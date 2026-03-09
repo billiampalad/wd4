@@ -23,7 +23,7 @@
                 <button id="hamburger" aria-label="Toggle sidebar">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <div class="brand-icon"><i class="fas fa-handshake"></i></div>
+                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35" height="35"></div>
                 <div class="brand-text">
                     <h1>POLIMDO &amp; DUDIKA</h1>
                     <p>Sistem Informasi Kerjasama</p>
@@ -54,9 +54,12 @@
                     </div>
                 </div>
 
-                <button class="icon-btn danger" id="logoutBtn" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+                <form method="POST" action="/logout" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="icon-btn danger" id="logoutBtn" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </nav>

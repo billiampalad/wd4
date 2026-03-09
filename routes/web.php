@@ -42,12 +42,7 @@ Route::post('/admin/login', [AdminAuthController::class, 'login']);
 |--------------------------------------------------------------------------
 */
 
-Route::get('/logout', function () {
-
-    Auth::logout();
-
-    return redirect('/login');
-});
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------

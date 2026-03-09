@@ -14,35 +14,39 @@ class LoginController
 
     public function login(Request $request)
     {
-        $credentials = $request->only('nik','password');
+        $credentials = $request->only('nik', 'password');
 
-        if(Auth::attempt($credentials)){
+        if (Auth::attempt($credentials)) {
 
             $user = Auth::user();
 
-            if($user->role->role_name == 'pimpinan'){
+            if ($user->role->role_name == 'pimpinan') {
                 return redirect('/pimpinan');
             }
 
-            if($user->role->role_name == 'jurusan'){
+            if ($user->role->role_name == 'jurusan') {
                 return redirect('/jurusan');
             }
 
-            if($user->role->role_name == 'unit_kerja'){
+            if ($user->role->role_name == 'unit_kerja') {
                 return redirect('/unit');
             }
 
-            if($user->role->role_name == 'admin'){
+            if ($user->role->role_name == 'admin') {
                 return redirect('/admin');
             }
         }
 
-        return back()->with('error','Login gagal');
+        return back()->with('error', 'Login gagal');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect('/');
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 }
