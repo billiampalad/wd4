@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Profile;
-// use App\Models\Role;
-// use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Auth;
+use App\Models\KegiatanKerjasama;
+use App\Models\Evaluasi;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController
 {
@@ -16,14 +17,67 @@ class DashboardController
         return view('auth.pimpinan');
     }
 
-    public function jurusan()
-    {
-        return view('auth.jurusan');
-    }
-
     public function unit()
     {
-        return view('auth.unit');
+        $user    = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if (!$profile || !$profile->unit_kerja_id) {
+            return redirect()->route('login')->with('error', 'Profil unit kerja tidak ditemukan.');
+        }
+
+        $unitId = $profile->unit_kerja_id;
+
+        // Helper closure for scoping to unit via pivot
+        $scopeUnit = fn($query) => $query->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId));
+
+        // ── 1. Quick Stats ──────────────────────────────────────
+        $totalKerjasama = $scopeUnit(KegiatanKerjasama::query())->count();
+
+        // Kegiatan yang BELUM punya record evaluasi
+        $menungguEvaluasi = $scopeUnit(KegiatanKerjasama::query())
+            ->whereDoesntHave('evaluasis')
+            ->count();
+
+        // Kegiatan yang SUDAH dievaluasi tapi status belum selesai (proxy for menunggu validasi pimpinan)
+        $menungguValidasi = $scopeUnit(KegiatanKerjasama::query())
+            ->whereHas('evaluasis')
+            ->where('status', '!=', 'selesai')
+            ->count();
+
+        // Kegiatan selesai / tervalidasi
+        $selesai = $scopeUnit(KegiatanKerjasama::query())
+            ->where('status', 'selesai')
+            ->count();
+
+        // ── 2. Tabel Action Required (5 terbaru belum dievaluasi) ─
+        $tugasEvaluasi = $scopeUnit(KegiatanKerjasama::query())
+            ->whereDoesntHave('evaluasis')
+            ->with('mitras')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // ── 3. Rata-rata Evaluasi (untuk Bar Chart) ─────────────
+        $avgEvaluasi = Evaluasi::whereHas('kegiatanKerjasama', function ($q) use ($unitId) {
+                $q->whereHas('unitKerjas', fn($qu) => $qu->where('unit_kerjas.id', $unitId));
+            })
+            ->select(
+                DB::raw('ROUND(AVG(kualitas),1)     as avg_kualitas'),
+                DB::raw('ROUND(AVG(keterlibatan),1)  as avg_keterlibatan'),
+                DB::raw('ROUND(AVG(efisiensi),1)     as avg_efisiensi'),
+                DB::raw('ROUND(AVG(kepuasan),1)      as avg_kepuasan')
+            )
+            ->first();
+
+        return view('auth.unit', compact(
+            'totalKerjasama',
+            'menungguEvaluasi',
+            'menungguValidasi',
+            'selesai',
+            'tugasEvaluasi',
+            'avgEvaluasi'
+        ));
     }
 
     // page halaman admin
@@ -45,7 +99,7 @@ class DashboardController
 
     public function profiles()
     {
-        $profiles = Profile::with('user')->get();
+        $profiles = Profile::with(['user', 'jurusan', 'unitKerja'])->get();
         return view('admin.layout.profiles', compact('profiles'));
     }
 

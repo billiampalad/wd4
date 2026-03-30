@@ -4,11 +4,9 @@
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
-            <i class="fas fa-home"></i>
+            <i class="fas fa-users"></i>
             <span class="sep">/</span>
-            <a href="{{ route('dashboard') }}" style="color: inherit; text-decoration: none;">Dashboard</a>
-            <span class="sep">/</span>
-            <a href="{{ route('users.index') }}" style="color: inherit; text-decoration: none;">Users</a>
+            <a href="{{ route('users.index') }}" style="color: inherit; text-decoration: none;">User Management</a>
             <span class="sep">/</span>
             <span class="current">Edit Pengguna</span>
         </div>
@@ -229,29 +227,33 @@
                             </div>
 
                             <div class="ue-form-group">
-                                <label class="ue-label" for="nama_jurusan">
+                                <label class="ue-label" for="jurusan_id">
                                     <i class="fas fa-graduation-cap ue-label-icon"></i>
                                     Nama Jurusan
                                 </label>
-                                <input
-                                    type="text" id="nama_jurusan" name="nama_jurusan"
-                                    class="ue-input"
-                                    value="{{ old('nama_jurusan', $user->profile?->nama_jurusan) }}"
-                                    placeholder="Contoh: Teknik Informatika"
-                                    oninput="updatePreview()" />
+                                <select id="jurusan_id" name="jurusan_id" class="ue-input">
+                                    <option value="">-- Pilih Jurusan --</option>
+                                    @foreach($jurusans as $jurusan)
+                                        <option value="{{ $jurusan->id }}" {{ old('jurusan_id', $user->profile?->jurusan_id) == $jurusan->id ? 'selected' : '' }}>
+                                            {{ $jurusan->nama_jurusan }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="ue-form-group">
-                                <label class="ue-label" for="nama_unit">
+                                <label class="ue-label" for="unit_kerja_id">
                                     <i class="fas fa-building ue-label-icon"></i>
                                     Nama Unit
                                 </label>
-                                <input
-                                    type="text" id="nama_unit" name="nama_unit"
-                                    class="ue-input"
-                                    value="{{ old('nama_unit', $user->profile?->nama_unit) }}"
-                                    placeholder="Contoh: Unit SDM"
-                                    oninput="updatePreview()" />
+                                <select id="unit_kerja_id" name="unit_kerja_id" class="ue-input">
+                                    <option value="">-- Pilih Unit Kerja --</option>
+                                    @foreach($unitKerjas as $unit)
+                                        <option value="{{ $unit->id }}" {{ old('unit_kerja_id', $user->profile?->unit_kerja_id) == $unit->id ? 'selected' : '' }}>
+                                            {{ $unit->nama_unit_pelaksana }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 

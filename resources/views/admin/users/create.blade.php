@@ -4,11 +4,9 @@
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
-            <i class="fas fa-home"></i>
+            <i class="fas fa-users"></i>
             <span class="sep">/</span>
-            <a href="{{ route('dashboard') }}" style="color: inherit; text-decoration: none;">Dashboard</a>
-            <span class="sep">/</span>
-            <a href="{{ route('users.index') }}" style="color: inherit; text-decoration: none;">Users</a>
+            <a href="{{ route('users.index') }}" style="color: inherit; text-decoration: none;">User Management</a>
             <span class="sep">/</span>
             <span class="current">Tambah Pengguna</span>
         </div>
@@ -218,31 +216,33 @@
                             </div>
 
                             <div class="uc-form-group">
-                                <label class="uc-label" for="nama_jurusan">
+                                <label class="uc-label" for="jurusan_id">
                                     <i class="fas fa-graduation-cap uc-label-icon"></i>
                                     Nama Jurusan
                                 </label>
-                                <input
-                                    type="text" id="nama_jurusan" name="nama_jurusan"
-                                    class="uc-input"
-                                    placeholder="Contoh: Teknik Informatika"
-                                    value="{{ old('nama_jurusan') }}"
-                                    oninput="updatePreview()"
-                                />
+                                <select id="jurusan_id" name="jurusan_id" class="uc-input">
+                                    <option value="">-- Pilih Jurusan --</option>
+                                    @foreach($jurusans as $jurusan)
+                                        <option value="{{ $jurusan->id }}" {{ old('jurusan_id') == $jurusan->id ? 'selected' : '' }}>
+                                            {{ $jurusan->nama_jurusan }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="uc-form-group">
-                                <label class="uc-label" for="nama_unit">
+                                <label class="uc-label" for="unit_kerja_id">
                                     <i class="fas fa-building uc-label-icon"></i>
                                     Nama Unit
                                 </label>
-                                <input
-                                    type="text" id="nama_unit" name="nama_unit"
-                                    class="uc-input"
-                                    placeholder="Contoh: Unit SDM"
-                                    value="{{ old('nama_unit') }}"
-                                    oninput="updatePreview()"
-                                />
+                                <select id="unit_kerja_id" name="unit_kerja_id" class="uc-input">
+                                    <option value="">-- Pilih Unit Kerja --</option>
+                                    @foreach($unitKerjas as $unit)
+                                        <option value="{{ $unit->id }}" {{ old('unit_kerja_id') == $unit->id ? 'selected' : '' }}>
+                                            {{ $unit->nama_unit_pelaksana }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 

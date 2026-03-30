@@ -88,7 +88,7 @@
                     </div>
                 </button>
 
-                <div class="divider">
+                <!-- <div class="divider">
                     <div class="divider-line"></div>
                     <span class="divider-text">Butuh bantuan?</span>
                     <div class="divider-line"></div>
@@ -96,7 +96,7 @@
 
                 <p class="help-text">
                     Belum punya akun? <a href="#">Hubungi administrator</a>
-                </p>
+                </p> -->
 
             </form>
         </div>

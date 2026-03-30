@@ -39,6 +39,26 @@ function initDashboard() {
         overlay.onclick = toggleSidebar;
     }
 
+    /* ─ Sidebar Collapse Toggle (desktop) ─ */
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    if (sidebarToggle) {
+        function applySidebarState(collapsed) {
+            if (collapsed) {
+                document.body.classList.add('sidebar-collapsed');
+            } else {
+                document.body.classList.remove('sidebar-collapsed');
+            }
+            localStorage.setItem('sidebar_collapsed', collapsed ? '1' : '0');
+        }
+
+        // Apply saved state on first load
+        applySidebarState(localStorage.getItem('sidebar_collapsed') === '1');
+
+        sidebarToggle.onclick = () => {
+            applySidebarState(localStorage.getItem('sidebar_collapsed') !== '1');
+        };
+    }
+
     /* ─ Data Master Submenu ─ */
     const dmBtn2 = document.getElementById('dataMasterBtn');
     const dmSub = document.getElementById('dataMasterSub');
@@ -100,12 +120,38 @@ function closeModal(id) {
     }
 }
 
-function togglePass(id) {
+function togglePass(btnOrId) {
+    // Jika argumen adalah element (untuk halaman list user)
+    if (btnOrId && typeof btnOrId === 'object') {
+        const wrap = btnOrId.closest('.um-pass-wrap');
+        if (wrap) {
+            const dots = wrap.querySelector('.um-pass-dots');
+            const real = wrap.querySelector('.um-pass-real');
+            const icon = btnOrId.querySelector('i');
+
+            if (dots && real) {
+                const isHidden = real.style.display === 'none';
+                dots.style.display = isHidden ? 'none' : 'inline';
+                real.style.display = isHidden ? 'inline' : 'none';
+                if (icon) {
+                    icon.className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
+                }
+            }
+        }
+        return;
+    }
+
+    // Jika argumen adalah ID atau kosong (untuk halaman create/edit)
+    const id = btnOrId || 'password';
     const el = document.getElementById(id);
-    const eye = document.getElementById(id.replace('pass', 'eye')) || document.getElementById('passEye');
-    if (el && eye) {
-        el.type = el.type === 'password' ? 'text' : 'password';
-        eye.className = el.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    const eye = document.getElementById('passEye') || (el ? document.getElementById(el.id + 'Eye') : null);
+
+    if (el) {
+        const isPass = el.type === 'password';
+        el.type = isPass ? 'text' : 'password';
+        if (eye) {
+            eye.className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
+        }
     }
 }
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Jurusan;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,7 +16,7 @@ class UserController
      */
     public function index()
     {
-        $users = User::with(['role', 'profile'])->latest()->get();
+        $users = User::with(['role', 'profile.jurusan', 'profile.unitKerja'])->latest()->get();
         return view('admin.layout.users', compact('users'));
     }
 
@@ -24,7 +26,9 @@ class UserController
     public function create()
     {
         $roles = Role::all();
-        return view('admin.users.create', compact('roles'));
+        $jurusans = Jurusan::all();
+        $unitKerjas = UnitKerja::all();
+        return view('admin.users.create', compact('roles', 'jurusans', 'unitKerjas'));
     }
 
     /**
@@ -41,8 +45,8 @@ class UserController
 
         $user->profile()->create([
             'jabatan' => $request->jabatan,
-            'nama_jurusan' => $request->nama_jurusan,
-            'nama_unit' => $request->nama_unit,
+            'jurusan_id' => $request->jurusan_id,
+            'unit_kerja_id' => $request->unit_kerja_id,
         ]);
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
@@ -53,10 +57,12 @@ class UserController
      */
     public function edit(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('profile')->findOrFail($id);
         $roles = Role::all();
+        $jurusans = Jurusan::all();
+        $unitKerjas = UnitKerja::all();
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles', 'jurusans', 'unitKerjas'));
     }
 
     /**
@@ -77,8 +83,8 @@ class UserController
             ['user_id' => $user->id],
             [
                 'jabatan' => $request->jabatan,
-                'nama_jurusan' => $request->nama_jurusan,
-                'nama_unit' => $request->nama_unit,
+                'jurusan_id' => $request->jurusan_id,
+                'unit_kerja_id' => $request->unit_kerja_id,
             ]
         );
 

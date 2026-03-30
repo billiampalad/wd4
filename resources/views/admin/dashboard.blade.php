@@ -67,31 +67,85 @@
 
             <a class="menu-item {{ request()->routeIs('dashboard', 'admin.dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-tachometer-alt"></i></div>
-                Dashboard
+                <span>Dashboard</span>
             </a>
 
             @php
                 $isUserManagementActive = request()->routeIs('users', 'users.*', 'roles', 'roles.*', 'profiles', 'profiles.*');
             @endphp
-            <div id="dataMasterParent" class="menu-item {{ $isUserManagementActive ? 'active' : '' }}" style="flex-direction:column; align-items:stretch; padding:0;">
-                <div id="dataMasterBtn" class="menu-item {{ $isUserManagementActive ? 'submenu-open' : '' }}" style="margin:0; cursor: pointer;">
+            <div id="dataMasterParent" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div id="dataMasterBtn" class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-users"></i></div>
-                    <span style="flex:1; font-size:13px; font-weight:600;">User Management</span>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">User Management</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
                 <div class="submenu {{ $isUserManagementActive ? 'open' : '' }}" id="dataMasterSub">
-                    <a class="submenu-item {{ request()->routeIs('users', 'users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                        <span class="submenu-dot"></span>Users
-                    </a>
-                    <a class="submenu-item {{ request()->routeIs('roles', 'roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
-                        <span class="submenu-dot"></span>Roles
-                    </a>
-                    <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*') ? 'active' : '' }}" href="{{ route('profiles') }}">
-                        <span class="submenu-dot"></span>Profiles
-                    </a>
+                    <div class="submenu-inner">
+                        <a class="submenu-item {{ request()->routeIs('users', 'users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                            <span class="submenu-dot"></span><span>Users</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('roles', 'roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                            <span class="submenu-dot"></span><span>Roles</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*') ? 'active' : '' }}" href="{{ route('profiles') }}">
+                            <span class="submenu-dot"></span><span>Profiles</span>
+                        </a>
+                    </div>
                 </div>
             </div>
+
+            <div class="menu-section">MASTER DATA</div>
+            <a class="menu-item {{ request()->routeIs('mitra.*') ? 'active' : '' }}" href="{{ route('mitra.index') }}">
+                <div class="menu-icon"><i class="fas fa-handshake"></i></div>
+                <span>Mitra Kerjasama</span>
+            </a>
+            <a class="menu-item {{ request()->routeIs('jkerjasama.*') ? 'active' : '' }}" href="{{ route('jkerjasama.index') }}">
+                <div class="menu-icon"><i class="fas fa-tags"></i></div>
+                <span>Jenis Kerjasama</span>
+            </a>
+            <a class="menu-item" href="#" data-page="jenis_kerjasama">
+                <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
+                <span>Unit Pelaksana</span>
+            </a>
+
+            <div class="menu-section">KERJASAMA</div>
+            <a class="menu-item" href="#" data-page="data_kerjasama">
+                <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
+                <span>Data Kerjasama</span>
+            </a>
+            <a class="menu-item" href="#" data-page="hasil_capaian">
+                <div class="menu-icon"><i class="fas fa-chart-bar"></i></div>
+                <span>Hasil &amp; Capaian</span>
+            </a>
+            <a class="menu-item" href="#" data-page="evaluasi_kinerja">
+                <div class="menu-icon"><i class="fas fa-star"></i></div>
+                <span>Evaluasi Kinerja</span>
+            </a>
+            <a class="menu-item" href="#" data-page="permasalahan_solusi">
+                <div class="menu-icon"><i class="fas fa-tools"></i></div>
+                <span>Solusi &amp; Masalah</span>
+            </a>
+
+            <div class="menu-section">SYSTEM</div>
+            <a class="menu-item" href="#" data-page="notifikasi">
+                <div class="menu-icon"><i class="fas fa-bell"></i></div>
+                <span>Notifikasi Mitra</span>
+            </a>
+
+            <a class="menu-item" href="#" data-page="laporan">
+                <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
+                <span>Laporan Data</span>
+            </a>
+            <a class="menu-item" href="#" data-page="laporan">
+                <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>
+                <span>Statistik Data</span>
+            </a>
         </aside>
+
+        <!-- Sidebar Toggle (Floating on Border) -->
+        <button id="sidebarToggle" class="sidebar-toggle-floating" title="Toggle Sidebar">
+            <i class="fas fa-arrow-right-to-bracket"></i>
+        </button>
 
         <!-- Main Content -->
         @yield('content')

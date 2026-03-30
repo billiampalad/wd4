@@ -4,11 +4,9 @@
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
-            <i class="fas fa-home"></i>
+            <i class="fas fa-users"></i>
             <span class="sep">/</span>
-            <a href="{{ route('dashboard') }}" style="color: inherit; text-decoration: none;">Dashboard</a>
-            <span class="sep">/</span>
-            <a href="{{ route('roles.index') }}" style="color: inherit; text-decoration: none;">Roles</a>
+            <a href="{{ route('roles.index') }}" style="color: inherit; text-decoration: none;">User Management</a>
             <span class="sep">/</span>
             <span class="current">Edit Role</span>
         </div>

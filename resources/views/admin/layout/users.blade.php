@@ -4,9 +4,9 @@
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
-            <i class="fas fa-home"></i>
+            <i class="fas fa-users"></i>
             <span class="sep">/</span>
-            <a href="{{ route('dashboard') }}" style="color: inherit; text-decoration: none;">Dashboard</a>
+            <span style="color: inherit; text-decoration: none;">User Management</span>
             <span class="sep">/</span>
             <span class="current">Users</span>
         </div>
@@ -68,8 +68,8 @@
                             </span>
                         </td>
                         <td class="um-td"><span class="um-meta">{{ $user->profile?->jabatan ?? '-' }}</span></td>
-                        <td class="um-td"><span class="um-meta">{{ $user->profile?->nama_jurusan ?? '-' }}</span></td>
-                        <td class="um-td"><span class="um-meta">{{ $user->profile?->nama_unit ?? '-' }}</span></td>
+                        <td class="um-td"><span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span></td>
+                        <td class="um-td"><span class="um-meta">{{ $user->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}</span></td>
                         <td class="um-td">
                             <div class="um-date">
                                 <i class="fas fa-calendar-plus um-date-icon"></i>
