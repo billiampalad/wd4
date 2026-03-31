@@ -251,6 +251,7 @@
 
         {{-- ═══ TAB 3: Pelaksanaan ═══ --}}
         <div class="tab-content mc-body" x-show="activeTab === 'pelaksanaan'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" style="padding: 24px; display: none;">
+            @if($isEditMode)
             <form action="{{ route('unit.kerjasama.pelaksanaan.store', $kegiatan->id) }}" method="POST" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
                 @csrf
                 <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
@@ -282,10 +283,11 @@
                     </button>
                 </div>
             </form>
+            @endif
 
             @forelse($kegiatan->pelaksanaans as $p)
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; position: relative; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
-                <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 12px; padding-right: 40px;">{{ $p->deskripsi }}</div>
+                <div style="font-size: 13px; color: var(--text); line-height: 1.6; margin-bottom: 12px;{{ $isEditMode ? ' padding-right: 40px;' : '' }}">{{ $p->deskripsi }}</div>
                 <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                     @if($p->cakupan)
                     <span style="font-size: 12px; color: var(--text-sub);"><strong style="color:var(--text);">Cakupan:</strong> {{ $p->cakupan }}</span>
@@ -297,6 +299,7 @@
                     <span style="font-size: 12px; color: var(--text-sub);"><strong style="color:var(--text);">Sumber Daya:</strong> {{ $p->sumber_daya }}</span>
                     @endif
                 </div>
+                @if($isEditMode)
                 <div style="position: absolute; top: 16px; right: 16px;">
                     <form action="{{ route('unit.kerjasama.pelaksanaan.destroy', [$kegiatan->id, $p->id]) }}" method="POST" onsubmit="return confirm('Hapus data pelaksanaan ini?')" style="display: inline;">
                         @csrf @method('DELETE')
@@ -305,6 +308,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
             @empty
             <div style="text-align: center; padding: 40px; color: var(--text-sub); font-size: 13px; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border);">
@@ -318,6 +322,7 @@
 
         {{-- ═══ TAB 4: Hasil & Capaian ═══ --}}
         <div class="tab-content mc-body" x-show="activeTab === 'hasil'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" style="padding: 24px; display: none;">
+            @if($isEditMode)
             <form action="{{ route('unit.kerjasama.hasil.store', $kegiatan->id) }}" method="POST" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
                 @csrf
                 <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
@@ -356,6 +361,7 @@
                     </button>
                 </div>
             </form>
+            @endif
 
             @forelse($kegiatan->hasils as $h)
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; position: relative; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
@@ -376,6 +382,7 @@
                     <div style="grid-column: 1 / -1;"><div class="md-stat-label" style="margin-bottom: 4px;">Manfaat Mitra</div><div style="font-size: 13px; color: var(--text); line-height: 1.5;">{{ $h->manfaat_mitra }}</div></div>
                     @endif
                 </div>
+                @if($isEditMode)
                 <div style="position: absolute; top: 16px; right: 16px;">
                     <form action="{{ route('unit.kerjasama.hasil.destroy', [$kegiatan->id, $h->id]) }}" method="POST" onsubmit="return confirm('Hapus data hasil ini?')" style="display: inline;">
                         @csrf @method('DELETE')
@@ -384,6 +391,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
             @empty
             <div style="text-align: center; padding: 40px; color: var(--text-sub); font-size: 13px; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border);">
@@ -397,6 +405,7 @@
 
         {{-- ═══ TAB 5: Permasalahan & Solusi ═══ --}}
         <div class="tab-content mc-body" x-show="activeTab === 'masalah'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" style="padding: 24px; display: none;">
+            @if($isEditMode)
             <form action="{{ route('unit.kerjasama.permasalahan.store', $kegiatan->id) }}" method="POST" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
                 @csrf
                 <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
@@ -425,10 +434,11 @@
                     </button>
                 </div>
             </form>
+            @endif
 
             @forelse($kegiatan->permasalahanSolusis as $ps)
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; position: relative; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
-                <div style="display: flex; flex-direction: column; gap: 16px; padding-right: 40px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;{{ $isEditMode ? ' padding-right: 40px;' : '' }}">
                     <div>
                         <div class="md-stat-label" style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
                             <span style="width: 24px; height: 24px; border-radius: 6px; background: rgba(239,68,68,.1); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">
@@ -457,6 +467,7 @@
                         <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $ps->rekomendasi ?: '-' }}</div>
                     </div>
                 </div>
+                @if($isEditMode)
                 <div style="position: absolute; top: 16px; right: 16px;">
                     <form action="{{ route('unit.kerjasama.permasalahan.destroy', [$kegiatan->id, $ps->id]) }}" method="POST" onsubmit="return confirm('Hapus data permasalahan & solusi ini?')" style="display: inline;">
                         @csrf @method('DELETE')
@@ -465,6 +476,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
             @empty
             <div style="text-align: center; padding: 40px; color: var(--text-sub); font-size: 13px; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border);">
@@ -478,6 +490,7 @@
 
         {{-- ═══ TAB 6: Dokumentasi ═══ --}}
         <div class="tab-content mc-body" x-show="activeTab === 'dokumentasi'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" style="padding: 24px; display: none;">
+            @if($isEditMode)
             <form action="{{ route('unit.kerjasama.dokumentasi.store', $kegiatan->id) }}" method="POST" style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px;">
                 @csrf
                 <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
@@ -505,6 +518,7 @@
                     </button>
                 </div>
             </form>
+            @endif
 
             @forelse($kegiatan->dokumentasis as $d)
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; position: relative;">
@@ -519,12 +533,14 @@
                         @endif
                     </div>
                 </div>
+                @if($isEditMode)
                 <form action="{{ route('unit.kerjasama.dokumentasi.destroy', [$kegiatan->id, $d->id]) }}" method="POST" onsubmit="return confirm('Hapus dokumentasi ini?')" style="flex-shrink: 0; margin-left: 12px;">
                     @csrf @method('DELETE')
                     <button type="submit" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--danger); cursor: pointer; font-size: 12px; transition: all 0.2s;" onmouseover="this.style.background='var(--danger)'; this.style.color='#fff';" onmouseout="this.style.background='var(--surface)'; this.style.color='var(--danger)';">
                         <i class="fas fa-trash"></i>
                     </button>
                 </form>
+                @endif
             </div>
             @empty
             <div style="text-align: center; padding: 40px; color: var(--text-sub); font-size: 13px; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border);">
