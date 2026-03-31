@@ -72,7 +72,7 @@
                                     {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '-' }}
                                 </td>
                                 <td class="um-td um-td-aksi" style="text-align:center;">
-                                    <a href="#"
+                                    <a href="{{ route('unit.evaluasi.form', $kegiatan->id) }}" data-turbo="false"
                                         style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px;
                                                background:linear-gradient(135deg,var(--accent),var(--accent2));
                                                color:#fff; border-radius:8px; font-size:11px; font-weight:700;
@@ -167,7 +167,7 @@
                                     </span>
                                 </td>
                                 <td class="um-td um-td-aksi" style="text-align:center;">
-                                    <a href="#" class="um-btn-edit" title="Detail"
+                                    <a href="{{ route('unit.evaluasi.form', $kegiatan->id) }}" class="um-btn-edit" title="Detail" data-turbo="false"
                                         style="background: rgba(79,70,229,.12); color: #4f46e5;">
                                         <i class="fas fa-eye"></i>
                                     </a>

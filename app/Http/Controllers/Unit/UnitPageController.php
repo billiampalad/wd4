@@ -9,6 +9,7 @@ use App\Models\Profile;
 use App\Models\KegiatanKerjasama;
 use App\Models\Evaluasi;
 use App\Models\JenisKerjasama;
+use Illuminate\Http\Request;
 
 class UnitPageController extends Controller
 {
@@ -68,6 +69,85 @@ class UnitPageController extends Controller
             ->get();
 
         return view('auth.unit', compact('evaluasiList', 'belumEvaluasi'));
+    }
+
+    // ─── Form Evaluasi (GET) ────────────────────────────────────
+    public function formEvaluasi($id)
+    {
+        $unitId = $this->resolveUnitId();
+
+        $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)
+            ->with(['mitras', 'jenisKerjasama', 'evaluasis' => function ($q) {
+                $q->where('dinilai_oleh', Auth::id());
+            }])
+            ->findOrFail($id);
+
+        $existingEval = $kegiatan->evaluasis->first();
+
+        return view('auth.unit', compact('kegiatan', 'existingEval'));
+    }
+
+    // ─── Store Evaluasi (POST) ──────────────────────────────────
+    public function storeEvaluasi(Request $request, $id)
+    {
+        $request->validate([
+            'sesuai_rencana' => 'required|integer|min:1|max:5',
+            'kualitas'       => 'required|integer|min:1|max:5',
+            'keterlibatan'   => 'required|integer|min:1|max:5',
+            'efisiensi'      => 'required|integer|min:1|max:5',
+            'kepuasan'       => 'required|integer|min:1|max:5',
+            'catatan'        => 'nullable|string|max:2000',
+        ]);
+
+        $unitId = $this->resolveUnitId();
+        $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
+
+        Evaluasi::create([
+            'id_kegiatan'   => $kegiatan->id,
+            'dinilai_oleh'  => Auth::id(),
+            'sesuai_rencana' => $request->sesuai_rencana,
+            'kualitas'       => $request->kualitas,
+            'keterlibatan'   => $request->keterlibatan,
+            'efisiensi'      => $request->efisiensi,
+            'kepuasan'       => $request->kepuasan,
+            'catatan'        => $request->catatan,
+        ]);
+
+        // Update status kegiatan menjadi selesai
+        $kegiatan->update(['status' => 'selesai']);
+
+        return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil disimpan.');
+    }
+
+    // ─── Update Evaluasi (PUT) ──────────────────────────────────
+    public function updateEvaluasi(Request $request, $id)
+    {
+        $request->validate([
+            'sesuai_rencana' => 'required|integer|min:1|max:5',
+            'kualitas'       => 'required|integer|min:1|max:5',
+            'keterlibatan'   => 'required|integer|min:1|max:5',
+            'efisiensi'      => 'required|integer|min:1|max:5',
+            'kepuasan'       => 'required|integer|min:1|max:5',
+            'catatan'        => 'nullable|string|max:2000',
+        ]);
+
+        $unitId = $this->resolveUnitId();
+        $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
+
+        $eval = Evaluasi::where('id_kegiatan', $kegiatan->id)
+            ->where('dinilai_oleh', Auth::id())
+            ->firstOrFail();
+
+        $eval->update([
+            'sesuai_rencana' => $request->sesuai_rencana,
+            'kualitas'       => $request->kualitas,
+            'keterlibatan'   => $request->keterlibatan,
+            'efisiensi'      => $request->efisiensi,
+            'kepuasan'       => $request->kepuasan,
+            'catatan'        => $request->catatan,
+        ]);
+
+        return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil diperbarui.');
     }
 
     // ─── Laporan Data ────────────────────────────────────────────

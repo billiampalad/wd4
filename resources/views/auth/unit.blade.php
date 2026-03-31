@@ -119,6 +119,8 @@
                 @include('auth.layout.unit.detail_kerjasama')
             @elseif(request()->routeIs('unit.dkerjasama'))
                 @include('auth.layout.unit.dkerjasama')
+            @elseif(request()->routeIs('unit.evaluasi.form'))
+                @include('auth.layout.unit.form_evaluasi')
             @elseif(request()->routeIs('unit.evaluasi'))
                 @include('auth.layout.unit.evaluasi_kinerja')
             @elseif(request()->routeIs('unit.laporan'))
