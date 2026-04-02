@@ -27,6 +27,18 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
+| NOTIFIKASI API
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/notifikasi', [\App\Http\Controllers\NotifikasiController::class, 'index']);
+    Route::post('/api/notifikasi/{id}/mark-read', [\App\Http\Controllers\NotifikasiController::class, 'markAsRead']);
+    Route::post('/api/notifikasi/mark-all-read', [\App\Http\Controllers\NotifikasiController::class, 'markAllRead']);
+});
+
+/*
+|--------------------------------------------------------------------------
 | LOGIN USER
 |--------------------------------------------------------------------------
 */
@@ -59,6 +71,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:pimpinan'])->group(function () {
     Route::get('/pimpinan', [DashboardController::class, 'pimpinan'])->name('pimpinan.dashboard');
+    Route::post('/pimpinan/evaluate/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'evaluate'])->name('pimpinan.evaluate');
 });
 
 Route::middleware(['auth', 'role:jurusan'])->group(function () {

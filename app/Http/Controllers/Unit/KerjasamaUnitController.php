@@ -439,6 +439,25 @@ class KerjasamaUnitController extends Controller
 
         $kegiatan->update(['status' => 'menunggu_evaluasi']);
 
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
+        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'pimpinan');
+        })->get();
+
+        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        
+        foreach ($pimpinans as $pimpinan) {
+            \App\Models\Notifikasi::send(
+                $pimpinan->id,
+                Auth::id(),
+                $kegiatan->id,
+                'evaluasi',
+                'Dokumen Menunggu Evaluasi',
+                "$namaUnit mengirimkan laporan kegiatan $kegiatan->nama_kegiatan untuk dievaluasi.",
+                route('pimpinan.dashboard')
+            );
+        }
+
         return back()->with('success', 'Data kerjasama berhasil dikirim ke Pimpinan untuk dievaluasi.');
     }
 }

@@ -505,5 +505,181 @@ function datepicker(initialDate = '') {
     }
 }
 
+function initNotifikasi() {
+    const notifBtn = document.getElementById('notificationBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifList = document.getElementById('notifList');
+    const notifBadge = document.getElementById('notifBadge');
+    const markAllReadBtn = document.getElementById('markAllRead');
+
+    if (!notifBtn || !notifDropdown) return;
+
+    // Toggle dropdown
+    notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('show');
+        if (notifDropdown.classList.contains('show')) {
+            fetchNotifications();
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+            notifDropdown.classList.remove('show');
+        }
+    });
+
+    // Mark all as read
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fetch('/api/notifikasi/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    fetchNotifications();
+                }
+            });
+        });
+    }
+
+    // Fetch and render notifications
+    function fetchNotifications() {
+        fetch('/api/notifikasi')
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    renderNotifications(res.data);
+                    updateBadge(res.unread_count);
+                }
+            })
+            .catch(err => console.error('Gagal mengambil notifikasi:', err));
+    }
+
+    function updateBadge(count) {
+        if (count > 0) {
+            notifBadge.textContent = count > 9 ? '9+' : count;
+            notifBadge.style.display = 'flex';
+        } else {
+            notifBadge.style.display = 'none';
+        }
+    }
+
+    function renderNotifications(data) {
+        if (data.length === 0) {
+            notifList.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>Tidak ada notifikasi baru</p>
+                </div>
+            `;
+            return;
+        }
+
+        notifList.innerHTML = data.map(item => {
+            const isUnread = item.is_read === 0;
+            const timeAgoStr = timeAgo(new Date(item.created_at));
+            
+            // Tentukan ikon & warna berdasarkan pengirim
+            let icon = 'fa-building';
+            let iconBg = 'rgba(79, 70, 229, 0.1)';
+            let iconColor = 'var(--accent)';
+            let senderName = '-';
+
+            if (item.sender && item.sender.profile) {
+                const profile = item.sender.profile;
+                if (profile.jurusan) {
+                    icon = 'fa-book';
+                    iconBg = 'rgba(124, 58, 237, 0.1)';
+                    iconColor = 'var(--accent2)';
+                    senderName = profile.jurusan.nama_jurusan;
+                } else if (profile.unit_kerja || profile.unit_kerja_id || profile.unitKerja) {
+                    icon = 'fa-building';
+                    iconBg = 'rgba(14, 165, 233, 0.1)';
+                    iconColor = 'var(--accent3)';
+                    const unit = profile.unit_kerja || profile.unitKerja;
+                    senderName = unit ? unit.nama_unit_pelaksana : 'Unit Kerja';
+                }
+            }
+
+            // Fallback sender name if profile logic fails
+            if (senderName === '-' && item.sender) {
+                senderName = item.sender.name;
+            }
+
+            return `
+                <a href="${item.link || '#'}" class="notification-item ${isUnread ? 'unread' : ''}" data-id="${item.id}">
+                    <div class="notification-icon-wrapper" style="background:${iconBg}; color:${iconColor};">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <span class="notification-sender">${senderName}</span>
+                        <span class="notification-message">${item.pesan}</span>
+                        <div class="notification-meta">
+                            <span class="notification-time">${timeAgoStr}</span>
+                            <span class="notification-badge-type badge-${item.type || 'evaluasi'}">${item.type || 'evaluasi'}</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        // Add click event to mark as read
+        document.querySelectorAll('.notification-item').forEach(el => {
+            el.addEventListener('click', function(e) {
+                const id = this.getAttribute('data-id');
+                markAsRead(id);
+            });
+        });
+    }
+
+    function markAsRead(id) {
+        fetch(`/api/notifikasi/${id}/mark-read`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                fetchNotifications(); // Refresh
+            }
+        });
+    }
+
+    function timeAgo(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        let interval = seconds / 31536000;
+        if (interval > 1) return Math.floor(interval) + " tahun lalu";
+        interval = seconds / 2592000;
+        if (interval > 1) return Math.floor(interval) + " bulan lalu";
+        interval = seconds / 86400;
+        if (interval > 1) return Math.floor(interval) + " hari lalu";
+        interval = seconds / 3600;
+        if (interval > 1) return Math.floor(interval) + " jam lalu";
+        interval = seconds / 60;
+        if (interval > 1) return Math.floor(interval) + " menit lalu";
+        return "Baru saja";
+    }
+
+    // Initial load for badge count
+    fetchNotifications();
+    
+    // Poll for new notifications every 30 seconds
+    setInterval(fetchNotifications, 30000);
+}
+
 // Jalankan saat pertama kali dan setiap kali Turbo navigasi
-document.addEventListener('turbo:load', initDashboard);
+document.addEventListener('turbo:load', () => {
+    initDashboard();
+    initNotifikasi();
+});

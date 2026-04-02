@@ -566,6 +566,25 @@ class KerjasamaJurusanController extends Controller
 
         $kegiatan->update(['status' => 'menunggu_evaluasi']);
 
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
+        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'pimpinan');
+        })->get();
+
+        $namaJurusan = Auth::user()->profile->jurusan->nama_jurusan;
+        
+        foreach ($pimpinans as $pimpinan) {
+            Notifikasi::send(
+                $pimpinan->id,
+                Auth::id(),
+                $kegiatan->id,
+                'evaluasi',
+                'Dokumen Menunggu Evaluasi',
+                "$namaJurusan mengirimkan laporan kegiatan $kegiatan->nama_kegiatan untuk dievaluasi.",
+                route('pimpinan.dashboard') // Nanti bisa diarahkan ke detail jika sudah ada detail pimpinan
+            );
+        }
+
         return back()->with('success', 'Data kerjasama berhasil dikirim ke Pimpinan untuk dievaluasi.');
     }
 }

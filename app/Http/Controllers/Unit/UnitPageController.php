@@ -128,6 +128,25 @@ class UnitPageController extends Controller
         // Update status kegiatan menjadi menunggu validasi pimpinan
         $kegiatan->update(['status' => 'menunggu_validasi']);
 
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
+        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'pimpinan');
+        })->get();
+
+        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        
+        foreach ($pimpinans as $pimpinan) {
+            \App\Models\Notifikasi::send(
+                $pimpinan->id,
+                Auth::id(),
+                $kegiatan->id,
+                'validasi',
+                'Dokumen Menunggu Validasi',
+                "$namaUnit mengirimkan evaluasi $kegiatan->nama_kegiatan untuk divalidasi.",
+                route('pimpinan.dashboard')
+            );
+        }
+
         return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }
 
@@ -162,6 +181,25 @@ class UnitPageController extends Controller
         // Update status kegiatan menjadi menunggu validasi pimpinan
         $kegiatan->update(['status' => 'menunggu_validasi']);
 
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
+        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'pimpinan');
+        })->get();
+
+        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        
+        foreach ($pimpinans as $pimpinan) {
+            \App\Models\Notifikasi::send(
+                $pimpinan->id,
+                Auth::id(),
+                $kegiatan->id,
+                'validasi',
+                'Dokumen Menunggu Validasi',
+                "$namaUnit mengirimkan evaluasi $kegiatan->nama_kegiatan untuk divalidasi.",
+                route('pimpinan.dashboard')
+            );
+        }
+
         return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil diperbarui dan dikirim ke Pimpinan.');
     }
 
@@ -181,6 +219,25 @@ class UnitPageController extends Controller
         }
 
         $kegiatan->update(['status' => 'menunggu_validasi']);
+
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
+        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'pimpinan');
+        })->get();
+
+        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        
+        foreach ($pimpinans as $pimpinan) {
+            \App\Models\Notifikasi::send(
+                $pimpinan->id,
+                Auth::id(),
+                $kegiatan->id,
+                'validasi',
+                'Dokumen Menunggu Validasi',
+                "$namaUnit mengirimkan evaluasi $kegiatan->nama_kegiatan untuk divalidasi.",
+                route('pimpinan.dashboard')
+            );
+        }
 
         return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }

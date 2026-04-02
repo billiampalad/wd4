@@ -7,6 +7,8 @@
 
     <title>Unit — Sistem Informasi Kerjasama Polimdo</title>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap"
@@ -47,10 +49,28 @@
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
 
-                <button class="icon-btn" id="notificationBtn" title="Notifications">
-                    <i class="fas fa-bell" id="notificationIcon"></i>
-                    <span class="notification-badge">3</span>
-                </button>
+                <div class="notification-container">
+                    <button class="icon-btn" id="notificationBtn" title="Notifications">
+                        <i class="fas fa-bell" id="notificationIcon"></i>
+                        <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                    </button>
+                    
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notification-header">
+                            <h3>Notifikasi</h3>
+                            <button id="markAllRead" style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai semua dibaca</button>
+                        </div>
+                        <div class="notification-list" id="notifList">
+                            <div class="notification-empty">
+                                <i class="fas fa-bell-slash"></i>
+                                <p>Tidak ada notifikasi baru</p>
+                            </div>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="#">Lihat Semua Notifikasi</a>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="user-chip">
                     <div class="user-avatar" id="userAvatar">{{ auth()->user()->name }}</div>
