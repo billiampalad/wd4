@@ -89,6 +89,41 @@ class DashboardController
         ));
     }
 
+    public function pimpinanMonitoring()
+    {
+        $dataKerjasama = KegiatanKerjasama::with(['jurusans', 'unitKerjas', 'mitras', 'evaluasis', 'kesimpulans'])
+            ->latest()
+            ->get();
+
+        return view('auth.pimpinan', [
+            'view' => 'monitoring',
+            'dataKerjasama' => $dataKerjasama
+        ]);
+    }
+
+    public function pimpinanEvaluasi()
+    {
+        // 1. Antrean Laporan Jurusan (menunggu_evaluasi)
+        $laporanJurusan = KegiatanKerjasama::where('status', 'menunggu_evaluasi')
+            ->whereHas('jurusans')
+            ->with(['jurusans', 'mitras'])
+            ->latest()
+            ->get();
+
+        // 2. Antrean Laporan Unit Kerja (menunggu_validasi)
+        $laporanUnit = KegiatanKerjasama::where('status', 'menunggu_validasi')
+            ->whereHas('unitKerjas')
+            ->with(['unitKerjas', 'mitras', 'evaluasis'])
+            ->latest()
+            ->get();
+
+        return view('auth.pimpinan', [
+            'view' => 'evaluasi',
+            'laporanJurusan' => $laporanJurusan,
+            'laporanUnit' => $laporanUnit
+        ]);
+    }
+
     public function unit()
     {
         $user    = Auth::user();

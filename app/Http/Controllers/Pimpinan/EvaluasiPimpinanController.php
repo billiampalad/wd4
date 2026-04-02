@@ -20,6 +20,14 @@ class EvaluasiPimpinanController extends Controller
     {
         $kegiatan = KegiatanKerjasama::findOrFail($id);
         
+        // Validasi Umum (Dibuat opsional sesuai permintaan)
+        $request->validate([
+            'ringkasan'        => 'nullable|string',
+            'saran'            => 'nullable|string',
+            'status_validasi'  => 'required|in:layak,tidak_layak',
+            'tindak_lanjut'    => 'nullable|string',
+        ]);
+
         DB::beginTransaction();
         try {
             // 1. Simpan/Update Evaluasi (jika dari Jurusan, Pimpinan isi skor)
@@ -48,42 +56,44 @@ class EvaluasiPimpinanController extends Controller
             }
 
             // 2. Simpan/Update Kesimpulan
-            $request->validate([
-                'ringkasan'     => 'required|string',
-                'saran'         => 'required|string',
-                'tindak_lanjut' => 'nullable|string',
-            ]);
-
             Kesimpulan::updateOrCreate(
                 ['id_kegiatan' => $kegiatan->id],
                 [
                     'ringkasan'     => $request->ringkasan,
                     'saran'         => $request->saran,
-                    'tindak_lanjut' => $request->tindak_lanjut,
+                    'tindak_lanjut' => $request->tindak_lanjut ?? null,
                 ]
             );
 
             // 3. Update Status
-            $kegiatan->update(['status' => 'selesai']);
+            $statusValidasi = $request->status_validasi === 'layak' ? 'selesai' : 'revisi';
+            $kegiatan->update(['status' => $statusValidasi]);
 
             // 4. KIRIM NOTIFIKASI KE PENGUSUL (JURUSAN/UNIT KERJA)
             $recipientId = $kegiatan->created_by;
-            
-            Notifikasi::send(
-                $recipientId,
-                Auth::id(),
-                $kegiatan->id,
-                'selesai',
-                'Dokumen Telah Disetujui/Layak',
-                "Pimpinan telah mengevaluasi dan menyetujui laporan kegiatan $kegiatan->nama_kegiatan.",
-                // Link detail disesuaikan dengan role pengirim
-                $kegiatan->jurusans()->exists() 
-                    ? route('jurusan.kerjasama.show', $kegiatan->id) 
-                    : route('unit.kerjasama.show', $kegiatan->id)
-            );
+            if ($recipientId) {
+                $judulNotif = $statusValidasi === 'selesai' ? 'Dokumen Telah Disetujui/Layak' : 'Dokumen Perlu Revisi';
+                $pesanNotif = $statusValidasi === 'selesai' 
+                    ? "Pimpinan telah mengevaluasi dan menyetujui laporan kegiatan $kegiatan->nama_kegiatan."
+                    : "Pimpinan telah mengevaluasi laporan kegiatan $kegiatan->nama_kegiatan. Silakan cek catatan revisi.";
+                
+                Notifikasi::send(
+                    $recipientId,
+                    Auth::id(),
+                    $kegiatan->id,
+                    $statusValidasi,
+                    $judulNotif,
+                    $pesanNotif,
+                    $kegiatan->jurusans()->exists() 
+                        ? route('jurusan.kerjasama.show', $kegiatan->id) 
+                        : route('unit.kerjasama.show', $kegiatan->id)
+                );
+            }
 
             DB::commit();
-            return back()->with('success', 'Evaluasi berhasil disimpan dan dokumen dinyatakan selesai.');
+            
+            // Berikan response flash data
+            return redirect()->route('pimpinan.evaluasi')->with('success', 'Evaluasi berhasil disimpan dan dokumen dinyatakan ' . ($statusValidasi === 'selesai' ? 'selesai.' : 'perlu revisi.'));
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menyimpan evaluasi: ' . $e->getMessage());

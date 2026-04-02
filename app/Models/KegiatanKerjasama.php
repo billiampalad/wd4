@@ -109,6 +109,7 @@ class KegiatanKerjasama extends Model
             'menunggu_evaluasi' => 'Menunggu Evaluasi',
             'menunggu_validasi' => 'Menunggu Validasi Pimpinan',
             'selesai' => 'Selesai',
+            'revisi' => 'Perlu Revisi',
             default => 'Draft',
         };
     }
@@ -119,6 +120,7 @@ class KegiatanKerjasama extends Model
             'menunggu_evaluasi' => 'tag-blue',
             'menunggu_validasi' => 'tag-purple',
             'selesai' => 'tag-green',
+            'revisi' => 'tag-red',
             default => 'tag-orange',
         };
     }

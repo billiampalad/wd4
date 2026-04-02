@@ -22,6 +22,39 @@
 </head>
 
 <body>
+    @if(session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+                showConfirmButton: true
+            });
+        </script>
+    @endif
+
+    @if($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: "{{ $errors->first() }}",
+                showConfirmButton: true
+            });
+        </script>
+    @endif
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
