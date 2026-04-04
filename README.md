@@ -132,3 +132,22 @@ Untuk hak 2 tap pada menu "Evaluasi & Validasi" di hak akses di pimpinan yaitu y
 menggunakan tabel databees dari evaluasis dan kesimpulans.
 2. Evaluasi Unit Kerja
 hanya menggunakan tabel databeses dari kesipulans saja.
+
+## PERAN KERJA NOTIFIKASI
+Gemini berkata
+Keputusan yang sangat jeli! Memiliki dua akses untuk menu yang sama (di header dan di sidebar) seringkali membuat tampilan menjadi redundan (tumpang tindih).
+
+Pendekatan terbaik dan paling modern untuk sistem informasi seperti ini adalah menghapus menu Notifikasi dari sidebar dan memusatkan semuanya pada ikon lonceng di header.
+
+Dengan cara ini, sidebar Anda akan benar-benar bersih dan hanya berisi menu inti (Dashboard & Data Kerjasama).
+
+Berikut adalah skenario penerapan UI/UX dan alur sistem yang paling ideal untuk fitur notifikasi Anda:
+
+1. Peran Ikon Lonceng di Header (Quick View)
+Ikon di header berfungsi sebagai pusat perhatian instan karena posisinya selalu terlihat di halaman mana pun user berada.
+
+Badge Angka: Menampilkan jumlah notifikasi yang belum dibaca (berdasarkan kolom is_read = 0 di tabel notifikasis).
+
+Dropdown Pop-up: Saat ikon diklik, muncul dropdown yang menampilkan 3 hingga 5 notifikasi terbaru.
+
+Aksi Cepat: User bisa mengklik salah satu notifikasi di dropdown tersebut, dan sistem akan langsung mengarahkan mereka ke halaman detail kegiatan yang bersangkutan, sekaligus mengubah status is_read menjadi 1 (sudah dibaca).

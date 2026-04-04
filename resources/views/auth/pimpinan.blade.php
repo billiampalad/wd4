@@ -148,7 +148,7 @@
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
                 <span>Evaluasi & Validasi</span>
             </a>
-            <a class="menu-item" href="#" data-page="statistik">
+            <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}" href="{{ route('pimpinan.laporan') }}">
                 <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>
                 <span>Laporan Global</span>
             </a>
@@ -166,6 +166,8 @@
                 @include('auth.layout.pimpinan.monitoring')
             @elseif(request()->routeIs('pimpinan.evaluasi'))
                 @include('auth.layout.pimpinan.evaluasivalidasi')
+            @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
+                @include('auth.layout.pimpinan.laporan')
             @else
                 @include('auth.layout.pimpinan.dashboard')
             @endif

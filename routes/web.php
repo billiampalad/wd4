@@ -74,6 +74,12 @@ Route::middleware(['auth', 'role:pimpinan'])->group(function () {
     Route::get('/pimpinan/monitoring', [DashboardController::class, 'pimpinanMonitoring'])->name('pimpinan.monitoring');
     Route::get('/pimpinan/evaluasi', [DashboardController::class, 'pimpinanEvaluasi'])->name('pimpinan.evaluasi');
     Route::post('/pimpinan/evaluate/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'evaluate'])->name('pimpinan.evaluate');
+
+    // ─── Laporan Global ────────────────────────────────────
+    Route::get('/pimpinan/laporan', [\App\Http\Controllers\Pimpinan\LaporanPimpinanController::class, 'index'])->name('pimpinan.laporan');
+    Route::get('/pimpinan/laporan/preview', [\App\Http\Controllers\Pimpinan\LaporanPimpinanController::class, 'preview'])->name('pimpinan.laporan.preview');
+    Route::get('/pimpinan/laporan/pdf', [\App\Http\Controllers\Pimpinan\LaporanPimpinanController::class, 'exportPdf'])->name('pimpinan.laporan.pdf');
+    Route::get('/pimpinan/laporan/excel', [\App\Http\Controllers\Pimpinan\LaporanPimpinanController::class, 'exportExcel'])->name('pimpinan.laporan.excel');
 });
 
 Route::middleware(['auth', 'role:jurusan'])->group(function () {
