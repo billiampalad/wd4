@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\DB;
 
 class EvaluasiPimpinanController extends Controller
 {
+    public function show($id)
+    {
+        $kegiatan = KegiatanKerjasama::with([
+            'jurusans',
+            'unitKerjas',
+            'mitras',
+            'tujuans',
+            'pelaksanaans',
+            'hasils',
+            'dokumentasis',
+            'evaluasis.penilai',
+            'kesimpulans',
+            'permasalahanSolusis',
+            'jenisKerjasama'
+        ])->findOrFail($id);
+
+        return view('auth.pimpinan', [
+            'view' => 'detail_evaluasi',
+            'kegiatan' => $kegiatan
+        ]);
+    }
+
     /**
      * Pimpinan memberikan penilaian dan mengubah status menjadi selesai.
      */

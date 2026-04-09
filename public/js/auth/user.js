@@ -181,7 +181,7 @@ function initDashboard() {
             const message = match ? match[1] : 'Yakin ingin melanjutkan?';
 
             form.removeAttribute('onsubmit');
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 Swal.fire({
                     title: 'Konfirmasi',
@@ -204,8 +204,10 @@ function initDashboard() {
     /* ─ Dashboard Charts ─ */
     initCharts();
 
-    /* ─ Laporan Data ─ */
     initLaporan();
+
+    initStarRatings();
+    initCustomDropdown();
 }
 
 function initCharts() {
@@ -387,11 +389,11 @@ function initLaporan() {
                             statusIconColor = '#10b981';
                             statusBg = 'rgba(16,185,129,.12)';
                             statusLabel = 'Selesai/Layak';
-                        // } else if (item.status === 'revisi') {
-                        //     statusColor = 'red';
-                        //     statusIconColor = '#ef4444';
-                        //     statusBg = 'rgba(239,68,68,.12)';
-                        //     statusLabel = 'Revisi';
+                            // } else if (item.status === 'revisi') {
+                            //     statusColor = 'red';
+                            //     statusIconColor = '#ef4444';
+                            //     statusBg = 'rgba(239,68,68,.12)';
+                            //     statusLabel = 'Revisi';
                         } else if (item.status === 'menunggu' || item.status === 'menunggu_evaluasi') {
                             statusColor = 'blue';
                             statusIconColor = '#0ea5e9';
@@ -468,6 +470,128 @@ function initLaporan() {
             window.location.href = `${excelUrl}?${getFilterParams()}`;
         });
     }
+}
+
+function initCustomDropdown() {
+    const trigger = document.getElementById('customDropdownTrigger');
+    const menu = document.getElementById('customDropdownMenu');
+    const select = document.getElementById('status_validasi');
+    const options = document.querySelectorAll('.custom-dropdown-option');
+    if (!trigger || !menu || !select) return;
+    let isOpen = false;
+    let originalParent = menu.parentElement;
+    let placeholder = null;
+    function positionMenu() {
+        const r = trigger.getBoundingClientRect();
+        menu.style.width = r.width + 'px';
+        menu.style.left = r.left + 'px';
+        menu.style.top = (r.bottom + 8) + 'px';
+    }
+    function openMenu() {
+        if (isOpen) return;
+        placeholder = document.createElement('div');
+        placeholder.style.display = 'none';
+        originalParent.insertBefore(placeholder, menu.nextSibling);
+        document.body.appendChild(menu);
+        menu.classList.add('dropdown-portal');
+        trigger.classList.add('open');
+        positionMenu();
+        requestAnimationFrame(() => {
+            menu.classList.add('open');
+        });
+        document.addEventListener('click', onDocClick);
+        window.addEventListener('scroll', onReposition, true);
+        window.addEventListener('resize', onReposition);
+        isOpen = true;
+    }
+    function closeMenu() {
+        if (!isOpen) return;
+        menu.classList.remove('open');
+        trigger.classList.remove('open');
+        document.removeEventListener('click', onDocClick);
+        window.removeEventListener('scroll', onReposition, true);
+        window.removeEventListener('resize', onReposition);
+        if (originalParent && placeholder) {
+            originalParent.insertBefore(menu, placeholder);
+            placeholder.remove();
+        } else {
+            originalParent.appendChild(menu);
+        }
+        menu.classList.remove('dropdown-portal');
+        isOpen = false;
+    }
+    function onDocClick(e) {
+        if (!menu.contains(e.target) && !trigger.contains(e.target)) {
+            closeMenu();
+        }
+    }
+    function onReposition() {
+        if (!isOpen) return;
+        positionMenu();
+    }
+    trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (isOpen) closeMenu(); else openMenu();
+    });
+    options.forEach(function (opt) {
+        opt.addEventListener('click', function () {
+            const value = this.getAttribute('data-value');
+            select.value = value;
+            options.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            let iconHtml = '';
+            if (value === 'layak') {
+                iconHtml = '<div style="display:flex; align-items:center; gap:10px;"><div style="width:24px; height:24px; border-radius:50%; background:#dcfce7; color:#16a34a; display:flex; align-items:center; justify-content:center; font-size:11px;"><i class="fas fa-check"></i></div><span style="font-weight:700; color:#15803d; font-size:14px;">Layak / Disetujui</span></div>';
+            } else if (value === 'tidak_layak') {
+                iconHtml = '<div style="display:flex; align-items:center; gap:10px;"><div style="width:24px; height:24px; border-radius:50%; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; font-size:11px;"><i class="fas fa-times"></i></div><span style="font-weight:700; color:#b91c1c; font-size:14px;">Tidak Layak / Perlu Revisi</span></div>';
+            }
+            const span = trigger.querySelector('span');
+            if (span) span.innerHTML = iconHtml || 'Pilihan';
+            closeMenu();
+        });
+    });
+}
+
+function initStarRatings() {
+    document.querySelectorAll('.star-rating').forEach(function (group) {
+        const name = group.getAttribute('data-name');
+        const buttons = group.querySelectorAll('.star-btn');
+        const input = document.getElementById('input-' + name);
+        const display = document.getElementById('score-display-' + name);
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const value = parseInt(this.getAttribute('data-value'));
+                if (input) input.value = value;
+                buttons.forEach(function (b, idx) {
+                    if (idx < value) {
+                        b.classList.add('active');
+                        b.style.color = '#f59e0b';
+                    } else {
+                        b.classList.remove('active');
+                        b.style.color = 'rgba(0,0,0,.15)';
+                    }
+                });
+                if (display) {
+                    display.textContent = value + '/5';
+                    display.style.color = value >= 4 ? '#10b981' : (value >= 3 ? '#f59e0b' : '#ef4444');
+                }
+            });
+            btn.addEventListener('mouseenter', function () {
+                const hv = parseInt(this.getAttribute('data-value'));
+                buttons.forEach(function (b, idx) {
+                    if (idx < hv) {
+                        b.style.color = '#fbbf24';
+                    }
+                });
+            });
+            btn.addEventListener('mouseleave', function () {
+                const cv = parseInt((input && input.value) || '0');
+                buttons.forEach(function (b, idx) {
+                    b.style.color = idx < cv ? '#f59e0b' : 'rgba(0,0,0,.15)';
+                });
+            });
+        });
+    });
 }
 
 function datepicker(initialDate = '') {
@@ -588,12 +712,12 @@ function initNotifikasi() {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(res => res.json())
-            .then(res => {
-                if (res.success) {
-                    fetchNotifications();
-                }
-            });
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        fetchNotifications();
+                    }
+                });
         });
     }
 
@@ -633,7 +757,7 @@ function initNotifikasi() {
         notifList.innerHTML = data.map(item => {
             const isUnread = item.is_read === 0;
             const timeAgoStr = timeAgo(new Date(item.created_at));
-            
+
             // Tentukan ikon & warna berdasarkan pengirim
             let icon = 'fa-building';
             let iconBg = 'rgba(79, 70, 229, 0.1)';
@@ -680,7 +804,7 @@ function initNotifikasi() {
 
         // Add click event to mark as read
         document.querySelectorAll('.notification-item').forEach(el => {
-            el.addEventListener('click', function(e) {
+            el.addEventListener('click', function (e) {
                 const id = this.getAttribute('data-id');
                 markAsRead(id);
             });
@@ -695,12 +819,12 @@ function initNotifikasi() {
                 'Content-Type': 'application/json'
             }
         })
-        .then(res => res.json())
-        .then(res => {
-            if (res.success) {
-                fetchNotifications(); // Refresh
-            }
-        });
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    fetchNotifications(); // Refresh
+                }
+            });
     }
 
     function timeAgo(date) {
@@ -720,7 +844,7 @@ function initNotifikasi() {
 
     // Initial load for badge count
     fetchNotifications();
-    
+
     // Poll for new notifications every 30 seconds
     setInterval(fetchNotifications, 30000);
 }

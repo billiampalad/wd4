@@ -183,9 +183,9 @@
             <a href="{{ route('pimpinan.monitoring') }}" class="rfc-btn" style="text-decoration: none; display: flex; align-items: center; gap: 8px; background: #6b7280; color: white;">
                 <i class="fas fa-arrow-left"></i> Kembali ke Monitoring
             </a>
-            <a href="{{ route('pimpinan.laporan.pdf', ['pengusul' => 'all', 'status' => 'all']) }}" target="_blank" class="rfc-btn rfc-btn-danger" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <!-- <a href="{{ route('pimpinan.laporan.pdf', ['pengusul' => 'all', 'status' => 'all']) }}" target="_blank" class="rfc-btn rfc-btn-danger" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
                 <i class="fas fa-file-pdf"></i> Cetak Laporan
-            </a>
+            </a> -->
         </div>
     </div>
 </main>

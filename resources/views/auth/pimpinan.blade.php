@@ -88,11 +88,13 @@
                         <i class="fas fa-bell" id="notificationIcon"></i>
                         <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
                     </button>
-                    
+
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
-                            <button id="markAllRead" style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai semua dibaca</button>
+                            <button id="markAllRead"
+                                style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai
+                                semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
                             <!-- Items will be loaded here via JS -->
@@ -139,16 +141,19 @@
                 <span>Dashboard Eksekutif</span>
             </a>
 
-            <a class="menu-item {{ request()->routeIs('pimpinan.monitoring') ? 'active' : '' }}" href="{{ route('pimpinan.monitoring') }}">
+            <a class="menu-item {{ request()->routeIs('pimpinan.monitoring') ? 'active' : '' }}"
+                href="{{ route('pimpinan.monitoring') }}">
                 <div class="menu-icon"><i class="fas fa-folder-open"></i></div>
                 <span>Monitoring Data</span>
             </a>
 
-            <a class="menu-item {{ request()->routeIs('pimpinan.evaluasi') ? 'active' : '' }}" href="{{ route('pimpinan.evaluasi') }}">
+            <a class="menu-item {{ request()->routeIs('pimpinan.evaluasi*') ? 'active' : '' }}"
+                href="{{ route('pimpinan.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
                 <span>Evaluasi & Validasi</span>
             </a>
-            <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}" href="{{ route('pimpinan.laporan') }}">
+            <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}"
+                href="{{ route('pimpinan.laporan') }}">
                 <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>
                 <span>Laporan Global</span>
             </a>
@@ -168,6 +173,8 @@
                 @include('auth.layout.pimpinan.evaluasivalidasi')
             @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
                 @include('auth.layout.pimpinan.detail_monitoring')
+            @elseif(isset($view) && $view == 'detail_evaluasi')
+                @include('auth.layout.pimpinan.detail_evaluasi')
             @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
                 @include('auth.layout.pimpinan.laporan')
             @else

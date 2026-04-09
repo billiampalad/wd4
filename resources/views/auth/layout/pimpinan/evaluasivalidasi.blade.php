@@ -54,9 +54,9 @@
                                     @endforeach
                                 </td>
                                 <td style="text-align: center;">
-                                    <button class="rfc-btn" onclick="openEvaluateModal('{{ $kegiatan->id }}', 'jurusan')" style="font-size: 11px; padding: 6px 14px;">
+                                    <a href="{{ route('pimpinan.evaluasi.show', $kegiatan->id) }}" class="rfc-btn" style="font-size: 11px; padding: 6px 14px;">
                                         <i class="fas fa-star"></i> Beri Penilaian
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
@@ -99,9 +99,9 @@
                                     <span class="tag tag-green" style="font-weight: 800;">{{ number_format($avg, 1) }}</span>
                                 </td>
                                 <td style="text-align: center;">
-                                    <button class="rfc-btn" onclick="openEvaluateModal('{{ $kegiatan->id }}', 'unit')" style="font-size: 11px; padding: 6px 14px;">
+                                    <a href="{{ route('pimpinan.evaluasi.show', $kegiatan->id) }}" class="rfc-btn" style="font-size: 11px; padding: 6px 14px;">
                                         <i class="fas fa-check"></i> Validasi Laporan
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         @empty
@@ -113,79 +113,7 @@
         </div>
     </div>
 
-    {{-- Modal Penilaian --}}
-    <div id="evaluateModal" class="modal-overlay-custom" style="display: none;">
-        <div class="modal-content-custom">
-            <div class="modal-header-custom">
-                <h3 id="modalTitle">Form Penilaian Pimpinan</h3>
-                <button onclick="closeModal()" class="close-btn-custom">&times;</button>
-            </div>
 
-            <form id="evaluateForm" method="POST">
-                @csrf
-                <div id="jurusanFields" style="display: none;">
-                    <h4 class="section-title">Skor Kinerja (1-5)</h4>
-                    <div class="grid-fields">
-                        <div class="field-group">
-                            <label>Kesesuaian Rencana</label>
-                            <input type="number" name="sesuai_rencana" min="1" max="5" class="search-bar">
-                        </div>
-                        <div class="field-group">
-                            <label>Kualitas Pelaksanaan</label>
-                            <input type="number" name="kualitas" min="1" max="5" class="search-bar">
-                        </div>
-                        <div class="field-group">
-                            <label>Keterlibatan Mitra</label>
-                            <input type="number" name="keterlibatan" min="1" max="5" class="search-bar">
-                        </div>
-                        <div class="field-group">
-                            <label>Efisiensi Sumber Daya</label>
-                            <input type="number" name="efisiensi" min="1" max="5" class="search-bar">
-                        </div>
-                        <div class="field-group full-width">
-                            <label>Kepuasan Pihak Terkait</label>
-                            <input type="number" name="kepuasan" min="1" max="5" class="search-bar">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="unitFields" style="display: none;" class="info-box">
-                    <div class="info-content">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Skor evaluasi internal telah diisi oleh Unit Kerja secara mandiri.</span>
-                    </div>
-                </div>
-
-                <div class="field-group">
-                    <label>Ringkasan Evaluasi (Teks - Opsional)</label>
-                    <textarea name="ringkasan" class="search-bar text-area" placeholder="Berikan ringkasan capaian (Opsional)..."></textarea>
-                </div>
-
-                <div class="field-group">
-                    <label>Saran Tindak Lanjut (Teks - Opsional)</label>
-                    <textarea name="saran" class="search-bar text-area" placeholder="Apa yang perlu diperbaiki ke depannya (Opsional)?"></textarea>
-                </div>
-
-                <div class="field-group">
-                    <label>Catatan Tambahan (Opsional)</label>
-                    <textarea name="tindak_lanjut" class="search-bar text-area" style="height: 60px;" placeholder="Catatan untuk tindak lanjut..."></textarea>
-                </div>
-
-                <div class="field-group">
-                    <label>Status Validasi Akhir</label>
-                    <select name="status_validasi" class="search-bar select-input">
-                        <option value="layak">Layak / Disetujui</option>
-                        <option value="tidak_layak">Tidak Layak / Perlu Revisi</option>
-                    </select>
-                </div>
-
-                <div class="modal-footer-custom">
-                    <button type="button" onclick="closeModal()" class="rfc-btn btn-cancel">Batal</button>
-                    <button type="submit" class="rfc-btn">Simpan Penilaian</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </main>
 
 <style>

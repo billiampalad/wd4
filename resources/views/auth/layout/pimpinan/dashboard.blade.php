@@ -122,7 +122,7 @@
                 </span>
             </div>
             <div class="card-body" style="height:320px; padding:20px;">
-                <canvas id="trenBulananChart"></canvas>
+                <canvas id="trenBulananChart" data-tren='{!! json_encode($trenPerBulan) !!}' data-year="{{ now()->year }}"></canvas>
             </div>
         </div>
 
@@ -144,7 +144,7 @@
                 </div>
             </div>
             <div class="card-body" style="height:320px; padding:20px;">
-                <canvas id="jenisDonutChart"></canvas>
+                <canvas id="jenisDonutChart" data-jenis='{!! json_encode($sebaranJenis) !!}'></canvas>
             </div>
         </div>
     </div>
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="card-body" style="height:300px; padding:20px;">
-                <canvas id="kinerjaJurusanChart"></canvas>
+                <canvas id="kinerjaJurusanChart" data-jurusan='{!! json_encode($kinerjaJurusan) !!}'></canvas>
             </div>
         </div>
 
@@ -192,7 +192,7 @@
                 </div>
             </div>
             <div class="card-body" style="height:300px; padding:20px;">
-                <canvas id="kinerjaUnitChart"></canvas>
+                <canvas id="kinerjaUnitChart" data-unit='{!! json_encode($kinerjaUnit) !!}'></canvas>
             </div>
         </div>
     </div>
@@ -350,7 +350,8 @@
         const trenCtx = document.getElementById('trenBulananChart');
         if (trenCtx) {
             // Map data bulan ke array 12 elemen
-            const rawTren = @json($trenPerBulan);
+            const rawTren = JSON.parse(trenCtx.getAttribute('data-tren') || '[]');
+            const currentYear = trenCtx.getAttribute('data-year') || new Date().getFullYear();
             const trenData = new Array(12).fill(0);
             rawTren.forEach(item => { trenData[item.bulan - 1] = item.total; });
 
@@ -394,7 +395,7 @@
                             padding: 12,
                             displayColors: false,
                             callbacks: {
-                                title: function (items) { return namaBulan[items[0].dataIndex] + ' {{ now()->year }}'; },
+                                title: function (items) { return namaBulan[items[0].dataIndex] + ' ' + currentYear; },
                                 label: function (ctx) { return ' ' + ctx.parsed.y + ' kerjasama baru'; }
                             }
                         }
@@ -417,7 +418,7 @@
         // ═══ B. SEBARAN JENIS KERJASAMA (Donut Chart) ═══
         const jenisCtx = document.getElementById('jenisDonutChart');
         if (jenisCtx) {
-            const rawJenis = @json($sebaranJenis);
+            const rawJenis = JSON.parse(jenisCtx.getAttribute('data-jenis') || '[]');
             const jenisLabels = rawJenis.map(j => j.nama_kerjasama);
             const jenisData = rawJenis.map(j => j.total);
             const jenisColors = [
@@ -479,7 +480,7 @@
         // ═══ C. KINERJA JURUSAN (Horizontal Bar) ═══
         const jurusanCtx = document.getElementById('kinerjaJurusanChart');
         if (jurusanCtx) {
-            const rawJurusan = @json($kinerjaJurusan);
+            const rawJurusan = JSON.parse(jurusanCtx.getAttribute('data-jurusan') || '[]');
             const jurusanLabels = rawJurusan.map(j => j.nama_jurusan);
             const jurusanData = rawJurusan.map(j => j.total);
             const jurusanColors = [
@@ -541,7 +542,7 @@
         // ═══ C2. KINERJA UNIT KERJA (Horizontal Bar) ═══
         const unitCtx = document.getElementById('kinerjaUnitChart');
         if (unitCtx) {
-            const rawUnit = @json($kinerjaUnit);
+            const rawUnit = JSON.parse(unitCtx.getAttribute('data-unit') || '[]');
             const unitLabels = rawUnit.map(u => u.nama_unit_pelaksana);
             const unitData = rawUnit.map(u => u.total);
             const unitColors = [
