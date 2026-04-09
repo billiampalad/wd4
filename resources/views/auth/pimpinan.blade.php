@@ -166,6 +166,8 @@
                 @include('auth.layout.pimpinan.monitoring')
             @elseif(request()->routeIs('pimpinan.evaluasi'))
                 @include('auth.layout.pimpinan.evaluasivalidasi')
+            @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
+                @include('auth.layout.pimpinan.detail_monitoring')
             @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
                 @include('auth.layout.pimpinan.laporan')
             @else

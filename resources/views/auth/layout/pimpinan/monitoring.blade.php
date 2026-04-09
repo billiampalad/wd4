@@ -64,10 +64,10 @@
                                     {{ $kegiatan->status_label }}
                                 </span>
                             </td>
-                            <td style="text-align: center;">
-                                <button class="icon-btn" title="Lihat Detail" onclick="showDetail('{{ $kegiatan->id }}')">
+                            <td class="um-td">
+                                <a href="{{ route('pimpinan.monitoring.detail', $kegiatan->id) }}" class="icon-btn" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     @empty
@@ -95,9 +95,4 @@
             row.style.display = text.includes(q) ? '' : 'none';
         });
     });
-
-    function showDetail(id) {
-        // Logika show detail bisa menggunakan modal atau redirect
-        alert('Detail untuk ID ' + id + ' akan segera hadir.');
-    }
 </script>

@@ -101,6 +101,28 @@ class DashboardController
         ]);
     }
 
+    public function pimpinanMonitoringDetail($id)
+    {
+        $kegiatan = KegiatanKerjasama::with([
+            'jurusans', 
+            'unitKerjas', 
+            'mitras', 
+            'tujuans', 
+            'pelaksanaans', 
+            'hasils', 
+            'dokumentasis', 
+            'evaluasis.penilai', 
+            'kesimpulans', 
+            'permasalahanSolusis',
+            'jenisKerjasama'
+        ])->findOrFail($id);
+
+        return view('auth.pimpinan', [
+            'view' => 'detail_monitoring',
+            'kegiatan' => $kegiatan
+        ]);
+    }
+
     public function pimpinanEvaluasi()
     {
         // 1. Antrean Laporan Jurusan (menunggu_evaluasi)
