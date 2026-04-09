@@ -60,7 +60,17 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="um-empty">Tidak ada antrean evaluasi jurusan.</td></tr>
+                            <tr>
+                                <td colspan="5" class="um-empty">
+                                    <div class="empty-state-container">
+                                        <div class="empty-state-icon">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </div>
+                                        <h4>Semua Laporan Telah Dievaluasi</h4>
+                                        <p>Saat ini tidak ada antrean laporan dari jurusan yang perlu Anda nilai.</p>
+                                    </div>
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -105,7 +115,17 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="um-empty">Tidak ada antrean validasi unit kerja.</td></tr>
+                            <tr>
+                                <td colspan="5" class="um-empty">
+                                    <div class="empty-state-container">
+                                        <div class="empty-state-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                            <i class="fas fa-check-double"></i>
+                                        </div>
+                                        <h4>Pekerjaan Selesai!</h4>
+                                        <p>Semua laporan dari unit kerja telah divalidasi dengan sukses.</p>
+                                    </div>
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -184,6 +204,49 @@
     .select-input { width: 100%; padding: 12px; border-radius: 10px; cursor: pointer; }
     .modal-footer-custom { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
     .btn-cancel { background: var(--surface2); color: var(--text-sub); }
+
+    /* Empty State Styling */
+    .um-empty {
+        padding: 60px 20px !important;
+        background: var(--surface);
+    }
+    .empty-state-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 16px;
+        animation: float 3s ease-in-out infinite;
+    }
+    .empty-state-container h4 {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+    .empty-state-container p {
+        font-size: 13px;
+        color: var(--text-sub);
+        max-width: 300px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
 </style>
 
 <script>
