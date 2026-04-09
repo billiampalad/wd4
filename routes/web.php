@@ -89,6 +89,11 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
 
     // ─── Data Kerjasama CRUD ─────────────────────────────
     Route::get('/jurusan/data-kerjasama', [KerjasamaJurusanController::class, 'index'])->name('jurusan.dkerjasama');
+
+    // ─── Hasil Evaluasi ─────────────────────────────────
+    Route::get('/jurusan/hasil-evaluasi', [DashboardJurusanController::class, 'hasilEvaluasi'])->name('jurusan.hasil_evaluasi');
+    Route::get('/jurusan/hasil-evaluasi/{id}', [DashboardJurusanController::class, 'formEvaluasi'])->name('jurusan.evaluasi.form');
+
     Route::get('/jurusan/data-kerjasama/create', [KerjasamaJurusanController::class, 'create'])->name('jurusan.kerjasama.create');
     Route::post('/jurusan/data-kerjasama', [KerjasamaJurusanController::class, 'store'])->name('jurusan.kerjasama.store');
     Route::get('/jurusan/data-kerjasama/{id}', [KerjasamaJurusanController::class, 'show'])->name('jurusan.kerjasama.show');

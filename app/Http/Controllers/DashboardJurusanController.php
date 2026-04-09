@@ -11,6 +11,18 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardJurusanController extends Controller
 {
+    private function resolveJurusanId(): int
+    {
+        $user = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if (!$profile || !$profile->jurusan_id) {
+            abort(403, 'Profil jurusan tidak ditemukan.');
+        }
+
+        return (int) $profile->jurusan_id;
+    }
+
     public function index()
     {
         // 1. Dapatkan user yang sedang login beserta data profilenya (untuk tahu dia jurusan apa)
@@ -98,5 +110,46 @@ class DashboardJurusanController extends Controller
             'trenKerjasama',
             'sebaranJenis'
         ));
+    }
+
+    public function hasilEvaluasi()
+    {
+        $id_jurusan = $this->resolveJurusanId();
+
+        $evaluasiList = KegiatanKerjasama::query()
+            ->whereHas('jurusans', fn($q) => $q->where('jurusans.id', $id_jurusan))
+            ->whereHas('evaluasis')
+            ->with(['evaluasis', 'mitras', 'jenisKerjasama'])
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('auth.jurusan', compact('evaluasiList'));
+    }
+
+    public function formEvaluasi($id)
+    {
+        $id_jurusan = $this->resolveJurusanId();
+
+        $kegiatan = KegiatanKerjasama::query()
+            ->whereHas('jurusans', fn($q) => $q->where('jurusans.id', $id_jurusan))
+            ->with([
+                'mitras',
+                'jenisKerjasama',
+                'jurusans',
+                'unitKerjas',
+                'creator',
+                'tujuans',
+                'pelaksanaans',
+                'hasils',
+                'dokumentasis',
+                'permasalahanSolusis',
+                'evaluasis',
+            ])
+            ->findOrFail($id);
+
+        $existingEval = $kegiatan->evaluasis->first();
+        $readonly = true;
+
+        return view('auth.jurusan', compact('kegiatan', 'existingEval', 'readonly'));
     }
 }

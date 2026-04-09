@@ -139,6 +139,11 @@
                 <span>Data Kerjasama</span>
             </a>
 
+            <a class="menu-item {{ request()->routeIs('jurusan.hasil_evaluasi') ? 'active' : '' }}" href="{{ route('jurusan.hasil_evaluasi') }}">
+                <div class="menu-icon"><i class="fas fa-clipboard-check"></i></div>
+                <span>Hasil Evaluasi</span>
+            </a>
+
             <a class="menu-item {{ request()->routeIs('jurusan.laporan') ? 'active' : '' }}" href="{{ route('jurusan.laporan') }}">
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
                 <span>Laporan Data</span>
@@ -161,6 +166,10 @@
                 @include('auth.layout.jurusan.detail_kerjasama')
             @elseif(request()->routeIs('jurusan.dkerjasama'))
                 @include('auth.layout.jurusan.dkerjasama')
+            @elseif(request()->routeIs('jurusan.hasil_evaluasi'))
+                @include('auth.layout.jurusan.hasil_evaluasi')
+            @elseif(request()->routeIs('jurusan.evaluasi.form'))
+                @include('auth.layout.jurusan.form_evaluasi')
             @elseif(request()->routeIs('jurusan.laporan'))
                 @include('auth.layout.jurusan.laporan')
             @else
