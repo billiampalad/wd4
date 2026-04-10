@@ -183,7 +183,7 @@
                     <div class="mt-4">
                         @foreach($kegiatan->permasalahanSolusis as $ps)
                             <div class="solusi-box">
-                                <p><strong>Kendala:</strong> {{ $ps->permasalahan ?? '-' }}</p>
+                                <p><strong>Kendala:</strong> {{ $ps->kendala ?? '-' }}</p>
                                 <p><strong>Solusi:</strong> {{ $ps->solusi ?? '-' }}</p>
                                 <p><strong>Rekomendasi:</strong> {{ $ps->rekomendasi ?? '-' }}</p>
                             </div>
@@ -280,18 +280,16 @@
 
                     <div class="field-group mt-4">
                         <label for="saran"
-                            style="font-size:12px; font-weight:700; margin-bottom: 8px; display: block; padding-top: 12px;">Saran Tindak
-                            Lanjut (Opsional)</label>
+                            style="font-size:12px; font-weight:700; margin-bottom: 8px; display: block; padding-top: 12px;">Saran (Opsional)</label>
                         <textarea name="saran" id="saran" class="custom-textarea"
                             placeholder="Apa yang perlu diperbaiki ke depannya..."></textarea>
                     </div>
 
                     <div class="field-group mt-4">
-                        <label for="catatan"
-                            style="font-size:12px; font-weight:700; margin-bottom: 8px; display: block; padding-top: 12px;">Catatan
-                            Tambahan (Opsional)</label>
-                        <textarea name="catatan" id="catatan" class="custom-textarea"
-                            placeholder="Catatan ekstra untuk diperhatikan..."></textarea>
+                        <label for="tindak_lanjut"
+                            style="font-size:12px; font-weight:700; margin-bottom: 8px; display: block; padding-top: 12px;">Tindak Lanjut (Opsional)</label>
+                        <textarea name="tindak_lanjut" id="tindak_lanjut" class="custom-textarea"
+                            placeholder="Apa yang harus di tindak lanjut untuk kedepannya..."></textarea>
                     </div>
 
                     <div class="field-group mt-6">

@@ -437,6 +437,17 @@ class KerjasamaUnitController extends Controller
         $unitId = $this->getUnitId();
         $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
 
+        if (! in_array($kegiatan->status, ['draft', 'revisi'], true)) {
+            return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Perlu Revisi.');
+        }
+
+        $kirimUlangSetelahRevisi = $kegiatan->status === 'revisi';
+
+        $kegiatan->loadMissing('jurusans', 'unitKerjas');
+        $pengusulLabel = $kegiatan->jurusans->pluck('nama_jurusan')->filter()->join(', ')
+            ?: $kegiatan->unitKerjas->pluck('nama_unit_pelaksana')->filter()->join(', ')
+            ?: (Auth::user()->profile?->unitKerja?->nama_unit_pelaksana ?? Auth::user()->name);
+
         $kegiatan->update(['status' => 'menunggu_evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
@@ -444,20 +455,22 @@ class KerjasamaUnitController extends Controller
             $q->where('role_name', 'pimpinan');
         })->get();
 
-        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
-        
+        $judul = 'Status Evaluasi';
+        $pesan = $kirimUlangSetelahRevisi
+            ? "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen dikirim ulang setelah revisi — menunggu evaluasi Anda."
+            : "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen baru — menunggu evaluasi Anda.";
+
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
                 $pimpinan->id,
                 Auth::id(),
                 $kegiatan->id,
-                'evaluasi',
-                'Dokumen Menunggu Evaluasi',
-                "$namaUnit mengirimkan laporan kegiatan $kegiatan->nama_kegiatan untuk dievaluasi.",
-                route('pimpinan.dashboard')
+                $kirimUlangSetelahRevisi ? 'revisi' : 'evaluasi',
+                $judul,
+                $pesan,
+                route('pimpinan.evaluasi')
             );
         }
-
         return back()->with('success', 'Data kerjasama berhasil dikirim ke Pimpinan untuk dievaluasi.');
     }
 }

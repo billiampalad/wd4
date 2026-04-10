@@ -715,6 +715,9 @@ function initNotifikasi() {
                 .then(res => res.json())
                 .then(res => {
                     if (res.success) {
+                        // Segera kosongkan UI untuk pengalaman yang lebih responsif
+                        renderNotifications([]);
+                        updateBadge(0);
                         fetchNotifications();
                     }
                 });
@@ -738,9 +741,21 @@ function initNotifikasi() {
         if (count > 0) {
             notifBadge.textContent = count > 9 ? '9+' : count;
             notifBadge.style.display = 'flex';
+            if (markAllReadBtn) markAllReadBtn.style.display = 'block';
         } else {
             notifBadge.style.display = 'none';
+            if (markAllReadBtn) markAllReadBtn.style.display = 'none';
         }
+    }
+
+    function escapeNotifHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     function renderNotifications(data) {
@@ -757,6 +772,11 @@ function initNotifikasi() {
         notifList.innerHTML = data.map(item => {
             const isUnread = item.is_read === 0;
             const timeAgoStr = timeAgo(new Date(item.created_at));
+            const typeKey = (item.type || 'evaluasi').toString().toLowerCase();
+            const typeBadgeClass = typeKey === 'revisi' ? 'revisi' : typeKey;
+            const typeLabel = typeKey === 'revisi'
+                ? 'Sudah direvisi'
+                : (typeKey === 'evaluasi' ? 'Evaluasi' : typeKey.replace(/_/g, ' '));
 
             // Tentukan ikon & warna berdasarkan pengirim
             let icon = 'fa-building';
@@ -785,17 +805,21 @@ function initNotifikasi() {
                 senderName = item.sender.name;
             }
 
+            const contentBlock = `
+                <span class="notification-sender">${escapeNotifHtml(senderName)}</span>
+                <span class="notification-message">${escapeNotifHtml(item.pesan || '')}</span>
+            `;
+
             return `
                 <a href="${item.link || '#'}" class="notification-item ${isUnread ? 'unread' : ''}" data-id="${item.id}">
                     <div class="notification-icon-wrapper" style="background:${iconBg}; color:${iconColor};">
                         <i class="fas ${icon}"></i>
                     </div>
                     <div class="notification-content">
-                        <span class="notification-sender">${senderName}</span>
-                        <span class="notification-message">${item.pesan}</span>
+                        ${contentBlock}
                         <div class="notification-meta">
                             <span class="notification-time">${timeAgoStr}</span>
-                            <span class="notification-badge-type badge-${item.type || 'evaluasi'}">${item.type || 'evaluasi'}</span>
+                            <span class="notification-badge-type badge-${typeBadgeClass}">${typeLabel}</span>
                         </div>
                     </div>
                 </a>
@@ -822,7 +846,17 @@ function initNotifikasi() {
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
-                    fetchNotifications(); // Refresh
+                    // Segera hilangkan item dari UI
+                     const item = document.querySelector(`.notification-item[data-id="${id}"]`);
+                     if (item) {
+                         item.remove();
+                         // Jika tidak ada lagi item, tampilkan state kosong
+                         if (notifList.querySelectorAll('.notification-item').length === 0) {
+                             renderNotifications([]);
+                         }
+                     }
+                     
+                     fetchNotifications(); // Refresh to update count and empty state if needed
                 }
             });
     }

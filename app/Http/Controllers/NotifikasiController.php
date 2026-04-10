@@ -19,8 +19,14 @@ class NotifikasiController extends Controller
         // Sesuai permintaan: "ketika data tersebut sudah di kerjakan maka data notif tersebut akan hilang"
         // Jadi kita filter berdasarkan status kegiatan_kerjasamas jika itu notifikasi pimpinan
         
-        $query = Notifikasi::with(['sender.profile.jurusan', 'sender.profile.unitKerja', 'kegiatanKerjasama'])
+        $query = Notifikasi::with([
+            'sender.profile.jurusan',
+            'sender.profile.unitKerja',
+            'kegiatanKerjasama.jurusans',
+            'kegiatanKerjasama.unitKerjas',
+        ])
             ->where('user_id', $user->id)
+            ->where('is_read', 0) // Hanya tampilkan yang belum dibaca agar bisa "hilang" saat ditandai dibaca
             ->latest();
 
         // Filter untuk Pimpinan: Hanya tampilkan jika kegiatan masih butuh aksi

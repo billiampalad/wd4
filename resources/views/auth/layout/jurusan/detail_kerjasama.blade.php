@@ -54,6 +54,7 @@
     <div class="modern-card" x-data="{ activeTab: localStorage.getItem('activeDetailTab') || 'umum' }" x-init="$watch('activeTab', value => localStorage.setItem('activeDetailTab', value)); $nextTick(() => localStorage.removeItem('activeDetailTab'))">
         @php
             $isEditMode = in_array($kegiatan->status, ['draft', 'revisi']);
+            $kesimpulanPimpinan = $kegiatan->kesimpulans->sortByDesc('id')->first();
         @endphp
         {{-- Tab Navigation --}}
         <div class="md-tab-nav" id="tabNav">
@@ -135,6 +136,7 @@
                     </div>
                 </div>
             </div>
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
 
         {{-- ═══ TAB 2: Tujuan & Sasaran ═══ --}}
@@ -249,6 +251,7 @@
                     @endif
                 </div>
             @endif
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
 
         {{-- ═══ TAB 3: Pelaksanaan ═══ --}}
@@ -320,6 +323,7 @@
                 Belum ada data pelaksanaan.
             </div>
             @endforelse
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
 
         {{-- ═══ TAB 4: Hasil & Capaian ═══ --}}
@@ -403,6 +407,7 @@
                 Belum ada data hasil & capaian.
             </div>
             @endforelse
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
 
         {{-- ═══ TAB 5: Permasalahan & Solusi ═══ --}}
@@ -488,6 +493,7 @@
                 Belum ada data permasalahan & solusi.
             </div>
             @endforelse
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
 
         {{-- ═══ TAB 6: Dokumentasi ═══ --}}
@@ -552,8 +558,15 @@
                 Belum ada dokumentasi.
             </div>
             @endforelse
+            @include('auth.layout.jurusan._detail_tab_footer_kirim_revisi')
         </div>
     </div>
+
+    @if(in_array($kegiatan->status, ['draft', 'revisi'], true))
+    <form id="submitToPimpinanForm" action="{{ route('jurusan.kerjasama.submit', $kegiatan->id) }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+    @endif
 
     {{-- ═══ SUBMIT TO PIMPINAN SECTION ═══ --}}
     @if($kegiatan->status === 'draft')
@@ -568,13 +581,40 @@
             </div>
         </div>
 
-        <form id="submitToPimpinanForm" action="{{ route('jurusan.kerjasama.submit', $kegiatan->id) }}" method="POST" style="display: none;">
-            @csrf
-        </form>
-
-        <button type="button" onclick="confirmSubmit()" style="padding: 12px 28px; background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s; box-shadow: 0 4px 14px rgba(79,70,229,.3); white-space: nowrap;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(79,70,229,.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(79,70,229,.3)';">
+        <button type="button" onclick="confirmSubmitKerjasamaJurusan()" style="padding: 12px 28px; background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s; box-shadow: 0 4px 14px rgba(79,70,229,.3); white-space: nowrap;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(79,70,229,.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(79,70,229,.3)';">
             <i class="fas fa-paper-plane"></i> Kirim ke Pimpinan
         </button>
+    </div>
+    @elseif($kegiatan->status === 'revisi')
+    <div style="margin-top: 24px; background: linear-gradient(135deg, rgba(245,158,11,.08), rgba(251,191,36,.05)); border: 1.5px solid rgba(245,158,11,.28); border-radius: 14px; padding: 20px 24px; display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
+        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245,158,11,.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="fas fa-pen-to-square" style="color: #d97706; font-size: 16px;"></i>
+        </div>
+        <div style="flex: 1; min-width: 240px;">
+            <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 4px;">Perlu Revisi — Catatan dari Pimpinan</div>
+            <div style="font-size: 13px; color: var(--text-sub); line-height: 1.5; margin-bottom: 16px;">Silakan sesuaikan data kerjasama sesuai ringkasan, saran, dan tindak lanjut berikut, lalu kirim ulang dari tab detail.</div>
+
+            @if($kesimpulanPimpinan)
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
+                        <div class="md-stat-label" style="margin-bottom: 6px;">Ringkasan</div>
+                        <div style="font-size: 13px; color: var(--text); line-height: 1.65; white-space: pre-line;">{{ $kesimpulanPimpinan->ringkasan ?: '—' }}</div>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
+                        <div class="md-stat-label" style="margin-bottom: 6px;">Saran</div>
+                        <div style="font-size: 13px; color: var(--text); line-height: 1.65; white-space: pre-line;">{{ $kesimpulanPimpinan->saran ?: '—' }}</div>
+                    </div>
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;">
+                        <div class="md-stat-label" style="margin-bottom: 6px;">Tindak lanjut</div>
+                        <div style="font-size: 13px; color: var(--text); line-height: 1.65; white-space: pre-line;">{{ $kesimpulanPimpinan->tindak_lanjut ?: '—' }}</div>
+                    </div>
+                </div>
+            @else
+                <div style="font-size: 13px; color: var(--text-sub); background: rgba(245,158,11,.06); border: 1px dashed rgba(245,158,11,.35); border-radius: 12px; padding: 14px 16px;">
+                    Catatan kesimpulan dari Pimpinan belum tersedia di sistem. Hubungi Pimpinan jika diperlukan.
+                </div>
+            @endif
+        </div>
     </div>
     @elseif($kegiatan->status === 'menunggu_evaluasi')
     <div style="margin-top: 24px; background: linear-gradient(135deg, rgba(59,130,246,.06), rgba(96,165,250,.04)); border: 1.5px solid rgba(59,130,246,.2); border-radius: 14px; padding: 20px 24px; display: flex; align-items: center; gap: 14px;">
@@ -597,11 +637,28 @@
 </main>
 
 <script>
-function confirmSubmit() {
-    Swal.fire({
-        title: 'Apakah Anda Sudah Yakin?',
-        html: `
-            <div style="text-align: left; font-size: 14px; color: #64748b; line-height: 1.7; margin-top: 8px;">
+const KERJASAMA_JURUSAN_SUBMIT_IS_REVISI = @json($kegiatan->status === 'revisi');
+
+function confirmSubmitKerjasamaJurusan() {
+    const isRevisi = KERJASAMA_JURUSAN_SUBMIT_IS_REVISI;
+    const title = isRevisi ? 'Kirim ulang ke Pimpinan?' : 'Apakah Anda Sudah Yakin?';
+    const html = isRevisi
+        ? `<div style="text-align: left; font-size: 14px; color: #64748b; line-height: 1.7; margin-top: 8px;">
+                <p style="margin-bottom: 12px;">Anda akan mengirim kembali data yang <strong>sudah direvisi</strong> ke Pimpinan untuk evaluasi ulang.</p>
+                <p style="margin-bottom: 12px;">Pastikan perbaikan sudah mengikuti catatan Pimpinan pada bagian <strong>Perlu Revisi</strong>.</p>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Informasi Umum</span></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Tujuan & Sasaran</span></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Pelaksanaan</span></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Hasil & Capaian</span></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Permasalahan & Solusi</span></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Dokumentasi</span></div>
+                </div>
+                <p style="margin-top: 14px; color: #ef4444; font-weight: 600; font-size: 13px;">
+                    <i class="fas fa-info-circle"></i> Setelah dikirim, data tidak dapat diedit hingga Pimpinan mengevaluasi kembali.
+                </p>
+            </div>`
+        : `<div style="text-align: left; font-size: 14px; color: #64748b; line-height: 1.7; margin-top: 8px;">
                 <p style="margin-bottom: 12px;">Pastikan semua data berikut sudah terisi dengan benar:</p>
                 <div style="display: flex; flex-direction: column; gap: 6px;">
                     <div style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-check-circle" style="color: #10b981; font-size: 13px;"></i><span>Informasi Umum</span></div>
@@ -614,11 +671,16 @@ function confirmSubmit() {
                 <p style="margin-top: 14px; color: #ef4444; font-weight: 600; font-size: 13px;">
                     <i class="fas fa-info-circle"></i> Setelah dikirim, data tidak dapat diedit kembali.
                 </p>
-            </div>
-        `,
+            </div>`;
+
+    Swal.fire({
+        title: title,
+        html: html,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: '<i class="fas fa-paper-plane"></i>&nbsp; Kirim ke Pimpinan',
+        confirmButtonText: isRevisi
+            ? '<i class="fas fa-paper-plane"></i>&nbsp; Kirim (sudah direvisi)'
+            : '<i class="fas fa-paper-plane"></i>&nbsp; Kirim ke Pimpinan',
         cancelButtonText: '<i class="fas fa-times"></i>&nbsp; Batal',
         confirmButtonColor: '#4f46e5',
         cancelButtonColor: '#6b7280',
@@ -633,7 +695,8 @@ function confirmSubmit() {
                 showConfirmButton: false,
                 didOpen: () => { Swal.showLoading(); }
             });
-            document.getElementById('submitToPimpinanForm').submit();
+            const form = document.getElementById('submitToPimpinanForm');
+            if (form) form.submit();
         }
     });
 }

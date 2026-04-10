@@ -93,7 +93,7 @@
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
                             <button id="markAllRead"
-                                style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai
+                                style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer; display:none;">Tandai
                                 semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
@@ -103,9 +103,9 @@
                                 <p>Tidak ada notifikasi baru</p>
                             </div>
                         </div>
-                        <div class="notification-footer">
+                        <!-- <div class="notification-footer">
                             <a href="#">Lihat Semua Notifikasi</a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 

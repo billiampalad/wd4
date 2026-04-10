@@ -564,6 +564,17 @@ class KerjasamaJurusanController extends Controller
         $id_jurusan = $this->getJurusanId();
         $kegiatan = $this->scopeJurusan(KegiatanKerjasama::query(), $id_jurusan)->findOrFail($id);
 
+        if (! in_array($kegiatan->status, ['draft', 'revisi'], true)) {
+            return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Perlu Revisi.');
+        }
+
+        $kirimUlangSetelahRevisi = $kegiatan->status === 'revisi';
+
+        $kegiatan->loadMissing('jurusans', 'unitKerjas');
+        $pengusulLabel = $kegiatan->jurusans->pluck('nama_jurusan')->filter()->join(', ')
+            ?: $kegiatan->unitKerjas->pluck('nama_unit_pelaksana')->filter()->join(', ')
+            ?: (Auth::user()->profile?->jurusan?->nama_jurusan ?? Auth::user()->name);
+
         $kegiatan->update(['status' => 'menunggu_evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
@@ -571,17 +582,20 @@ class KerjasamaJurusanController extends Controller
             $q->where('role_name', 'pimpinan');
         })->get();
 
-        $namaJurusan = Auth::user()->profile->jurusan->nama_jurusan;
-        
+        $judul = 'Status Evaluasi';
+        $pesan = $kirimUlangSetelahRevisi
+            ? "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen dikirim ulang setelah revisi — menunggu evaluasi Anda."
+            : "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen baru — menunggu evaluasi Anda.";
+
         foreach ($pimpinans as $pimpinan) {
             Notifikasi::send(
                 $pimpinan->id,
                 Auth::id(),
                 $kegiatan->id,
-                'evaluasi',
-                'Dokumen Menunggu Evaluasi',
-                "$namaJurusan mengirimkan laporan kegiatan $kegiatan->nama_kegiatan untuk dievaluasi.",
-                route('pimpinan.dashboard') // Nanti bisa diarahkan ke detail jika sudah ada detail pimpinan
+                $kirimUlangSetelahRevisi ? 'revisi' : 'evaluasi',
+                $judul,
+                $pesan,
+                route('pimpinan.evaluasi')
             );
         }
 
