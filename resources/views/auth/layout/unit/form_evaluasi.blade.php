@@ -363,7 +363,7 @@
                 </div>
             </div>
 
-            {{-- Catatan --}}
+            <!-- {{-- Catatan --}}
             <div class="card um-card" style="margin-bottom: 24px;">
                 <div class="card-header um-header" style="display:flex; align-items:center; padding:15px 20px;">
                     <div class="um-title"
@@ -382,7 +382,7 @@
                         onfocus="this.style.borderColor='var(--accent)'; this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
                         onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">{{ old('catatan', $existingEval?->catatan ?? '') }}</textarea>
                 </div>
-            </div>
+            </div> -->
 
             {{-- Summary & Save --}}
             <div class="card um-card" style="margin-bottom: 24px;">

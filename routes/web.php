@@ -151,6 +151,7 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     // ─── Sub-resource: Tujuan ────────────────────────────
     Route::post('/unit/data-kerjasama/{id}/tujuan', [KerjasamaUnitController::class, 'storeTujuan'])->name('unit.kerjasama.tujuan.store');
     Route::put('/unit/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaUnitController::class, 'updateTujuan'])->name('unit.kerjasama.tujuan.update');
+    Route::delete('/unit/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaUnitController::class, 'destroyTujuan'])->name('unit.kerjasama.tujuan.destroy');
 
     // ─── Sub-resource: Pelaksanaan ───────────────────────
     Route::post('/unit/data-kerjasama/{id}/pelaksanaan', [KerjasamaUnitController::class, 'storePelaksanaan'])->name('unit.kerjasama.pelaksanaan.store');

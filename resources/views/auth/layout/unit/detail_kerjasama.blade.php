@@ -93,10 +93,10 @@
                         </div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Jurusan</div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Unit Kerja</div>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            @forelse($kegiatan->jurusans as $jur)
-                            <span class="tag tag-blue" style="font-size: 11px;">{{ $jur->nama_jurusan }}</span>
+                            @forelse($kegiatan->unitKerjas as $uk)
+                            <span class="tag tag-blue" style="font-size: 11px;">{{ $uk->nama_unit_pelaksana }}</span>
                             @empty
                             <span style="font-size: 13px; color: var(--text-sub);">-</span>
                             @endforelse
@@ -131,6 +131,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- Button Selanjutnya to Tab 2 --}}
+            <div style="margin-top: 24px; text-align: right;">
+                <button type="button" @click="activeTab = 'tujuan'" class="rfc-btn rfc-btn-primary">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
             </div>
         </div>
 
@@ -170,8 +177,8 @@
                                 <button type="button" @click="activeTab = 'umum'" class="rfc-btn" style="background: var(--surface); color: var(--text-sub); border: 1px solid var(--border);">
                                     <i class="fas fa-arrow-left"></i> Kembali
                                 </button>
-                                <button type="submit" @click="localStorage.setItem('activeDetailTab','pelaksanaan');" class="rfc-btn rfc-btn-primary">
-                                    <i class="fas fa-arrow-right"></i> Selanjutnya
+                                <button type="submit" class="rfc-btn rfc-btn-primary">
+                                    <i class="fas fa-save"></i> Simpan
                                 </button>
                             </div>
                         </form>
@@ -196,12 +203,49 @@
                                 <button type="button" @click="activeTab = 'umum'" class="rfc-btn" style="background: var(--surface); color: var(--text-sub); border: 1px solid var(--border);">
                                     <i class="fas fa-arrow-left"></i> Kembali
                                 </button>
-                                <button type="submit" @click="localStorage.setItem('activeDetailTab','pelaksanaan');" class="rfc-btn rfc-btn-primary">
-                                    <i class="fas fa-arrow-right"></i> Selanjutnya
+                                <button type="submit" class="rfc-btn rfc-btn-primary">
+                                    <i class="fas fa-save"></i> Simpan
                                 </button>
                             </div>
+                        </form>
                     @endif
                 </div>
+                {{-- List data yang sudah diinput --}}
+                <div style="margin-top: 24px;">
+                    <div style="font-weight: 800; font-size: 14px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-list-ul" style="color: var(--accent);"></i>
+                        Data Terdaftar
+                    </div>
+                    @foreach($kegiatan->tujuans as $t)
+                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; position: relative; box-shadow: 0 2px 12px rgba(0,0,0,0.02);">
+                        <div style="margin-bottom: 16px; padding-right: 40px;">
+                            <div class="md-stat-label" style="margin-bottom: 6px;">Tujuan Kegiatan</div>
+                            <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $t->tujuan }}</div>
+                        </div>
+                        <div>
+                            <div class="md-stat-label" style="margin-bottom: 6px;">Sasaran Kegiatan</div>
+                            <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $t->sasaran }}</div>
+                        </div>
+                        <div style="position: absolute; top: 16px; right: 16px;">
+                            <form action="{{ route('unit.kerjasama.tujuan.destroy', [$kegiatan->id, $t->id]) }}" method="POST" onsubmit="return confirm('Hapus data tujuan & sasaran ini?')" style="display: inline;">
+                                @csrf @method('DELETE')
+                                <button type="submit" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--danger); cursor: pointer; font-size: 12px; transition: all 0.2s;" onmouseover="this.style.background='var(--danger)'; this.style.color='#fff';" onmouseout="this.style.background='var(--surface)'; this.style.color='var(--danger)';">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                {{-- Button Selanjutnya (Hanya muncul jika sudah ada data) --}}
+                @if($tujuanSasaran)
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" @click="activeTab = 'pelaksanaan'" class="rfc-btn rfc-btn-primary">
+                        Selanjutnya <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                @endif
             @else
                 {{-- Read-only view --}}
                 <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
@@ -210,17 +254,19 @@
                         Tujuan & Sasaran
                     </div>
 
-                    @if($tujuanSasaran)
-                        <div style="margin-bottom: 20px;">
-                            <div class="md-stat-label" style="margin-bottom: 6px;">Tujuan Kegiatan</div>
-                            <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $tujuanSasaran->tujuan }}</div>
-                        </div>
+                    @forelse($kegiatan->tujuans as $t)
+                        <div style="margin-bottom: 20px; {{ !$loop->last ? 'border-bottom: 1px dashed var(--border); padding-bottom: 20px;' : '' }}">
+                            <div style="margin-bottom: 16px;">
+                                <div class="md-stat-label" style="margin-bottom: 6px;">Tujuan Kegiatan</div>
+                                <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $t->tujuan }}</div>
+                            </div>
 
-                        <div>
-                            <div class="md-stat-label" style="margin-bottom: 6px;">Sasaran Kegiatan</div>
-                            <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $tujuanSasaran->sasaran }}</div>
+                            <div>
+                                <div class="md-stat-label" style="margin-bottom: 6px;">Sasaran Kegiatan</div>
+                                <div style="font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-line;">{{ $t->sasaran }}</div>
+                            </div>
                         </div>
-                    @else
+                    @empty
                         <div style="text-align: left; padding: 6px 0;">
                             <div style="background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.22); border-radius: 12px; padding: 14px 16px; color: var(--text-sub);">
                                 <div style="display: flex; gap: 10px; align-items: flex-start;">
@@ -244,8 +290,16 @@
                                 </div>
                             </div>
                         </div>
-                    @endif
+                    @endforelse
                 </div>
+
+                @if($tujuanSasaran)
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" @click="activeTab = 'pelaksanaan'" class="rfc-btn rfc-btn-primary">
+                        Selanjutnya <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                @endif
             @endif
         </div>
 
@@ -318,6 +372,13 @@
                 Belum ada data pelaksanaan.
             </div>
             @endforelse
+
+            {{-- Button Selanjutnya to Tab 4 --}}
+            <div style="margin-top: 24px; text-align: right;">
+                <button type="button" @click="activeTab = 'hasil'" class="rfc-btn rfc-btn-primary">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
         {{-- ═══ TAB 4: Hasil & Capaian ═══ --}}
@@ -401,6 +462,13 @@
                 Belum ada data hasil & capaian.
             </div>
             @endforelse
+
+            {{-- Button Selanjutnya to Tab 5 --}}
+            <div style="margin-top: 24px; text-align: right;">
+                <button type="button" @click="activeTab = 'masalah'" class="rfc-btn rfc-btn-primary">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
         {{-- ═══ TAB 5: Permasalahan & Solusi ═══ --}}
@@ -486,6 +554,13 @@
                 Belum ada data permasalahan & solusi.
             </div>
             @endforelse
+
+            {{-- Button Selanjutnya to Tab 6 --}}
+            <div style="margin-top: 24px; text-align: right;">
+                <button type="button" @click="activeTab = 'dokumentasi'" class="rfc-btn rfc-btn-primary">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
         {{-- ═══ TAB 6: Dokumentasi ═══ --}}

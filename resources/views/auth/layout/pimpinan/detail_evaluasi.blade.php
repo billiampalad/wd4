@@ -106,8 +106,8 @@
                                     class="spec-val text-sm font-normal">{{ $pel->cakupan ?? '-' }}</span></div>
                             <div><span class="spec-label" style="margin-top:10px">Peserta</span><span
                                     class="spec-val text-sm font-normal">{{ $pel->jumlah_peserta ?? 0 }} Orang</span></div>
-                            <div><span class="spec-label" style="margin-top:10px">Sumber Data</span><span
-                                    class="spec-val text-sm font-normal">{{ $pel->sumber_data ?? '-' }}</span></div>
+                            <div><span class="spec-label" style="margin-top:10px">Sumber Daya</span><span
+                                    class="spec-val text-sm font-normal">{{ $pel->sumber_daya ?? '-' }}</span></div>
                         </div>
                     @else
                         <p class="text-sm text-gray-500 mt-2">Tidak ada data pelaksanaan.</p>
@@ -272,7 +272,7 @@
 
                     <div class="field-group mt-4">
                         <label for="ringkasan"
-                            style="font-size:12px; font-weight:700; margin-bottom: 8px; display: block;">Ringkasan
+                            style="font-size:12px; font-weight:700; margin-bottom: 8px; margin-top: 10px; display: block;">Ringkasan
                             Evaluasi (Opsional)</label>
                         <textarea name="ringkasan" id="ringkasan" class="custom-textarea"
                             placeholder="Ringkasan capaian kinerja..."></textarea>

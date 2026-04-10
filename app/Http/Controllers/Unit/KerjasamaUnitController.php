@@ -299,6 +299,17 @@ class KerjasamaUnitController extends Controller
         return back()->with('success', 'Tujuan berhasil diperbarui.');
     }
 
+    public function destroyTujuan(Request $request, $id, $tujuanId)
+    {
+        $unitId = $this->getUnitId();
+        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
+
+        $tujuan = Tujuan::where('id_kegiatan', $id)->findOrFail($tujuanId);
+        $tujuan->delete();
+
+        return back()->with('success', 'Tujuan berhasil dihapus.');
+    }
+
     // ─── PELAKSANAAN ─────────────────────────────────────
 
     public function storePelaksanaan(Request $request, $id)
