@@ -3690,6 +3690,99 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover { opacity: 
     background-color: var(--surface) !important;
 }
 
+/* ─── TABLE PAGINATION ─── */
+.table-pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 4px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+    padding: 4px 8px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pag-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--transition);
+}
+
+.pag-btn:hover:not([disabled]) {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.pag-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.pag-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pag-dots {
+    color: var(--text-sub);
+    font-size: 13px;
+    padding: 0 4px;
+}
+
+/* ─── TABLE ENTRIES ─── */
+.table-entries-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+.entries-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    border-radius: 6px;
+    outline: none;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+
+.entries-select:focus {
+    border-color: var(--accent);
+}
+
 /* ─── DETAIL EVALUASI MODERN UI ─── */
 .eval-card {
     background: var(--surface);

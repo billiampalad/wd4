@@ -87,6 +87,149 @@ function initDashboard() {
 
     /* ─ Global search: filter tabel Data Kerjasama & Laporan ─ */
     const searchClear = document.getElementById('navSearchClear');
+    
+    function updatePagination(tbody) {
+        const table = tbody.closest('table');
+        if (!table || table.classList.contains('no-pagination')) return;
+
+        const pageSize = parseInt(table.getAttribute('data-page-size') || '10');
+        const currentPage = parseInt(table.getAttribute('data-current-page') || '1');
+        
+        // Get all rows that are NOT the "no results" row and are NOT hidden by search
+        const allRows = Array.from(tbody.querySelectorAll('tr.um-row'));
+        const visibleRows = allRows.filter(row => row.getAttribute('data-search-hidden') !== '1');
+        
+        const totalRows = visibleRows.length;
+        const totalPages = Math.ceil(totalRows / pageSize) || 1;
+        
+        // Ensure current page is within bounds
+        let page = currentPage;
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+        table.setAttribute('data-current-page', page);
+
+        // Show/hide rows based on current page
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+
+        visibleRows.forEach((row, index) => {
+            if (index >= start && index < end) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Update pagination controls UI
+        renderPaginationControls(table, totalRows, page, totalPages, pageSize);
+    }
+
+    function renderPaginationControls(table, totalRows, currentPage, totalPages, pageSize) {
+        const container = table.closest('.table-wrap') || table;
+        let controls = container.parentNode.querySelector('.table-pagination-controls');
+        if (!controls) {
+            controls = document.createElement('div');
+            controls.className = 'table-pagination-controls';
+            container.parentNode.insertBefore(controls, container.nextSibling);
+        }
+
+        const startIdx = totalRows === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+        const endIdx = Math.min(currentPage * pageSize, totalRows);
+
+        let paginationHtml = `
+            <div class="pagination-info">
+                Menampilkan ${startIdx} sampai ${endIdx} dari ${totalRows} data
+            </div>
+            <div class="pagination-buttons">
+                <button class="pag-btn prev" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+        `;
+
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 1);
+        let endPage = Math.min(totalPages, startPage + 2);
+        if (endPage - startPage < 2) startPage = Math.max(1, endPage - 2);
+
+        if (startPage > 1) {
+            paginationHtml += `<button class="pag-btn" data-page="1">1</button>`;
+            if (startPage > 2) paginationHtml += `<span class="pag-dots">...</span>`;
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHtml += `
+                <button class="pag-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+            `;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) paginationHtml += `<span class="pag-dots">...</span>`;
+            paginationHtml += `<button class="pag-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+
+        paginationHtml += `
+                <button class="pag-btn next" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        `;
+
+        controls.innerHTML = paginationHtml;
+
+        // Add event listeners to buttons
+        controls.querySelectorAll('.pag-btn:not([disabled])').forEach(btn => {
+            btn.onclick = () => {
+                const newPage = parseInt(btn.getAttribute('data-page'));
+                table.setAttribute('data-current-page', newPage);
+                updatePagination(table.querySelector('tbody'));
+            };
+        });
+    }
+
+    function initTableFeatures() {
+        const tables = document.querySelectorAll('#mainContent .um-table');
+        tables.forEach(table => {
+            if (table.classList.contains('no-pagination') || table.getAttribute('data-paginated')) return;
+            
+            table.setAttribute('data-paginated', '1');
+            table.setAttribute('data-current-page', '1');
+            table.setAttribute('data-page-size', '10');
+
+            // Add "Show Entries" dropdown
+            const header = table.closest('.card')?.querySelector('.card-header');
+            if (header) {
+                const entriesWrap = document.createElement('div');
+                entriesWrap.className = 'table-entries-wrap';
+                entriesWrap.innerHTML = `
+                    <label>Tampilkan</label>
+                    <select class="entries-select">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <label>data</label>
+                `;
+                
+                // Find where to insert in header
+                const title = header.querySelector('.um-title, .card-title');
+                if (title && title.nextSibling) {
+                    header.insertBefore(entriesWrap, title.nextSibling);
+                } else {
+                    header.appendChild(entriesWrap);
+                }
+
+                entriesWrap.querySelector('.entries-select').onchange = (e) => {
+                    table.setAttribute('data-page-size', e.target.value);
+                    table.setAttribute('data-current-page', '1');
+                    updatePagination(table.querySelector('tbody'));
+                };
+            }
+
+            updatePagination(table.querySelector('tbody'));
+        });
+    }
+
     if (searchInput) {
         let searchTimeout;
         
@@ -128,6 +271,11 @@ function initDashboard() {
 
             tables.forEach(tbody => {
                 if (!tbody) return;
+                
+                // Reset to first page when searching
+                const table = tbody.closest('table');
+                if (table) table.setAttribute('data-current-page', '1');
+
                 const rows = tbody.querySelectorAll('tr.um-row');
                 const emptyRow = tbody.querySelector('tr.um-empty, tr[data-empty]');
                 let visibleCount = 0;
@@ -151,14 +299,21 @@ function initDashboard() {
                         }
                     });
 
-                    row.style.display = rowMatch ? '' : 'none';
+                    // Set temporary attribute for search visibility
                     if (rowMatch) {
+                        row.removeAttribute('data-search-hidden');
                         visibleCount++;
                         if (q) {
                             cells.forEach(cell => highlightText(cell, q));
                         }
+                    } else {
+                        row.setAttribute('data-search-hidden', '1');
+                        row.style.display = 'none';
                     }
                 });
+
+                // Update pagination after search
+                updatePagination(tbody);
 
                 // Tampilkan pesan "tidak ditemukan" saat search aktif dan tidak ada yang cocok
                 let noResultsRow = tbody.querySelector('tr[data-search-no-results]');
@@ -183,9 +338,17 @@ function initDashboard() {
                     if (span) span.textContent = q;
                     noResultsRow.style.display = '';
                     if (emptyRow) emptyRow.style.display = 'none';
+                    
+                    // Hide pagination if no results
+                    const controls = table.parentNode.querySelector('.table-pagination-controls');
+                    if (controls) controls.style.display = 'none';
                 } else {
                     if (noResultsRow) noResultsRow.style.display = 'none';
                     if (emptyRow && !q) emptyRow.style.display = '';
+                    
+                    const table = tbody.closest('table');
+                    const controls = table?.parentNode.querySelector('.table-pagination-controls');
+                    if (controls) controls.style.display = '';
                 }
             });
         }
@@ -204,13 +367,15 @@ function initDashboard() {
         });
 
         if (searchClear) {
-            searchClear.onclick = () => {
-                searchInput.value = '';
-                filterTableBySearch();
-                searchInput.focus();
-            };
-        }
+        searchClear.onclick = () => {
+            searchInput.value = '';
+            filterTableBySearch();
+            searchInput.focus();
+        };
     }
+
+    initTableFeatures();
+}
 
     /* ─ Logout confirm ─ */
     const logoutBtn = document.getElementById('logoutBtn');
