@@ -597,6 +597,8 @@ function initStarRatings() {
 function datepicker(initialDate = '') {
     return {
         show: false,
+        showMonthPicker: false,
+        showYearPicker: false,
         formattedDate: '',
         year: '',
         month: '',
@@ -605,6 +607,8 @@ function datepicker(initialDate = '') {
         monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
         days: [],
         blanks: [],
+        years: [],
+        yearSearch: '',
 
         init() {
             let today = initialDate ? new Date(initialDate) : new Date();
@@ -615,6 +619,20 @@ function datepicker(initialDate = '') {
                 this.formattedDate = this.formatDate(today);
             }
             this.getDays();
+            this.generateYears();
+        },
+
+        get filteredYears() {
+            if (!this.yearSearch) return this.years;
+            return this.years.filter(y => y.toString().includes(this.yearSearch));
+        },
+
+        generateYears() {
+            const currentYear = new Date().getFullYear();
+            this.years = [];
+            for (let i = currentYear - 50; i <= currentYear + 10; i++) {
+                this.years.push(i);
+            }
         },
 
         isToday(date) {
@@ -672,6 +690,28 @@ function datepicker(initialDate = '') {
                 this.month--;
             }
             this.getDays();
+        },
+
+        toggleMonthPicker() {
+            this.showMonthPicker = !this.showMonthPicker;
+            this.showYearPicker = false;
+        },
+
+        toggleYearPicker() {
+            this.showYearPicker = !this.showYearPicker;
+            this.showMonthPicker = false;
+        },
+
+        selectMonth(m) {
+            this.month = m;
+            this.getDays();
+            this.showMonthPicker = false;
+        },
+
+        selectYear(y) {
+            this.year = parseInt(y);
+            this.getDays();
+            this.showYearPicker = false;
         }
     }
 }

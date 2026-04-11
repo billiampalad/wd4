@@ -126,12 +126,30 @@
                                 </div>
                                 <div class="adp-calendar" x-show="show" x-transition>
                                     <div class="adp-header">
-                                        <span class="adp-month" x-text="monthNames[month] + ' ' + year"></span>
+                                        <div style="display: flex; gap: 4px;">
+                                            <span class="adp-month" @click="toggleMonthPicker()" x-text="monthNames[month]"></span>
+                                            <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
+                                        </div>
                                         <div class="adp-nav">
                                             <div class="adp-nav-btn" @click="prevMonth()"><i class="fas fa-chevron-left"></i></div>
                                             <div class="adp-nav-btn" @click="nextMonth()"><i class="fas fa-chevron-right"></i></div>
                                         </div>
                                     </div>
+
+                                    <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
+                                        <template x-for="(mName, index) in monthNames">
+                                            <div class="adp-picker-item" :class="{'selected': month === index}" @click="selectMonth(index)" x-text="mName"></div>
+                                        </template>
+                                    </div>
+                                    <div class="adp-year-picker" x-show="showYearPicker" x-transition>
+                                        <div style="grid-column: span 4; padding: 4px;">
+                                            <input type="text" x-model="yearSearch" placeholder="Cari tahun..." style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);" @click.stop>
+                                        </div>
+                                        <template x-for="y in filteredYears">
+                                            <div class="adp-picker-item" :class="{'selected': year === y}" @click="selectYear(y)" x-text="y"></div>
+                                        </template>
+                                    </div>
+
                                     <div class="adp-grid">
                                         <template x-for="day in dayNames">
                                             <div class="adp-day-name" x-text="day"></div>
@@ -159,12 +177,30 @@
                                 </div>
                                 <div class="adp-calendar" x-show="show" x-transition>
                                     <div class="adp-header">
-                                        <span class="adp-month" x-text="monthNames[month] + ' ' + year"></span>
+                                        <div style="display: flex; gap: 4px;">
+                                            <span class="adp-month" @click="toggleMonthPicker()" x-text="monthNames[month]"></span>
+                                            <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
+                                        </div>
                                         <div class="adp-nav">
                                             <div class="adp-nav-btn" @click="prevMonth()"><i class="fas fa-chevron-left"></i></div>
                                             <div class="adp-nav-btn" @click="nextMonth()"><i class="fas fa-chevron-right"></i></div>
                                         </div>
                                     </div>
+
+                                    <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
+                                        <template x-for="(mName, index) in monthNames">
+                                            <div class="adp-picker-item" :class="{'selected': month === index}" @click="selectMonth(index)" x-text="mName"></div>
+                                        </template>
+                                    </div>
+                                    <div class="adp-year-picker" x-show="showYearPicker" x-transition>
+                                        <div style="grid-column: span 4; padding: 4px;">
+                                            <input type="text" x-model="yearSearch" placeholder="Cari tahun..." style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);" @click.stop>
+                                        </div>
+                                        <template x-for="y in filteredYears">
+                                            <div class="adp-picker-item" :class="{'selected': year === y}" @click="selectYear(y)" x-text="y"></div>
+                                        </template>
+                                    </div>
+
                                     <div class="adp-grid">
                                         <template x-for="day in dayNames">
                                             <div class="adp-day-name" x-text="day"></div>
@@ -201,12 +237,30 @@
                                 </div>
                                 <div class="adp-calendar" x-show="show" x-transition>
                                     <div class="adp-header">
-                                        <span class="adp-month" x-text="monthNames[month] + ' ' + year"></span>
+                                        <div style="display: flex; gap: 4px;">
+                                            <span class="adp-month" @click="toggleMonthPicker()" x-text="monthNames[month]"></span>
+                                            <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
+                                        </div>
                                         <div class="adp-nav">
                                             <div class="adp-nav-btn" @click="prevMonth()"><i class="fas fa-chevron-left"></i></div>
                                             <div class="adp-nav-btn" @click="nextMonth()"><i class="fas fa-chevron-right"></i></div>
                                         </div>
                                     </div>
+
+                                    <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
+                                        <template x-for="(mName, index) in monthNames">
+                                            <div class="adp-picker-item" :class="{'selected': month === index}" @click="selectMonth(index)" x-text="mName"></div>
+                                        </template>
+                                    </div>
+                                    <div class="adp-year-picker" x-show="showYearPicker" x-transition>
+                                        <div style="grid-column: span 4; padding: 4px;">
+                                            <input type="text" x-model="yearSearch" placeholder="Cari tahun..." style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);" @click.stop>
+                                        </div>
+                                        <template x-for="y in filteredYears">
+                                            <div class="adp-picker-item" :class="{'selected': year === y}" @click="selectYear(y)" x-text="y"></div>
+                                        </template>
+                                    </div>
+
                                     <div class="adp-grid">
                                         <template x-for="day in dayNames">
                                             <div class="adp-day-name" x-text="day"></div>

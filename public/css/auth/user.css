@@ -3569,7 +3569,8 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover { opacity: 
 [data-theme="dark"] .adp-calendar { background: var(--surface); border-color: var(--border); }
 
 .adp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.adp-month { font-weight: 700; font-size: 14px; color: var(--text); }
+.adp-month { font-weight: 700; font-size: 14px; color: var(--text); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: 0.2s; }
+.adp-month:hover { background: var(--surface2); color: var(--accent); }
 .adp-nav { display: flex; gap: 4px; }
 .adp-nav-btn { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
 .adp-nav-btn:hover { background: var(--surface2); color: var(--accent); }
@@ -3581,6 +3582,51 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover { opacity: 
 .adp-day.today { border: 1.5px solid var(--accent); color: var(--accent); font-weight: 700; }
 .adp-day.selected { background: var(--accent) !important; color: #fff !important; font-weight: 700; }
 .adp-day.empty { cursor: default; }
+
+/* Datepicker Month & Year Picker */
+.adp-month-picker, .adp-year-picker {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: var(--surface);
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.adp-picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    color: var(--text);
+}
+
+.adp-picker-item:hover {
+    background: var(--surface2);
+    color: var(--accent);
+}
+
+.adp-picker-item.selected {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+}
+
+.adp-year-picker {
+    grid-template-columns: repeat(4, 1fr);
+}
 
 /* ─── SWEETALERT DARK MODE ─── */
 [data-theme="dark"] .swal2-popup {
