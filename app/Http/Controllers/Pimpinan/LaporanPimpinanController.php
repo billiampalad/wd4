@@ -127,14 +127,14 @@ class LaporanPimpinanController extends Controller
             'request' => $request
         ])->setPaper('a4', 'landscape');
         
-        $filename = 'Laporan_Global_Kerjasama_' . date('Ymd_His') . '.pdf';
+        $filename = 'Laporan_Global_Kerjasama_Pimpinan.pdf';
         return $pdf->download($filename);
     }
 
     public function exportExcel(Request $request)
     {
         $data = $this->getFilteredData($request);
-        
-        return Excel::download(new GlobalLaporanExport($data), 'Laporan_Global_Kerjasama_' . date('Ymd_His') . '.xlsx');
+        return Excel::download(new GlobalLaporanExport($data), 'Laporan_Global_Kerjasama_Pimpinan.xlsx');
+        // return Excel::download(new GlobalLaporanExport($data), 'Laporan_Global_Kerjasama_' . date('Ymd_His') . '.xlsx');
     }
 }
