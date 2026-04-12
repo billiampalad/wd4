@@ -143,7 +143,7 @@ class UnitPageController extends Controller
                 'validasi',
                 'Dokumen Menunggu Validasi',
                 "$namaUnit mengirimkan evaluasi $kegiatan->nama_kegiatan untuk divalidasi.",
-                route('pimpinan.dashboard')
+                route('pimpinan.evaluasi')
             );
         }
 

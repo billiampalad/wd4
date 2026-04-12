@@ -132,8 +132,8 @@ class DashboardController
             ->latest()
             ->get();
 
-        // 2. Antrean Laporan Unit Kerja (menunggu_validasi)
-        $laporanUnit = KegiatanKerjasama::where('status', 'menunggu_validasi')
+        // 2. Antrean Laporan Unit Kerja (menunggu_validasi atau menunggu_evaluasi)
+        $laporanUnit = KegiatanKerjasama::whereIn('status', ['menunggu_validasi', 'menunggu_evaluasi'])
             ->whereHas('unitKerjas')
             ->with(['unitKerjas', 'mitras', 'evaluasis'])
             ->latest()

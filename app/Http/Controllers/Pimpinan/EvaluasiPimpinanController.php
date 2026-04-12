@@ -53,7 +53,10 @@ class EvaluasiPimpinanController extends Controller
         DB::beginTransaction();
         try {
             // 1. Simpan/Update Evaluasi (jika dari Jurusan, Pimpinan isi skor)
-            if ($kegiatan->status === 'menunggu_evaluasi') {
+            // Khusus untuk Unit Kerja, mereka sudah mengisi skor sendiri, pimpinan hanya validasi.
+            $isUnitKerja = $kegiatan->unitKerjas()->exists();
+
+            if ($kegiatan->status === 'menunggu_evaluasi' && !$isUnitKerja) {
                 $request->validate([
                     'sesuai_rencana' => 'required|integer|min:1|max:5',
                     'kualitas'       => 'required|integer|min:1|max:5',

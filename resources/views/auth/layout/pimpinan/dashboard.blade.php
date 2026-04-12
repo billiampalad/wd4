@@ -299,7 +299,7 @@
                                     @endif
                                 </td>
                                 <td style="text-align:center;">
-                                    <a href="#"
+                                    <a href="{{ route('pimpinan.evaluasi') }}"
                                         style="display:inline-flex; align-items:center; gap:6px; padding:7px 16px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-radius:8px; font-size:11px; font-weight:700; text-decoration:none; transition:all .2s; box-shadow:0 2px 8px rgba(79,70,229,.25);"
                                         onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 14px rgba(79,70,229,.4)'"
                                         onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(79,70,229,.25)'">
