@@ -111,8 +111,12 @@
                 <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
                 <span>Unit Pelaksana</span>
             </a>
+            <a class="menu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">
+                <div class="menu-icon"><i class="fas fa-microchip"></i></div>
+                <span>Jurusan</span>
+            </a>
 
-            <div class="menu-section">KERJASAMA</div>
+            <!-- <div class="menu-section">KERJASAMA</div>
             <a class="menu-item" href="#" data-page="data_kerjasama">
                 <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
                 <span>Data Kerjasama</span>
@@ -143,7 +147,7 @@
             <a class="menu-item" href="#" data-page="laporan">
                 <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>
                 <span>Statistik Data</span>
-            </a>
+            </a> -->
         </aside>
 
         <!-- Sidebar Toggle (Floating on Border) -->
