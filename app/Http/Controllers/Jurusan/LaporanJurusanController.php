@@ -80,7 +80,7 @@ class LaporanJurusanController extends Controller
             'evaluasis'
         ])->get();
 
-        return Excel::download(new \App\Exports\LaporanKerjasamaExport($data), 'laporan_kerjasama.xlsx');
+        return Excel::download(new \App\Exports\LaporanKerjasamaExport($data), 'laporan_kerjasama_jurusan.xlsx');
     }
 
     public function exportPdf(Request $request)
@@ -96,6 +96,6 @@ class LaporanJurusanController extends Controller
         ])->get();
 
         $pdf = Pdf::loadView('auth.layout.jurusan.laporan_pdf', compact('data'));
-        return $pdf->download('laporan_kerjasama.pdf');
+        return $pdf->download('laporan_kerjasama_jurusan.pdf');
     }
 }

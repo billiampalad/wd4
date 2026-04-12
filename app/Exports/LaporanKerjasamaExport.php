@@ -11,15 +11,17 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class LaporanKerjasamaExport implements FromView, ShouldAutoSize, WithStyles
 {
     protected $data;
+    protected $view;
 
-    public function __construct($data)
+    public function __construct($data, $view = 'auth.layout.jurusan.laporan_excel')
     {
         $this->data = $data;
+        $this->view = $view;
     }
 
     public function view(): View
     {
-        return view('auth.layout.jurusan.laporan_excel', [
+        return view($this->view, [
             'data' => $this->data
         ]);
     }

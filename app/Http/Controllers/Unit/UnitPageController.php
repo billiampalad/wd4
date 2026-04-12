@@ -282,7 +282,7 @@ class UnitPageController extends Controller
             ->with(['jenisKerjasama', 'mitras', 'tujuans', 'pelaksanaans', 'hasils', 'evaluasis'])
             ->get();
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data), 'laporan_kerjasama_unit.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.unit.laporan_excel'), 'laporan_kerjasama_unit.xlsx');
     }
 
     private function buildLaporanQuery(Request $request)
