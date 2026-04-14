@@ -23,8 +23,22 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('auth.welcome');
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\KegiatanKerjasama::with(['mitras', 'jenisKerjasama'])->latest();
+
+    if ($search = $request->get('search')) {
+        $query->where('nama_kegiatan', 'like', "%{$search}%");
+    }
+
+    $kerjasama = $query->paginate(9);
+
+    $stats = [
+        'total_kerjasama' => \App\Models\KegiatanKerjasama::count(),
+        'total_mitra' => \App\Models\Mitra::count(),
+        'total_aktif' => \App\Models\KegiatanKerjasama::where('status', 'selesai')->count(),
+    ];
+
+    return view('auth.welcome', compact('kerjasama', 'stats'));
 });
 
 /*
