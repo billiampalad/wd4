@@ -24,7 +24,7 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.welcome');
 });
 
 /*
@@ -213,8 +213,3 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/users', [UserController::class, 'index'])->name('users');
 
 Route::get('/profiles', [DashboardController::class, 'profiles'])->name('profiles');
-
-// Atau jika ingin route utama mengarah ke dashboard
-Route::get('/', function () {
-    return redirect()->route('dashboard');
-});
