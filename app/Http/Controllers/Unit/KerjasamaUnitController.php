@@ -67,6 +67,21 @@ class KerjasamaUnitController extends Controller
             'mitra_kategori.*' => 'required|string',
             'dok_link_drive' => 'nullable|string|max:500',
             'dok_keterangan' => 'nullable|string|max:1000',
+            // New fields
+            'tujuan' => 'required|string',
+            'sasaran' => 'required|string',
+            'pelaksanaan_deskripsi' => 'required|string',
+            'pelaksanaan_cakupan' => 'nullable|string',
+            'pelaksanaan_peserta' => 'nullable|integer|min:0',
+            'pelaksanaan_sumber_daya' => 'nullable|string',
+            'hasil_langsung' => 'nullable|string',
+            'hasil_dampak' => 'nullable|string',
+            'hasil_manfaat_mahasiswa' => 'nullable|string',
+            'hasil_manfaat_polimdo' => 'nullable|string',
+            'hasil_manfaat_mitra' => 'nullable|string',
+            'masalah_kendala' => 'nullable|string',
+            'masalah_solusi' => 'nullable|string',
+            'masalah_rekomendasi' => 'nullable|string',
         ]);
 
         $unitId = $this->getUnitId();
@@ -106,6 +121,40 @@ class KerjasamaUnitController extends Controller
             }
             $kegiatan->mitras()->attach($mitraIds);
 
+            // Save Tujuan & Sasaran
+            Tujuan::create([
+                'id_kegiatan' => $kegiatan->id,
+                'tujuan' => $request->tujuan,
+                'sasaran' => $request->sasaran,
+            ]);
+
+            // Save Pelaksanaan
+            Pelaksanaan::create([
+                'id_kegiatan' => $kegiatan->id,
+                'deskripsi' => $request->pelaksanaan_deskripsi,
+                'cakupan' => $request->pelaksanaan_cakupan,
+                'jumlah_peserta' => $request->pelaksanaan_peserta,
+                'sumber_daya' => $request->pelaksanaan_sumber_daya,
+            ]);
+
+            // Save Hasil & Capaian
+            Hasil::create([
+                'id_kegiatan' => $kegiatan->id,
+                'hasil_langsung' => $request->hasil_langsung,
+                'dampak' => $request->hasil_dampak,
+                'manfaat_mahasiswa' => $request->hasil_manfaat_mahasiswa,
+                'manfaat_polimdo' => $request->hasil_manfaat_polimdo,
+                'manfaat_mitra' => $request->hasil_manfaat_mitra,
+            ]);
+
+            // Save Permasalahan & Solusi
+            PermasalahanSolusi::create([
+                'id_kegiatan' => $kegiatan->id,
+                'kendala' => $request->masalah_kendala,
+                'solusi' => $request->masalah_solusi,
+                'rekomendasi' => $request->masalah_rekomendasi,
+            ]);
+
             // Dokumentasi (optional)
             if ($request->filled('dok_link_drive')) {
                 Dokumentasi::create([
@@ -116,6 +165,12 @@ class KerjasamaUnitController extends Controller
             }
 
             DB::commit();
+
+            // If action is 'submit', redirect to submitToPimpinan
+            if ($request->action === 'submit') {
+                return $this->submitToPimpinan($kegiatan->id);
+            }
+
             return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -183,6 +238,21 @@ class KerjasamaUnitController extends Controller
             'mitra_kategori.*' => 'required|string',
             'dok_link_drive' => 'nullable|string|max:500',
             'dok_keterangan' => 'nullable|string|max:1000',
+            // New fields
+            'tujuan' => 'required|string',
+            'sasaran' => 'required|string',
+            'pelaksanaan_deskripsi' => 'required|string',
+            'pelaksanaan_cakupan' => 'nullable|string',
+            'pelaksanaan_peserta' => 'nullable|integer|min:0',
+            'pelaksanaan_sumber_daya' => 'nullable|string',
+            'hasil_langsung' => 'nullable|string',
+            'hasil_dampak' => 'nullable|string',
+            'hasil_manfaat_mahasiswa' => 'nullable|string',
+            'hasil_manfaat_polimdo' => 'nullable|string',
+            'hasil_manfaat_mitra' => 'nullable|string',
+            'masalah_kendala' => 'nullable|string',
+            'masalah_solusi' => 'nullable|string',
+            'masalah_rekomendasi' => 'nullable|string',
         ]);
 
         $unitId = $this->getUnitId();
@@ -220,6 +290,45 @@ class KerjasamaUnitController extends Controller
             }
             $kegiatan->mitras()->sync($mitraIds);
 
+            // Update/create Tujuan & Sasaran
+            $kegiatan->tujuans()->updateOrCreate(
+                ['id_kegiatan' => $kegiatan->id],
+                ['tujuan' => $request->tujuan, 'sasaran' => $request->sasaran]
+            );
+
+            // Update/create Pelaksanaan
+            $kegiatan->pelaksanaans()->updateOrCreate(
+                ['id_kegiatan' => $kegiatan->id],
+                [
+                    'deskripsi' => $request->pelaksanaan_deskripsi,
+                    'cakupan' => $request->pelaksanaan_cakupan,
+                    'jumlah_peserta' => $request->pelaksanaan_peserta,
+                    'sumber_daya' => $request->pelaksanaan_sumber_daya
+                ]
+            );
+
+            // Update/create Hasil & Capaian
+            $kegiatan->hasils()->updateOrCreate(
+                ['id_kegiatan' => $kegiatan->id],
+                [
+                    'hasil_langsung' => $request->hasil_langsung,
+                    'dampak' => $request->hasil_dampak,
+                    'manfaat_mahasiswa' => $request->hasil_manfaat_mahasiswa,
+                    'manfaat_polimdo' => $request->hasil_manfaat_polimdo,
+                    'manfaat_mitra' => $request->hasil_manfaat_mitra
+                ]
+            );
+
+            // Update/create Permasalahan & Solusi
+            $kegiatan->permasalahanSolusis()->updateOrCreate(
+                ['id_kegiatan' => $kegiatan->id],
+                [
+                    'kendala' => $request->masalah_kendala,
+                    'solusi' => $request->masalah_solusi,
+                    'rekomendasi' => $request->masalah_rekomendasi
+                ]
+            );
+
             // Update/create dokumentasi
             if ($request->filled('dok_link_drive')) {
                 $dok = $kegiatan->dokumentasis()->first();
@@ -238,6 +347,12 @@ class KerjasamaUnitController extends Controller
             }
 
             DB::commit();
+
+            // If action is 'submit', redirect to submitToPimpinan
+            if ($request->action === 'submit') {
+                return $this->submitToPimpinan($kegiatan->id);
+            }
+
             return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();

@@ -53,7 +53,7 @@
     {{-- ═══ TABS ═══ --}}
     <div class="modern-card" x-data="{ activeTab: localStorage.getItem('activeDetailTab') || 'umum' }" x-init="$watch('activeTab', value => localStorage.setItem('activeDetailTab', value)); $nextTick(() => localStorage.removeItem('activeDetailTab'))">
         @php
-        $isEditMode = in_array($kegiatan->status, ['draft', 'revisi']);
+        $isEditMode = false; // Disable edit mode in detail page
         $kesimpulanPimpinan = $kegiatan->kesimpulans->sortByDesc('id')->first();
         @endphp
         {{-- Tab Navigation --}}
