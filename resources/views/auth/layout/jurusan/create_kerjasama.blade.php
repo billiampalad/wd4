@@ -218,13 +218,68 @@
                             </div>
                         </div>
 
-                        {{-- Nomor MoU --}}
-                        <div class="mc-group">
-                            <label class="mc-label">Nomor MoU</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-file-contract mc-icon-left"></i>
-                                <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}" placeholder="Contoh: MoU/001/2026" class="mc-input" />
+                        {{-- Dokumen Kerjasama (Alpine Interactive) --}}
+                        <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
+                            open: false, 
+                            selected: '{{ old('jenis_dokumen', 'MoU') }}',
+                            items: [
+                                { id: 'MoU', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
+                                { id: 'MoA', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
+                                { id: 'IA', label: 'Implementation Arrangement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
+                            ],
+                            get selectedItem() {
+                                return this.items.find(i => i.id === this.selected);
+                            }
+                        }">
+                            <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
+                            <input type="hidden" name="jenis_dokumen" :value="selected">
+                            
+                            <div class="mc-grid-2" style="gap: 16px;">
+                                {{-- Left: Type Dropdown --}}
+                                <div class="alpine-dropdown" @click.outside="open = false" style="position: relative;">
+                                    <div class="ad-trigger" :class="{'active': open}" @click="open = !open" style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div :style="'width: 32px; height: 32px; border-radius: 8px; background:' + selectedItem.color + '20; color:' + selectedItem.color + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
+                                                <i class="fas" :class="selectedItem.icon"></i>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                <span x-text="selectedItem.short" style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                <span x-text="selectedItem.label" style="font-size: 11px; color: var(--text-sub);"></span>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-chevron-down" style="font-size: 11px; color: #9ca3af; transition: 0.3s;" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                                    </div>
+
+                                    <div class="ad-menu" x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                        <template x-for="item in items" :key="item.id">
+                                            <div @click="selected = item.id; open = false" 
+                                                 class="ad-item" 
+                                                 :class="{'selected': selected === item.id}"
+                                                 style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
+                                                 onmouseover="this.style.background='var(--surface2)'" 
+                                                 onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                <div :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
+                                                    <i class="fas" :class="item.icon"></i>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                    <span x-text="item.short" style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                    <span x-text="item.label" style="font-size: 11px; color: var(--text-sub);"></span>
+                                                </div>
+                                                <i class="fas fa-check" x-show="selected === item.id" style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                {{-- Right: Number Input --}}
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-hashtag mc-icon-left"></i>
+                                    <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}" placeholder="Masukkan nomor dokumen..." class="mc-input" style="height: 48px;" />
+                                </div>
                             </div>
+                            @error('jenis_dokumen')
+                                <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Tanggal MoU (Alpine Datepicker) --}}

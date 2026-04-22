@@ -13,6 +13,7 @@ class KegiatanKerjasama extends Model
 
     protected $fillable = [
         'nama_kegiatan',
+        'jenis_dokumen',
         'created_by',
         'periode_mulai',
         'periode_selesai',

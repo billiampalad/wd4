@@ -113,8 +113,13 @@
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Nomor MoU</div>
-                        <div style="font-size: 14px; color: var(--text); font-family: 'DM Mono', monospace;">{{ $kegiatan->nomor_mou ?? '-' }}</div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Dokumen Kerjasama</div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            @if($kegiatan->jenis_dokumen)
+                                <span class="tag tag-{{ $kegiatan->jenis_dokumen == 'MoU' ? 'purple' : ($kegiatan->jenis_dokumen == 'MoA' ? 'green' : 'orange') }}" style="font-size: 10px; padding: 2px 8px;">{{ $kegiatan->jenis_dokumen }}</span>
+                            @endif
+                            <div style="font-size: 14px; color: var(--text); font-family: 'DM Mono', monospace;">{{ $kegiatan->nomor_mou ?? '-' }}</div>
+                        </div>
                     </div>
                     <div>
                         <div class="md-stat-label" style="margin-bottom: 4px;">Tanggal MoU</div>

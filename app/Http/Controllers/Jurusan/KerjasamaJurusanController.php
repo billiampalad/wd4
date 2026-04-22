@@ -82,6 +82,7 @@ class KerjasamaJurusanController extends Controller
     {
         $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
+            'jenis_dokumen' => 'required|string|in:MoU,MoA,IA',
             'id_jenis' => 'required|array|min:1',
             'id_jenis.*' => 'exists:jenis_kerjasamas,id',
             'periode_mulai' => 'nullable|date',
@@ -104,6 +105,7 @@ class KerjasamaJurusanController extends Controller
             // 1. Create kegiatan kerjasama
             $kegiatan = KegiatanKerjasama::create([
                 'nama_kegiatan' => $request->nama_kegiatan,
+                'jenis_dokumen' => $request->jenis_dokumen,
                 'created_by' => Auth::id(),
                 'periode_mulai' => $request->periode_mulai,
                 'periode_selesai' => $request->periode_selesai,
@@ -183,6 +185,7 @@ class KerjasamaJurusanController extends Controller
     {
         $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
+            'jenis_dokumen' => 'required|string|in:MoU,MoA,IA',
             'id_jenis' => 'required|array|min:1',
             'id_jenis.*' => 'exists:jenis_kerjasamas,id',
             'periode_mulai' => 'nullable|date',
@@ -207,6 +210,7 @@ class KerjasamaJurusanController extends Controller
         try {
             $kegiatan->update([
                 'nama_kegiatan' => $request->nama_kegiatan,
+                'jenis_dokumen' => $request->jenis_dokumen,
                 'periode_mulai' => $request->periode_mulai,
                 'periode_selesai' => $request->periode_selesai,
                 'nomor_mou' => $request->nomor_mou,
