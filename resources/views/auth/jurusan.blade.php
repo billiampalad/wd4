@@ -138,7 +138,7 @@
             </a>
 
             @php
-                $isDataKerjasamaActive = request()->routeIs('jurusan.dkerjasama', 'jurusan.kerjasama.*');
+                $isDataKerjasamaActive = request()->routeIs('jurusan.dkerjasama', 'jurusan.kerjasama.*', 'jurusan.mitra', 'jurusan.mitra.*');
             @endphp
             <div id="kerjasamaParent" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
@@ -151,7 +151,7 @@
                         <a class="submenu-item {{ request()->routeIs('jurusan.dkerjasama', 'jurusan.kerjasama.*') ? 'active' : '' }}" href="{{ route('jurusan.dkerjasama') }}">
                             <span class="submenu-dot"></span><span>Repositori</span>
                         </a>
-                        <a class="submenu-item" href="#">
+                        <a class="submenu-item {{ request()->routeIs('jurusan.mitra', 'jurusan.mitra.*') ? 'active' : '' }}" href="#">
                             <span class="submenu-dot"></span><span>Mitra</span>
                         </a>
                     </div>
