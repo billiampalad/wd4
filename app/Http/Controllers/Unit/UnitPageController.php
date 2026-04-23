@@ -9,6 +9,7 @@ use App\Models\Profile;
 use App\Models\KegiatanKerjasama;
 use App\Models\Evaluasi;
 use App\Models\JenisKerjasama;
+use App\Models\Klasifikasi;
 use Illuminate\Http\Request;
 
 class UnitPageController extends Controller
@@ -70,21 +71,30 @@ class UnitPageController extends Controller
 
     public function mitraCreate()
     {
-        return view('auth.unit');
+        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
+        return view('auth.unit', compact('klasifikasi'));
     }
 
     public function mitraStore(Request $request)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
-            'kategori'   => 'required|string|in:nasional,internasional',
-            'negara'     => 'nullable|string|max:255',
+            'nama_mitra'   => 'required|string|max:255',
+            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'alamat'       => 'nullable|string|max:255',
+            'kategori'     => 'required|string|in:nasional,internasional',
+            'negara'       => 'nullable|string|max:255',
+            'telp'         => 'nullable|string|max:20',
+            'website'      => 'nullable|string|max:255',
         ]);
 
         \App\Models\Mitra::create([
-            'nama_mitra' => $request->nama_mitra,
-            'kategori'   => $request->kategori,
-            'negara'     => $request->negara ?? 'Indonesia',
+            'nama_mitra'   => $request->nama_mitra,
+            'id_klasifikasi' => $request->id_klasifikasi,
+            'alamat'       => $request->alamat,
+            'kategori'     => $request->kategori,
+            'negara'       => $request->negara ?? 'Indonesia',
+            'telp'         => $request->telp,
+            'website'      => $request->website,
         ]);
 
         return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil ditambahkan.');
@@ -97,30 +107,39 @@ class UnitPageController extends Controller
             $q->whereHas('unitKerjas', function($uq) use ($unitId) {
                 $uq->where('unit_kerjas.id', $unitId);
             });
-        }])->findOrFail($id);
+        }, 'klasifikasi'])->findOrFail($id);
 
         return view('auth.unit', compact('mitra'));
     }
 
     public function mitraEdit($id)
     {
-        $mitra = \App\Models\Mitra::findOrFail($id);
-        return view('auth.unit', compact('mitra'));
+        $mitra = \App\Models\Mitra::with('klasifikasi')->findOrFail($id);
+        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
+        return view('auth.unit', compact('mitra', 'klasifikasi'));
     }
 
     public function mitraUpdate(Request $request, $id)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
-            'kategori'   => 'required|string|in:nasional,internasional',
-            'negara'     => 'nullable|string|max:255',
+            'nama_mitra'   => 'required|string|max:255',
+            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'alamat'       => 'nullable|string|max:255',
+            'kategori'     => 'required|string|in:nasional,internasional',
+            'negara'       => 'nullable|string|max:255',
+            'telp'         => 'nullable|string|max:20',
+            'website'      => 'nullable|string|max:255',
         ]);
 
         $mitra = \App\Models\Mitra::findOrFail($id);
         $mitra->update([
-            'nama_mitra' => $request->nama_mitra,
-            'kategori'   => $request->kategori,
-            'negara'     => $request->negara ?? 'Indonesia',
+            'nama_mitra'   => $request->nama_mitra,
+            'id_klasifikasi' => $request->id_klasifikasi,
+            'alamat'       => $request->alamat,
+            'kategori'     => $request->kategori,
+            'negara'       => $request->negara ?? 'Indonesia',
+            'telp'         => $request->telp,
+            'website'      => $request->website,
         ]);
 
         return redirect()->route('unit.mitra')->with('success', 'Data mitra berhasil diperbarui.');

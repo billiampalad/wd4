@@ -21,13 +21,43 @@
             <div class="mc-body" style="padding: 30px;">
                 <div class="mc-grid-2">
                     {{-- Nama Mitra --}}
-                    <div class="mc-group" style="grid-column: 1 / -1;">
+                    <div class="mc-group">
                         <label class="mc-label">Nama Instansi / Mitra <span class="mc-req">*</span></label>
                         <div class="mc-input-wrap">
                             <i class="fas fa-building mc-icon-left"></i>
                             <input type="text" name="nama_mitra" value="{{ old('nama_mitra') }}" required placeholder="Contoh: PT. Teknologi Maju Bersama" class="mc-input @error('nama_mitra') border-danger @enderror" />
                         </div>
                         @error('nama_mitra')
+                            <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Klasifikasi --}}
+                    <div class="mc-group">
+                        <label class="mc-label">Klasifikasi</label>
+                        <div class="mc-input-wrap">
+                            <i class="fas fa-tag mc-icon-left"></i>
+                            <select name="id_klasifikasi" class="mc-input @error('id_klasifikasi') border-danger @enderror">
+                                <option value="">-- Pilih Klasifikasi --</option>
+                                @forelse($klasifikasi ?? [] as $klas)
+                                    <option value="{{ $klas->id }}" {{ old('id_klasifikasi') == $klas->id ? 'selected' : '' }}>{{ $klas->nama }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        @error('id_klasifikasi')
+                            <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Alamat --}}
+                    <div class="mc-group" style="grid-column: 1 / -1;">
+                        <label class="mc-label">Alamat</label>
+                        <div class="mc-input-wrap">
+                            <i class="fas fa-map-marker-alt mc-icon-left" style="top: 14px;"></i>
+                            <textarea name="alamat" rows="2" placeholder="Masukkan alamat lengkap mitra..." class="mc-input" style="resize: vertical; min-height: 70px;">{{ old('alamat') }}</textarea>
+                        </div>
+                        @error('alamat')
                             <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
                         @enderror
                     </div>
@@ -97,6 +127,30 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Telepon --}}
+                    <div class="mc-group">
+                        <label class="mc-label">Nomor Telepon</label>
+                        <div class="mc-input-wrap">
+                            <i class="fas fa-phone mc-icon-left"></i>
+                            <input type="text" name="telp" value="{{ old('telp') }}" placeholder="Contoh: 021-12345678" class="mc-input @error('telp') border-danger @enderror" />
+                        </div>
+                        @error('telp')
+                            <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Website --}}
+                    <div class="mc-group">
+                        <label class="mc-label">Website</label>
+                        <div class="mc-input-wrap">
+                            <i class="fas fa-globe mc-icon-left"></i>
+                            <input type="text" name="website" value="{{ old('website') }}" placeholder="Contoh: https://www.example.com" class="mc-input @error('website') border-danger @enderror" />
+                        </div>
+                        @error('website')
+                            <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
             </div>

@@ -24,10 +24,25 @@
                         <i class="fas fa-building"></i>
                     </div>
                     <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">{{ $mitra->nama_mitra }}</h3>
-                    <span class="tag tag-{{ $mitra->kategori == 'nasional' ? 'blue' : 'purple' }}">{{ ucfirst($mitra->kategori) }}</span>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <span class="tag tag-{{ $mitra->kategori == 'nasional' ? 'blue' : 'purple' }}">{{ ucfirst($mitra->kategori) }}</span>
+                        @if($mitra->klasifikasi)
+                            <span class="tag tag-green">{{ $mitra->klasifikasi->nama }}</span>
+                        @endif
+                    </div>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    @if($mitra->alamat)
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Alamat</div>
+                        <div style="font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: flex-start; gap: 8px;">
+                            <i class="fas fa-map-marker-alt" style="color: var(--accent); font-size: 12px; margin-top: 3px;"></i>
+                            <span>{{ $mitra->alamat }}</span>
+                        </div>
+                    </div>
+                    @endif
+
                     <div>
                         <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Negara</div>
                         <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
@@ -35,6 +50,27 @@
                             {{ $mitra->negara ?? 'Indonesia' }}
                         </div>
                     </div>
+
+                    @if($mitra->telp)
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Telepon</div>
+                        <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-phone" style="color: var(--accent); font-size: 12px;"></i>
+                            {{ $mitra->telp }}
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($mitra->website)
+                    <div>
+                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Website</div>
+                        <div style="font-size: 14px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-globe" style="font-size: 12px;"></i>
+                            <a href="{{ $mitra->website }}" target="_blank" style="color: var(--accent); text-decoration: none;">{{ $mitra->website }}</a>
+                        </div>
+                    </div>
+                    @endif
+
                     <div>
                         <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Kerjasama</div>
                         <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
@@ -101,7 +137,7 @@
                                     </td>
                                     <td class="um-td um-td-aksi">
                                         <div class="um-actions">
-                                            <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="btn-action view" title="Lihat Detail Kegiatan">
+                                            <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view" title="Lihat Detail Kegiatan">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </div>
