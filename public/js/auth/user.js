@@ -62,17 +62,23 @@ function initDashboard() {
         };
     }
 
-    /* ─ Data Master Submenu ─ */
-    const dmBtn2 = document.getElementById('dataMasterBtn');
-    const dmSub = document.getElementById('dataMasterSub');
+    /* ─ Sidebar Submenus ─ */
+    const submenus = [
+        { btn: 'dataMasterBtn', sub: 'dataMasterSub' },
+        { btn: 'kerjasamaBtn', sub: 'kerjasamaSub' }
+    ];
 
-    if (dmBtn2 && dmSub) {
-        dmBtn2.onclick = (e) => {
-            e.preventDefault();
-            dmBtn2.classList.toggle('submenu-open');
-            dmSub.classList.toggle('open');
-        };
-    }
+    submenus.forEach(item => {
+        const btn = document.getElementById(item.btn);
+        const sub = document.getElementById(item.sub);
+        if (btn && sub) {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                btn.classList.toggle('submenu-open');
+                sub.classList.toggle('open');
+            };
+        }
+    });
 
     /* ─ Show navSearch on wider screens ─ */
     const navSearch = document.getElementById('navSearch');

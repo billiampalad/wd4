@@ -5,9 +5,9 @@
         <div class="breadcrumb">
             <i class="fas fa-home" style="font-size:11px;"></i>
             <span class="sep">/</span>
-            <span class="current" id="breadcrumbCurrent">Data Kerjasama</span>
+            <span class="current" id="breadcrumbCurrent">Repositori</span>
         </div>
-        <h2 id="pageTitle">Data Kerjasama Unit</h2>
+        <h2 id="pageTitle">Data Kerjasama</h2>
         <p id="pageDesc">Kelola dan lihat data kerjasama khusus untuk
             <strong>{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}</strong>.
         </p>
