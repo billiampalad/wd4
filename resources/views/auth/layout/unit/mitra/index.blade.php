@@ -16,16 +16,18 @@
     </div>
 
     @if(session('success'))
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #059669; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 13px;">
-            <i class="fas fa-check-circle"></i>
-            <span>{{ session('success') }}</span>
+        <div class="alert alert-success"
+            style="background: linear-gradient(135deg, rgba(16,185,129,.12), rgba(5,150,105,.08)); border: 1px solid rgba(16,185,129,.3); color: #065f46; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-check-circle" style="font-size: 16px; color: #10b981;"></i>
+            {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #dc2626; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; font-size: 13px;">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>{{ session('error') }}</span>
+        <div class="alert alert-error"
+            style="background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(220,38,38,.08)); border: 1px solid rgba(239,68,68,.3); color: #991b1b; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #ef4444;"></i>
+            {{ session('error') }}
         </div>
     @endif
 
@@ -35,8 +37,9 @@
                 <i class="fas fa-handshake" style="color: var(--accent);"></i>
                 <span>Mitra Kerjasama</span>
             </div>
-            <a href="{{ route('unit.mitra.create') }}" class="rfc-btn rfc-btn-primary" style="text-decoration: none;">
-                <i class="fas fa-plus-circle"></i> Tambah Mitra
+            <a href="{{ route('unit.mitra.create') }}" class="btn-add"
+                style="background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79,70,229,.3); transition: all 0.3s;">
+                <i class="fas fa-plus"></i> Tambah Data
             </a>
         </div>
         <div class="card-body" style="padding: 0;">
@@ -44,12 +47,11 @@
                 <table class="um-table">
                     <thead>
                         <tr>
-                            <th class="um-th um-th-num">#</th>
+                            <th class="um-th um-th-num">No</th>
                             <th class="um-th">Nama Mitra</th>
-                            <th class="um-th">Kategori</th>
+                            <th class="um-th">Klasifikasi</th>
                             <th class="um-th">Negara</th>
-                            <th class="um-th">Total Kegiatan</th>
-                            <th class="um-th">Aksi</th>
+                            <th class="um-th um-th-num">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,23 +74,18 @@
                                         {{ $mitra->negara ?? 'Indonesia' }}
                                     </span>
                                 </td>
-                                <td class="um-td">
-                                    <span class="tag tag-green" style="font-family: 'DM Mono', monospace; font-size: 11px;">
-                                        {{ $mitra->kegiatan_kerjasamas_count ?? 0 }} Kegiatan
-                                    </span>
-                                </td>
                                 <td class="um-td um-td-aksi">
                                     <div class="um-actions">
-                                        <a href="{{ route('unit.mitra.show', $mitra->id) }}" class="btn-action view" title="Detail Mitra">
+                                        <a href="{{ route('unit.mitra.show', $mitra->id) }}" class="um-btn-view" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('unit.mitra.edit', $mitra->id) }}" class="btn-action edit" title="Edit Mitra">
+                                        <a href="{{ route('unit.mitra.edit', $mitra->id) }}" class="um-btn-warn" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('unit.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mitra ini?')">
+                                        <form action="{{ route('unit.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mitra ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-action delete" title="Hapus Mitra">
+                                            <button type="submit" class="um-btn-delete" title="Hapus">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
