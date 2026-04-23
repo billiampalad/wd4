@@ -49,6 +49,96 @@ class UnitPageController extends Controller
         return view('auth.unit', compact('kerjasamaUnit'));
     }
 
+    // ─── Mitra Unit ──────────────────────────────────────────────
+    public function mitra()
+    {
+        $unitId = $this->resolveUnitId();
+
+        // Ambil semua mitra yang pernah bekerjasama dengan unit ini
+        $mitras = \App\Models\Mitra::whereHas('kegiatanKerjasamas', function($q) use ($unitId) {
+            $q->whereHas('unitKerjas', function($uq) use ($unitId) {
+                $uq->where('unit_kerjas.id', $unitId);
+            });
+        })->withCount(['kegiatanKerjasamas' => function($q) use ($unitId) {
+            $q->whereHas('unitKerjas', function($uq) use ($unitId) {
+                $uq->where('unit_kerjas.id', $unitId);
+            });
+        }])->orderBy('nama_mitra', 'asc')->get();
+
+        return view('auth.unit', compact('mitras'));
+    }
+
+    public function mitraCreate()
+    {
+        return view('auth.unit');
+    }
+
+    public function mitraStore(Request $request)
+    {
+        $request->validate([
+            'nama_mitra' => 'required|string|max:255',
+            'kategori'   => 'required|string|in:nasional,internasional',
+            'negara'     => 'nullable|string|max:255',
+        ]);
+
+        \App\Models\Mitra::create([
+            'nama_mitra' => $request->nama_mitra,
+            'kategori'   => $request->kategori,
+            'negara'     => $request->negara ?? 'Indonesia',
+        ]);
+
+        return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil ditambahkan.');
+    }
+
+    public function mitraShow($id)
+    {
+        $mitra = \App\Models\Mitra::with(['kegiatanKerjasamas' => function($q) {
+            $unitId = $this->resolveUnitId();
+            $q->whereHas('unitKerjas', function($uq) use ($unitId) {
+                $uq->where('unit_kerjas.id', $unitId);
+            });
+        }])->findOrFail($id);
+
+        return view('auth.unit', compact('mitra'));
+    }
+
+    public function mitraEdit($id)
+    {
+        $mitra = \App\Models\Mitra::findOrFail($id);
+        return view('auth.unit', compact('mitra'));
+    }
+
+    public function mitraUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_mitra' => 'required|string|max:255',
+            'kategori'   => 'required|string|in:nasional,internasional',
+            'negara'     => 'nullable|string|max:255',
+        ]);
+
+        $mitra = \App\Models\Mitra::findOrFail($id);
+        $mitra->update([
+            'nama_mitra' => $request->nama_mitra,
+            'kategori'   => $request->kategori,
+            'negara'     => $request->negara ?? 'Indonesia',
+        ]);
+
+        return redirect()->route('unit.mitra')->with('success', 'Data mitra berhasil diperbarui.');
+    }
+
+    public function mitraDestroy($id)
+    {
+        $mitra = \App\Models\Mitra::findOrFail($id);
+        
+        // Cek apakah mitra masih memiliki kegiatan kerjasama
+        if ($mitra->kegiatanKerjasamas()->count() > 0) {
+            return back()->with('error', 'Mitra tidak bisa dihapus karena masih memiliki riwayat kerjasama.');
+        }
+
+        $mitra->delete();
+        return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil dihapus.');
+    }
+
     // ─── Evaluasi Kinerja ────────────────────────────────────────
     public function evaluasi()
     {

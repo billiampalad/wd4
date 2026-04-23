@@ -142,7 +142,7 @@
             </a>
 
             @php
-                $isDataKerjasamaActive = request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*');
+                $isDataKerjasamaActive = request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*', 'unit.mitra', 'unit.mitra.*');
             @endphp
             <div id="kerjasamaParent" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
@@ -150,12 +150,12 @@
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Kerjasama</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
-                <div class="submenu {{ $isDataKerjasamaActive ? 'open' : '' }}" id="kerjasamaSub">
+                <div class="submenu {{ $isDataKerjasamaActive || request()->routeIs('unit.mitra') ? 'open' : '' }}" id="kerjasamaSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*') ? 'active' : '' }}" href="{{ route('unit.dkerjasama') }}">
                             <span class="submenu-dot"></span><span>Repositori</span>
                         </a>
-                        <a class="submenu-item" href="#">
+                        <a class="submenu-item {{ request()->routeIs('unit.mitra') ? 'active' : '' }}" href="{{ route('unit.mitra') }}">
                             <span class="submenu-dot"></span><span>Mitra</span>
                         </a>
                     </div>
@@ -191,6 +191,14 @@
                 @include('auth.layout.unit.detail_kerjasama')
             @elseif(request()->routeIs('unit.dkerjasama'))
                 @include('auth.layout.unit.dkerjasama')
+            @elseif(request()->routeIs('unit.mitra.create'))
+                @include('auth.layout.unit.mitra.create')
+            @elseif(request()->routeIs('unit.mitra.edit'))
+                @include('auth.layout.unit.mitra.edit')
+            @elseif(request()->routeIs('unit.mitra.show'))
+                @include('auth.layout.unit.mitra.detail')
+            @elseif(request()->routeIs('unit.mitra'))
+                @include('auth.layout.unit.mitra.index')
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')
             @elseif(request()->routeIs('unit.evaluasi'))

@@ -157,6 +157,16 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');
+    
+    // ─── Mitra Unit CRUD ─────────────────────────────────
+    Route::get('/unit/mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'mitra'])->name('unit.mitra');
+    Route::get('/unit/mitra/create', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraCreate'])->name('unit.mitra.create');
+    Route::post('/unit/mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraStore'])->name('unit.mitra.store');
+    Route::get('/unit/mitra/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraShow'])->name('unit.mitra.show');
+    Route::get('/unit/mitra/{id}/edit', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraEdit'])->name('unit.mitra.edit');
+    Route::put('/unit/mitra/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraUpdate'])->name('unit.mitra.update');
+    Route::delete('/unit/mitra/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraDestroy'])->name('unit.mitra.destroy');
+
     Route::get('/unit/data-kerjasama/create', [KerjasamaUnitController::class, 'create'])->name('unit.kerjasama.create');
     Route::post('/unit/data-kerjasama', [KerjasamaUnitController::class, 'store'])->name('unit.kerjasama.store');
     Route::get('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'show'])->name('unit.kerjasama.show');

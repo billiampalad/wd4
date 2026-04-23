@@ -5,7 +5,9 @@
         <div class="breadcrumb">
             <i class="fas fa-home" style="font-size:11px;"></i>
             <span class="sep">/</span>
-            <span class="current" id="breadcrumbCurrent">Repositori</span>
+            <span class="current" id="breadcrumbCurrent">Kerjasama</span>
+            <span class="sep">/</span>
+            <span class="current">Repositori</span>
         </div>
         <h2 id="pageTitle">Data Kerjasama</h2>
         <p id="pageDesc">Kelola dan lihat data kerjasama khusus untuk
