@@ -39,7 +39,7 @@
                             return this.items.filter(i => i.label.toLowerCase().includes(q));
                         }
                     }">
-                        <label class="mc-label">Klasifikasi Mitra</label>
+                        <label class="mc-label">Klasifikasi Mitra <span class="mc-req">*</span></label>
                         <input type="hidden" name="id_klasifikasi" :value="selected">
                         <div class="alpine-dropdown" @click.outside="open = false; search = ''">
                             <div class="ad-trigger no-icon" :class="{'active': open}"
@@ -149,8 +149,7 @@
                             <div class="mc-group" style="margin-top: 16px;" x-data="countryPicker()"
                                 x-init="$watch('kategori', v => { if(v !== 'internasional') selected = 'Indonesia' }); selected = negara">
                                 <label class="mc-label"><i class="fas fa-globe-americas"
-                                        style="color: var(--accent); margin-right: 6px;"></i>Negara <span
-                                        class="mc-req">*</span></label>
+                                        style="color: var(--accent); margin-right: 6px;"></i>Negara</label>
                                 <input type="hidden" name="negara" :value="selected" required>
                                 <div class="alpine-dropdown" @click.outside="open = false; search = ''">
                                     <div class="ad-trigger" :class="{'active': open}"
@@ -204,6 +203,21 @@
                     <span class="text-danger" style="margin-top: 8px; display: block; font-size: 11px;"><i
                             class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                 @enderror
+
+                {{-- Alamat --}}
+                <div class="mc-group" style="margin-bottom: 16px;">
+                    <label class="mc-label">Alamat</label>
+                    <div class="mc-input-wrap">
+                        <i class="fas fa-map-marker-alt mc-icon-left" style="top: 14px;"></i>
+                        <textarea name="alamat" rows="2" placeholder="Masukkan alamat lengkap mitra..."
+                            class="mc-input @error('alamat') border-danger @enderror"
+                            style="resize: vertical; min-height: 70px;">{{ old('alamat') }}</textarea>
+                    </div>
+                    @error('alamat')
+                        <span class="text-danger"
+                            style="font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</span>
+                    @enderror
+                </div>
 
                 <div class="mc-grid-2">
 

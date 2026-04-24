@@ -64,8 +64,8 @@
                                     <span class="um-name">{{ $mitra->nama_mitra }}</span>
                                 </td>
                                 <td class="um-td">
-                                    <span class="tag tag-{{ $mitra->kategori == 'nasional' ? 'blue' : 'purple' }}" style="font-size: 11px;">
-                                        {{ ucfirst($mitra->kategori) }}
+                                    <span class="um-meta">
+                                        {{ $mitra->klasifikasi->nama ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="um-td">

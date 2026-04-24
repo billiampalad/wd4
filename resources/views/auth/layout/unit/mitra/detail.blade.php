@@ -20,60 +20,79 @@
         <div>
             <div class="modern-card" style="padding: 24px;">
                 <div style="text-align: center; margin-bottom: 24px;">
-                    <div style="width: 80px; height: 80px; border-radius: 20px; background: var(--accent2); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">
+                    <div
+                        style="width: 80px; height: 80px; border-radius: 20px; background: var(--accent2); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">
                         <i class="fas fa-building"></i>
                     </div>
-                    <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">{{ $mitra->nama_mitra }}</h3>
+                    <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+                        {{ $mitra->nama_mitra }}</h3>
                     <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                        <span class="tag tag-{{ $mitra->kategori == 'nasional' ? 'blue' : 'purple' }}">{{ ucfirst($mitra->kategori) }}</span>
+                        <span
+                            class="tag tag-{{ $mitra->kategori == 'nasional' ? 'blue' : 'purple' }}">{{ ucfirst($mitra->kategori) }}</span>
                         @if($mitra->klasifikasi)
                             <span class="tag tag-green">{{ $mitra->klasifikasi->nama }}</span>
                         @endif
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--border); padding-top: 20px;">
-                    @if($mitra->alamat)
+                <div
+                    style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--border); padding-top: 20px;">
                     <div>
-                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Alamat</div>
-                        <div style="font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: flex-start; gap: 8px;">
-                            <i class="fas fa-map-marker-alt" style="color: var(--accent); font-size: 12px; margin-top: 3px;"></i>
-                            <span>{{ $mitra->alamat }}</span>
+                        <div
+                            style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                            Alamat</div>
+                        <div
+                            style="font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: flex-start; gap: 8px;">
+                            <i class="fas fa-map-marker-alt"
+                                style="color: var(--accent); font-size: 12px; margin-top: 3px;"></i>
+                            <span>{{ $mitra->alamat ?? '-' }}</span>
                         </div>
                     </div>
-                    @endif
 
                     <div>
-                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Negara</div>
-                        <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                        <div
+                            style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                            Negara</div>
+                        <div
+                            style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-globe-asia" style="color: var(--accent); font-size: 12px;"></i>
                             {{ $mitra->negara ?? 'Indonesia' }}
                         </div>
                     </div>
 
-                    @if($mitra->telp)
                     <div>
-                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Telepon</div>
-                        <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                        <div
+                            style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                            Telepon</div>
+                        <div
+                            style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-phone" style="color: var(--accent); font-size: 12px;"></i>
-                            {{ $mitra->telp }}
+                            {{ $mitra->telp ?? '-' }}
                         </div>
                     </div>
-                    @endif
 
-                    @if($mitra->website)
                     <div>
-                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Website</div>
-                        <div style="font-size: 14px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+                        <div
+                            style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                            Website</div>
+                        <div
+                            style="font-size: 14px; font-weight: 600; color: var(--accent); display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-globe" style="font-size: 12px;"></i>
-                            <a href="{{ $mitra->website }}" target="_blank" style="color: var(--accent); text-decoration: none;">{{ $mitra->website }}</a>
+                            @if($mitra->website)
+                                <a href="{{ $mitra->website }}" target="_blank"
+                                    style="color: var(--accent); text-decoration: none;">{{ $mitra->website }}</a>
+                            @else
+                                <span style="color: var(--text);">-</span>
+                            @endif
                         </div>
                     </div>
-                    @endif
 
                     <div>
-                        <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Total Kerjasama</div>
-                        <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
+                        <div
+                            style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                            Total Kerjasama</div>
+                        <div
+                            style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-handshake" style="color: var(--accent); font-size: 12px;"></i>
                             {{ $mitra->kegiatanKerjasamas->count() }} Kegiatan
                         </div>
@@ -81,10 +100,12 @@
                 </div>
 
                 <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 10px;">
-                    <a href="{{ route('unit.mitra.edit', $mitra->id) }}" class="rfc-btn rfc-btn-primary" style="text-decoration: none; justify-content: center; width: 100%;">
+                    <a href="{{ route('unit.mitra.edit', $mitra->id) }}" class="rfc-btn rfc-btn-primary"
+                        style="text-decoration: none; justify-content: center; width: 100%;">
                         <i class="fas fa-edit"></i> Edit Data Mitra
                     </a>
-                    <a href="{{ route('unit.mitra') }}" class="rfc-btn" style="text-decoration: none; justify-content: center; width: 100%; background: var(--surface2); color: var(--text); border: 1px solid var(--border);">
+                    <a href="{{ route('unit.mitra') }}" class="rfc-btn"
+                        style="text-decoration: none; justify-content: center; width: 100%; background: var(--surface2); color: var(--text); border: 1px solid var(--border);">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -93,8 +114,10 @@
 
         {{-- Main: Activities List --}}
         <div class="modern-card">
-            <div style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0;">Riwayat Kegiatan Kerjasama</h4>
+            <div
+                style="padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin: 0;">Riwayat Kegiatan Kerjasama
+                </h4>
             </div>
             <div class="card-body" style="padding: 0;">
                 <div class="table-wrap um-table-wrap">
@@ -115,8 +138,10 @@
                                         <span class="um-num">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</span>
                                     </td>
                                     <td class="um-td">
-                                        <div style="font-weight: 600; color: var(--text); margin-bottom: 2px;">{{ $kegiatan->nama_kegiatan }}</div>
-                                        <div style="font-size: 11px; color: var(--text-sub);">{{ $kegiatan->jenis_dokumen }} - {{ $kegiatan->nomor_mou }}</div>
+                                        <div style="font-weight: 600; color: var(--text); margin-bottom: 2px;">
+                                            {{ $kegiatan->nama_kegiatan }}</div>
+                                        <div style="font-size: 11px; color: var(--text-sub);">{{ $kegiatan->jenis_dokumen }}
+                                            - {{ $kegiatan->nomor_mou }}</div>
                                     </td>
                                     <td class="um-td">
                                         <div style="font-size: 12px; color: var(--text);">
@@ -137,7 +162,8 @@
                                     </td>
                                     <td class="um-td um-td-aksi">
                                         <div class="um-actions">
-                                            <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view" title="Lihat Detail Kegiatan">
+                                            <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view"
+                                                title="Lihat Detail Kegiatan">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </div>

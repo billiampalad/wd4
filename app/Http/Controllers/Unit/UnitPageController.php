@@ -55,12 +55,8 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        // Ambil semua mitra yang pernah bekerjasama dengan unit ini
-        $mitras = \App\Models\Mitra::whereHas('kegiatanKerjasamas', function($q) use ($unitId) {
-            $q->whereHas('unitKerjas', function($uq) use ($unitId) {
-                $uq->where('unit_kerjas.id', $unitId);
-            });
-        })->withCount(['kegiatanKerjasamas' => function($q) use ($unitId) {
+        // Ambil semua mitra, beserta jumlah kerjasama terkait unit ini
+        $mitras = \App\Models\Mitra::with('klasifikasi')->withCount(['kegiatanKerjasamas' => function($q) use ($unitId) {
             $q->whereHas('unitKerjas', function($uq) use ($unitId) {
                 $uq->where('unit_kerjas.id', $unitId);
             });
@@ -149,8 +145,8 @@ class UnitPageController extends Controller
     {
         $mitra = \App\Models\Mitra::findOrFail($id);
         
-        // Cek apakah mitra masih memiliki kegiatan kerjasama
-        if ($mitra->kegiatanKerjasamas()->count() > 0) {
+        // Cek apakah mitra memiliki riwayat kegiatan kerjasama
+        if ($mitra->kegiatanKerjasamas()->exists()) {
             return back()->with('error', 'Mitra tidak bisa dihapus karena masih memiliki riwayat kerjasama.');
         }
 
