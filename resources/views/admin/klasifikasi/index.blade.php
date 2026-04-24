@@ -1,5 +1,17 @@
 @extends('admin.dashboard')
 
+@section('styles')
+    <style>
+        .um-table-wrap {
+            overflow-x: visible;
+        }
+        .um-table {
+            min-width: unset;
+            width: 100%;
+        }
+    </style>
+@endsection
+
 @section('content')
 <main class="main-content">
     <div class="page-header">
