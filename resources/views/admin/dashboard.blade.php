@@ -115,7 +115,10 @@
                 <div class="menu-icon"><i class="fas fa-microchip"></i></div>
                 <span>Jurusan</span>
             </a>
-
+            <a class="menu-item {{ request()->routeIs('klasifikasi.*') ? 'active' : '' }}" href="{{ route('klasifikasi.index') }}">
+                <div class="menu-icon"><i class="fas fa-microchip"></i></div>
+                <span>Klasifikasi Mitra</span>
+            </a>
             <!-- <div class="menu-section">KERJASAMA</div>
             <a class="menu-item" href="#" data-page="data_kerjasama">
                 <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
