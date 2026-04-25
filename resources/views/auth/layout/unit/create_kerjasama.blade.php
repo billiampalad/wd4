@@ -35,6 +35,120 @@
             <form action="{{ route('unit.kerjasama.store') }}" method="POST">
                 @csrf
                 <div class="mc-body">
+                    <div class="mc-grid-2">
+                        {{-- Dokumen Kerjasama (Alpine Interactive) --}}
+                        <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
+                            open: false, 
+                            selected: '{{ old('jenis_dokumen', 'MoU') }}',
+                            items: [
+                                { id: 'MoU', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
+                                { id: 'MoA', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
+                                { id: 'IA', label: 'Implementation Arrangement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
+                            ],
+                            get selectedItem() {
+                                return this.items.find(i => i.id === this.selected);
+                            }
+                        }">
+                            <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
+                            <input type="hidden" name="jenis_dokumen" :value="selected">
+
+                            <div class="mc-grid-2" style="gap: 16px;">
+                                {{-- Left: Type Dropdown --}}
+                                <div class="alpine-dropdown" @click.outside="open = false" style="position: relative;">
+                                    <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
+                                        style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <div
+                                                :style="'width: 32px; height: 32px; border-radius: 8px; background:' + selectedItem.color + '20; color:' + selectedItem.color + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
+                                                <i class="fas" :class="selectedItem.icon"></i>
+                                            </div>
+                                            <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                <span x-text="selectedItem.short"
+                                                    style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                <span x-text="selectedItem.label"
+                                                    style="font-size: 11px; color: var(--text-sub);"></span>
+                                            </div>
+                                        </div>
+                                        <i class="fas fa-chevron-down"
+                                            style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
+                                            :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                                    </div>
+
+                                    <div class="ad-menu" x-show="open"
+                                        x-transition:enter="transition ease-out duration-200"
+                                        x-transition:enter-start="opacity-0 transform scale-95"
+                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                        style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                        <template x-for="item in items" :key="item.id">
+                                            <div @click="selected = item.id; open = false" class="ad-item"
+                                                :class="{'selected': selected === item.id}"
+                                                style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
+                                                onmouseover="this.style.background='var(--surface2)'"
+                                                onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                <div
+                                                    :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
+                                                    <i class="fas" :class="item.icon"></i>
+                                                </div>
+                                                <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                    <span x-text="item.short"
+                                                        style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                    <span x-text="item.label"
+                                                        style="font-size: 11px; color: var(--text-sub);"></span>
+                                                </div>
+                                                <i class="fas fa-check" x-show="selected === item.id"
+                                                    style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                {{-- Right: Number Input --}}
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-hashtag mc-icon-left"></i>
+                                    <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}"
+                                        placeholder="Masukkan nomor dokumen..." class="mc-input"
+                                        style="height: 48px;" />
+                                </div>
+                            </div>
+                            @error('jenis_dokumen')
+                                <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;"><i
+                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Nama Kegiatan --}}
+                        <div style="grid-column: 1 / -1;" class="mc-group">
+                            <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-file-lines mc-icon-left"></i>
+                                <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}" required
+                                    placeholder="Contoh: Pelatihan Web Development Bersama Industri"
+                                    class="mc-input @error('nama_kegiatan') border-danger @enderror" />
+                            </div>
+                            @error('nama_kegiatan')
+                                <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
+                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div style="grid-column: 1 / -1;" class="mc-group">
+                            <label class="mc-label">Deskripsi</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="dok_keterangan" rows="3"
+                                    placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
+                                    class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('dok_keterangan') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ═══ SECTION 2: Tujuan & Sasaran ═══ --}}
+                    <div class="mc-section-title">
+                        <span class="mc-section-num">02</span>
+                        <span>Tujuan & Sasaran</span>
+                    </div>
+
                     <div id="mitraContainer"
                         x-data="{ kategori: '{{ old('mitra_kategori.0', '') }}', negara: '{{ old('mitra_negara.0', 'Indonesia') }}' }">
                         <div class="mitra-card"
@@ -136,115 +250,8 @@
                                 class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
 
-                    <div class="mc-grid-2">
-                        {{-- Nama Kegiatan --}}
-                        <div style="grid-column: 1 / -1;" class="mc-group">
-                            <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-file-lines mc-icon-left"></i>
-                                <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}" required
-                                    placeholder="Contoh: Pelatihan Web Development Bersama Industri"
-                                    class="mc-input @error('nama_kegiatan') border-danger @enderror" />
-                            </div>
-                            @error('nama_kegiatan')
-                                <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
-                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        {{-- Dokumen Kerjasama (Alpine Interactive) --}}
-                        <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
-                            open: false, 
-                            selected: '{{ old('jenis_dokumen', 'MoU') }}',
-                            items: [
-                                { id: 'MoU', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
-                                { id: 'MoA', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
-                                { id: 'IA', label: 'Implementation Arrangement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
-                            ],
-                            get selectedItem() {
-                                return this.items.find(i => i.id === this.selected);
-                            }
-                        }">
-                            <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
-                            <input type="hidden" name="jenis_dokumen" :value="selected">
-
-                            <div class="mc-grid-2" style="gap: 16px;">
-                                {{-- Left: Type Dropdown --}}
-                                <div class="alpine-dropdown" @click.outside="open = false" style="position: relative;">
-                                    <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
-                                        style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <div
-                                                :style="'width: 32px; height: 32px; border-radius: 8px; background:' + selectedItem.color + '20; color:' + selectedItem.color + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
-                                                <i class="fas" :class="selectedItem.icon"></i>
-                                            </div>
-                                            <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                <span x-text="selectedItem.short"
-                                                    style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                <span x-text="selectedItem.label"
-                                                    style="font-size: 11px; color: var(--text-sub);"></span>
-                                            </div>
-                                        </div>
-                                        <i class="fas fa-chevron-down"
-                                            style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
-                                            :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                                    </div>
-
-                                    <div class="ad-menu" x-show="open"
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 transform scale-95"
-                                        x-transition:enter-end="opacity-100 transform scale-100"
-                                        style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
-                                        <template x-for="item in items" :key="item.id">
-                                            <div @click="selected = item.id; open = false" class="ad-item"
-                                                :class="{'selected': selected === item.id}"
-                                                style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
-                                                onmouseover="this.style.background='var(--surface2)'"
-                                                onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
-                                                <div
-                                                    :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
-                                                    <i class="fas" :class="item.icon"></i>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                    <span x-text="item.short"
-                                                        style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                    <span x-text="item.label"
-                                                        style="font-size: 11px; color: var(--text-sub);"></span>
-                                                </div>
-                                                <i class="fas fa-check" x-show="selected === item.id"
-                                                    style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                {{-- Right: Number Input --}}
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-hashtag mc-icon-left"></i>
-                                    <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}"
-                                        placeholder="Masukkan nomor dokumen..." class="mc-input"
-                                        style="height: 48px;" />
-                                </div>
-                            </div>
-                            @error('jenis_dokumen')
-                                <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;"><i
-                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="mc-group">
-                            <label class="mc-label">Deskripsi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="dok_keterangan" rows="3"
-                                    placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
-                                    class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('dok_keterangan') }}</textarea>
-                            </div>
-                        </div>
-
-                        {{-- Jenis Kerjasama (Alpine Multi-Select) --}}
-                        <div class="mc-group" x-data="{ 
+                    {{-- Jenis Kerjasama (Alpine Multi-Select) --}}
+                    <div class="mc-group" x-data="{ 
                             open: false, 
                             selected: {{ json_encode(old('id_jenis', [])) }},
                             items: [
@@ -262,179 +269,170 @@
                                 return this.items.filter(i => this.selected.includes(i.id)).map(i => i.label);
                             }
                         }">
-                            <label class="mc-label">Jenis Kerjasama <span class="mc-req">*</span></label>
-                            <template x-for="id in selected" :key="id">
-                                <input type="hidden" name="id_jenis[]" :value="id">
-                            </template>
-                            <div class="alpine-dropdown" @click.outside="open = false">
-                                <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
-                                    <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                                        <i class="fas fa-handshake"
-                                            style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                        <span x-show="selected.length === 0" style="color: #9ca3af;">— Pilih Jenis
-                                            —</span>
-                                        <div x-show="selected.length > 0"
-                                            style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                            <template x-for="label in selectedLabels" :key="label">
-                                                <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px;"
-                                                    x-text="label"></span>
-                                            </template>
-                                        </div>
+                        <label class="mc-label">Jenis Kerjasama <span class="mc-req">*</span></label>
+                        <template x-for="id in selected" :key="id">
+                            <input type="hidden" name="id_jenis[]" :value="id">
+                        </template>
+                        <div class="alpine-dropdown" @click.outside="open = false">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
+                                <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                    <i class="fas fa-handshake"
+                                        style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                    <span x-show="selected.length === 0" style="color: #9ca3af;">— Pilih Jenis
+                                        —</span>
+                                    <div x-show="selected.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                        <template x-for="label in selectedLabels" :key="label">
+                                            <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px;"
+                                                x-text="label"></span>
+                                        </template>
                                     </div>
-                                    <i class="fas fa-chevron-down"
-                                        style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
-                                        :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                 </div>
-                                <div class="ad-menu" x-show="open" x-transition>
-                                    <template x-for="item in items" :key="item.id">
-                                        <div class="ad-item" :class="{'selected': isSelected(item.id)}"
-                                            @click="toggle(item.id)"
-                                            style="display: flex; align-items: center; gap: 10px;">
-                                            <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
-                                                :style="isSelected(item.id) ? 'background: var(--accent); border-color: var(--accent);' : ''">
-                                                <i class="fas fa-check" style="font-size: 10px; color: #fff;"
-                                                    x-show="isSelected(item.id)"></i>
-                                            </div>
-                                            <span x-text="item.label"></span>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
+                                    :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                            </div>
+                            <div class="ad-menu" x-show="open" x-transition>
+                                <template x-for="item in items" :key="item.id">
+                                    <div class="ad-item" :class="{'selected': isSelected(item.id)}"
+                                        @click="toggle(item.id)" style="display: flex; align-items: center; gap: 10px;">
+                                        <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                            :style="isSelected(item.id) ? 'background: var(--accent); border-color: var(--accent);' : ''">
+                                            <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                x-show="isSelected(item.id)"></i>
                                         </div>
+                                        <span x-text="item.label"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Penanggung Jawab --}}
+                    <div class="mc-group">
+                        <label class="mc-label">Penanggung Jawab (Optional)</label>
+                        <div class="mc-input-wrap">
+                            <i class="fas fa-user-tie mc-icon-left"></i>
+                            <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab') }}"
+                                placeholder="Nama Koordinator/PJ" class="mc-input" />
+                        </div>
+                    </div>
+
+                    {{-- Periode Mulai (Alpine Datepicker) --}}
+                    <div class="mc-group" x-data="datepicker('{{ old('periode_mulai') }}')">
+                        <label class="mc-label">Periode Mulai</label>
+                        <div class="alpine-datepicker" @click.outside="show = false">
+                            <div class="adp-input-wrap">
+                                <i class="fas fa-calendar-day mc-icon-left"></i>
+                                <input type="text" name="periode_mulai" x-model="formattedDate" readonly
+                                    @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
+                            </div>
+                            <div class="adp-calendar" x-show="show" x-transition>
+                                <div class="adp-header">
+                                    <div style="display: flex; gap: 4px;">
+                                        <span class="adp-month" @click="toggleMonthPicker()"
+                                            x-text="monthNames[month]"></span>
+                                        <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
+                                    </div>
+                                    <div class="adp-nav">
+                                        <div class="adp-nav-btn" @click="prevMonth()"><i
+                                                class="fas fa-chevron-left"></i></div>
+                                        <div class="adp-nav-btn" @click="nextMonth()"><i
+                                                class="fas fa-chevron-right"></i></div>
+                                    </div>
+                                </div>
+
+                                <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
+                                    <template x-for="(mName, index) in monthNames">
+                                        <div class="adp-picker-item" :class="{'selected': month === index}"
+                                            @click="selectMonth(index)" x-text="mName"></div>
                                     </template>
                                 </div>
-                            </div>
-                        </div>
-
-                        {{-- Penanggung Jawab --}}
-                        <div class="mc-group">
-                            <label class="mc-label">Penanggung Jawab (Optional)</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-user-tie mc-icon-left"></i>
-                                <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab') }}"
-                                    placeholder="Nama Koordinator/PJ" class="mc-input" />
-                            </div>
-                        </div>
-
-                        {{-- Periode Mulai (Alpine Datepicker) --}}
-                        <div class="mc-group" x-data="datepicker('{{ old('periode_mulai') }}')">
-                            <label class="mc-label">Periode Mulai</label>
-                            <div class="alpine-datepicker" @click.outside="show = false">
-                                <div class="adp-input-wrap">
-                                    <i class="fas fa-calendar-day mc-icon-left"></i>
-                                    <input type="text" name="periode_mulai" x-model="formattedDate" readonly
-                                        @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
+                                <div class="adp-year-picker" x-show="showYearPicker" x-transition>
+                                    <div style="grid-column: span 4; padding: 4px;">
+                                        <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
+                                            style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                            @click.stop>
+                                    </div>
+                                    <template x-for="y in filteredYears">
+                                        <div class="adp-picker-item" :class="{'selected': year === y}"
+                                            @click="selectYear(y)" x-text="y"></div>
+                                    </template>
                                 </div>
-                                <div class="adp-calendar" x-show="show" x-transition>
-                                    <div class="adp-header">
-                                        <div style="display: flex; gap: 4px;">
-                                            <span class="adp-month" @click="toggleMonthPicker()"
-                                                x-text="monthNames[month]"></span>
-                                            <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
-                                        </div>
-                                        <div class="adp-nav">
-                                            <div class="adp-nav-btn" @click="prevMonth()"><i
-                                                    class="fas fa-chevron-left"></i></div>
-                                            <div class="adp-nav-btn" @click="nextMonth()"><i
-                                                    class="fas fa-chevron-right"></i></div>
-                                        </div>
-                                    </div>
 
-                                    <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
-                                        <template x-for="(mName, index) in monthNames">
-                                            <div class="adp-picker-item" :class="{'selected': month === index}"
-                                                @click="selectMonth(index)" x-text="mName"></div>
-                                        </template>
-                                    </div>
-                                    <div class="adp-year-picker" x-show="showYearPicker" x-transition>
-                                        <div style="grid-column: span 4; padding: 4px;">
-                                            <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
-                                                style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
-                                                @click.stop>
-                                        </div>
-                                        <template x-for="y in filteredYears">
-                                            <div class="adp-picker-item" :class="{'selected': year === y}"
-                                                @click="selectYear(y)" x-text="y"></div>
-                                        </template>
-                                    </div>
-
-                                    <div class="adp-grid">
-                                        <template x-for="day in dayNames">
-                                            <div class="adp-day-name" x-text="day"></div>
-                                        </template>
-                                        <template x-for="blankday in blanks">
-                                            <div class="adp-day empty"></div>
-                                        </template>
-                                        <template x-for="date in days">
-                                            <div class="adp-day"
-                                                :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                                @click="selectDate(date)" x-text="date"></div>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Periode Selesai (Alpine Datepicker) --}}
-                        <div class="mc-group" x-data="datepicker('{{ old('periode_selesai') }}')">
-                            <label class="mc-label">Periode Selesai</label>
-                            <div class="alpine-datepicker" @click.outside="show = false">
-                                <div class="adp-input-wrap">
-                                    <i class="fas fa-calendar-check mc-icon-left"></i>
-                                    <input type="text" name="periode_selesai" x-model="formattedDate" readonly
-                                        @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
-                                </div>
-                                <div class="adp-calendar" x-show="show" x-transition>
-                                    <div class="adp-header">
-                                        <div style="display: flex; gap: 4px;">
-                                            <span class="adp-month" @click="toggleMonthPicker()"
-                                                x-text="monthNames[month]"></span>
-                                            <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
-                                        </div>
-                                        <div class="adp-nav">
-                                            <div class="adp-nav-btn" @click="prevMonth()"><i
-                                                    class="fas fa-chevron-left"></i></div>
-                                            <div class="adp-nav-btn" @click="nextMonth()"><i
-                                                    class="fas fa-chevron-right"></i></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
-                                        <template x-for="(mName, index) in monthNames">
-                                            <div class="adp-picker-item" :class="{'selected': month === index}"
-                                                @click="selectMonth(index)" x-text="mName"></div>
-                                        </template>
-                                    </div>
-                                    <div class="adp-year-picker" x-show="showYearPicker" x-transition>
-                                        <div style="grid-column: span 4; padding: 4px;">
-                                            <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
-                                                style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
-                                                @click.stop>
-                                        </div>
-                                        <template x-for="y in filteredYears">
-                                            <div class="adp-picker-item" :class="{'selected': year === y}"
-                                                @click="selectYear(y)" x-text="y"></div>
-                                        </template>
-                                    </div>
-
-                                    <div class="adp-grid">
-                                        <template x-for="day in dayNames">
-                                            <div class="adp-day-name" x-text="day"></div>
-                                        </template>
-                                        <template x-for="blankday in blanks">
-                                            <div class="adp-day empty"></div>
-                                        </template>
-                                        <template x-for="date in days">
-                                            <div class="adp-day"
-                                                :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                                @click="selectDate(date)" x-text="date"></div>
-                                        </template>
-                                    </div>
+                                <div class="adp-grid">
+                                    <template x-for="day in dayNames">
+                                        <div class="adp-day-name" x-text="day"></div>
+                                    </template>
+                                    <template x-for="blankday in blanks">
+                                        <div class="adp-day empty"></div>
+                                    </template>
+                                    <template x-for="date in days">
+                                        <div class="adp-day"
+                                            :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                            @click="selectDate(date)" x-text="date"></div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- ═══ SECTION 2: Tujuan & Sasaran ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">02</span>
-                        <span>Tujuan & Sasaran</span>
+                    {{-- Periode Selesai (Alpine Datepicker) --}}
+                    <div class="mc-group" x-data="datepicker('{{ old('periode_selesai') }}')">
+                        <label class="mc-label">Periode Selesai</label>
+                        <div class="alpine-datepicker" @click.outside="show = false">
+                            <div class="adp-input-wrap">
+                                <i class="fas fa-calendar-check mc-icon-left"></i>
+                                <input type="text" name="periode_selesai" x-model="formattedDate" readonly
+                                    @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
+                            </div>
+                            <div class="adp-calendar" x-show="show" x-transition>
+                                <div class="adp-header">
+                                    <div style="display: flex; gap: 4px;">
+                                        <span class="adp-month" @click="toggleMonthPicker()"
+                                            x-text="monthNames[month]"></span>
+                                        <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
+                                    </div>
+                                    <div class="adp-nav">
+                                        <div class="adp-nav-btn" @click="prevMonth()"><i
+                                                class="fas fa-chevron-left"></i></div>
+                                        <div class="adp-nav-btn" @click="nextMonth()"><i
+                                                class="fas fa-chevron-right"></i></div>
+                                    </div>
+                                </div>
+
+                                <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
+                                    <template x-for="(mName, index) in monthNames">
+                                        <div class="adp-picker-item" :class="{'selected': month === index}"
+                                            @click="selectMonth(index)" x-text="mName"></div>
+                                    </template>
+                                </div>
+                                <div class="adp-year-picker" x-show="showYearPicker" x-transition>
+                                    <div style="grid-column: span 4; padding: 4px;">
+                                        <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
+                                            style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                            @click.stop>
+                                    </div>
+                                    <template x-for="y in filteredYears">
+                                        <div class="adp-picker-item" :class="{'selected': year === y}"
+                                            @click="selectYear(y)" x-text="y"></div>
+                                    </template>
+                                </div>
+
+                                <div class="adp-grid">
+                                    <template x-for="day in dayNames">
+                                        <div class="adp-day-name" x-text="day"></div>
+                                    </template>
+                                    <template x-for="blankday in blanks">
+                                        <div class="adp-day empty"></div>
+                                    </template>
+                                    <template x-for="date in days">
+                                        <div class="adp-day"
+                                            :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                            @click="selectDate(date)" x-text="date"></div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mc-grid-2">
