@@ -143,10 +143,73 @@
                         </div>
                     </div>
 
-                    {{-- ═══ SECTION 2: Tujuan & Sasaran ═══ --}}
+                    {{-- ═══ SECTION 2: Penggiat Kerja Sama ═══ --}}
                     <div class="mc-section-title">
-                        <span class="mc-section-num">02</span>
-                        <span>Tujuan & Sasaran</span>
+                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
+                        <span>Penggiat Kerja Sama</span>
+                    </div>
+
+                    {{-- Nama Instansi & Alamat --}}
+                    <div class="mc-grid-2">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Instansi <span class="mc-req">*</span></label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-building mc-icon-left"></i>
+                                <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}"
+                                    placeholder="Masukkan nama instansi" class="mc-input" required />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Alamat</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
+                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
+                                    placeholder="Masukkan alamat instansi" class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Penandatangan --}}
+                    <div class="mc-grid-2" style="margin-top: 10px;">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Penandatangan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-pen-nib mc-icon-left"></i>
+                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                    placeholder="Nama penandatangan" class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jabatan Penandatangan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                <input type="text" name="jabatan_penandatangan"
+                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
+                                    class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Penanggung Jawab --}}
+                    <div class="mc-grid-2" style="margin-top: 10px;">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Penanggung Jawab</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-user-tie mc-icon-left"></i>
+                                <input type="text" name="nama_penanggung_jawab"
+                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
+                                    class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jabatan Penanggung Jawab</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                <input type="text" name="jabatan_penanggung_jawab"
+                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
+                                    class="mc-input" />
+                            </div>
+                        </div>
                     </div>
 
                     <div id="mitraContainer"
@@ -304,16 +367,6 @@
                                     </div>
                                 </template>
                             </div>
-                        </div>
-                    </div>
-
-                    {{-- Penanggung Jawab --}}
-                    <div class="mc-group">
-                        <label class="mc-label">Penanggung Jawab (Optional)</label>
-                        <div class="mc-input-wrap">
-                            <i class="fas fa-user-tie mc-icon-left"></i>
-                            <input type="text" name="penanggung_jawab" value="{{ old('penanggung_jawab') }}"
-                                placeholder="Nama Koordinator/PJ" class="mc-input" />
                         </div>
                     </div>
 
