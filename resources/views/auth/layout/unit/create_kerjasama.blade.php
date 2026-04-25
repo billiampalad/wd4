@@ -146,7 +146,7 @@
                     {{-- ═══ SECTION 2: Penggiat Kerja Sama ═══ --}}
                     <div class="mc-section-title">
                         <span class="mc-section-num"><i class="fas fa-users"></i></span>
-                        <span>Penggiat Kerja Sama</span>
+                        <span>Pihak Ke-1</span>
                     </div>
 
                     {{-- Nama Instansi & Alamat --}}
@@ -212,99 +212,71 @@
                         </div>
                     </div>
 
-                    <div id="mitraContainer"
-                        x-data="{ kategori: '{{ old('mitra_kategori.0', '') }}', negara: '{{ old('mitra_negara.0', 'Indonesia') }}' }">
-                        <div class="mitra-card"
-                            style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; position: relative;">
-                            <div class="mc-grid-2">
-                                <div class="mc-group">
-                                    <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
-                                    <div class="mc-input-wrap">
-                                        <input type="text" name="mitra_nama[]" value="{{ old('mitra_nama.0') }}"
-                                            required placeholder="Masukkan nama instansi/mitra"
-                                            class="mc-input no-icon">
-                                    </div>
-                                </div>
+                    <div class="mc-section-title">
+                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
+                        <span>Pihak Ke-2</span>
+                    </div>
 
-                                {{-- Kategori Mitra (Alpine Dropdown) --}}
-                                <div class="mc-group" x-data="{ open: false }">
-                                    <label class="mc-label">Kategori <span class="mc-req">*</span></label>
-                                    <input type="hidden" name="mitra_kategori[]" :value="kategori" required>
-                                    <div class="alpine-dropdown" @click.outside="open = false">
-                                        <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
-                                            <span
-                                                x-text="kategori === 'nasional' ? 'Nasional' : (kategori === 'internasional' ? 'Internasional' : '— Pilih Kategori —')"></span>
-                                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s"
-                                                :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                                        </div>
-                                        <div class="ad-menu" x-show="open" x-transition>
-                                            <div class="ad-item" :class="{'selected': kategori === 'nasional'}"
-                                                @click="kategori = 'nasional'; negara = 'Indonesia'; open = false">
-                                                Nasional</div>
-                                            <div class="ad-item" :class="{'selected': kategori === 'internasional'}"
-                                                @click="kategori = 'internasional'; negara = ''; open = false">
-                                                Internasional</div>
-                                        </div>
-                                    </div>
-                                </div>
+                    {{-- Nama Mitra & Alamat --}}
+                    <div class="mc-grid-2">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-building mc-icon-left"></i>
+                                <input type="text" name="nama_mitra" value="{{ old('nama_mitra') }}"
+                                    placeholder="Masukkan nama mitra" class="mc-input" required />
                             </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Alamat</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
+                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
+                                    placeholder="Masukkan alamat instansi" class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
 
-                            {{-- Negara Dropdown (hanya muncul saat Internasional) --}}
-                            <div x-show="kategori === 'internasional'" x-transition>
-                                <div class="mc-group" style="margin-top: 16px;" x-data="countryPicker()"
-                                    x-init="$watch('kategori', v => { if(v !== 'internasional') selected = 'Indonesia' }); selected = negara">
-                                    <label class="mc-label"><i class="fas fa-globe-americas"
-                                            style="color: var(--accent); margin-right: 6px;"></i>Negara <span
-                                            class="mc-req">*</span></label>
-                                    <input type="hidden" name="mitra_negara[]" :value="selected" required>
-                                    <div class="alpine-dropdown" @click.outside="open = false; search = ''">
-                                        <div class="ad-trigger" :class="{'active': open}"
-                                            @click="open = !open; $nextTick(() => { if(open) $refs.countrySearch.focus() })">
-                                            <div
-                                                style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
-                                                <i class="fas fa-flag"
-                                                    style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                                <span x-show="!selected" style="color: #9ca3af;">— Pilih Negara —</span>
-                                                <span x-show="selected" x-text="selected"
-                                                    style="font-weight: 500;"></span>
-                                            </div>
-                                            <i class="fas fa-chevron-down"
-                                                style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
-                                                :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                                        </div>
-                                        <div class="ad-menu" x-show="open" x-transition
-                                            style="max-height: 280px; overflow: hidden; display: flex; flex-direction: column;">
-                                            {{-- Search Input --}}
-                                            <div
-                                                style="padding: 8px 12px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
-                                                <div
-                                                    style="display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;">
-                                                    <i class="fas fa-search"
-                                                        style="font-size: 12px; color: #9ca3af;"></i>
-                                                    <input x-ref="countrySearch" x-model="search" type="text"
-                                                        placeholder="Cari negara..."
-                                                        style="border: none; outline: none; background: transparent; font-size: 13px; color: var(--text); width: 100%; font-family: inherit;"
-                                                        @click.stop>
-                                                    <button x-show="search" @click.stop="search = ''" type="button"
-                                                        style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 0; font-size: 11px;">
-                                                        <i class="fas fa-times-circle"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            {{-- Country List --}}
-                                            <div style="overflow-y: auto; max-height: 220px; flex: 1;">
-                                                <template x-for="country in filteredCountries" :key="country">
-                                                    <div class="ad-item" :class="{'selected': selected === country}"
-                                                        @click="selected = country; negara = country; open = false; search = ''"
-                                                        x-text="country"></div>
-                                                </template>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    {{-- Penandatangan --}}
+                    <div class="mc-grid-2" style="margin-top: 10px;">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Penandatangan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-pen-nib mc-icon-left"></i>
+                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                    placeholder="Nama penandatangan" class="mc-input" />
                             </div>
-                            <input type="hidden" name="mitra_negara[]" :value="negara"
-                                x-show="kategori !== 'internasional'">
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jabatan Penandatangan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                <input type="text" name="jabatan_penandatangan"
+                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
+                                    class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Penanggung Jawab --}}
+                    <div class="mc-grid-2" style="margin-top: 10px;">
+                        <div class="mc-group">
+                            <label class="mc-label">Nama Penanggung Jawab</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-user-tie mc-icon-left"></i>
+                                <input type="text" name="nama_penanggung_jawab"
+                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
+                                    class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jabatan Penanggung Jawab</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                <input type="text" name="jabatan_penanggung_jawab"
+                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
+                                    class="mc-input" />
+                            </div>
                         </div>
                     </div>
 
@@ -312,6 +284,12 @@
                         <span class="text-danger" style="margin-top: 8px; display: block; font-size: 11px;"><i
                                 class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
+
+                    {{-- ═══ SECTION 4: Bentuk Kegiatan ═══ --}}
+                    <div class="mc-section-title">
+                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
+                        <span>Bentuk Kegiatan</span>
+                    </div>
 
                     {{-- Jenis Kerjasama (Alpine Multi-Select) --}}
                     <div class="mc-group" x-data="{ 
@@ -509,55 +487,6 @@
                         </div>
                     </div>
 
-                    {{-- ═══ SECTION 3: Pelaksanaan ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">03</span>
-                        <span>Pelaksanaan Kegiatan</span>
-                    </div>
-
-                    <div class="mc-grid-2">
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Deskripsi Pelaksanaan <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-cogs mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_deskripsi" rows="3" required
-                                    placeholder="Deskripsi pelaksanaan kegiatan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Cakupan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-layer-group mc-icon-left"></i>
-                                <input type="text" name="pelaksanaan_cakupan" value="{{ old('pelaksanaan_cakupan') }}"
-                                    placeholder="Cakupan kegiatan" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jumlah Peserta</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-users mc-icon-left"></i>
-                                <input type="number" name="pelaksanaan_peserta" value="{{ old('pelaksanaan_peserta') }}"
-                                    placeholder="0" min="0" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Sumber Daya</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-tools mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_sumber_daya" rows="2"
-                                    placeholder="Sumber daya yang digunakan..." class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- ═══ SECTION 4: Hasil & Capaian ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">04</span>
-                        <span>Hasil & Capaian</span>
-                    </div>
-
                     <div class="mc-grid-2">
                         <div class="mc-group">
                             <label class="mc-label">Hasil Langsung (Output)</label>
@@ -655,6 +584,48 @@
                                 <i class="fas fa-link mc-icon-left"></i>
                                 <input type="text" name="dok_link_drive" value="{{ old('dok_link_drive') }}"
                                     placeholder="https://drive.google.com/..." class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mc-section-title">
+                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
+                        <span>Form Tambahan</span>
+                    </div>
+
+                    <div class="mc-grid-2">
+                        <div class="mc-group" style="grid-column: 1 / -1;">
+                            <label class="mc-label">Deskripsi Pelaksanaan <span class="mc-req">*</span></label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-cogs mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="pelaksanaan_deskripsi" rows="3" required
+                                    placeholder="Deskripsi pelaksanaan kegiatan..." class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Cakupan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-layer-group mc-icon-left"></i>
+                                <input type="text" name="pelaksanaan_cakupan" value="{{ old('pelaksanaan_cakupan') }}"
+                                    placeholder="Cakupan kegiatan" class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jumlah Peserta</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-users mc-icon-left"></i>
+                                <input type="number" name="pelaksanaan_peserta" value="{{ old('pelaksanaan_peserta') }}"
+                                    placeholder="0" min="0" class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group" style="grid-column: 1 / -1;">
+                            <label class="mc-label">Sumber Daya</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-tools mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="pelaksanaan_sumber_daya" rows="2"
+                                    placeholder="Sumber daya yang digunakan..." class="mc-input"
+                                    style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
                             </div>
                         </div>
                     </div>
