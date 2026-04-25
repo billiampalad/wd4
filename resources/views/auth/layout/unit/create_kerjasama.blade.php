@@ -142,148 +142,214 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {{-- ═══ SECTION 2: Penggiat Kerja Sama ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
-                        <span>Pihak Ke-1</span>
-                    </div>
+                {{-- ═══ SECTION 2: Penggiat Kerja Sama (Separate Card) ═══ --}}
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; margin-top: 24px; overflow: hidden;">
+                    {{-- Card Header --}}
+                    <div x-data="{ showPenggiat: true, showPihak1: true, showPihak2: false }">
+                        <div @click="showPenggiat = !showPenggiat"
+                            style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
+                            <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Penggiat Kerja Sama</h4>
+                                <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Data pihak-pihak yang terlibat dalam kerja sama</p>
+                            </div>
+                            <i class="fas fa-chevron-down"
+                                style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;"
+                                :style="showPenggiat ? 'transform: rotate(180deg)' : ''"></i>
+                        </div>
 
-                    {{-- Nama Instansi & Alamat --}}
-                    <div class="mc-grid-2">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Instansi <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-building mc-icon-left"></i>
-                                <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}"
-                                    placeholder="Masukkan nama instansi" class="mc-input" required />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Alamat</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
-                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
-                                    placeholder="Masukkan alamat instansi" class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
+                        {{-- Card Body --}}
+                        <div x-show="showPenggiat" x-collapse.duration.300ms
+                            style="padding: 20px 24px;">
 
-                    {{-- Penandatangan --}}
-                    <div class="mc-grid-2" style="margin-top: 10px;">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Penandatangan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-pen-nib mc-icon-left"></i>
-                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
-                                    placeholder="Nama penandatangan" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jabatan Penandatangan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-id-badge mc-icon-left"></i>
-                                <input type="text" name="jabatan_penandatangan"
-                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
-                                    class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
+                            {{-- ── Pihak Ke-1 ── --}}
+                            <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
+                                {{-- Pihak 1 Header --}}
+                                <div @click="showPihak1 = !showPihak1"
+                                    style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                    onmouseover="this.style.background='var(--surface)'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.12); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-1</span>
+                                        <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Instansi Penyelenggara</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down"
+                                        style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
+                                        :style="showPihak1 ? 'transform: rotate(180deg)' : ''"></i>
+                                </div>
 
-                    {{-- Penanggung Jawab --}}
-                    <div class="mc-grid-2" style="margin-top: 10px;">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Penanggung Jawab</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-user-tie mc-icon-left"></i>
-                                <input type="text" name="nama_penanggung_jawab"
-                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
-                                    class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jabatan Penanggung Jawab</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-id-badge mc-icon-left"></i>
-                                <input type="text" name="jabatan_penanggung_jawab"
-                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
-                                    class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
+                                {{-- Pihak 1 Content --}}
+                                <div x-show="showPihak1" x-collapse.duration.300ms
+                                    style="padding: 0 20px 20px 20px;">
+                                    {{-- Nama Instansi & Alamat --}}
+                                    <div class="mc-grid-2">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Instansi <span class="mc-req">*</span></label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-building mc-icon-left"></i>
+                                                <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}"
+                                                    placeholder="Masukkan nama instansi" class="mc-input" required />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Alamat</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
+                                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
+                                                    placeholder="Masukkan alamat instansi" class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    <div class="mc-section-title">
-                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
-                        <span>Pihak Ke-2</span>
-                    </div>
+                                    {{-- Penandatangan --}}
+                                    <div class="mc-grid-2" style="margin-top: 10px;">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Penandatangan</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-pen-nib mc-icon-left"></i>
+                                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                                    placeholder="Nama penandatangan" class="mc-input" />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Jabatan Penandatangan</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                                <input type="text" name="jabatan_penandatangan"
+                                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    {{-- Nama Mitra & Alamat --}}
-                    <div class="mc-grid-2">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-building mc-icon-left"></i>
-                                <input type="text" name="nama_mitra" value="{{ old('nama_mitra') }}"
-                                    placeholder="Masukkan nama mitra" class="mc-input" required />
+                                    {{-- Penanggung Jawab --}}
+                                    <div class="mc-grid-2" style="margin-top: 10px;">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Penanggung Jawab</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-user-tie mc-icon-left"></i>
+                                                <input type="text" name="nama_penanggung_jawab"
+                                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Jabatan Penanggung Jawab</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                                <input type="text" name="jabatan_penanggung_jawab"
+                                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Alamat</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
-                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
-                                    placeholder="Masukkan alamat instansi" class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
 
-                    {{-- Penandatangan --}}
-                    <div class="mc-grid-2" style="margin-top: 10px;">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Penandatangan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-pen-nib mc-icon-left"></i>
-                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
-                                    placeholder="Nama penandatangan" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jabatan Penandatangan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-id-badge mc-icon-left"></i>
-                                <input type="text" name="jabatan_penandatangan"
-                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
-                                    class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
+                            {{-- ── Pihak Ke-2 ── --}}
+                            <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+                                {{-- Pihak 2 Header --}}
+                                <div @click="showPihak2 = !showPihak2"
+                                    style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                    onmouseover="this.style.background='var(--surface)'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(5,150,105,0.12); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        <i class="fas fa-handshake"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-2</span>
+                                        <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Mitra Kerja Sama</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down"
+                                        style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
+                                        :style="showPihak2 ? 'transform: rotate(180deg)' : ''"></i>
+                                </div>
 
-                    {{-- Penanggung Jawab --}}
-                    <div class="mc-grid-2" style="margin-top: 10px;">
-                        <div class="mc-group">
-                            <label class="mc-label">Nama Penanggung Jawab</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-user-tie mc-icon-left"></i>
-                                <input type="text" name="nama_penanggung_jawab"
-                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
-                                    class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jabatan Penanggung Jawab</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-id-badge mc-icon-left"></i>
-                                <input type="text" name="jabatan_penanggung_jawab"
-                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
-                                    class="mc-input" />
+                                {{-- Pihak 2 Content --}}
+                                <div x-show="showPihak2" x-collapse.duration.300ms
+                                    style="padding: 0 20px 20px 20px;">
+                                    {{-- Nama Mitra & Alamat --}}
+                                    <div class="mc-grid-2">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-building mc-icon-left"></i>
+                                                <input type="text" name="nama_mitra" value="{{ old('nama_mitra') }}"
+                                                    placeholder="Masukkan nama mitra" class="mc-input" required />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Alamat</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
+                                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}"
+                                                    placeholder="Masukkan alamat instansi" class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Penandatangan --}}
+                                    <div class="mc-grid-2" style="margin-top: 10px;">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Penandatangan</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-pen-nib mc-icon-left"></i>
+                                                <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                                    placeholder="Nama penandatangan" class="mc-input" />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Jabatan Penandatangan</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                                <input type="text" name="jabatan_penandatangan"
+                                                    value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Penanggung Jawab --}}
+                                    <div class="mc-grid-2" style="margin-top: 10px;">
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Penanggung Jawab</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-user-tie mc-icon-left"></i>
+                                                <input type="text" name="nama_penanggung_jawab"
+                                                    value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Jabatan Penanggung Jawab</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-id-badge mc-icon-left"></i>
+                                                <input type="text" name="jabatan_penanggung_jawab"
+                                                    value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab"
+                                                    class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     @error('mitra_nama')
-                        <span class="text-danger" style="margin-top: 8px; display: block; font-size: 11px;"><i
+                        <span class="text-danger" style="margin: 12px 24px; display: block; font-size: 11px;"><i
                                 class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
+                </div>
+
+                {{-- Continue mc-body for remaining sections --}}
+                <div class="mc-body">
 
                     {{-- ═══ SECTION 4: Bentuk Kegiatan ═══ --}}
                     <div class="mc-section-title">
@@ -344,6 +410,102 @@
                                         <span x-text="item.label"></span>
                                     </div>
                                 </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ═══ SECTION 5: Permasalahan & Solusi ═══ --}}
+                    <div class="mc-section-title">
+                        <span class="mc-section-num">05</span>
+                        <span>Permasalahan & Solusi</span>
+                    </div>
+
+                    <div class="mc-grid-1">
+                        <div class="mc-group">
+                            <label class="mc-label">Kendala yang dihadapi</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-exclamation-triangle mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="masalah_kendala" rows="3"
+                                    placeholder="Jelaskan kendala atau permasalahan..." class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_kendala') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Solusi</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-check-circle mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="masalah_solusi" rows="3"
+                                    placeholder="Upaya yang dilakukan untuk mengatasi kendala..." class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_solusi') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Rekomendasi</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-lightbulb mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="masalah_rekomendasi" rows="3"
+                                    placeholder="Berikan rekomendasi perbaikan..." class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_rekomendasi') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ═══ SECTION 6: Dokumentasi ═══ --}}
+                    <div class="mc-section-title">
+                        <span class="mc-section-num">06</span>
+                        <span>Dokumentasi <span
+                                style="font-weight: 400; font-size: 12px; color: var(--text-sub); margin-left: 4px;">(Opsional)</span></span>
+                    </div>
+
+                    <div class="mc-grid-1">
+                        <div class="mc-group">
+                            <label class="mc-label">Link Google Drive</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-link mc-icon-left"></i>
+                                <input type="text" name="dok_link_drive" value="{{ old('dok_link_drive') }}"
+                                    placeholder="https://drive.google.com/..." class="mc-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mc-section-title">
+                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
+                        <span>Form Tambahan</span>
+                    </div>
+
+                    <div class="mc-grid-2">
+                        <div class="mc-group" style="grid-column: 1 / -1;">
+                            <label class="mc-label">Deskripsi Pelaksanaan <span class="mc-req">*</span></label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-cogs mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="pelaksanaan_deskripsi" rows="3" required
+                                    placeholder="Deskripsi pelaksanaan kegiatan..." class="mc-input"
+                                    style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Cakupan</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-layer-group mc-icon-left"></i>
+                                <input type="text" name="pelaksanaan_cakupan" value="{{ old('pelaksanaan_cakupan') }}"
+                                    placeholder="Cakupan kegiatan" class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group">
+                            <label class="mc-label">Jumlah Peserta</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-users mc-icon-left"></i>
+                                <input type="number" name="pelaksanaan_peserta" value="{{ old('pelaksanaan_peserta') }}"
+                                    placeholder="0" min="0" class="mc-input" />
+                            </div>
+                        </div>
+                        <div class="mc-group" style="grid-column: 1 / -1;">
+                            <label class="mc-label">Sumber Daya</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-tools mc-icon-left" style="top: 14px;"></i>
+                                <textarea name="pelaksanaan_sumber_daya" rows="2"
+                                    placeholder="Sumber daya yang digunakan..." class="mc-input"
+                                    style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -530,102 +692,6 @@
                                 <textarea name="hasil_manfaat_mitra" rows="2" placeholder="Manfaat bagi mitra..."
                                     class="mc-input"
                                     style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_mitra') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- ═══ SECTION 5: Permasalahan & Solusi ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">05</span>
-                        <span>Permasalahan & Solusi</span>
-                    </div>
-
-                    <div class="mc-grid-1">
-                        <div class="mc-group">
-                            <label class="mc-label">Kendala yang dihadapi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-exclamation-triangle mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_kendala" rows="3"
-                                    placeholder="Jelaskan kendala atau permasalahan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_kendala') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Solusi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-check-circle mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_solusi" rows="3"
-                                    placeholder="Upaya yang dilakukan untuk mengatasi kendala..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_solusi') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Rekomendasi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-lightbulb mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_rekomendasi" rows="3"
-                                    placeholder="Berikan rekomendasi perbaikan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_rekomendasi') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- ═══ SECTION 6: Dokumentasi ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">06</span>
-                        <span>Dokumentasi <span
-                                style="font-weight: 400; font-size: 12px; color: var(--text-sub); margin-left: 4px;">(Opsional)</span></span>
-                    </div>
-
-                    <div class="mc-grid-1">
-                        <div class="mc-group">
-                            <label class="mc-label">Link Google Drive</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-link mc-icon-left"></i>
-                                <input type="text" name="dok_link_drive" value="{{ old('dok_link_drive') }}"
-                                    placeholder="https://drive.google.com/..." class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mc-section-title">
-                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
-                        <span>Form Tambahan</span>
-                    </div>
-
-                    <div class="mc-grid-2">
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Deskripsi Pelaksanaan <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-cogs mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_deskripsi" rows="3" required
-                                    placeholder="Deskripsi pelaksanaan kegiatan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Cakupan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-layer-group mc-icon-left"></i>
-                                <input type="text" name="pelaksanaan_cakupan" value="{{ old('pelaksanaan_cakupan') }}"
-                                    placeholder="Cakupan kegiatan" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jumlah Peserta</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-users mc-icon-left"></i>
-                                <input type="number" name="pelaksanaan_peserta" value="{{ old('pelaksanaan_peserta') }}"
-                                    placeholder="0" min="0" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Sumber Daya</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-tools mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_sumber_daya" rows="2"
-                                    placeholder="Sumber daya yang digunakan..." class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
                             </div>
                         </div>
                     </div>
