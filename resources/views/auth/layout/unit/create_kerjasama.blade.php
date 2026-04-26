@@ -145,236 +145,300 @@
                 </div>
 
                 {{-- ═══ TWO-COLUMN LAYOUT: Penggiat & Bentuk Kegiatan ═══ --}}
-                <style>
-                    .penggiat-bentuk-grid {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 24px;
-                        margin-top: 24px;
-                        align-items: start;
-                    }
-
-                    @media (max-width: 900px) {
-                        .penggiat-bentuk-grid {
-                            grid-template-columns: 1fr;
-                        }
-                    }
-                </style>
-                <div class="penggiat-bentuk-grid">
+                <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 24px; padding: 0 24px;">
 
                     {{-- ═══ COLUMN 1: Penggiat Kerja Sama ═══ --}}
                     <div
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
                         {{-- Card Header --}}
-                        <div x-data="{ showPenggiat: true, showPihak1: true, showPihak2: false }">
+                        <div x-data="{
+                            showPenggiat: true,
+                            showPihak1: true,
+                            showPihak2: true,
+                            showPenandatangan1: true,
+                            showPJ1: false,
+                            penggiatList: [{ id: Date.now(), showPenandatangan: true, showPJ: false, mitraId: '', mitraOpen: false }],
+                            nextId() { return Date.now() + Math.random(); },
+                            addPenggiat() {
+                                this.penggiatList.push({ id: this.nextId(), showPenandatangan: true, showPJ: false, mitraId: '', mitraOpen: false });
+                            },
+                            removePenggiat(idx) {
+                                if (this.penggiatList.length > 1) this.penggiatList.splice(idx, 1);
+                            },
+                            mitraItems: [
+                                @foreach($mitras as $m)
+                                    { id: {{ $m->id }}, nama: '{{ addslashes($m->nama_mitra) }}' },
+                                @endforeach
+                            ]
+                        }">
                             <div @click="showPenggiat = !showPenggiat"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
-                                <div
-                                    style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div style="flex: 1;">
-                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">
-                                        Penggiat Kerja Sama</h4>
-                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Data
-                                        pihak-pihak yang terlibat dalam kerja sama</p>
+                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Penggiat Kerja Sama</h4>
+                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Data pihak-pihak yang terlibat dalam kerja sama</p>
                                 </div>
-                                <i class="fas fa-chevron-down"
-                                    style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;"
-                                    :style="showPenggiat ? 'transform: rotate(180deg)' : ''"></i>
+                                <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;" :style="showPenggiat ? 'transform: rotate(180deg)' : ''"></i>
                             </div>
 
                             {{-- Card Body --}}
                             <div x-show="showPenggiat" x-collapse.duration.300ms style="padding: 20px 24px;">
 
-                                {{-- ── Pihak Ke-1 ── --}}
-                                <div
-                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
+                                {{-- ══ Pihak Ke-1 ══ --}}
+                                <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
                                     {{-- Pihak 1 Header --}}
                                     <div @click="showPihak1 = !showPihak1"
                                         style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                        onmouseover="this.style.background='var(--surface)'"
-                                        onmouseout="this.style.background='transparent'">
-                                        <div
-                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.12); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
+                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.12); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 13px;">
                                             <i class="fas fa-building"></i>
                                         </div>
                                         <div style="flex: 1;">
-                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak
-                                                Ke-1</span>
-                                            <span
-                                                style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Instansi
-                                                Penyelenggara</span>
+                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-1</span>
+                                            <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Instansi Penyelenggara</span>
                                         </div>
-                                        <i class="fas fa-chevron-down"
-                                            style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
-                                            :style="showPihak1 ? 'transform: rotate(180deg)' : ''"></i>
+                                        <i class="fas fa-chevron-down" style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;" :style="showPihak1 ? 'transform: rotate(180deg)' : ''"></i>
                                     </div>
 
                                     {{-- Pihak 1 Content --}}
-                                    <div x-show="showPihak1" x-collapse.duration.300ms
-                                        style="padding: 0 20px 20px 20px;">
-                                        {{-- Nama Instansi & Alamat --}}
-                                        <div class="mc-grid-2">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Instansi <span
-                                                        class="mc-req">*</span></label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-building mc-icon-left"></i>
-                                                    <input type="text" name="nama_instansi"
-                                                        value="{{ old('nama_instansi') }}"
-                                                        placeholder="Masukkan nama instansi" class="mc-input"
-                                                        required />
-                                                </div>
+                                    <div x-show="showPihak1" x-collapse.duration.300ms style="padding: 0 20px 20px 20px;">
+                                        {{-- Nama Instansi (full width) --}}
+                                        <div class="mc-group">
+                                            <label class="mc-label">Nama Instansi <span class="mc-req">*</span></label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-building mc-icon-left"></i>
+                                                <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}" placeholder="Masukkan nama instansi" class="mc-input" required />
                                             </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Alamat</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-map-marker-alt mc-icon-left"></i>
-                                                    <input type="text" name="alamat_instansi"
-                                                        value="{{ old('alamat_instansi') }}"
-                                                        placeholder="Masukkan alamat instansi" class="mc-input" />
+                                        </div>
+
+                                        {{-- Alamat (full width) --}}
+                                        <div class="mc-group" style="margin-top: 10px;">
+                                            <label class="mc-label">Alamat</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
+                                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}" placeholder="Masukkan alamat instansi" class="mc-input" />
+                                            </div>
+                                        </div>
+
+                                        {{-- Penandatangan (Collapsible) --}}
+                                        <div style="margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                            <div @click="showPenandatangan1 = !showPenandatangan1"
+                                                style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                                onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
+                                                <i class="fas fa-pen-nib" style="font-size: 12px; color: #4f46e5;"></i>
+                                                <div style="flex: 1;">
+                                                    <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
+                                                    <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat yang menandatangani dokumen</span>
+                                                </div>
+                                                <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="showPenandatangan1 ? 'transform: rotate(180deg)' : ''"></i>
+                                            </div>
+                                            <div x-show="showPenandatangan1" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                <div class="mc-grid-2">
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Nama</label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-user mc-icon-left"></i>
+                                                            <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}" placeholder="Nama penandatangan" class="mc-input" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Jabatan</label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-id-badge mc-icon-left"></i>
+                                                            <input type="text" name="jabatan_penandatangan" value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan" class="mc-input" />
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {{-- Penandatangan --}}
-                                        <div class="mc-grid-2" style="margin-top: 10px;">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Penandatangan</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-pen-nib mc-icon-left"></i>
-                                                    <input type="text" name="nama_penandatangan"
-                                                        value="{{ old('nama_penandatangan') }}"
-                                                        placeholder="Nama penandatangan" class="mc-input" />
+                                        {{-- Penanggung Jawab (Collapsible) --}}
+                                        <div style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                            <div @click="showPJ1 = !showPJ1"
+                                                style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                                onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
+                                                <i class="fas fa-user-tie" style="font-size: 12px; color: #059669;"></i>
+                                                <div style="flex: 1;">
+                                                    <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung Jawab</span>
+                                                    <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika ada</span>
                                                 </div>
+                                                <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="showPJ1 ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Jabatan Penandatangan</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-id-badge mc-icon-left"></i>
-                                                    <input type="text" name="jabatan_penandatangan"
-                                                        value="{{ old('jabatan_penandatangan') }}"
-                                                        placeholder="Jabatan penandatangan" class="mc-input" />
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {{-- Penanggung Jawab --}}
-                                        <div class="mc-grid-2" style="margin-top: 10px;">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Penanggung Jawab</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-user-tie mc-icon-left"></i>
-                                                    <input type="text" name="nama_penanggung_jawab"
-                                                        value="{{ old('nama_penanggung_jawab') }}"
-                                                        placeholder="Nama penanggung jawab" class="mc-input" />
-                                                </div>
-                                            </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Jabatan Penanggung Jawab</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-id-badge mc-icon-left"></i>
-                                                    <input type="text" name="jabatan_penanggung_jawab"
-                                                        value="{{ old('jabatan_penanggung_jawab') }}"
-                                                        placeholder="Jabatan penanggung jawab" class="mc-input" />
+                                            <div x-show="showPJ1" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                <div class="mc-grid-2">
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Nama</label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-user mc-icon-left"></i>
+                                                            <input type="text" name="nama_penanggung_jawab" value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab" class="mc-input" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Jabatan</label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-id-badge mc-icon-left"></i>
+                                                            <input type="text" name="jabatan_penanggung_jawab" value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab" class="mc-input" />
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- ── Pihak Ke-2 ── --}}
-                                <div
-                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+
+                                {{-- ══ Pihak Ke-2 (Dynamic Penggiat) ══ --}}
+                                <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: visible;">
                                     {{-- Pihak 2 Header --}}
                                     <div @click="showPihak2 = !showPihak2"
                                         style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                        onmouseover="this.style.background='var(--surface)'"
-                                        onmouseout="this.style.background='transparent'">
-                                        <div
-                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(5,150,105,0.12); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
+                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(5,150,105,0.12); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 13px;">
                                             <i class="fas fa-handshake"></i>
                                         </div>
                                         <div style="flex: 1;">
-                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak
-                                                Ke-2</span>
-                                            <span
-                                                style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Mitra
-                                                Kerja Sama</span>
+                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-2</span>
+                                            <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Mitra Kerja Sama</span>
                                         </div>
-                                        <i class="fas fa-chevron-down"
-                                            style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
-                                            :style="showPihak2 ? 'transform: rotate(180deg)' : ''"></i>
+                                        <span x-show="penggiatList.length > 0" style="background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-right: 8px;" x-text="penggiatList.length"></span>
+                                        <i class="fas fa-chevron-down" style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;" :style="showPihak2 ? 'transform: rotate(180deg)' : ''"></i>
                                     </div>
 
                                     {{-- Pihak 2 Content --}}
-                                    <div x-show="showPihak2" x-collapse.duration.300ms
-                                        style="padding: 0 20px 20px 20px;">
-                                        {{-- Nama Mitra & Alamat --}}
-                                        <div class="mc-grid-2">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-building mc-icon-left"></i>
-                                                    <input type="text" name="nama_mitra" value="{{ old('nama_mitra') }}"
-                                                        placeholder="Masukkan nama mitra" class="mc-input" required />
-                                                </div>
-                                            </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Alamat</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-map-marker-alt mc-icon-left"></i>
-                                                    <input type="text" name="alamat_instansi"
-                                                        value="{{ old('alamat_instansi') }}"
-                                                        placeholder="Masukkan alamat instansi" class="mc-input" />
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div x-show="showPihak2" x-collapse.duration.300ms style="padding: 0 20px 20px 20px;">
 
-                                        {{-- Penandatangan --}}
-                                        <div class="mc-grid-2" style="margin-top: 10px;">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Penandatangan</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-pen-nib mc-icon-left"></i>
-                                                    <input type="text" name="nama_penandatangan"
-                                                        value="{{ old('nama_penandatangan') }}"
-                                                        placeholder="Nama penandatangan" class="mc-input" />
-                                                </div>
-                                            </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Jabatan Penandatangan</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-id-badge mc-icon-left"></i>
-                                                    <input type="text" name="jabatan_penandatangan"
-                                                        value="{{ old('jabatan_penandatangan') }}"
-                                                        placeholder="Jabatan penandatangan" class="mc-input" />
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {{-- Dynamic Penggiat Entries --}}
+                                        <template x-for="(pg, idx) in penggiatList" :key="pg.id">
+                                            <div style="border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; background: var(--surface); position: relative;"
+                                                x-transition:enter="transition ease-out duration-300"
+                                                x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                                x-transition:enter-end="opacity-100 transform translate-y-0">
 
-                                        {{-- Penanggung Jawab --}}
-                                        <div class="mc-grid-2" style="margin-top: 10px;">
-                                            <div class="mc-group">
-                                                <label class="mc-label">Nama Penanggung Jawab</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-user-tie mc-icon-left"></i>
-                                                    <input type="text" name="nama_penanggung_jawab"
-                                                        value="{{ old('nama_penanggung_jawab') }}"
-                                                        placeholder="Nama penanggung jawab" class="mc-input" />
+                                                {{-- Penggiat Number Badge + Remove --}}
+                                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                                        <span style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center;" x-text="idx + 1"></span>
+                                                        <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penggiat <span x-text="idx + 1"></span></span>
+                                                    </div>
+                                                    <button type="button" x-show="penggiatList.length > 1" @click="removePenggiat(idx)"
+                                                        style="background: rgba(239,68,68,0.1); border: none; color: #ef4444; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.2s;"
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+
+                                                {{-- Nama Mitra (Dropdown from DB + Add New Link) --}}
+                                                <div class="mc-group" style="margin-bottom: 10px;">
+                                                    <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
+                                                    <div style="display: flex; gap: 8px; align-items: flex-start;">
+                                                        <div style="flex: 1; position: relative;" class="alpine-dropdown" @click.outside="pg.mitraOpen = false">
+                                                            <input type="hidden" name="mitra_nama[]" :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
+                                                            <div class="ad-trigger no-icon" :class="{'active': pg.mitraOpen}" @click="pg.mitraOpen = !pg.mitraOpen"
+                                                                style="min-height: 40px;">
+                                                                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                                    <i class="fas fa-building" style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
+                                                                    <span x-show="!pg.mitraId" style="color: #9ca3af; font-size: 12px;">— Pilih Mitra —</span>
+                                                                    <span x-show="pg.mitraId" style="font-size: 12px; color: var(--text);" x-text="mitraItems.find(m => m.id == pg.mitraId)?.nama || ''"></span>
+                                                                </div>
+                                                                <i class="fas fa-chevron-down" style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;" :style="pg.mitraOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                            </div>
+                                                            <div class="ad-menu" x-show="pg.mitraOpen" x-transition
+                                                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130; max-height: 180px; overflow-y: auto;">
+                                                                <template x-for="mitra in mitraItems" :key="mitra.id">
+                                                                    <div class="ad-item" :class="{'selected': pg.mitraId == mitra.id}"
+                                                                        @click="pg.mitraId = mitra.id; pg.mitraOpen = false"
+                                                                        style="font-size: 12px; padding: 8px 12px;">
+                                                                        <span x-text="mitra.nama"></span>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                        {{-- Add New Mitra Button --}}
+                                                        <a href="{{ route('unit.mitra.create') }}"
+                                                            style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
+                                                            onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'"
+                                                            title="Tambah Mitra Baru">
+                                                            <i class="fas fa-plus"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Penandatangan (Collapsible) --}}
+                                                <div style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                    <div @click="pg.showPenandatangan = !pg.showPenandatangan"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface2)'">
+                                                        <i class="fas fa-pen-nib" style="font-size: 12px; color: #4f46e5;"></i>
+                                                        <div style="flex: 1;">
+                                                            <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
+                                                            <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat yang menandatangani dokumen</span>
+                                                        </div>
+                                                        <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="pg.showPenandatangan ? 'transform: rotate(180deg)' : ''"></i>
+                                                    </div>
+                                                    <div x-show="pg.showPenandatangan" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                        <div class="mc-grid-2">
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Nama</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-user mc-icon-left"></i>
+                                                                    <input type="text" :name="'penggiat[' + idx + '][nama_penandatangan]'" placeholder="Nama penandatangan" class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Jabatan</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-id-badge mc-icon-left"></i>
+                                                                    <input type="text" :name="'penggiat[' + idx + '][jabatan_penandatangan]'" placeholder="Jabatan penandatangan" class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Penanggung Jawab (Collapsible) --}}
+                                                <div style="margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                    <div @click="pg.showPJ = !pg.showPJ"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface2)'">
+                                                        <i class="fas fa-user-tie" style="font-size: 12px; color: #059669;"></i>
+                                                        <div style="flex: 1;">
+                                                            <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung Jawab</span>
+                                                            <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika ada</span>
+                                                        </div>
+                                                        <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="pg.showPJ ? 'transform: rotate(180deg)' : ''"></i>
+                                                    </div>
+                                                    <div x-show="pg.showPJ" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                        <div class="mc-grid-2">
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Nama</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-user mc-icon-left"></i>
+                                                                    <input type="text" :name="'penggiat[' + idx + '][nama_pj]'" placeholder="Nama penanggung jawab" class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Jabatan</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-id-badge mc-icon-left"></i>
+                                                                    <input type="text" :name="'penggiat[' + idx + '][jabatan_pj]'" placeholder="Jabatan penanggung jawab" class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="mc-group">
-                                                <label class="mc-label">Jabatan Penanggung Jawab</label>
-                                                <div class="mc-input-wrap">
-                                                    <i class="fas fa-id-badge mc-icon-left"></i>
-                                                    <input type="text" name="jabatan_penanggung_jawab"
-                                                        value="{{ old('jabatan_penanggung_jawab') }}"
-                                                        placeholder="Jabatan penanggung jawab" class="mc-input" />
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </template>
+
+                                        {{-- Tambah Penggiat Button --}}
+                                        <button type="button" @click="addPenggiat()"
+                                            style="width: 100%; padding: 12px; border: 2px dashed var(--border); border-radius: 10px; background: transparent; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;"
+                                            onmouseover="this.style.borderColor='var(--accent)'; this.style.background='rgba(79,70,229,0.04)'"
+                                            onmouseout="this.style.borderColor='var(--border)'; this.style.background='transparent'">
+                                            <i class="fas fa-plus-circle"></i>
+                                            Tambah Penggiat
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -652,7 +716,7 @@
                         </div>
                     </div>
 
-                </div> {{-- End Two-Column Grid --}}
+                </div> {{-- End Stacked Layout --}}
 
                 {{-- Continue mc-body for remaining sections --}}
                 <div class="mc-body">
