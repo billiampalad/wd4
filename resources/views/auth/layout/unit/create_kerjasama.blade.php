@@ -508,14 +508,330 @@
                                     {{-- Pihak 1 Content --}}
                                     <div x-show="showPihak1" x-collapse.duration.300ms
                                         style="padding: 0 20px 20px 20px;">
-                                        {{-- Nama Instansi (full width) --}}
-                                        <div class="mc-group">
-                                            <label class="mc-label">Nama Pelaksana<span class="mc-req">*</span></label>
-                                            <div class="mc-input-wrap">
-                                                <i class="fas fa-building mc-icon-left"></i>
-                                                <input type="text" name="nama_instansi"
-                                                    value="{{ old('nama_instansi') }}"
-                                                    placeholder="Masukkan nama pelaksana" class="mc-input" required />
+                                        {{-- ══ Tipe Pelaksana Dropdown ══ --}}
+                                        <div x-data="{
+                                            tipePelaksana: '{{ old('tipe_pelaksana', '') }}',
+
+                                            {{-- Jurusan multi-select --}}
+                                            jurusanOpen: false,
+                                            selectedJurusans: [],
+                                            jurusanItems: [
+                                                @foreach($jurusans ?? [] as $jur)
+                                                    { id: {{ $jur->id }}, nama: '{{ addslashes($jur->nama_jurusan) }}' },
+                                                @endforeach
+                                            ],
+                                            toggleJurusan(id) {
+                                                if (this.selectedJurusans.includes(id)) {
+                                                    this.selectedJurusans = this.selectedJurusans.filter(i => i !== id);
+                                                } else {
+                                                    this.selectedJurusans.push(id);
+                                                }
+                                                this.selectedProdis = this.selectedProdis.filter(pid => {
+                                                    const p = this.prodiItems.find(x => x.id === pid);
+                                                    return p && this.selectedJurusans.includes(p.jurusan_id);
+                                                });
+                                            },
+                                            getJurusanName(id) { return this.jurusanItems.find(j => j.id === id)?.nama ?? ''; },
+
+                                            {{-- Prodi data (used by nested x-data scopes) --}}
+                                            selectedProdis: [],
+                                            prodiItems: [
+                                                @foreach($prodis ?? [] as $p)
+                                                    { id: {{ $p->id }}, jurusan_id: {{ $p->jurusan_id }}, nama: '{{ addslashes($p->nama_prodi) }}', jenjang: '{{ $p->jenjang }}' },
+                                                @endforeach
+                                            ],
+                                            toggleProdi(id) {
+                                                if (this.selectedProdis.includes(id)) {
+                                                    this.selectedProdis = this.selectedProdis.filter(i => i !== id);
+                                                } else {
+                                                    this.selectedProdis.push(id);
+                                                }
+                                            },
+                                            getProdiName(id) {
+                                                const p = this.prodiItems.find(x => x.id === id);
+                                                return p ? `${p.nama} (${p.jenjang})` : '';
+                                            },
+
+                                            {{-- UPA multi-select --}}
+                                            upaOpen: false,
+                                            selectedUpas: [],
+                                            upaItems: [
+                                                @foreach($upas ?? [] as $u)
+                                                    { id: {{ $u->id }}, nama: '{{ addslashes($u->nama_upa) }}' },
+                                                @endforeach
+                                            ],
+                                            toggleUpa(id) {
+                                                if (this.selectedUpas.includes(id)) { this.selectedUpas = this.selectedUpas.filter(i => i !== id); }
+                                                else { this.selectedUpas.push(id); }
+                                            },
+                                            getUpaName(id) { return this.upaItems.find(u => u.id === id)?.nama ?? ''; },
+
+                                            {{-- Pusat multi-select --}}
+                                            pusatOpen: false,
+                                            selectedPusats: [],
+                                            pusatItems: [
+                                                @foreach($pusats ?? [] as $ps)
+                                                    { id: {{ $ps->id }}, nama: '{{ addslashes($ps->nama_pusat) }}' },
+                                                @endforeach
+                                            ],
+                                            togglePusat(id) {
+                                                if (this.selectedPusats.includes(id)) { this.selectedPusats = this.selectedPusats.filter(i => i !== id); }
+                                                else { this.selectedPusats.push(id); }
+                                            },
+                                            getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
+                                        }">
+                                            {{-- Tipe Pelaksana Selector --}}
+                                            <div class="mc-group">
+                                                <label class="mc-label">Tipe Pelaksana <span class="mc-req">*</span></label>
+                                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                                    <template x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
+                                                        <button type="button" @click="tipePelaksana = opt.v"
+                                                            :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`">
+                                                            <i :class="opt.icon" style="font-size: 13px;"></i>
+                                                            <span x-text="opt.label"></span>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                                <input type="hidden" name="tipe_pelaksana" :value="tipePelaksana">
+                                            </div>
+
+                                            {{-- ══ Jurusan Sub-form (Jenis Kerjasama Style) ══ --}}
+                                            <div x-show="tipePelaksana === 'jurusan'" x-collapse.duration.300ms
+                                                style="margin-top: 12px;">
+
+                                                {{-- Jurusan Dropdown Selector --}}
+                                                <div class="mc-group">
+                                                    <label class="mc-label"><i class="fas fa-microchip" style="margin-right:5px; color:#4f46e5;"></i> Pilih Jurusan</label>
+                                                    <template x-for="jId in selectedJurusans" :key="'hj'+jId">
+                                                        <input type="hidden" name="pelaksana_jurusan_ids[]" :value="jId">
+                                                    </template>
+                                                    <div class="alpine-dropdown" @click.outside="jurusanOpen = false">
+                                                        <div class="ad-trigger no-icon" :class="{'active': jurusanOpen}"
+                                                            @click="jurusanOpen = !jurusanOpen">
+                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-microchip" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedJurusans.length === 0" style="color: #9ca3af;">— Pilih Jurusan —</span>
+                                                                <div x-show="selectedJurusans.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="jId in selectedJurusans" :key="'tag'+jId">
+                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px;" x-text="getJurusanName(jId)"></span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <i class="fas fa-chevron-down"
+                                                                style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
+                                                                :style="jurusanOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                        </div>
+                                                        <div class="ad-menu" x-show="jurusanOpen" x-transition>
+                                                            <template x-for="j in jurusanItems" :key="j.id">
+                                                                <div class="ad-item" :class="{'selected': selectedJurusans.includes(j.id)}"
+                                                                    @click="toggleJurusan(j.id)"
+                                                                    style="display: flex; align-items: center; gap: 10px;">
+                                                                    <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                                                        :style="selectedJurusans.includes(j.id) ? 'background: #4f46e5; border-color: #4f46e5;' : ''">
+                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                            x-show="selectedJurusans.includes(j.id)"></i>
+                                                                    </div>
+                                                                    <span x-text="j.nama"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Dynamic Sub-Forms: Prodi per Selected Jurusan --}}
+                                                <template x-for="jId in selectedJurusans" :key="'jform-' + jId">
+                                                    <div x-transition:enter="transition ease-out duration-300"
+                                                        x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                                        x-transition:enter-end="opacity-100 transform translate-y-0"
+                                                        style="margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; overflow: visible;">
+
+                                                        {{-- Sub-Form Header --}}
+                                                        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.05), rgba(124,58,237,0.03)); border-radius: 14px 14px 0 0;">
+                                                            <div style="width: 28px; height: 28px; border-radius: 8px; background: #4f46e5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
+                                                                <i class="fas fa-microchip"></i>
+                                                            </div>
+                                                            <div style="flex: 1; min-width: 0;">
+                                                                <span style="font-weight: 700; font-size: 13px; color: var(--text);" x-text="getJurusanName(jId)"></span>
+                                                                <span style="font-size: 11px; color: var(--text-sub); display: block; margin-top: 1px;">Pilih program studi pada jurusan ini</span>
+                                                            </div>
+                                                            <button type="button" @click="toggleJurusan(jId)"
+                                                                style="width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                                onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.06)'"
+                                                                onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-sub)'; this.style.background='var(--surface)'"
+                                                                title="Hapus jurusan ini">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </div>
+
+                                                        {{-- Sub-Form Body: Prodi Multi-Select --}}
+                                                        <div style="padding: 18px;" x-data="{
+                                                            prodiDropOpen: false,
+                                                            prodiSearchQ: '',
+                                                            get availableProdis() {
+                                                                const q = this.prodiSearchQ.toLowerCase();
+                                                                return $data.prodiItems.filter(p =>
+                                                                    p.jurusan_id === jId &&
+                                                                    !$data.selectedProdis.includes(p.id) &&
+                                                                    (!q || p.nama.toLowerCase().includes(q))
+                                                                );
+                                                            },
+                                                            get selectedInJurusan() {
+                                                                return $data.selectedProdis.filter(pid => {
+                                                                    const p = $data.prodiItems.find(x => x.id === pid);
+                                                                    return p && p.jurusan_id === jId;
+                                                                });
+                                                            }
+                                                        }">
+                                                            <div class="mc-group" style="position: relative; margin-bottom: 0;" @click.outside="prodiDropOpen = false">
+                                                                <label class="mc-label" style="margin-bottom: 8px;">
+                                                                    <i class="fas fa-graduation-cap" style="margin-right:5px; color:#059669;"></i> Program Studi
+                                                                </label>
+
+                                                                {{-- Selected Prodi Tags --}}
+                                                                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;" x-show="selectedInJurusan.length > 0">
+                                                                    <template x-for="pId in selectedInJurusan" :key="'ptag'+pId">
+                                                                        <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; background:linear-gradient(135deg, rgba(5,150,105,0.12), rgba(5,150,105,0.06)); color:#059669; border:1px solid rgba(5,150,105,0.2);">
+                                                                            <span x-text="$data.getProdiName(pId)"></span>
+                                                                            <i class="fas fa-times" style="font-size:9px; cursor:pointer; opacity:0.7;" @click="$data.toggleProdi(pId)" @click.stop></i>
+                                                                        </span>
+                                                                    </template>
+                                                                </div>
+
+                                                                {{-- Hidden inputs for prodis --}}
+                                                                <template x-for="pId in selectedInJurusan" :key="'hp'+pId">
+                                                                    <input type="hidden" name="pelaksana_prodi_ids[]" :value="pId">
+                                                                </template>
+
+                                                                {{-- Prodi Dropdown --}}
+                                                                <div class="alpine-dropdown" @click.outside="prodiDropOpen = false">
+                                                                    <div class="ad-trigger no-icon" :class="{'active': prodiDropOpen}"
+                                                                        @click="prodiDropOpen = !prodiDropOpen">
+                                                                        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                            <i class="fas fa-graduation-cap" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                            <span style="color: #9ca3af; font-size: 12px;">— Pilih Program Studi —</span>
+                                                                        </div>
+                                                                        <i class="fas fa-chevron-down"
+                                                                            style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
+                                                                            :style="prodiDropOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                                    </div>
+                                                                    <div class="ad-menu" x-show="prodiDropOpen" x-transition
+                                                                        style="max-height: 220px; overflow-y: auto;">
+                                                                        {{-- Search inside dropdown --}}
+                                                                        <div style="padding: 8px 12px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
+                                                                            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;">
+                                                                                <i class="fas fa-search" style="font-size: 11px; color: #9ca3af;"></i>
+                                                                                <input type="text" x-model="prodiSearchQ" placeholder="Cari prodi..."
+                                                                                    style="border: none; outline: none; background: transparent; font-size: 12px; color: var(--text); width: 100%; font-family: inherit;"
+                                                                                    @click.stop>
+                                                                            </div>
+                                                                        </div>
+                                                                        <template x-for="p in availableProdis" :key="p.id">
+                                                                            <div class="ad-item"
+                                                                                @click="$data.toggleProdi(p.id)"
+                                                                                style="display: flex; align-items: center; gap: 10px;">
+                                                                                <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                                                                    :style="$data.selectedProdis.includes(p.id) ? 'background: #059669; border-color: #059669;' : ''">
+                                                                                    <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                                        x-show="$data.selectedProdis.includes(p.id)"></i>
+                                                                                </div>
+                                                                                <span x-text="p.nama" style="flex: 1;"></span>
+                                                                                <span style="font-size:10px; padding:1px 6px; border-radius:4px; background:rgba(5,150,105,0.1); color:#059669; font-weight:600;" x-text="p.jenjang"></span>
+                                                                            </div>
+                                                                        </template>
+                                                                        <div x-show="availableProdis.length === 0"
+                                                                            style="padding:12px 14px; font-size:12px; color:var(--text-sub); text-align:center;">
+                                                                            <i class="fas fa-info-circle" style="margin-right:4px; opacity:0.5;"></i> Tidak ada prodi tersedia
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                            {{-- ══ UPA Sub-form (Checkbox Style) ══ --}}
+                                            <div x-show="tipePelaksana === 'upa'" x-collapse.duration.300ms
+                                                style="margin-top: 12px;">
+                                                <div class="mc-group">
+                                                    <label class="mc-label"><i class="fas fa-building-columns" style="margin-right:5px; color:#0891b2;"></i> Pilih UPA</label>
+                                                    <template x-for="uId in selectedUpas" :key="'hu'+uId">
+                                                        <input type="hidden" name="pelaksana_upa_ids[]" :value="uId">
+                                                    </template>
+                                                    <div class="alpine-dropdown" @click.outside="upaOpen = false">
+                                                        <div class="ad-trigger no-icon" :class="{'active': upaOpen}"
+                                                            @click="upaOpen = !upaOpen">
+                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-building-columns" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedUpas.length === 0" style="color: #9ca3af;">— Pilih UPA —</span>
+                                                                <div x-show="selectedUpas.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="uId in selectedUpas" :key="'utag'+uId">
+                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px; background: rgba(8,145,178,0.12); color: #0891b2; border: 1px solid rgba(8,145,178,0.2);" x-text="getUpaName(uId)"></span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <i class="fas fa-chevron-down"
+                                                                style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
+                                                                :style="upaOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                        </div>
+                                                        <div class="ad-menu" x-show="upaOpen" x-transition>
+                                                            <template x-for="u in upaItems" :key="u.id">
+                                                                <div class="ad-item" :class="{'selected': selectedUpas.includes(u.id)}"
+                                                                    @click="toggleUpa(u.id)"
+                                                                    style="display: flex; align-items: center; gap: 10px;">
+                                                                    <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                                                        :style="selectedUpas.includes(u.id) ? 'background: #0891b2; border-color: #0891b2;' : ''">
+                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                            x-show="selectedUpas.includes(u.id)"></i>
+                                                                    </div>
+                                                                    <span x-text="u.nama"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- ══ Pusat Sub-form (Checkbox Style) ══ --}}
+                                            <div x-show="tipePelaksana === 'pusat'" x-collapse.duration.300ms
+                                                style="margin-top: 12px;">
+                                                <div class="mc-group">
+                                                    <label class="mc-label"><i class="fas fa-landmark" style="margin-right:5px; color:#7c3aed;"></i> Pilih Pusat</label>
+                                                    <template x-for="psId in selectedPusats" :key="'hps'+psId">
+                                                        <input type="hidden" name="pelaksana_pusat_ids[]" :value="psId">
+                                                    </template>
+                                                    <div class="alpine-dropdown" @click.outside="pusatOpen = false">
+                                                        <div class="ad-trigger no-icon" :class="{'active': pusatOpen}"
+                                                            @click="pusatOpen = !pusatOpen">
+                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-landmark" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedPusats.length === 0" style="color: #9ca3af;">— Pilih Pusat —</span>
+                                                                <div x-show="selectedPusats.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="psId in selectedPusats" :key="'pstag'+psId">
+                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px; background: rgba(124,58,237,0.12); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2);" x-text="getPusatName(psId)"></span>
+                                                                    </template>
+                                                                </div>
+                                                            </div>
+                                                            <i class="fas fa-chevron-down"
+                                                                style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
+                                                                :style="pusatOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                        </div>
+                                                        <div class="ad-menu" x-show="pusatOpen" x-transition>
+                                                            <template x-for="ps in pusatItems" :key="ps.id">
+                                                                <div class="ad-item" :class="{'selected': selectedPusats.includes(ps.id)}"
+                                                                    @click="togglePusat(ps.id)"
+                                                                    style="display: flex; align-items: center; gap: 10px;">
+                                                                    <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                                                        :style="selectedPusats.includes(ps.id) ? 'background: #7c3aed; border-color: #7c3aed;' : ''">
+                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                            x-show="selectedPusats.includes(ps.id)"></i>
+                                                                    </div>
+                                                                    <span x-text="ps.nama"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 

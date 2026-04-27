@@ -12,6 +12,10 @@ use App\Models\Pelaksanaan;
 use App\Models\PermasalahanSolusi;
 use App\Models\Profile;
 use App\Models\Tujuan;
+use App\Models\Jurusan;
+use App\Models\Prodi;
+use App\Models\Upa;
+use App\Models\Pusat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +48,12 @@ class KerjasamaUnitController extends Controller
     {
         $jenisKerjasama = JenisKerjasama::all();
         $mitras = Mitra::orderBy('nama_mitra')->get();
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
+        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
+        $upas = Upa::orderBy('nama_upa')->get();
+        $pusats = Pusat::orderBy('nama_pusat')->get();
 
-        return view('auth.unit', compact('jenisKerjasama', 'mitras'));
+        return view('auth.unit', compact('jenisKerjasama', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats'));
     }
 
     // ─── STORE ───────────────────────────────────────────
