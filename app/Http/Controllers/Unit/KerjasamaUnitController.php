@@ -219,14 +219,21 @@ class KerjasamaUnitController extends Controller
     {
         $unitId = $this->getUnitId();
 
-        $kegiatan = KegiatanKerjasama::with(['mitras', 'dokumentasis', 'jenisKerjasama'])
+        $kegiatan = KegiatanKerjasama::with([
+                'mitras', 'dokumentasis', 'jenisKerjasama',
+                'tujuans', 'pelaksanaans', 'hasils', 'permasalahanSolusis',
+            ])
             ->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
             ->findOrFail($id);
 
         $jenisKerjasama = JenisKerjasama::all();
         $mitras = Mitra::orderBy('nama_mitra')->get();
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
+        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
+        $upas = Upa::orderBy('nama_upa')->get();
+        $pusats = Pusat::orderBy('nama_pusat')->get();
 
-        return view('auth.unit', compact('kegiatan', 'jenisKerjasama', 'mitras'));
+        return view('auth.unit', compact('kegiatan', 'jenisKerjasama', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
