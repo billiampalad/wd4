@@ -28,6 +28,23 @@
                 </div>
 
                 <div class="uc-form-group">
+                    <label class="uc-label" for="kode_jurusan">
+                        <i class="fas fa-barcode uc-label-icon"></i>
+                        Kode Jurusan
+                    </label>
+                    <input
+                        type="text" id="kode_jurusan" name="kode_jurusan"
+                        class="uc-input @error('kode_jurusan') uc-input-error @enderror"
+                        placeholder="Contoh: JUR01"
+                        value="{{ old('kode_jurusan') }}"
+                        maxlength="20"
+                    >
+                    @error('kode_jurusan')
+                        <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="uc-form-group">
                     <label class="uc-label" for="nama_jurusan">
                         <i class="fas fa-microchip uc-label-icon"></i>
                         Nama Jurusan
@@ -36,9 +53,10 @@
                     <input
                         type="text" id="nama_jurusan" name="nama_jurusan"
                         class="uc-input @error('nama_jurusan') uc-input-error @enderror"
-                        placeholder="Contoh: Istitusi dsb"
+                        placeholder="Contoh: Teknik Elektro"
                         value="{{ old('nama_jurusan') }}"
                         required
+                        maxlength="150"
                     >
                     @error('nama_jurusan')  
                         <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>

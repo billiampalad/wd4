@@ -33,6 +33,23 @@
                 </div>
 
                 <div class="ue-form-group">
+                    <label class="ue-label" for="kode_jurusan">
+                        <i class="fas fa-barcode ue-label-icon"></i>
+                        Kode Jurusan
+                    </label>
+                    <input
+                        type="text" id="kode_jurusan" name="kode_jurusan"
+                        class="ue-input @error('kode_jurusan') ue-input-error @enderror"
+                        value="{{ old('kode_jurusan', $jurusan->kode_jurusan) }}"
+                        placeholder="Contoh: JUR01"
+                        maxlength="20"
+                    >
+                    @error('kode_jurusan')
+                        <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="ue-form-group">
                     <label class="ue-label" for="nama_jurusan">
                         <i class="fas fa-microchip ue-label-icon"></i>
                         Nama Jurusan
@@ -44,6 +61,7 @@
                         value="{{ old('nama_jurusan', $jurusan->nama_jurusan) }}"
                         placeholder="Ubah nama jurusan"
                         required
+                        maxlength="150"
                     >
                     @error('nama_jurusan')   
                         <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>

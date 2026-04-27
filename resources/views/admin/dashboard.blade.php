@@ -115,9 +115,21 @@
                 <div class="menu-icon"><i class="fas fa-microchip"></i></div>
                 <span>Jurusan</span>
             </a>
+            <a class="menu-item {{ request()->routeIs('prodi.*') ? 'active' : '' }}" href="{{ route('prodi.index') }}">
+                <div class="menu-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span>Program Studi</span>
+            </a>
             <a class="menu-item {{ request()->routeIs('klasifikasi.*') ? 'active' : '' }}" href="{{ route('klasifikasi.index') }}">
                 <div class="menu-icon"><i class="fas fa-microchip"></i></div>
                 <span>Klasifikasi Mitra</span>
+            </a>
+            <a class="menu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}" href="{{ route('upa.index') }}">
+                <div class="menu-icon"><i class="fas fa-building-columns"></i></div>
+                <span>UPA</span>
+            </a>
+            <a class="menu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}" href="{{ route('pusat.index') }}">
+                <div class="menu-icon"><i class="fas fa-landmark"></i></div>
+                <span>Pusat</span>
             </a>
             <!-- <div class="menu-section">KERJASAMA</div>
             <a class="menu-item" href="#" data-page="data_kerjasama">

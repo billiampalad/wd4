@@ -12,7 +12,10 @@ use App\Http\Controllers\Admin\MitraController;
 use App\Http\Controllers\Admin\JenisKerjasamaController;
 use App\Http\Controllers\Admin\UpelaksanaController;
 use App\Http\Controllers\Admin\JurusanController;
+use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\KlasifikasiController;
+use App\Http\Controllers\Admin\UpaController;
+use App\Http\Controllers\Admin\PusatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
 use App\Http\Controllers\Jurusan\KerjasamaJurusanController;
@@ -229,7 +232,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('jkerjasama', JenisKerjasamaController::class);
     Route::resource('upelaksana', UpelaksanaController::class);
     Route::resource('jurusan', JurusanController::class);
+    Route::resource('prodi', ProdiController::class);
     Route::resource('klasifikasi', KlasifikasiController::class);
+    Route::resource('upa', UpaController::class);
+    Route::resource('pusat', PusatController::class);
     Route::get('/profiles', [DashboardController::class, 'profiles'])->name('admin.profiles');
 });
 

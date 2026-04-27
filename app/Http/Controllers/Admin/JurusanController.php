@@ -25,10 +25,11 @@ class JurusanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_jurusan' => 'required|string|max:255|unique:jurusans,nama_jurusan',
+            'kode_jurusan' => 'nullable|string|max:20|unique:jurusans,kode_jurusan',
+            'nama_jurusan' => 'required|string|max:150|unique:jurusans,nama_jurusan',
         ]);
 
-        Jurusan::create($request->all());
+        Jurusan::create($request->only(['kode_jurusan', 'nama_jurusan']));
 
         return redirect()
             ->route('jurusan.index')
@@ -45,10 +46,11 @@ class JurusanController extends Controller
     {
         $jurusan = Jurusan::findOrFail($id);
         $request->validate([
-            'nama_jurusan' => 'required|string|max:255|unique:jurusans,nama_jurusan,' . $jurusan->id,
+            'kode_jurusan' => 'nullable|string|max:20|unique:jurusans,kode_jurusan,' . $jurusan->id,
+            'nama_jurusan' => 'required|string|max:150|unique:jurusans,nama_jurusan,' . $jurusan->id,
         ]);
 
-        $jurusan->update($request->all());
+        $jurusan->update($request->only(['kode_jurusan', 'nama_jurusan']));
 
         return redirect()
             ->route('jurusan.index')

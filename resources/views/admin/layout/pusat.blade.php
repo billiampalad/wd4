@@ -4,14 +4,14 @@
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
-            <i class="fas fa-microchip"></i>
+            <i class="fas fa-landmark"></i>
             <span class="sep">/</span>
             <span style="color: inherit; text-decoration: none;">Master Data</span>
             <span class="sep">/</span>
-            <span class="current">Jurusan</span>
+            <span class="current">Pusat</span>
         </div>
-        <h2 id="pageTitle">Jurusan</h2>
-        <p id="pageDesc">Tambah, edit, dan hapus data Jurusan.</p>
+        <h2 id="pageTitle">Pusat</h2>
+        <p id="pageDesc">Tambah, edit, dan hapus data Pusat.</p>
     </div>
 
     @if(session('success'))
@@ -22,9 +22,9 @@
 
     <div class="card um-card">
         <div class="card-header um-header">
-            <div class="card-title"><i class="fas fa-microchip"></i> Daftar Jurusan</div>
-            <a href="{{ route('jurusan.create') }}" class="um-btn-add">
-                <i class="fas fa-plus"></i> Tambah Jurusan
+            <div class="card-title"><i class="fas fa-landmark"></i> Daftar Pusat</div>
+            <a href="{{ route('pusat.create') }}" class="um-btn-add">
+                <i class="fas fa-plus"></i> Tambah Pusat
             </a>
         </div>
 
@@ -33,43 +33,39 @@
                 <thead>
                     <tr>
                         <th class="um-th um-th-num">#</th>
-                        <th class="um-th">Kode</th>
-                        <th class="um-th">Nama Jurusan</th>
+                        <th class="um-th">Nama Pusat</th>
                         <th class="um-th">Dibuat</th>
                         <th class="um-th">Diperbarui</th>
                         <th class="um-th um-th-aksi">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($jurusans as $i => $jurusan)
+                    @forelse($pusats as $i => $pusat)
                         <tr class="um-row">
                             <td class="um-td um-td-num">
                                 <span class="um-num">{{ $i + 1 }}</span>
                             </td>
                             <td class="um-td">
-                                <span class="um-meta" style="font-family: monospace;">{{ $jurusan->kode_jurusan ?? '-' }}</span>
-                            </td>
-                            <td class="um-td">
-                                <span class="um-name">{{ $jurusan->nama_jurusan ?? '-' }}</span>
+                                <span class="um-name">{{ $pusat->nama_pusat ?? '-' }}</span>
                             </td>
                             <td class="um-td">
                                 <div class="um-date">
                                     <i class="fas fa-calendar-plus um-date-icon"></i>
-                                    {{ $jurusan->created_at?->format('d-m-Y H:i') ?? '-' }}
+                                    {{ $pusat->created_at?->format('d-m-Y H:i') ?? '-' }}
                                 </div>
                             </td>
                             <td class="um-td">
                                 <div class="um-date">
                                     <i class="fas fa-calendar-check um-date-icon"></i>
-                                    {{ $jurusan->updated_at?->format('d-m-Y H:i') ?? '-' }}
+                                    {{ $pusat->updated_at?->format('d-m-Y H:i') ?? '-' }}
                                 </div>
                             </td>
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
-                                    <a href="{{ route('jurusan.edit', $jurusan->id) }}" class="btn-action edit um-btn-edit" title="Edit">
+                                    <a href="{{ route('pusat.edit', $pusat->id) }}" class="btn-action edit um-btn-edit" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('jurusan.destroy', $jurusan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus Jurusan ini?')">
+                                    <form action="{{ route('pusat.destroy', $pusat->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus Pusat ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-action delete um-btn-delete" title="Hapus">
@@ -81,13 +77,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="um-empty">
+                            <td colspan="5" class="um-empty">
                                 <div class="um-empty-state">
                                     <div class="um-empty-icon">
-                                        <i class="fas fa-microchip"></i>
+                                        <i class="fas fa-landmark"></i>
                                     </div>
-                                    <p class="um-empty-title">Belum ada data Jurusan</p>
-                                    <p class="um-empty-sub">Klik tombol <strong>Tambah Jurusan</strong> untuk memulai.</p>
+                                    <p class="um-empty-title">Belum ada data Pusat</p>
+                                    <p class="um-empty-sub">Klik tombol <strong>Tambah Pusat</strong> untuk memulai.</p>
                                 </div>
                             </td>
                         </tr>
