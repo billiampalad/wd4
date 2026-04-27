@@ -51,7 +51,8 @@
                                         <i class="fas fa-clock"></i>
                                     </div>
                                     <div style="flex: 1;">
-                                        <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;">
+                                        <h4
+                                            style="margin: 0; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;">
                                             Masa Berlaku</h4>
                                     </div>
                                     <i class="fas fa-chevron-down"
@@ -582,9 +583,12 @@
                                         }">
                                             {{-- Tipe Pelaksana Selector --}}
                                             <div class="mc-group">
-                                                <label class="mc-label">Tipe Pelaksana <span class="mc-req">*</span></label>
-                                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                                    <template x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
+                                                <label class="mc-label">Tipe Pelaksana <span
+                                                        class="mc-req">*</span></label>
+                                                <div
+                                                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                                    <template
+                                                        x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
                                                         <button type="button" @click="tipePelaksana = opt.v"
                                                             :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`">
                                                             <i :class="opt.icon" style="font-size: 13px;"></i>
@@ -601,19 +605,29 @@
 
                                                 {{-- Jurusan Dropdown Selector --}}
                                                 <div class="mc-group">
-                                                    <label class="mc-label"><i class="fas fa-microchip" style="margin-right:5px; color:#4f46e5;"></i> Pilih Jurusan</label>
+                                                    <label class="mc-label"><i class="fas fa-microchip"
+                                                            style="margin-right:5px; color:#4f46e5;"></i> Pilih
+                                                        Jurusan</label>
                                                     <template x-for="jId in selectedJurusans" :key="'hj'+jId">
-                                                        <input type="hidden" name="pelaksana_jurusan_ids[]" :value="jId">
+                                                        <input type="hidden" name="pelaksana_jurusan_ids[]"
+                                                            :value="jId">
                                                     </template>
                                                     <div class="alpine-dropdown" @click.outside="jurusanOpen = false">
                                                         <div class="ad-trigger no-icon" :class="{'active': jurusanOpen}"
                                                             @click="jurusanOpen = !jurusanOpen">
-                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                                                                <i class="fas fa-microchip" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                                                <span x-show="selectedJurusans.length === 0" style="color: #9ca3af;">— Pilih Jurusan —</span>
-                                                                <div x-show="selectedJurusans.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                                                    <template x-for="jId in selectedJurusans" :key="'tag'+jId">
-                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px;" x-text="getJurusanName(jId)"></span>
+                                                            <div
+                                                                style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-microchip"
+                                                                    style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedJurusans.length === 0"
+                                                                    style="color: #9ca3af;">— Pilih Jurusan —</span>
+                                                                <div x-show="selectedJurusans.length > 0"
+                                                                    style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="jId in selectedJurusans"
+                                                                        :key="'tag'+jId">
+                                                                        <span class="tag tag-purple"
+                                                                            style="font-size: 10px; padding: 2px 8px;"
+                                                                            x-text="getJurusanName(jId)"></span>
                                                                     </template>
                                                                 </div>
                                                             </div>
@@ -623,12 +637,14 @@
                                                         </div>
                                                         <div class="ad-menu" x-show="jurusanOpen" x-transition>
                                                             <template x-for="j in jurusanItems" :key="j.id">
-                                                                <div class="ad-item" :class="{'selected': selectedJurusans.includes(j.id)}"
+                                                                <div class="ad-item"
+                                                                    :class="{'selected': selectedJurusans.includes(j.id)}"
                                                                     @click="toggleJurusan(j.id)"
                                                                     style="display: flex; align-items: center; gap: 10px;">
                                                                     <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
                                                                         :style="selectedJurusans.includes(j.id) ? 'background: #4f46e5; border-color: #4f46e5;' : ''">
-                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                        <i class="fas fa-check"
+                                                                            style="font-size: 10px; color: #fff;"
                                                                             x-show="selectedJurusans.includes(j.id)"></i>
                                                                     </div>
                                                                     <span x-text="j.nama"></span>
@@ -646,13 +662,19 @@
                                                         style="margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; overflow: visible;">
 
                                                         {{-- Sub-Form Header --}}
-                                                        <div style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.05), rgba(124,58,237,0.03)); border-radius: 14px 14px 0 0;">
-                                                            <div style="width: 28px; height: 28px; border-radius: 8px; background: #4f46e5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
+                                                        <div
+                                                            style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.05), rgba(124,58,237,0.03)); border-radius: 14px 14px 0 0;">
+                                                            <div
+                                                                style="width: 28px; height: 28px; border-radius: 8px; background: #4f46e5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
                                                                 <i class="fas fa-microchip"></i>
                                                             </div>
                                                             <div style="flex: 1; min-width: 0;">
-                                                                <span style="font-weight: 700; font-size: 13px; color: var(--text);" x-text="getJurusanName(jId)"></span>
-                                                                <span style="font-size: 11px; color: var(--text-sub); display: block; margin-top: 1px;">Pilih program studi pada jurusan ini</span>
+                                                                <span
+                                                                    style="font-weight: 700; font-size: 13px; color: var(--text);"
+                                                                    x-text="getJurusanName(jId)"></span>
+                                                                <span
+                                                                    style="font-size: 11px; color: var(--text-sub); display: block; margin-top: 1px;">Pilih
+                                                                    program studi pada jurusan ini</span>
                                                             </div>
                                                             <button type="button" @click="toggleJurusan(jId)"
                                                                 style="width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
@@ -682,65 +704,97 @@
                                                                 });
                                                             }
                                                         }">
-                                                            <div class="mc-group" style="position: relative; margin-bottom: 0;" @click.outside="prodiDropOpen = false">
+                                                            <div class="mc-group"
+                                                                style="position: relative; margin-bottom: 0;"
+                                                                @click.outside="prodiDropOpen = false">
                                                                 <label class="mc-label" style="margin-bottom: 8px;">
-                                                                    <i class="fas fa-graduation-cap" style="margin-right:5px; color:#059669;"></i> Program Studi
+                                                                    <i class="fas fa-graduation-cap"
+                                                                        style="margin-right:5px; color:#059669;"></i>
+                                                                    Program Studi
                                                                 </label>
 
                                                                 {{-- Selected Prodi Tags --}}
-                                                                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;" x-show="selectedInJurusan.length > 0">
-                                                                    <template x-for="pId in selectedInJurusan" :key="'ptag'+pId">
-                                                                        <span style="display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; background:linear-gradient(135deg, rgba(5,150,105,0.12), rgba(5,150,105,0.06)); color:#059669; border:1px solid rgba(5,150,105,0.2);">
-                                                                            <span x-text="$data.getProdiName(pId)"></span>
-                                                                            <i class="fas fa-times" style="font-size:9px; cursor:pointer; opacity:0.7;" @click="$data.toggleProdi(pId)" @click.stop></i>
+                                                                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"
+                                                                    x-show="selectedInJurusan.length > 0">
+                                                                    <template x-for="pId in selectedInJurusan"
+                                                                        :key="'ptag'+pId">
+                                                                        <span
+                                                                            style="display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; background:linear-gradient(135deg, rgba(5,150,105,0.12), rgba(5,150,105,0.06)); color:#059669; border:1px solid rgba(5,150,105,0.2);">
+                                                                            <span
+                                                                                x-text="$data.getProdiName(pId)"></span>
+                                                                            <i class="fas fa-times"
+                                                                                style="font-size:9px; cursor:pointer; opacity:0.7;"
+                                                                                @click="$data.toggleProdi(pId)"
+                                                                                @click.stop></i>
                                                                         </span>
                                                                     </template>
                                                                 </div>
 
                                                                 {{-- Hidden inputs for prodis --}}
-                                                                <template x-for="pId in selectedInJurusan" :key="'hp'+pId">
-                                                                    <input type="hidden" name="pelaksana_prodi_ids[]" :value="pId">
+                                                                <template x-for="pId in selectedInJurusan"
+                                                                    :key="'hp'+pId">
+                                                                    <input type="hidden" name="pelaksana_prodi_ids[]"
+                                                                        :value="pId">
                                                                 </template>
 
                                                                 {{-- Prodi Dropdown --}}
-                                                                <div class="alpine-dropdown" @click.outside="prodiDropOpen = false">
-                                                                    <div class="ad-trigger no-icon" :class="{'active': prodiDropOpen}"
+                                                                <div class="alpine-dropdown"
+                                                                    @click.outside="prodiDropOpen = false">
+                                                                    <div class="ad-trigger no-icon"
+                                                                        :class="{'active': prodiDropOpen}"
                                                                         @click="prodiDropOpen = !prodiDropOpen">
-                                                                        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                                                                            <i class="fas fa-graduation-cap" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                                                            <span style="color: #9ca3af; font-size: 12px;">— Pilih Program Studi —</span>
+                                                                        <div
+                                                                            style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                            <i class="fas fa-graduation-cap"
+                                                                                style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                            <span
+                                                                                style="color: #9ca3af; font-size: 12px;">—
+                                                                                Pilih Program Studi —</span>
                                                                         </div>
                                                                         <i class="fas fa-chevron-down"
                                                                             style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
                                                                             :style="prodiDropOpen ? 'transform: rotate(180deg)' : ''"></i>
                                                                     </div>
-                                                                    <div class="ad-menu" x-show="prodiDropOpen" x-transition
+                                                                    <div class="ad-menu" x-show="prodiDropOpen"
+                                                                        x-transition
                                                                         style="max-height: 220px; overflow-y: auto;">
                                                                         {{-- Search inside dropdown --}}
-                                                                        <div style="padding: 8px 12px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
-                                                                            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;">
-                                                                                <i class="fas fa-search" style="font-size: 11px; color: #9ca3af;"></i>
-                                                                                <input type="text" x-model="prodiSearchQ" placeholder="Cari prodi..."
+                                                                        <div
+                                                                            style="padding: 8px 12px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
+                                                                            <div
+                                                                                style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;">
+                                                                                <i class="fas fa-search"
+                                                                                    style="font-size: 11px; color: #9ca3af;"></i>
+                                                                                <input type="text"
+                                                                                    x-model="prodiSearchQ"
+                                                                                    placeholder="Cari prodi..."
                                                                                     style="border: none; outline: none; background: transparent; font-size: 12px; color: var(--text); width: 100%; font-family: inherit;"
                                                                                     @click.stop>
                                                                             </div>
                                                                         </div>
-                                                                        <template x-for="p in availableProdis" :key="p.id">
+                                                                        <template x-for="p in availableProdis"
+                                                                            :key="p.id">
                                                                             <div class="ad-item"
                                                                                 @click="$data.toggleProdi(p.id)"
                                                                                 style="display: flex; align-items: center; gap: 10px;">
                                                                                 <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
                                                                                     :style="$data.selectedProdis.includes(p.id) ? 'background: #059669; border-color: #059669;' : ''">
-                                                                                    <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                                    <i class="fas fa-check"
+                                                                                        style="font-size: 10px; color: #fff;"
                                                                                         x-show="$data.selectedProdis.includes(p.id)"></i>
                                                                                 </div>
-                                                                                <span x-text="p.nama" style="flex: 1;"></span>
-                                                                                <span style="font-size:10px; padding:1px 6px; border-radius:4px; background:rgba(5,150,105,0.1); color:#059669; font-weight:600;" x-text="p.jenjang"></span>
+                                                                                <span x-text="p.nama"
+                                                                                    style="flex: 1;"></span>
+                                                                                <span
+                                                                                    style="font-size:10px; padding:1px 6px; border-radius:4px; background:rgba(5,150,105,0.1); color:#059669; font-weight:600;"
+                                                                                    x-text="p.jenjang"></span>
                                                                             </div>
                                                                         </template>
                                                                         <div x-show="availableProdis.length === 0"
                                                                             style="padding:12px 14px; font-size:12px; color:var(--text-sub); text-align:center;">
-                                                                            <i class="fas fa-info-circle" style="margin-right:4px; opacity:0.5;"></i> Tidak ada prodi tersedia
+                                                                            <i class="fas fa-info-circle"
+                                                                                style="margin-right:4px; opacity:0.5;"></i>
+                                                                            Tidak ada prodi tersedia
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -754,19 +808,28 @@
                                             <div x-show="tipePelaksana === 'upa'" x-collapse.duration.300ms
                                                 style="margin-top: 12px;">
                                                 <div class="mc-group">
-                                                    <label class="mc-label"><i class="fas fa-building-columns" style="margin-right:5px; color:#0891b2;"></i> Pilih UPA</label>
+                                                    <label class="mc-label"><i class="fas fa-building-columns"
+                                                            style="margin-right:5px; color:#0891b2;"></i> Pilih
+                                                        UPA</label>
                                                     <template x-for="uId in selectedUpas" :key="'hu'+uId">
                                                         <input type="hidden" name="pelaksana_upa_ids[]" :value="uId">
                                                     </template>
                                                     <div class="alpine-dropdown" @click.outside="upaOpen = false">
                                                         <div class="ad-trigger no-icon" :class="{'active': upaOpen}"
                                                             @click="upaOpen = !upaOpen">
-                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                                                                <i class="fas fa-building-columns" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                                                <span x-show="selectedUpas.length === 0" style="color: #9ca3af;">— Pilih UPA —</span>
-                                                                <div x-show="selectedUpas.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                                                    <template x-for="uId in selectedUpas" :key="'utag'+uId">
-                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px; background: rgba(8,145,178,0.12); color: #0891b2; border: 1px solid rgba(8,145,178,0.2);" x-text="getUpaName(uId)"></span>
+                                                            <div
+                                                                style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-building-columns"
+                                                                    style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedUpas.length === 0"
+                                                                    style="color: #9ca3af;">— Pilih UPA —</span>
+                                                                <div x-show="selectedUpas.length > 0"
+                                                                    style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="uId in selectedUpas"
+                                                                        :key="'utag'+uId">
+                                                                        <span class="tag tag-purple"
+                                                                            style="font-size: 10px; padding: 2px 8px; background: rgba(8,145,178,0.12); color: #0891b2; border: 1px solid rgba(8,145,178,0.2);"
+                                                                            x-text="getUpaName(uId)"></span>
                                                                     </template>
                                                                 </div>
                                                             </div>
@@ -776,12 +839,14 @@
                                                         </div>
                                                         <div class="ad-menu" x-show="upaOpen" x-transition>
                                                             <template x-for="u in upaItems" :key="u.id">
-                                                                <div class="ad-item" :class="{'selected': selectedUpas.includes(u.id)}"
+                                                                <div class="ad-item"
+                                                                    :class="{'selected': selectedUpas.includes(u.id)}"
                                                                     @click="toggleUpa(u.id)"
                                                                     style="display: flex; align-items: center; gap: 10px;">
                                                                     <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
                                                                         :style="selectedUpas.includes(u.id) ? 'background: #0891b2; border-color: #0891b2;' : ''">
-                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                        <i class="fas fa-check"
+                                                                            style="font-size: 10px; color: #fff;"
                                                                             x-show="selectedUpas.includes(u.id)"></i>
                                                                     </div>
                                                                     <span x-text="u.nama"></span>
@@ -796,19 +861,28 @@
                                             <div x-show="tipePelaksana === 'pusat'" x-collapse.duration.300ms
                                                 style="margin-top: 12px;">
                                                 <div class="mc-group">
-                                                    <label class="mc-label"><i class="fas fa-landmark" style="margin-right:5px; color:#7c3aed;"></i> Pilih Pusat</label>
+                                                    <label class="mc-label"><i class="fas fa-landmark"
+                                                            style="margin-right:5px; color:#7c3aed;"></i> Pilih
+                                                        Pusat</label>
                                                     <template x-for="psId in selectedPusats" :key="'hps'+psId">
                                                         <input type="hidden" name="pelaksana_pusat_ids[]" :value="psId">
                                                     </template>
                                                     <div class="alpine-dropdown" @click.outside="pusatOpen = false">
                                                         <div class="ad-trigger no-icon" :class="{'active': pusatOpen}"
                                                             @click="pusatOpen = !pusatOpen">
-                                                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
-                                                                <i class="fas fa-landmark" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
-                                                                <span x-show="selectedPusats.length === 0" style="color: #9ca3af;">— Pilih Pusat —</span>
-                                                                <div x-show="selectedPusats.length > 0" style="display: flex; flex-wrap: wrap; gap: 4px;">
-                                                                    <template x-for="psId in selectedPusats" :key="'pstag'+psId">
-                                                                        <span class="tag tag-purple" style="font-size: 10px; padding: 2px 8px; background: rgba(124,58,237,0.12); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2);" x-text="getPusatName(psId)"></span>
+                                                            <div
+                                                                style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                                                <i class="fas fa-landmark"
+                                                                    style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
+                                                                <span x-show="selectedPusats.length === 0"
+                                                                    style="color: #9ca3af;">— Pilih Pusat —</span>
+                                                                <div x-show="selectedPusats.length > 0"
+                                                                    style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                                                    <template x-for="psId in selectedPusats"
+                                                                        :key="'pstag'+psId">
+                                                                        <span class="tag tag-purple"
+                                                                            style="font-size: 10px; padding: 2px 8px; background: rgba(124,58,237,0.12); color: #7c3aed; border: 1px solid rgba(124,58,237,0.2);"
+                                                                            x-text="getPusatName(psId)"></span>
                                                                     </template>
                                                                 </div>
                                                             </div>
@@ -818,12 +892,14 @@
                                                         </div>
                                                         <div class="ad-menu" x-show="pusatOpen" x-transition>
                                                             <template x-for="ps in pusatItems" :key="ps.id">
-                                                                <div class="ad-item" :class="{'selected': selectedPusats.includes(ps.id)}"
+                                                                <div class="ad-item"
+                                                                    :class="{'selected': selectedPusats.includes(ps.id)}"
                                                                     @click="togglePusat(ps.id)"
                                                                     style="display: flex; align-items: center; gap: 10px;">
                                                                     <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
                                                                         :style="selectedPusats.includes(ps.id) ? 'background: #7c3aed; border-color: #7c3aed;' : ''">
-                                                                        <i class="fas fa-check" style="font-size: 10px; color: #fff;"
+                                                                        <i class="fas fa-check"
+                                                                            style="font-size: 10px; color: #fff;"
                                                                             x-show="selectedPusats.includes(ps.id)"></i>
                                                                     </div>
                                                                     <span x-text="ps.nama"></span>
@@ -1205,7 +1281,7 @@
                                             delete this.sasaranOpen[id];
                                         } else {
                                             this.selected.push(id);
-                                            this.formData[id] = { nilai_kontrak: '', volume: '', satuan_volume: '', keterangan: '', sasaran: '', indikator_kinerja: '' };
+                                            this.formData[id] = { nilai_kontrak: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran: '', indikator_kinerja: '' };
                                             this.sasaranOpen[id] = false;
                                         }
                                     },
@@ -1217,7 +1293,7 @@
                                     init() {
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
-                                                this.formData[id] = { nilai_kontrak: '', volume: '', satuan_volume: '', keterangan: '', sasaran: '', indikator_kinerja: '' };
+                                                this.formData[id] = { nilai_kontrak: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran: '', indikator_kinerja: '' };
                                                 this.sasaranOpen[id] = false;
                                             }
                                         });
@@ -1340,19 +1416,39 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Row 3: Keterangan --}}
-                                                <div class="mc-group" style="margin-bottom: 14px;">
-                                                    <label class="mc-label">Keterangan <span
-                                                            style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Ringkasan
-                                                            luaran dari kegiatan)</span></label>
-                                                    <div class="mc-input-wrap">
-                                                        <i class="fas fa-align-left mc-icon-left"
-                                                            style="top: 14px;"></i>
-                                                        <textarea :name="'jenis_detail[' + id + '][keterangan]'"
-                                                            x-model="formData[id].keterangan" rows="2"
-                                                            placeholder="Jelaskan ringkasan luaran kegiatan..."
-                                                            class="mc-input"
-                                                            style="resize: vertical; min-height: 70px;"></textarea>
+                                                {{-- Row 3: Keterangan + Tujuan --}}
+                                                <div
+                                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                                                    {{-- Keterangan --}}
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Keterangan <span
+                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Ringkasan
+                                                                luaran dari kegiatan)</span></label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-align-left mc-icon-left"
+                                                                style="top: 14px;"></i>
+                                                            <textarea :name="'jenis_detail[' + id + '][keterangan]'"
+                                                                x-model="formData[id].keterangan" rows="2"
+                                                                placeholder="Jelaskan ringkasan luaran kegiatan..."
+                                                                class="mc-input"
+                                                                style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Tujuan --}}
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Tujuan <span
+                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Tujuan
+                                                                dari kegiatan)</span></label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-bullseye mc-icon-left"
+                                                                style="top: 14px;"></i>
+                                                            <textarea :name="'jenis_detail[' + id + '][tujuan]'"
+                                                                x-model="formData[id].tujuan" rows="2"
+                                                                placeholder="Jelaskan tujuan dari kegiatan kerjasama..."
+                                                                class="mc-input"
+                                                                style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -1412,6 +1508,77 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {{-- Pelaksanaan Kegiatan (Collapsible) --}}
+                                                <div x-data="{ showPelaksanaan: false }"
+                                                    style="margin-top: 16px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                                    <div @click="showPelaksanaan = !showPelaksanaan"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
+                                                        onmouseover="this.style.background='var(--surface2)'"
+                                                        onmouseout="this.style.background='var(--surface)'">
+                                                        <i class="fas fa-cogs"
+                                                            style="font-size: 12px; color: #f59e0b;"></i>
+                                                        <div style="flex: 1;">
+                                                            <span
+                                                                style="font-weight: 600; font-size: 12px; color: var(--text);">Pelaksanaan
+                                                                Kegiatan</span>
+                                                            <span
+                                                                style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Detail
+                                                                pelaksanaan, cakupan & sumber daya</span>
+                                                        </div>
+                                                        <i class="fas fa-chevron-down"
+                                                            style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;"
+                                                            :style="showPelaksanaan ? 'transform: rotate(180deg)' : ''"></i>
+                                                    </div>
+                                                    <div x-show="showPelaksanaan" x-collapse.duration.200ms
+                                                        style="padding: 0 14px 14px 14px;">
+                                                        <div class="mc-grid-2">
+                                                            <div class="mc-group" style="grid-column: 1 / -1;">
+                                                                <label class="mc-label">Deskripsi Pelaksanaan <span
+                                                                        class="mc-req">*</span></label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-cogs mc-icon-left"
+                                                                        style="top: 14px;"></i>
+                                                                    <textarea name="pelaksanaan_deskripsi" rows="3"
+                                                                        required
+                                                                        placeholder="Deskripsi pelaksanaan kegiatan..."
+                                                                        class="mc-input"
+                                                                        style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Cakupan</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-layer-group mc-icon-left"></i>
+                                                                    <input type="text" name="pelaksanaan_cakupan"
+                                                                        value="{{ old('pelaksanaan_cakupan') }}"
+                                                                        placeholder="Cakupan kegiatan"
+                                                                        class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="mc-group">
+                                                                <label class="mc-label">Jumlah Peserta</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-users mc-icon-left"></i>
+                                                                    <input type="number" name="pelaksanaan_peserta"
+                                                                        value="{{ old('pelaksanaan_peserta') }}"
+                                                                        placeholder="0" min="0" class="mc-input" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="mc-group" style="grid-column: 1 / -1;">
+                                                                <label class="mc-label">Sumber Daya</label>
+                                                                <div class="mc-input-wrap">
+                                                                    <i class="fas fa-tools mc-icon-left"
+                                                                        style="top: 14px;"></i>
+                                                                    <textarea name="pelaksanaan_sumber_daya" rows="2"
+                                                                        placeholder="Sumber daya yang digunakan..."
+                                                                        class="mc-input"
+                                                                        style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -1425,150 +1592,77 @@
                 {{-- Continue mc-body for remaining sections --}}
                 <div class="mc-body">
 
-                    {{-- ═══ SECTION 5: Permasalahan & Solusi ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">05</span>
-                        <span>Permasalahan & Solusi</span>
-                    </div>
+                    {{-- ═══ Hasil dan Capaian (Bentuk Kegiatan-style Card) ═══ --}}
+                    <div
+                        style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; margin-bottom: 20px;">
+                        <div x-data="{ showHasil: true }">
+                            {{-- Card Header --}}
+                            <div @click="showHasil = !showHasil"
+                                style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(5,150,105,0.04), rgba(16,185,129,0.04)); border-radius: 16px 16px 0 0;">
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Hasil
+                                        dan Capaian</h4>
+                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Output, dampak,
+                                        dan manfaat dari kegiatan kerjasama</p>
+                                </div>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;"
+                                    :style="showHasil ? 'transform: rotate(180deg)' : ''"></i>
+                            </div>
 
-                    <div class="mc-grid-1">
-                        <div class="mc-group">
-                            <label class="mc-label">Kendala yang dihadapi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-exclamation-triangle mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_kendala" rows="3"
-                                    placeholder="Jelaskan kendala atau permasalahan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_kendala') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Solusi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-check-circle mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_solusi" rows="3"
-                                    placeholder="Upaya yang dilakukan untuk mengatasi kendala..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_solusi') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Rekomendasi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-lightbulb mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="masalah_rekomendasi" rows="3"
-                                    placeholder="Berikan rekomendasi perbaikan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('masalah_rekomendasi') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="mc-section-title">
-                        <span class="mc-section-num"><i class="fas fa-users"></i></span>
-                        <span>Form Tambahan</span>
-                    </div>
-
-                    <div class="mc-grid-2">
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Deskripsi Pelaksanaan <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-cogs mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_deskripsi" rows="3" required
-                                    placeholder="Deskripsi pelaksanaan kegiatan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('pelaksanaan_deskripsi') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Cakupan</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-layer-group mc-icon-left"></i>
-                                <input type="text" name="pelaksanaan_cakupan" value="{{ old('pelaksanaan_cakupan') }}"
-                                    placeholder="Cakupan kegiatan" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Jumlah Peserta</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-users mc-icon-left"></i>
-                                <input type="number" name="pelaksanaan_peserta" value="{{ old('pelaksanaan_peserta') }}"
-                                    placeholder="0" min="0" class="mc-input" />
-                            </div>
-                        </div>
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Sumber Daya</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-tools mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="pelaksanaan_sumber_daya" rows="2"
-                                    placeholder="Sumber daya yang digunakan..." class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('pelaksanaan_sumber_daya') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="mc-grid-2">
-                        <div class="mc-group">
-                            <label class="mc-label">Tujuan Kegiatan <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-bullseye mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="tujuan" rows="3" required
-                                    placeholder="Meningkatkan kompetensi praktis mahasiswa..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('tujuan') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Sasaran Kegiatan <span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-crosshairs mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="sasaran" rows="3" required
-                                    placeholder="Mahasiswa D3 Teknik Informatika Semester 5..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('sasaran') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mc-grid-2">
-                        <div class="mc-group">
-                            <label class="mc-label">Hasil Langsung (Output)</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-chart-line mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="hasil_langsung" rows="3" placeholder="Hasil langsung kegiatan..."
-                                    class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('hasil_langsung') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Dampak (Outcome)</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-impact-gradient mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="hasil_dampak" rows="3" placeholder="Dampak kegiatan..." class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('hasil_dampak') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Manfaat Mahasiswa</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-user-graduate mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="hasil_manfaat_mahasiswa" rows="2"
-                                    placeholder="Manfaat bagi mahasiswa..." class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_mahasiswa') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group">
-                            <label class="mc-label">Manfaat Polimdo</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-university mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="hasil_manfaat_polimdo" rows="2" placeholder="Manfaat bagi Polimdo..."
-                                    class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_polimdo') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="mc-group" style="grid-column: 1 / -1;">
-                            <label class="mc-label">Manfaat Mitra</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-handshake-angle mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="hasil_manfaat_mitra" rows="2" placeholder="Manfaat bagi mitra..."
-                                    class="mc-input"
-                                    style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_mitra') }}</textarea>
+                            {{-- Card Body --}}
+                            <div x-show="showHasil" x-collapse.duration.300ms style="padding: 20px 24px;">
+                                <div class="mc-grid-2">
+                                    <div class="mc-group">
+                                        <label class="mc-label">Hasil Langsung (Output)</label>
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-chart-line mc-icon-left" style="top: 14px;"></i>
+                                            <textarea name="hasil_langsung" rows="3"
+                                                placeholder="Hasil langsung kegiatan..." class="mc-input"
+                                                style="resize: vertical; min-height: 100px;">{{ old('hasil_langsung') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mc-group">
+                                        <label class="mc-label">Dampak (Outcome)</label>
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-expand mc-icon-left" style="top: 14px;"></i>
+                                            <textarea name="hasil_dampak" rows="3" placeholder="Dampak kegiatan..."
+                                                class="mc-input"
+                                                style="resize: vertical; min-height: 100px;">{{ old('hasil_dampak') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mc-group">
+                                        <label class="mc-label">Manfaat Mahasiswa</label>
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-user-graduate mc-icon-left" style="top: 14px;"></i>
+                                            <textarea name="hasil_manfaat_mahasiswa" rows="2"
+                                                placeholder="Manfaat bagi mahasiswa..." class="mc-input"
+                                                style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_mahasiswa') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mc-group">
+                                        <label class="mc-label">Manfaat Polimdo</label>
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-university mc-icon-left" style="top: 14px;"></i>
+                                            <textarea name="hasil_manfaat_polimdo" rows="2"
+                                                placeholder="Manfaat bagi Polimdo..." class="mc-input"
+                                                style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_polimdo') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mc-group" style="grid-column: 1 / -1;">
+                                        <label class="mc-label">Manfaat Mitra</label>
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-handshake-angle mc-icon-left" style="top: 14px;"></i>
+                                            <textarea name="hasil_manfaat_mitra" rows="2"
+                                                placeholder="Manfaat bagi mitra..." class="mc-input"
+                                                style="resize: vertical; min-height: 80px;">{{ old('hasil_manfaat_mitra') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
