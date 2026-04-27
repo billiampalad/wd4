@@ -34,10 +34,294 @@
 
             <form action="{{ route('unit.kerjasama.store') }}" method="POST">
                 @csrf
-                <div class="mc-body">
-                    <div class="mc-grid-2">
-                        {{-- Dokumen Kerjasama (Alpine Interactive) --}}
-                        <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
+                {{-- ═══ TWO-COLUMN TOP LAYOUT: Masa Berlaku (Left) + Form Utama (Right) ═══ --}}
+                <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 24px;">
+
+                    {{-- ══ LEFT COLUMN: Masa Berlaku (Sticky) ══ --}}
+                    <div style="position: sticky; top: 24px; align-self: start;">
+                        <div
+                            style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
+                            <div
+                                x-data="{ showMasaBerlaku: true, statusOpen: false, statusValue: '{{ old('status_kerjasama', '') }}' }">
+                                {{-- Card Header --}}
+                                <div @click="showMasaBerlaku = !showMasaBerlaku"
+                                    style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.04)); border-radius: 16px 16px 0 0; transition: background 0.2s;">
+                                    <div
+                                        style="width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(5,150,105,0.25);">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;">
+                                            Masa Berlaku</h4>
+                                    </div>
+                                    <i class="fas fa-chevron-down"
+                                        style="font-size: 10px; color: var(--text-sub); transition: transform 0.3s ease;"
+                                        :style="showMasaBerlaku ? 'transform: rotate(180deg)' : ''"></i>
+                                </div>
+
+                                {{-- Card Body --}}
+                                <div x-show="showMasaBerlaku" x-collapse.duration.300ms style="padding: 18px;">
+
+                                    {{-- ── Status Kerjasama ── --}}
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                                            <div
+                                                style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #059669, #10b981);">
+                                            </div>
+                                            <span
+                                                style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Status
+                                                Kerjasama</span>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Status <span class="mc-req">*</span></label>
+                                            <input type="hidden" name="status_kerjasama" :value="statusValue">
+                                            <div class="alpine-dropdown" @click.outside="statusOpen = false"
+                                                style="position: relative;">
+                                                <div class="ad-trigger no-icon" :class="{'active': statusOpen}"
+                                                    @click="statusOpen = !statusOpen" style="min-height: 42px;">
+                                                    <div
+                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                        <i class="fas fa-signal"
+                                                            style="font-size: 13px; flex-shrink: 0;"
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;' : 'color: #9ca3af;'"></i>
+                                                        <span x-show="!statusValue"
+                                                            style="color: #9ca3af; font-size: 13px;">— Pilih Status
+                                                            —</span>
+                                                        <span x-show="statusValue"
+                                                            style="font-size: 13px; font-weight: 500;"
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : 'color: #6b7280;'"
+                                                            x-text="statusValue"></span>
+                                                    </div>
+                                                    <i class="fas fa-chevron-down"
+                                                        style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;"
+                                                        :style="statusOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                </div>
+                                                <div class="ad-menu" x-show="statusOpen" x-transition
+                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130;">
+                                                    <div class="ad-item" :class="{'selected': statusValue === 'Aktif'}"
+                                                        @click="statusValue = 'Aktif'; statusOpen = false"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px;">
+                                                        <div
+                                                            style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; flex-shrink: 0;">
+                                                        </div>
+                                                        <span style="font-size: 13px;">Aktif</span>
+                                                    </div>
+                                                    <div class="ad-item"
+                                                        :class="{'selected': statusValue === 'Dalam Perpanjangan'}"
+                                                        @click="statusValue = 'Dalam Perpanjangan'; statusOpen = false"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px;">
+                                                        <div
+                                                            style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; flex-shrink: 0;">
+                                                        </div>
+                                                        <span style="font-size: 13px;">Dalam Perpanjangan</span>
+                                                    </div>
+                                                    <div class="ad-item"
+                                                        :class="{'selected': statusValue === 'Kadarluarsa'}"
+                                                        @click="statusValue = 'Kadarluarsa'; statusOpen = false"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px;">
+                                                        <div
+                                                            style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0;">
+                                                        </div>
+                                                        <span style="font-size: 13px;">Kadarluarsa</span>
+                                                    </div>
+                                                    <div class="ad-item"
+                                                        :class="{'selected': statusValue === 'Tidak Aktif'}"
+                                                        @click="statusValue = 'Tidak Aktif'; statusOpen = false"
+                                                        style="display: flex; align-items: center; gap: 10px; padding: 10px 14px;">
+                                                        <div
+                                                            style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; flex-shrink: 0;">
+                                                        </div>
+                                                        <span style="font-size: 13px;">Tidak Aktif</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Divider --}}
+                                    <div
+                                        style="height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 20px 0;">
+                                    </div>
+
+                                    {{-- ── Periode Kerjasama ── --}}
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                                            <div
+                                                style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #4f46e5, #7c3aed);">
+                                            </div>
+                                            <span
+                                                style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Periode
+                                                Kerjasama</span>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                                            {{-- Periode Mulai --}}
+                                            <div class="mc-group" x-data="datepicker('{{ old('periode_mulai') }}')">
+                                                <label class="mc-label">Tanggal Mulai</label>
+                                                <div class="alpine-datepicker" @click.outside="show = false">
+                                                    <div class="adp-input-wrap">
+                                                        <i class="fas fa-calendar-day mc-icon-left"></i>
+                                                        <input type="text" name="periode_mulai" x-model="formattedDate"
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                            class="adp-input">
+                                                    </div>
+                                                    <div class="adp-calendar" x-show="show" x-transition>
+                                                        <div class="adp-header">
+                                                            <div style="display: flex; gap: 4px;">
+                                                                <span class="adp-month" @click="toggleMonthPicker()"
+                                                                    x-text="monthNames[month]"></span>
+                                                                <span class="adp-month" @click="toggleYearPicker()"
+                                                                    x-text="year"></span>
+                                                            </div>
+                                                            <div class="adp-nav">
+                                                                <div class="adp-nav-btn" @click="prevMonth()"><i
+                                                                        class="fas fa-chevron-left"></i></div>
+                                                                <div class="adp-nav-btn" @click="nextMonth()"><i
+                                                                        class="fas fa-chevron-right"></i></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="adp-month-picker" x-show="showMonthPicker"
+                                                            x-transition>
+                                                            <template x-for="(mName, index) in monthNames">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': month === index}"
+                                                                    @click="selectMonth(index)" x-text="mName"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-year-picker" x-show="showYearPicker"
+                                                            x-transition>
+                                                            <div style="grid-column: span 4; padding: 4px;">
+                                                                <input type="text" x-model="yearSearch"
+                                                                    placeholder="Cari tahun..."
+                                                                    style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                                                    @click.stop>
+                                                            </div>
+                                                            <template x-for="y in filteredYears">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': year === y}"
+                                                                    @click="selectYear(y)" x-text="y"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-grid">
+                                                            <template x-for="day in dayNames">
+                                                                <div class="adp-day-name" x-text="day"></div>
+                                                            </template>
+                                                            <template x-for="blankday in blanks">
+                                                                <div class="adp-day empty"></div>
+                                                            </template>
+                                                            <template x-for="date in days">
+                                                                <div class="adp-day"
+                                                                    :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                                                    @click="selectDate(date)" x-text="date"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Periode Selesai --}}
+                                            <div class="mc-group" x-data="datepicker('{{ old('periode_selesai') }}')">
+                                                <label class="mc-label">Tanggal Selesai</label>
+                                                <div class="alpine-datepicker" @click.outside="show = false">
+                                                    <div class="adp-input-wrap">
+                                                        <i class="fas fa-calendar-check mc-icon-left"></i>
+                                                        <input type="text" name="periode_selesai"
+                                                            x-model="formattedDate" readonly @click="show = !show"
+                                                            placeholder="Pilih Tanggal" class="adp-input">
+                                                    </div>
+                                                    <div class="adp-calendar" x-show="show" x-transition>
+                                                        <div class="adp-header">
+                                                            <div style="display: flex; gap: 4px;">
+                                                                <span class="adp-month" @click="toggleMonthPicker()"
+                                                                    x-text="monthNames[month]"></span>
+                                                                <span class="adp-month" @click="toggleYearPicker()"
+                                                                    x-text="year"></span>
+                                                            </div>
+                                                            <div class="adp-nav">
+                                                                <div class="adp-nav-btn" @click="prevMonth()"><i
+                                                                        class="fas fa-chevron-left"></i></div>
+                                                                <div class="adp-nav-btn" @click="nextMonth()"><i
+                                                                        class="fas fa-chevron-right"></i></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="adp-month-picker" x-show="showMonthPicker"
+                                                            x-transition>
+                                                            <template x-for="(mName, index) in monthNames">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': month === index}"
+                                                                    @click="selectMonth(index)" x-text="mName"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-year-picker" x-show="showYearPicker"
+                                                            x-transition>
+                                                            <div style="grid-column: span 4; padding: 4px;">
+                                                                <input type="text" x-model="yearSearch"
+                                                                    placeholder="Cari tahun..."
+                                                                    style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                                                    @click.stop>
+                                                            </div>
+                                                            <template x-for="y in filteredYears">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': year === y}"
+                                                                    @click="selectYear(y)" x-text="y"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-grid">
+                                                            <template x-for="day in dayNames">
+                                                                <div class="adp-day-name" x-text="day"></div>
+                                                            </template>
+                                                            <template x-for="blankday in blanks">
+                                                                <div class="adp-day empty"></div>
+                                                            </template>
+                                                            <template x-for="date in days">
+                                                                <div class="adp-day"
+                                                                    :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                                                    @click="selectDate(date)" x-text="date"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Divider --}}
+                                    <div
+                                        style="height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 20px 0;">
+                                    </div>
+
+                                    {{-- ── Dokumentasi ── --}}
+                                    <div>
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                                            <div
+                                                style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #d97706, #f59e0b);">
+                                            </div>
+                                            <span
+                                                style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Dokumentasi</span>
+                                            <span
+                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub); margin-left: 2px;">(Opsional)</span>
+                                        </div>
+                                        <div class="mc-group">
+                                            <label class="mc-label">Link Google Drive</label>
+                                            <div class="mc-input-wrap">
+                                                <i class="fas fa-link mc-icon-left"></i>
+                                                <input type="text" name="dok_link_drive"
+                                                    value="{{ old('dok_link_drive') }}"
+                                                    placeholder="https://drive.google.com/..." class="mc-input" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ══ RIGHT COLUMN: Form Utama ══ --}}
+                    <div>
+                        <div class="mc-body" style="padding: 0;">
+                            <div class="mc-grid-2">
+                                {{-- Dokumen Kerjasama (Alpine Interactive) --}}
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
                             open: false, 
                             selected: '{{ old('jenis_dokumen', 'MoU') }}',
                             items: [
@@ -49,100 +333,106 @@
                                 return this.items.find(i => i.id === this.selected);
                             }
                         }">
-                            <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
-                            <input type="hidden" name="jenis_dokumen" :value="selected">
+                                    <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
+                                    <input type="hidden" name="jenis_dokumen" :value="selected">
 
-                            <div class="mc-grid-2" style="gap: 16px;">
-                                {{-- Left: Type Dropdown --}}
-                                <div class="alpine-dropdown" @click.outside="open = false" style="position: relative;">
-                                    <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
-                                        style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <div
-                                                :style="'width: 32px; height: 32px; border-radius: 8px; background:' + selectedItem.color + '20; color:' + selectedItem.color + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
-                                                <i class="fas" :class="selectedItem.icon"></i>
+                                    <div class="mc-grid-2" style="gap: 16px;">
+                                        {{-- Left: Type Dropdown --}}
+                                        <div class="alpine-dropdown" @click.outside="open = false"
+                                            style="position: relative;">
+                                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
+                                                style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                                                <div style="display: flex; align-items: center; gap: 12px;">
+                                                    <div
+                                                        :style="'width: 32px; height: 32px; border-radius: 8px; background:' + selectedItem.color + '20; color:' + selectedItem.color + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
+                                                        <i class="fas" :class="selectedItem.icon"></i>
+                                                    </div>
+                                                    <div
+                                                        style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                        <span x-text="selectedItem.short"
+                                                            style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                        <span x-text="selectedItem.label"
+                                                            style="font-size: 11px; color: var(--text-sub);"></span>
+                                                    </div>
+                                                </div>
+                                                <i class="fas fa-chevron-down"
+                                                    style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
+                                                    :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
-                                            <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                <span x-text="selectedItem.short"
-                                                    style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                <span x-text="selectedItem.label"
-                                                    style="font-size: 11px; color: var(--text-sub);"></span>
+
+                                            <div class="ad-menu" x-show="open"
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 transform scale-95"
+                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                                style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                                <template x-for="item in items" :key="item.id">
+                                                    <div @click="selected = item.id; open = false" class="ad-item"
+                                                        :class="{'selected': selected === item.id}"
+                                                        style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
+                                                        onmouseover="this.style.background='var(--surface2)'"
+                                                        onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                        <div
+                                                            :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
+                                                            <i class="fas" :class="item.icon"></i>
+                                                        </div>
+                                                        <div
+                                                            style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                            <span x-text="item.short"
+                                                                style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                            <span x-text="item.label"
+                                                                style="font-size: 11px; color: var(--text-sub);"></span>
+                                                        </div>
+                                                        <i class="fas fa-check" x-show="selected === item.id"
+                                                            style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </div>
-                                        <i class="fas fa-chevron-down"
-                                            style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
-                                            :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                                    </div>
 
-                                    <div class="ad-menu" x-show="open"
-                                        x-transition:enter="transition ease-out duration-200"
-                                        x-transition:enter-start="opacity-0 transform scale-95"
-                                        x-transition:enter-end="opacity-100 transform scale-100"
-                                        style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
-                                        <template x-for="item in items" :key="item.id">
-                                            <div @click="selected = item.id; open = false" class="ad-item"
-                                                :class="{'selected': selected === item.id}"
-                                                style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
-                                                onmouseover="this.style.background='var(--surface2)'"
-                                                onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
-                                                <div
-                                                    :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
-                                                    <i class="fas" :class="item.icon"></i>
-                                                </div>
-                                                <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                    <span x-text="item.short"
-                                                        style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                    <span x-text="item.label"
-                                                        style="font-size: 11px; color: var(--text-sub);"></span>
-                                                </div>
-                                                <i class="fas fa-check" x-show="selected === item.id"
-                                                    style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
-                                            </div>
-                                        </template>
+                                        {{-- Right: Number Input --}}
+                                        <div class="mc-input-wrap">
+                                            <i class="fas fa-hashtag mc-icon-left"></i>
+                                            <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}"
+                                                placeholder="Masukkan nomor dokumen..." class="mc-input"
+                                                style="height: 48px;" />
+                                        </div>
                                     </div>
+                                    @error('jenis_dokumen')
+                                        <span class="text-danger"
+                                            style="font-size: 11px; margin-top: 4px; display: block;"><i
+                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
                                 </div>
 
-                                {{-- Right: Number Input --}}
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-hashtag mc-icon-left"></i>
-                                    <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}"
-                                        placeholder="Masukkan nomor dokumen..." class="mc-input"
-                                        style="height: 48px;" />
+                                {{-- Nama Kegiatan --}}
+                                <div style="grid-column: 1 / -1;" class="mc-group">
+                                    <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
+                                    <div class="mc-input-wrap">
+                                        <i class="fas fa-file-lines mc-icon-left"></i>
+                                        <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}"
+                                            required placeholder="Contoh: Pelatihan Web Development Bersama Industri"
+                                            class="mc-input @error('nama_kegiatan') border-danger @enderror" />
+                                    </div>
+                                    @error('nama_kegiatan')
+                                        <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
+                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div style="grid-column: 1 / -1;" class="mc-group">
+                                    <label class="mc-label">Deskripsi</label>
+                                    <div class="mc-input-wrap">
+                                        <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
+                                        <textarea name="dok_keterangan" rows="3"
+                                            placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
+                                            class="mc-input"
+                                            style="resize: vertical; min-height: 100px;">{{ old('dok_keterangan') }}</textarea>
+                                    </div>
                                 </div>
                             </div>
-                            @error('jenis_dokumen')
-                                <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;"><i
-                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                            @enderror
                         </div>
-
-                        {{-- Nama Kegiatan --}}
-                        <div style="grid-column: 1 / -1;" class="mc-group">
-                            <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-file-lines mc-icon-left"></i>
-                                <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}" required
-                                    placeholder="Contoh: Pelatihan Web Development Bersama Industri"
-                                    class="mc-input @error('nama_kegiatan') border-danger @enderror" />
-                            </div>
-                            @error('nama_kegiatan')
-                                <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
-                                        class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div style="grid-column: 1 / -1;" class="mc-group">
-                            <label class="mc-label">Deskripsi</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
-                                <textarea name="dok_keterangan" rows="3"
-                                    placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
-                                    class="mc-input"
-                                    style="resize: vertical; min-height: 100px;">{{ old('dok_keterangan') }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </div> {{-- End RIGHT COLUMN --}}
+                </div> {{-- End TWO-COLUMN TOP LAYOUT --}}
 
                 {{-- ═══ TWO-COLUMN LAYOUT: Penggiat & Bentuk Kegiatan ═══ --}}
                 <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 24px; padding: 0 24px;">
@@ -173,81 +463,100 @@
                         }">
                             <div @click="showPenggiat = !showPenggiat"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
-                                <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #059669); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
                                     <i class="fas fa-users"></i>
                                 </div>
                                 <div style="flex: 1;">
-                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Penggiat Kerja Sama</h4>
-                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Data pihak-pihak yang terlibat dalam kerja sama</p>
+                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">
+                                        Penggiat Kerja Sama</h4>
+                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Data
+                                        pihak-pihak yang terlibat dalam kerja sama</p>
                                 </div>
-                                <i class="fas fa-chevron-down" style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;" :style="showPenggiat ? 'transform: rotate(180deg)' : ''"></i>
+                                <i class="fas fa-chevron-down"
+                                    style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;"
+                                    :style="showPenggiat ? 'transform: rotate(180deg)' : ''"></i>
                             </div>
 
                             {{-- Card Body --}}
                             <div x-show="showPenggiat" x-collapse.duration.300ms style="padding: 20px 24px;">
 
                                 {{-- ══ Pihak Ke-1 ══ --}}
-                                <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
+                                <div
+                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
                                     {{-- Pihak 1 Header --}}
                                     <div @click="showPihak1 = !showPihak1"
                                         style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
-                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.12); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        onmouseover="this.style.background='var(--surface)'"
+                                        onmouseout="this.style.background='transparent'">
+                                        <div
+                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.12); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 13px;">
                                             <i class="fas fa-building"></i>
                                         </div>
                                         <div style="flex: 1;">
-                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-1</span>
-                                            <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Instansi Penyelenggara</span>
+                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak
+                                                Ke-1</span>
+                                            <span
+                                                style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Instansi
+                                                Penyelenggara</span>
                                         </div>
-                                        <i class="fas fa-chevron-down" style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;" :style="showPihak1 ? 'transform: rotate(180deg)' : ''"></i>
+                                        <i class="fas fa-chevron-down"
+                                            style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
+                                            :style="showPihak1 ? 'transform: rotate(180deg)' : ''"></i>
                                     </div>
 
                                     {{-- Pihak 1 Content --}}
-                                    <div x-show="showPihak1" x-collapse.duration.300ms style="padding: 0 20px 20px 20px;">
+                                    <div x-show="showPihak1" x-collapse.duration.300ms
+                                        style="padding: 0 20px 20px 20px;">
                                         {{-- Nama Instansi (full width) --}}
                                         <div class="mc-group">
-                                            <label class="mc-label">Nama Instansi <span class="mc-req">*</span></label>
+                                            <label class="mc-label">Nama Pelaksana<span class="mc-req">*</span></label>
                                             <div class="mc-input-wrap">
                                                 <i class="fas fa-building mc-icon-left"></i>
-                                                <input type="text" name="nama_instansi" value="{{ old('nama_instansi') }}" placeholder="Masukkan nama instansi" class="mc-input" required />
-                                            </div>
-                                        </div>
-
-                                        {{-- Alamat (full width) --}}
-                                        <div class="mc-group" style="margin-top: 10px;">
-                                            <label class="mc-label">Alamat</label>
-                                            <div class="mc-input-wrap">
-                                                <i class="fas fa-map-marker-alt mc-icon-left"></i>
-                                                <input type="text" name="alamat_instansi" value="{{ old('alamat_instansi') }}" placeholder="Masukkan alamat instansi" class="mc-input" />
+                                                <input type="text" name="nama_instansi"
+                                                    value="{{ old('nama_instansi') }}"
+                                                    placeholder="Masukkan nama pelaksana" class="mc-input" required />
                                             </div>
                                         </div>
 
                                         {{-- Penandatangan (Collapsible) --}}
-                                        <div style="margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                        <div
+                                            style="margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
                                             <div @click="showPenandatangan1 = !showPenandatangan1"
                                                 style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                                onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
+                                                onmouseover="this.style.background='var(--surface2)'"
+                                                onmouseout="this.style.background='var(--surface)'">
                                                 <i class="fas fa-pen-nib" style="font-size: 12px; color: #4f46e5;"></i>
                                                 <div style="flex: 1;">
-                                                    <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
-                                                    <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat yang menandatangani dokumen</span>
+                                                    <span
+                                                        style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
+                                                    <span
+                                                        style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat
+                                                        yang menandatangani dokumen</span>
                                                 </div>
-                                                <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="showPenandatangan1 ? 'transform: rotate(180deg)' : ''"></i>
+                                                <i class="fas fa-chevron-down"
+                                                    style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;"
+                                                    :style="showPenandatangan1 ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
-                                            <div x-show="showPenandatangan1" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                            <div x-show="showPenandatangan1" x-collapse.duration.200ms
+                                                style="padding: 0 14px 14px 14px;">
                                                 <div class="mc-grid-2">
                                                     <div class="mc-group">
                                                         <label class="mc-label">Nama</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
-                                                            <input type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}" placeholder="Nama penandatangan" class="mc-input" />
+                                                            <input type="text" name="nama_penandatangan"
+                                                                value="{{ old('nama_penandatangan') }}"
+                                                                placeholder="Nama penandatangan" class="mc-input" />
                                                         </div>
                                                     </div>
                                                     <div class="mc-group">
                                                         <label class="mc-label">Jabatan</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
-                                                            <input type="text" name="jabatan_penandatangan" value="{{ old('jabatan_penandatangan') }}" placeholder="Jabatan penandatangan" class="mc-input" />
+                                                            <input type="text" name="jabatan_penandatangan"
+                                                                value="{{ old('jabatan_penandatangan') }}"
+                                                                placeholder="Jabatan penandatangan" class="mc-input" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -255,31 +564,45 @@
                                         </div>
 
                                         {{-- Penanggung Jawab (Collapsible) --}}
-                                        <div style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                        <div
+                                            style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
                                             <div @click="showPJ1 = !showPJ1"
                                                 style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                                onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
+                                                onmouseover="this.style.background='var(--surface2)'"
+                                                onmouseout="this.style.background='var(--surface)'">
                                                 <i class="fas fa-user-tie" style="font-size: 12px; color: #059669;"></i>
                                                 <div style="flex: 1;">
-                                                    <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung Jawab</span>
-                                                    <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika ada</span>
+                                                    <span
+                                                        style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung
+                                                        Jawab</span>
+                                                    <span
+                                                        style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika
+                                                        ada</span>
                                                 </div>
-                                                <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="showPJ1 ? 'transform: rotate(180deg)' : ''"></i>
+                                                <i class="fas fa-chevron-down"
+                                                    style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;"
+                                                    :style="showPJ1 ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
-                                            <div x-show="showPJ1" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                            <div x-show="showPJ1" x-collapse.duration.200ms
+                                                style="padding: 0 14px 14px 14px;">
                                                 <div class="mc-grid-2">
                                                     <div class="mc-group">
                                                         <label class="mc-label">Nama</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
-                                                            <input type="text" name="nama_penanggung_jawab" value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama penanggung jawab" class="mc-input" />
+                                                            <input type="text" name="nama_penanggung_jawab"
+                                                                value="{{ old('nama_penanggung_jawab') }}"
+                                                                placeholder="Nama penanggung jawab" class="mc-input" />
                                                         </div>
                                                     </div>
                                                     <div class="mc-group">
                                                         <label class="mc-label">Jabatan</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
-                                                            <input type="text" name="jabatan_penanggung_jawab" value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Jabatan penanggung jawab" class="mc-input" />
+                                                            <input type="text" name="jabatan_penanggung_jawab"
+                                                                value="{{ old('jabatan_penanggung_jawab') }}"
+                                                                placeholder="Jabatan penanggung jawab"
+                                                                class="mc-input" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -290,24 +613,35 @@
 
 
                                 {{-- ══ Pihak Ke-2 (Dynamic Penggiat) ══ --}}
-                                <div style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: visible;">
+                                <div
+                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; overflow: visible;">
                                     {{-- Pihak 2 Header --}}
                                     <div @click="showPihak2 = !showPihak2"
                                         style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='transparent'">
-                                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(5,150,105,0.12); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+                                        onmouseover="this.style.background='var(--surface)'"
+                                        onmouseout="this.style.background='transparent'">
+                                        <div
+                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(5,150,105,0.12); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 13px;">
                                             <i class="fas fa-handshake"></i>
                                         </div>
                                         <div style="flex: 1;">
-                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak Ke-2</span>
-                                            <span style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Mitra Kerja Sama</span>
+                                            <span style="font-weight: 700; font-size: 13px; color: var(--text);">Pihak
+                                                Ke-2</span>
+                                            <span
+                                                style="font-size: 11px; color: var(--text-sub); margin-left: 8px;">Mitra
+                                                Kerja Sama</span>
                                         </div>
-                                        <span x-show="penggiatList.length > 0" style="background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-right: 8px;" x-text="penggiatList.length"></span>
-                                        <i class="fas fa-chevron-down" style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;" :style="showPihak2 ? 'transform: rotate(180deg)' : ''"></i>
+                                        <span x-show="penggiatList.length > 0"
+                                            style="background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-right: 8px;"
+                                            x-text="penggiatList.length"></span>
+                                        <i class="fas fa-chevron-down"
+                                            style="font-size: 11px; color: #9ca3af; transition: transform 0.3s ease;"
+                                            :style="showPihak2 ? 'transform: rotate(180deg)' : ''"></i>
                                     </div>
 
                                     {{-- Pihak 2 Content --}}
-                                    <div x-show="showPihak2" x-collapse.duration.300ms style="padding: 0 20px 20px 20px;">
+                                    <div x-show="showPihak2" x-collapse.duration.300ms
+                                        style="padding: 0 20px 20px 20px;">
 
                                         {{-- Dynamic Penggiat Entries --}}
                                         <template x-for="(pg, idx) in penggiatList" :key="pg.id">
@@ -317,37 +651,59 @@
                                                 x-transition:enter-end="opacity-100 transform translate-y-0">
 
                                                 {{-- Penggiat Number Badge + Remove --}}
-                                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <div
+                                                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                                        <span style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center;" x-text="idx + 1"></span>
-                                                        <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penggiat <span x-text="idx + 1"></span></span>
+                                                        <span
+                                                            style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; font-size: 10px; font-weight: 700; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center;"
+                                                            x-text="idx + 1"></span>
+                                                        <span
+                                                            style="font-weight: 600; font-size: 12px; color: var(--text);">Penggiat
+                                                            <span x-text="idx + 1"></span></span>
                                                     </div>
-                                                    <button type="button" x-show="penggiatList.length > 1" @click="removePenggiat(idx)"
+                                                    <button type="button" x-show="penggiatList.length > 1"
+                                                        @click="removePenggiat(idx)"
                                                         style="background: rgba(239,68,68,0.1); border: none; color: #ef4444; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; transition: all 0.2s;"
-                                                        onmouseover="this.style.background='rgba(239,68,68,0.2)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.2)'"
+                                                        onmouseout="this.style.background='rgba(239,68,68,0.1)'">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </div>
 
                                                 {{-- Nama Mitra (Dropdown from DB + Add New Link) --}}
                                                 <div class="mc-group" style="margin-bottom: 10px;">
-                                                    <label class="mc-label">Nama Mitra <span class="mc-req">*</span></label>
+                                                    <label class="mc-label">Nama Mitra <span
+                                                            class="mc-req">*</span></label>
                                                     <div style="display: flex; gap: 8px; align-items: flex-start;">
-                                                        <div style="flex: 1; position: relative;" class="alpine-dropdown" @click.outside="pg.mitraOpen = false">
-                                                            <input type="hidden" name="mitra_nama[]" :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
-                                                            <div class="ad-trigger no-icon" :class="{'active': pg.mitraOpen}" @click="pg.mitraOpen = !pg.mitraOpen"
+                                                        <div style="flex: 1; position: relative;"
+                                                            class="alpine-dropdown"
+                                                            @click.outside="pg.mitraOpen = false">
+                                                            <input type="hidden" name="mitra_nama[]"
+                                                                :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
+                                                            <div class="ad-trigger no-icon"
+                                                                :class="{'active': pg.mitraOpen}"
+                                                                @click="pg.mitraOpen = !pg.mitraOpen"
                                                                 style="min-height: 40px;">
-                                                                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
-                                                                    <i class="fas fa-building" style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
-                                                                    <span x-show="!pg.mitraId" style="color: #9ca3af; font-size: 12px;">— Pilih Mitra —</span>
-                                                                    <span x-show="pg.mitraId" style="font-size: 12px; color: var(--text);" x-text="mitraItems.find(m => m.id == pg.mitraId)?.nama || ''"></span>
+                                                                <div
+                                                                    style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                                    <i class="fas fa-building"
+                                                                        style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
+                                                                    <span x-show="!pg.mitraId"
+                                                                        style="color: #9ca3af; font-size: 12px;">— Pilih
+                                                                        Mitra —</span>
+                                                                    <span x-show="pg.mitraId"
+                                                                        style="font-size: 12px; color: var(--text);"
+                                                                        x-text="mitraItems.find(m => m.id == pg.mitraId)?.nama || ''"></span>
                                                                 </div>
-                                                                <i class="fas fa-chevron-down" style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;" :style="pg.mitraOpen ? 'transform: rotate(180deg)' : ''"></i>
+                                                                <i class="fas fa-chevron-down"
+                                                                    style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;"
+                                                                    :style="pg.mitraOpen ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="pg.mitraOpen" x-transition
                                                                 style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130; max-height: 180px; overflow-y: auto;">
                                                                 <template x-for="mitra in mitraItems" :key="mitra.id">
-                                                                    <div class="ad-item" :class="{'selected': pg.mitraId == mitra.id}"
+                                                                    <div class="ad-item"
+                                                                        :class="{'selected': pg.mitraId == mitra.id}"
                                                                         @click="pg.mitraId = mitra.id; pg.mitraOpen = false"
                                                                         style="font-size: 12px; padding: 8px 12px;">
                                                                         <span x-text="mitra.nama"></span>
@@ -358,7 +714,8 @@
                                                         {{-- Add New Mitra Button --}}
                                                         <a href="{{ route('unit.mitra.create') }}"
                                                             style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
-                                                            onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'"
+                                                            onmouseover="this.style.transform='scale(1.08)'"
+                                                            onmouseout="this.style.transform='scale(1)'"
                                                             title="Tambah Mitra Baru">
                                                             <i class="fas fa-plus"></i>
                                                         </a>
@@ -366,31 +723,46 @@
                                                 </div>
 
                                                 {{-- Penandatangan (Collapsible) --}}
-                                                <div style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                <div
+                                                    style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
                                                     <div @click="pg.showPenandatangan = !pg.showPenandatangan"
                                                         style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface2)'">
-                                                        <i class="fas fa-pen-nib" style="font-size: 12px; color: #4f46e5;"></i>
+                                                        onmouseover="this.style.background='var(--surface)'"
+                                                        onmouseout="this.style.background='var(--surface2)'">
+                                                        <i class="fas fa-pen-nib"
+                                                            style="font-size: 12px; color: #4f46e5;"></i>
                                                         <div style="flex: 1;">
-                                                            <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
-                                                            <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat yang menandatangani dokumen</span>
+                                                            <span
+                                                                style="font-weight: 600; font-size: 12px; color: var(--text);">Penandatangan</span>
+                                                            <span
+                                                                style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Pejabat
+                                                                yang menandatangani dokumen</span>
                                                         </div>
-                                                        <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="pg.showPenandatangan ? 'transform: rotate(180deg)' : ''"></i>
+                                                        <i class="fas fa-chevron-down"
+                                                            style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;"
+                                                            :style="pg.showPenandatangan ? 'transform: rotate(180deg)' : ''"></i>
                                                     </div>
-                                                    <div x-show="pg.showPenandatangan" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                    <div x-show="pg.showPenandatangan" x-collapse.duration.200ms
+                                                        style="padding: 0 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Nama</label>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-user mc-icon-left"></i>
-                                                                    <input type="text" :name="'penggiat[' + idx + '][nama_penandatangan]'" placeholder="Nama penandatangan" class="mc-input" />
+                                                                    <input type="text"
+                                                                        :name="'penggiat[' + idx + '][nama_penandatangan]'"
+                                                                        placeholder="Nama penandatangan"
+                                                                        class="mc-input" />
                                                                 </div>
                                                             </div>
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Jabatan</label>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
-                                                                    <input type="text" :name="'penggiat[' + idx + '][jabatan_penandatangan]'" placeholder="Jabatan penandatangan" class="mc-input" />
+                                                                    <input type="text"
+                                                                        :name="'penggiat[' + idx + '][jabatan_penandatangan]'"
+                                                                        placeholder="Jabatan penandatangan"
+                                                                        class="mc-input" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -398,31 +770,47 @@
                                                 </div>
 
                                                 {{-- Penanggung Jawab (Collapsible) --}}
-                                                <div style="margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                <div
+                                                    style="margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
                                                     <div @click="pg.showPJ = !pg.showPJ"
                                                         style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
-                                                        onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background='var(--surface2)'">
-                                                        <i class="fas fa-user-tie" style="font-size: 12px; color: #059669;"></i>
+                                                        onmouseover="this.style.background='var(--surface)'"
+                                                        onmouseout="this.style.background='var(--surface2)'">
+                                                        <i class="fas fa-user-tie"
+                                                            style="font-size: 12px; color: #059669;"></i>
                                                         <div style="flex: 1;">
-                                                            <span style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung Jawab</span>
-                                                            <span style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika ada</span>
+                                                            <span
+                                                                style="font-weight: 600; font-size: 12px; color: var(--text);">Penanggung
+                                                                Jawab</span>
+                                                            <span
+                                                                style="font-size: 10px; color: var(--text-sub); margin-left: 6px;">Jika
+                                                                ada</span>
                                                         </div>
-                                                        <i class="fas fa-chevron-down" style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;" :style="pg.showPJ ? 'transform: rotate(180deg)' : ''"></i>
+                                                        <i class="fas fa-chevron-down"
+                                                            style="font-size: 9px; color: #9ca3af; transition: transform 0.3s;"
+                                                            :style="pg.showPJ ? 'transform: rotate(180deg)' : ''"></i>
                                                     </div>
-                                                    <div x-show="pg.showPJ" x-collapse.duration.200ms style="padding: 0 14px 14px 14px;">
+                                                    <div x-show="pg.showPJ" x-collapse.duration.200ms
+                                                        style="padding: 0 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Nama</label>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-user mc-icon-left"></i>
-                                                                    <input type="text" :name="'penggiat[' + idx + '][nama_pj]'" placeholder="Nama penanggung jawab" class="mc-input" />
+                                                                    <input type="text"
+                                                                        :name="'penggiat[' + idx + '][nama_pj]'"
+                                                                        placeholder="Nama penanggung jawab"
+                                                                        class="mc-input" />
                                                                 </div>
                                                             </div>
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Jabatan</label>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
-                                                                    <input type="text" :name="'penggiat[' + idx + '][jabatan_pj]'" placeholder="Jabatan penanggung jawab" class="mc-input" />
+                                                                    <input type="text"
+                                                                        :name="'penggiat[' + idx + '][jabatan_pj]'"
+                                                                        placeholder="Jabatan penanggung jawab"
+                                                                        class="mc-input" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -757,23 +1145,6 @@
                         </div>
                     </div>
 
-                    {{-- ═══ SECTION 6: Dokumentasi ═══ --}}
-                    <div class="mc-section-title">
-                        <span class="mc-section-num">06</span>
-                        <span>Dokumentasi <span
-                                style="font-weight: 400; font-size: 12px; color: var(--text-sub); margin-left: 4px;">(Opsional)</span></span>
-                    </div>
-
-                    <div class="mc-grid-1">
-                        <div class="mc-group">
-                            <label class="mc-label">Link Google Drive</label>
-                            <div class="mc-input-wrap">
-                                <i class="fas fa-link mc-icon-left"></i>
-                                <input type="text" name="dok_link_drive" value="{{ old('dok_link_drive') }}"
-                                    placeholder="https://drive.google.com/..." class="mc-input" />
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="mc-section-title">
                         <span class="mc-section-num"><i class="fas fa-users"></i></span>
@@ -817,123 +1188,6 @@
                         </div>
                     </div>
 
-                    {{-- Periode Mulai (Alpine Datepicker) --}}
-                    <div class="mc-group" x-data="datepicker('{{ old('periode_mulai') }}')">
-                        <label class="mc-label">Periode Mulai</label>
-                        <div class="alpine-datepicker" @click.outside="show = false">
-                            <div class="adp-input-wrap">
-                                <i class="fas fa-calendar-day mc-icon-left"></i>
-                                <input type="text" name="periode_mulai" x-model="formattedDate" readonly
-                                    @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
-                            </div>
-                            <div class="adp-calendar" x-show="show" x-transition>
-                                <div class="adp-header">
-                                    <div style="display: flex; gap: 4px;">
-                                        <span class="adp-month" @click="toggleMonthPicker()"
-                                            x-text="monthNames[month]"></span>
-                                        <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
-                                    </div>
-                                    <div class="adp-nav">
-                                        <div class="adp-nav-btn" @click="prevMonth()"><i
-                                                class="fas fa-chevron-left"></i></div>
-                                        <div class="adp-nav-btn" @click="nextMonth()"><i
-                                                class="fas fa-chevron-right"></i></div>
-                                    </div>
-                                </div>
-
-                                <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
-                                    <template x-for="(mName, index) in monthNames">
-                                        <div class="adp-picker-item" :class="{'selected': month === index}"
-                                            @click="selectMonth(index)" x-text="mName"></div>
-                                    </template>
-                                </div>
-                                <div class="adp-year-picker" x-show="showYearPicker" x-transition>
-                                    <div style="grid-column: span 4; padding: 4px;">
-                                        <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
-                                            style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
-                                            @click.stop>
-                                    </div>
-                                    <template x-for="y in filteredYears">
-                                        <div class="adp-picker-item" :class="{'selected': year === y}"
-                                            @click="selectYear(y)" x-text="y"></div>
-                                    </template>
-                                </div>
-
-                                <div class="adp-grid">
-                                    <template x-for="day in dayNames">
-                                        <div class="adp-day-name" x-text="day"></div>
-                                    </template>
-                                    <template x-for="blankday in blanks">
-                                        <div class="adp-day empty"></div>
-                                    </template>
-                                    <template x-for="date in days">
-                                        <div class="adp-day"
-                                            :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                            @click="selectDate(date)" x-text="date"></div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Periode Selesai (Alpine Datepicker) --}}
-                    <div class="mc-group" x-data="datepicker('{{ old('periode_selesai') }}')">
-                        <label class="mc-label">Periode Selesai</label>
-                        <div class="alpine-datepicker" @click.outside="show = false">
-                            <div class="adp-input-wrap">
-                                <i class="fas fa-calendar-check mc-icon-left"></i>
-                                <input type="text" name="periode_selesai" x-model="formattedDate" readonly
-                                    @click="show = !show" placeholder="Pilih Tanggal" class="adp-input">
-                            </div>
-                            <div class="adp-calendar" x-show="show" x-transition>
-                                <div class="adp-header">
-                                    <div style="display: flex; gap: 4px;">
-                                        <span class="adp-month" @click="toggleMonthPicker()"
-                                            x-text="monthNames[month]"></span>
-                                        <span class="adp-month" @click="toggleYearPicker()" x-text="year"></span>
-                                    </div>
-                                    <div class="adp-nav">
-                                        <div class="adp-nav-btn" @click="prevMonth()"><i
-                                                class="fas fa-chevron-left"></i></div>
-                                        <div class="adp-nav-btn" @click="nextMonth()"><i
-                                                class="fas fa-chevron-right"></i></div>
-                                    </div>
-                                </div>
-
-                                <div class="adp-month-picker" x-show="showMonthPicker" x-transition>
-                                    <template x-for="(mName, index) in monthNames">
-                                        <div class="adp-picker-item" :class="{'selected': month === index}"
-                                            @click="selectMonth(index)" x-text="mName"></div>
-                                    </template>
-                                </div>
-                                <div class="adp-year-picker" x-show="showYearPicker" x-transition>
-                                    <div style="grid-column: span 4; padding: 4px;">
-                                        <input type="text" x-model="yearSearch" placeholder="Cari tahun..."
-                                            style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
-                                            @click.stop>
-                                    </div>
-                                    <template x-for="y in filteredYears">
-                                        <div class="adp-picker-item" :class="{'selected': year === y}"
-                                            @click="selectYear(y)" x-text="y"></div>
-                                    </template>
-                                </div>
-
-                                <div class="adp-grid">
-                                    <template x-for="day in dayNames">
-                                        <div class="adp-day-name" x-text="day"></div>
-                                    </template>
-                                    <template x-for="blankday in blanks">
-                                        <div class="adp-day empty"></div>
-                                    </template>
-                                    <template x-for="date in days">
-                                        <div class="adp-day"
-                                            :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                            @click="selectDate(date)" x-text="date"></div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="mc-grid-2">
                         <div class="mc-group">
@@ -1003,7 +1257,6 @@
                         </div>
                     </div>
                 </div>
-
                 {{-- Footer --}}
                 <div class="mc-footer"
                     style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
