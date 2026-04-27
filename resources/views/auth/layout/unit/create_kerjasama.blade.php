@@ -443,15 +443,15 @@
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
                         {{-- Card Header --}}
                         <div x-data="{
-                            showPenggiat: true,
-                            showPihak1: true,
-                            showPihak2: true,
-                            showPenandatangan1: true,
+                            showPenggiat: false,
+                            showPihak1: false,
+                            showPihak2: false,
+                            showPenandatangan1: false,
                             showPJ1: false,
-                            penggiatList: [{ id: Date.now(), showPenandatangan: true, showPJ: false, mitraId: '', mitraOpen: false }],
+                            penggiatList: [{ id: Date.now(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false }],
                             nextId() { return Date.now() + Math.random(); },
                             addPenggiat() {
-                                this.penggiatList.push({ id: this.nextId(), showPenandatangan: true, showPJ: false, mitraId: '', mitraOpen: false });
+                                this.penggiatList.push({ id: this.nextId(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false });
                             },
                             removePenggiat(idx) {
                                 if (this.penggiatList.length > 1) this.penggiatList.splice(idx, 1);
@@ -931,7 +931,7 @@
                                                     :style="showPenandatangan1 ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
                                             <div x-show="showPenandatangan1" x-collapse.duration.200ms
-                                                style="padding: 0 14px 14px 14px;">
+                                                style="padding: 10px 14px 14px 14px;">
                                                 <div class="mc-grid-2">
                                                     <div class="mc-group">
                                                         <label class="mc-label">Nama</label>
@@ -976,7 +976,7 @@
                                                     :style="showPJ1 ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
                                             <div x-show="showPJ1" x-collapse.duration.200ms
-                                                style="padding: 0 14px 14px 14px;">
+                                                style="padding: 10px 14px 14px 14px;">
                                                 <div class="mc-grid-2">
                                                     <div class="mc-group">
                                                         <label class="mc-label">Nama</label>
@@ -1135,7 +1135,7 @@
                                                             :style="pg.showPenandatangan ? 'transform: rotate(180deg)' : ''"></i>
                                                     </div>
                                                     <div x-show="pg.showPenandatangan" x-collapse.duration.200ms
-                                                        style="padding: 0 14px 14px 14px;">
+                                                        style="padding: 10px 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Nama</label>
@@ -1183,7 +1183,7 @@
                                                             :style="pg.showPJ ? 'transform: rotate(180deg)' : ''"></i>
                                                     </div>
                                                     <div x-show="pg.showPJ" x-collapse.duration.200ms
-                                                        style="padding: 0 14px 14px 14px;">
+                                                        style="padding: 10px 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
                                                                 <label class="mc-label">Nama</label>
@@ -1233,7 +1233,7 @@
                     {{-- ═══ COLUMN 2: Bentuk Kegiatan ═══ --}}
                     <div
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
-                        <div x-data="{ showBentuk: true }">
+                        <div x-data="{ showBentuk: false }">
                             {{-- Card Header --}}
                             <div @click="showBentuk = !showBentuk"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(217,119,6,0.04), rgba(245,158,11,0.04)); border-radius: 16px 16px 0 0;">
@@ -1531,7 +1531,7 @@
                                                             :style="showPelaksanaan ? 'transform: rotate(180deg)' : ''"></i>
                                                     </div>
                                                     <div x-show="showPelaksanaan" x-collapse.duration.200ms
-                                                        style="padding: 0 14px 14px 14px;">
+                                                        style="padding: 10px 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group" style="grid-column: 1 / -1;">
                                                                 <label class="mc-label">Deskripsi Pelaksanaan <span
@@ -1560,9 +1560,9 @@
                                                                 <label class="mc-label">Jumlah Peserta</label>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-users mc-icon-left"></i>
-                                                                    <input type="number" name="pelaksanaan_peserta"
+                                                                    <input type="text" name="pelaksanaan_peserta"
                                                                         value="{{ old('pelaksanaan_peserta') }}"
-                                                                        placeholder="0" min="0" class="mc-input" />
+                                                                        placeholder="Jumlah peserta" class="mc-input" />
                                                                 </div>
                                                             </div>
                                                             <div class="mc-group" style="grid-column: 1 / -1;">
@@ -1595,7 +1595,7 @@
                     {{-- ═══ Hasil dan Capaian (Bentuk Kegiatan-style Card) ═══ --}}
                     <div
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; margin-bottom: 20px;">
-                        <div x-data="{ showHasil: true }">
+                        <div x-data="{ showHasil: false }">
                             {{-- Card Header --}}
                             <div @click="showHasil = !showHasil"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(5,150,105,0.04), rgba(16,185,129,0.04)); border-radius: 16px 16px 0 0;">
