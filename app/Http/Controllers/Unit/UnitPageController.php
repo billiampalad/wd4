@@ -453,6 +453,7 @@ class UnitPageController extends Controller
             )
             ->first();
 
+
         return view('auth.unit', compact(
             'totalKerjasama',
             'statusBreakdown',
@@ -460,5 +461,54 @@ class UnitPageController extends Controller
             'sebaranJenis',
             'avgEvaluasi'
         ));
+    }
+
+    // ─── Form Laporan (PDF Upload) ──────────────────────────────
+    public function formLaporan()
+    {
+        $unitId = $this->resolveUnitId();
+
+        $laporanFiles = \App\Models\LaporanFile::where('unit_kerja_id', $unitId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('auth.unit', compact('laporanFiles'));
+    }
+
+    public function formLaporanStore(Request $request)
+    {
+        $request->validate([
+            'file_pdf' => 'required|file|mimes:pdf|max:10240',
+        ]);
+
+        $unitId = $this->resolveUnitId();
+
+        $file = $request->file('file_pdf');
+        $path = $file->store('laporan_unit', 'public');
+
+        \App\Models\LaporanFile::create([
+            'unit_kerja_id' => $unitId,
+            'uploaded_by'   => Auth::id(),
+            'judul'         => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+            'file_path'     => $path,
+            'original_name' => $file->getClientOriginalName(),
+            'file_size'     => $file->getSize(),
+        ]);
+
+        return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
+    }
+
+    public function formLaporanDestroy($id)
+    {
+        $unitId = $this->resolveUnitId();
+
+        $file = \App\Models\LaporanFile::where('unit_kerja_id', $unitId)->findOrFail($id);
+
+        // Delete the physical file
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($file->file_path);
+
+        $file->delete();
+
+        return redirect()->route('unit.form')->with('success', 'Laporan berhasil dihapus.');
     }
 }

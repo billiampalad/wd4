@@ -214,6 +214,11 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit/laporan/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPreview'])->name('unit.laporan.preview');
     Route::get('/unit/laporan/pdf', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPdf'])->name('unit.laporan.pdf');
     Route::get('/unit/laporan/excel', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanExcel'])->name('unit.laporan.excel');
+
+    // ─── Form Laporan (PDF Upload) ───────────────────────
+    Route::get('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporan'])->name('unit.form');
+    Route::post('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanStore'])->name('unit.form.store');
+    Route::delete('/unit/form-laporan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanDestroy'])->name('unit.form.destroy');
 });
 
 /*

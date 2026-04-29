@@ -74,8 +74,10 @@
                 <!-- Search (desktop) -->
                 <div class="search-bar" id="navSearch" style="display:none;">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input" autocomplete="off" />
-                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;" title="Bersihkan pencarian">
+                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input"
+                        autocomplete="off" />
+                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;"
+                        title="Bersihkan pencarian">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
@@ -89,11 +91,13 @@
                         <i class="fas fa-bell" id="notificationIcon"></i>
                         <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
                     </button>
-                    
+
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
-                            <button id="markAllRead" style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai semua dibaca</button>
+                            <button id="markAllRead"
+                                style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai
+                                semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
                             <div class="notification-empty">
@@ -140,21 +144,27 @@
             </a>
 
             @php
-                $isDataKerjasamaActive = request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*', 'unit.mitra', 'unit.mitra.*');
+                $isDataKerjasamaActive = request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*', 'unit.mitra', 'unit.mitra.*', 'unit.form', 'unit.form.*');
             @endphp
             <div id="kerjasamaParent" style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
+                <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}"
+                    style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-folder"></i></div>
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Kerjasama</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
                 <div class="submenu {{ $isDataKerjasamaActive ? 'open' : '' }}" id="kerjasamaSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*') ? 'active' : '' }}" href="{{ route('unit.dkerjasama') }}">
+                        <a class="submenu-item {{ request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*') ? 'active' : '' }}"
+                            href="{{ route('unit.dkerjasama') }}">
                             <span class="submenu-dot"></span><span>Repositori</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('unit.mitra', 'unit.mitra.*') ? 'active' : '' }}" href="{{ route('unit.mitra') }}">
+                        <a class="submenu-item {{ request()->routeIs('unit.mitra', 'unit.mitra.*') ? 'active' : '' }}"
+                            href="{{ route('unit.mitra') }}">
                             <span class="submenu-dot"></span><span>Mitra</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.form', 'unit.form.*') ? 'active' : '' }}" href="{{ route('unit.form') }}">
+                            <span class="submenu-dot"></span><span>Form Laporan</span>
                         </a>
                     </div>
                 </div>
@@ -195,6 +205,8 @@
                 @include('auth.layout.unit.mitra.edit')
             @elseif(request()->routeIs('unit.mitra.show'))
                 @include('auth.layout.unit.mitra.detail')
+            @elseif(request()->routeIs('unit.form'))
+                @include('auth.layout.unit.form.index')
             @elseif(request()->routeIs('unit.mitra'))
                 @include('auth.layout.unit.mitra.index')
             @elseif(request()->routeIs('unit.evaluasi.form'))
