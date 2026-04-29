@@ -204,16 +204,16 @@
                     @endphp
 
                     <div class="kcard" onclick="openModal(
-                                            {{ $item->id }},
-                                            `{{ addslashes($item->nama_kegiatan) }}`,
-                                            `{{ addslashes($mitraNames) }}`,
-                                            `{{ addslashes($jenis) }}`,
-                                            `{{ addslashes($bidang) }}`,
-                                            `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
-                                            `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
-                                            `{{ addslashes($statusLabel) }}`,
-                                            `{{ $statusClass }}`
-                                        )">
+                                                    {{ $item->id }},
+                                                    `{{ addslashes($item->nama_kegiatan) }}`,
+                                                    `{{ addslashes($mitraNames) }}`,
+                                                    `{{ addslashes($jenis) }}`,
+                                                    `{{ addslashes($bidang) }}`,
+                                                    `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
+                                                    `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
+                                                    `{{ addslashes($statusLabel) }}`,
+                                                    `{{ $statusClass }}`
+                                                )">
                         <div class="kcard-accent"></div>
 
                         <div class="kcard-top">
@@ -256,16 +256,16 @@
                         <div class="kcard-footer">
                             <button class="btn-detail"
                                 onclick="event.stopPropagation(); openModal(
-                                                                                                                                                                                {{ $item->id }},
-                                                                                                                                                                                `{{ addslashes($item->nama_kegiatan) }}`,
-                                                                                                                                                                                `{{ addslashes($mitraNames) }}`,
-                                                                                                                                                                                `{{ addslashes($jenis) }}`,
-                                                                                                                                                                                `{{ addslashes($bidang) }}`,
-                                                                                                                                                                                `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
-                                                                                                                                                                                `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
-                                                                                                                                                                                `{{ addslashes($statusLabel) }}`,
-                                                                                                                                                                                `{{ $statusClass }}`
-                                                                                                                                                                            )">
+                                                                                                                                                                                        {{ $item->id }},
+                                                                                                                                                                                        `{{ addslashes($item->nama_kegiatan) }}`,
+                                                                                                                                                                                        `{{ addslashes($mitraNames) }}`,
+                                                                                                                                                                                        `{{ addslashes($jenis) }}`,
+                                                                                                                                                                                        `{{ addslashes($bidang) }}`,
+                                                                                                                                                                                        `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
+                                                                                                                                                                                        `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
+                                                                                                                                                                                        `{{ addslashes($statusLabel) }}`,
+                                                                                                                                                                                        `{{ $statusClass }}`
+                                                                                                                                                                                    )">
                                 Lihat Detail
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">

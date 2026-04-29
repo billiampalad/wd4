@@ -50,7 +50,7 @@
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th">Nama Kegiatan</th>
+                            <th class="um-th">Judul Kerjasama</th>
                             <th class="um-th">Jenis Kerjasama</th>
                             <th class="um-th">Mitra</th>
                             <th class="um-th">Periode</th>
@@ -101,13 +101,17 @@
                                 </td>
                                 <td class="um-td um-td-aksi">
                                     <div class="um-actions">
-                                        <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view" title="Detail" data-turbo="false">
+                                        <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view"
+                                            title="Detail" data-turbo="false">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="um-btn-warn" title="Edit" data-turbo="false">
+                                        <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="um-btn-warn"
+                                            title="Edit" data-turbo="false">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('unit.kerjasama.destroy', $kegiatan->id) }}" method="POST" data-turbo="false" style="display:inline-flex;" onsubmit="return confirm('Yakin ingin menghapus data kerjasama ini? Semua data terkait (tujuan, pelaksanaan, hasil, dokumentasi) akan ikut terhapus.')">
+                                        <form action="{{ route('unit.kerjasama.destroy', $kegiatan->id) }}" method="POST"
+                                            data-turbo="false" style="display:inline-flex;"
+                                            onsubmit="return confirm('Yakin ingin menghapus data kerjasama ini? Semua data terkait (tujuan, pelaksanaan, hasil, dokumentasi) akan ikut terhapus.')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="um-btn-delete" title="Hapus">

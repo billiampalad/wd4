@@ -79,15 +79,8 @@ class KerjasamaUnitController extends Controller
             // New fields
             'tujuan' => 'required|string',
             'sasaran' => 'required|string',
-            'pelaksanaan_deskripsi' => 'required|string',
-            'pelaksanaan_cakupan' => 'nullable|string',
-            'pelaksanaan_peserta' => 'nullable|integer|min:0',
-            'pelaksanaan_sumber_daya' => 'nullable|string',
-            'hasil_langsung' => 'nullable|string',
-            'hasil_dampak' => 'nullable|string',
-            'hasil_manfaat_mahasiswa' => 'nullable|string',
-            'hasil_manfaat_polimdo' => 'nullable|string',
-            'hasil_manfaat_mitra' => 'nullable|string',
+
+
             'masalah_kendala' => 'nullable|string',
             'masalah_solusi' => 'nullable|string',
             'masalah_rekomendasi' => 'nullable|string',
@@ -120,7 +113,8 @@ class KerjasamaUnitController extends Controller
             foreach ($request->mitra_nama as $index => $nama) {
                 $kategori = $request->mitra_kategori[$index] ?? 'nasional';
                 $negara = $request->mitra_negara[$index] ?? 'Indonesia';
-                if ($kategori === 'nasional') $negara = 'Indonesia';
+                if ($kategori === 'nasional')
+                    $negara = 'Indonesia';
 
                 $mitra = Mitra::firstOrCreate(
                     ['nama_mitra' => $nama],
@@ -138,24 +132,9 @@ class KerjasamaUnitController extends Controller
                 'sasaran' => $request->sasaran,
             ]);
 
-            // Save Pelaksanaan
-            Pelaksanaan::create([
-                'id_kegiatan' => $kegiatan->id,
-                'deskripsi' => $request->pelaksanaan_deskripsi,
-                'cakupan' => $request->pelaksanaan_cakupan,
-                'jumlah_peserta' => $request->pelaksanaan_peserta,
-                'sumber_daya' => $request->pelaksanaan_sumber_daya,
-            ]);
 
-            // Save Hasil & Capaian
-            Hasil::create([
-                'id_kegiatan' => $kegiatan->id,
-                'hasil_langsung' => $request->hasil_langsung,
-                'dampak' => $request->hasil_dampak,
-                'manfaat_mahasiswa' => $request->hasil_manfaat_mahasiswa,
-                'manfaat_polimdo' => $request->hasil_manfaat_polimdo,
-                'manfaat_mitra' => $request->hasil_manfaat_mitra,
-            ]);
+
+
 
             // Save Permasalahan & Solusi
             PermasalahanSolusi::create([
@@ -208,7 +187,7 @@ class KerjasamaUnitController extends Controller
             'kesimpulans',
             'permasalahanSolusis',
         ])->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
-          ->findOrFail($id);
+            ->findOrFail($id);
 
         return view('auth.unit', compact('kegiatan'));
     }
@@ -220,9 +199,14 @@ class KerjasamaUnitController extends Controller
         $unitId = $this->getUnitId();
 
         $kegiatan = KegiatanKerjasama::with([
-                'mitras', 'dokumentasis', 'jenisKerjasama',
-                'tujuans', 'pelaksanaans', 'hasils', 'permasalahanSolusis',
-            ])
+            'mitras',
+            'dokumentasis',
+            'jenisKerjasama',
+            'tujuans',
+            'pelaksanaans',
+            'hasils',
+            'permasalahanSolusis',
+        ])
             ->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
             ->findOrFail($id);
 
@@ -259,15 +243,8 @@ class KerjasamaUnitController extends Controller
             // New fields
             'tujuan' => 'required|string',
             'sasaran' => 'required|string',
-            'pelaksanaan_deskripsi' => 'required|string',
-            'pelaksanaan_cakupan' => 'nullable|string',
-            'pelaksanaan_peserta' => 'nullable|integer|min:0',
-            'pelaksanaan_sumber_daya' => 'nullable|string',
-            'hasil_langsung' => 'nullable|string',
-            'hasil_dampak' => 'nullable|string',
-            'hasil_manfaat_mahasiswa' => 'nullable|string',
-            'hasil_manfaat_polimdo' => 'nullable|string',
-            'hasil_manfaat_mitra' => 'nullable|string',
+
+
             'masalah_kendala' => 'nullable|string',
             'masalah_solusi' => 'nullable|string',
             'masalah_rekomendasi' => 'nullable|string',
@@ -298,7 +275,8 @@ class KerjasamaUnitController extends Controller
             foreach ($request->mitra_nama as $index => $nama) {
                 $kategori = $request->mitra_kategori[$index] ?? 'nasional';
                 $negara = $request->mitra_negara[$index] ?? 'Indonesia';
-                if ($kategori === 'nasional') $negara = 'Indonesia';
+                if ($kategori === 'nasional')
+                    $negara = 'Indonesia';
 
                 $mitra = Mitra::firstOrCreate(
                     ['nama_mitra' => $nama],
@@ -313,29 +291,6 @@ class KerjasamaUnitController extends Controller
             $kegiatan->tujuans()->updateOrCreate(
                 ['id_kegiatan' => $kegiatan->id],
                 ['tujuan' => $request->tujuan, 'sasaran' => $request->sasaran]
-            );
-
-            // Update/create Pelaksanaan
-            $kegiatan->pelaksanaans()->updateOrCreate(
-                ['id_kegiatan' => $kegiatan->id],
-                [
-                    'deskripsi' => $request->pelaksanaan_deskripsi,
-                    'cakupan' => $request->pelaksanaan_cakupan,
-                    'jumlah_peserta' => $request->pelaksanaan_peserta,
-                    'sumber_daya' => $request->pelaksanaan_sumber_daya
-                ]
-            );
-
-            // Update/create Hasil & Capaian
-            $kegiatan->hasils()->updateOrCreate(
-                ['id_kegiatan' => $kegiatan->id],
-                [
-                    'hasil_langsung' => $request->hasil_langsung,
-                    'dampak' => $request->hasil_dampak,
-                    'manfaat_mahasiswa' => $request->hasil_manfaat_mahasiswa,
-                    'manfaat_polimdo' => $request->hasil_manfaat_polimdo,
-                    'manfaat_mitra' => $request->hasil_manfaat_mitra
-                ]
             );
 
             // Update/create Permasalahan & Solusi
@@ -582,7 +537,7 @@ class KerjasamaUnitController extends Controller
         $unitId = $this->getUnitId();
         $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
 
-        if (! in_array($kegiatan->status, ['draft', 'revisi'], true)) {
+        if (!in_array($kegiatan->status, ['draft', 'revisi'], true)) {
             return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Perlu Revisi.');
         }
 
@@ -596,7 +551,7 @@ class KerjasamaUnitController extends Controller
         $kegiatan->update(['status' => 'menunggu_evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
-        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+        $pimpinans = \App\Models\User::whereHas('role', function ($q) {
             $q->where('role_name', 'pimpinan');
         })->get();
 
