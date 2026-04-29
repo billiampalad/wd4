@@ -37,7 +37,7 @@
                 <i class="fas fa-handshake" style="color: var(--accent);"></i>
                 <span>Mitra Kerjasama</span>
             </div>
-            <a href="{{ route('unit.mitra.create') }}" class="btn-add"
+            <a href="javascript:void(0)" onclick="openMitraModal()" class="btn-add"
                 style="background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79,70,229,.3); transition: all 0.3s;">
                 <i class="fas fa-plus"></i> Tambah Data
             </a>
@@ -79,7 +79,7 @@
                                         <a href="{{ route('unit.mitra.show', $mitra->id) }}" class="um-btn-view" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('unit.mitra.edit', $mitra->id) }}" class="um-btn-warn" title="Edit">
+                                        <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}')" class="um-btn-warn" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('unit.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mitra ini?')">
@@ -108,3 +108,6 @@
         </div>
     </div>
 </main>
+
+@include('auth.layout.unit.mitra._modal_create')
+@include('auth.layout.unit.mitra._modal_edit')

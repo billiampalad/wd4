@@ -1143,7 +1143,7 @@
                                                             </div>
                                                         </div>
                                                         {{-- Add New Mitra Button --}}
-                                                        <a href="{{ route('unit.mitra.create') }}"
+                                                        <a href="javascript:void(0)" onclick="openMitraModal()"
                                                             style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
                                                             onmouseover="this.style.transform='scale(1.08)'"
                                                             onmouseout="this.style.transform='scale(1)'"
@@ -1597,6 +1597,8 @@
         </div>
     </div>
 </main>
+
+@include('auth.layout.unit.mitra._modal_create')
 
 <script>
     function mitraManager(initial = null) {
