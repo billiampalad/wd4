@@ -1,8 +1,6 @@
-function openModal(id, nama, mitra, jenis, bidang, nomou, periode, statusLabel, statusClass) {
+function openModal(id, nama, mitra, nomou, periode, statusLabel, statusClass) {
     document.getElementById('modal-title').textContent = nama;
     document.getElementById('modal-mitra').textContent = mitra;
-    document.getElementById('modal-jenis').textContent = jenis;
-    document.getElementById('modal-bidang').textContent = bidang || '-';
     document.getElementById('modal-nomou').textContent = nomou;
     document.getElementById('modal-periode').textContent = periode;
 

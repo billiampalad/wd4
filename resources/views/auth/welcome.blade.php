@@ -198,8 +198,6 @@
                         $statusLabel = $item->status_label ?? 'Draft';
                         $mitraNames = $item->mitras->pluck('nama_mitra')->join(', ') ?: 'Mitra belum ditentukan';
                         $mitraInit = strtoupper(substr($mitraNames, 0, 2));
-                        $jenis = $item->jenisKerjasama->pluck('nama_jenis')->join(', ') ?: '-';
-                        $bidang = $item->bidang_kerjasama ?? '-';
                         $hasDates = $item->periode_mulai && $item->periode_selesai;
                     @endphp
 
@@ -207,8 +205,6 @@
                                                     {{ $item->id }},
                                                     `{{ addslashes($item->nama_kegiatan) }}`,
                                                     `{{ addslashes($mitraNames) }}`,
-                                                    `{{ addslashes($jenis) }}`,
-                                                    `{{ addslashes($bidang) }}`,
                                                     `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
                                                     `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
                                                     `{{ addslashes($statusLabel) }}`,
@@ -227,16 +223,6 @@
                         </div>
 
                         <div class="kcard-meta">
-                            <div class="meta-row">
-                                <span class="meta-key">Jenis</span>
-                                <span class="meta-val">{{ $jenis }}</span>
-                            </div>
-                            @if($bidang && $bidang !== '-')
-                                <div class="meta-row">
-                                    <span class="meta-key">Bidang</span>
-                                    <span class="meta-val">{{ $bidang }}</span>
-                                </div>
-                            @endif
                             <div class="meta-row">
                                 <span class="meta-key">No. MoU</span>
                                 <span class="meta-val">{{ $item->nomor_mou ?? 'Belum ada' }}</span>
@@ -259,8 +245,6 @@
                                                                                                                                                                                         {{ $item->id }},
                                                                                                                                                                                         `{{ addslashes($item->nama_kegiatan) }}`,
                                                                                                                                                                                         `{{ addslashes($mitraNames) }}`,
-                                                                                                                                                                                        `{{ addslashes($jenis) }}`,
-                                                                                                                                                                                        `{{ addslashes($bidang) }}`,
                                                                                                                                                                                         `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
                                                                                                                                                                                         `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
                                                                                                                                                                                         `{{ addslashes($statusLabel) }}`,
@@ -303,6 +287,7 @@
                     <p
                         style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.35rem;">
                         Detail Kerjasama</p>
+                    <p style="font-size:0.68rem;color:var(--ink-faint);margin-bottom:0.5rem;">Judul Kegiatan</p>
                     <h2 id="modal-title"
                         style="font-family:'DM Serif Display',serif;font-size:1.35rem;color:var(--ink);line-height:1.3;">
                     </h2>
@@ -323,14 +308,6 @@
                 </div>
 
                 <p class="modal-section-label">Rincian Kerjasama</p>
-                <div class="modal-field">
-                    <span class="modal-fkey">Jenis Kerjasama</span>
-                    <span class="modal-fval" id="modal-jenis"></span>
-                </div>
-                <div class="modal-field">
-                    <span class="modal-fkey">Bidang</span>
-                    <span class="modal-fval" id="modal-bidang"></span>
-                </div>
                 <div class="modal-field">
                     <span class="modal-fkey">Nomor MoU</span>
                     <span class="modal-fval" id="modal-nomou"></span>
