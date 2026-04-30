@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('kegiatan_kerjasamas', function (Blueprint $table) {
-            $table->string('jenis_dokumen')->nullable()->after('nama_kegiatan');
+        Schema::create('pejabats', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('jabatan');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('kegiatan_kerjasamas', function (Blueprint $table) {
-            $table->dropColumn('jenis_dokumen');
-        });
+        Schema::dropIfExists('pejabats');
     }
 };

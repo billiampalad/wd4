@@ -42,7 +42,7 @@
                         <div
                             style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
                             <div
-                                x-data="{ showMasaBerlaku: true, statusOpen: false, statusValue: '{{ old('status_kerjasama', '') }}' }">
+                                x-data="{ showMasaBerlaku: true, statusOpen: false, statusValue: '{{ old('status', '') }}' }">
                                 {{-- Card Header --}}
                                 <div @click="showMasaBerlaku = !showMasaBerlaku"
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.04)); border-radius: 16px 16px 0 0; transition: background 0.2s;">
@@ -75,7 +75,7 @@
                                         </div>
                                         <div class="mc-group">
                                             <label class="mc-label">Status <span class="mc-req">*</span></label>
-                                            <input type="hidden" name="status_kerjasama" :value="statusValue">
+                                            <input type="hidden" name="status" :value="statusValue">
                                             <div class="alpine-dropdown" @click.outside="statusOpen = false"
                                                 style="position: relative;">
                                                 <div class="ad-trigger no-icon" :class="{'active': statusOpen}"
@@ -156,12 +156,12 @@
                                         </div>
                                         <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                                             {{-- Periode Mulai --}}
-                                            <div class="mc-group" x-data="datepicker('{{ old('periode_mulai') }}')">
+                                            <div class="mc-group" x-data="datepicker('{{ old('start_date') }}')">
                                                 <label class="mc-label">Tanggal Mulai</label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap">
                                                         <i class="fas fa-calendar-day mc-icon-left"></i>
-                                                        <input type="text" name="periode_mulai" x-model="formattedDate"
+                                                        <input type="text" name="start_date" x-model="formattedDate"
                                                             readonly @click="show = !show" placeholder="Pilih Tanggal"
                                                             class="adp-input">
                                                     </div>
@@ -220,14 +220,14 @@
                                             </div>
 
                                             {{-- Periode Selesai --}}
-                                            <div class="mc-group" x-data="datepicker('{{ old('periode_selesai') }}')">
+                                            <div class="mc-group" x-data="datepicker('{{ old('end_date') }}')">
                                                 <label class="mc-label">Tanggal Selesai</label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap">
                                                         <i class="fas fa-calendar-check mc-icon-left"></i>
-                                                        <input type="text" name="periode_selesai"
-                                                            x-model="formattedDate" readonly @click="show = !show"
-                                                            placeholder="Pilih Tanggal" class="adp-input">
+                                                        <input type="text" name="end_date" x-model="formattedDate"
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                            class="adp-input">
                                                     </div>
                                                     <div class="adp-calendar" x-show="show" x-transition>
                                                         <div class="adp-header">
@@ -303,8 +303,8 @@
                                             <label class="mc-label">Link Google Drive</label>
                                             <div class="mc-input-wrap">
                                                 <i class="fas fa-link mc-icon-left"></i>
-                                                <input type="text" name="dok_link_drive"
-                                                    value="{{ old('dok_link_drive') }}"
+                                                <input type="text" name="document_link"
+                                                    value="{{ old('document_link') }}"
                                                     placeholder="https://drive.google.com/..." class="mc-input" />
                                             </div>
                                         </div>
@@ -322,11 +322,11 @@
                                 {{-- Dokumen Kerjasama (Alpine Interactive) --}}
                                 <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
                             open: false, 
-                            selected: '{{ old('jenis_dokumen', 'MoU') }}',
+                            selected: '{{ old('jenis', 'MoU (Memorandum of Understanding)') }}',
                             items: [
-                                { id: 'MoU', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
-                                { id: 'MoA', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
-                                { id: 'IA', label: 'Implementation Arrangement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
+                                { id: 'MoU (Memorandum of Understanding)', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
+                                { id: 'MoA (Memorandum of Agreement)', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
+                                { id: 'IA (Implementation Agreement)', label: 'Implementation Agreement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
                             ],
                             get selectedItem() {
                                 return this.items.find(i => i.id === this.selected);
@@ -337,7 +337,7 @@
                             }
                         }" x-init="$dispatch('jenis-dokumen-changed', { value: selected })">
                                     <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
-                                    <input type="hidden" name="jenis_dokumen" :value="selected">
+                                    <input type="hidden" name="jenis" :value="selected">
 
                                     <div class="mc-grid-2" style="gap: 16px;">
                                         {{-- Left: Type Dropdown --}}
@@ -395,7 +395,7 @@
                                         {{-- Right: Number Input --}}
                                         <div class="mc-input-wrap">
                                             <i class="fas fa-hashtag mc-icon-left"></i>
-                                            <input type="text" name="nomor_mou" value="{{ old('nomor_mou') }}"
+                                            <input type="text" name="doc_number" value="{{ old('doc_number') }}"
                                                 placeholder="Masukkan nomor dokumen..." class="mc-input"
                                                 style="height: 48px;" />
                                         </div>
@@ -406,13 +406,13 @@
                                         <label class="mc-label">Nomor PKS</label>
                                         <div class="mc-input-wrap">
                                             <i class="fas fa-file-contract mc-icon-left"></i>
-                                            <input type="text" name="nomor_pks" value="{{ old('nomor_pks') }}"
+                                            <input type="text" name="pks_number" value="{{ old('pks_number') }}"
                                                 placeholder="Masukkan nomor PKS..." class="mc-input"
                                                 style="height: 48px; margin-top: 5px;" />
                                         </div>
                                     </div>
 
-                                    @error('jenis_dokumen')
+                                    @error('jenis')
                                         <span class="text-danger"
                                             style="font-size: 11px; margin-top: 4px; display: block;"><i
                                                 class="fas fa-circle-exclamation"></i> {{ $message }}</span>
@@ -424,11 +424,11 @@
                                     <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-file-lines mc-icon-left"></i>
-                                        <input type="text" name="nama_kegiatan" value="{{ old('nama_kegiatan') }}"
-                                            required placeholder="Contoh: Pelatihan Web Development Bersama Industri"
-                                            class="mc-input @error('nama_kegiatan') border-danger @enderror" />
+                                        <input type="text" name="title" value="{{ old('title') }}" required
+                                            placeholder="Contoh: Pelatihan Web Development Bersama Industri"
+                                            class="mc-input @error('title') border-danger @enderror" />
                                     </div>
-                                    @error('nama_kegiatan')
+                                    @error('title')
                                         <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
                                                 class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
@@ -438,10 +438,10 @@
                                     <label class="mc-label">Deskripsi</label>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
-                                        <textarea name="dok_keterangan" rows="3"
+                                        <textarea name="description" rows="3"
                                             placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
                                             class="mc-input"
-                                            style="resize: vertical; min-height: 100px;">{{ old('dok_keterangan') }}</textarea>
+                                            style="resize: vertical; min-height: 100px;">{{ old('description') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -525,7 +525,7 @@
                                         style="padding: 0 20px 20px 20px;">
                                         {{-- ══ Tipe Pelaksana Dropdown ══ --}}
                                         <div x-data="{
-                                            jenisDokumen: '{{ old('jenis_dokumen', 'MoU') }}',
+                                            jenisDokumen: '{{ old('jenis_dokumen', 'MoU (Memorandum of Understanding)') }}',
                                             tipePelaksana: '{{ old('tipe_pelaksana', '') }}',
 
                                             {{-- Jurusan multi-select --}}
@@ -596,11 +596,11 @@
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
                                         }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value">
-                                            {{-- Nama Instansi (shown for MoU) --}}
-                                            <div x-show="jenisDokumen === 'MoU'" x-collapse.duration.300ms>
+                                            {{-- Nama Instansi (Always shown) --}}
+                                            <div>
                                                 <div class="mc-group">
                                                     <label class="mc-label"><i class="fas fa-university"
-                                                            style="margin-right:5px; color:#4f46e5;"></i> Nama
+                                                            style="margin-top:15px; color:#4f46e5;"></i> Nama
                                                         Instansi</label>
                                                     <div class="mc-input-wrap">
                                                         <i class="fas fa-building mc-icon-left"></i>
@@ -613,9 +613,10 @@
                                             </div>
 
                                             {{-- Tipe Pelaksana (shown for MoA/IA) --}}
-                                            <div x-show="jenisDokumen !== 'MoU'" x-collapse.duration.300ms>
+                                            <div x-show="jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')"
+                                                x-collapse.duration.300ms>
                                                 {{-- Tipe Pelaksana Selector --}}
-                                                <div class="mc-group">
+                                                <div style="margin-top: 15px;" class="mc-group">
                                                     <label class="mc-label">Tipe Pelaksana <span
                                                             class="mc-req">*</span></label>
                                                     <div
@@ -1109,6 +1110,8 @@
                                                         <div style="flex: 1; position: relative;"
                                                             class="alpine-dropdown"
                                                             @click.outside="pg.mitraOpen = false">
+                                                            <input type="hidden" name="penggiat_mitra_ids[]"
+                                                                :value="pg.mitraId">
                                                             <input type="hidden" name="mitra_nama[]"
                                                                 :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
                                                             <div class="ad-trigger no-icon"
@@ -1306,11 +1309,9 @@
                                     formData: {},
                                     sasaranOpen: {},
                                     sasaranOptions: [
-                                        'Meningkatnya Kualitas Lulusan Perguruan Tinggi',
-                                        'Meningkatnya Inovasi Perguruan Tinggi Dalam Rangka Meningkatkan Mutu Pendidikan',
-                                        'Meningkatnya Kualitas Dosen Pendidikan Tinggi',
-                                        'Meningkatkan Kualitas Kurikulum dan Pembelajaran',
-                                        'Meningkatnya Program Studi yang Berkualitas'
+                                        @foreach($sasarans as $sas)
+                                            { id: {{ $sas->id }}, deskripsi: '{{ addslashes($sas->deskripsi) }}' },
+                                        @endforeach
                                     ],
                                     toggle(id) {
                                         const idx = this.selected.indexOf(id);
@@ -1520,8 +1521,8 @@
                                                             @click.outside="sasaranOpen[id] = false"
                                                             style="position: relative;">
                                                             <input type="hidden"
-                                                                :name="'jenis_detail[' + id + '][sasaran]'"
-                                                                x-model="formData[id].sasaran">
+                                                                :name="'jenis_detail[' + id + '][sasaran_id]'"
+                                                                x-model="formData[id].sasaran_id">
                                                             <div class="ad-trigger no-icon"
                                                                 :class="{'active': sasaranOpen[id]}"
                                                                 @click="sasaranOpen[id] = !sasaranOpen[id]">
@@ -1529,12 +1530,12 @@
                                                                     style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                                                                     <i class="fas fa-crosshairs"
                                                                         style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
-                                                                    <span x-show="!formData[id].sasaran"
+                                                                    <span x-show="!formData[id].sasaran_id"
                                                                         style="color: #9ca3af; font-size: 12px;">— Pilih
                                                                         Sasaran —</span>
-                                                                    <span x-show="formData[id].sasaran"
+                                                                    <span x-show="formData[id].sasaran_id"
                                                                         style="font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                                                        x-text="formData[id].sasaran"></span>
+                                                                        x-text="sasaranOptions.find(o => o.id == formData[id].sasaran_id)?.deskripsi || ''"></span>
                                                                 </div>
                                                                 <i class="fas fa-chevron-down"
                                                                     style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;"
@@ -1542,12 +1543,12 @@
                                                             </div>
                                                             <div class="ad-menu" x-show="sasaranOpen[id]" x-transition
                                                                 style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; max-height: 200px; overflow-y: auto;">
-                                                                <template x-for="(opt, oi) in sasaranOptions" :key="oi">
+                                                                <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
-                                                                        :class="{'selected': formData[id].sasaran === opt}"
-                                                                        @click="formData[id].sasaran = opt; sasaranOpen[id] = false"
+                                                                        :class="{'selected': formData[id].sasaran_id == opt.id}"
+                                                                        @click="formData[id].sasaran_id = opt.id; sasaranOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px;">
-                                                                        <span x-text="opt"></span>
+                                                                        <span x-text="opt.deskripsi"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>

@@ -3,19 +3,17 @@
 namespace App\Http\Controllers\Unit;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dokumentasi;
-use App\Models\Hasil;
-use App\Models\JenisKerjasama;
-use App\Models\KegiatanKerjasama;
-use App\Models\Mitra;
-use App\Models\Pelaksanaan;
-use App\Models\PermasalahanSolusi;
+use App\Models\Cooperation;
 use App\Models\Profile;
-use App\Models\Tujuan;
+use App\Models\Mitra;
 use App\Models\Jurusan;
 use App\Models\Prodi;
 use App\Models\Upa;
 use App\Models\Pusat;
+use App\Models\JenisKerjasama;
+use App\Models\Pejabat;
+use App\Models\Sasaran;
+use App\Models\DetailKegiatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,26 +32,19 @@ class KerjasamaUnitController extends Controller
         return (int) $profile->unit_kerja_id;
     }
 
-    /**
-     * Helper: scope query to kegiatan belonging to user's unit via pivot.
-     */
-    private function scopeUnit($query, $unitId)
-    {
-        return $query->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId));
-    }
-
     // ─── CREATE PAGE ─────────────────────────────────────
 
     public function create()
     {
-        $jenisKerjasama = JenisKerjasama::all();
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
+        $prodis = Prodi::orderBy('nama_prodi')->get();
         $upas = Upa::orderBy('nama_upa')->get();
         $pusats = Pusat::orderBy('nama_pusat')->get();
+        $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
+        $sasarans = Sasaran::orderBy('deskripsi')->get();
 
-        return view('auth.unit', compact('jenisKerjasama', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats'));
+        return view('auth.unit', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
     }
 
     // ─── STORE ───────────────────────────────────────────
@@ -61,106 +52,119 @@ class KerjasamaUnitController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kegiatan' => 'required|string|max:255',
-            'jenis_dokumen' => 'required|string|in:MoU,MoA,IA',
-            'id_jenis' => 'required|array|min:1',
-            'id_jenis.*' => 'exists:jenis_kerjasamas,id',
-            'periode_mulai' => 'nullable|date',
-            'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
-            'nomor_mou' => 'nullable|string|max:255',
-            'tanggal_mou' => 'nullable|date',
-            'penanggung_jawab' => 'nullable|string|max:255',
-            'mitra_nama' => 'required|array|min:1',
-            'mitra_nama.*' => 'required|string|max:255',
-            'mitra_kategori' => 'required|array|min:1',
-            'mitra_kategori.*' => 'required|string',
-            'dok_link_drive' => 'nullable|string|max:500',
-            'dok_keterangan' => 'nullable|string|max:1000',
-            // New fields
-            'tujuan' => 'required|string',
-            'sasaran' => 'required|string',
-
-
-            'masalah_kendala' => 'nullable|string',
-            'masalah_solusi' => 'nullable|string',
-            'masalah_rekomendasi' => 'nullable|string',
+            'title' => 'required|string|max:255',
+            'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
+            'doc_number' => 'nullable|string|max:255',
+            'pks_number' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'status' => 'nullable|string|in:aktif,perpanjangan,kadaluarsa,tidak_aktif',
+            'document_link' => 'nullable|string|max:255',
+            
+            // Penggiat validation (minimal)
+            'penggiat_mitra_ids' => 'nullable|array',
+            'penggiat' => 'nullable|array',
         ]);
-
-        $unitId = $this->getUnitId();
 
         DB::beginTransaction();
         try {
-            $kegiatan = KegiatanKerjasama::create([
-                'nama_kegiatan' => $request->nama_kegiatan,
-                'jenis_dokumen' => $request->jenis_dokumen,
-                'created_by' => Auth::id(),
-                'periode_mulai' => $request->periode_mulai,
-                'periode_selesai' => $request->periode_selesai,
-                'nomor_mou' => $request->nomor_mou,
-                'tanggal_mou' => $request->tanggal_mou,
-                'penanggung_jawab' => $request->penanggung_jawab,
-                'status' => 'draft',
-            ]);
-
-            // Attach jenis kerjasama
-            $kegiatan->jenisKerjasama()->attach($request->id_jenis);
-
-            // Attach unit (many-to-many)
-            $kegiatan->unitKerjas()->attach($unitId);
-
-            // Mitra (manual input)
-            $mitraIds = [];
-            foreach ($request->mitra_nama as $index => $nama) {
-                $kategori = $request->mitra_kategori[$index] ?? 'nasional';
-                $negara = $request->mitra_negara[$index] ?? 'Indonesia';
-                if ($kategori === 'nasional')
-                    $negara = 'Indonesia';
-
-                $mitra = Mitra::firstOrCreate(
-                    ['nama_mitra' => $nama],
-                    ['kategori' => $kategori, 'negara' => $negara]
-                );
-                $mitra->update(['kategori' => $kategori, 'negara' => $negara]);
-                $mitraIds[] = $mitra->id;
-            }
-            $kegiatan->mitras()->attach($mitraIds);
-
-            // Save Tujuan & Sasaran
-            Tujuan::create([
-                'id_kegiatan' => $kegiatan->id,
-                'tujuan' => $request->tujuan,
-                'sasaran' => $request->sasaran,
-            ]);
-
-
-
-
-
-            // Save Permasalahan & Solusi
-            PermasalahanSolusi::create([
-                'id_kegiatan' => $kegiatan->id,
-                'kendala' => $request->masalah_kendala,
-                'solusi' => $request->masalah_solusi,
-                'rekomendasi' => $request->masalah_rekomendasi,
-            ]);
-
-            // Dokumentasi (optional)
-            if ($request->filled('dok_link_drive')) {
-                Dokumentasi::create([
-                    'id_kegiatan' => $kegiatan->id,
-                    'link_drive' => $request->dok_link_drive,
-                    'keterangan' => $request->dok_keterangan,
+            // 1. Handle Internal Pejabats (Pihak 1)
+            $penandatanganInternal = null;
+            if ($request->nama_penandatangan) {
+                $penandatanganInternal = Pejabat::create([
+                    'nama' => $request->nama_penandatangan,
+                    'jabatan' => $request->jabatan_penandatangan ?? '-',
                 ]);
             }
 
-            DB::commit();
-
-            // If action is 'submit', redirect to submitToPimpinan
-            if ($request->action === 'submit') {
-                return $this->submitToPimpinan($kegiatan->id);
+            $pjInternal = null;
+            if ($request->nama_penanggung_jawab) {
+                $pjInternal = Pejabat::create([
+                    'nama' => $request->nama_penanggung_jawab,
+                    'jabatan' => $request->jabatan_penanggung_jawab ?? '-',
+                ]);
             }
 
-            return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil ditambahkan.');
+            // 2. Handle Mitra Pejabats (Pihak 2) - Ambil penggiat pertama karena tabel cooperations hanya punya 1 kolom mitra_id
+            $mitraId = null;
+            $penandatanganMitra = null;
+            $pjMitra = null;
+
+            if ($request->penggiat_mitra_ids && count($request->penggiat_mitra_ids) > 0) {
+                $mitraId = $request->penggiat_mitra_ids[0];
+                
+                $penggiatData = $request->penggiat[0] ?? null;
+                if ($penggiatData) {
+                    if (!empty($penggiatData['nama_penandatangan'])) {
+                        $penandatanganMitra = Pejabat::create([
+                            'nama' => $penggiatData['nama_penandatangan'],
+                            'jabatan' => $penggiatData['jabatan_penandatangan'] ?? '-',
+                        ]);
+                    }
+                    if (!empty($penggiatData['nama_pj'])) {
+                        $pjMitra = Pejabat::create([
+                            'nama' => $penggiatData['nama_pj'],
+                            'jabatan' => $penggiatData['jabatan_pj'] ?? '-',
+                        ]);
+                    }
+                }
+            }
+
+            // 3. Create Cooperation
+            $cooperation = Cooperation::create([
+                'title' => $request->title,
+                'jenis' => $request->jenis,
+                'doc_number' => $request->doc_number,
+                'pks_number' => $request->pks_number,
+                'description' => $request->description,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'status' => $request->status ?? 'aktif',
+                'document_link' => $request->document_link,
+                'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
+                'mitra_id' => $mitraId,
+                'penandatangan_internal_id' => $penandatanganInternal?->id,
+                'pj_internal_id' => $pjInternal?->id,
+                'penandatangan_mitra_id' => $penandatanganMitra?->id,
+                'pj_mitra_id' => $pjMitra?->id,
+            ]);
+
+            // 4. Handle Pivot Tables (Jurusan, UPA, Pusat)
+            if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
+                $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
+            } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
+                $cooperation->upas()->sync($request->pelaksana_upa_ids);
+            } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
+                $cooperation->pusats()->sync($request->pelaksana_pusat_ids);
+            }
+
+            // 5. Handle Detail Kegiatans
+            if ($request->id_jenis && is_array($request->id_jenis)) {
+                foreach ($request->id_jenis as $jenisId) {
+                    $detailData = $request->jenis_detail[$jenisId] ?? null;
+                    if ($detailData) {
+                        // Sanitize nilai_kontrak (remove Rp and dots)
+                        $nilaiKontrak = isset($detailData['nilai_kontrak']) ? (float) preg_replace('/[^0-9]/', '', $detailData['nilai_kontrak']) : 0;
+                        
+                        DetailKegiatan::create([
+                            'cooperation_id' => $cooperation->id,
+                            'jenis_kerjasama_id' => $jenisId,
+                            'sasaran_id' => $detailData['sasaran_id'] ?? null,
+                            'nilai_kontrak' => $nilaiKontrak,
+                            'income' => $detailData['income'] ?? null,
+                            'volume_luaran' => $detailData['volume'] ?? null,
+                            'satuan_luaran' => $detailData['satuan_volume'] ?? null,
+                            'keterangan' => $detailData['keterangan'] ?? null,
+                            'tujuan' => $detailData['tujuan'] ?? null,
+                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?? null,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
@@ -171,24 +175,7 @@ class KerjasamaUnitController extends Controller
 
     public function show($id)
     {
-        $unitId = $this->getUnitId();
-
-        $kegiatan = KegiatanKerjasama::with([
-            'jenisKerjasama',
-            'mitras',
-            'jurusans',
-            'unitKerjas',
-            'creator',
-            'tujuans',
-            'pelaksanaans',
-            'hasils',
-            'dokumentasis',
-            'evaluasis',
-            'kesimpulans',
-            'permasalahanSolusis',
-        ])->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
-            ->findOrFail($id);
-
+        $kegiatan = Cooperation::findOrFail($id);
         return view('auth.unit', compact('kegiatan'));
     }
 
@@ -196,28 +183,20 @@ class KerjasamaUnitController extends Controller
 
     public function edit($id)
     {
-        $unitId = $this->getUnitId();
-
-        $kegiatan = KegiatanKerjasama::with([
-            'mitras',
-            'dokumentasis',
-            'jenisKerjasama',
-            'tujuans',
-            'pelaksanaans',
-            'hasils',
-            'permasalahanSolusis',
-        ])
-            ->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
-            ->findOrFail($id);
-
-        $jenisKerjasama = JenisKerjasama::all();
+        $kegiatan = Cooperation::with([
+            'mitra', 'penandatanganInternal', 'pjInternal', 
+            'penandatanganMitra', 'pjMitra', 
+            'jurusans', 'upas', 'pusats', 'details'
+        ])->findOrFail($id);
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
+        $prodis = Prodi::orderBy('nama_prodi')->get();
         $upas = Upa::orderBy('nama_upa')->get();
         $pusats = Pusat::orderBy('nama_pusat')->get();
+        $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
+        $sasarans = Sasaran::orderBy('deskripsi')->get();
 
-        return view('auth.unit', compact('kegiatan', 'jenisKerjasama', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats'));
+        return view('auth.unit', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
@@ -225,108 +204,149 @@ class KerjasamaUnitController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_kegiatan' => 'required|string|max:255',
-            'jenis_dokumen' => 'required|string|in:MoU,MoA,IA',
-            'id_jenis' => 'required|array|min:1',
-            'id_jenis.*' => 'exists:jenis_kerjasamas,id',
-            'periode_mulai' => 'nullable|date',
-            'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
-            'nomor_mou' => 'nullable|string|max:255',
-            'tanggal_mou' => 'nullable|date',
-            'penanggung_jawab' => 'nullable|string|max:255',
-            'mitra_nama' => 'required|array|min:1',
-            'mitra_nama.*' => 'required|string|max:255',
-            'mitra_kategori' => 'required|array|min:1',
-            'mitra_kategori.*' => 'required|string',
-            'dok_link_drive' => 'nullable|string|max:500',
-            'dok_keterangan' => 'nullable|string|max:1000',
-            // New fields
-            'tujuan' => 'required|string',
-            'sasaran' => 'required|string',
-
-
-            'masalah_kendala' => 'nullable|string',
-            'masalah_solusi' => 'nullable|string',
-            'masalah_rekomendasi' => 'nullable|string',
+            'title' => 'required|string|max:255',
+            'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
+            'doc_number' => 'nullable|string|max:255',
+            'pks_number' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'status' => 'nullable|string|in:aktif,perpanjangan,kadaluarsa,tidak_aktif',
+            'document_link' => 'nullable|string|max:255',
+            'penggiat_mitra_ids' => 'nullable|array',
+            'penggiat' => 'nullable|array',
         ]);
 
-        $unitId = $this->getUnitId();
-
-        $kegiatan = KegiatanKerjasama::whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
-            ->findOrFail($id);
+        $cooperation = Cooperation::findOrFail($id);
 
         DB::beginTransaction();
         try {
-            $kegiatan->update([
-                'nama_kegiatan' => $request->nama_kegiatan,
-                'jenis_dokumen' => $request->jenis_dokumen,
-                'periode_mulai' => $request->periode_mulai,
-                'periode_selesai' => $request->periode_selesai,
-                'nomor_mou' => $request->nomor_mou,
-                'tanggal_mou' => $request->tanggal_mou,
-                'penanggung_jawab' => $request->penanggung_jawab,
-            ]);
-
-            // Sync jenis kerjasama
-            $kegiatan->jenisKerjasama()->sync($request->id_jenis);
-
-            // Sync mitras
-            $mitraIds = [];
-            foreach ($request->mitra_nama as $index => $nama) {
-                $kategori = $request->mitra_kategori[$index] ?? 'nasional';
-                $negara = $request->mitra_negara[$index] ?? 'Indonesia';
-                if ($kategori === 'nasional')
-                    $negara = 'Indonesia';
-
-                $mitra = Mitra::firstOrCreate(
-                    ['nama_mitra' => $nama],
-                    ['kategori' => $kategori, 'negara' => $negara]
-                );
-                $mitra->update(['kategori' => $kategori, 'negara' => $negara]);
-                $mitraIds[] = $mitra->id;
-            }
-            $kegiatan->mitras()->sync($mitraIds);
-
-            // Update/create Tujuan & Sasaran
-            $kegiatan->tujuans()->updateOrCreate(
-                ['id_kegiatan' => $kegiatan->id],
-                ['tujuan' => $request->tujuan, 'sasaran' => $request->sasaran]
-            );
-
-            // Update/create Permasalahan & Solusi
-            $kegiatan->permasalahanSolusis()->updateOrCreate(
-                ['id_kegiatan' => $kegiatan->id],
-                [
-                    'kendala' => $request->masalah_kendala,
-                    'solusi' => $request->masalah_solusi,
-                    'rekomendasi' => $request->masalah_rekomendasi
-                ]
-            );
-
-            // Update/create dokumentasi
-            if ($request->filled('dok_link_drive')) {
-                $dok = $kegiatan->dokumentasis()->first();
-                if ($dok) {
-                    $dok->update([
-                        'link_drive' => $request->dok_link_drive,
-                        'keterangan' => $request->dok_keterangan,
+            // 1. Handle Internal Pejabats (Pihak 1)
+            if ($request->nama_penandatangan) {
+                if ($cooperation->penandatangan_internal_id) {
+                    $cooperation->penandatanganInternal->update([
+                        'nama' => $request->nama_penandatangan,
+                        'jabatan' => $request->jabatan_penandatangan ?? '-',
                     ]);
                 } else {
-                    Dokumentasi::create([
-                        'id_kegiatan' => $kegiatan->id,
-                        'link_drive' => $request->dok_link_drive,
-                        'keterangan' => $request->dok_keterangan,
+                    $pj = Pejabat::create([
+                        'nama' => $request->nama_penandatangan,
+                        'jabatan' => $request->jabatan_penandatangan ?? '-',
                     ]);
+                    $cooperation->penandatangan_internal_id = $pj->id;
+                }
+            }
+
+            if ($request->nama_penanggung_jawab) {
+                if ($cooperation->pj_internal_id) {
+                    $cooperation->pjInternal->update([
+                        'nama' => $request->nama_penanggung_jawab,
+                        'jabatan' => $request->jabatan_penanggung_jawab ?? '-',
+                    ]);
+                } else {
+                    $pj = Pejabat::create([
+                        'nama' => $request->nama_penanggung_jawab,
+                        'jabatan' => $request->jabatan_penanggung_jawab ?? '-',
+                    ]);
+                    $cooperation->pj_internal_id = $pj->id;
+                }
+            }
+
+            // 2. Handle Mitra Pejabats (Pihak 2)
+            $mitraId = null;
+            if ($request->penggiat_mitra_ids && count($request->penggiat_mitra_ids) > 0) {
+                $mitraId = $request->penggiat_mitra_ids[0];
+                $penggiatData = $request->penggiat[0] ?? null;
+
+                if ($penggiatData) {
+                    if (!empty($penggiatData['nama_penandatangan'])) {
+                        if ($cooperation->penandatangan_mitra_id) {
+                            $cooperation->penandatanganMitra->update([
+                                'nama' => $penggiatData['nama_penandatangan'],
+                                'jabatan' => $penggiatData['jabatan_penandatangan'] ?? '-',
+                            ]);
+                        } else {
+                            $pj = Pejabat::create([
+                                'nama' => $penggiatData['nama_penandatangan'],
+                                'jabatan' => $penggiatData['jabatan_penandatangan'] ?? '-',
+                            ]);
+                            $cooperation->penandatangan_mitra_id = $pj->id;
+                        }
+                    }
+                    if (!empty($penggiatData['nama_pj'])) {
+                        if ($cooperation->pj_mitra_id) {
+                            $cooperation->pjMitra->update([
+                                'nama' => $penggiatData['nama_pj'],
+                                'jabatan' => $penggiatData['jabatan_pj'] ?? '-',
+                            ]);
+                        } else {
+                            $pj = Pejabat::create([
+                                'nama' => $penggiatData['nama_pj'],
+                                'jabatan' => $penggiatData['jabatan_pj'] ?? '-',
+                            ]);
+                            $cooperation->pj_mitra_id = $pj->id;
+                        }
+                    }
+                }
+            }
+
+            // 3. Update Cooperation
+            $cooperation->update([
+                'title' => $request->title,
+                'jenis' => $request->jenis,
+                'doc_number' => $request->doc_number,
+                'pks_number' => $request->pks_number,
+                'description' => $request->description,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'status' => $request->status ?? 'aktif',
+                'document_link' => $request->document_link,
+                'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
+                'mitra_id' => $mitraId,
+                'penandatangan_internal_id' => $cooperation->penandatangan_internal_id,
+                'pj_internal_id' => $cooperation->pj_internal_id,
+                'penandatangan_mitra_id' => $cooperation->penandatangan_mitra_id,
+                'pj_mitra_id' => $cooperation->pj_mitra_id,
+            ]);
+
+            // 4. Handle Pivot Tables (Jurusan, UPA, Pusat)
+            // Reset dulu agar tidak dobel
+            $cooperation->jurusans()->detach();
+            $cooperation->upas()->detach();
+            $cooperation->pusats()->detach();
+
+            if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
+                $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
+            } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
+                $cooperation->upas()->sync($request->pelaksana_upa_ids);
+            } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
+                $cooperation->pusats()->sync($request->pelaksana_pusat_ids);
+            }
+
+            // 5. Handle Detail Kegiatans
+            $cooperation->details()->delete();
+            if ($request->id_jenis && is_array($request->id_jenis)) {
+                foreach ($request->id_jenis as $jenisId) {
+                    $detailData = $request->jenis_detail[$jenisId] ?? null;
+                    if ($detailData) {
+                        $nilaiKontrak = isset($detailData['nilai_kontrak']) ? (float) preg_replace('/[^0-9]/', '', $detailData['nilai_kontrak']) : 0;
+                        DetailKegiatan::create([
+                            'cooperation_id' => $cooperation->id,
+                            'jenis_kerjasama_id' => $jenisId,
+                            'sasaran_id' => $detailData['sasaran_id'] ?? null,
+                            'nilai_kontrak' => $nilaiKontrak,
+                            'income' => $detailData['income'] ?? null,
+                            'volume_luaran' => $detailData['volume'] ?? null,
+                            'satuan_luaran' => $detailData['satuan_volume'] ?? null,
+                            'keterangan' => $detailData['keterangan'] ?? null,
+                            'tujuan' => $detailData['tujuan'] ?? null,
+                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?? null,
+                        ]);
+                    }
                 }
             }
 
             DB::commit();
-
-            // If action is 'submit', redirect to submitToPimpinan
-            if ($request->action === 'submit') {
-                return $this->submitToPimpinan($kegiatan->id);
-            }
-
             return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -338,239 +358,9 @@ class KerjasamaUnitController extends Controller
 
     public function destroy($id)
     {
-        $unitId = $this->getUnitId();
-        $kegiatan = KegiatanKerjasama::whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId))
-            ->findOrFail($id);
-
+        $kegiatan = Cooperation::findOrFail($id);
         $kegiatan->delete();
 
         return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
-    }
-
-    // ═══════════════════════════════════════════════════════
-    // SUB-RESOURCE CRUD (Tujuan, Pelaksanaan, Hasil, Dokumentasi, Permasalahan)
-    // ═══════════════════════════════════════════════════════
-
-    // ─── TUJUAN ──────────────────────────────────────────
-
-    public function storeTujuan(Request $request, $id)
-    {
-        $request->validate([
-            'tujuan' => 'required|string',
-            'sasaran' => 'required|string',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Tujuan::create([
-            'id_kegiatan' => $id,
-            'tujuan' => $request->tujuan,
-            'sasaran' => $request->sasaran,
-        ]);
-
-        return back()->with('success', 'Tujuan berhasil ditambahkan.');
-    }
-
-    public function updateTujuan(Request $request, $id, $tujuanId)
-    {
-        $request->validate([
-            'tujuan' => 'required|string',
-            'sasaran' => 'required|string',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        $tujuan = Tujuan::where('id_kegiatan', $id)->findOrFail($tujuanId);
-        $tujuan->update($request->only('tujuan', 'sasaran'));
-
-        return back()->with('success', 'Tujuan berhasil diperbarui.');
-    }
-
-    public function destroyTujuan(Request $request, $id, $tujuanId)
-    {
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        $tujuan = Tujuan::where('id_kegiatan', $id)->findOrFail($tujuanId);
-        $tujuan->delete();
-
-        return back()->with('success', 'Tujuan berhasil dihapus.');
-    }
-
-    // ─── PELAKSANAAN ─────────────────────────────────────
-
-    public function storePelaksanaan(Request $request, $id)
-    {
-        $request->validate([
-            'deskripsi' => 'required|string',
-            'cakupan' => 'nullable|string',
-            'jumlah_peserta' => 'nullable|integer|min:0',
-            'sumber_daya' => 'nullable|string',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Pelaksanaan::create([
-            'id_kegiatan' => $id,
-            'deskripsi' => $request->deskripsi,
-            'cakupan' => $request->cakupan,
-            'jumlah_peserta' => $request->jumlah_peserta,
-            'sumber_daya' => $request->sumber_daya,
-        ]);
-
-        return back()->with('success', 'Pelaksanaan berhasil ditambahkan.');
-    }
-
-    public function destroyPelaksanaan($id, $pelaksanaanId)
-    {
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Pelaksanaan::where('id_kegiatan', $id)->findOrFail($pelaksanaanId)->delete();
-
-        return back()->with('success', 'Pelaksanaan berhasil dihapus.');
-    }
-
-    // ─── HASIL ───────────────────────────────────────────
-
-    public function storeHasil(Request $request, $id)
-    {
-        $request->validate([
-            'hasil_langsung' => 'nullable|string',
-            'dampak' => 'nullable|string',
-            'manfaat_mahasiswa' => 'nullable|string',
-            'manfaat_polimdo' => 'nullable|string',
-            'manfaat_mitra' => 'nullable|string',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Hasil::create(array_merge($request->only('hasil_langsung', 'dampak', 'manfaat_mahasiswa', 'manfaat_polimdo', 'manfaat_mitra'), [
-            'id_kegiatan' => $id,
-        ]));
-
-        return back()->with('success', 'Hasil & capaian berhasil ditambahkan.');
-    }
-
-    public function destroyHasil($id, $hasilId)
-    {
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Hasil::where('id_kegiatan', $id)->findOrFail($hasilId)->delete();
-
-        return back()->with('success', 'Hasil berhasil dihapus.');
-    }
-
-    // ─── DOKUMENTASI ─────────────────────────────────────
-
-    public function storeDokumentasi(Request $request, $id)
-    {
-        $request->validate([
-            'link_drive' => 'required|string|max:500',
-            'keterangan' => 'nullable|string|max:1000',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Dokumentasi::create([
-            'id_kegiatan' => $id,
-            'link_drive' => $request->link_drive,
-            'keterangan' => $request->keterangan,
-        ]);
-
-        return back()->with('success', 'Dokumentasi berhasil ditambahkan.');
-    }
-
-    public function destroyDokumentasi($id, $dokId)
-    {
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        Dokumentasi::where('id_kegiatan', $id)->findOrFail($dokId)->delete();
-
-        return back()->with('success', 'Dokumentasi berhasil dihapus.');
-    }
-
-    // ─── PERMASALAHAN & SOLUSI ────────────────────────────
-
-    public function storePermasalahan(Request $request, $id)
-    {
-        $request->validate([
-            'kendala' => 'nullable|string',
-            'solusi' => 'nullable|string',
-            'rekomendasi' => 'nullable|string',
-        ]);
-
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        PermasalahanSolusi::create([
-            'id_kegiatan' => $id,
-            'kendala' => $request->kendala,
-            'solusi' => $request->solusi,
-            'rekomendasi' => $request->rekomendasi,
-        ]);
-
-        return back()->with('success', 'Permasalahan & solusi berhasil ditambahkan.');
-    }
-
-    public function destroyPermasalahan($id, $masalahId)
-    {
-        $unitId = $this->getUnitId();
-        $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        PermasalahanSolusi::where('id_kegiatan', $id)->findOrFail($masalahId)->delete();
-
-        return back()->with('success', 'Permasalahan & solusi berhasil dihapus.');
-    }
-
-    // ─── SUBMIT TO PIMPINAN ─────────────────────────────
-
-    public function submitToPimpinan($id)
-    {
-        $unitId = $this->getUnitId();
-        $kegiatan = $this->scopeUnit(KegiatanKerjasama::query(), $unitId)->findOrFail($id);
-
-        if (!in_array($kegiatan->status, ['draft', 'revisi'], true)) {
-            return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Perlu Revisi.');
-        }
-
-        $kirimUlangSetelahRevisi = $kegiatan->status === 'revisi';
-
-        $kegiatan->loadMissing('jurusans', 'unitKerjas');
-        $pengusulLabel = $kegiatan->jurusans->pluck('nama_jurusan')->filter()->join(', ')
-            ?: $kegiatan->unitKerjas->pluck('nama_unit_pelaksana')->filter()->join(', ')
-            ?: (Auth::user()->profile?->unitKerja?->nama_unit_pelaksana ?? Auth::user()->name);
-
-        $kegiatan->update(['status' => 'menunggu_evaluasi']);
-
-        // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
-        $pimpinans = \App\Models\User::whereHas('role', function ($q) {
-            $q->where('role_name', 'pimpinan');
-        })->get();
-
-        $judul = 'Status Evaluasi';
-        $pesan = $kirimUlangSetelahRevisi
-            ? "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen dikirim ulang setelah revisi — menunggu evaluasi Anda."
-            : "Pengusul: {$pengusulLabel}. Kegiatan: {$kegiatan->nama_kegiatan}. Dokumen baru — menunggu evaluasi Anda.";
-
-        foreach ($pimpinans as $pimpinan) {
-            \App\Models\Notifikasi::send(
-                $pimpinan->id,
-                Auth::id(),
-                $kegiatan->id,
-                $kirimUlangSetelahRevisi ? 'revisi' : 'evaluasi',
-                $judul,
-                $pesan,
-                route('pimpinan.evaluasi')
-            );
-        }
-        return back()->with('success', 'Data kerjasama berhasil dikirim ke Pimpinan untuk dievaluasi.');
     }
 }

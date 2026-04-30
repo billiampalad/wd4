@@ -157,63 +157,34 @@ class DashboardController
 
         $unitId = $profile->unit_kerja_id;
 
-        // Helper closure for scoping to unit via pivot
-        $scopeUnit = fn($query) => $query->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId));
-
         // ── 1. Quick Stats ──────────────────────────────────────
-        $totalKerjasama = $scopeUnit(KegiatanKerjasama::query())->count();
+        // Temporarily using Cooperation count instead of unit-specific count
+        $totalKerjasama = \App\Models\Cooperation::count();
 
-        // Kegiatan yang BELUM punya record evaluasi
-        $menungguEvaluasi = $scopeUnit(KegiatanKerjasama::query())
-            ->whereDoesntHave('evaluasis')
-            ->count();
+        // These metrics depend on relationships/columns not yet in the new schema
+        $menungguEvaluasi = 0;
+        $menungguValidasi = 0;
+        $selesai = 0;
 
-        // Kegiatan yang SUDAH dievaluasi tapi status belum selesai (proxy for menunggu validasi pimpinan)
-        $menungguValidasi = $scopeUnit(KegiatanKerjasama::query())
-            ->whereHas('evaluasis')
-            ->where('status', '!=', 'selesai')
-            ->count();
+        // ── 2. Tabel Action Required ─
+        $tugasEvaluasi = collect();
 
-        // Kegiatan selesai / tervalidasi
-        $selesai = $scopeUnit(KegiatanKerjasama::query())
-            ->where('status', 'selesai')
-            ->count();
-
-        // ── 2. Tabel Action Required (5 terbaru belum dievaluasi) ─
-        $tugasEvaluasi = $scopeUnit(KegiatanKerjasama::query())
-            ->whereDoesntHave('evaluasis')
-            ->with('mitras')
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-
-        // ── 3. Rata-rata Evaluasi (untuk Bar Chart) ─────────────
-        $avgEvaluasi = Evaluasi::whereHas('kegiatanKerjasama', function ($q) use ($unitId) {
-                $q->whereHas('unitKerjas', fn($qu) => $qu->where('unit_kerjas.id', $unitId));
-            })
-            ->select(
-                DB::raw('ROUND(AVG(kualitas),1)     as avg_kualitas'),
-                DB::raw('ROUND(AVG(keterlibatan),1)  as avg_keterlibatan'),
-                DB::raw('ROUND(AVG(efisiensi),1)     as avg_efisiensi'),
-                DB::raw('ROUND(AVG(kepuasan),1)      as avg_kepuasan')
-            )
-            ->first();
+        // ── 3. Rata-rata Evaluasi ─────────────
+        $avgEvaluasi = (object)[
+            'avg_kualitas' => 0,
+            'avg_keterlibatan' => 0,
+            'avg_efisiensi' => 0,
+            'avg_kepuasan' => 0
+        ];
 
         // ── 4. Tren Kerjasama Per Tahun ──────────────────────────
-        $trenPerTahun = $scopeUnit(KegiatanKerjasama::query())
-            ->select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
+        $trenPerTahun = \App\Models\Cooperation::select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
             ->groupBy('tahun')
             ->orderBy('tahun')
             ->get();
 
         // ── 5. Sebaran Jenis Kerjasama ───────────────────────────
-        $sebaranJenis = DB::table('kegiatan_jenis_kerjasamas')
-            ->join('jenis_kerjasamas', 'kegiatan_jenis_kerjasamas.id_jenis', '=', 'jenis_kerjasamas.id')
-            ->join('kegiatan_units', 'kegiatan_jenis_kerjasamas.id_kegiatan', '=', 'kegiatan_units.id_kegiatan')
-            ->where('kegiatan_units.id_unit', $unitId)
-            ->select('jenis_kerjasamas.nama_kerjasama', DB::raw('count(*) as total'))
-            ->groupBy('jenis_kerjasamas.nama_kerjasama')
-            ->get();
+        $sebaranJenis = collect();
 
         return view('auth.unit', compact(
             'totalKerjasama',

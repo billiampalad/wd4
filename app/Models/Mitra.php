@@ -20,14 +20,9 @@ class Mitra extends Model
         'website',
     ];
 
-    public function kegiatanMitras()
+    public function cooperations()
     {
-        return $this->hasMany(KegiatanMitra::class, 'id_mitra');
-    }
-
-    public function kegiatanKerjasamas()
-    {
-        return $this->belongsToMany(KegiatanKerjasama::class, 'kegiatan_mitras', 'id_mitra', 'id_kegiatan');
+        return $this->hasMany(Cooperation::class, 'mitra_id');
     }
 
     public function klasifikasi(): BelongsTo

@@ -8,7 +8,7 @@
             <span class="sep">/</span>
             <span class="current">Detail</span>
         </div>
-        <h2 id="pageTitle">{{ $kegiatan->nama_kegiatan }}</h2>
+        <h2 id="pageTitle">{{ $kegiatan->title }}</h2>
         <p id="pageDesc">Detail lengkap kegiatan kerjasama dan data terkait.</p>
     </div>
 
@@ -28,7 +28,7 @@
             <div class="md-stat-info">
                 <div class="md-stat-label">Jenis</div>
                 <div class="md-stat-value">
-                    {{ $kegiatan->jenisKerjasama->pluck('nama_kerjasama')->join(', ') ?: '-' }}
+                    {{ $kegiatan->jenis ?? '-' }}
                 </div>
             </div>
         </div>
@@ -39,13 +39,26 @@
             <div class="md-stat-info">
                 <div class="md-stat-label">Periode</div>
                 <div class="md-stat-value">
-                    {{ $kegiatan->periode_mulai?->format('d M Y') ?? '-' }} — {{ $kegiatan->periode_selesai?->format('d M Y') ?? '-' }}
+                    @if($kegiatan->start_date)
+                        {{ $kegiatan->start_date->format('d M Y') }} - {{ $kegiatan->end_date ? $kegiatan->end_date->format('d M Y') : 'Selesai' }}
+                    @else
+                        -
+                    @endif
                 </div>
             </div>
         </div>
         <div class="md-stat-card" style="flex: 0; min-width: auto; padding: 0 24px; justify-content: center;">
-            <span class="tag {{ $kegiatan->status_class }}" style="font-size: 13px; padding: 8px 16px;">
-                <i class="fas fa-circle" style="font-size:7px;"></i> {{ $kegiatan->status_label }}
+            @php
+                $statusClass = match($kegiatan->status) {
+                    'aktif' => 'tag-green',
+                    'perpanjangan' => 'tag-orange',
+                    'kadaluarsa' => 'tag-red',
+                    'tidak_aktif' => 'tag-gray',
+                    default => 'tag-gray'
+                };
+            @endphp
+            <span class="tag {{ $statusClass }}" style="font-size: 13px; padding: 8px 16px; text-transform: capitalize;">
+                <i class="fas fa-circle" style="font-size:7px;"></i> {{ str_replace('_', ' ', $kegiatan->status ?? 'aktif') }}
             </span>
         </div>
     </div>
@@ -83,61 +96,38 @@
             <div class="mc-grid-2">
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Nama Kegiatan</div>
-                        <div style="font-size: 14px; font-weight: 700; color: var(--text);">{{ $kegiatan->nama_kegiatan }}</div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Judul Kerjasama</div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--text);">{{ $kegiatan->title }}</div>
                     </div>
                     <div>
                         <div class="md-stat-label" style="margin-bottom: 4px;">Jenis Kerjasama</div>
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            @forelse($kegiatan->jenisKerjasama as $jk)
-                            <span class="tag tag-purple" style="font-size: 11px;">{{ $jk->nama_kerjasama }}</span>
-                            @empty
-                            <span style="font-size: 13px; color: var(--text-sub);">-</span>
-                            @endforelse
+                            <span class="tag tag-purple" style="font-size: 11px;">{{ $kegiatan->jenis }}</span>
                         </div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Unit Kerja</div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            @forelse($kegiatan->unitKerjas as $uk)
-                            <span class="tag tag-blue" style="font-size: 11px;">{{ $uk->nama_unit_pelaksana }}</span>
-                            @empty
-                            <span style="font-size: 13px; color: var(--text-sub);">-</span>
-                            @endforelse
-                        </div>
-                    </div>
-                    <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Dibuat Oleh</div>
-                        <div style="font-size: 14px; color: var(--text);">{{ $kegiatan->creator?->name ?? '-' }}</div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Deskripsi</div>
+                        <div style="font-size: 13px; color: var(--text); line-height: 1.6;">{{ $kegiatan->description ?? '-' }}</div>
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Dokumen Kerjasama</div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            @if($kegiatan->jenis_dokumen)
-                                <span class="tag tag-{{ $kegiatan->jenis_dokumen == 'MoU' ? 'purple' : ($kegiatan->jenis_dokumen == 'MoA' ? 'green' : 'orange') }}" style="font-size: 10px; padding: 2px 8px;">{{ $kegiatan->jenis_dokumen }}</span>
-                            @endif
-                            <div style="font-size: 14px; color: var(--text); font-family: 'DM Mono', monospace;">{{ $kegiatan->nomor_mou ?? '-' }}</div>
-                        </div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Nomor Dokumen Utama</div>
+                        <div style="font-size: 14px; color: var(--text); font-family: 'DM Mono', monospace;">{{ $kegiatan->doc_number ?? '-' }}</div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Tanggal MoU</div>
-                        <div style="font-size: 14px; color: var(--text);">{{ $kegiatan->tanggal_mou?->format('d M Y') ?? '-' }}</div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Nomor PKS</div>
+                        <div style="font-size: 14px; color: var(--text); font-family: 'DM Mono', monospace;">{{ $kegiatan->pks_number ?? '-' }}</div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom: 4px;">Penanggung Jawab</div>
-                        <div style="font-size: 14px; color: var(--text);">{{ $kegiatan->penanggung_jawab ?? '-' }}</div>
-                    </div>
-                    <div>
-                        <div class="md-stat-label" style="margin-bottom: 8px;">Mitra Kerjasama</div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                            @forelse($kegiatan->mitras as $m)
-                            <span class="tag tag-blue" style="font-size: 11px;">{{ $m->nama_mitra }}</span>
-                            @empty
-                            <span style="font-size: 13px; color: var(--text-sub);">Belum ada mitra</span>
-                            @endforelse
-                        </div>
+                        <div class="md-stat-label" style="margin-bottom: 4px;">Link Dokumen</div>
+                        @if($kegiatan->document_link)
+                            <a href="{{ $kegiatan->document_link }}" target="_blank" style="font-size: 13px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-external-link-alt"></i> Buka di Google Drive
+                            </a>
+                        @else
+                            <div style="font-size: 13px; color: var(--text-sub);">-</div>
+                        @endif
                     </div>
                 </div>
             </div>

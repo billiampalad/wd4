@@ -65,25 +65,16 @@
                                     <span class="um-num">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</span>
                                 </td>
                                 <td class="um-td">
-                                    <span class="um-name">{{ $kegiatan->nama_kegiatan ?? '-' }}</span>
+                                    <span class="um-name">{{ $kegiatan->title ?? '-' }}</span>
                                 </td>
                                 <td class="um-td">
                                     <span class="tag tag-purple" style="font-size: 11px;">
                                         <i class="fas fa-handshake" style="font-size:9px; margin-right:4px;"></i>
-                                        {{ $kegiatan->jenisKerjasama->pluck('nama_kerjasama')->join(', ') ?: '-' }}
+                                        {{ $kegiatan->jenis ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="um-td">
-                                    @if($kegiatan->mitras->count() > 0)
-                                        <span class="um-meta" title="{{ $kegiatan->mitras->pluck('nama_mitra')->join(', ') }}">
-                                            {{ $kegiatan->mitras->first()->nama_mitra }}
-                                            @if($kegiatan->mitras->count() > 1)
-                                                +{{ $kegiatan->mitras->count() - 1 }} mitra lainnya
-                                            @endif
-                                        </span>
-                                    @else
-                                        <span class="um-meta">-</span>
-                                    @endif
+                                    <span class="um-meta">-</span>
                                 </td>
                                 <td class="um-td">
                                     @php
@@ -94,9 +85,9 @@
                                         {{ $selesai ? $selesai : '-' }}</span>
                                 </td>
                                 <td class="um-td">
-                                    <span class="tag {{ $kegiatan->status_class }}">
+                                    <span class="tag tag-orange">
                                         <i class="fas fa-circle" style="font-size:6px;"></i>
-                                        {{ $kegiatan->status_label ?? '-' }}
+                                        Aktif
                                     </span>
                                 </td>
                                 <td class="um-td um-td-aksi">

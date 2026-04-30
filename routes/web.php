@@ -28,18 +28,18 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\KegiatanKerjasama::with(['mitras', 'jenisKerjasama'])->latest();
+    $query = \App\Models\Cooperation::latest();
 
     if ($search = $request->get('search')) {
-        $query->where('nama_kegiatan', 'like', "%{$search}%");
+        $query->where('title', 'like', "%{$search}%");
     }
 
     $kerjasama = $query->paginate(9);
 
     $stats = [
-        'total_kerjasama' => \App\Models\KegiatanKerjasama::count(),
+        'total_kerjasama' => \App\Models\Cooperation::count(),
         'total_mitra' => \App\Models\Mitra::count(),
-        'total_aktif' => \App\Models\KegiatanKerjasama::where('status', 'selesai')->count(),
+        'total_aktif' => \App\Models\Cooperation::count(), // Stubbed as 'selesai' status is gone
     ];
 
     return view('auth.welcome', compact('kerjasama', 'stats'));

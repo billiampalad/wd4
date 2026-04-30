@@ -11,57 +11,57 @@ class UsersSeeder extends Seeder
     public function run(): void
     {
         // Insert roles
-        // DB::table('roles')->insert([
-        //     ['role_name' => 'pimpinan'],
-        //     ['role_name' => 'jurusan'],
-        //     ['role_name' => 'unit_kerja'],
-        //     ['role_name' => 'admin'],
-        // ]);
+        DB::table('roles')->insertOrIgnore([
+            ['role_name' => 'pimpinan'],
+            ['role_name' => 'jurusan'],
+            ['role_name' => 'unit_kerja'],
+            ['role_name' => 'admin'],
+        ]);
 
         // Insert users
-        // DB::table('users')->insert([
-        //     [
-        //         'nik' => '123456',
-        //         'name' => 'Admin Unit',
-        //         'password' => Hash::make('password'),
-        //         'role_id' => 3
-        //     ],
-        //     [
-        //         'nik' => '222222',
-        //         'name' => 'Admin Jurusan',
-        //         'password' => Hash::make('password'),
-        //         'role_id' => 2
-        //     ],
-        //     [
-        //         'nik' => '012460',
-        //         'name' => 'Admin Pimpinan',
-        //         'password' => Hash::make('password'),
-        //         'role_id' => 1
-        //     ],
-        //     [
-        //         'nik' => '120604',
-        //         'name' => 'Admin',
-        //         'password' => Hash::make('password'),
-        //         'role_id' => 4
-        //     ]
-        // ]);
+        DB::table('users')->insertOrIgnore([
+            [
+                'nik' => '123456',
+                'name' => 'Admin Unit',
+                'password' => Hash::make('password'),
+                'role_id' => 3
+            ],
+            [
+                'nik' => '222222',
+                'name' => 'Admin Jurusan',
+                'password' => Hash::make('password'),
+                'role_id' => 2
+            ],
+            [
+                'nik' => '012460',
+                'name' => 'Admin Pimpinan',
+                'password' => Hash::make('password'),
+                'role_id' => 1
+            ],
+            [
+                'nik' => '120604',
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+                'role_id' => 4
+            ]
+        ]);
 
         // insert jurusans
-        // DB::table('jurusans')->insert([
-        //     [
-        //         'nama_jurusan' => 'Teknik Elektro',
-        //     ]
-        // ]);
+        DB::table('jurusans')->insertOrIgnore([
+            [
+                'nama_jurusan' => 'Teknik Elektro',
+            ]
+        ]);
 
         // insert unit_kerjas
-        // DB::table('unit_kerjas')->insert([
-        //     [
-        //         'nama_unit_pelaksana' => 'Ketua Unit',
-        //     ]
-        // ]);
+        DB::table('unit_kerjas')->insertOrIgnore([
+            [
+                'nama_unit_pelaksana' => 'Ketua Unit',
+            ]
+        ]);
 
         // Insert profiles
-        DB::table('profiles')->insert([
+        DB::table('profiles')->insertOrIgnore([
             [
                 'user_id' => 1,
                 'jabatan' => null,
