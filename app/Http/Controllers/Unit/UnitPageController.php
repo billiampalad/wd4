@@ -430,12 +430,12 @@ class UnitPageController extends Controller
     public function formLaporanStore(Request $request)
     {
         $request->validate([
-            'file_pdf' => 'required|file|mimes:pdf|max:10240',
+            'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:3072',
         ]);
 
         $unitId = $this->resolveUnitId();
 
-        $file = $request->file('file_pdf');
+        $file = $request->file('file_laporan');
         $path = $file->store('laporan_unit', 'public');
 
         \App\Models\LaporanFile::create([
@@ -448,6 +448,68 @@ class UnitPageController extends Controller
         ]);
 
         return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
+    }
+
+    public function formLaporanDownload($id, $type)
+    {
+        $unitId = $this->resolveUnitId();
+        $file = \App\Models\LaporanFile::where('unit_kerja_id', $unitId)->findOrFail($id);
+        $filePath = storage_path('app/public/' . $file->file_path);
+
+        if (!file_exists($filePath)) {
+            return back()->with('error', 'File tidak ditemukan di server.');
+        }
+
+        $originalName = $file->original_name;
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $nameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
+
+        if ($type === 'word') {
+            // Jika file asli sudah word, langsung download
+            if (in_array(strtolower($extension), ['doc', 'docx'])) {
+                return response()->download($filePath, $originalName);
+            }
+
+            // Jika file asli PDF, lakukan konversi nyata ke DOCX
+            try {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile($filePath);
+                $text = $pdf->getText();
+
+                // Bersihkan teks dari karakter non-printable yang bisa merusak XML DOCX
+                $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
+
+                $phpWord = new \PhpOffice\PhpWord\PhpWord();
+                $section = $phpWord->addSection();
+                
+                // Pisahkan teks per baris agar tampilan di Word lebih rapi
+                $lines = explode("\n", $text);
+                foreach ($lines as $line) {
+                    $section->addText(trim($line));
+                }
+
+                // Cek ketersediaan ZipArchive untuk menentukan format (DOCX butuh Zip)
+                if (class_exists('ZipArchive')) {
+                    $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+                    $extension = 'docx';
+                } else {
+                    // Fallback ke RTF jika ZipArchive tidak ada (RTF tidak butuh Zip)
+                    $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'RTF');
+                    $extension = 'rtf';
+                }
+
+                $tempFile = tempnam(sys_get_temp_dir(), 'laporan_') . '.' . $extension;
+                $objWriter->save($tempFile);
+
+                return response()->download($tempFile, $nameWithoutExt . '.' . $extension)->deleteFileAfterSend(true);
+            } catch (\Exception $e) {
+                // Jika konversi gagal, fallback ke download file asli dengan info
+                return response()->download($filePath, $originalName);
+            }
+        }
+
+        // Default download (PDF atau format asli)
+        return response()->download($filePath, $originalName);
     }
 
     public function formLaporanDestroy($id)
