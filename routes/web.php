@@ -28,10 +28,17 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Cooperation::latest();
+    $query = \App\Models\Cooperation::with('mitra')->latest();
 
     if ($search = $request->get('search')) {
         $query->where('title', 'like', "%{$search}%");
+    }
+
+    $kategori = $request->get('kategori_mitra', 'all');
+    if ($kategori !== 'all') {
+        $query->whereHas('mitra', function ($q) use ($kategori) {
+            $q->where('kategori', $kategori);
+        });
     }
 
     $kerjasama = $query->paginate(9);
@@ -39,7 +46,9 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
     $stats = [
         'total_kerjasama' => \App\Models\Cooperation::count(),
         'total_mitra' => \App\Models\Mitra::count(),
-        'total_aktif' => \App\Models\Cooperation::count(), // Stubbed as 'selesai' status is gone
+        'total_aktif' => \App\Models\Cooperation::where('status', 'aktif')->count(),
+        'mitra_nasional' => \App\Models\Mitra::where('kategori', 'nasional')->count(),
+        'mitra_internasional' => \App\Models\Mitra::where('kategori', 'internasional')->count(),
     ];
 
     return view('auth.welcome', compact('kerjasama', 'stats'));

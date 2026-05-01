@@ -10,9 +10,9 @@
             try {
                 const savedTheme = localStorage.getItem('welcome-theme');
                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const theme = savedTheme === 'dark' || savedTheme === 'light'
-                    ? savedTheme
-                    : (prefersDark ? 'dark' : 'light');
+                const theme = savedTheme === 'dark' || savedTheme === 'light' ?
+                    savedTheme :
+                    (prefersDark ? 'dark' : 'light');
 
                 document.documentElement.dataset.theme = theme;
             } catch (error) {
@@ -226,8 +226,6 @@
                             <span class="stat-split-lbl">Internasional</span>
                         </div>
                     </div>
-
-                    <p class="stat-desc">Distribusi mitra berdasarkan kategori yang tersimpan di database, sehingga ringkasan publik tetap konsisten dengan data sistem.</p>
                 </article>
             </div>
         </div>
@@ -273,10 +271,10 @@
     <!-- ═══ MAIN DATA SECTION ══════════════════════════════════ -->
     <main class="main-wrap" id="data-kerjasama">
         @php
-            $selectedKategoriMitra = request('kategori_mitra', 'all');
-            $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
-                ? $selectedKategoriMitra
-                : 'all';
+        $selectedKategoriMitra = request('kategori_mitra', 'all');
+        $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
+        ? $selectedKategoriMitra
+        : 'all';
         @endphp
 
         <div class="section-top">
@@ -284,7 +282,7 @@
                 <div class="section-eyebrow">Data Kerjasama</div>
                 <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
                 @if($selectedKategoriMitra !== 'all')
-                    <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
+                <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
                 @endif
                 <p class="section-sub">Daftar kegiatan kerjasama yang sedang dan telah berjalan · Tampilan publik</p>
             </div>
@@ -322,91 +320,98 @@
         </div>
 
         @if(isset($kerjasama) && $kerjasama->count() > 0)
-            <div class="cards-grid">
-                @foreach($kerjasama as $item)
-                    @php
-                        $statusClass = $item->status_class ?? 'badge-draft';
-                        $statusLabel = $item->status_label ?? 'Draft';
-                        $mitraNames = $item->mitras->pluck('nama_mitra')->join(', ') ?: 'Mitra belum ditentukan';
-                        $mitraInit = strtoupper(substr($mitraNames, 0, 2));
-                        $hasDates = $item->periode_mulai && $item->periode_selesai;
-                    @endphp
+        <div class="cards-grid">
+            @foreach($kerjasama as $item)
+            @php
+            $status = strtolower($item->status ?? '');
+            $statusClass = match(true) {
+            $status === 'aktif' => 'badge-active',
+            str_contains($status, 'perpanjangan') => 'badge-warning',
+            in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
+            default => 'badge-draft'
+            };
+            $statusLabel = ucwords($item->status ?? 'Draft');
 
-                    <div class="kcard" onclick="openModal(
+            $mitraNames = $item->mitra ? $item->mitra->nama_mitra : 'Mitra belum ditentukan';
+            $mitraInit = strtoupper(substr($mitraNames, 0, 2));
+            $hasDates = $item->start_date && $item->end_date;
+            @endphp
+
+            <div class="kcard" onclick="openModal(
                                                     {{ $item->id }},
-                                                    `{{ addslashes($item->nama_kegiatan) }}`,
+                                                    `{{ addslashes($item->title) }}`,
                                                     `{{ addslashes($mitraNames) }}`,
-                                                    `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
-                                                    `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
+                                                    `{{ addslashes($item->doc_number ?? 'Belum ada') }}`,
+                                                    `{{ $hasDates ? $item->start_date->format('d M Y') . ' – ' . $item->end_date->format('d M Y') : 'Tanggal belum lengkap' }}`,
                                                     `{{ addslashes($statusLabel) }}`,
                                                     `{{ $statusClass }}`
                                                 )">
-                        <div class="kcard-accent"></div>
+                <div class="kcard-accent"></div>
 
-                        <div class="kcard-top">
-                            <h3 class="kcard-title">{{ $item->nama_kegiatan }}</h3>
-                            <span class="status-pill {{ $statusClass }}">{{ $statusLabel }}</span>
-                        </div>
+                <div class="kcard-top">
+                    <h3 class="kcard-title">{{ $item->title }}</h3>
+                    <span class="status-pill {{ $statusClass }}">{{ $statusLabel }}</span>
+                </div>
 
-                        <div class="kcard-mitra">
-                            <div class="mitra-dot">{{ $mitraInit }}</div>
-                            {{ $mitraNames }}
-                        </div>
+                <div class="kcard-mitra">
+                    <div class="mitra-dot">{{ $mitraInit }}</div>
+                    {{ $mitraNames }}
+                </div>
 
-                        <div class="kcard-meta">
-                            <div class="meta-row">
-                                <span class="meta-key">No. MoU</span>
-                                <span class="meta-val">{{ $item->nomor_mou ?? 'Belum ada' }}</span>
-                            </div>
-                            <div class="meta-row">
-                                <span class="meta-key">Durasi</span>
-                                <span class="meta-val">
-                                    @if($hasDates)
-                                        {{ $item->periode_mulai->format('d M Y') }} – {{ $item->periode_selesai->format('d M Y') }}
-                                    @else
-                                        Tanggal belum lengkap
-                                    @endif
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="kcard-footer">
-                            <button class="btn-detail"
-                                onclick="event.stopPropagation(); openModal(
-                                                                                                                                                                                        {{ $item->id }},
-                                                                                                                                                                                        `{{ addslashes($item->nama_kegiatan) }}`,
-                                                                                                                                                                                        `{{ addslashes($mitraNames) }}`,
-                                                                                                                                                                                        `{{ addslashes($item->nomor_mou ?? 'Belum ada') }}`,
-                                                                                                                                                                                        `{{ $hasDates ? $item->periode_mulai->format('d M Y') . ' – ' . $item->periode_selesai->format('d M Y') : 'Tanggal belum lengkap' }}`,
-                                                                                                                                                                                        `{{ addslashes($statusLabel) }}`,
-                                                                                                                                                                                        `{{ $statusClass }}`
-                                                                                                                                                                                    )">
-                                Lihat Detail
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
+                <div class="kcard-meta">
+                    <div class="meta-row">
+                        <span class="meta-key">No. Dokumen</span>
+                        <span class="meta-val">{{ $item->doc_number ?? 'Belum ada' }}</span>
                     </div>
-                @endforeach
-            </div>
+                    <div class="meta-row">
+                        <span class="meta-key">Durasi</span>
+                        <span class="meta-val">
+                            @if($hasDates)
+                            {{ $item->start_date->format('d M Y') }} – {{ $item->end_date->format('d M Y') }}
+                            @else
+                            Tanggal belum lengkap
+                            @endif
+                        </span>
+                    </div>
+                </div>
 
-            <div class="pagination-wrap">
-                {{ $kerjasama->links('pagination::simple-bootstrap-4') }}
+                <div class="kcard-footer">
+                    <button class="btn-detail"
+                        onclick="event.stopPropagation(); openModal(
+                            {{ $item->id }},
+                                `{{ addslashes($item->title) }}`,
+                                `{{ addslashes($mitraNames) }}`,
+                                `{{ addslashes($item->doc_number ?? 'Belum ada') }}`,
+                                `{{ $hasDates ? $item->start_date->format('d M Y') . ' – ' . $item->end_date->format('d M Y') : 'Tanggal belum lengkap' }}`,
+                                `{{ addslashes($statusLabel) }}`,
+                                `{{ $statusClass }}`
+                            )">
+                        Lihat Detail
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
             </div>
+            @endforeach
+        </div>
+
+        <div class="pagination-wrap">
+            {{ $kerjasama->links('pagination::simple-bootstrap-4') }}
+        </div>
 
         @else
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                </div>
-                <h3>Belum ada data kerjasama</h3>
-                <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci atau filter yang dipilih.</p>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
             </div>
+            <h3>Belum ada data kerjasama</h3>
+            <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci atau filter yang dipilih.</p>
+        </div>
         @endif
     </main>
 
