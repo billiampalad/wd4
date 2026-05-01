@@ -16,19 +16,19 @@
         style="position: relative; width: 100%; max-width: 640px; max-height: 90vh; background: var(--surface); border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); overflow: hidden; transform: scale(0.9) translateY(20px); opacity: 0; transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column;">
 
         {{-- Modal Header --}}
-        <div style="display: flex; align-items: center; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(124,58,237,0.03)); flex-shrink: 0;">
-            <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; box-shadow: 0 4px 14px rgba(79,70,229,0.35);">
+        <div style="display: flex; align-items: center; gap: 16px; padding: 24px 28px; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(124,58,237,0.04)); flex-shrink: 0;">
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; box-shadow: 0 8px 20px rgba(79,70,229,0.3);">
                 <i class="fas fa-handshake"></i>
             </div>
             <div style="flex: 1;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">Tambah Mitra Baru</h3>
-                <p style="margin: 3px 0 0; font-size: 12px; color: var(--text-sub);">Lengkapi data instansi atau mitra kerjasama</p>
+                <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">Tambah Mitra Baru</h3>
+                <p style="margin: 4px 0 0; font-size: 13px; color: var(--text-sub);">Lengkapi informasi instansi mitra kerjasama</p>
             </div>
             <button onclick="closeMitraModal()" type="button"
-                style="width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;"
-                onmouseover="this.style.background='var(--surface2)'; this.style.color='var(--text)'"
-                onmouseout="this.style.background='var(--surface)'; this.style.color='var(--text-sub)'">
-                <i class="fas fa-times" style="font-size: 13px;"></i>
+                style="width: 38px; height: 38px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;"
+                onmouseover="this.style.background='var(--surface)'; this.style.color='#ef4444'; this.style.borderColor='#fee2e2'"
+                onmouseout="this.style.background='var(--surface2)'; this.style.color='var(--text-sub)'; this.style.borderColor='var(--border)'">
+                <i class="fas fa-times" style="font-size: 14px;"></i>
             </button>
         </div>
 

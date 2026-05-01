@@ -5,12 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DUDIKA — Sistem Informasi Kerjasama</title>
+    <script>
+        (() => {
+            try {
+                const savedTheme = localStorage.getItem('welcome-theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = savedTheme === 'dark' || savedTheme === 'light'
+                    ? savedTheme
+                    : (prefersDark ? 'dark' : 'light');
+
+                document.documentElement.dataset.theme = theme;
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/welcome-stats.css') }}" data-turbo-track="reload">
 </head>
 
 <body>
@@ -26,6 +42,28 @@
             </a>
             <div class="nav-right">
                 <a href="#data-kerjasama" class="nav-link">Data Kerjasama</a>
+                <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
+                    aria-label="Ubah ke mode gelap">
+                    <span class="theme-toggle-orb" aria-hidden="true">
+                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
+                        </svg>
+                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="m4.93 4.93 1.41 1.41" />
+                            <path d="m17.66 17.66 1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="m6.34 17.66-1.41 1.41" />
+                            <path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                    </span>
+                    <span class="theme-toggle-text" data-theme-toggle-label>Mode Gelap</span>
+                </button>
                 <a href="{{ route('login') }}" class="btn-nav">Login Sistem</a>
             </div>
         </div>
@@ -109,25 +147,91 @@
         </div>
     </header>
 
-    <!-- ═══ STATS STRIP ═══════════════════════════════════════ -->
-    <div class="stats-strip">
+    <!-- ═══ STATS CARD ═══════════════════════════════════════ -->
+    <section class="stats-strip" aria-labelledby="stats-overview-title">
         <div class="stats-inner">
-            <div class="stat-item">
-                <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
-                <div class="stat-lbl">Total Kerjasama</div>
+            <div class="stats-heading">
+                <span class="stats-kicker">Ikhtisar Publik</span>
+                <h2 id="stats-overview-title">Ringkasan cepat data kerjasama</h2>
+                <p>Setiap kartu menyorot metrik inti agar data kemitraan lebih cepat dipahami dari satu tampilan.</p>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
-                <div class="stat-lbl">Mitra Terdaftar</div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <div class="stat-num">{{ $stats['total_aktif'] ?? 0 }}</div>
-                <div class="stat-lbl">Kerjasama Aktif / Selesai</div>
+
+            <div class="stats-card-grid">
+                <article class="stat-card">
+                    <div class="stat-card-icon stat-card-icon-blue" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 12h18" />
+                            <path d="M3 6h18" />
+                            <path d="M3 18h12" />
+                        </svg>
+                    </div>
+                    <div class="stat-card-meta">Total Data</div>
+                    <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
+                    <div class="stat-lbl">Kerjasama Tercatat</div>
+                    <p class="stat-desc">Seluruh kegiatan yang sudah masuk dalam sistem informasi publik.</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-card-icon stat-card-icon-green" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <div class="stat-card-meta">Jaringan Mitra</div>
+                    <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
+                    <div class="stat-lbl">Mitra Terdaftar</div>
+                    <p class="stat-desc">Organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.</p>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-card-icon stat-card-icon-amber" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                            <polyline points="16 7 22 7 22 13" />
+                        </svg>
+                    </div>
+                    <div class="stat-card-meta">Status Berjalan</div>
+                    <div class="stat-num">{{ $stats['total_aktif'] ?? 0 }}</div>
+                    <div class="stat-lbl">Aktif / Selesai</div>
+                    <p class="stat-desc">Kerjasama yang sedang berjalan maupun yang telah dituntaskan.</p>
+                </article>
+
+                <article class="stat-card stat-card-breakdown">
+                    <div class="stat-card-icon stat-card-icon-purple" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9Z" />
+                            <path d="M3.6 9h16.8" />
+                            <path d="M3.6 15h16.8" />
+                            <path d="M12 3a15.3 15.3 0 0 1 0 18" />
+                            <path d="M12 3a15.3 15.3 0 0 0 0 18" />
+                        </svg>
+                    </div>
+                    <div class="stat-card-meta">Cakupan Mitra</div>
+                    <div class="stat-lbl">Mitra Nasional & Internasional</div>
+
+                    <div class="stat-split" aria-label="Rincian kategori mitra">
+                        <div class="stat-split-item">
+                            <span class="stat-split-num">{{ $stats['mitra_nasional'] ?? 0 }}</span>
+                            <span class="stat-split-lbl">Nasional</span>
+                        </div>
+                        <div class="stat-split-item">
+                            <span class="stat-split-num">{{ $stats['mitra_internasional'] ?? 0 }}</span>
+                            <span class="stat-split-lbl">Internasional</span>
+                        </div>
+                    </div>
+
+                    <p class="stat-desc">Distribusi mitra berdasarkan kategori yang tersimpan di database, sehingga ringkasan publik tetap konsisten dengan data sistem.</p>
+                </article>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- ═══ TRUST STRIP ════════════════════════════════════════ -->
     <div class="trust-strip">
@@ -168,15 +272,42 @@
 
     <!-- ═══ MAIN DATA SECTION ══════════════════════════════════ -->
     <main class="main-wrap" id="data-kerjasama">
+        @php
+            $selectedKategoriMitra = request('kategori_mitra', 'all');
+            $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
+                ? $selectedKategoriMitra
+                : 'all';
+        @endphp
 
         <div class="section-top">
             <div>
                 <div class="section-eyebrow">Data Kerjasama</div>
                 <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
+                @if($selectedKategoriMitra !== 'all')
+                    <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
+                @endif
                 <p class="section-sub">Daftar kegiatan kerjasama yang sedang dan telah berjalan · Tampilan publik</p>
             </div>
 
-            <form action="/" method="GET" class="filter-bar">
+            <form action="/" method="GET" class="filter-bar" data-landing-filter>
+                <div class="filter-toggle" aria-label="Filter kategori kerjasama">
+                    <label class="filter-option {{ $selectedKategoriMitra === 'all' ? 'is-active' : '' }}">
+                        <input type="radio" name="kategori_mitra" value="all"
+                            {{ $selectedKategoriMitra === 'all' ? 'checked' : '' }}>
+                        <span>Semua</span>
+                    </label>
+                    <label class="filter-option {{ $selectedKategoriMitra === 'nasional' ? 'is-active' : '' }}">
+                        <input type="radio" name="kategori_mitra" value="nasional"
+                            {{ $selectedKategoriMitra === 'nasional' ? 'checked' : '' }}>
+                        <span>Nasional</span>
+                    </label>
+                    <label class="filter-option {{ $selectedKategoriMitra === 'internasional' ? 'is-active' : '' }}">
+                        <input type="radio" name="kategori_mitra" value="internasional"
+                            {{ $selectedKategoriMitra === 'internasional' ? 'checked' : '' }}>
+                        <span>Internasional</span>
+                    </label>
+                </div>
+
                 <div class="search-wrap">
                     <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -274,7 +405,7 @@
                     </svg>
                 </div>
                 <h3>Belum ada data kerjasama</h3>
-                <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan.</p>
+                <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci atau filter yang dipilih.</p>
             </div>
         @endif
     </main>

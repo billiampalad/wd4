@@ -1,37 +1,55 @@
 <!-- Main Content -->
-<main id="mainContent">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-home" style="font-size:11px;"></i>
-            <span class="sep">/</span>
-            <a href="{{ route('unit.dkerjasama') }}" style="color: inherit; text-decoration: none;">Data Kerjasama</a>
-            <span class="sep">/</span>
-            <span class="current">Edit Data</span>
+<main id="mainContent" class="dk-page">
+    <section class="dk-hero">
+        <div class="dk-hero-content">
+            <div class="breadcrumb dk-breadcrumb">
+                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-home"></i>
+                </a>
+                <span class="sep">/</span>
+                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current">Data Kerjasama</span>
+                </a>
+                <span class="sep">/</span>
+                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current">Repositori</span>
+                </a>
+                <span class="sep">/</span>
+                <span class="current">Edit Data</span>
+            </div>
+
+            <div class="dk-hero-main">
+                <div class="dk-hero-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div>
+                    <span class="dk-eyebrow">Repositori Unit</span>
+                    <h2 id="pageTitle">Edit Data Kerjasama</h2>
+                    <p id="pageDesc">Perbarui informasi kegiatan kerjasama.</p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Edit Data Kerjasama</h2>
-        <p id="pageDesc">Perbarui informasi kegiatan kerjasama.</p>
-    </div>
+    </section>
 
     @if(session('error'))
-        <div
-            style="background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(220,38,38,.08)); border: 1px solid rgba(239,68,68,.3); color: #991b1b; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #ef4444;"></i>
-            {{ session('error') }}
+        <div class="dk-alert dk-alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
-    <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
-        <div class="modern-card">
-            <div class="mc-header">
-                <div class="mc-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div class="mc-title">
-                    <h3>Edit Data Kerjasama</h3>
-                    <p>Pastikan data yang diisi telah valid.</p>
-                </div>
+    <div class="card um-card dk-card" style="overflow: visible;">
+        <div class="card-header um-header dk-card-header">
+            <div class="um-title dk-card-title">
+                <span class="dk-title-icon"><i class="fas fa-edit"></i></span>
+                <span>
+                    <strong>Edit Data Kerjasama</strong>
+                    <small>Pastikan data yang diisi telah valid.</small>
+                </span>
             </div>
+        </div>
 
+        <div class="card-body dk-card-body" style="padding: 0;">
             <form action="{{ route('unit.kerjasama.update', $kegiatan->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -43,7 +61,19 @@
                         <div
                             style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
                             <div
-                                x-data="{ showMasaBerlaku: true, statusOpen: false, statusValue: '{{ old('status', $kegiatan->status ?? '') }}' }">
+                                x-data="{ 
+                                    showMasaBerlaku: true, 
+                                    statusOpen: false, 
+                                    statusValue: '{{ 
+                                        match(strtolower(old('status', $kegiatan->status ?? ''))) {
+                                            'aktif' => 'Aktif',
+                                            'dalam perpanjangan' => 'Dalam Perpanjangan',
+                                            'kadarluarsa' => 'Kadarluarsa',
+                                            'tidak aktif' => 'Tidak Aktif',
+                                            default => old('status', $kegiatan->status ?? '')
+                                        }
+                                    }}' 
+                                }">
                                 {{-- Card Header --}}
                                 <div @click="showMasaBerlaku = !showMasaBerlaku"
                                     style="display: flex; align-items: center; gap: 10px; padding: 14px 18px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.04)); border-radius: 16px 16px 0 0; transition: background 0.2s;">
@@ -301,8 +331,6 @@
                                             </div>
                                             <span
                                                 style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Dokumentasi</span>
-                                            <span
-                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub); margin-left: 2px;">(Opsional)</span>
                                         </div>
                                         <div class="mc-group">
                                             <label class="mc-label">Link Google Drive</label>
@@ -462,7 +490,7 @@
 
                     {{-- ═══ COLUMN 1: Penggiat Kerja Sama ═══ --}}
                     <div
-                        style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;">
+                        style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
                         {{-- Card Header --}}
                         <div x-data="{
                             showPenggiat: true,
@@ -484,12 +512,22 @@
                                         jabatan_pj: '{{ addslashes($kegiatan->pjMitra?->jabatan ?? '') }}'
                                     }
                                 @else
-                                    { id: Date.now(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false }
+                                    { id: Date.now(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false, nama_penandatangan: '', jabatan_penandatangan: '', nama_pj: '', jabatan_pj: '' }
                                 @endif
                             ],
                             nextId() { return Date.now() + Math.random(); },
                             addPenggiat() {
-                                this.penggiatList.push({ id: this.nextId(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false });
+                                this.penggiatList.push({ 
+                                    id: this.nextId(), 
+                                    showPenandatangan: false, 
+                                    showPJ: false, 
+                                    mitraId: '', 
+                                    mitraOpen: false,
+                                    nama_penandatangan: '',
+                                    jabatan_penandatangan: '',
+                                    nama_pj: '',
+                                    jabatan_pj: ''
+                                });
                             },
                             removePenggiat(idx) {
                                 if (this.penggiatList.length > 1) this.penggiatList.splice(idx, 1);
@@ -522,7 +560,7 @@
 
                                 {{-- ══ Pihak Ke-1 ══ --}}
                                 <div
-                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden;">
+                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: visible;">
                                     {{-- Pihak 1 Header --}}
                                     <div @click="showPihak1 = !showPihak1"
                                         style="display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.2s;"
@@ -549,7 +587,7 @@
                                         style="padding: 0 20px 20px 20px;">
                                         <div x-data="{
                                             jenisDokumen: '{{ old('jenis_dokumen', $kegiatan->jenis) }}',
-                                            tipePelaksana: '{{ old('tipe_pelaksana', $kegiatan->jurusans->count() > 0 ? 'jurusan' : ($kegiatan->upas->count() > 0 ? 'upa' : ($kegiatan->pusats->count() > 0 ? 'pusat' : ''))) }}',
+                                            tipePelaksana: '{{ old('tipe_pelaksana', $kegiatan->tipe_pelaksana ?? ($kegiatan->jurusans->count() > 0 ? 'jurusan' : ($kegiatan->upas->count() > 0 ? 'upa' : ($kegiatan->pusats->count() > 0 ? 'pusat' : '')))) }}',
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
@@ -573,7 +611,7 @@
                                             getJurusanName(id) { return this.jurusanItems.find(j => j.id === id)?.nama ?? ''; },
 
                                             {{-- Prodi data (used by nested x-data scopes) --}}
-                                            selectedProdis: [],
+                                            selectedProdis: [{{ $kegiatan->prodis->pluck('id')->join(',') }}],
                                             prodiItems: [
                                                 @foreach($prodis ?? [] as $p)
                                                     { id: {{ $p->id }}, jurusan_id: {{ $p->jurusan_id }}, nama: '{{ addslashes($p->nama_prodi) }}', jenjang: '{{ $p->jenjang }}' },
@@ -976,7 +1014,7 @@
 
                                         {{-- Penandatangan (Collapsible) --}}
                                         <div
-                                            style="margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                            style="margin-top: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: visible; background: var(--surface);">
                                             <div @click="showPenandatangan1 = !showPenandatangan1"
                                                 style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
                                                 onmouseover="this.style.background='var(--surface2)'"
@@ -1020,7 +1058,7 @@
 
                                         {{-- Penanggung Jawab (Collapsible) --}}
                                         <div
-                                            style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface);">
+                                            style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: visible; background: var(--surface);">
                                             <div @click="showPJ1 = !showPJ1"
                                                 style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
                                                 onmouseover="this.style.background='var(--surface2)'"
@@ -1133,6 +1171,7 @@
                                                         <div style="flex: 1; position: relative;"
                                                             class="alpine-dropdown"
                                                             @click.outside="pg.mitraOpen = false">
+                                                            <input type="hidden" name="penggiat_mitra_ids[]" :value="pg.mitraId">
                                                             <input type="hidden" name="mitra_nama[]"
                                                                 :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
                                                             <div class="ad-trigger no-icon"
@@ -1179,7 +1218,7 @@
 
                                                 {{-- Penandatangan (Collapsible) --}}
                                                 <div
-                                                    style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                    style="margin-top: 10px; border: 1px solid var(--border); border-radius: 10px; overflow: visible; background: var(--surface2);">
                                                     <div @click="pg.showPenandatangan = !pg.showPenandatangan"
                                                         style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
                                                         onmouseover="this.style.background='var(--surface)'"
@@ -1206,6 +1245,7 @@
                                                                     <i class="fas fa-user mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][nama_penandatangan]'"
+                                                                        x-model="pg.nama_penandatangan"
                                                                         placeholder="Nama penandatangan"
                                                                         class="mc-input" />
                                                                 </div>
@@ -1216,6 +1256,7 @@
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][jabatan_penandatangan]'"
+                                                                        x-model="pg.jabatan_penandatangan"
                                                                         placeholder="Jabatan penandatangan"
                                                                         class="mc-input" />
                                                                 </div>
@@ -1226,7 +1267,7 @@
 
                                                 {{-- Penanggung Jawab (Collapsible) --}}
                                                 <div
-                                                    style="margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2);">
+                                                    style="margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: visible; background: var(--surface2);">
                                                     <div @click="pg.showPJ = !pg.showPJ"
                                                         style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; user-select: none; transition: background 0.2s;"
                                                         onmouseover="this.style.background='var(--surface)'"
@@ -1254,6 +1295,7 @@
                                                                     <i class="fas fa-user mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][nama_pj]'"
+                                                                        x-model="pg.nama_pj"
                                                                         placeholder="Nama penanggung jawab"
                                                                         class="mc-input" />
                                                                 </div>
@@ -1264,6 +1306,7 @@
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][jabatan_pj]'"
+                                                                        x-model="pg.jabatan_pj"
                                                                         placeholder="Jabatan penanggung jawab"
                                                                         class="mc-input" />
                                                                 </div>
@@ -1316,7 +1359,7 @@
                             </div>
 
                             {{-- Card Body --}}
-                            <div x-show="showBentuk" x-collapse.duration.300ms style="padding: 20px 24px;">
+                            <div x-show="showBentuk" x-collapse.duration.300ms style="padding: 20px 24px; overflow: visible;">
 
                                 {{-- Jenis Kerjasama (Alpine Multi-Select with Dynamic Forms) --}}
                                 <div x-data="{ 
@@ -1614,53 +1657,6 @@
 
                 {{-- Continue mc-body for remaining sections --}}
                 <div class="mc-body">
-
-                    {{-- ═══ Tujuan & Sasaran (Collapsible Card) ═══ --}}
-                    <div
-                        style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; margin-bottom: 20px;">
-                        <div x-data="{ showTujuan: false }">
-                            <div @click="showTujuan = !showTujuan"
-                                style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(124,58,237,0.04)); border-radius: 16px 16px 0 0;">
-                                <div
-                                    style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
-                                    <i class="fas fa-bullseye"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Tujuan
-                                        & Sasaran</h4>
-                                    <p style="margin: 2px 0 0; font-size: 12px; color: var(--text-sub);">Target dan
-                                        sasaran kegiatan kerjasama</p>
-                                </div>
-                                <i class="fas fa-chevron-down"
-                                    style="font-size: 12px; color: var(--text-sub); transition: transform 0.3s ease;"
-                                    :style="showTujuan ? 'transform: rotate(180deg)' : ''"></i>
-                            </div>
-                            <div x-show="showTujuan" x-collapse.duration.300ms style="padding: 20px 24px;">
-                                <div class="mc-grid-2">
-                                    <div class="mc-group">
-                                        <label class="mc-label">Tujuan Kegiatan <span class="mc-req">*</span></label>
-                                        <div class="mc-input-wrap">
-                                            <i class="fas fa-bullseye mc-icon-left" style="top: 14px;"></i>
-                                            <textarea name="tujuan" rows="3" required
-                                                placeholder="Meningkatkan kompetensi praktis mahasiswa..."
-                                                class="mc-input"
-                                                style="resize: vertical; min-height: 100px;">{{ old('tujuan', '') }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="mc-group">
-                                        <label class="mc-label">Sasaran Kegiatan <span class="mc-req">*</span></label>
-                                        <div class="mc-input-wrap">
-                                            <i class="fas fa-crosshairs mc-icon-left" style="top: 14px;"></i>
-                                            <textarea name="sasaran" rows="3" required
-                                                placeholder="Mahasiswa D3 Teknik Informatika Semester 5..."
-                                                class="mc-input"
-                                                style="resize: vertical; min-height: 100px;">{{ old('sasaran', '') }}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 {{-- Footer --}}
                 <div class="mc-footer"
@@ -1670,12 +1666,8 @@
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
                     <div style="display: flex; gap: 12px;">
-                        <button type="submit" name="action" value="draft" class="rfc-btn"
-                            style="background: var(--surface); color: var(--text); border: 1px solid var(--border);">
-                            <i class="fas fa-save"></i> Simpan Draft
-                        </button>
-                        <button type="submit" name="action" value="submit" class="rfc-btn rfc-btn-primary">
-                            <i class="fas fa-paper-plane"></i> Simpan & Kirim ke Pimpinan
+                        <button type="submit" class="rfc-btn rfc-btn-primary">
+                            <i class="fas fa-save"></i> Simpan Perubahan
                         </button>
                     </div>
                 </div>

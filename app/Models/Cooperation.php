@@ -27,6 +27,10 @@ class Cooperation extends Model
         'pj_internal_id',
         'penandatangan_mitra_id',
         'pj_mitra_id',
+        'tipe_pelaksana',
+        'jurusan_id',
+        'upa_id',
+        'pusat_id',
     ];
     protected $casts = [
         'start_date' => 'date',
@@ -58,6 +62,21 @@ class Cooperation extends Model
         return $this->belongsTo(Pejabat::class, 'pj_mitra_id');
     }
 
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id');
+    }
+
+    public function upa()
+    {
+        return $this->belongsTo(Upa::class, 'upa_id');
+    }
+
+    public function pusat()
+    {
+        return $this->belongsTo(Pusat::class, 'pusat_id');
+    }
+
     public function jurusans()
     {
         return $this->belongsToMany(Jurusan::class, 'kerjasama_jurusan', 'cooperation_id', 'jurusan_id');
@@ -71,6 +90,11 @@ class Cooperation extends Model
     public function pusats()
     {
         return $this->belongsToMany(Pusat::class, 'kerjasama_pusat', 'cooperation_id', 'pusat_id');
+    }
+
+    public function prodis()
+    {
+        return $this->belongsToMany(Prodi::class, 'kerjasama_prodi', 'cooperation_id', 'prodi_id');
     }
 
     public function details()

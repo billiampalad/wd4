@@ -1,127 +1,264 @@
+@php
+    $kerjasamaList = $kerjasamaUnit ?? collect();
+    if (! $kerjasamaList instanceof \Illuminate\Support\Collection) {
+        $kerjasamaList = collect($kerjasamaList);
+    }
+
+    $unitName = auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja';
+    $totalKerjasama = $kerjasamaList->count();
+    $aktifCount = $kerjasamaList->filter(fn ($item) => strtolower($item->status ?? '') === 'aktif')->count();
+    $perpanjanganCount = $kerjasamaList->filter(fn ($item) => str_contains(strtolower($item->status ?? ''), 'perpanjangan'))->count();
+    $expiredCount = $kerjasamaList->filter(function ($item) {
+        $status = strtolower($item->status ?? '');
+        return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+    })->count();
+@endphp
+
 <!-- Main Content -->
-<main id="mainContent">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-home" style="font-size:11px;"></i>
-            <span class="sep">/</span>
-            <span class="current" id="breadcrumbCurrent">Kerjasama</span>
-            <span class="sep">/</span>
-            <span class="current">Repositori</span>
+<main id="mainContent" class="dk-page">
+    <section class="dk-hero">
+        <div class="dk-hero-content">
+            <div class="breadcrumb dk-breadcrumb">
+                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-home"></i>
+                </a>
+                <span class="sep">/</span>
+                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current" id="breadcrumbCurrent">Data Kerjasama</span>
+                </a>
+                <span class="sep">/</span>
+                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current">Repositori</span>
+                </a>
+            </div>
+
+            <div class="dk-hero-main">
+                <div class="dk-hero-icon">
+                    <i class="fas fa-handshake-angle"></i>
+                </div>
+                <div>
+                    <span class="dk-eyebrow">Repositori Unit</span>
+                    <h2 id="pageTitle">Data Kerjasama</h2>
+                    <p id="pageDesc">
+                        Pantau dokumen, mitra, masa berlaku, dan status kerjasama untuk
+                        <strong>{{ $unitName }}</strong>.
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Data Kerjasama</h2>
-        <p id="pageDesc">Kelola dan lihat data kerjasama khusus untuk
-            <strong>{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}</strong>.
-        </p>
-    </div>
+    </section>
+
+    <section class="dk-stats-grid" aria-label="Ringkasan data kerjasama">
+        <div class="dk-stat-card dk-stat-total">
+            <div class="dk-stat-icon"><i class="fas fa-layer-group"></i></div>
+            <div>
+                <span class="dk-stat-label">Total Dokumen</span>
+                <strong>{{ number_format($totalKerjasama) }}</strong>
+            </div>
+        </div>
+        <div class="dk-stat-card dk-stat-active">
+            <div class="dk-stat-icon"><i class="fas fa-circle-check"></i></div>
+            <div>
+                <span class="dk-stat-label">Aktif</span>
+                <strong>{{ number_format($aktifCount) }}</strong>
+            </div>
+        </div>
+        <div class="dk-stat-card dk-stat-warning">
+            <div class="dk-stat-icon"><i class="fas fa-clock-rotate-left"></i></div>
+            <div>
+                <span class="dk-stat-label">Perpanjangan</span>
+                <strong>{{ number_format($perpanjanganCount) }}</strong>
+            </div>
+        </div>
+        <div class="dk-stat-card dk-stat-danger">
+            <div class="dk-stat-icon"><i class="fas fa-calendar-xmark"></i></div>
+            <div>
+                <span class="dk-stat-label">Kadaluarsa</span>
+                <strong>{{ number_format($expiredCount) }}</strong>
+            </div>
+        </div>
+    </section>
 
     @if(session('success'))
-        <div class="alert alert-success"
-            style="background: linear-gradient(135deg, rgba(16,185,129,.12), rgba(5,150,105,.08)); border: 1px solid rgba(16,185,129,.3); color: #065f46; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-check-circle" style="font-size: 16px; color: #10b981;"></i>
-            {{ session('success') }}
+        <div class="dk-alert dk-alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-error"
-            style="background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(220,38,38,.08)); border: 1px solid rgba(239,68,68,.3); color: #991b1b; padding: 14px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-exclamation-circle" style="font-size: 16px; color: #ef4444;"></i>
-            {{ session('error') }}
+        <div class="dk-alert dk-alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
-    <div class="card um-card">
-        <div class="card-header um-header"
-            style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;">
-            <div class="um-title"
-                style="font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-folder-open" style="color: var(--accent);"></i>
-                <span>Daftar Kerjasama</span>
+    <div class="card um-card dk-card">
+        <div class="card-header um-header dk-card-header">
+            <div class="um-title dk-card-title">
+                <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
+                <span>
+                    <strong>Daftar Kerjasama</strong>
+                    <small>{{ $kerjasamaList->count() }} data ditemukan</small>
+                </span>
             </div>
-            <a href="{{ route('unit.kerjasama.create') }}" class="btn-add"
-                style="background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(79,70,229,.3); transition: all 0.3s;">
-                <i class="fas fa-plus"></i> Tambah Data
-            </a>
+
+            <div class="dk-card-tools">
+                <a href="{{ route('unit.kerjasama.create') }}" class="dk-primary-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambah Data</span>
+                </a>
+            </div>
         </div>
-        <div class="card-body" style="padding: 0;">
-            <div class="table-wrap um-table-wrap">
-                <table class="um-table">
+
+        <div class="card-body dk-card-body" x-data="{ 
+            currentPage: 1, 
+            perPage: 10,
+            totalRows: {{ $kerjasamaList->count() }},
+            get totalPages() { return Math.ceil(this.totalRows / this.perPage); },
+            get startRange() { return (this.currentPage - 1) * this.perPage + 1; },
+            get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); }
+        }">
+            <div class="table-wrap um-table-wrap dk-table-wrap">
+                <table class="um-table dk-table">
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th">Judul Kerjasama</th>
-                            <th class="um-th">Jenis Kerjasama</th>
+                            <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th">Mitra</th>
-                            <th class="um-th">Periode</th>
+                            <th class="um-th" style="white-space: nowrap;">Masa Berlaku</th>
                             <th class="um-th">Status</th>
                             <th class="um-th um-th-aksi">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse(($kerjasamaUnit ?? collect()) as $index => $kegiatan)
-                            <tr class="um-row">
-                                <td class="um-td um-td-num">
-                                    <span class="um-num">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</span>
+                        @forelse($kerjasamaList as $index => $kegiatan)
+                            @php
+                                $status = strtolower($kegiatan->status ?? '');
+                                $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+                                $isExtended = str_contains($status, 'perpanjangan');
+                                $statusValue = $isExtended ? 'dalam perpanjangan' : ($isExpired ? 'kadarluarsa' : $status);
+                                
+                                $statusClass = match (true) {
+                                    $status === 'aktif' => 'dk-status-active',
+                                    $isExtended => 'dk-status-warning',
+                                    $isExpired => 'dk-status-danger',
+                                    $status === 'tidak aktif' => 'dk-status-muted',
+                                    default => 'dk-status-neutral',
+                                };
+                                $statusIcon = match (true) {
+                                    $status === 'aktif' => 'fa-circle-check',
+                                    $isExtended => 'fa-clock',
+                                    $isExpired => 'fa-circle-xmark',
+                                    $status === 'tidak aktif' => 'fa-circle-minus',
+                                    default => 'fa-circle-info',
+                                };
+                                $statusLabel = match (true) {
+                                    $status === 'aktif' => 'Aktif',
+                                    $isExtended => 'Perpanjangan',
+                                    $isExpired => 'Kadarluarsa',
+                                    $status === 'tidak aktif' => 'Tidak Aktif',
+                                    $status !== '' => ucwords($status),
+                                    default => 'Belum Diatur',
+                                };
+
+                                $pelaksanaIcon = 'fa-building';
+                                $pelaksanaClass = 'dk-entity-indigo';
+                                $pelaksanaName = '-';
+                                if ($kegiatan->tipe_pelaksana === 'jurusan') {
+                                    $pelaksanaIcon = 'fa-microchip';
+                                    $pelaksanaClass = 'dk-entity-indigo';
+                                    $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+                                } elseif ($kegiatan->tipe_pelaksana === 'upa') {
+                                    $pelaksanaIcon = 'fa-building-columns';
+                                    $pelaksanaClass = 'dk-entity-cyan';
+                                    $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+                                } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+                                    $pelaksanaIcon = 'fa-landmark';
+                                    $pelaksanaClass = 'dk-entity-violet';
+                                    $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+                                }
+
+                                $mulai = $kegiatan->start_date?->format('d M Y');
+                                $selesai = $kegiatan->end_date?->format('d M Y');
+                                $docNumber = $kegiatan->doc_number ?? '';
+                                $title = $kegiatan->title ?? '';
+                                $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
+                            @endphp
+                            <tr class="um-row dk-row">
+                                <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                    <span class="um-num dk-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
-                                <td class="um-td">
-                                    <span class="um-name">{{ $kegiatan->title ?? '-' }}</span>
+                                <td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
+                                        <span class="dk-doc-number">#{{ $docNumber ?: '-' }}</span>
+                                        <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $title ?: '-' }}</span>
+                                        <span class="dk-doc-kind">{{ $kegiatan->jenis ?? '-' }}</span>
+                                    </div>
                                 </td>
-                                <td class="um-td">
-                                    <span class="tag tag-purple" style="font-size: 11px;">
-                                        <i class="fas fa-handshake" style="font-size:9px; margin-right:4px;"></i>
-                                        {{ $kegiatan->jenis ?? '-' }}
+                                <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-entity" style="align-items: flex-start;">
+                                        <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
+                                            <i class="fas {{ $pelaksanaIcon }}"></i>
+                                        </span>
+                                        <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-entity" style="align-items: flex-start;">
+                                        <span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">
+                                            <i class="fas fa-building"></i>
+                                        </span>
+                                        <span class="dk-entity-text" style="padding-top: 4px;">{{ $mitraName ?: '-' }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-date-range-compact">
+                                        <span class="date-val">{{ $mulai ?? '-' }}</span>
+                                        <span class="date-sep">s/d</span>
+                                        <span class="date-val">{{ $selesai ?? '-' }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                    <span class="dk-status {{ $statusClass }}">
+                                        <i class="fas {{ $statusIcon }}"></i>
+                                        {{ $statusLabel }}
                                     </span>
                                 </td>
-                                <td class="um-td">
-                                    <span class="um-meta">-</span>
-                                </td>
-                                <td class="um-td">
-                                    @php
-                                        $mulai = $kegiatan->periode_mulai?->format('d M Y');
-                                        $selesai = $kegiatan->periode_selesai?->format('d M Y');
-                                    @endphp
-                                    <span class="um-meta">{{ $mulai ? $mulai : '-' }} s/d
-                                        {{ $selesai ? $selesai : '-' }}</span>
-                                </td>
-                                <td class="um-td">
-                                    <span class="tag tag-orange">
-                                        <i class="fas fa-circle" style="font-size:6px;"></i>
-                                        Aktif
-                                    </span>
-                                </td>
-                                <td class="um-td um-td-aksi">
-                                    <div class="um-actions">
-                                        <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="um-btn-view"
-                                            title="Detail" data-turbo="false">
+                                <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
+                                    <div class="um-actions dk-actions-compact">
+                                        <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="um-btn-warn"
-                                            title="Edit" data-turbo="false">
-                                            <i class="fas fa-edit"></i>
+                                        <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="dk-action-btn edit" title="Edit">
+                                            <i class="fas fa-pen-to-square"></i>
                                         </a>
                                         <form action="{{ route('unit.kerjasama.destroy', $kegiatan->id) }}" method="POST"
-                                            data-turbo="false" style="display:inline-flex;"
-                                            onsubmit="return confirm('Yakin ingin menghapus data kerjasama ini? Semua data terkait (tujuan, pelaksanaan, hasil, dokumentasi) akan ikut terhapus.')">
+                                            class="dk-delete-form" style="display: inline;"
+                                            onsubmit="return confirm('Yakin ingin menghapus data kerjasama ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="um-btn-delete" title="Hapus">
-                                                <i class="fas fa-trash"></i>
+                                            <button type="submit" class="dk-action-btn delete" title="Hapus">
+                                                <i class="fas fa-trash-can"></i>
                                             </button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr>
+                            <tr data-empty>
                                 <td colspan="7" class="um-empty">
-                                    <div class="um-empty-state">
-                                        <div class="um-empty-icon">
-                                            <i class="fas fa-folder-open"
-                                                style="font-size: 28px; opacity: 0.3; color: var(--text-sub);"></i>
+                                    <div class="um-empty-state dk-empty-state">
+                                        <div class="um-empty-icon dk-empty-icon">
+                                            <i class="fas fa-folder-open"></i>
                                         </div>
                                         <p class="um-empty-title">Belum ada data kerjasama</p>
-                                        <p class="um-empty-sub">Klik tombol <strong>Tambah Data</strong> untuk memulai.</p>
+                                        <p class="um-empty-sub">Tambahkan dokumen pertama agar repositori unit mulai terisi.</p>
+                                        <a href="{{ route('unit.kerjasama.create') }}" class="dk-empty-btn">
+                                            <i class="fas fa-plus"></i>
+                                            Tambah Data
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

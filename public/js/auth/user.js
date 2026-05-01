@@ -308,6 +308,7 @@ function initDashboard() {
                     // Set temporary attribute for search visibility
                     if (rowMatch) {
                         row.removeAttribute('data-search-hidden');
+                        row.style.display = '';
                         visibleCount++;
                         if (q) {
                             cells.forEach(cell => highlightText(cell, q));

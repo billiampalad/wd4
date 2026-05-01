@@ -59,8 +59,9 @@ class KerjasamaUnitController extends Controller
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
-            'status' => 'nullable|string|in:aktif,perpanjangan,kadaluarsa,tidak_aktif',
+            'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
+            'tipe_pelaksana' => 'nullable|string|in:jurusan,upa,pusat',
             
             // Penggiat validation (minimal)
             'penggiat_mitra_ids' => 'nullable|array',
@@ -69,6 +70,16 @@ class KerjasamaUnitController extends Controller
 
         DB::beginTransaction();
         try {
+            // Handle status normalization
+            $statusMap = [
+                'Aktif' => 'aktif',
+                'Dalam Perpanjangan' => 'dalam perpanjangan',
+                'Kadarluarsa' => 'kadarluarsa',
+                'Tidak Aktif' => 'tidak aktif',
+            ];
+
+            $status = $statusMap[$request->status] ?? 'aktif';
+
             // 1. Handle Internal Pejabats (Pihak 1)
             $penandatanganInternal = null;
             if ($request->nama_penandatangan) {
@@ -92,7 +103,7 @@ class KerjasamaUnitController extends Controller
             $pjMitra = null;
 
             if ($request->penggiat_mitra_ids && count($request->penggiat_mitra_ids) > 0) {
-                $mitraId = $request->penggiat_mitra_ids[0];
+                $mitraId = $request->penggiat_mitra_ids[0] ?: null;
                 
                 $penggiatData = $request->penggiat[0] ?? null;
                 if ($penggiatData) {
@@ -120,7 +131,7 @@ class KerjasamaUnitController extends Controller
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => $request->status ?? 'aktif',
+                'status' => $status,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
                 'mitra_id' => $mitraId,
@@ -128,11 +139,18 @@ class KerjasamaUnitController extends Controller
                 'pj_internal_id' => $pjInternal?->id,
                 'penandatangan_mitra_id' => $penandatanganMitra?->id,
                 'pj_mitra_id' => $pjMitra?->id,
+                'tipe_pelaksana' => $request->tipe_pelaksana,
+                'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             // 4. Handle Pivot Tables (Jurusan, UPA, Pusat)
             if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
                 $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
+                if ($request->pelaksana_prodi_ids) {
+                    $cooperation->prodis()->sync($request->pelaksana_prodi_ids);
+                }
             } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
                 $cooperation->upas()->sync($request->pelaksana_upa_ids);
             } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
@@ -144,8 +162,9 @@ class KerjasamaUnitController extends Controller
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? null;
                     if ($detailData) {
-                        // Sanitize nilai_kontrak (remove Rp and dots)
-                        $nilaiKontrak = isset($detailData['nilai_kontrak']) ? (float) preg_replace('/[^0-9]/', '', $detailData['nilai_kontrak']) : 0;
+                        // Sanitize nilai_kontrak (remove Rp, spaces, and dots)
+                        $cleanNilai = isset($detailData['nilai_kontrak']) ? str_replace(['Rp', '.', ' '], '', $detailData['nilai_kontrak']) : '0';
+                        $nilaiKontrak = (float) str_replace(',', '.', $cleanNilai);
                         
                         DetailKegiatan::create([
                             'cooperation_id' => $cooperation->id,
@@ -186,7 +205,7 @@ class KerjasamaUnitController extends Controller
         $kegiatan = Cooperation::with([
             'mitra', 'penandatanganInternal', 'pjInternal', 
             'penandatanganMitra', 'pjMitra', 
-            'jurusans', 'upas', 'pusats', 'details'
+            'jurusans', 'upas', 'pusats', 'prodis', 'details'
         ])->findOrFail($id);
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
@@ -211,8 +230,9 @@ class KerjasamaUnitController extends Controller
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
-            'status' => 'nullable|string|in:aktif,perpanjangan,kadaluarsa,tidak_aktif',
+            'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
+            'tipe_pelaksana' => 'nullable|string|in:jurusan,upa,pusat',
             'penggiat_mitra_ids' => 'nullable|array',
             'penggiat' => 'nullable|array',
         ]);
@@ -221,6 +241,16 @@ class KerjasamaUnitController extends Controller
 
         DB::beginTransaction();
         try {
+            // Handle status normalization
+            $statusMap = [
+                'Aktif' => 'aktif',
+                'Dalam Perpanjangan' => 'dalam perpanjangan',
+                'Kadarluarsa' => 'kadarluarsa',
+                'Tidak Aktif' => 'tidak aktif',
+            ];
+
+            $status = $statusMap[$request->status] ?? $cooperation->status;
+
             // 1. Handle Internal Pejabats (Pihak 1)
             if ($request->nama_penandatangan) {
                 if ($cooperation->penandatangan_internal_id) {
@@ -255,7 +285,7 @@ class KerjasamaUnitController extends Controller
             // 2. Handle Mitra Pejabats (Pihak 2)
             $mitraId = null;
             if ($request->penggiat_mitra_ids && count($request->penggiat_mitra_ids) > 0) {
-                $mitraId = $request->penggiat_mitra_ids[0];
+                $mitraId = $request->penggiat_mitra_ids[0] ?: null;
                 $penggiatData = $request->penggiat[0] ?? null;
 
                 if ($penggiatData) {
@@ -299,7 +329,7 @@ class KerjasamaUnitController extends Controller
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => $request->status ?? 'aktif',
+                'status' => $status,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
                 'mitra_id' => $mitraId,
@@ -307,6 +337,10 @@ class KerjasamaUnitController extends Controller
                 'pj_internal_id' => $cooperation->pj_internal_id,
                 'penandatangan_mitra_id' => $cooperation->penandatangan_mitra_id,
                 'pj_mitra_id' => $cooperation->pj_mitra_id,
+                'tipe_pelaksana' => $request->tipe_pelaksana,
+                'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             // 4. Handle Pivot Tables (Jurusan, UPA, Pusat)
@@ -314,9 +348,13 @@ class KerjasamaUnitController extends Controller
             $cooperation->jurusans()->detach();
             $cooperation->upas()->detach();
             $cooperation->pusats()->detach();
+            $cooperation->prodis()->detach();
 
             if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
                 $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
+                if ($request->pelaksana_prodi_ids) {
+                    $cooperation->prodis()->sync($request->pelaksana_prodi_ids);
+                }
             } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
                 $cooperation->upas()->sync($request->pelaksana_upa_ids);
             } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
@@ -329,8 +367,11 @@ class KerjasamaUnitController extends Controller
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? null;
                     if ($detailData) {
-                        $nilaiKontrak = isset($detailData['nilai_kontrak']) ? (float) preg_replace('/[^0-9]/', '', $detailData['nilai_kontrak']) : 0;
-                        DetailKegiatan::create([
+                    // Sanitize nilai_kontrak (remove Rp, spaces, and dots)
+                    $cleanNilai = isset($detailData['nilai_kontrak']) ? str_replace(['Rp', '.', ' '], '', $detailData['nilai_kontrak']) : '0';
+                    $nilaiKontrak = (float) str_replace(',', '.', $cleanNilai);
+
+                    DetailKegiatan::create([
                             'cooperation_id' => $cooperation->id,
                             'jenis_kerjasama_id' => $jenisId,
                             'sasaran_id' => $detailData['sasaran_id'] ?? null,
