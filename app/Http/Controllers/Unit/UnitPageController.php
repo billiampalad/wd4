@@ -470,40 +470,56 @@ class UnitPageController extends Controller
                 return response()->download($filePath, $originalName);
             }
 
-            // Jika file asli PDF, lakukan konversi nyata ke DOCX
+            // Jika file asli PDF, lakukan konversi ke DOCX
             try {
                 $parser = new \Smalot\PdfParser\Parser();
                 $pdf = $parser->parseFile($filePath);
                 $text = $pdf->getText();
 
-                // Bersihkan teks dari karakter non-printable yang bisa merusak XML DOCX
+                // Bersihkan teks agar valid untuk XML DOCX
                 $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
 
                 $phpWord = new \PhpOffice\PhpWord\PhpWord();
-                $section = $phpWord->addSection();
                 
-                // Pisahkan teks per baris agar tampilan di Word lebih rapi
+                // Pengaturan Halaman agar lebih mirip PDF (A4)
+                $section = $phpWord->addSection([
+                    'pageSizeW' => \PhpOffice\PhpWord\Shared\Converter::cmToTwip(21),
+                    'pageSizeH' => \PhpOffice\PhpWord\Shared\Converter::cmToTwip(29.7),
+                    'marginLeft' => 600,
+                    'marginRight' => 600,
+                    'marginTop' => 600,
+                    'marginBottom' => 600,
+                ]);
+
+                // Menggunakan font standar yang umum di PDF
+                $phpWord->setDefaultFontName('Arial');
+                $phpWord->setDefaultFontSize(11);
+
                 $lines = explode("\n", $text);
                 foreach ($lines as $line) {
-                    $section->addText(trim($line));
+                    $trimmedLine = trim($line);
+                    if (!empty($trimmedLine)) {
+                        $section->addText($trimmedLine);
+                    } else {
+                        $section->addTextBreak(1);
+                    }
                 }
 
                 // Cek ketersediaan ZipArchive untuk menentukan format (DOCX butuh Zip)
                 if (class_exists('ZipArchive')) {
                     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-                    $extension = 'docx';
+                    $outExtension = 'docx';
                 } else {
                     // Fallback ke RTF jika ZipArchive tidak ada (RTF tidak butuh Zip)
                     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'RTF');
-                    $extension = 'rtf';
+                    $outExtension = 'rtf';
                 }
 
-                $tempFile = tempnam(sys_get_temp_dir(), 'laporan_') . '.' . $extension;
+                $tempFile = tempnam(sys_get_temp_dir(), 'laporan_') . '.' . $outExtension;
                 $objWriter->save($tempFile);
 
-                return response()->download($tempFile, $nameWithoutExt . '.' . $extension)->deleteFileAfterSend(true);
+                return response()->download($tempFile, $nameWithoutExt . '.' . $outExtension)->deleteFileAfterSend(true);
             } catch (\Exception $e) {
-                // Jika konversi gagal, fallback ke download file asli dengan info
                 return response()->download($filePath, $originalName);
             }
         }
