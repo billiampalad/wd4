@@ -16,13 +16,13 @@
 
             <div class="dk-hero-main">
                 <div class="dk-hero-icon" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff;">
-                    <i class="fas fa-file-export"></i>
+                    <i class="fas fa-file-pdf"></i>
                 </div>
                 <div>
                     <span class="dk-eyebrow">Dokumentasi Kerjasama</span>
                     <h2 id="pageTitle">Form Laporan</h2>
                     <p id="pageDesc">
-                        Upload dan kelola dokumen laporan kerjasama dalam format PDF atau Word untuk unit Anda.
+                        Upload dan kelola dokumen laporan kerjasama Anda.
                     </p>
                 </div>
             </div>
@@ -234,21 +234,12 @@
                                             <i class="fas fa-eye"></i>
                                         </a>
 
-                                        {{-- Opsi Download PDF --}}
-                                        <a href="{{ route('unit.form.download', [$file->id, 'pdf']) }}"
+                                        <a href="{{ asset('storage/' . $file->file_path) }}"
+                                            download="{{ $file->original_name }}"
                                             class="dk-action-btn edit"
-                                            style="--bg: rgba(239, 68, 68, 0.1); --color: #ef4444;"
-                                            title="Download PDF">
-                                            <i class="fas fa-file-pdf"></i>
-                                        </a>
-
-                                        {{-- Opsi Download Word --}}
-                                        <a href="{{ route('unit.form.download', [$file->id, 'word']) }}"
-                                            class="dk-action-btn edit"
-                                            style="--bg: rgba(37, 99, 235, 0.1); --color: #2563eb;"
-                                            @if($isPdf) onclick="return confirm('Sistem akan mengonversi teks dari PDF ke format Word (.docx). Lanjutkan?')" @endif
-                                            title="Download Word">
-                                            <i class="fas fa-file-word"></i>
+                                            style="--bg: rgba(16, 185, 129, 0.1); --color: #10b981;"
+                                            title="Download">
+                                            <i class="fas fa-download"></i>
                                         </a>
 
                                         <form action="{{ route('unit.form.destroy', $file->id) }}" method="POST" style="display: inline-flex;"
