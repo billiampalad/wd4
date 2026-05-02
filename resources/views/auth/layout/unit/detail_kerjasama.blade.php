@@ -352,55 +352,143 @@
         <div style="display: flex; flex-direction: column; gap: 28px;">
             
             {{-- Card: Upload Laporan --}}
-            <div class="card dk-card" style="border: 1px solid #4f46e5; background: rgba(79,70,229,0.02);">
-                <div class="card-header dk-card-header" style="border-bottom-color: rgba(79,70,229,0.1);">
-                    <div class="dk-card-title">
-                        <span class="dk-title-icon" style="background: #4f46e5; color: white;"><i class="fas fa-cloud-arrow-up"></i></span>
-                        <span><strong>Upload Dokumen</strong></span>
+            {{-- ═══ Enhanced Document Management Card ═══ --}}
+            <div class="card dk-card" style="border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); border-radius: 20px; overflow: hidden; transition: all 0.3s ease;">
+                {{-- Card Header --}}
+                <div class="card-header dk-card-header" style="padding: 20px 24px; background: linear-gradient(to right, var(--surface), var(--surface2)); border-bottom: 1px solid var(--border);">
+                    <div class="dk-card-title" style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.01em;">Manajemen Dokumen</span>
+                            <span style="font-size: 10px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em;">Laporan & Arsip</span>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body dk-card-body" style="padding: 24px;">
-                    <form action="{{ route('unit.form.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
-                        
-                        <div style="margin-bottom: 16px;">
-                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.02em;">File Laporan (PDF)</label>
-                            <div class="dk-upload-zone" style="position: relative;">
-                                <input type="file" name="file_laporan" id="file_laporan" accept=".pdf" required
-                                    style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
-                                <div style="border: 2px dashed rgba(79,70,229,0.3); border-radius: 12px; padding: 20px; text-align: center; background: white; transition: 0.3s;" id="upload-preview">
-                                    <i class="fas fa-file-pdf" style="font-size: 24px; color: #ef4444; margin-bottom: 8px;"></i>
-                                    <p style="margin: 0; font-size: 12px; font-weight: 700; color: var(--text);" id="file-name">Pilih atau Drag File</p>
-                                    <p style="margin: 4px 0 0; font-size: 10px; color: var(--text-sub);">Maksimum 3MB</p>
-                                </div>
-                            </div>
+
+                <div class="card-body dk-card-body" style="padding: 24px;" x-data="{ tab: 'list' }">
+                    {{-- ═══ Modern Sliding Tab Navigation ═══ --}}
+                    <div class="sliding-tab-container">
+                        {{-- Background Pill Animation --}}
+                        <div class="sliding-tab-pill"
+                            :style="tab === 'list' ? 'transform: translateX(0);' : 'transform: translateX(100%);'">
                         </div>
 
-                        <button type="submit" class="dk-primary-btn" style="width: 100%; min-height: 40px; border-radius: 10px; font-size: 13px; background: #4f46e5; color: white; border: none; cursor: pointer; transition: 0.3s;">
-                            <i class="fas fa-upload"></i>
-                            <span>Upload Sekarang</span>
+                        <button @click="tab = 'list'" 
+                            class="sliding-tab-btn"
+                            :class="{ 'active': tab === 'list' }">
+                            <i class="fas fa-list-ul"></i> 
+                            <span>Riwayat</span>
                         </button>
-                    </form>
+                        <button @click="tab = 'upload'" 
+                            class="sliding-tab-btn"
+                            :class="{ 'active': tab === 'upload' }">
+                            <i class="fas fa-cloud-arrow-up"></i> 
+                            <span>Upload Baru</span>
+                        </button>
+                    </div>
 
-                    @if($kegiatan->laporanFiles->count() > 0)
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(79,70,229,0.2);">
-                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 12px;">File Terupload ({{ $kegiatan->laporanFiles->count() }})</label>
-                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                    {{-- ═══ Tab Content: List (File History) ═══ --}}
+                    <div x-show="tab === 'list'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4"
+                         x-transition:enter-end="opacity-100 translate-y-0">
+                        
+                        @if($kegiatan->laporanFiles->count() > 0)
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
                                 @foreach($kegiatan->laporanFiles as $file)
-                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: white; border: 1px solid var(--border); border-radius: 8px;">
-                                        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
-                                            <i class="fas fa-file-pdf" style="color: #ef4444; flex-shrink: 0;"></i>
-                                            <span style="font-size: 12px; color: var(--text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $file->original_name }}</span>
+                                    <div class="dk-file-item">
+                                        <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+                                            {{-- File Icon Badge --}}
+                                            <div class="dk-file-icon">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </div>
+                                            
+                                            <div class="dk-file-info">
+                                                <p class="dk-file-name">{{ $file->original_name }}</p>
+                                                <div class="dk-file-meta">
+                                                    <span class="dk-file-meta-item"><i class="far fa-calendar-alt" style="margin-right: 4px;"></i>{{ $file->created_at->format('d M Y') }}</span>
+                                                    <span class="dk-file-dot"></span>
+                                                    <span class="dk-file-meta-item">{{ round($file->file_size / 1024 / 1024, 2) }} MB</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" style="color: #4f46e5; font-size: 12px; padding: 4px;"><i class="fas fa-eye"></i></a>
+
+                                        <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" 
+                                            class="dk-action-btn view"
+                                            style="width: 34px; height: 34px; border-radius: 10px; background: var(--surface2); color: var(--text-sub); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; text-decoration: none; border: 1px solid var(--border);"
+                                            onmouseover="this.style.background='var(--accent)'; this.style.color='white'; this.style.borderColor='var(--accent)';"
+                                            onmouseout="this.style.background='var(--surface2)'; this.style.color='var(--text-sub)'; this.style.borderColor='var(--border)';"
+                                            title="Pratinjau Dokumen">
+                                            <i class="fas fa-external-link-alt" style="font-size: 12px;"></i>
+                                        </a>
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
-                    @endif
+                        @else
+                            <div style="text-align: center; padding: 40px 20px;">
+                                <div style="width: 64px; height: 64px; background: var(--surface2); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 1px solid var(--border);">
+                                    <i class="fas fa-inbox" style="color: var(--text-sub); opacity: 0.4; font-size: 24px;"></i>
+                                </div>
+                                <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text);">Belum Ada Dokumen</h4>
+                                <p style="margin: 4px 0 0; font-size: 11px; color: var(--text-sub); max-width: 200px; margin-left: auto; margin-right: auto;">Klik tab 'Upload Baru' untuk menambahkan laporan kerjasama.</p>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- ═══ Tab Content: Upload (Form) ═══ --}}
+                    <div x-show="tab === 'upload'" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-4"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-cloak>
+                        
+                        <form action="{{ route('unit.form.store') }}" method="POST" enctype="multipart/form-data" x-data="{ fileName: '' }">
+                            @csrf
+                            <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
+                            
+                            <div style="margin-bottom: 24px;">
+                                <div class="dk-upload-zone-wrapper">
+                                    <input type="file" name="file_laporan" id="file_laporan" accept=".pdf" required
+                                        class="dk-upload-input"
+                                        @change="fileName = $event.target.files[0].name">
+                                    
+                                    <div class="dk-upload-zone" :class="{ 'has-file': fileName }">
+                                        {{-- Visual Feedback on File Select --}}
+                                        <template x-if="!fileName">
+                                            <div>
+                                                <div class="dk-upload-icon">
+                                                    <i class="fas fa-cloud-arrow-up"></i>
+                                                </div>
+                                                <p class="dk-upload-text-main">Tarik & Lepas File</p>
+                                                <p class="dk-upload-text-sub">atau klik untuk menelusuri berkas (PDF)</p>
+                                            </div>
+                                        </template>
+
+                                        <template x-if="fileName">
+                                            <div style="animation: bounceIn 0.5s ease;">
+                                                <div class="dk-upload-icon">
+                                                    <i class="fas fa-file-circle-check"></i>
+                                                </div>
+                                                <p class="dk-upload-text-main" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 20px;" x-text="fileName"></p>
+                                                <p class="dk-upload-text-sub">Dokumen siap diunggah!</p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="dk-btn-submit" :disabled="!fileName">
+                                <i class="fas fa-rocket"></i>
+                                <span>Kirim Dokumen</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
+            {{-- Card: Pelaksana --}}
 
             {{-- Card: Pelaksana --}}
             <div class="card dk-card">
@@ -410,23 +498,23 @@
                         <span><strong>Unit Pelaksana</strong></span>
                     </div>
                 </div>
-                <div class="card-body dk-card-body" style="padding: 24px;">
+                <div class="card-body dk-card-body">
                     <div class="dk-entity" style="margin-bottom: 20px;">
                         <span class="dk-entity-icon {{ $pelaksanaClass }}" style="width: 44px; height: 44px; font-size: 16px;">
                             <i class="fas {{ $pelaksanaIcon }}"></i>
                         </span>
                         <div class="dk-entity-text">
-                            <small style="display: block; font-size: 10px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 3px;">{{ $pelaksanaType ?: 'Unit' }}</small>
+                            <small class="dk-mitra-info-label" style="margin-bottom: 3px;">{{ $pelaksanaType ?: 'Unit' }}</small>
                             <strong style="display: block; font-size: 14px; line-height: 1.3;">{{ $pelaksanaName }}</strong>
                         </div>
                     </div>
 
                     @if($kegiatan->prodis->count() > 0)
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border);">
-                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.02em;">Program Studi Terkait</label>
+                        <div class="dk-prodi-list">
+                            <label class="dk-prodi-label">Program Studi Terkait</label>
                             <div style="display: flex; flex-direction: column; gap: 10px;">
                                 @foreach($kegiatan->prodis as $prodi)
-                                    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border-left: 4px solid #059669; font-weight: 600;">
+                                    <div class="dk-prodi-item">
                                         <i class="fas fa-graduation-cap" style="font-size: 12px; color: #059669; opacity: 0.8;"></i>
                                         <span>{{ $prodi->nama_prodi }}</span>
                                     </div>
@@ -445,31 +533,31 @@
                         <span><strong>Profil Mitra</strong></span>
                     </div>
                 </div>
-                <div class="card-body dk-card-body" style="padding: 24px;">
+                <div class="card-body dk-card-body">
                     @if($kegiatan->mitra)
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
-                            <div style="text-align: center; padding: 12px 0;">
-                                <div style="width: 68px; height: 68px; border-radius: 18px; background: var(--surface2); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; border: 1px solid var(--border);">
+                        <div class="dk-mitra-profile">
+                            <div class="dk-mitra-header">
+                                <div class="dk-mitra-logo">
                                     <i class="fas fa-building"></i>
                                 </div>
-                                <strong style="display: block; font-size: 15px; color: var(--text); margin-bottom: 8px; line-height: 1.4;">{{ $kegiatan->mitra->nama_mitra }}</strong>
+                                <strong class="dk-mitra-name">{{ $kegiatan->mitra->nama_mitra }}</strong>
                                 <span class="tag tag-blue" style="font-size: 11px; padding: 4px 12px;">{{ ucfirst($kegiatan->mitra->kategori ?? 'Nasional') }}</span>
                             </div>
                             
-                            <div style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid var(--border); padding-top: 20px;">
+                            <div class="dk-mitra-info-list">
                                 <div>
-                                    <small style="display: block; font-size: 10px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">Alamat</small>
-                                    <div style="font-size: 13px; color: var(--text); line-height: 1.6; display: flex; gap: 10px;">
+                                    <small class="dk-mitra-info-label">Alamat</small>
+                                    <div class="dk-mitra-info-value">
                                         <i class="fas fa-map-marker-alt" style="margin-top: 4px; font-size: 12px; color: #ef4444; flex-shrink: 0;"></i>
                                         <span>{{ $kegiatan->mitra->alamat ?: '-' }}</span>
                                     </div>
                                 </div>
                                 @if($kegiatan->mitra->website)
                                     <div>
-                                        <small style="display: block; font-size: 10px; color: var(--text-sub); font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">Website Resmi</small>
-                                        <a href="{{ $kegiatan->mitra->website }}" target="_blank" style="font-size: 13px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                                        <small class="dk-mitra-info-label">Website Resmi</small>
+                                        <a href="{{ $kegiatan->mitra->website }}" target="_blank" class="dk-mitra-website">
                                             <i class="fas fa-globe" style="font-size: 12px;"></i>
-                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ str_replace(['http://', 'https://'], '', $kegiatan->mitra->website) }}</span>
+                                            <span>{{ str_replace(['http://', 'https://'], '', $kegiatan->mitra->website) }}</span>
                                         </a>
                                     </div>
                                 @endif
@@ -485,14 +573,14 @@
             </div>
 
             {{-- Action Buttons --}}
-            <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="dk-btn-group">
                 @if($kegiatan->document_link)
-                    <a href="{{ $kegiatan->document_link }}" target="_blank" class="dk-primary-btn" style="width: 100%; min-height: 44px; border-radius: 12px; font-size: 13px; gap: 10px; padding: 0 16px;">
+                    <a href="{{ $kegiatan->document_link }}" target="_blank" class="dk-primary-btn dk-btn-full">
                         <i class="fas fa-file-pdf" style="font-size: 14px;"></i>
                         <span>Lihat Dokumen Asli</span>
                     </a>
                 @endif
-                <a href="{{ route('unit.dkerjasama') }}" class="dk-secondary-btn" style="width: 100%; min-height: 44px; border-radius: 12px; font-size: 13px; gap: 10px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); padding: 0 16px;">
+                <a href="{{ route('unit.dkerjasama') }}" class="dk-secondary-btn dk-btn-full" style="background: var(--surface2); color: var(--text); border: 1px solid var(--border);">
                     <i class="fas fa-arrow-left" style="font-size: 12px;"></i>
                     <span>Kembali ke Repositori</span>
                 </a>

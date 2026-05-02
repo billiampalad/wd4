@@ -4881,3 +4881,368 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover { opacity: 
         align-items: flex-start;
     }
 }
+
+/* ─── MODERN SLIDING TABS ───────────────────────────── */
+.sliding-tab-container {
+    position: relative;
+    display: flex;
+    background: var(--surface2);
+    padding: 5px;
+    border-radius: 14px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    isolation: isolate;
+}
+
+.sliding-tab-pill {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: calc(100% - 10px);
+    width: calc(50% - 5px);
+    background: var(--surface);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    border: 1px solid var(--border);
+}
+
+[data-theme="dark"] .sliding-tab-pill {
+    background: var(--surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sliding-tab-btn {
+    position: relative;
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 2;
+    background: transparent;
+    color: var(--text-sub);
+    font-family: inherit;
+}
+
+.sliding-tab-btn:hover:not(.active) {
+    color: var(--text);
+}
+
+.sliding-tab-btn.active {
+    color: var(--accent);
+}
+
+.sliding-tab-btn i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+.sliding-tab-btn.active i {
+    transform: scale(1.1);
+}
+
+/* ─── FILE ITEM LIST ───────────────────────────────── */
+.dk-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dk-file-item:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.08);
+}
+
+.dk-file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+.dk-file-info {
+    min-width: 0;
+    flex: 1;
+    margin: 0 14px;
+}
+
+.dk-file-name {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+}
+
+.dk-file-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.dk-file-meta-item {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+.dk-file-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--border);
+}
+
+/* ─── UPLOAD ZONE ──────────────────────────────────── */
+.dk-upload-zone-wrapper {
+    position: relative;
+}
+
+.dk-upload-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.dk-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 40px 24px;
+    text-align: center;
+    background: var(--surface);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.dk-upload-zone.has-file {
+    border-color: var(--accent);
+    background: rgba(79, 70, 229, 0.02);
+}
+
+.dk-upload-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(79, 70, 229, 0.08);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.dk-upload-zone.has-file .dk-upload-icon {
+    background: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+}
+
+.dk-upload-text-main {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.dk-upload-text-sub {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+.dk-upload-zone.has-file .dk-upload-text-sub {
+    color: #10b981;
+    font-weight: 700;
+}
+
+/* ─── ACTION BUTTONS ───────────────────────────────── */
+.dk-btn-submit {
+    width: 100%;
+    min-height: 50px;
+    border-radius: 16px;
+    font-size: 14px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 800;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+    transition: all 0.3s ease;
+}
+
+.dk-btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.35);
+}
+
+.dk-btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ─── ENTITY LIST & CARDS ───────────────────────────── */
+.dk-entity-card-body {
+    padding: 24px;
+}
+
+.dk-prodi-list {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--border);
+}
+
+.dk-prodi-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+}
+
+.dk-prodi-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 10px;
+    border-left: 4px solid #059669;
+    font-weight: 600;
+}
+
+.dk-mitra-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dk-mitra-header {
+    text-align: center;
+    padding: 12px 0;
+}
+
+.dk-mitra-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    background: var(--surface2);
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+    border: 1px solid var(--border);
+}
+
+.dk-mitra-name {
+    display: block;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.dk-mitra-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+}
+
+.dk-mitra-info-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.dk-mitra-info-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+}
+
+.dk-mitra-website {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.dk-mitra-website span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dk-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dk-btn-full {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 12px;
+    font-size: 13px;
+    gap: 10px;
+    padding: 0 16px;
+}
