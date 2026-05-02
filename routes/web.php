@@ -227,7 +227,6 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     // ─── Form Laporan (PDF/Word Upload) ───────────────────
     Route::get('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporan'])->name('unit.form');
     Route::post('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanStore'])->name('unit.form.store');
-    Route::delete('/unit/form-laporan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanDestroy'])->name('unit.form.destroy');
 });
 
 /*

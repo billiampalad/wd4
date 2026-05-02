@@ -8,11 +8,18 @@ class LaporanFile extends Model
 {
     protected $fillable = [
         'unit_kerja_id',
+        'cooperation_id',
         'uploaded_by',
+        'judul',
         'file_path',
         'original_name',
         'file_size',
     ];
+
+    public function cooperation()
+    {
+        return $this->belongsTo(Cooperation::class, 'cooperation_id');
+    }
 
     public function unitKerja()
     {

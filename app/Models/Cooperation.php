@@ -97,6 +97,16 @@ class Cooperation extends Model
         return $this->belongsToMany(Prodi::class, 'kerjasama_prodi', 'cooperation_id', 'prodi_id');
     }
 
+    public function mitras()
+    {
+        return $this->belongsToMany(Mitra::class, 'cooperation_mitra', 'cooperation_id', 'mitra_id');
+    }
+
+    public function laporanFiles()
+    {
+        return $this->hasMany(LaporanFile::class, 'cooperation_id');
+    }
+
     public function details()
     {
         return $this->hasMany(DetailKegiatan::class);

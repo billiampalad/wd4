@@ -351,6 +351,57 @@
         {{-- Right Column --}}
         <div style="display: flex; flex-direction: column; gap: 28px;">
             
+            {{-- Card: Upload Laporan --}}
+            <div class="card dk-card" style="border: 1px solid #4f46e5; background: rgba(79,70,229,0.02);">
+                <div class="card-header dk-card-header" style="border-bottom-color: rgba(79,70,229,0.1);">
+                    <div class="dk-card-title">
+                        <span class="dk-title-icon" style="background: #4f46e5; color: white;"><i class="fas fa-cloud-arrow-up"></i></span>
+                        <span><strong>Upload Dokumen</strong></span>
+                    </div>
+                </div>
+                <div class="card-body dk-card-body" style="padding: 24px;">
+                    <form action="{{ route('unit.form.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.02em;">File Laporan (PDF)</label>
+                            <div class="dk-upload-zone" style="position: relative;">
+                                <input type="file" name="file_laporan" id="file_laporan" accept=".pdf" required
+                                    style="position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;">
+                                <div style="border: 2px dashed rgba(79,70,229,0.3); border-radius: 12px; padding: 20px; text-align: center; background: white; transition: 0.3s;" id="upload-preview">
+                                    <i class="fas fa-file-pdf" style="font-size: 24px; color: #ef4444; margin-bottom: 8px;"></i>
+                                    <p style="margin: 0; font-size: 12px; font-weight: 700; color: var(--text);" id="file-name">Pilih atau Drag File</p>
+                                    <p style="margin: 4px 0 0; font-size: 10px; color: var(--text-sub);">Maksimum 3MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="dk-primary-btn" style="width: 100%; min-height: 40px; border-radius: 10px; font-size: 13px; background: #4f46e5; color: white; border: none; cursor: pointer; transition: 0.3s;">
+                            <i class="fas fa-upload"></i>
+                            <span>Upload Sekarang</span>
+                        </button>
+                    </form>
+
+                    @if($kegiatan->laporanFiles->count() > 0)
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(79,70,229,0.2);">
+                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; margin-bottom: 12px;">File Terupload ({{ $kegiatan->laporanFiles->count() }})</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                @foreach($kegiatan->laporanFiles as $file)
+                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: white; border: 1px solid var(--border); border-radius: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                                            <i class="fas fa-file-pdf" style="color: #ef4444; flex-shrink: 0;"></i>
+                                            <span style="font-size: 12px; color: var(--text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $file->original_name }}</span>
+                                        </div>
+                                        <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" style="color: #4f46e5; font-size: 12px; padding: 4px;"><i class="fas fa-eye"></i></a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             {{-- Card: Pelaksana --}}
             <div class="card dk-card">
                 <div class="card-header dk-card-header">

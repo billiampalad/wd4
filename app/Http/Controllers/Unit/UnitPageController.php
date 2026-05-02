@@ -418,19 +418,29 @@ class UnitPageController extends Controller
     // ─── Form Laporan (PDF Upload) ──────────────────────────────
     public function formLaporan()
     {
-        $unitId = $this->resolveUnitId();
+        return view('auth.unit');
+    }
 
-        $laporanFiles = \App\Models\LaporanFile::where('unit_kerja_id', $unitId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+    public function previewTemplate()
+    {
+        $path = public_path('templates/Laporan Pelaksanaan Kerjasama.docx');
 
-        return view('auth.unit', compact('laporanFiles'));
+        if (!file_exists($path)) {
+            return back()->with('error', 'File template tidak ditemukan.');
+        }
+
+        // Menggunakan response()->file() untuk mencoba membuka secara inline di browser
+        return response()->file($path, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'Content-Disposition' => 'inline; filename="Laporan Pelaksanaan Kerjasama.docx"'
+        ]);
     }
 
     public function formLaporanStore(Request $request)
     {
         $request->validate([
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:3072',
+            'cooperation_id' => 'nullable|exists:cooperations,id',
         ]);
 
         $unitId = $this->resolveUnitId();
@@ -440,6 +450,7 @@ class UnitPageController extends Controller
 
         \App\Models\LaporanFile::create([
             'unit_kerja_id' => $unitId,
+            'cooperation_id' => $request->cooperation_id,
             'uploaded_by'   => Auth::id(),
             'judul'         => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'file_path'     => $path,
@@ -447,20 +458,10 @@ class UnitPageController extends Controller
             'file_size'     => $file->getSize(),
         ]);
 
+        if ($request->has('cooperation_id')) {
+            return back()->with('success', 'Dokumen laporan berhasil diupload ke kerjasama ini.');
+        }
+
         return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
-    }
-
-    public function formLaporanDestroy($id)
-    {
-        $unitId = $this->resolveUnitId();
-
-        $file = \App\Models\LaporanFile::where('unit_kerja_id', $unitId)->findOrFail($id);
-
-        // Delete the physical file
-        \Illuminate\Support\Facades\Storage::disk('public')->delete($file->file_path);
-
-        $file->delete();
-
-        return redirect()->route('unit.form')->with('success', 'Laporan berhasil dihapus.');
     }
 }
