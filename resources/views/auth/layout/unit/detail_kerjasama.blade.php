@@ -415,14 +415,23 @@ if ($totalDays < 30) {
                                         </div>
                                     </div>
 
-                                    <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank"
-                                        class="dk-action-btn view"
-                                        style="width: 34px; height: 34px; border-radius: 10px; background: var(--surface2); color: var(--text-sub); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; text-decoration: none; border: 1px solid var(--border);"
-                                        onmouseover="this.style.background='var(--accent)'; this.style.color='white'; this.style.borderColor='var(--accent)';"
-                                        onmouseout="this.style.background='var(--surface2)'; this.style.color='var(--text-sub)'; this.style.borderColor='var(--border)';"
-                                        title="Pratinjau Dokumen">
-                                        <i class="fas fa-external-link-alt" style="font-size: 12px;"></i>
-                                    </a>
+                                    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                                        <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" 
+                                            class="dk-action-btn view"
+                                            title="Pratinjau Dokumen">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+
+                                        <form action="{{ route('unit.form.destroy', $file->id) }}" method="POST" 
+                                            onsubmit="return confirm('Hapus dokumen ini dari riwayat?')"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dk-action-btn delete" title="Hapus Dokumen">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                                 @endforeach
                             </div>

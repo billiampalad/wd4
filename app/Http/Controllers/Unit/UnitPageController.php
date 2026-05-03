@@ -11,6 +11,8 @@ use App\Models\Evaluasi;
 use App\Models\JenisKerjasama;
 use App\Models\Klasifikasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UnitPageController extends Controller
 {
@@ -439,29 +441,64 @@ class UnitPageController extends Controller
     public function formLaporanStore(Request $request)
     {
         $request->validate([
-            'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:3072',
+            'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:5120', // Menaikkan limit ke 5MB
             'cooperation_id' => 'nullable|exists:cooperations,id',
         ]);
 
         $unitId = $this->resolveUnitId();
-
         $file = $request->file('file_laporan');
-        $path = $file->store('laporan_unit', 'public');
+        
+        // Dapatkan nama asli dan ekstensi
+        $originalName = $file->getClientOriginalName();
+        $nameOnly = pathinfo($originalName, PATHINFO_FILENAME);
+        $extension = $file->getClientOriginalExtension();
+        
+        // Bersihkan nama file dari karakter aneh agar aman di filesystem
+        $cleanName = Str::slug($nameOnly) . '.' . $extension;
+        
+        // Logika Unik: Jika file sudah ada, tambahkan angka di belakangnya
+        $filename = $cleanName;
+        $counter = 1;
+        while (Storage::disk('public')->exists('laporan_unit/' . $filename)) {
+            $filename = Str::slug($nameOnly) . '-' . $counter . '.' . $extension;
+            $counter++;
+        }
+
+        $path = $file->storeAs('laporan_unit', $filename, 'public');
 
         \App\Models\LaporanFile::create([
             'unit_kerja_id' => $unitId,
             'cooperation_id' => $request->cooperation_id,
             'uploaded_by'   => Auth::id(),
-            'judul'         => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'file_path'     => $path,
-            'original_name' => $file->getClientOriginalName(),
+            'original_name' => $originalName, // Tetap simpan nama asli untuk tampilan
             'file_size'     => $file->getSize(),
         ]);
 
         if ($request->has('cooperation_id')) {
-            return back()->with('success', 'Dokumen laporan berhasil diupload ke kerjasama ini.');
+            return back()->with('success', 'Dokumen laporan berhasil diupload.');
         }
 
         return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
+    }
+
+    public function formLaporanDestroy($id)
+    {
+        $laporan = \App\Models\LaporanFile::findOrFail($id);
+
+        // Pastikan hanya pengunggah atau unit terkait yang bisa menghapus (Opsional, sesuaikan kebutuhan)
+        // if ($laporan->uploaded_by !== Auth::id()) {
+        //     abort(403);
+        // }
+
+        // Hapus file fisik dari storage
+        if (Storage::disk('public')->exists($laporan->file_path)) {
+            Storage::disk('public')->delete($laporan->file_path);
+        }
+
+        // Hapus data dari database
+        $laporan->delete();
+
+        return back()->with('success', 'Dokumen laporan berhasil dihapus.');
     }
 }

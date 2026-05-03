@@ -10,7 +10,6 @@ class LaporanFile extends Model
         'unit_kerja_id',
         'cooperation_id',
         'uploaded_by',
-        'judul',
         'file_path',
         'original_name',
         'file_size',
