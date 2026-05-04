@@ -83,7 +83,7 @@ class UnitPageController extends Controller
             'website'      => 'nullable|string|max:255',
         ]);
 
-        \App\Models\Mitra::create([
+        $mitra = \App\Models\Mitra::create([
             'nama_mitra'   => $request->nama_mitra,
             'id_klasifikasi' => $request->id_klasifikasi,
             'alamat'       => $request->alamat,
@@ -92,6 +92,17 @@ class UnitPageController extends Controller
             'telp'         => $request->telp,
             'website'      => $request->website,
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Mitra berhasil ditambahkan.',
+                'data' => [
+                    'id' => $mitra->id,
+                    'nama' => $mitra->nama_mitra
+                ]
+            ]);
+        }
 
         return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil ditambahkan.');
     }
@@ -165,7 +176,7 @@ class UnitPageController extends Controller
                 ->orWhere('pusat_id', $unitId)
                 ->orWhereHas('upas', fn($sq) => $sq->where('upa_id', $unitId))
                 ->orWhereHas('pusats', fn($sq) => $sq->where('pusat_id', $unitId));
-        });
+        })->orderBy('created_at', 'asc');
 
         // 1. List DRAFT
         $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->latest()->get();

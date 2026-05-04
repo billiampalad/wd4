@@ -96,10 +96,10 @@
                                         </div>
                                         <div class="mc-group">
                                             <label class="mc-label">Status <span class="mc-req">*</span></label>
-                                            <input type="hidden" name="status" :value="inputType === 'baru' ? 'Draft' : statusValue">
+                                            <input type="hidden" name="status" :value="inputType === 'baru' ? 'Proses' : statusValue">
                                             <div class="alpine-dropdown" @click.outside="statusOpen = false"
                                                 style="position: relative;">
-                                                <div class="ad-trigger no-icon" :class="{'active': statusOpen}"
+                                                <div class="ad-trigger no-icon" :class="{'active': statusOpen, 'is-invalid': @error('status') true @else false @enderror}"
                                                     @click="statusOpen = !statusOpen" style="min-height: 42px;">
                                                     <div
                                                         style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
@@ -111,7 +111,7 @@
                                                             —</span>
                                                         <span x-show="statusValue"
                                                             style="font-size: 13px; font-weight: 500;"
-                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : 'color: #6b7280;'"
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;'"
                                                             x-text="statusValue"></span>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
@@ -157,6 +157,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @error('status')
+                                            <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -353,9 +356,13 @@
                                 return this.items.find(i => i.id === this.selected);
                             },
                             selectType(id) {
-                                this.selected = id;
-                                this.$dispatch('jenis-dokumen-changed', { value: id });
-                            }
+                                                this.selected = id;
+                                                this.$dispatch('jenis-dokumen-changed', { value: id });
+                                                // Reset tipe pelaksana jika pindah ke MoU
+                                                if (id.includes('MoU')) {
+                                                    window.dispatchEvent(new CustomEvent('reset-tipe-pelaksana'));
+                                                }
+                                            }
                         }" x-init="$dispatch('jenis-dokumen-changed', { value: selected })">
                                     <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
                                     <input type="hidden" name="jenis" :value="selected">
@@ -364,7 +371,7 @@
                                         {{-- Left: Type Dropdown --}}
                                         <div class="alpine-dropdown" @click.outside="open = false"
                                             style="position: relative;">
-                                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
+                                            <div class="ad-trigger" :class="{'active': open, 'is-invalid': @error('jenis') true @else false @enderror}" @click="open = !open"
                                                 style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
                                                 <div style="display: flex; align-items: center; gap: 12px;">
                                                     <div
@@ -434,24 +441,20 @@
                                     </div>
 
                                     @error('jenis')
-                                    <span class="text-danger"
-                                        style="font-size: 11px; margin-top: 4px; display: block;"><i
-                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
-                                {{-- Nama Kegiatan --}}
                                 <div style="grid-column: 1 / -1;" class="mc-group">
                                     <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-file-lines mc-icon-left"></i>
-                                        <input type="text" name="title" value="{{ old('title') }}" required
+                                        <input type="text" name="title" value="{{ old('title') }}"
                                             placeholder="Contoh: Pelatihan Web Development Bersama Industri"
-                                            class="mc-input @error('title') border-danger @enderror" />
+                                            class="mc-input @error('title') is-invalid @enderror" />
                                     </div>
                                     @error('title')
-                                    <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
-                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -506,7 +509,8 @@
                                     { id: {{ $m->id }}, nama: '{{ addslashes($m->nama_mitra) }}' },
                                 @endforeach
                             ]
-                        }">
+                        }"
+                            @mitra-added.window="mitraItems.push($event.detail)">
                             <div @click="showPenggiat = !showPenggiat"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
                                 <div
@@ -626,7 +630,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value">
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value"
+                                            @reset-tipe-pelaksana.window="tipePelaksana = ''">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -655,13 +660,17 @@
                                                         <template
                                                             x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
                                                             <button type="button" @click="tipePelaksana = opt.v"
-                                                                :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`">
+                                                                :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`"
+                                                                :class="{'is-invalid': @error('tipe_pelaksana') true @else false @enderror}">
                                                                 <i :class="opt.icon" style="font-size: 13px;"></i>
                                                                 <span x-text="opt.label"></span>
                                                             </button>
                                                         </template>
                                                     </div>
                                                     <input type="hidden" name="tipe_pelaksana" :value="tipePelaksana">
+                                                    @error('tipe_pelaksana')
+                                                    <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                                    @enderror
                                                 </div>
 
                                                 {{-- ══ Jurusan Sub-form (Jenis Kerjasama Style) ══ --}}
@@ -1146,7 +1155,7 @@
                                                             <input type="hidden" name="mitra_nama[]"
                                                                 :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
                                                             <div class="ad-trigger no-icon"
-                                                                :class="{'active': pg.mitraOpen}"
+                                                                :class="{'active': pg.mitraOpen, 'is-invalid': @error('penggiat_mitra_ids.*') true @else false @enderror}"
                                                                 @click="pg.mitraOpen = !pg.mitraOpen"
                                                                 style="min-height: 40px;">
                                                                 <div
@@ -1185,6 +1194,9 @@
                                                             <i class="fas fa-plus"></i>
                                                         </a>
                                                     </div>
+                                                    @error('penggiat_mitra_ids.*')
+                                                    <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                                    @enderror
                                                 </div>
 
                                                 {{-- Penandatangan (Collapsible) --}}
@@ -1376,8 +1388,7 @@
                                 }">
                                     {{-- Dropdown Selector --}}
                                     <div class="mc-group">
-                                        <label class="mc-label">Bentuk Kegiatan Kerjasama (Ruang Lingkup)<span
-                                                class="mc-req">*</span></label>
+                                        <label class="mc-label">Bentuk Kegiatan Kerjasama (Ruang Lingkup)</label>
                                         <template x-for="id in selected" :key="id">
                                             <input type="hidden" name="id_jenis[]" :value="id">
                                         </template>

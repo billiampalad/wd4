@@ -109,17 +109,28 @@
                         return;
                     }
 
-                    if (res.ok || res.status === 302) {
+                    if (res.ok) {
+                        const result = await res.json();
                         closeMitraModal();
+                        
+                        // Dispatch event agar Alpine.js di halaman utama bisa menangkap data mitra baru
+                        window.dispatchEvent(new CustomEvent('mitra-added', { 
+                            detail: result.data 
+                        }));
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil!',
                             text: 'Mitra baru berhasil ditambahkan.',
                             showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            window.location.reload();
+                            timer: 1500
                         });
+                        return;
+                    }
+
+                    if (res.status === 302) {
+                        // Fallback jika redirect terjadi
+                        window.location.reload();
                         return;
                     }
 

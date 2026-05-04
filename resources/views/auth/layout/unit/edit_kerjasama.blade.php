@@ -32,10 +32,10 @@
     </section>
 
     @if(session('error'))
-        <div class="dk-alert dk-alert-error">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>{{ session('error') }}</span>
-        </div>
+    <div class="dk-alert dk-alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ session('error') }}</span>
+    </div>
     @endif
 
     <div class="card um-card dk-card" style="overflow: visible;">
@@ -365,9 +365,13 @@
                                 return this.items.find(i => i.id === this.selected);
                             },
                             selectType(id) {
-                                this.selected = id;
-                                this.$dispatch('jenis-dokumen-changed', { value: id });
-                            }
+                                                this.selected = id;
+                                                this.$dispatch('jenis-dokumen-changed', { value: id });
+                                                // Reset tipe pelaksana jika pindah ke MoU
+                                                if (id.includes('MoU')) {
+                                                    window.dispatchEvent(new CustomEvent('reset-tipe-pelaksana'));
+                                                }
+                                            }
                         }" x-init="$dispatch('jenis-dokumen-changed', { value: selected })">
                                     <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
                                     <input type="hidden" name="jenis" :value="selected">
@@ -448,9 +452,9 @@
                                     </div>
 
                                     @error('jenis')
-                                        <span class="text-danger"
-                                            style="font-size: 11px; margin-top: 4px; display: block;"><i
-                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="text-danger"
+                                        style="font-size: 11px; margin-top: 4px; display: block;"><i
+                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -465,8 +469,8 @@
                                             class="mc-input @error('title') border-danger @enderror" />
                                     </div>
                                     @error('title')
-                                        <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
-                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
+                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -537,7 +541,8 @@
                                     { id: {{ $m->id }}, nama: '{{ addslashes($m->nama_mitra) }}' },
                                 @endforeach
                             ]
-                        }">
+                        }"
+                            @mitra-added.window="mitraItems.push($event.detail)">
                             <div @click="showPenggiat = !showPenggiat"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
                                 <div
@@ -656,7 +661,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value">
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value"
+                                            @reset-tipe-pelaksana.window="tipePelaksana = ''">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -1331,8 +1337,8 @@
                         </div>
 
                         @error('mitra_nama')
-                            <span class="text-danger" style="margin: 12px 24px; display: block; font-size: 11px;"><i
-                                    class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                        <span class="text-danger" style="margin: 12px 24px; display: block; font-size: 11px;"><i
+                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                         @enderror
                     </div>
 
@@ -1679,7 +1685,11 @@
 <script>
     function mitraManager(initial = null) {
         return {
-            mitras: initial || [{ id: Date.now(), kategori: '', negara: '' }]
+            mitras: initial || [{
+                id: Date.now(),
+                kategori: '',
+                negara: ''
+            }]
         };
     }
 

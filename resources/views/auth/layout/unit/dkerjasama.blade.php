@@ -212,7 +212,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kerjasamaList as $index => $kegiatan)
+                        @forelse($kerjasamaList->sortBy('created_at') as $index => $kegiatan)
                         @php
                         $status = strtolower($kegiatan->status ?? '');
                         $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
@@ -221,6 +221,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 
                         $statusClass = match (true) {
                         $status === 'aktif' => 'dk-status-active',
+                        $status === 'proses' => 'dk-status-info',
                         $isExtended => 'dk-status-warning',
                         $isExpired => 'dk-status-danger',
                         $status === 'tidak aktif' => 'dk-status-muted',
@@ -228,6 +229,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         };
                         $statusIcon = match (true) {
                         $status === 'aktif' => 'fa-circle-check',
+                        $status === 'proses' => 'fa-spinner fa-spin',
                         $isExtended => 'fa-clock',
                         $isExpired => 'fa-circle-xmark',
                         $status === 'tidak aktif' => 'fa-circle-minus',
