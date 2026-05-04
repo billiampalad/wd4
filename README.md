@@ -26,112 +26,86 @@ Data Kerjasama -> resources/views/auth/layout/jurusan/dkerjasama.blade.php
 Laporan Data -> resources/views/auth/layout/jurusan/laporan.blade.php
 
 ## PROSES CARA KERJA HAK AKSES UNIT KERJA DAN PIMPINAN
-Berikut adalah penjelasan detail di mana proses "memberikan" dan "melihat" data tersebut terjadi:
 
-1. Di mana Pimpinan MEMBERIKAN Ringkasan & Saran untuk Unit Kerja?
-Proses ini dilakukan di dalam menu Evaluasi & Validasi pada hak akses Pimpinan.
-Agar Pimpinan tidak bingung membedakan mana laporan Jurusan dan mana laporan Unit Kerja, Anda bisa membagi tampilan di menu ini menjadi dua Tab atau menggunakan Filter:
+1. Pisahkan Menjadi Dua Kolom Status di Database
 
-Tab Laporan Jurusan: Merender query data dengan status menunggu_evaluasi.
+Agar sistem tidak bingung, tabel Anda sebaiknya memiliki dua penanda status yang berjalan beriringan:
 
-Tab Laporan Unit Kerja: Merender query data dengan status menunggu_validasi_pimpinan.
+- status_dokumen: Draft -> Menunggu Evaluasi -> Revisi -> Disahkan. (Ini untuk melacak proses birokrasi antara Unit Kerja dan Pimpinan).
+- status_berlaku: Belum Mulai -> Aktif -> Dalam Perpanjangan -> Kadaluarsa -> Tidak Aktif. (Ini untuk melacak waktu di lapangan).
 
-Ketika Pimpinan menekan tombol "Beri Penilaian" pada salah satu laporan Unit Kerja di tab tersebut, sistem akan memunculkan form di mana Pimpinan bisa mengetikkan Ringkasan Evaluasi dan Saran Tindak Lanjut, lalu mengubah statusnya menjadi Selesai.
+2. Penyesuaian Alur Kerja (Workflow)
 
-2. Di mana Unit Kerja MELIHAT Hasil Ringkasan & Saran dari Pimpinan?
-Setelah Pimpinan selesai melakukan evaluasi akhir, Unit Kerja dapat membaca hasilnya di dalam menu Data Kerjasama milik mereka (bukan di menu Evaluasi Internal).
+Tahap 1: Input Data Baru oleh Unit Kerja
 
-Cara kerjanya:
+- Unit Kerja mengisi form data, termasuk tanggal mulai dan tanggal selesai kegiatan.
+- Perbaikan Form: Form pilihan status masa berlaku (aktif, kadaluarsa, dll.) sebaiknya disembunyikan atau dikunci (disabled) pada saat membuat data baru.
+- Pengecualian: Form status masa berlaku ini hanya dimunculkan jika Unit Kerja sedang menginput "Data Lama" (arsip kerja sama tahun-tahun sebelumnya yang sudah selesai/kadaluarsa) ke dalam sistem baru.
+- Data tersimpan dengan status_dokumen = Draft.
 
-Unit Kerja masuk ke menu Data Kerjasama.
+Tahap 2: Pengiriman Draft & Template Laporan
 
-Mereka mencari dokumen yang statusnya sudah Selesai.
+- Unit Kerja mengunduh template, mengisinya, menandatanganinya di level jurusan/unit, lalu mengunggahnya ke halaman Detail.
+- Unit Kerja menekan "Kirim ke Pimpinan".
+- status_dokumen berubah menjadi Menunggu Evaluasi.
 
-Mereka menekan tombol "Detail" pada dokumen tersebut.
+Tahap 3: Evaluasi Pimpinan
 
-Di halaman detail tersebut (biasanya diletakkan di posisi paling bawah atau pada tab khusus bernama "Hasil Validasi Pimpinan"), sistem akan merender data teks Ringkasan Evaluasi, Saran Tindak Lanjut, dan Status Kelayakan yang telah diketik oleh Pimpinan.
+- Pimpinan memeriksa draft tersebut. Jika setuju, pimpinan menekan tombol pengesahan.
+- status_dokumen berubah menjadi Disahkan.
 
-3. Apa yang Diinput Unit Kerja di Menu "Evaluasi Internal"?
-Sebagai pengingat, pada menu Evaluasi Internal milik Unit Kerja, mereka tidak membuat Ringkasan Evaluasi dan Saran Tindak Lanjut.
+Tahap 4: Sistem Mengatur Status Masa Berlaku Otomatis
 
-Di menu tersebut, Unit Kerja murni hanya melakukan Self-Assessment (mengisi metrik skoring form evaluasi) yang merujuk pada tabel evaluasis:
+- Tepat setelah Pimpinan mengesahkan dokumen tersebut, sistem (backend) mengambil alih.
+- Sistem mengecek tanggal: Jika tanggal hari ini berada di antara tanggal mulai dan selesai, maka status_berlaku otomatis menjadi Aktif.
 
-Kesesuaian dengan rencana (1-5)
+Tahap 5: Pembaruan Status Selanjutnya (Pasca Pengesahan)
 
-Kualitas pelaksanaan (1-5)
+- Seiring berjalannya waktu, jika tanggal selesai sudah terlewati, sistem otomatis mengubah status_berlaku menjadi Kadaluarsa.
+- Jika pihak internal/mitra ingin memperpanjang, barulah Unit Kerja masuk kembali ke halaman Detail dokumen tersebut, menekan tombol "Ajukan Perpanjangan", yang akan mengubah status_berlaku menjadi Dalam Perpanjangan. (Ini bisa memicu pembuatan form MOU/MOA baru yang terkait dengan data lama ini).
+- Jika memang kerja sama dihentikan permanen, Pimpinan atau Unit Kerja bisa mengubah status_berlaku menjadi Tidak Aktif.
 
-Keterlibatan mitra (1-5)
 
-Efisiensi penggunaan sumber daya (1-5)
+# FUNGSI TOMBOL 'KIRIM KE PIMPINAN' & 'AJUKAN PERPANJANGAN'
 
-Kepuasan pihak terkait (1-5)
+1. Tombol "Kirim ke Pimpinan"
+Tombol ini hanya muncul pada fase awal pengajuan atau saat ada perbaikan.
 
-Setelah Unit Kerja menyimpan nilai-nilai angka/skoring ini, barulah dokumen tersebut terlempar ke menu Pimpinan (menunggu_validasi_pimpinan) untuk diberikan kesimpulan akhir berupa teks (Ringkasan & Saran).
+- Muncul jika: Status dokumen adalah 'Draft' (baru diunggah) atau 'Revisi' (dikembalikan oleh pimpinan untuk diperbaiki).
+- Fungsi: Mengubah status_dokumen menjadi 'Menunggu Evaluasi' dan mengirimkan notifikasi ke Pimpinan.
+- Hilang jika: Dokumen sudah dikirim ke Pimpinan atau sudah Disahkan. (Unit Kerja tidak perlu mengirim ulang dokumen yang sudah disetujui).
 
-## PROSES CARA KERJA HAK AKSES JURUSAN DAN PIMPINAN
-1. Untuk Hak Akses JURUSAN
-A. Apa yang Diinput oleh Jurusan?
-Jurusan tidak memiliki menu evaluasi. Mereka murni bekerja di menu Data Kerjasama.
+2. Tombol "Ajukan Perpanjangan"
+Tombol ini khusus untuk fase akhir, saat dokumen sudah berjalan sah namun masa berlakunya hampir habis atau sudah habis.
 
-Saat mengklik "Tambah Data", mereka hanya mengisi form fakta di lapangan (Informasi Umum, Tujuan, Pelaksanaan, Hasil, Kendala, dan Bukti Lampiran).
+- Muncul jika: Status dokumen sudah Disahkan dan status masa berlakunya adalah 'Kadaluarsa' (atau misalnya sisa 30 hari lagi sebelum kadaluarsa).
+- Fungsi: Memulai proses perpanjangan, yang bisa mengubah status menjadi Dalam Perpanjangan dan mungkin memicu pembuatan form draft kesepakatan baru.
+- Hilang jika: Dokumen masih berstatus Draft, Menunggu Evaluasi, atau jika masa aktifnya masih sangat panjang.
 
-Mereka tidak melihat form skor angka (1-5) atau form teks ringkasan/saran.
 
-Setelah selesai, mereka klik "Kirim ke Pimpinan" (Status berubah menjadi menunggu_evaluasi).
+# FORM TAMBAHAN UNTUK AJUKAN PERPANJANGAN
+Pemilihan caranya sangat bergantung pada aturan administrasi kerja sama di kampus Anda. Berikut adalah dua pilihan cara kerja (UI/UX) yang paling umum digunakan:
 
-B. Di mana Jurusan MELIHAT Penilaian, Ringkasan, dan Saran?
-Sama seperti Unit Kerja, Jurusan melihat hasil akhirnya di dalam menu Data Kerjasama.
+Pendekatan 1: Menggunakan Modal / Pop-up (Paling Cepat & Praktis)
+Gunakan cara ini jika: Perpanjangan kerja sama menggunakan nomor dokumen yang sama, dan hanya perlu memperbarui Tanggal Selesai serta mengunggah surat perpanjangan.
+- Cara Kerja UI:
+Saat Unit Kerja menekan tombol "Ajukan Perpanjangan" di halaman Detail, layar tidak berpindah halaman. Alih-alih, muncul sebuah kotak dialog (Modal Pop-up) di tengah layar.
+- Isi Form di Modal:
+- Input Tanggal Mulai Perpanjangan.
+- Input Tanggal Selesai Baru.
+- Form Upload Dokumen (Surat Perpanjangan).
+- Alur: Setelah di-submit, status_dokumen menjadi 'Menunggu Evaluasi' agar Pimpinan bisa melihat dan menyetujui tanggal baru tersebut.
 
-Saat sebuah dokumen sudah berstatus Selesai, Jurusan mengklik tombol "Detail".
-
-Di bagian paling bawah halaman detail tersebut (misalnya di dalam card bernama "Hasil Penilaian Pimpinan"), Jurusan dapat melihat lengkap:
-
-Skor Kinerja (1-5) yang diberikan Pimpinan.
-
-Ringkasan Evaluasi (Teks).
-
-Saran Tindak Lanjut (Teks).
-
-2. Untuk Hak Akses PIMPINAN
-Karena Pimpinan menerima dua jenis laporan yang berbeda (dari Jurusan dan dari Unit Kerja), maka form yang muncul di layar Pimpinan akan sedikit berbeda (dinamis) menyesuaikan siapa pengirimnya.
-
-A. Di mana Pimpinan MEMBERIKAN Penilaian & Catatan?
-Semuanya terpusat di menu Evaluasi & Validasi. Di menu ini, sistem akan merender form yang berbeda tergantung status dokumen:
-
-Skenario 1: Mengevaluasi Laporan JURUSAN (Status: menunggu_evaluasi)
-Saat Pimpinan klik "Beri Penilaian" pada data milik Jurusan, form yang terbuka akan sangat lengkap. Pimpinan harus menginput:
-
-Skor Angka (1-5) (Kesesuaian, Kualitas, Keterlibatan, Efisiensi, Kepuasan).
-
-Ringkasan Evaluasi (Input Textarea).
-
-Saran Tindak Lanjut (Input Textarea).
-
-Status Validasi Akhir (Layak/Tidak).
-
-Skenario 2: Memvalidasi Laporan UNIT KERJA (Status: menunggu_validasi_pimpinan)
-Saat Pimpinan klik "Beri Penilaian" pada data milik Unit Kerja, form yang terbuka lebih ringkas.
-
-Pimpinan akan melihat Skor Angka (1-5) yang sudah diisi secara Self-Assessment oleh Unit Kerja (tampilannya Read-Only, Pimpinan tinggal melihat saja).
-
-Pimpinan hanya perlu menginput:
-
-Ringkasan Evaluasi (Input Textarea).
-
-Saran Tindak Lanjut (Input Textarea).
-
-Status Validasi Akhir (Layak/Tidak).
-
-B. Di mana Pimpinan MELIHAT hasil kerjanya?
-Setelah mengeklik "Simpan", dokumen tersebut hilang dari antrean menu Evaluasi & Validasi. Jika Pimpinan ingin melihat kembali dokumen yang sudah selesai mereka nilai, mereka bisa membukanya di menu Monitoring Data atau menarik datanya di menu Laporan Global.
-
-Dengan logika render form yang dinamis di Controller Pimpinan ini, tugas Pimpinan menjadi sangat efisien dan tidak ada form yang tumpang tindih.
-
-Untuk hak 2 tap pada menu "Evaluasi & Validasi" di hak akses di pimpinan yaitu yang pertama:
-1. Evaluasi Jurusan
-menggunakan tabel databees dari evaluasis dan kesimpulans.
-2. Evaluasi Unit Kerja
-hanya menggunakan tabel databeses dari kesipulans saja.
+Pendekatan 2: Menggunakan Kembali Form "Input Data Baru" (Lebih Direkomendasikan)
+Gunakan cara ini jika: Perpanjangan kerja sama dianggap sebagai kontrak baru yang memiliki Nomor Dokumen/PKS baru, tetapi masih berhubungan dengan kerja sama yang lama.
+Anda tidak perlu membuat halaman HTML/Blade baru. Anda cukup menggunakan halaman Form Input Data Baru yang sudah Anda buat sebelumnya, tetapi dengan trik "Isi Otomatis" (Auto-fill).
+- Cara Kerja UI:
+Saat tombol "Ajukan Perpanjangan" ditekan, arahkan Unit Kerja ke halaman Form Input Data Baru. Namun, sistem akan mengisi otomatis semua kolomnya (Nama Mitra, Judul, Jurusan, dll) berdasarkan data kerja sama yang lama.
+- Alur:
+1. Sistem mengarahkan ke URL seperti: [domain.com/kerjasama/create?perpanjangan_dari=15](https://domain.com/kerjasama/create?perpanjangan_dari=15) (Angka 15 adalah ID kerja sama lama).
+2. Unit Kerja melihat form input data yang sudah terisi, jadi mereka hanya perlu mengganti Nomor PKS baru dan menyesuaikan tanggal berlakunya.
+3. Setelah di-submit, ini akan tersimpan sebagai Data Kerja Sama Baru dengan status awal Draft.
+4. Kerja sama yang lama statusnya dibiarkan Kadaluarsa atau Selesai sebagai arsip sejarah.
 
 ## PERAN KERJA NOTIFIKASI
 Gemini berkata

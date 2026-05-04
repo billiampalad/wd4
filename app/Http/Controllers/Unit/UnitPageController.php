@@ -139,7 +139,7 @@ class UnitPageController extends Controller
     public function mitraDestroy($id)
     {
         $mitra = \App\Models\Mitra::findOrFail($id);
-        
+
         // Cek apakah mitra memiliki riwayat kerjasama
         if ($mitra->cooperations()->exists()) {
             return back()->with('error', 'Mitra tidak bisa dihapus karena masih memiliki riwayat kerjasama.');
@@ -152,13 +152,36 @@ class UnitPageController extends Controller
     // ─── Evaluasi Kinerja ────────────────────────────────────────
     public function evaluasi()
     {
-        $unitId = $this->resolveUnitId();
+        $user = Auth::user();
+        $unitId = $user->profile?->unit_kerja_id;
 
-        // Stubbing as evaluasi depends on kegiatan_kerjasamas
-        $evaluasiList = collect();
-        $belumEvaluasi = collect();
+        if (!$unitId) {
+            return redirect()->back()->with('error', 'Unit kerja tidak ditemukan pada profil Anda.');
+        }
 
-        return view('auth.unit', compact('evaluasiList', 'belumEvaluasi'));
+        // Query dasar kerjasama untuk unit ini
+        $baseQuery = Cooperation::where(function ($q) use ($unitId) {
+            $q->where('upa_id', $unitId)
+                ->orWhere('pusat_id', $unitId)
+                ->orWhereHas('upas', fn($sq) => $sq->where('upa_id', $unitId))
+                ->orWhereHas('pusats', fn($sq) => $sq->where('pusat_id', $unitId));
+        });
+
+        // 1. List DRAFT
+        $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->latest()->get();
+
+        // 2. List MENUNGGU EVALUASI (Sudah di-upload tapi belum dinilai)
+        $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->latest()->get();
+
+        // 3. List SUDAH DIEVALUASI / DISAHKAN
+        $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->latest()->get();
+
+        return view('auth.unit', [
+            'view' => 'evaluasi_kinerja',
+            'draftList' => $draftList,
+            'belumEvaluasi' => $belumEvaluasi,
+            'evaluasiList' => $evaluasiList
+        ]);
     }
 
     // ─── Form Evaluasi (GET) ────────────────────────────────────
@@ -203,12 +226,12 @@ class UnitPageController extends Controller
         $kegiatan->update(['status' => 'menunggu_validasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
-        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+        $pimpinans = \App\Models\User::whereHas('role', function ($q) {
             $q->where('role_name', 'pimpinan');
         })->get();
 
         $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
-        
+
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
                 $pimpinan->id,
@@ -256,12 +279,12 @@ class UnitPageController extends Controller
         $kegiatan->update(['status' => 'menunggu_validasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
-        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+        $pimpinans = \App\Models\User::whereHas('role', function ($q) {
             $q->where('role_name', 'pimpinan');
         })->get();
 
         $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
-        
+
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
                 $pimpinan->id,
@@ -295,12 +318,12 @@ class UnitPageController extends Controller
         $kegiatan->update(['status' => 'menunggu_validasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
-        $pimpinans = \App\Models\User::whereHas('role', function($q) {
+        $pimpinans = \App\Models\User::whereHas('role', function ($q) {
             $q->where('role_name', 'pimpinan');
         })->get();
 
         $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
-        
+
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
                 $pimpinan->id,
@@ -447,15 +470,15 @@ class UnitPageController extends Controller
 
         $unitId = $this->resolveUnitId();
         $file = $request->file('file_laporan');
-        
+
         // Dapatkan nama asli dan ekstensi
         $originalName = $file->getClientOriginalName();
         $nameOnly = pathinfo($originalName, PATHINFO_FILENAME);
         $extension = $file->getClientOriginalExtension();
-        
+
         // Bersihkan nama file dari karakter aneh agar aman di filesystem
         $cleanName = Str::slug($nameOnly) . '.' . $extension;
-        
+
         // Logika Unik: Jika file sudah ada, tambahkan angka di belakangnya
         $filename = $cleanName;
         $counter = 1;

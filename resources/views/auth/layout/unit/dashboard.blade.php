@@ -9,7 +9,8 @@
         </div>
         <h2 id="pageTitle">Selamat Datang, {{ auth()->user()->name }}</h2>
         <p id="pageDesc">Ringkasan data kerjasama untuk
-            <strong>{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}</strong></p>
+            <strong>{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}</strong>
+        </p>
     </div>
 
     <!-- ════════════════════════════════════════════════════════
@@ -108,10 +109,10 @@
                     </div>
                 </div>
                 @if($menungguEvaluasi > 0)
-                    <span class="tag tag-orange" style="font-size:12px; padding:5px 14px;">
-                        <i class="fas fa-exclamation-circle" style="font-size:10px;"></i>
-                        {{ $menungguEvaluasi }} kegiatan
-                    </span>
+                <span class="tag tag-orange" style="font-size:12px; padding:5px 14px;">
+                    <i class="fas fa-exclamation-circle" style="font-size:10px;"></i>
+                    {{ $menungguEvaluasi }} kegiatan
+                </span>
                 @endif
             </div>
 
@@ -128,47 +129,48 @@
                     </thead>
                     <tbody>
                         @forelse($tugasEvaluasi as $index => $kegiatan)
-                            <tr>
-                                <td>
-                                    <span
-                                        style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
-                                </td>
-                                <td>
-                                    <div style="font-weight:600; font-size:13px;">{{ $kegiatan->nama_kegiatan }}</div>
-                                    <div style="font-size:11px; color:var(--text-sub);">PJ:
-                                        {{ $kegiatan->penanggung_jawab ?? '-' }}</div>
-                                </td>
-                                <td style="font-size:12px;">
-                                    {{ $kegiatan->mitras->pluck('nama_mitra')->join(', ') ?: '-' }}
-                                </td>
-                                <td style="font-size:12px; color:var(--text-sub);">
-                                    {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '-' }}
-                                </td>
-                                <td style="text-align:center;">
-                                    <a href="#"
-                                        style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-radius:8px; font-size:11px; font-weight:700; text-decoration:none; transition:all .2s; box-shadow:0 2px 8px rgba(79,70,229,.25);"
-                                        onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(79,70,229,.35)'"
-                                        onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(79,70,229,.25)'">
-                                        <i class="fas fa-pen-to-square" style="font-size:10px;"></i>
-                                        Beri Evaluasi
-                                    </a>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <span
+                                    style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                            </td>
+                            <td>
+                                <div style="font-weight:600; font-size:13px;">{{ $kegiatan->nama_kegiatan }}</div>
+                                <div style="font-size:11px; color:var(--text-sub);">PJ:
+                                    {{ $kegiatan->penanggung_jawab ?? '-' }}
+                                </div>
+                            </td>
+                            <td style="font-size:12px;">
+                                {{ $kegiatan->mitras->pluck('nama_mitra')->join(', ') ?: '-' }}
+                            </td>
+                            <td style="font-size:12px; color:var(--text-sub);">
+                                {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '-' }}
+                            </td>
+                            <td style="text-align:center;">
+                                <a href="#"
+                                    style="display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-radius:8px; font-size:11px; font-weight:700; text-decoration:none; transition:all .2s; box-shadow:0 2px 8px rgba(79,70,229,.25);"
+                                    onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(79,70,229,.35)'"
+                                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(79,70,229,.25)'">
+                                    <i class="fas fa-pen-to-square" style="font-size:10px;"></i>
+                                    Beri Evaluasi
+                                </a>
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="5" style="text-align:center; padding:40px 20px;">
-                                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                                        <div
-                                            style="width:48px; height:48px; border-radius:12px; background:rgba(16,185,129,0.1); color:#10b981; display:flex; align-items:center; justify-content:center; font-size:20px;">
-                                            <i class="fas fa-circle-check"></i>
-                                        </div>
-                                        <span style="font-size:13px; font-weight:600; color:var(--text);">Semua Tugas
-                                            Selesai!</span>
-                                        <span style="font-size:12px; color:var(--text-sub);">Tidak ada kegiatan yang perlu
-                                            dievaluasi saat ini.</span>
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:40px 20px;">
+                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                                    <div
+                                        style="width:48px; height:48px; border-radius:12px; background:rgba(16,185,129,0.1); color:#10b981; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                                        <i class="fas fa-circle-check"></i>
                                     </div>
-                                </td>
-                            </tr>
+                                    <span style="font-size:13px; font-weight:600; color:var(--text);">Semua Tugas
+                                        Selesai!</span>
+                                    <span style="font-size:12px; color:var(--text-sub);">Tidak ada kegiatan yang perlu
+                                        dievaluasi saat ini.</span>
+                                </div>
+                            </td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -187,7 +189,7 @@
                 <div class="card-title"><i class="fas fa-chart-line"></i> Tren Kerjasama Per Tahun</div>
             </div>
             <div class="card-body" style="height:300px; padding:20px;">
-                <canvas id="trenChart" 
+                <canvas id="trenChart"
                     data-labels="{{ ($trenPerTahun ?? collect())->pluck('tahun')->toJson() }}"
                     data-values="{{ ($trenPerTahun ?? collect())->pluck('total')->toJson() }}">
                 </canvas>
@@ -241,32 +243,32 @@
             </div>
             <div class="card-body" style="display:flex; flex-direction:column; gap:16px; padding:20px;">
                 @php
-                    $scores = [
-                        ['label' => 'Kualitas', 'value' => $avgEvaluasi->avg_kualitas ?? 0, 'color' => '#4f46e5', 'icon' => 'fa-gem'],
-                        ['label' => 'Keterlibatan', 'value' => $avgEvaluasi->avg_keterlibatan ?? 0, 'color' => '#0ea5e9', 'icon' => 'fa-users'],
-                        ['label' => 'Efisiensi', 'value' => $avgEvaluasi->avg_efisiensi ?? 0, 'color' => '#10b981', 'icon' => 'fa-bolt'],
-                        ['label' => 'Kepuasan', 'value' => $avgEvaluasi->avg_kepuasan ?? 0, 'color' => '#f59e0b', 'icon' => 'fa-smile'],
-                    ];
+                $scores = [
+                ['label' => 'Kualitas', 'value' => $avgEvaluasi->avg_kualitas ?? 0, 'color' => '#4f46e5', 'icon' => 'fa-gem'],
+                ['label' => 'Keterlibatan', 'value' => $avgEvaluasi->avg_keterlibatan ?? 0, 'color' => '#0ea5e9', 'icon' => 'fa-users'],
+                ['label' => 'Efisiensi', 'value' => $avgEvaluasi->avg_efisiensi ?? 0, 'color' => '#10b981', 'icon' => 'fa-bolt'],
+                ['label' => 'Kepuasan', 'value' => $avgEvaluasi->avg_kepuasan ?? 0, 'color' => '#f59e0b', 'icon' => 'fa-smile'],
+                ];
                 @endphp
 
                 @foreach($scores as $s)
-                    <div>
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                            <span
-                                style="font-size:12px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:6px;">
-                                <i class="fas {{ $s['icon'] }}" style="color:{{ $s['color'] }}; font-size:11px;"></i>
-                                {{ $s['label'] }}
-                            </span>
-                            <span
-                                style="font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:{{ $s['color'] }};">{{ $s['value'] }}/5</span>
-                        </div>
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                        <span
+                            style="font-size:12px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:6px;">
+                            <i class="fas {{ $s['icon'] }}" style="color:{{ $s['color'] }}; font-size:11px;"></i>
+                            {{ $s['label'] }}
+                        </span>
+                        <span
+                            style="font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:{{ $s['color'] }};">{{ $s['value'] }}/5</span>
+                    </div>
+                    <div
+                        style="width:100%; height:8px; background:var(--surface2); border-radius:99px; overflow:hidden;">
                         <div
-                            style="width:100%; height:8px; background:var(--surface2); border-radius:99px; overflow:hidden;">
-                            <div
-                                style="width:{{ ($s['value'] / 5) * 100 }}%; height:100%; background:{{ $s['color'] }}; border-radius:99px; transition:width .6s cubic-bezier(.4,0,.2,1);">
-                            </div>
+                            style="width:{{ ($s['value'] / 5) * 100 }}%; height:100%; background:{{ $s['color'] }}; border-radius:99px; transition:width .6s cubic-bezier(.4,0,.2,1);">
                         </div>
                     </div>
+                </div>
                 @endforeach
 
                 <div style="margin-top:auto; padding-top:12px; border-top:1px solid var(--border);">
@@ -286,7 +288,7 @@
 {{-- ── Chart.js scripts ──────────────────────────────────────── --}}
 <script>
     /* global Chart */
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         // Theme config
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
@@ -319,16 +321,38 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1, color: textColor, font: { size: 11, weight: 600 } },
-                            grid: { color: gridColor, drawBorder: false }
+                            ticks: {
+                                stepSize: 1,
+                                color: textColor,
+                                font: {
+                                    size: 11,
+                                    weight: 600
+                                }
+                            },
+                            grid: {
+                                color: gridColor,
+                                drawBorder: false
+                            }
                         },
                         x: {
-                            ticks: { color: textColor, font: { size: 11, weight: 600 } },
-                            grid: { display: false }
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 11,
+                                    weight: 600
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }
@@ -341,7 +365,7 @@
             const labels = JSON.parse(jenisCtx.dataset.labels || '[]');
             const values = JSON.parse(jenisCtx.dataset.values || '[]');
             const count = parseInt(jenisCtx.dataset.count || '0');
-            const jenisColors = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
+            const jenisColors = ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
 
             new Chart(jenisCtx, {
                 type: 'doughnut',
@@ -361,7 +385,16 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { color: textColor, font: { size: 11, weight: 600 }, padding: 16, usePointStyle: true, pointStyle: 'circle' }
+                            labels: {
+                                color: textColor,
+                                font: {
+                                    size: 11,
+                                    weight: 600
+                                },
+                                padding: 16,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         }
                     }
                 }
@@ -386,7 +419,7 @@
                             'rgba(16,185,129,0.75)',
                             'rgba(245,158,11,0.75)'
                         ],
-                        borderColor: ['#4f46e5','#0ea5e9','#10b981','#f59e0b'],
+                        borderColor: ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b'],
                         borderWidth: 2,
                         borderRadius: 8,
                         borderSkipped: false,
@@ -397,7 +430,9 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: false
+                        },
                         tooltip: {
                             backgroundColor: isDark ? '#1e2333' : '#fff',
                             titleColor: isDark ? '#e8eaf6' : '#1a1d2e',
@@ -413,13 +448,32 @@
                     },
                     scales: {
                         y: {
-                            beginAtZero: true, max: 5,
-                            ticks: { stepSize: 1, color: textColor, font: { size: 11, weight: 600 } },
-                            grid: { color: gridColor, drawBorder: false }
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                color: textColor,
+                                font: {
+                                    size: 11,
+                                    weight: 600
+                                }
+                            },
+                            grid: {
+                                color: gridColor,
+                                drawBorder: false
+                            }
                         },
                         x: {
-                            ticks: { color: textColor, font: { size: 11, weight: 600 } },
-                            grid: { display: false }
+                            ticks: {
+                                color: textColor,
+                                font: {
+                                    size: 11,
+                                    weight: 600
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
                         }
                     }
                 }

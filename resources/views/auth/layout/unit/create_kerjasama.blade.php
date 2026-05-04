@@ -32,19 +32,21 @@
     </section>
 
     @if(session('error'))
-        <div class="dk-alert dk-alert-error">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>{{ session('error') }}</span>
-        </div>
+    <div class="dk-alert dk-alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ session('error') }}</span>
+    </div>
     @endif
 
-    <div class="card um-card dk-card" style="overflow: visible;">
+    <div class="card um-card dk-card" style="overflow: visible;" x-data="{ inputType: '{{ request('type', 'baru') }}' }">
         <div class="card-header um-header dk-card-header">
             <div class="um-title dk-card-title">
-                <span class="dk-title-icon"><i class="fas fa-plus-circle"></i></span>
+                <span class="dk-title-icon">
+                    <i class="fas" :class="inputType === 'baru' ? 'fa-file-circle-plus' : 'fa-box-archive'"></i>
+                </span>
                 <span>
-                    <strong>Formulir Kerjasama Baru</strong>
-                    <small>Silakan lengkapi data kegiatan kerjasama di bawah ini.</small>
+                    <strong x-text="inputType === 'baru' ? 'Pengajuan Kerjasama Baru' : 'Input Arsip Kerjasama (Historis)'"></strong>
+                    <small x-text="inputType === 'baru' ? 'Silakan lengkapi data pengajuan kerjasama baru.' : 'Lengkapi data historis kerjasama untuk pengarsipan digital.'"></small>
                 </span>
             </div>
         </div>
@@ -52,6 +54,7 @@
         <div class="card-body dk-card-body" style="padding: 0;">
             <form action="{{ route('unit.kerjasama.store') }}" method="POST">
                 @csrf
+                <input type="hidden" name="input_type" :value="inputType">
                 {{-- ═══ TWO-COLUMN TOP LAYOUT: Masa Berlaku (Left) + Form Utama (Right) ═══ --}}
                 <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 24px;">
 
@@ -81,8 +84,8 @@
                                 {{-- Card Body --}}
                                 <div x-show="showMasaBerlaku" x-collapse.duration.300ms style="padding: 18px;">
 
-                                    {{-- ── Status Kerjasama ── --}}
-                                    <div style="margin-bottom: 20px;">
+                                    {{-- ── Status Kerjasama (Hanya tampil untuk Arsip) ── --}}
+                                    <div style="margin-bottom: 20px;" x-show="inputType === 'arsip'" x-transition>
                                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
                                             <div
                                                 style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #059669, #10b981);">
@@ -93,7 +96,7 @@
                                         </div>
                                         <div class="mc-group">
                                             <label class="mc-label">Status <span class="mc-req">*</span></label>
-                                            <input type="hidden" name="status" :value="statusValue">
+                                            <input type="hidden" name="status" :value="inputType === 'baru' ? 'Draft' : statusValue">
                                             <div class="alpine-dropdown" @click.outside="statusOpen = false"
                                                 style="position: relative;">
                                                 <div class="ad-trigger no-icon" :class="{'active': statusOpen}"
@@ -431,9 +434,9 @@
                                     </div>
 
                                     @error('jenis')
-                                        <span class="text-danger"
-                                            style="font-size: 11px; margin-top: 4px; display: block;"><i
-                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="text-danger"
+                                        style="font-size: 11px; margin-top: 4px; display: block;"><i
+                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -447,8 +450,8 @@
                                             class="mc-input @error('title') border-danger @enderror" />
                                     </div>
                                     @error('title')
-                                        <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
-                                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="text-danger" style="font-size: 11px; margin-top: 4px;"><i
+                                            class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
@@ -1299,8 +1302,8 @@
                         </div>
 
                         @error('mitra_nama')
-                            <span class="text-danger" style="margin: 12px 24px; display: block; font-size: 11px;"><i
-                                    class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                        <span class="text-danger" style="margin: 12px 24px; display: block; font-size: 11px;"><i
+                                class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                         @enderror
                     </div>
 
@@ -1632,7 +1635,11 @@
 <script>
     function mitraManager(initial = null) {
         return {
-            mitras: initial || [{ id: Date.now(), kategori: '', negara: '' }]
+            mitras: initial || [{
+                id: Date.now(),
+                kategori: '',
+                negara: ''
+            }]
         };
     }
 
