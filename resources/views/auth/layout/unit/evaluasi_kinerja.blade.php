@@ -53,34 +53,64 @@
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th">Judul Kerjasama</th>
+                            <th class="um-th dk-th-title" style="width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th">Mitra</th>
-                            <th class="um-th">Kelengkapan</th>
                             <th class="um-th um-th-aksi" style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse(($draftList ?? collect()) as $index => $kegiatan)
-                        <tr class="um-row">
-                            <td class="um-td um-td-num">
-                                <span class="um-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                        @forelse(($draftList ?? collect()) as $kegiatan)
+                        @php
+                        $pelaksanaIcon = 'fa-building';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = '-';
+                        if ($kegiatan->tipe_pelaksana === 'jurusan') {
+                        $pelaksanaIcon = 'fa-microchip';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'upa') {
+                        $pelaksanaIcon = 'fa-building-columns';
+                        $pelaksanaClass = 'dk-entity-cyan';
+                        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+                        $pelaksanaIcon = 'fa-landmark';
+                        $pelaksanaClass = 'dk-entity-violet';
+                        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+                        }
+                        $docNumber = $kegiatan->doc_number ?? '';
+                        $title = $kegiatan->title ?? '';
+                        $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
+                        @endphp
+                        <tr class="um-row dk-row">
+                            <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             </td>
-                            <td class="um-td">
-                                <div style="font-weight:700; color:var(--text); font-size:13px;">{{ $kegiatan->title }}</div>
-                                <div style="font-size:10px; color:var(--text-sub);">{{ $kegiatan->jenis }}</div>
+                            <td class="um-td dk-title-cell" style="width: 400px; vertical-align: top; padding-top: 15px;">
+                                <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
+                                    <span class="dk-doc-number">#{{ $docNumber ?: '-' }}</span>
+                                    <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $title ?: '-' }}</span>
+                                    <span class="dk-doc-kind">{{ $kegiatan->jenis ?? '-' }}</span>
+                                </div>
                             </td>
-                            <td class="um-td">
-                                <span style="font-size:12px; font-weight:600;">{{ $kegiatan->mitra?->nama_mitra ?? '-' }}</span>
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
+                                        <i class="fas {{ $pelaksanaIcon }}"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                </div>
                             </td>
-                            <td class="um-td">
-                                @php $hasLaporan = $kegiatan->laporanFiles->count() > 0; @endphp
-                                <span class="tag {{ $hasLaporan ? 'tag-green' : 'tag-gray' }}" style="font-size:10px;">
-                                    <i class="fas {{ $hasLaporan ? 'fa-check' : 'fa-times' }}" style="margin-right:4px;"></i>
-                                    {{ $hasLaporan ? 'Laporan Ada' : 'Belum Ada Laporan' }}
-                                </span>
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">
+                                        <i class="fas fa-building"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $mitraName ?: '-' }}</span>
+                                </div>
                             </td>
-                            <td class="um-td um-td-aksi" style="text-align:center;">
-                                <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 12px; font-size: 10px; border-radius: 6px;">
+                            <td class="um-td um-td-aksi" style="text-align:center; vertical-align: top; padding-top: 15px;">
+                                <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
                                     <i class="fas fa-arrow-right"></i> Lengkapi
                                 </a>
                             </td>
@@ -127,29 +157,64 @@
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th">Nama Kegiatan</th>
+                            <th class="um-th dk-th-title" style="width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th">Mitra</th>
-                            <th class="um-th">Tanggal Berakhir</th>
                             <th class="um-th um-th-aksi" style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse(($belumEvaluasi ?? collect()) as $index => $kegiatan)
-                        <tr class="um-row">
-                            <td class="um-td um-td-num">
-                                <span class="um-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                        @forelse(($belumEvaluasi ?? collect()) as $kegiatan)
+                        @php
+                        $pelaksanaIcon = 'fa-building';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = '-';
+                        if ($kegiatan->tipe_pelaksana === 'jurusan') {
+                        $pelaksanaIcon = 'fa-microchip';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'upa') {
+                        $pelaksanaIcon = 'fa-building-columns';
+                        $pelaksanaClass = 'dk-entity-cyan';
+                        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+                        $pelaksanaIcon = 'fa-landmark';
+                        $pelaksanaClass = 'dk-entity-violet';
+                        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+                        }
+                        $docNumber = $kegiatan->doc_number ?? '';
+                        $title = $kegiatan->title ?? '';
+                        $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
+                        @endphp
+                        <tr class="um-row dk-row">
+                            <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             </td>
-                            <td class="um-td">
-                                <div style="font-weight:700; color:var(--text); font-size:13px;">{{ $kegiatan->title }}</div>
+                            <td class="um-td dk-title-cell" style="width: 400px; vertical-align: top; padding-top: 15px;">
+                                <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
+                                    <span class="dk-doc-number">#{{ $docNumber ?: '-' }}</span>
+                                    <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $title ?: '-' }}</span>
+                                    <span class="dk-doc-kind">{{ $kegiatan->jenis ?? '-' }}</span>
+                                </div>
                             </td>
-                            <td class="um-td" style="font-size:12px;">
-                                {{ $kegiatan->mitra?->nama_mitra ?? '-' }}
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
+                                        <i class="fas {{ $pelaksanaIcon }}"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                </div>
                             </td>
-                            <td class="um-td" style="font-size:12px; color:var(--text-sub);">
-                                {{ $kegiatan->end_date ? $kegiatan->end_date->format('d M Y') : '-' }}
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">
+                                        <i class="fas fa-building"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $mitraName ?: '-' }}</span>
+                                </div>
                             </td>
-                            <td class="um-td um-td-aksi" style="text-align:center;">
-                                <a href="{{ route('unit.evaluasi.form', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 14px; font-size:11px; border-radius:8px;">
+                            <td class="um-td um-td-aksi" style="text-align:center; vertical-align: top; padding-top: 15px;">
+                                <a href="{{ route('unit.evaluasi.form', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 14px; font-size:11px; border-radius:8px; display: inline-flex; align-items: center; gap: 8px;">
                                     <i class="fas fa-star" style="font-size:10px;"></i> Beri Nilai
                                 </a>
                             </td>
@@ -191,31 +256,69 @@
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th">Nama Kegiatan</th>
+                            <th class="um-th dk-th-title" style="width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th">Mitra</th>
                             <th class="um-th">Rata-rata Skor</th>
                             <th class="um-th um-th-aksi" style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse(($evaluasiList ?? collect()) as $index => $kegiatan)
+                        @forelse(($evaluasiList ?? collect()) as $kegiatan)
                         @php
                         $eval = $kegiatan->evaluasis?->first();
                         $avgScore = $eval
                         ? round(($eval->kualitas + $eval->keterlibatan + $eval->efisiensi + $eval->kepuasan) / 4, 1)
                         : 0;
+
+                        $pelaksanaIcon = 'fa-building';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = '-';
+                        if ($kegiatan->tipe_pelaksana === 'jurusan') {
+                        $pelaksanaIcon = 'fa-microchip';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'upa') {
+                        $pelaksanaIcon = 'fa-building-columns';
+                        $pelaksanaClass = 'dk-entity-cyan';
+                        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+                        $pelaksanaIcon = 'fa-landmark';
+                        $pelaksanaClass = 'dk-entity-violet';
+                        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+                        }
+                        $docNumber = $kegiatan->doc_number ?? '';
+                        $title = $kegiatan->title ?? '';
+                        $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                         @endphp
-                        <tr class="um-row">
-                            <td class="um-td um-td-num">
-                                <span class="um-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                        <tr class="um-row dk-row">
+                            <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             </td>
-                            <td class="um-td">
-                                <div style="font-weight:700; color:var(--text); font-size:13px;">{{ $kegiatan->title }}</div>
+                            <td class="um-td dk-title-cell" style="width: 400px; vertical-align: top; padding-top: 15px;">
+                                <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
+                                    <span class="dk-doc-number">#{{ $docNumber ?: '-' }}</span>
+                                    <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $title ?: '-' }}</span>
+                                    <span class="dk-doc-kind">{{ $kegiatan->jenis ?? '-' }}</span>
+                                </div>
                             </td>
-                            <td class="um-td" style="font-size:12px;">
-                                {{ $kegiatan->mitra?->nama_mitra ?? '-' }}
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
+                                        <i class="fas {{ $pelaksanaIcon }}"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                </div>
                             </td>
-                            <td class="um-td">
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">
+                                        <i class="fas fa-building"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $mitraName ?: '-' }}</span>
+                                </div>
+                            </td>
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <div style="flex: 1; height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; min-width: 60px;">
                                         <div style="width: {{ ($avgScore / 5) * 100 }}%; height: 100%; background: {{ $avgScore >= 4 ? '#10b981' : ($avgScore >= 3 ? '#f59e0b' : '#ef4444') }};"></div>
@@ -223,7 +326,7 @@
                                     <span style="font-family:'DM Mono',monospace; font-size:12px; font-weight:700;">{{ $avgScore }}/5</span>
                                 </div>
                             </td>
-                            <td class="um-td um-td-aksi" style="text-align:center;">
+                            <td class="um-td um-td-aksi" style="text-align:center; vertical-align: top; padding-top: 15px;">
                                 <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
@@ -231,7 +334,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="um-empty">
+                            <td colspan="6" class="um-empty">
                                 <div class="um-empty-state">
                                     <p class="um-empty-title" style="font-size: 12px; color: var(--text-sub);">Belum ada riwayat pengesahan</p>
                                 </div>

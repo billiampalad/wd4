@@ -163,29 +163,20 @@ class UnitPageController extends Controller
     // ─── Evaluasi Kinerja ────────────────────────────────────────
     public function evaluasi()
     {
-        $user = Auth::user();
-        $unitId = $user->profile?->unit_kerja_id;
+        $unitId = $this->resolveUnitId();
 
-        if (!$unitId) {
-            return redirect()->back()->with('error', 'Unit kerja tidak ditemukan pada profil Anda.');
-        }
+        // Query dasar kerjasama
+        $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+            ->orderBy('created_at', 'asc');
 
-        // Query dasar kerjasama untuk unit ini
-        $baseQuery = Cooperation::where(function ($q) use ($unitId) {
-            $q->where('upa_id', $unitId)
-                ->orWhere('pusat_id', $unitId)
-                ->orWhereHas('upas', fn($sq) => $sq->where('upa_id', $unitId))
-                ->orWhereHas('pusats', fn($sq) => $sq->where('pusat_id', $unitId));
-        })->orderBy('created_at', 'asc');
+        // 1. List DRAFT (Status: proses)
+        $draftList = (clone $baseQuery)->where('status', 'proses')->get();
 
-        // 1. List DRAFT
-        $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->latest()->get();
-
-        // 2. List MENUNGGU EVALUASI (Sudah di-upload tapi belum dinilai)
-        $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->latest()->get();
+        // 2. List MENUNGGU EVALUASI
+        $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->get();
 
         // 3. List SUDAH DIEVALUASI / DISAHKAN
-        $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->latest()->get();
+        $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->get();
 
         return view('auth.unit', [
             'view' => 'evaluasi_kinerja',

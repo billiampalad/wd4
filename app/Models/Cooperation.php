@@ -31,6 +31,7 @@ class Cooperation extends Model
         'jurusan_id',
         'upa_id',
         'pusat_id',
+        'status_dokumen',
     ];
     protected $casts = [
         'start_date' => 'date',
