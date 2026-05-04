@@ -50,10 +50,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kerjasamaJurusan as $index => $kegiatan)
+                        @forelse($kerjasamaJurusan as $kegiatan)
                             <tr class="um-row">
                                 <td class="um-td um-td-num">
-                                    <span class="um-num">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="um-num">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span>
                                 </td>
                                 <td class="um-td">
                                     <span class="um-name">{{ $kegiatan->nama_kegiatan ?? '-' }}</span>

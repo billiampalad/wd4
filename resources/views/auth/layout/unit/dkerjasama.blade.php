@@ -212,7 +212,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kerjasamaList->sortBy('created_at') as $index => $kegiatan)
+                        @forelse($kerjasamaList as $kegiatan)
                         @php
                         $status = strtolower($kegiatan->status ?? '');
                         $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
@@ -269,7 +269,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         @endphp
                         <tr class="um-row dk-row">
                             <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
-                                <span class="um-num dk-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                                <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             </td>
                             <td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;">
                                 <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">

@@ -46,7 +46,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         $kerjasamaUnit = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return view('auth.unit', compact('kerjasamaUnit'));
