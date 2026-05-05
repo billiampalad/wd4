@@ -12,7 +12,7 @@ class Evaluasi extends Model
     protected $table = 'evaluasis';
 
     protected $fillable = [
-        'id_kegiatan',
+        'cooperation_id',
         'dinilai_oleh',
         'sesuai_rencana',
         'kualitas',
@@ -22,14 +22,9 @@ class Evaluasi extends Model
         'catatan',
     ];
 
-    public function kegiatanKerjasama()
-    {
-        return $this->belongsTo(KegiatanKerjasama::class, 'id_kegiatan');
-    }
-
     public function cooperation()
     {
-        return $this->belongsTo(Cooperation::class, 'id_kegiatan');
+        return $this->belongsTo(Cooperation::class, 'cooperation_id');
     }
 
     public function penilai()

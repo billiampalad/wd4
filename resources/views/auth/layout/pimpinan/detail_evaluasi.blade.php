@@ -164,6 +164,9 @@
                             <div class="spec-item"><span class="spec-label">Keterlibatan Mitra</span><span
                                     class="spec-val text-xl text-danger">{{ $e->keterlibatan ?? '-' }}<span
                                         class="text-sm text-gray-400">/5</span></span></div>
+                            <div class="spec-item"><span class="spec-label">Efisiensi</span><span
+                                    class="spec-val text-xl text-danger">{{ $e->efisiensi ?? '-' }}<span
+                                        class="text-sm text-gray-400">/5</span></span></div>
                             <div class="spec-item"><span class="spec-label">Kepuasan Pihak Terkait</span><span
                                     class="spec-val text-xl text-danger">{{ $e->kepuasan ?? '-' }}<span
                                         class="text-sm text-gray-400">/5</span></span></div>

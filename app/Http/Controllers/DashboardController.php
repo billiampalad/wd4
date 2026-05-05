@@ -15,68 +15,87 @@ class DashboardController
     public function pimpinan()
     {
         $tahunIni = now()->year;
+        $user = Auth::user();
 
         // ── 1. WIDGET KARTU STATISTIK ─────────────────────────────
-
-        // Total Kerja Sama Tahun Ini
-        $totalKerjasamaTahunIni = Cooperation::whereYear('created_at', $tahunIni)->count();
-
-        // Menunggu Evaluasi Pimpinan (status_dokumen = 'Menunggu Evaluasi')
-        $menungguEvaluasi = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')->count();
-
-        // Status 'Menunggu Validasi' tidak ada dalam list status terbaru (Draft, Menunggu Evaluasi, Disahkan)
-        $menungguValidasi = 0;
-
-        // Kerjasama Internasional vs Nasional (via mitra belongsTo)
-        $internasional = Cooperation::whereYear('created_at', $tahunIni)
-            ->whereHas('mitra', fn($q) => $q->where('kategori', 'internasional'))
-            ->count();
-        $nasional = Cooperation::whereYear('created_at', $tahunIni)
-            ->whereHas('mitra', fn($q) => $q->where('kategori', 'nasional'))
-            ->count();
+        $totalKerjasamaAktif = Cooperation::where('status', 'aktif')->count();
+        $totalMitra = \App\Models\Mitra::count();
+        $totalNilaiKontrak = \App\Models\DetailKegiatan::sum('nilai_kontrak');
+        
+        $capaianSasaran = DB::table('detail_kegiatans')
+            ->join('sasarans', 'detail_kegiatans.sasaran_id', '=', 'sasarans.id')
+            ->select('sasarans.deskripsi as nama_sasaran', DB::raw('COUNT(*) as total'))
+            ->groupBy('sasarans.deskripsi')
+            ->get();
 
         // ── 2. VISUALISASI GRAFIK ─────────────────────────────────
-
-        // A. Tren Kerja Sama Per Bulan (tahun berjalan)
-        $trenPerBulan = Cooperation::whereYear('created_at', $tahunIni)
-            ->select(DB::raw('MONTH(created_at) as bulan'), DB::raw('COUNT(*) as total'))
-            ->groupBy('bulan')
-            ->orderBy('bulan')
+        $distribusiJenis = Cooperation::select('jenis', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('jenis')
+            ->groupBy('jenis')
             ->get();
 
-        // B. Distribusi Sebaran Jenis Kerjasama (Donut) — from detail_kegiatans pivot
-        $sebaranJenis = DB::table('detail_kegiatans')
-            ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
-            ->select('jenis_kerjasamas.nama_kerjasama', DB::raw('COUNT(*) as total'))
-            ->groupBy('jenis_kerjasamas.nama_kerjasama')
+        $trenTahunan = Cooperation::whereNotNull('start_date')
+            ->select(DB::raw('YEAR(start_date) as tahun'), DB::raw('COUNT(*) as total'))
+            ->groupBy('tahun')
+            ->orderBy('tahun')
             ->get();
 
-        // C. Kinerja Jurusan (Horizontal Bar) — from kerjasama_jurusan pivot
-        $kinerjaJurusan = DB::table('kerjasama_jurusan')
+        $topJurusan = DB::table('kerjasama_jurusan')
             ->join('jurusans', 'kerjasama_jurusan.jurusan_id', '=', 'jurusans.id')
             ->select('jurusans.nama_jurusan', DB::raw('COUNT(*) as total'))
             ->groupBy('jurusans.nama_jurusan')
             ->orderByDesc('total')
+            ->limit(5)
             ->get();
 
-        // C2. Kinerja Unit Pelaksana — based on tipe_pelaksana grouping
-        $kinerjaUnit = Cooperation::whereNotNull('tipe_pelaksana')
-            ->select('tipe_pelaksana', DB::raw('COUNT(*) as total'))
-            ->groupBy('tipe_pelaksana')
-            ->orderByDesc('total')
-            ->get()
-            ->map(function ($item) {
-                $item->nama_unit_pelaksana = match ($item->tipe_pelaksana) {
-                    'jurusan' => 'Jurusan',
-                    'upa' => 'UPA',
-                    'pusat' => 'Pusat',
-                    default => ucfirst($item->tipe_pelaksana),
-                };
-                return $item;
-            });
+        $klasifikasiMitra = DB::table('mitras')
+            ->join('klasifikasi', 'mitras.id_klasifikasi', '=', 'klasifikasi.id')
+            ->select('klasifikasi.nama as klasifikasi', DB::raw('COUNT(*) as total'))
+            ->groupBy('klasifikasi.nama')
+            ->get();
 
-        // ── 3. TABEL AKSI CEPAT ──────────────────────────────────
+        $internasional = \App\Models\Mitra::where('kategori', 'internasional')->count();
+        $nasional = \App\Models\Mitra::where('kategori', 'nasional')->count();
 
+        // ── 3. RINGKASAN TUGAS HARI INI ───────────────────────────
+        $expiringSoon = Cooperation::with('mitra')
+            ->where('status', 'aktif')
+            ->whereNotNull('end_date')
+            ->whereBetween('end_date', [now(), now()->addDays(60)])
+            ->get();
+
+        $dalamPerpanjangan = Cooperation::with('mitra')
+            ->where('status', 'proses') // Asumsi proses = perpanjangan
+            ->get();
+
+        $dokumenTanpaLink = Cooperation::with('mitra')
+            ->where(function($q) {
+                $q->whereNull('document_link')->orWhere('document_link', '');
+            })
+            ->get();
+
+        $implementasiTerbaru = \App\Models\DetailKegiatan::with(['cooperation.mitra', 'jenisKerjasama'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        $realisasiLuaran = DB::table('detail_kegiatans')
+            ->select('satuan_luaran', DB::raw('SUM(volume_luaran) as total_volume'))
+            ->whereNotNull('satuan_luaran')
+            ->where('satuan_luaran', '!=', '')
+            ->groupBy('satuan_luaran')
+            ->get();
+
+        $notifikasiSistem = \App\Models\Notifikasi::where('user_id', $user->id)
+            ->where('is_read', 0)
+            ->latest()
+            ->get();
+
+        // Old variables for backward compatibility if needed:
+        $totalKerjasamaTahunIni = Cooperation::whereYear('created_at', $tahunIni)->count();
+        $menungguEvaluasi = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')->count();
+        $menungguValidasi = 0;
+        
         $dokumenMenunggu = Cooperation::with(['mitra', 'jurusans'])
             ->where('status_dokumen', 'Menunggu Evaluasi')
             ->latest()
@@ -89,11 +108,22 @@ class DashboardController
             'menungguValidasi',
             'internasional',
             'nasional',
-            'trenPerBulan',
-            'sebaranJenis',
-            'kinerjaJurusan',
-            'kinerjaUnit',
-            'dokumenMenunggu'
+            'dokumenMenunggu',
+            // New Dashboard variables
+            'totalKerjasamaAktif',
+            'totalMitra',
+            'totalNilaiKontrak',
+            'capaianSasaran',
+            'distribusiJenis',
+            'trenTahunan',
+            'topJurusan',
+            'klasifikasiMitra',
+            'expiringSoon',
+            'dalamPerpanjangan',
+            'dokumenTanpaLink',
+            'implementasiTerbaru',
+            'realisasiLuaran',
+            'notifikasiSistem'
         ));
     }
 

@@ -82,7 +82,6 @@ Tombol ini khusus untuk fase akhir, saat dokumen sudah berjalan sah namun masa b
 - Fungsi: Memulai proses perpanjangan, yang bisa mengubah status menjadi Dalam Perpanjangan dan mungkin memicu pembuatan form draft kesepakatan baru.
 - Hilang jika: Dokumen masih berstatus Draft, Menunggu Evaluasi, atau jika masa aktifnya masih sangat panjang.
 
-
 # FORM TAMBAHAN UNTUK AJUKAN PERPANJANGAN
 Pemilihan caranya sangat bergantung pada aturan administrasi kerja sama di kampus Anda. Berikut adalah dua pilihan cara kerja (UI/UX) yang paling umum digunakan:
 
@@ -106,6 +105,16 @@ Saat tombol "Ajukan Perpanjangan" ditekan, arahkan Unit Kerja ke halaman Form In
 2. Unit Kerja melihat form input data yang sudah terisi, jadi mereka hanya perlu mengganti Nomor PKS baru dan menyesuaikan tanggal berlakunya.
 3. Setelah di-submit, ini akan tersimpan sebagai Data Kerja Sama Baru dengan status awal Draft.
 4. Kerja sama yang lama statusnya dibiarkan Kadaluarsa atau Selesai sebagai arsip sejarah.
+
+
+# Kesimpulan Struktur Menu Final Pimpinan:
+- Dashboard Eksekutif (Beranda & ringkasan tugas hari ini)
+- Evaluasi & Validasi (Tempat Pimpinan memberi nilai, catatan, dan status persetujuan)
+- Monitoring Data (Melihat grafik performa instansi dan peringatan dini)
+- Arsip Digital (Pencarian cepat dokumen PDF yang sudah disahkan)
+- Laporan Global (Pusat unduhan dan cetak rekapitulasi)
+
+
 
 ## PERAN KERJA NOTIFIKASI
 Gemini berkata

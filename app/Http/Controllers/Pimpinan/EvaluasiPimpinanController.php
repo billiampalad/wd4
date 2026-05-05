@@ -64,7 +64,7 @@ class EvaluasiPimpinanController extends Controller
                 ]);
 
                 Evaluasi::updateOrCreate(
-                    ['id_kegiatan' => $kegiatan->id],
+                    ['cooperation_id' => $kegiatan->id],
                     [
                         'dinilai_oleh'   => Auth::id(),
                         'sesuai_rencana' => $request->sesuai_rencana,
