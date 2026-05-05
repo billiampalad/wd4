@@ -129,13 +129,135 @@ class DashboardController
 
     public function pimpinanMonitoring()
     {
-        $dataKerjasama = Cooperation::with(['mitra', 'jurusans', 'upas', 'pusats', 'details', 'pjInternal'])
+        $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran', 'pjInternal'])
             ->latest()
             ->get();
 
+        // ── I. GRAFIK PERFORMA INSTANSI ───────────────────────────
+
+        // 1. Funnel: MoU → MoA → IA conversion
+        $funnelData = Cooperation::select('jenis', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('jenis')
+            ->groupBy('jenis')
+            ->pluck('total', 'jenis');
+
+        // 2. Capaian Sasaran / IKU
+        $sasaranData = DB::table('detail_kegiatans')
+            ->join('sasarans', 'detail_kegiatans.sasaran_id', '=', 'sasarans.id')
+            ->select('sasarans.id', 'sasarans.deskripsi as nama_sasaran', DB::raw('COUNT(*) as total'))
+            ->groupBy('sasarans.id', 'sasarans.deskripsi')
+            ->get();
+        $totalSasaranEntries = $sasaranData->sum('total');
+
+        // 3. Revenue / Financial Trend (monthly for current year)
+        $financialTrend = DB::table('detail_kegiatans')
+            ->join('cooperations', 'detail_kegiatans.cooperation_id', '=', 'cooperations.id')
+            ->whereNotNull('cooperations.start_date')
+            ->select(
+                DB::raw('YEAR(cooperations.start_date) as tahun'),
+                DB::raw('MONTH(cooperations.start_date) as bulan'),
+                DB::raw('SUM(detail_kegiatans.nilai_kontrak) as total_kontrak')
+            )
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->get();
+        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status', 'aktif'))
+            ->sum('nilai_kontrak');
+
+        // 4. Ranking Unit Pelaksana
+        $rankJurusan = DB::table('kerjasama_jurusan')
+            ->join('jurusans', 'kerjasama_jurusan.jurusan_id', '=', 'jurusans.id')
+            ->join('cooperations', 'kerjasama_jurusan.cooperation_id', '=', 'cooperations.id')
+            ->where('cooperations.status', 'aktif')
+            ->select('jurusans.nama_jurusan as nama', DB::raw('COUNT(*) as total'))
+            ->groupBy('jurusans.nama_jurusan')
+            ->orderByDesc('total')
+            ->get();
+
+        $rankUpa = DB::table('kerjasama_upa')
+            ->join('upas', 'kerjasama_upa.upa_id', '=', 'upas.id')
+            ->join('cooperations', 'kerjasama_upa.cooperation_id', '=', 'cooperations.id')
+            ->where('cooperations.status', 'aktif')
+            ->select('upas.nama_upa as nama', DB::raw('COUNT(*) as total'))
+            ->groupBy('upas.nama_upa')
+            ->orderByDesc('total')
+            ->get();
+
+        $rankPusat = DB::table('kerjasama_pusat')
+            ->join('pusats', 'kerjasama_pusat.pusat_id', '=', 'pusats.id')
+            ->join('cooperations', 'kerjasama_pusat.cooperation_id', '=', 'cooperations.id')
+            ->where('cooperations.status', 'aktif')
+            ->select('pusats.nama_pusat as nama', DB::raw('COUNT(*) as total'))
+            ->groupBy('pusats.nama_pusat')
+            ->orderByDesc('total')
+            ->get();
+
+        $unitRanking = collect()
+            ->merge($rankJurusan->map(fn($i) => (object)['nama' => $i->nama, 'total' => $i->total, 'tipe' => 'Jurusan']))
+            ->merge($rankUpa->map(fn($i) => (object)['nama' => $i->nama, 'total' => $i->total, 'tipe' => 'UPA']))
+            ->merge($rankPusat->map(fn($i) => (object)['nama' => $i->nama, 'total' => $i->total, 'tipe' => 'Pusat']))
+            ->sortByDesc('total')
+            ->values();
+
+        // ── II. SISTEM PERINGATAN DINI ────────────────────────────
+
+        // 1. Expiration Alerts
+        $criticalExpiry = Cooperation::with(['mitra', 'pjInternal'])
+            ->where('status', 'aktif')
+            ->whereNotNull('end_date')
+            ->whereBetween('end_date', [now(), now()->addDays(30)])
+            ->orderBy('end_date')
+            ->get();
+
+        $warningExpiry = Cooperation::with(['mitra', 'pjInternal'])
+            ->where('status', 'aktif')
+            ->whereNotNull('end_date')
+            ->whereBetween('end_date', [now()->addDays(31), now()->addDays(90)])
+            ->orderBy('end_date')
+            ->get();
+
+        // 2. Idle Cooperations (aktif tapi tanpa detail_kegiatans)
+        $idleCooperations = Cooperation::with(['mitra', 'pjInternal'])
+            ->where('status', 'aktif')
+            ->whereDoesntHave('details')
+            ->get();
+
+        // 3. Compliance Alerts (aktif tapi document_link / pks_number NULL)
+        $complianceAlerts = Cooperation::with(['mitra'])
+            ->where('status', 'aktif')
+            ->where(function($q) {
+                $q->whereNull('document_link')
+                  ->orWhere('document_link', '')
+                  ->orWhereNull('pks_number')
+                  ->orWhere('pks_number', '');
+            })
+            ->get();
+
+        // ── III. EXTRA STATS ──────────────────────────────────────
+        $totalKerjasama = $dataKerjasama->count();
+        $aktifCount = $dataKerjasama->where('status', 'aktif')->count();
+        $expiredCount = $dataKerjasama->filter(fn($i) => in_array(strtolower($i->status ?? ''), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']))->count();
+
         return view('auth.pimpinan', [
             'view' => 'monitoring',
-            'dataKerjasama' => $dataKerjasama
+            'dataKerjasama' => $dataKerjasama,
+            // Performance metrics
+            'funnelData' => $funnelData,
+            'sasaranData' => $sasaranData,
+            'totalSasaranEntries' => $totalSasaranEntries,
+            'financialTrend' => $financialTrend,
+            'totalNilaiKontrakAktif' => $totalNilaiKontrakAktif,
+            'unitRanking' => $unitRanking,
+            // Early warnings
+            'criticalExpiry' => $criticalExpiry,
+            'warningExpiry' => $warningExpiry,
+            'idleCooperations' => $idleCooperations,
+            'complianceAlerts' => $complianceAlerts,
+            // Stats
+            'totalKerjasama' => $totalKerjasama,
+            'aktifCount' => $aktifCount,
+            'expiredCount' => $expiredCount,
         ]);
     }
 
