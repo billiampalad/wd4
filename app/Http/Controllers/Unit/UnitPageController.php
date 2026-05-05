@@ -193,7 +193,9 @@ class UnitPageController extends Controller
 
         $kegiatan = Cooperation::findOrFail($id);
 
-        $existingEval = null; // Stubbing evaluation as relation is broken
+        $existingEval = Evaluasi::where('cooperation_id', $kegiatan->id)
+            ->where('dinilai_oleh', Auth::id())
+            ->first();
 
         return view('auth.unit', compact('kegiatan', 'existingEval'));
     }
@@ -214,7 +216,7 @@ class UnitPageController extends Controller
         $kegiatan = Cooperation::findOrFail($id);
 
         Evaluasi::create([
-            'id_kegiatan'   => $kegiatan->id,
+            'cooperation_id' => $kegiatan->id,
             'dinilai_oleh'  => Auth::id(),
             'sesuai_rencana' => $request->sesuai_rencana,
             'kualitas'       => $request->kualitas,
@@ -225,7 +227,7 @@ class UnitPageController extends Controller
         ]);
 
         // Update status kegiatan menjadi menunggu validasi pimpinan
-        $kegiatan->update(['status' => 'menunggu_validasi']);
+        $kegiatan->update(['status_dokumen' => 'Menunggu Evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
         $pimpinans = \App\Models\User::whereHas('role', function ($q) {
@@ -264,7 +266,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
         $kegiatan = Cooperation::findOrFail($id);
 
-        $eval = Evaluasi::where('id_kegiatan', $kegiatan->id)
+        $eval = Evaluasi::where('cooperation_id', $kegiatan->id)
             ->where('dinilai_oleh', Auth::id())
             ->firstOrFail();
 
@@ -278,7 +280,7 @@ class UnitPageController extends Controller
         ]);
 
         // Update status kegiatan menjadi menunggu validasi pimpinan
-        $kegiatan->update(['status' => 'menunggu_validasi']);
+        $kegiatan->update(['status_dokumen' => 'Menunggu Evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
         $pimpinans = \App\Models\User::whereHas('role', function ($q) {
@@ -309,7 +311,7 @@ class UnitPageController extends Controller
         $kegiatan = Cooperation::findOrFail($id);
 
         // Pastikan sudah ada evaluasi
-        $hasEval = Evaluasi::where('id_kegiatan', $kegiatan->id)
+        $hasEval = Evaluasi::where('cooperation_id', $kegiatan->id)
             ->where('dinilai_oleh', Auth::id())
             ->exists();
 
@@ -317,7 +319,7 @@ class UnitPageController extends Controller
             return back()->with('error', 'Tidak bisa mengirim ke Pimpinan. Silakan isi evaluasi terlebih dahulu.');
         }
 
-        $kegiatan->update(['status' => 'menunggu_validasi']);
+        $kegiatan->update(['status_dokumen' => 'Menunggu Evaluasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
         $pimpinans = \App\Models\User::whereHas('role', function ($q) {

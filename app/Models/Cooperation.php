@@ -116,6 +116,11 @@ class Cooperation extends Model
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
     }
 
+    public function kesimpulans()
+    {
+        return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
     // ─── Accessors ───────────────────────────────────────
 
     public function getStatusLabelAttribute()

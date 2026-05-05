@@ -20,6 +20,10 @@ class Evaluasi extends Model
         'efisiensi',
         'kepuasan',
         'catatan',
+        'ringkasan',
+        'saran',
+        'tindak_lanjut',
+        'status_validasi',
     ];
 
     public function cooperation()
