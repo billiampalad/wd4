@@ -33,6 +33,9 @@ class Cooperation extends Model
         'pusat_id',
         'status_dokumen',
     ];
+
+    protected $appends = ['status_label', 'status_class'];
+
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
@@ -98,11 +101,6 @@ class Cooperation extends Model
         return $this->belongsToMany(Prodi::class, 'kerjasama_prodi', 'cooperation_id', 'prodi_id');
     }
 
-    public function mitras()
-    {
-        return $this->belongsToMany(Mitra::class, 'cooperation_mitra', 'cooperation_id', 'mitra_id');
-    }
-
     public function laporanFiles()
     {
         return $this->hasMany(LaporanFile::class, 'cooperation_id');
@@ -111,5 +109,28 @@ class Cooperation extends Model
     public function details()
     {
         return $this->hasMany(DetailKegiatan::class);
+    }
+
+    public function evaluasis()
+    {
+        return $this->hasMany(Evaluasi::class, 'id_kegiatan');
+    }
+
+    // ─── Accessors ───────────────────────────────────────
+
+    public function getStatusLabelAttribute()
+    {
+        return $this->status_dokumen ?: 'Draft';
+    }
+
+    public function getStatusClassAttribute()
+    {
+        return match ($this->status_dokumen) {
+            'Menunggu Evaluasi' => 'tag-blue',
+            'Menunggu Validasi' => 'tag-purple',
+            'Disahkan' => 'tag-green',
+            'Revisi' => 'tag-red',
+            default => 'tag-orange',
+        };
     }
 }

@@ -35,23 +35,32 @@
                             <td>
                                 @php
                                     $isJurusan = $kegiatan->jurusans->count() > 0;
-                                    $namaPengusul = $isJurusan 
-                                        ? $kegiatan->jurusans->first()->nama_jurusan 
-                                        : ($kegiatan->unitKerjas->count() > 0 ? $kegiatan->unitKerjas->first()->nama_unit_pelaksana : '-');
+                                    $namaPengusul = '-';
+                                    if ($isJurusan) {
+                                        $namaPengusul = $kegiatan->jurusans->first()->nama_jurusan;
+                                    } elseif ($kegiatan->upas->count() > 0) {
+                                        $namaPengusul = $kegiatan->upas->first()->nama_upa;
+                                    } elseif ($kegiatan->pusats->count() > 0) {
+                                        $namaPengusul = $kegiatan->pusats->first()->nama_pusat;
+                                    }
                                 @endphp
                                 <div style="font-weight: 700; color: var(--text);">{{ $namaPengusul }}</div>
-                                <div style="font-size: 11px; color: var(--text-sub);">{{ $isJurusan ? 'Jurusan' : 'Unit Kerja' }}</div>
+                                <div style="font-size: 11px; color: var(--text-sub);">
+                                    {{ $isJurusan ? 'Jurusan' : ($kegiatan->upas->count() > 0 ? 'UPA' : ($kegiatan->pusats->count() > 0 ? 'Pusat' : 'Unit Kerja')) }}
+                                </div>
                             </td>
                             <td>
-                                <div style="font-weight: 600; color: var(--accent);">{{ $kegiatan->nama_kegiatan }}</div>
-                                <div style="font-size: 11px; color: var(--text-sub);">PJ: {{ $kegiatan->penanggung_jawab ?? '-' }}</div>
+                                <div style="font-weight: 600; color: var(--accent);">{{ $kegiatan->title }}</div>
+                                <div style="font-size: 11px; color: var(--text-sub);">PJ: {{ $kegiatan->pjInternal->nama ?? '-' }}</div>
                             </td>
                             <td>
-                                @foreach($kegiatan->mitras as $mitra)
+                                @if($kegiatan->mitra)
                                     <span class="tag" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 10px; margin-bottom: 2px; display: inline-block;">
-                                        {{ $mitra->nama_mitra }}
+                                        {{ $kegiatan->mitra->nama_mitra }}
                                     </span>
-                                @endforeach
+                                @else
+                                    <span style="color: var(--text-sub); font-size: 11px;">-</span>
+                                @endif
                             </td>
                             <td style="text-align: center;">
                                 <span class="tag {{ $kegiatan->status_class }}" style="font-size: 10px; padding: 4px 10px;">

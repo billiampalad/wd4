@@ -24,35 +24,34 @@
                 <div class="spec-grid">
                     <div class="spec-item">
                         <span class="spec-label">Nama Kegiatan</span>
-                        <span class="spec-val">{{ $kegiatan->nama_kegiatan }}</span>
+                        <span class="spec-val">{{ $kegiatan->title }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Status</span>
                         @php
-                            $statusClass = $kegiatan->status == 'menunggu_evaluasi' || $kegiatan->status == 'menunggu_validasi' ? 'warning' : ($kegiatan->status == 'selesai' ? 'success' : 'danger');
+                            $statusClass = $kegiatan->status_dokumen == 'Menunggu Evaluasi' ? 'warning' : ($kegiatan->status_dokumen == 'Disahkan' ? 'success' : 'danger');
                         @endphp
                         <span
-                            class="badge-status {{ $statusClass }}">{{ ucfirst(str_replace('_', ' ', $kegiatan->status)) }}</span>
+                            class="badge-status {{ $statusClass }}">{{ $kegiatan->status_dokumen }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Jenis Kerjasama</span>
                         <span
-                            class="spec-val">{{ $kegiatan->jenisKerjasama->pluck('nama_kerjasama')->join(', ') ?: '-' }}</span>
+                            class="spec-val">{{ $kegiatan->jenis }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Nomor MOU</span>
-                        <span class="spec-val">{{ $kegiatan->nomor_mou ?? '-' }}</span>
+                        <span class="spec-val">{{ $kegiatan->doc_number ?? '-' }}</span>
                     </div>
                     <div class="spec-item">
-                        <span class="spec-label">Tanggal MOU</span>
-                        <span
-                            class="spec-val">{{ $kegiatan->tanggal_mou ? $kegiatan->tanggal_mou->format('d M Y') : '-' }}</span>
+                        <span class="spec-label">Nomor PKS</span>
+                        <span class="spec-val">{{ $kegiatan->pks_number ?? '-' }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Periode</span>
                         <span class="spec-val">
-                            {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '-' }} s/d
-                            {{ $kegiatan->periode_selesai ? $kegiatan->periode_selesai->format('d M Y') : 'Selesai' }}
+                            {{ $kegiatan->start_date ? $kegiatan->start_date->format('d M Y') : '-' }} s/d
+                            {{ $kegiatan->end_date ? $kegiatan->end_date->format('d M Y') : 'Selesai' }}
                         </span>
                     </div>
                 </div>
@@ -71,18 +70,21 @@
                     <div class="spec-item">
                         <span class="spec-label">Unit Pelaksana</span>
                         @php
-                            $pengusul = $kegiatan->jurusans->pluck('nama_jurusan')->merge($kegiatan->unitKerjas->pluck('nama_unit_pelaksana'))->join(', ');
+                            $pengusul = $kegiatan->jurusans->pluck('nama_jurusan')
+                                ->merge($kegiatan->upas->pluck('nama_upa'))
+                                ->merge($kegiatan->pusats->pluck('nama_pusat'))
+                                ->join(', ');
                         @endphp
                         <span class="spec-val">{{ $pengusul ?: 'N/A' }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Nama Mitra Dudika</span>
-                        <span class="spec-val">{{ $kegiatan->mitras->pluck('nama_mitra')->join(', ') ?: '-' }}</span>
+                        <span class="spec-val">{{ $kegiatan->mitra->nama_mitra ?? '-' }}</span>
                     </div>
                     <div class="spec-item">
                         <span class="spec-label">Negara / Wilayah</span>
                         <span
-                            class="spec-val">{{ $kegiatan->mitras->pluck('negara')->unique()->join(', ') ?: 'Indonesia' }}</span>
+                            class="spec-val">{{ $kegiatan->mitra->negara ?? 'Indonesia' }}</span>
                     </div>
                 </div>
             </div>

@@ -99,7 +99,7 @@ class DashboardController
 
     public function pimpinanMonitoring()
     {
-        $dataKerjasama = Cooperation::with(['mitra', 'jurusans', 'details'])
+        $dataKerjasama = Cooperation::with(['mitra', 'jurusans', 'upas', 'pusats', 'details', 'pjInternal'])
             ->latest()
             ->get();
 
@@ -135,7 +135,7 @@ class DashboardController
         // 1. Antrean Laporan Jurusan (Menunggu Evaluasi, tipe_pelaksana = jurusan)
         $laporanJurusan = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
             ->where('tipe_pelaksana', 'jurusan')
-            ->with(['jurusans', 'mitra'])
+            ->with(['jurusans', 'mitra', 'evaluasis'])
             ->latest()
             ->get();
 
@@ -145,7 +145,7 @@ class DashboardController
                 $q->whereNull('tipe_pelaksana')
                     ->orWhere('tipe_pelaksana', '!=', 'jurusan');
             })
-            ->with(['mitra'])
+            ->with(['mitra', 'upas', 'pusats', 'evaluasis'])
             ->latest()
             ->get();
 

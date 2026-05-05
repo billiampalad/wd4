@@ -27,6 +27,11 @@ class Evaluasi extends Model
         return $this->belongsTo(KegiatanKerjasama::class, 'id_kegiatan');
     }
 
+    public function cooperation()
+    {
+        return $this->belongsTo(Cooperation::class, 'id_kegiatan');
+    }
+
     public function penilai()
     {
         return $this->belongsTo(User::class, 'dinilai_oleh');

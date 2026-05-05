@@ -47,11 +47,13 @@
                             <tr class="um-row">
                                 <td>{{ $index + 1 }}</td>
                                 <td><strong>{{ $kegiatan->jurusans->first()->nama_jurusan ?? '-' }}</strong></td>
-                                <td>{{ $kegiatan->nama_kegiatan }}</td>
+                                <td>{{ $kegiatan->title }}</td>
                                 <td>
-                                    @foreach($kegiatan->mitras as $mitra)
-                                        <span class="tag" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 10px;">{{ $mitra->nama_mitra }}</span>
-                                    @endforeach
+                                    @if($kegiatan->mitra)
+                                        <span class="tag" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; font-size: 10px;">{{ $kegiatan->mitra->nama_mitra }}</span>
+                                    @else
+                                        <span style="color: var(--text-sub); font-size: 11px;">-</span>
+                                    @endif
                                 </td>
                                 <td style="text-align: center;">
                                     <a href="{{ route('pimpinan.evaluasi.show', $kegiatan->id) }}" class="rfc-btn" style="font-size: 11px; padding: 6px 14px;">
@@ -99,8 +101,18 @@
                         @forelse($laporanUnit as $index => $kegiatan)
                             <tr class="um-row">
                                 <td>{{ $index + 1 }}</td>
-                                <td><strong>{{ $kegiatan->unitKerjas->first()->nama_unit_pelaksana ?? '-' }}</strong></td>
-                                <td>{{ $kegiatan->nama_kegiatan }}</td>
+                                <td>
+                                    @php
+                                        $namaUnit = '-';
+                                        if ($kegiatan->upas->count() > 0) {
+                                            $namaUnit = $kegiatan->upas->first()->nama_upa;
+                                        } elseif ($kegiatan->pusats->count() > 0) {
+                                            $namaUnit = $kegiatan->pusats->first()->nama_pusat;
+                                        }
+                                    @endphp
+                                    <strong>{{ $namaUnit }}</strong>
+                                </td>
+                                <td>{{ $kegiatan->title }}</td>
                                 <td style="text-align: center;">
                                     @php
                                         $eval = $kegiatan->evaluasis->first();

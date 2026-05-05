@@ -23,25 +23,28 @@
                 <table class="um-table-detail" style="width: 100%; border-collapse: collapse;">
                     <tr>
                         <td style="width: 30%; padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">NAMA PROGRAM / KEGIATAN</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->nama_kegiatan }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->title }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">JENIS KERJA SAMA</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->jenisKerjasama->pluck('nama_kerjasama')->join(', ') }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->jenis }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">NAMA MITRA DUDIKA</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->mitras->pluck('nama_mitra')->join(', ') }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->mitra->nama_mitra ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">NEGARA</td>
-                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->mitras->pluck('negara')->unique()->join(', ') ?: 'Indonesia' }}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{{ $kegiatan->mitra->negara ?? 'Indonesia' }}</td>
                     </tr>
                     <tr>
                         <td style="padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">UNIT PELAKSANA</td>
                         <td style="padding: 12px; border-bottom: 1px solid #eee;">
                             @php
-                                $pengusul = $kegiatan->jurusans->pluck('nama_jurusan')->merge($kegiatan->unitKerjas->pluck('nama_unit_pelaksana'))->join(', ');
+                                $pengusul = $kegiatan->jurusans->pluck('nama_jurusan')
+                                    ->merge($kegiatan->upas->pluck('nama_upa'))
+                                    ->merge($kegiatan->pusats->pluck('nama_pusat'))
+                                    ->join(', ');
                             @endphp
                             {{ $pengusul ?: 'N/A' }}
                         </td>
@@ -49,15 +52,14 @@
                     <tr>
                         <td style="padding: 12px; font-weight: 600; color: var(--text-sub); border-bottom: 1px solid #eee;">PERIODE</td>
                         <td style="padding: 12px; border-bottom: 1px solid #eee;">
-                            {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '-' }} s/d 
-                            {{ $kegiatan->periode_selesai ? $kegiatan->periode_selesai->format('d M Y') : 'Selesai' }}
+                            {{ $kegiatan->start_date ? $kegiatan->start_date->format('d M Y') : '-' }} s/d 
+                            {{ $kegiatan->end_date ? $kegiatan->end_date->format('d M Y') : 'Selesai' }}
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 12px; font-weight: 600; color: var(--text-sub);">NOMOR & TANGGAL MOU</td>
+                        <td style="padding: 12px; font-weight: 600; color: var(--text-sub);">NOMOR MOU / PKS</td>
                         <td style="padding: 12px;">
-                            {{ $kegiatan->nomor_mou ?? '-' }} 
-                            @if($kegiatan->tanggal_mou) ({{ $kegiatan->tanggal_mou->format('d M Y') }}) @endif
+                            {{ $kegiatan->doc_number ?? '-' }} / {{ $kegiatan->pks_number ?? '-' }}
                         </td>
                     </tr>
                 </table>
