@@ -216,24 +216,19 @@
                 <table id="previewTable" class="um-table" style="white-space: nowrap; min-width: 1000px;">
                     <thead>
                         <tr>
-                            <th class="um-th um-th-num">No</th>
-                            <th class="um-th">Nama Kegiatan</th>
-                            <th class="um-th">Jenis Kerjasama</th>
+                            <th class="um-th um-th-num">#</th>
+                            <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th">Mitra</th>
-                            <th class="um-th">Periode</th>
+                            <th class="um-th" style="white-space: nowrap;">Masa Berlaku</th>
                             <th class="um-th">Status</th>
                         </tr>
                     </thead>
                     <tbody id="previewBody">
-                        <tr id="emptyStateRow">
-                            <td colspan="6" class="um-empty">
-                                <div class="um-empty-state" style="padding: 30px 0;">
-                                    <div class="um-empty-icon">
-                                        <i class="fas fa-search" style="font-size: 28px; opacity: 0.3; color: var(--text-sub);"></i>
-                                    </div>
-                                    <p class="um-empty-title">Belum ada preview data</p>
-                                    <p class="um-empty-sub">Silakan klik <strong>Tampilkan</strong> untuk melihat hasil filter.</p>
-                                </div>
+                        <tr id="loadingRow">
+                            <td colspan="6" style="text-align:center; padding: 40px 0;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i>
+                                <p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -245,75 +240,191 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('filterForm');
-    const previewBody = document.getElementById('previewBody');
-    const emptyRow = document.getElementById('emptyStateRow');
-    const previewCount = document.getElementById('previewCount');
+    var form = document.getElementById('filterForm');
+    var previewBody = document.getElementById('previewBody');
+    var previewCount = document.getElementById('previewCount');
+    var btnTampilkan = document.getElementById('btnTampilkan');
 
     function getFormParams() {
-        const fd = new FormData(form);
-        const params = new URLSearchParams();
+        var fd = new FormData(form);
+        var params = new URLSearchParams();
         fd.forEach(function (val, key) { if (val) params.append(key, val); });
         return params.toString();
     }
 
     function formatDate(dateStr) {
         if (!dateStr) return '-';
-        var d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
-        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        try {
+            var str = String(dateStr).split('T')[0];
+            var d = new Date(str);
+            if (isNaN(d.getTime())) return String(dateStr);
+            var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+            var day = String(d.getDate()).padStart(2, '0');
+            return day + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+        } catch (e) {
+            return '-';
+        }
     }
 
-    // Tampilkan preview
-    document.getElementById('btnTampilkan').addEventListener('click', function () {
-        var btn = this;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+    function showLoading() {
+        previewBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
+    }
+
+    function showEmpty() {
+        previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><div class="um-empty-icon"><i class="fas fa-inbox" style="font-size:28px; opacity:0.3; color:var(--text-sub);"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
+        previewCount.style.display = 'none';
+    }
+
+    function showError() {
+        previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
+    }
+
+    function buildRow(item, idx) {
+        var title = item.title || '-';
+        var docNumber = item.doc_number || '';
+        var jenis = item.jenis || '-';
+        var mitraName = (item.mitra && item.mitra.nama_mitra) ? item.mitra.nama_mitra : '-';
+
+        var pelaksanaIcon = 'fa-building';
+        var pelaksanaClass = 'dk-entity-indigo';
+        var pelaksanaName = '-';
+        if (item.tipe_pelaksana === 'jurusan') {
+            pelaksanaIcon = 'fa-microchip';
+            pelaksanaName = (item.jurusan && item.jurusan.nama_jurusan) ? item.jurusan.nama_jurusan : '-';
+        } else if (item.tipe_pelaksana === 'upa') {
+            pelaksanaIcon = 'fa-building-columns';
+            pelaksanaClass = 'dk-entity-cyan';
+            pelaksanaName = (item.upa && item.upa.nama_upa) ? item.upa.nama_upa : '-';
+        } else if (item.tipe_pelaksana === 'pusat') {
+            pelaksanaIcon = 'fa-landmark';
+            pelaksanaClass = 'dk-entity-violet';
+            pelaksanaName = (item.pusat && item.pusat.nama_pusat) ? item.pusat.nama_pusat : '-';
+        }
+
+        var mulai = formatDate(item.start_date);
+        var selesai = formatDate(item.end_date);
+
+        var status = (item.status || '').toLowerCase();
+        var isExpired = ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'].indexOf(status) !== -1;
+        var isExtended = status.indexOf('perpanjangan') !== -1;
+
+        var statusClass = 'dk-status-neutral';
+        var statusIcon = 'fa-circle-info';
+        var statusLabel = 'Belum Diatur';
+
+        if (status === 'aktif') {
+            statusClass = 'dk-status-active';
+            statusIcon = 'fa-circle-check';
+            statusLabel = 'Aktif';
+        } else if (status === 'proses' || status === 'menunggu_validasi') {
+            statusClass = 'dk-status-info';
+            statusIcon = 'fa-spinner fa-spin';
+            statusLabel = status === 'proses' ? 'Proses' : 'Menunggu Validasi';
+        } else if (isExtended) {
+            statusClass = 'dk-status-warning';
+            statusIcon = 'fa-clock';
+            statusLabel = 'Perpanjangan';
+        } else if (isExpired) {
+            statusClass = 'dk-status-danger';
+            statusIcon = 'fa-circle-xmark';
+            statusLabel = 'Kadarluarsa';
+        } else if (status === 'tidak aktif') {
+            statusClass = 'dk-status-muted';
+            statusIcon = 'fa-circle-minus';
+            statusLabel = 'Tidak Aktif';
+        } else if (status !== '') {
+            statusLabel = status.replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+        }
+
+        var tr = document.createElement('tr');
+        tr.className = 'um-row dk-row';
+        tr.innerHTML =
+            '<td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">' +
+                '<span class="um-num dk-num">' + String(idx + 1).padStart(2, '0') + '</span>' +
+            '</td>' +
+            '<td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;">' +
+                '<div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">' +
+                    '<span class="dk-doc-number">#' + (docNumber || '-') + '</span>' +
+                    '<span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">' + title + '</span>' +
+                    '<span class="dk-doc-kind">' + jenis + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;">' +
+                '<div class="dk-entity" style="align-items: flex-start;">' +
+                    '<span class="dk-entity-icon ' + pelaksanaClass + '" style="flex-shrink: 0;">' +
+                        '<i class="fas ' + pelaksanaIcon + '"></i>' +
+                    '</span>' +
+                    '<span class="dk-entity-text" style="padding-top: 4px;">' + pelaksanaName + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;">' +
+                '<div class="dk-entity" style="align-items: flex-start;">' +
+                    '<span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">' +
+                        '<i class="fas fa-building"></i>' +
+                    '</span>' +
+                    '<span class="dk-entity-text" style="padding-top: 4px;">' + mitraName + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;">' +
+                '<div class="dk-date-range-compact">' +
+                    '<span class="date-val">' + mulai + '</span>' +
+                    '<span class="date-sep">s/d</span>' +
+                    '<span class="date-val">' + selesai + '</span>' +
+                '</div>' +
+            '</td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;">' +
+                '<span class="dk-status ' + statusClass + '">' +
+                    '<i class="fas ' + statusIcon + '"></i> ' +
+                    statusLabel +
+                '</span>' +
+            '</td>';
+        return tr;
+    }
+
+    // Core function to fetch and render data
+    function loadData() {
+        // Immediately show loading skeleton (clears any previous content)
+        showLoading();
+
+        btnTampilkan.disabled = true;
+        btnTampilkan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
 
         var url = form.dataset.previewUrl + '?' + getFormParams();
 
         fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
             .then(function (res) { return res.json(); })
             .then(function (data) {
+                // Clear the loading skeleton
                 previewBody.innerHTML = '';
 
                 if (!data || data.length === 0) {
-                    previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><div class="um-empty-icon"><i class="fas fa-inbox" style="font-size:28px; opacity:0.3; color:var(--text-sub);"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
-                    previewCount.style.display = 'none';
-                } else {
-                    previewCount.textContent = data.length + ' data';
-                    previewCount.style.display = 'inline-block';
-
-                    data.forEach(function (item, idx) {
-                        var jenis = (item.jenis_kerjasama || []).map(function (j) { return j.nama_kerjasama; }).join(', ') || '-';
-                        var mitra = (item.mitras || []).map(function (m) { return m.nama_mitra; }).join(', ') || '-';
-                        var periode = formatDate(item.periode_mulai) + ' — ' + formatDate(item.periode_selesai);
-                        var sLabel = item.status_label || item.status || '-';
-                        var sClass = item.status_class || 'tag-orange';
-
-                        var tr = document.createElement('tr');
-                        tr.className = 'um-row';
-                        tr.innerHTML =
-                            '<td class="um-td um-td-num"><span class="um-num">' + String(idx + 1).padStart(3, '0') + '</span></td>' +
-                            '<td class="um-td"><span class="um-name">' + (item.nama_kegiatan || '-') + '</span></td>' +
-                            '<td class="um-td"><span class="tag tag-purple" style="font-size:11px;">' + jenis + '</span></td>' +
-                            '<td class="um-td" style="font-size:12px;">' + mitra + '</td>' +
-                            '<td class="um-td" style="font-size:12px; color:var(--text-sub);">' + periode + '</td>' +
-                            '<td class="um-td"><span class="tag ' + sClass + '" style="font-size:11px;"><i class="fas fa-circle" style="font-size:6px;"></i> ' + sLabel + '</span></td>';
-                        previewBody.appendChild(tr);
-                    });
+                    showEmpty();
+                    return;
                 }
+
+                previewCount.textContent = data.length + ' data';
+                previewCount.style.display = 'inline-block';
+
+                data.forEach(function (item, idx) {
+                    try {
+                        previewBody.appendChild(buildRow(item, idx));
+                    } catch(e) {
+                        console.error('Error rendering row ' + idx + ':', e);
+                    }
+                });
             })
             .catch(function (err) {
                 console.error(err);
-                previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
+                showError();
             })
             .finally(function () {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-search"></i> Tampilkan';
+                btnTampilkan.disabled = false;
+                btnTampilkan.innerHTML = '<i class="fas fa-search"></i> Tampilkan';
             });
-    });
+    }
+
+    // Button click handler
+    btnTampilkan.addEventListener('click', loadData);
 
     // Cetak PDF
     document.getElementById('btnCetakPdf').addEventListener('click', function () {
@@ -324,5 +435,8 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('btnExportExcel').addEventListener('click', function () {
         window.open(form.dataset.excelUrl + '?' + getFormParams(), '_blank');
     });
+
+    // Auto-load data on page load (call directly, no click simulation)
+    loadData();
 });
 </script>

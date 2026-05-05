@@ -382,13 +382,13 @@ class UnitPageController extends Controller
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::query();
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat']);
 
         if ($request->filled('tanggal_awal')) {
-            $query->where('periode_mulai', '>=', $request->tanggal_awal);
+            $query->where('start_date', '>=', $request->tanggal_awal);
         }
         if ($request->filled('tanggal_akhir')) {
-            $query->where('periode_mulai', '<=', $request->tanggal_akhir);
+            $query->where('start_date', '<=', $request->tanggal_akhir);
         }
         if ($request->filled('id_jenis') && $request->id_jenis != 'all') {
             $query->where('jenis', 'like', '%' . $request->id_jenis . '%');
