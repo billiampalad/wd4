@@ -169,8 +169,8 @@ class UnitPageController extends Controller
         $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
             ->orderBy('created_at', 'asc');
 
-        // 1. List DRAFT (Status: proses)
-        $draftList = (clone $baseQuery)->where('status', 'proses')->get();
+        // 1. List DRAFT (Status: Draft)
+        $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->get();
 
         // 2. List MENUNGGU EVALUASI
         $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->get();

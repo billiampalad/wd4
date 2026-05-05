@@ -7766,6 +7766,7 @@ body.sidebar-collapsed .dk-container {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 14px;
     padding: 0 20px 18px 20px;
+    border-bottom: none !important;
 }
 
 .ev-metric-card {
@@ -7829,6 +7830,7 @@ body.sidebar-collapsed .dk-container {
 
 .ev-history {
     padding: 0 20px 20px 20px;
+    border-top: none !important;
 }
 
 .ev-history-title {
@@ -7836,6 +7838,7 @@ body.sidebar-collapsed .dk-container {
     font-weight: 700;
     color: var(--text);
     margin-bottom: 10px;
+    border-top: none !important;
 }
 
 .ev-history-item {

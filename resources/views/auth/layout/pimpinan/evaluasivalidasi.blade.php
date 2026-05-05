@@ -9,9 +9,7 @@
                     style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px"><i
                         class="fas fa-home"></i></a>
                 <span class="sep">/</span>
-                <span class="current">Administrasi</span>
-                <span class="sep">/</span>
-                <span class="current" style="color:var(--accent);">Validasi</span>
+                <span class="current">Evaluasi Validasi</span>
             </div>
             <div class="dk-hero-main">
                 <div class="dk-hero-icon"><i class="fas fa-file-signature"></i></div>
@@ -32,26 +30,26 @@
             <!-- Tabs -->
             <div class="eval-tabs">
                 <button class="eval-tab-btn" :class="activeTab === 'jurusan' ? 'active jurusan' : ''" @click="activeTab = 'jurusan'">
-                    <i class="fas fa-university"></i> Jurusan
+                    <i class="fas fa-graduation-cap"></i> Jurusan
                     @if($laporanJurusan->count() > 0)
                         <span class="eval-badge jurusan">{{ $laporanJurusan->count() }}</span>
                     @endif
                 </button>
                 <button class="eval-tab-btn" :class="activeTab === 'upa' ? 'active upa' : ''" @click="activeTab = 'upa'">
-                    <i class="fas fa-building-columns"></i> UPA
+                    <i class="fas fa-cogs"></i> UPA
                     @if($laporanUpa->count() > 0)
                         <span class="eval-badge upa">{{ $laporanUpa->count() }}</span>
                     @endif
                 </button>
                 <button class="eval-tab-btn" :class="activeTab === 'pusat' ? 'active pusat' : ''" @click="activeTab = 'pusat'">
-                    <i class="fas fa-landmark"></i> Pusat
+                    <i class="fas fa-building"></i> Pusat
                     @if($laporanPusat->count() > 0)
                         <span class="eval-badge pusat">{{ $laporanPusat->count() }}</span>
                     @endif
                 </button>
                 @if($laporanUnit->count() > 0)
                 <button class="eval-tab-btn" :class="activeTab === 'unit' ? 'active unit' : ''" @click="activeTab = 'unit'">
-                    <i class="fas fa-folder-tree"></i> Lainnya
+                    <i class="fas fa-university"></i> Institusi
                     <span class="eval-badge unit">{{ $laporanUnit->count() }}</span>
                 </button>
                 @endif

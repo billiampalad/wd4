@@ -214,8 +214,8 @@
                                 </div>
                             </td>
                             <td class="um-td um-td-aksi" style="text-align:center; vertical-align: top; padding-top: 15px;">
-                                <a href="{{ route('unit.evaluasi.form', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 14px; font-size:11px; border-radius:8px; display: inline-flex; align-items: center; gap: 8px;">
-                                    <i class="fas fa-star" style="font-size:10px;"></i> Beri Nilai
+                                <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-eye"></i> Lihat Detail
                                 </a>
                             </td>
                         </tr>
