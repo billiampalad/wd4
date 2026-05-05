@@ -170,7 +170,7 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');
-    
+
     // ─── Mitra Unit CRUD ─────────────────────────────────
     Route::get('/unit/mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'mitra'])->name('unit.mitra');
     Route::get('/unit/mitra/create', [App\Http\Controllers\Unit\UnitPageController::class, 'mitraCreate'])->name('unit.mitra.create');
@@ -186,6 +186,9 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit/data-kerjasama/{id}/edit', [KerjasamaUnitController::class, 'edit'])->name('unit.kerjasama.edit');
     Route::put('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'update'])->name('unit.kerjasama.update');
     Route::delete('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'destroy'])->name('unit.kerjasama.destroy');
+
+    // ─── Submit to Pimpinan ──────────────────────────────
+    Route::post('/unit/data-kerjasama/{id}/submit', [KerjasamaUnitController::class, 'submitToPimpinan'])->name('unit.kerjasama.submit');
 
     // ─── Sub-resource: Tujuan ────────────────────────────
     Route::post('/unit/data-kerjasama/{id}/tujuan', [KerjasamaUnitController::class, 'storeTujuan'])->name('unit.kerjasama.tujuan.store');

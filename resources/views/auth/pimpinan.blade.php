@@ -25,37 +25,37 @@
 
 <body>
     @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 3000
+        });
+    </script>
     @endif
 
     @if(session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: "{{ session('error') }}",
-                showConfirmButton: true
-            });
-        </script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: "{{ session('error') }}",
+            showConfirmButton: true
+        });
+    </script>
     @endif
 
     @if($errors->any())
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: "{{ $errors->first() }}",
-                showConfirmButton: true
-            });
-        </script>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            text: "{{ $errors->first() }}",
+            showConfirmButton: true
+        });
+    </script>
     @endif
     <!-- navbar -->
     <nav>
@@ -75,12 +75,12 @@
             <div class="nav-actions">
                 <!-- Search (desktop) -->
                 <div class="search-bar" id="navSearch" style="display:none;">
-                     <i class="fas fa-search"></i>
-                     <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input" autocomplete="off" />
-                     <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;" title="Bersihkan pencarian">
-                         <i class="fas fa-times-circle"></i>
-                     </button>
-                 </div>
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input" autocomplete="off" />
+                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;" title="Bersihkan pencarian">
+                        <i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
 
                 <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
@@ -89,7 +89,25 @@
                 <div class="notification-container">
                     <button class="icon-btn" id="notificationBtn" title="Notifications">
                         <i class="fas fa-bell" id="notificationIcon"></i>
-                        <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                        @php
+                        $user = auth()->user();
+                        $query = \App\Models\Notifikasi::where('user_id', $user->id)->where('is_read', 0);
+
+                        // Filter khusus pimpinan agar angka sinkron dengan data yang butuh evaluasi
+                        if (strtolower($user->role->role_name ?? '') === 'pimpinan') {
+                        $query->where(function($q) {
+                        $q->whereHas('cooperation', function($sq) {
+                        $sq->where('status_dokumen', 'Menunggu Evaluasi');
+                        })
+                        ->orWhereNull('source_id')
+                        ->orWhereIn('type', ['evaluasi', 'revisi']);
+                        });
+                        }
+                        $notifCount = $query->count();
+                        @endphp
+                        <span class="notification-badge" id="notifBadge" style="{{ $notifCount > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $notifCount > 9 ? '9+' : $notifCount }}
+                        </span>
                     </button>
 
                     <div class="notification-dropdown" id="notifDropdown">
@@ -170,19 +188,19 @@
         <!-- ── MAIN ──────────────────────────────────────────────── -->
         @yield('content')
         @if(!View::hasSection('content'))
-            @if(request()->routeIs('pimpinan.monitoring'))
-                @include('auth.layout.pimpinan.monitoring')
-            @elseif(request()->routeIs('pimpinan.evaluasi'))
-                @include('auth.layout.pimpinan.evaluasivalidasi')
-            @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
-                @include('auth.layout.pimpinan.detail_monitoring')
-            @elseif(isset($view) && $view == 'detail_evaluasi')
-                @include('auth.layout.pimpinan.detail_evaluasi')
-            @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
-                @include('auth.layout.pimpinan.laporan')
-            @else
-                @include('auth.layout.pimpinan.dashboard')
-            @endif
+        @if(request()->routeIs('pimpinan.monitoring'))
+        @include('auth.layout.pimpinan.monitoring')
+        @elseif(request()->routeIs('pimpinan.evaluasi'))
+        @include('auth.layout.pimpinan.evaluasivalidasi')
+        @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
+        @include('auth.layout.pimpinan.detail_monitoring')
+        @elseif(isset($view) && $view == 'detail_evaluasi')
+        @include('auth.layout.pimpinan.detail_evaluasi')
+        @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
+        @include('auth.layout.pimpinan.laporan')
+        @else
+        @include('auth.layout.pimpinan.dashboard')
+        @endif
         @endif
 
         <div id="sidebarOverlay"></div>

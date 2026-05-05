@@ -32,9 +32,9 @@ class Notifikasi extends Model
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function kegiatanKerjasama()
+    public function cooperation()
     {
-        return $this->belongsTo(KegiatanKerjasama::class, 'source_id');
+        return $this->belongsTo(Cooperation::class, 'source_id');
     }
 
     public static function send($userId, $senderId, $sourceId, $type, $judul, $pesan, $link)

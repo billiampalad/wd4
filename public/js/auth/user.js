@@ -93,21 +93,21 @@ function initDashboard() {
 
     /* ─ Global search: filter tabel Data Kerjasama & Laporan ─ */
     const searchClear = document.getElementById('navSearchClear');
-    
+
     function updatePagination(tbody) {
         const table = tbody.closest('table');
         if (!table || table.classList.contains('no-pagination')) return;
 
         const pageSize = parseInt(table.getAttribute('data-page-size') || '10');
         const currentPage = parseInt(table.getAttribute('data-current-page') || '1');
-        
+
         // Get all rows that are NOT the "no results" row and are NOT hidden by search
         const allRows = Array.from(tbody.querySelectorAll('tr.um-row'));
         const visibleRows = allRows.filter(row => row.getAttribute('data-search-hidden') !== '1');
-        
+
         const totalRows = visibleRows.length;
         const totalPages = Math.ceil(totalRows / pageSize) || 1;
-        
+
         // Ensure current page is within bounds
         let page = currentPage;
         if (page > totalPages) page = totalPages;
@@ -196,7 +196,7 @@ function initDashboard() {
         const tables = document.querySelectorAll('#mainContent .um-table');
         tables.forEach(table => {
             if (table.classList.contains('no-pagination') || table.getAttribute('data-paginated')) return;
-            
+
             table.setAttribute('data-paginated', '1');
             table.setAttribute('data-current-page', '1');
             table.setAttribute('data-page-size', '10');
@@ -216,7 +216,7 @@ function initDashboard() {
                     </select>
                     <label>data</label>
                 `;
-                
+
                 // Find where to insert in header
                 const title = header.querySelector('.um-title, .card-title');
                 if (title && title.nextSibling) {
@@ -238,7 +238,7 @@ function initDashboard() {
 
     if (searchInput) {
         let searchTimeout;
-        
+
         function highlightText(element, query) {
             if (!query) return;
 
@@ -247,7 +247,7 @@ function initDashboard() {
                 if (node.nodeType === 3) { // Text node
                     const text = node.nodeValue;
                     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                    
+
                     if (text.match(regex)) {
                         const span = document.createElement('span');
                         span.innerHTML = text.replace(regex, '<mark class="search-highlight">$1</mark>');
@@ -264,7 +264,7 @@ function initDashboard() {
 
         function filterTableBySearch() {
             const q = (searchInput.value || '').trim().toLowerCase();
-            
+
             // Toggle clear button visibility
             if (searchClear) {
                 searchClear.style.display = q ? 'flex' : 'none';
@@ -277,7 +277,7 @@ function initDashboard() {
 
             tables.forEach(tbody => {
                 if (!tbody) return;
-                
+
                 // Reset to first page when searching
                 const table = tbody.closest('table');
                 if (table) table.setAttribute('data-current-page', '1');
@@ -291,13 +291,13 @@ function initDashboard() {
                     if (!row.hasAttribute('data-original-html')) {
                         row.setAttribute('data-original-html', row.innerHTML);
                     }
-                    
+
                     // Restore original HTML before search and highlight
                     row.innerHTML = row.getAttribute('data-original-html');
-                    
+
                     const cells = row.querySelectorAll('td');
                     let rowMatch = false;
-                    
+
                     cells.forEach(cell => {
                         const cellText = cell.textContent || '';
                         if (!q || cellText.toLowerCase().includes(q)) {
@@ -345,14 +345,14 @@ function initDashboard() {
                     if (span) span.textContent = q;
                     noResultsRow.style.display = '';
                     if (emptyRow) emptyRow.style.display = 'none';
-                    
+
                     // Hide pagination if no results
                     const controls = table.parentNode.querySelector('.table-pagination-controls');
                     if (controls) controls.style.display = 'none';
                 } else {
                     if (noResultsRow) noResultsRow.style.display = 'none';
                     if (emptyRow && !q) emptyRow.style.display = '';
-                    
+
                     const table = tbody.closest('table');
                     const controls = table?.parentNode.querySelector('.table-pagination-controls');
                     if (controls) controls.style.display = '';
@@ -374,15 +374,15 @@ function initDashboard() {
         });
 
         if (searchClear) {
-        searchClear.onclick = () => {
-            searchInput.value = '';
-            filterTableBySearch();
-            searchInput.focus();
-        };
-    }
+            searchClear.onclick = () => {
+                searchInput.value = '';
+                filterTableBySearch();
+                searchInput.focus();
+            };
+        }
 
-    initTableFeatures();
-}
+        initTableFeatures();
+    }
 
     /* ─ Logout confirm ─ */
     const logoutBtn = document.getElementById('logoutBtn');
@@ -962,6 +962,10 @@ function initNotifikasi() {
 
     if (!notifBtn || !notifDropdown) return;
 
+    // Prevent double initialization
+    if (notifBtn.dataset.initialized) return;
+    notifBtn.dataset.initialized = 'true';
+
     // Toggle dropdown
     notifBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1124,16 +1128,16 @@ function initNotifikasi() {
             .then(res => {
                 if (res.success) {
                     // Segera hilangkan item dari UI
-                     const item = document.querySelector(`.notification-item[data-id="${id}"]`);
-                     if (item) {
-                         item.remove();
-                         // Jika tidak ada lagi item, tampilkan state kosong
-                         if (notifList.querySelectorAll('.notification-item').length === 0) {
-                             renderNotifications([]);
-                         }
-                     }
-                     
-                     fetchNotifications(); // Refresh to update count and empty state if needed
+                    const item = document.querySelector(`.notification-item[data-id="${id}"]`);
+                    if (item) {
+                        item.remove();
+                        // Jika tidak ada lagi item, tampilkan state kosong
+                        if (notifList.querySelectorAll('.notification-item').length === 0) {
+                            renderNotifications([]);
+                        }
+                    }
+
+                    fetchNotifications(); // Refresh to update count and empty state if needed
                 }
             });
     }
@@ -1156,12 +1160,22 @@ function initNotifikasi() {
     // Initial load for badge count
     fetchNotifications();
 
-    // Poll for new notifications every 30 seconds
-    setInterval(fetchNotifications, 30000);
+    // Poll for new notifications every 30 seconds (hanya jika belum ada interval)
+    if (!window.notifInterval) {
+        window.notifInterval = setInterval(fetchNotifications, 30000);
+    }
 }
 
-// Jalankan saat pertama kali dan setiap kali Turbo navigasi
+// Jalankan saat pertama kali, setiap kali Turbo navigasi, dan sebagai fallback DOMContentLoaded
 document.addEventListener('turbo:load', () => {
     initDashboard();
     initNotifikasi();
 });
+
+// Fallback jika Turbo tidak aktif
+if (!window.Turbo) {
+    document.addEventListener('DOMContentLoaded', () => {
+        initDashboard();
+        initNotifikasi();
+    });
+}

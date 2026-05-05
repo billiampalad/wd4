@@ -14,6 +14,8 @@ use App\Models\JenisKerjasama;
 use App\Models\Pejabat;
 use App\Models\Sasaran;
 use App\Models\DetailKegiatan;
+use App\Models\Notifikasi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -413,6 +415,67 @@ class KerjasamaUnitController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
+        }
+    }
+
+    // ─── SUBMIT TO PIMPINAN ─────────────────────────────
+
+    public function submitToPimpinan($id)
+    {
+        $user = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if (!$profile) {
+            return back()->with('error', 'Profil Anda tidak ditemukan.');
+        }
+
+        $cooperation = Cooperation::findOrFail($id);
+
+        // Validasi kepemilikan data (Best Practice)
+        // Jika user adalah unit_kerja, pastikan data ini milik unitnya (jika relasi sudah benar)
+        // Untuk saat ini, kita cek apakah user memiliki unit_kerja_id atau jurusan_id
+        if (!$profile->unit_kerja_id && !$profile->jurusan_id) {
+            return back()->with('error', 'Anda tidak memiliki otoritas untuk mengirim data ini.');
+        }
+
+        // Cek duplikasi pengajuan: hanya boleh jika status 'Draft'
+        if ($cooperation->status_dokumen !== 'Draft') {
+            return back()->with('error', 'Data ini sudah diajukan atau sedang dalam proses evaluasi.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // 1. Update status_dokumen pada tabel cooperations menjadi ‘Menunggu Evaluasi’
+            $cooperation->update([
+                'status_dokumen' => 'Menunggu Evaluasi'
+            ]);
+
+            // 2. Ambil semua user dengan role 'pimpinan'
+            $pimpinans = User::whereHas('role', function ($q) {
+                $q->where('role_name', 'pimpinan');
+            })->get();
+
+            // 3. Simpan notifikasi secara otomatis ke tabel notifikasis
+            $pesan = "Pengajuan kerjasama baru: '{$cooperation->title}' membutuhkan evaluasi dari Anda.";
+            $judul = 'Persetujuan Kerjasama Baru';
+
+            foreach ($pimpinans as $pimpinan) {
+                Notifikasi::send(
+                    $pimpinan->id,      // user_id (receiver)
+                    $user->id,          // sender_id
+                    $cooperation->id,   // source_id
+                    'evaluasi',         // type
+                    $judul,             // judul
+                    $pesan,             // pesan
+                    route('pimpinan.evaluasi.show', $cooperation->id) // link
+                );
+            }
+
+            DB::commit();
+            return back()->with('success', 'Berhasil! Data kerjasama telah dikirim ke Pimpinan untuk dievaluasi.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mengirim permintaan: ' . $e->getMessage());
         }
     }
 

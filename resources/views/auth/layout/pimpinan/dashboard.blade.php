@@ -258,7 +258,7 @@
                                     @php
                                         $pengusul = $kegiatan->jurusans->pluck('nama_jurusan')->join(', ');
                                         if (!$pengusul) {
-                                            $pengusul = $kegiatan->unitKerjas->pluck('nama_unit_pelaksana')->join(', ');
+                                            $pengusul = $kegiatan->mitra?->nama_mitra ?? '-';
                                         }
                                     @endphp
                                     <div style="display:flex; align-items:center; gap:8px;">
@@ -270,32 +270,32 @@
                                             <div style="font-weight:600; font-size:12px; color:var(--text);">
                                                 {{ $pengusul ?: '-' }}</div>
                                             <div style="font-size:10px; color:var(--text-sub);">
-                                                {{ $kegiatan->jurusans->count() > 0 ? 'Jurusan' : 'Unit Kerja' }}
+                                                {{ $kegiatan->jurusans->count() > 0 ? 'Jurusan' : ($kegiatan->tipe_pelaksana ? ucfirst($kegiatan->tipe_pelaksana) : 'Mitra') }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div style="font-weight:600; font-size:13px; color:var(--text);">
-                                        {{ $kegiatan->nama_kegiatan }}</div>
+                                        {{ $kegiatan->title }}</div>
                                     <div style="font-size:11px; color:var(--text-sub); margin-top:2px;">
-                                        PJ: {{ $kegiatan->penanggung_jawab ?? '-' }}
+                                        PJ: {{ $kegiatan->pjInternal?->nama ?? '-' }}
                                     </div>
                                 </td>
                                 <td style="text-align:center;">
-                                    @if($kegiatan->status === 'menunggu_evaluasi')
+                                    @if($kegiatan->status_dokumen === 'Menunggu Evaluasi')
                                         <span class="tag tag-orange" style="font-size:10px; padding:4px 10px;">
                                             <i class="fas fa-clipboard-list" style="font-size:8px;"></i>
                                             Menunggu Evaluasi
                                         </span>
-                                    @elseif($kegiatan->status === 'menunggu_validasi')
+                                    @elseif($kegiatan->status_dokumen === 'Menunggu Validasi')
                                         <span class="tag tag-blue" style="font-size:10px; padding:4px 10px;">
                                             <i class="fas fa-check-circle" style="font-size:8px;"></i>
                                             Menunggu Validasi
                                         </span>
                                     @else
                                         <span class="tag"
-                                            style="font-size:10px; padding:4px 10px;">{{ $kegiatan->status_label }}</span>
+                                            style="font-size:10px; padding:4px 10px;">{{ $kegiatan->status_dokumen ?? 'Draft' }}</span>
                                     @endif
                                 </td>
                                 <td style="text-align:center;">

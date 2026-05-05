@@ -1,375 +1,377 @@
 @php
-    $status = strtolower($kegiatan->status ?? '');
-    $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
-    $isExtended = str_contains($status, 'perpanjangan');
+$status = strtolower($kegiatan->status ?? '');
+$isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+$isExtended = str_contains($status, 'perpanjangan');
 
-    $statusClass = match (true) {
-        $status === 'aktif' => 'dk-status-active',
-        $isExtended => 'dk-status-warning',
-        $isExpired => 'dk-status-danger',
-        $status === 'tidak aktif' => 'dk-status-muted',
-        default => 'dk-status-neutral',
-    };
-    $statusIcon = match (true) {
-        $status === 'aktif' => 'fa-circle-check',
-        $isExtended => 'fa-clock',
-        $isExpired => 'fa-circle-xmark',
-        $status === 'tidak aktif' => 'fa-circle-minus',
-        default => 'fa-circle-info',
-    };
-    $statusLabel = match (true) {
-        $status === 'aktif' => 'Aktif',
-        $isExtended => 'Perpanjangan',
-        $isExpired => 'Kadarluarsa',
-        $status === 'tidak aktif' => 'Tidak Aktif',
-        $status !== '' => ucwords($status),
-        default => 'Belum Diatur',
-    };
+$statusClass = match (true) {
+$status === 'aktif' => 'dk-status-active',
+$isExtended => 'dk-status-warning',
+$isExpired => 'dk-status-danger',
+$status === 'tidak aktif' => 'dk-status-muted',
+default => 'dk-status-neutral',
+};
+$statusIcon = match (true) {
+$status === 'aktif' => 'fa-circle-check',
+$isExtended => 'fa-clock',
+$isExpired => 'fa-circle-xmark',
+$status === 'tidak aktif' => 'fa-circle-minus',
+default => 'fa-circle-info',
+};
+$statusLabel = match (true) {
+$status === 'aktif' => 'Aktif',
+$isExtended => 'Perpanjangan',
+$isExpired => 'Kadarluarsa',
+$status === 'tidak aktif' => 'Tidak Aktif',
+$status !== '' => ucwords($status),
+default => 'Belum Diatur',
+};
 
-    $pelaksanaIcon = 'fa-building';
-    $pelaksanaClass = 'dk-entity-indigo';
-    $pelaksanaName = '-';
-    $pelaksanaType = '';
-    if ($kegiatan->tipe_pelaksana === 'jurusan') {
-        $pelaksanaIcon = 'fa-microchip';
-        $pelaksanaClass = 'dk-entity-indigo';
-        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-        $pelaksanaType = 'Jurusan';
-    } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-        $pelaksanaIcon = 'fa-building-columns';
-        $pelaksanaClass = 'dk-entity-cyan';
-        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-        $pelaksanaType = 'UPA';
-    } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-        $pelaksanaIcon = 'fa-landmark';
-        $pelaksanaClass = 'dk-entity-violet';
-        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-        $pelaksanaType = 'Pusat';
+$pelaksanaIcon = 'fa-building';
+$pelaksanaClass = 'dk-entity-indigo';
+$pelaksanaName = '-';
+$pelaksanaType = '';
+if ($kegiatan->tipe_pelaksana === 'jurusan') {
+$pelaksanaIcon = 'fa-microchip';
+$pelaksanaClass = 'dk-entity-indigo';
+$pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+$pelaksanaType = 'Jurusan';
+} elseif ($kegiatan->tipe_pelaksana === 'upa') {
+$pelaksanaIcon = 'fa-building-columns';
+$pelaksanaClass = 'dk-entity-cyan';
+$pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+$pelaksanaType = 'UPA';
+} elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+$pelaksanaIcon = 'fa-landmark';
+$pelaksanaClass = 'dk-entity-violet';
+$pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+$pelaksanaType = 'Pusat';
+}
+
+$totalNilai = $kegiatan->details->sum('nilai_kontrak');
+
+$timeRemainingLabel = '-';
+$timeRemainingColor = 'var(--text)';
+if ($kegiatan->end_date) {
+$now = now();
+$end = \Carbon\Carbon::parse($kegiatan->end_date);
+$diff = $now->diff($end);
+$isPast = $now->greaterThan($end);
+
+if ($isPast) {
+$timeRemainingLabel = 'Kadarluarsa';
+$timeRemainingColor = '#ef4444';
+} else {
+$years = $diff->y;
+$months = $diff->m;
+$days = $diff->d;
+
+$parts = [];
+if ($years > 0)
+$parts[] = $years . ' Thn';
+if ($months > 0)
+$parts[] = $months . ' Bln';
+if ($days > 0 || empty($parts))
+$parts[] = $days . ' Hari';
+
+$timeRemainingLabel = implode(', ', array_slice($parts, 0, 2));
+
+// Color logic
+$totalDays = $now->diffInDays($end);
+if ($totalDays < 30) {
+    $timeRemainingColor='#ef4444' ; // Red for < 1 month
+    } elseif ($totalDays < 90) {
+    $timeRemainingColor='#f59e0b' ; // Orange for < 3 months
+    } else {
+    $timeRemainingColor='#10b981' ; // Green for safe
     }
-
-    $totalNilai = $kegiatan->details->sum('nilai_kontrak');
-
-    $timeRemainingLabel = '-';
-    $timeRemainingColor = 'var(--text)';
-    if ($kegiatan->end_date) {
-        $now = now();
-        $end = \Carbon\Carbon::parse($kegiatan->end_date);
-        $diff = $now->diff($end);
-        $isPast = $now->greaterThan($end);
-
-        if ($isPast) {
-            $timeRemainingLabel = 'Kadarluarsa';
-            $timeRemainingColor = '#ef4444';
-        } else {
-            $years = $diff->y;
-            $months = $diff->m;
-            $days = $diff->d;
-
-            $parts = [];
-            if ($years > 0)
-                $parts[] = $years . ' Thn';
-            if ($months > 0)
-                $parts[] = $months . ' Bln';
-            if ($days > 0 || empty($parts))
-                $parts[] = $days . ' Hari';
-
-            $timeRemainingLabel = implode(', ', array_slice($parts, 0, 2));
-
-            // Color logic
-            $totalDays = $now->diffInDays($end);
-            if ($totalDays < 30) {
-                $timeRemainingColor = '#ef4444'; // Red for < 1 month
-            } elseif ($totalDays < 90) {
-                $timeRemainingColor = '#f59e0b'; // Orange for < 3 months
-            } else {
-                $timeRemainingColor = '#10b981'; // Green for safe
-            }
-        }
     }
-@endphp
+    }
+    @endphp
 
-<style>
+    <style>
     .dk-warning-btn {
-        background: linear-gradient(135deg, #ff9a00 0%, #ff5a00 100%);
-        color: #fff !important;
-        box-shadow: 0 10px 20px rgba(255, 90, 0, 0.2);
-        text-decoration: none;
+    background: linear-gradient(135deg, #ff9a00 0%, #ff5a00 100%);
+    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(255, 90, 0, 0.2);
+    text-decoration: none;
     }
 
     .dk-warning-btn:hover {
-        background: linear-gradient(135deg, #ffb347 0%, #ff9a00 100%);
-        box-shadow: 0 12px 24px rgba(255, 90, 0, 0.3);
-        transform: translateY(-2px);
+    background: linear-gradient(135deg, #ffb347 0%, #ff9a00 100%);
+    box-shadow: 0 12px 24px rgba(255, 90, 0, 0.3);
+    transform: translateY(-2px);
     }
 
     .dk-info-btn {
-        background: linear-gradient(135deg, #e90606ff 0%, #e90606ff 100%);
-        color: #fff !important;
-        box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
-        text-decoration: none;
+    background: linear-gradient(135deg, #e90606ff 0%, #e90606ff 100%);
+    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(0, 114, 255, 0.2);
+    text-decoration: none;
     }
 
     .dk-info-btn:hover {
-        background: linear-gradient(135deg, #ff6969ff 0%, #e90606ff 100%);
-        box-shadow: 0 12px 24px rgba(0, 114, 255, 0.3);
-        transform: translateY(-2px);
+    background: linear-gradient(135deg, #ff6969ff 0%, #e90606ff 100%);
+    box-shadow: 0 12px 24px rgba(0, 114, 255, 0.3);
+    transform: translateY(-2px);
     }
-</style>
+    </style>
 
-<main id="mainContent" class="dk-page">
-    {{-- ═══ HERO SECTION ═══ --}}
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('unit.dashboard') }}" class="breadcrumb-item">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('unit.dkerjasama') }}" class="breadcrumb-item">
-                    <span>Data Kerjasama</span>
-                </a>
-                <span class="sep">/</span>
-                <span class="current">Detail Dokumen</span>
-            </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas fa-file-contract"></i>
-                </div>
-                <div class="dk-hero-info">
-                    <span class="dk-eyebrow">Repositori Unit Pelaksana</span>
-                    <h2 id="pageTitle">{{ $kegiatan->title }}</h2>
-                    <div class="dk-hero-meta">
-                        <span class="dk-status {{ $statusClass }}">
-                            <i class="fas {{ $statusIcon }}"></i>
-                            {{ $statusLabel }}
-                        </span>
-                        <div class="dk-hero-date-box">
-                            <div class="date-item start">
-                                <i class="fas fa-calendar-check"></i>
-                                <span>{{ $kegiatan->start_date?->format('d M Y') ?? '-' }}</span>
-                            </div>
-                            <div class="date-item end">
-                                <i class="fas fa-calendar-xmark"></i>
-                                <span>{{ $kegiatan->end_date?->format('d M Y') ?? 'Selesai' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="dk-hero-action">
-                    <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="dk-primary-btn">
-                        <i class="fas fa-pen-to-square"></i>
-                        <span>Edit Data</span>
+    <main id="mainContent" class="dk-page">
+        {{-- ═══ HERO SECTION ═══ --}}
+        <section class="dk-hero">
+            <div class="dk-hero-content">
+                <div class="breadcrumb dk-breadcrumb">
+                    <a href="{{ route('unit.dashboard') }}" class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
                     </a>
+                    <span class="sep">/</span>
+                    <a href="{{ route('unit.dkerjasama') }}" class="breadcrumb-item">
+                        <span>Data Kerjasama</span>
+                    </a>
+                    <span class="sep">/</span>
+                    <span class="current">Detail Dokumen</span>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    {{-- ═══ STATS GRID ═══ --}}
-    <section class="dk-stats-grid-wrapper">
-        <div class="dk-stats-grid">
-            <div class="dk-stat-card dk-stat-total">
-                <div class="dk-stat-icon"><i class="fas fa-money-bill-wave"></i></div>
-                <div class="dk-stat-info">
-                    <span class="dk-stat-label">Nilai Kontrak</span>
-                    <strong>Rp {{ number_format($totalNilai, 0, ',', '.') }}</strong>
-                </div>
-            </div>
-            <div class="dk-stat-card dk-stat-active">
-                <div class="dk-stat-icon"><i class="fas fa-handshake"></i></div>
-                <div class="dk-stat-info">
-                    <span class="dk-stat-label">Ruang Lingkup</span>
-                    <strong>{{ $kegiatan->details->count() }} Kegiatan</strong>
-                </div>
-            </div>
-            <div class="dk-stat-card dk-stat-warning">
-                <div class="dk-stat-icon"><i class="fas fa-hourglass-half"></i></div>
-                <div class="dk-stat-info">
-                    <span class="dk-stat-label">Sisa Waktu</span>
-                    <strong style="color: {{ $timeRemainingColor }};">
-                        {{ $timeRemainingLabel }}
-                    </strong>
-                </div>
-            </div>
-            <div class="dk-stat-card dk-stat-danger">
-                <div class="dk-stat-icon"><i class="fas fa-building-user"></i></div>
-                <div class="dk-stat-info">
-                    <span class="dk-stat-label">Tipe Pelaksana</span>
-                    <strong>{{ $pelaksanaType ?: '-' }}</strong>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- ═══ MAIN CONTENT ═══ --}}
-    <div class="dk-container">
-        <div class="dk-grid-layout">
-
-            {{-- Left Column --}}
-            <div style="display: flex; flex-direction: column; gap: 28px; min-width: 0;">
-
-                {{-- Card: Ringkasan --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-circle-info"></i></span>
-                            <span>
-                                <strong>Ringkasan Dokumen</strong>
-                                <small>Informasi mendasar naskah kerjasama</small>
+                <div class="dk-hero-main">
+                    <div class="dk-hero-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="dk-hero-info">
+                        <span class="dk-eyebrow">Repositori Unit Pelaksana</span>
+                        <h2 id="pageTitle">{{ $kegiatan->title }}</h2>
+                        <div class="dk-hero-meta">
+                            <span class="dk-status {{ $statusClass }}">
+                                <i class="fas {{ $statusIcon }}"></i>
+                                {{ $statusLabel }}
                             </span>
+                            <div class="dk-hero-date-box">
+                                <div class="date-item start">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>{{ $kegiatan->start_date?->format('d M Y') ?? '-' }}</span>
+                                </div>
+                                <div class="date-item end">
+                                    <i class="fas fa-calendar-xmark"></i>
+                                    <span>{{ $kegiatan->end_date?->format('d M Y') ?? 'Selesai' }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 28px;">
-                            <div>
-                                <label
-                                    style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Nomor
-                                    Dokumen Utama</label>
-                                <div
-                                    style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); word-break: break-all;">
-                                    {{ $kegiatan->doc_number ?: '-' }}
-                                </div>
-                            </div>
-                            <div>
-                                <label
-                                    style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Nomor
-                                    PKS</label>
-                                <div
-                                    style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); word-break: break-all;">
-                                    {{ $kegiatan->pks_number ?: '-' }}
-                                </div>
+                    <div class="dk-hero-action">
+                        <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="dk-primary-btn">
+                            <i class="fas fa-pen-to-square"></i>
+                            <span>Edit Data</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- ═══ STATS GRID ═══ --}}
+        <section class="dk-stats-grid-wrapper">
+            <div class="dk-stats-grid">
+                <div class="dk-stat-card dk-stat-total">
+                    <div class="dk-stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="dk-stat-info">
+                        <span class="dk-stat-label">Nilai Kontrak</span>
+                        <strong>Rp {{ number_format($totalNilai, 0, ',', '.') }}</strong>
+                    </div>
+                </div>
+                <div class="dk-stat-card dk-stat-active">
+                    <div class="dk-stat-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="dk-stat-info">
+                        <span class="dk-stat-label">Ruang Lingkup</span>
+                        <strong>{{ $kegiatan->details->count() }} Kegiatan</strong>
+                    </div>
+                </div>
+                <div class="dk-stat-card dk-stat-warning">
+                    <div class="dk-stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="dk-stat-info">
+                        <span class="dk-stat-label">Sisa Waktu</span>
+                        <strong style="color: {{ $timeRemainingColor }};">
+                            {{ $timeRemainingLabel }}
+                        </strong>
+                    </div>
+                </div>
+                <div class="dk-stat-card dk-stat-danger">
+                    <div class="dk-stat-icon"><i class="fas fa-building-user"></i></div>
+                    <div class="dk-stat-info">
+                        <span class="dk-stat-label">Tipe Pelaksana</span>
+                        <strong>{{ $pelaksanaType ?: '-' }}</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- ═══ MAIN CONTENT ═══ --}}
+        <div class="dk-container">
+            <div class="dk-grid-layout">
+
+                {{-- Left Column --}}
+                <div style="display: flex; flex-direction: column; gap: 28px; min-width: 0;">
+
+                    {{-- Card: Ringkasan --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-circle-info"></i></span>
+                                <span>
+                                    <strong>Ringkasan Dokumen</strong>
+                                    <small>Informasi mendasar naskah kerjasama</small>
+                                </span>
                             </div>
                         </div>
-                        <div>
-                            <label
-                                style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Deskripsi
-                                Kegiatan</label>
+                        <div class="card-body dk-card-body" style="padding: 28px;">
                             <div
-                                style="font-size: 15px; color: var(--text); line-height: 1.8; text-align: justify; white-space: pre-line;">
-                                {{ $kegiatan->description ?: 'Tidak ada deskripsi tambahan.' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card: Pihak Terlibat --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-users-rectangle"></i></span>
-                            <span>
-                                <strong>Pihak Terlibat</strong>
-                                <small>Pejabat penandatangan & penanggung jawab</small>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
-                            {{-- Pihak 1 --}}
-                            <div>
-                                <div
-                                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 28px;">
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Nomor
+                                        Dokumen Utama</label>
                                     <div
-                                        style="width: 36px; height: 36px; border-radius: 10px; background: rgba(79, 70, 229, 0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 16px;">
-                                        <i class="fas fa-university"></i>
-                                    </div>
-                                    <span style="font-weight: 800; font-size: 15px; color: var(--text);">Politeknik
-                                        Negeri Manado</span>
-                                </div>
-                                <div style="display: flex; flex-direction: column; gap: 20px;">
-                                    <div class="dk-entity-card">
-                                        <span class="dk-entity-icon dk-entity-indigo"><i
-                                                class="fas fa-pen-nib"></i></span>
-                                        <div class="dk-entity-text">
-                                            <small class="dk-entity-label indigo">Penandatangan</small>
-                                            <strong>{{ $kegiatan->penandatanganInternal?->nama ?: '-' }}</strong>
-                                            <span>{{ $kegiatan->penandatanganInternal?->jabatan ?: '-' }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="dk-entity-card">
-                                        <span class="dk-entity-icon dk-entity-indigo"><i
-                                                class="fas fa-user-tie"></i></span>
-                                        <div class="dk-entity-text">
-                                            <small class="dk-entity-label indigo">Penanggung Jawab</small>
-                                            <strong>{{ $kegiatan->pjInternal?->nama ?: '-' }}</strong>
-                                            <span>{{ $kegiatan->pjInternal?->jabatan ?: '-' }}</span>
-                                        </div>
+                                        style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); word-break: break-all;">
+                                        {{ $kegiatan->doc_number ?: '-' }}
                                     </div>
                                 </div>
-                            </div>
-                            {{-- Pihak 2 --}}
-                            <div>
-                                <div
-                                    style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                <div>
+                                    <label
+                                        style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Nomor
+                                        PKS</label>
                                     <div
-                                        style="width: 36px; height: 36px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 16px;">
-                                        <i class="fas fa-building"></i>
+                                        style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); word-break: break-all;">
+                                        {{ $kegiatan->pks_number ?: '-' }}
                                     </div>
-                                    <span
-                                        style="font-weight: 800; font-size: 15px; color: var(--text);">{{ $kegiatan->mitra?->nama_mitra ?: 'Pihak Mitra' }}</span>
                                 </div>
-                                <div style="display: flex; flex-direction: column; gap: 20px;">
-                                    <div class="dk-entity-card">
-                                        <span class="dk-entity-icon dk-entity-emerald"><i
-                                                class="fas fa-pen-nib"></i></span>
-                                        <div class="dk-entity-text">
-                                            <small class="dk-entity-label emerald">Penandatangan</small>
-                                            <strong>{{ $kegiatan->penandatanganMitra?->nama ?: '-' }}</strong>
-                                            <span>{{ $kegiatan->penandatanganMitra?->jabatan ?: '-' }}</span>
+                            </div>
+                            <div>
+                                <label
+                                    style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Deskripsi
+                                    Kegiatan</label>
+                                <div
+                                    style="font-size: 15px; color: var(--text); line-height: 1.8; text-align: justify; white-space: pre-line;">
+                                    {{ $kegiatan->description ?: 'Tidak ada deskripsi tambahan.' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Card: Pihak Terlibat --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-users-rectangle"></i></span>
+                                <span>
+                                    <strong>Pihak Terlibat</strong>
+                                    <small>Pejabat penandatangan & penanggung jawab</small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body dk-card-body" style="padding: 28px;">
+                            <div
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+                                {{-- Pihak 1 --}}
+                                <div>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                        <div
+                                            style="width: 36px; height: 36px; border-radius: 10px; background: rgba(79, 70, 229, 0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                            <i class="fas fa-university"></i>
+                                        </div>
+                                        <span style="font-weight: 800; font-size: 15px; color: var(--text);">Politeknik
+                                            Negeri Manado</span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                                        <div class="dk-entity-card">
+                                            <span class="dk-entity-icon dk-entity-indigo"><i
+                                                    class="fas fa-pen-nib"></i></span>
+                                            <div class="dk-entity-text">
+                                                <small class="dk-entity-label indigo">Penandatangan</small>
+                                                <strong>{{ $kegiatan->penandatanganInternal?->nama ?: '-' }}</strong>
+                                                <span>{{ $kegiatan->penandatanganInternal?->jabatan ?: '-' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="dk-entity-card">
+                                            <span class="dk-entity-icon dk-entity-indigo"><i
+                                                    class="fas fa-user-tie"></i></span>
+                                            <div class="dk-entity-text">
+                                                <small class="dk-entity-label indigo">Penanggung Jawab</small>
+                                                <strong>{{ $kegiatan->pjInternal?->nama ?: '-' }}</strong>
+                                                <span>{{ $kegiatan->pjInternal?->jabatan ?: '-' }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="dk-entity-card">
-                                        <span class="dk-entity-icon dk-entity-emerald"><i
-                                                class="fas fa-user-tie"></i></span>
-                                        <div class="dk-entity-text">
-                                            <small class="dk-entity-label emerald">Penanggung Jawab</small>
-                                            <strong>{{ $kegiatan->pjMitra?->nama ?: '-' }}</strong>
-                                            <span>{{ $kegiatan->pjMitra?->jabatan ?: '-' }}</span>
+                                </div>
+                                {{-- Pihak 2 --}}
+                                <div>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                                        <div
+                                            style="width: 36px; height: 36px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <span
+                                            style="font-weight: 800; font-size: 15px; color: var(--text);">{{ $kegiatan->mitra?->nama_mitra ?: 'Pihak Mitra' }}</span>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                                        <div class="dk-entity-card">
+                                            <span class="dk-entity-icon dk-entity-emerald"><i
+                                                    class="fas fa-pen-nib"></i></span>
+                                            <div class="dk-entity-text">
+                                                <small class="dk-entity-label emerald">Penandatangan</small>
+                                                <strong>{{ $kegiatan->penandatanganMitra?->nama ?: '-' }}</strong>
+                                                <span>{{ $kegiatan->penandatanganMitra?->jabatan ?: '-' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="dk-entity-card">
+                                            <span class="dk-entity-icon dk-entity-emerald"><i
+                                                    class="fas fa-user-tie"></i></span>
+                                            <div class="dk-entity-text">
+                                                <small class="dk-entity-label emerald">Penanggung Jawab</small>
+                                                <strong>{{ $kegiatan->pjMitra?->nama ?: '-' }}</strong>
+                                                <span>{{ $kegiatan->pjMitra?->jabatan ?: '-' }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {{-- Card: Ruang Lingkup --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-list-check"></i></span>
-                            <span>
-                                <strong>Ruang Lingkup Kegiatan</strong>
-                                <small>Detail implementasi kerjasama</small>
-                            </span>
+                    {{-- Card: Ruang Lingkup --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-list-check"></i></span>
+                                <span>
+                                    <strong>Ruang Lingkup Kegiatan</strong>
+                                    <small>Detail implementasi kerjasama</small>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body dk-card-body" style="padding: 0;">
-                        <div class="table-wrap dk-table-wrap" style="overflow-x: auto;">
-                            <table class="dk-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 60px;">#</th>
-                                        <th>Bentuk Kegiatan</th>
-                                        <th>Sasaran</th>
-                                        <th style="text-align: right;">Nilai Kontrak</th>
-                                        <th>Luaran</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($kegiatan->details as $idx => $item)
+                        <div class="card-body dk-card-body" style="padding: 0;">
+                            <div class="table-wrap dk-table-wrap" style="overflow-x: auto;">
+                                <table class="dk-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 60px;">#</th>
+                                            <th>Bentuk Kegiatan</th>
+                                            <th>Sasaran</th>
+                                            <th style="text-align: right;">Nilai Kontrak</th>
+                                            <th>Luaran</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($kegiatan->details as $idx => $item)
                                         <tr>
                                             <td><span class="dk-num">{{ $idx + 1 }}</span></td>
                                             <td>
                                                 <div style="font-weight: 700; color: var(--text); font-size: 14px;">
-                                                    {{ $item->jenisKerjasama?->nama_kerjasama ?? '-' }}</div>
+                                                    {{ $item->jenisKerjasama?->nama_kerjasama ?? '-' }}
+                                                </div>
                                                 @if($item->keterangan)
-                                                    <div
-                                                        style="font-size: 11px; color: var(--text-sub); margin-top: 5px; line-height: 1.4;">
-                                                        {{ $item->keterangan }}</div>
+                                                <div
+                                                    style="font-size: 11px; color: var(--text-sub); margin-top: 5px; line-height: 1.4;">
+                                                    {{ $item->keterangan }}
+                                                </div>
                                                 @endif
                                             </td>
                                             <td>
@@ -378,27 +380,28 @@
                                             </td>
                                             <td style="text-align: right;">
                                                 @if($item->nilai_kontrak > 0)
-                                                    <div style="font-weight: 800; color: #059669; font-size: 14px;">Rp
-                                                        {{ number_format($item->nilai_kontrak, 0, ',', '.') }}</div>
-                                                    <span class="tag {{ $item->income === 'ya' ? 'tag-blue' : 'tag-gray' }}"
-                                                        style="font-size: 10px; margin-top: 6px; padding: 2px 8px;">{{ $item->income === 'ya' ? 'Income' : 'Non-Income' }}</span>
+                                                <div style="font-weight: 800; color: #059669; font-size: 14px;">Rp
+                                                    {{ number_format($item->nilai_kontrak, 0, ',', '.') }}
+                                                </div>
+                                                <span class="tag {{ $item->income === 'ya' ? 'tag-blue' : 'tag-gray' }}"
+                                                    style="font-size: 10px; margin-top: 6px; padding: 2px 8px;">{{ $item->income === 'ya' ? 'Income' : 'Non-Income' }}</span>
                                                 @else
-                                                    <span
-                                                        style="color: var(--text-sub); font-size: 13px; font-weight: 600;">-</span>
+                                                <span
+                                                    style="color: var(--text-sub); font-size: 13px; font-weight: 600;">-</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if($item->volume_luaran)
-                                                    <div style="font-weight: 700; font-size: 13px; color: var(--text);">
-                                                        {{ $item->volume_luaran }} <span
-                                                            style="font-weight: 500; color: var(--text-sub);">{{ $item->satuan_luaran }}</span>
-                                                    </div>
+                                                <div style="font-weight: 700; font-size: 13px; color: var(--text);">
+                                                    {{ $item->volume_luaran }} <span
+                                                        style="font-weight: 500; color: var(--text-sub);">{{ $item->satuan_luaran }}</span>
+                                                </div>
                                                 @else
-                                                    <span style="color: var(--text-sub);">-</span>
+                                                <span style="color: var(--text-sub);">-</span>
                                                 @endif
                                             </td>
                                         </tr>
-                                    @empty
+                                        @empty
                                         <tr>
                                             <td colspan="5"
                                                 style="text-align: center; padding: 50px; color: var(--text-sub);">
@@ -407,97 +410,97 @@
                                                 <span style="font-weight: 500;">Belum ada detail kegiatan terdaftar.</span>
                                             </td>
                                         </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Right Column --}}
-            <div style="display: flex; flex-direction: column; gap: 28px; min-width: 0;">
+                {{-- Right Column --}}
+                <div style="display: flex; flex-direction: column; gap: 28px; min-width: 0;">
 
-                {{-- ═══ Enhanced Document Management Card ═══ --}}
-                <div class="card dk-card">
-                    {{-- Card Header --}}
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
-                            <span>
-                                <strong>Manajemen Dokumen</strong>
-                                <small>Laporan & Arsip Kerjasama</small>
-                            </span>
+                    {{-- ═══ Enhanced Document Management Card ═══ --}}
+                    <div class="card dk-card">
+                        {{-- Card Header --}}
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
+                                <span>
+                                    <strong>Manajemen Dokumen</strong>
+                                    <small>Laporan & Arsip Kerjasama</small>
+                                </span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="card-body dk-card-body" style="padding: 28px;" x-data="{ tab: 'list' }">
-                        {{-- ═══ Modern Sliding Tab Navigation ═══ --}}
-                        <div class="sliding-tab-container">
-                            {{-- Background Pill Animation --}}
-                            <div class="sliding-tab-pill"
-                                :style="tab === 'list' ? 'transform: translateX(0);' : 'transform: translateX(100%);'">
+                        <div class="card-body dk-card-body" style="padding: 28px;" x-data="{ tab: 'list' }">
+                            {{-- ═══ Modern Sliding Tab Navigation ═══ --}}
+                            <div class="sliding-tab-container">
+                                {{-- Background Pill Animation --}}
+                                <div class="sliding-tab-pill"
+                                    :style="tab === 'list' ? 'transform: translateX(0);' : 'transform: translateX(100%);'">
+                                </div>
+
+                                <button @click="tab = 'list'" class="sliding-tab-btn" :class="{ 'active': tab === 'list' }">
+                                    <i class="fas fa-list-ul"></i>
+                                    <span>Riwayat</span>
+                                </button>
+                                <button @click="tab = 'upload'" class="sliding-tab-btn"
+                                    :class="{ 'active': tab === 'upload' }">
+                                    <i class="fas fa-cloud-arrow-up"></i>
+                                    <span>Upload Baru</span>
+                                </button>
                             </div>
 
-                            <button @click="tab = 'list'" class="sliding-tab-btn" :class="{ 'active': tab === 'list' }">
-                                <i class="fas fa-list-ul"></i>
-                                <span>Riwayat</span>
-                            </button>
-                            <button @click="tab = 'upload'" class="sliding-tab-btn"
-                                :class="{ 'active': tab === 'upload' }">
-                                <i class="fas fa-cloud-arrow-up"></i>
-                                <span>Upload Baru</span>
-                            </button>
-                        </div>
+                            {{-- ═══ Tab Content: List (File History) ═══ --}}
+                            <div x-show="tab === 'list'" x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4"
+                                x-transition:enter-end="opacity-100 translate-y-0">
 
-                        {{-- ═══ Tab Content: List (File History) ═══ --}}
-                        <div x-show="tab === 'list'" x-transition:enter="transition ease-out duration-300"
-                            x-transition:enter-start="opacity-0 translate-y-4"
-                            x-transition:enter-end="opacity-100 translate-y-0">
-
-                            @if($kegiatan->laporanFiles->count() > 0)
+                                @if($kegiatan->laporanFiles->count() > 0)
                                 <div style="display: flex; flex-direction: column; gap: 12px;">
                                     @foreach($kegiatan->laporanFiles as $file)
-                                        <div class="dk-file-item">
-                                            <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
-                                                {{-- File Icon Badge --}}
-                                                <div class="dk-file-icon">
-                                                    <i class="fas fa-file-pdf"></i>
-                                                </div>
-
-                                                <div class="dk-file-info">
-                                                    <p class="dk-file-name">{{ $file->original_name }}</p>
-                                                    <div class="dk-file-meta">
-                                                        <span class="dk-file-meta-item"><i class="far fa-calendar-alt"
-                                                                style="margin-right: 4px;"></i>{{ $file->created_at->format('d M Y') }}</span>
-                                                        <span class="dk-file-dot"></span>
-                                                        <span
-                                                            class="dk-file-meta-item">{{ round($file->file_size / 1024 / 1024, 2) }}
-                                                            MB</span>
-                                                    </div>
-                                                </div>
+                                    <div class="dk-file-item">
+                                        <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+                                            {{-- File Icon Badge --}}
+                                            <div class="dk-file-icon">
+                                                <i class="fas fa-file-pdf"></i>
                                             </div>
 
-                                            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank"
-                                                    class="dk-action-btn view" title="Pratinjau Dokumen">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </a>
-
-                                                <form action="{{ route('unit.form.destroy', $file->id) }}" method="POST"
-                                                    onsubmit="return confirm('Hapus dokumen ini dari riwayat?')"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="dk-action-btn delete" title="Hapus Dokumen">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
+                                            <div class="dk-file-info">
+                                                <p class="dk-file-name">{{ $file->original_name }}</p>
+                                                <div class="dk-file-meta">
+                                                    <span class="dk-file-meta-item"><i class="far fa-calendar-alt"
+                                                            style="margin-right: 4px;"></i>{{ $file->created_at->format('d M Y') }}</span>
+                                                    <span class="dk-file-dot"></span>
+                                                    <span
+                                                        class="dk-file-meta-item">{{ round($file->file_size / 1024 / 1024, 2) }}
+                                                        MB</span>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                                            <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank"
+                                                class="dk-action-btn view" title="Pratinjau Dokumen">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+
+                                            <form action="{{ route('unit.form.destroy', $file->id) }}" method="POST"
+                                                onsubmit="return confirm('Hapus dokumen ini dari riwayat?')"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="dk-action-btn delete" title="Hapus Dokumen">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                     @endforeach
                                 </div>
-                            @else
+                                @else
                                 <div style="text-align: center; padding: 40px 20px;">
                                     <div
                                         style="width: 64px; height: 64px; background: var(--surface2); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 1px solid var(--border);">
@@ -510,113 +513,113 @@
                                         style="margin: 4px 0 0; font-size: 11px; color: var(--text-sub); max-width: 200px; margin-left: auto; margin-right: auto;">
                                         Klik tab 'Upload Baru' untuk menambahkan laporan kerjasama.</p>
                                 </div>
-                            @endif
-                        </div>
+                                @endif
+                            </div>
 
-                        {{-- ═══ Tab Content: Upload (Form) ═══ --}}
-                        <div x-show="tab === 'upload'" x-transition:enter="transition ease-out duration-300"
-                            x-transition:enter-start="opacity-0 translate-y-4"
-                            x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
+                            {{-- ═══ Tab Content: Upload (Form) ═══ --}}
+                            <div x-show="tab === 'upload'" x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4"
+                                x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
 
-                            <form action="{{ route('unit.form.store') }}" method="POST" enctype="multipart/form-data"
-                                x-data="{ fileName: '' }">
-                                @csrf
-                                <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
+                                <form action="{{ route('unit.form.store') }}" method="POST" enctype="multipart/form-data"
+                                    x-data="{ fileName: '' }">
+                                    @csrf
+                                    <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
 
-                                <div style="margin-bottom: 24px;">
-                                    <div class="dk-upload-zone-wrapper">
-                                        <input type="file" name="file_laporan" id="file_laporan" accept=".pdf" required
-                                            class="dk-upload-input" @change="fileName = $event.target.files[0].name">
+                                    <div style="margin-bottom: 24px;">
+                                        <div class="dk-upload-zone-wrapper">
+                                            <input type="file" name="file_laporan" id="file_laporan" accept=".pdf" required
+                                                class="dk-upload-input" @change="fileName = $event.target.files[0].name">
 
-                                        <div class="dk-upload-zone" :class="{ 'has-file': fileName }">
-                                            {{-- Visual Feedback on File Select --}}
-                                            <template x-if="!fileName">
-                                                <div>
-                                                    <div class="dk-upload-icon">
-                                                        <i class="fas fa-cloud-arrow-up"></i>
+                                            <div class="dk-upload-zone" :class="{ 'has-file': fileName }">
+                                                {{-- Visual Feedback on File Select --}}
+                                                <template x-if="!fileName">
+                                                    <div>
+                                                        <div class="dk-upload-icon">
+                                                            <i class="fas fa-cloud-arrow-up"></i>
+                                                        </div>
+                                                        <p class="dk-upload-text-main">Tarik & Lepas File</p>
+                                                        <p class="dk-upload-text-sub">atau klik untuk menelusuri berkas
+                                                            (PDF)</p>
                                                     </div>
-                                                    <p class="dk-upload-text-main">Tarik & Lepas File</p>
-                                                    <p class="dk-upload-text-sub">atau klik untuk menelusuri berkas
-                                                        (PDF)</p>
-                                                </div>
-                                            </template>
+                                                </template>
 
-                                            <template x-if="fileName">
-                                                <div style="animation: bounceIn 0.5s ease;">
-                                                    <div class="dk-upload-icon">
-                                                        <i class="fas fa-file-circle-check"></i>
+                                                <template x-if="fileName">
+                                                    <div style="animation: bounceIn 0.5s ease;">
+                                                        <div class="dk-upload-icon">
+                                                            <i class="fas fa-file-circle-check"></i>
+                                                        </div>
+                                                        <p class="dk-upload-text-main"
+                                                            style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 20px;"
+                                                            x-text="fileName"></p>
+                                                        <p class="dk-upload-text-sub">Dokumen siap diunggah!</p>
                                                     </div>
-                                                    <p class="dk-upload-text-main"
-                                                        style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 20px;"
-                                                        x-text="fileName"></p>
-                                                    <p class="dk-upload-text-sub">Dokumen siap diunggah!</p>
-                                                </div>
-                                            </template>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <button type="submit" class="dk-btn-submit" :disabled="!fileName">
-                                    <i class="fas fa-rocket"></i>
-                                    <span>Kirim Dokumen</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Card: Pelaksana --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-users-gear"></i></span>
-                            <span>
-                                <strong>Unit Pelaksana</strong>
-                                <small>Instansi pengelola kegiatan</small>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
-                        <div class="dk-entity-card">
-                            <span class="dk-entity-icon {{ $pelaksanaClass }}">
-                                <i class="fas {{ $pelaksanaIcon }}"></i>
-                            </span>
-                            <div class="dk-entity-text">
-                                <small
-                                    class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType ?: 'Unit' }}</small>
-                                <strong>{{ $pelaksanaName }}</strong>
+                                    <button type="submit" class="dk-btn-submit" :disabled="!fileName">
+                                        <i class="fas fa-rocket"></i>
+                                        <span>Kirim Dokumen</span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
+                    </div>
 
-                        @if($kegiatan->prodis->count() > 0)
+                    {{-- Card: Pelaksana --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-users-gear"></i></span>
+                                <span>
+                                    <strong>Unit Pelaksana</strong>
+                                    <small>Instansi pengelola kegiatan</small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body dk-card-body" style="padding: 28px;">
+                            <div class="dk-entity-card">
+                                <span class="dk-entity-icon {{ $pelaksanaClass }}">
+                                    <i class="fas {{ $pelaksanaIcon }}"></i>
+                                </span>
+                                <div class="dk-entity-text">
+                                    <small
+                                        class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType ?: 'Unit' }}</small>
+                                    <strong>{{ $pelaksanaName }}</strong>
+                                </div>
+                            </div>
+
+                            @if($kegiatan->prodis->count() > 0)
                             <div class="dk-prodi-list">
                                 <label class="dk-prodi-label">Program Studi Terkait</label>
                                 <div class="dk-prodi-container">
                                     @foreach($kegiatan->prodis as $prodi)
-                                        <div class="dk-prodi-item">
-                                            <i class="fas fa-graduation-cap"></i>
-                                            <span>{{ $prodi->nama_prodi }}</span>
-                                        </div>
+                                    <div class="dk-prodi-item">
+                                        <i class="fas fa-graduation-cap"></i>
+                                        <span>{{ $prodi->nama_prodi }}</span>
+                                    </div>
                                     @endforeach
                                 </div>
                             </div>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Card: Profil Mitra --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-building-circle-check"></i></span>
-                            <span>
-                                <strong>Profil Mitra</strong>
-                                <small>Informasi detail instansi mitra</small>
-                            </span>
+                            @endif
                         </div>
                     </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
-                        @if($kegiatan->mitra)
+
+                    {{-- Card: Profil Mitra --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-building-circle-check"></i></span>
+                                <span>
+                                    <strong>Profil Mitra</strong>
+                                    <small>Informasi detail instansi mitra</small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body dk-card-body" style="padding: 28px;">
+                            @if($kegiatan->mitra)
                             <div class="dk-mitra-profile">
                                 <div class="dk-mitra-header">
                                     <div class="dk-mitra-logo">
@@ -636,51 +639,61 @@
                                         </div>
                                     </div>
                                     @if($kegiatan->mitra->website)
-                                        <div class="dk-mitra-info-item">
-                                            <small class="dk-mitra-info-label">Website Resmi</small>
-                                            <a href="{{ $kegiatan->mitra->website }}" target="_blank" class="dk-mitra-website">
-                                                <i class="fas fa-globe"></i>
-                                                <span>{{ str_replace(['http://', 'https://'], '', $kegiatan->mitra->website) }}</span>
-                                            </a>
-                                        </div>
+                                    <div class="dk-mitra-info-item">
+                                        <small class="dk-mitra-info-label">Website Resmi</small>
+                                        <a href="{{ $kegiatan->mitra->website }}" target="_blank" class="dk-mitra-website">
+                                            <i class="fas fa-globe"></i>
+                                            <span>{{ str_replace(['http://', 'https://'], '', $kegiatan->mitra->website) }}</span>
+                                        </a>
+                                    </div>
                                     @endif
                                 </div>
                             </div>
-                        @else
+                            @else
                             <div style="text-align: center; color: var(--text-sub); font-size: 13px; padding: 40px 20px;">
                                 <i class="fas fa-building-slash"
                                     style="font-size: 32px; opacity: 0.15; margin-bottom: 12px; display: block;"></i>
                                 <span style="font-weight: 600;">Data mitra tidak ditemukan.</span>
                             </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
-                </div>
 
-                {{-- Action Buttons --}}
-                <div class="dk-btn-group">
-                    @if($kegiatan->document_link)
+                    {{-- Action Buttons --}}
+                    <div class="dk-btn-group">
+                        @if($kegiatan->document_link)
                         <a href="{{ $kegiatan->document_link }}" target="_blank" class="dk-primary-btn dk-btn-full">
                             <i class="fas fa-file-pdf"></i>
                             <span>Lihat Dokumen Asli</span>
                         </a>
-                    @endif
+                        @endif
 
-                    <a href="#" class="dk-warning-btn dk-btn-full">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>Minta Persetujuan Pimpinan</span>
-                    </a>
+                        @if($kegiatan->status_dokumen === 'Draft')
+                        <form action="{{ route('unit.kerjasama.submit', $kegiatan->id) }}" method="POST" class="dk-btn-full" id="submitForm">
+                            @csrf
+                            <button type="submit" class="dk-warning-btn dk-btn-full" style="border: none; cursor: pointer;" onclick="return confirm('Apakah Anda yakin ingin mengirim permintaan persetujuan ke Pimpinan?')">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Minta Persetujuan Pimpinan</span>
+                            </button>
+                        </form>
+                        @else
+                        <button class="dk-warning-btn dk-btn-full" style="opacity: 0.6; cursor: not-allowed; border: none;" disabled title="Sudah diajukan atau sedang dalam proses">
+                            <i class="fas fa-check-circle"></i>
+                            <span>{{ $kegiatan->status_dokumen }}</span>
+                        </button>
+                        @endif
 
-                    <a href="#" class="dk-info-btn dk-btn-full">
-                        <i class="fas fa-clock-rotate-left"></i>
-                        <span>Ajukan Perpanjangan</span>
-                    </a>
+                        <a href="#" class="dk-info-btn dk-btn-full">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>Ajukan Perpanjangan</span>
+                        </a>
 
-                    <a href="{{ route('unit.dkerjasama') }}" class="dk-secondary-btn dk-btn-full dk-btn-back">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Kembali ke Repositori</span>
-                    </a>
+                        <a href="{{ route('unit.dkerjasama') }}" class="dk-secondary-btn dk-btn-full dk-btn-back">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Kembali ke Repositori</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>

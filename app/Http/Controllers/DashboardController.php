@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Profile;
-use App\Models\KegiatanKerjasama;
+use App\Models\Cooperation;
 use App\Models\Evaluasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,59 +18,67 @@ class DashboardController
 
         // ── 1. WIDGET KARTU STATISTIK ─────────────────────────────
 
-        // Total Kerja Sama Tahun Ini (status layak/selesai atau semua valid)
-        $totalKerjasamaTahunIni = KegiatanKerjasama::whereYear('created_at', $tahunIni)->count();
+        // Total Kerja Sama Tahun Ini
+        $totalKerjasamaTahunIni = Cooperation::whereYear('created_at', $tahunIni)->count();
 
-        // Menunggu Evaluasi Pimpinan (dari Jurusan)
-        $menungguEvaluasi = KegiatanKerjasama::where('status', 'menunggu_evaluasi')->count();
+        // Menunggu Evaluasi Pimpinan (status_dokumen = 'Menunggu Evaluasi')
+        $menungguEvaluasi = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')->count();
 
-        // Menunggu Validasi Akhir (dari Unit Kerja)
-        $menungguValidasi = KegiatanKerjasama::where('status', 'menunggu_validasi')->count();
+        // Status 'Menunggu Validasi' tidak ada dalam list status terbaru (Draft, Menunggu Evaluasi, Disahkan)
+        $menungguValidasi = 0;
 
-        // Kerjasama Internasional vs Nasional
-        $internasional = KegiatanKerjasama::whereYear('created_at', $tahunIni)
-            ->whereHas('mitras', fn($q) => $q->where('kategori', 'internasional'))
+        // Kerjasama Internasional vs Nasional (via mitra belongsTo)
+        $internasional = Cooperation::whereYear('created_at', $tahunIni)
+            ->whereHas('mitra', fn($q) => $q->where('kategori', 'internasional'))
             ->count();
-        $nasional = KegiatanKerjasama::whereYear('created_at', $tahunIni)
-            ->whereHas('mitras', fn($q) => $q->where('kategori', 'nasional'))
+        $nasional = Cooperation::whereYear('created_at', $tahunIni)
+            ->whereHas('mitra', fn($q) => $q->where('kategori', 'nasional'))
             ->count();
 
         // ── 2. VISUALISASI GRAFIK ─────────────────────────────────
 
         // A. Tren Kerja Sama Per Bulan (tahun berjalan)
-        $trenPerBulan = KegiatanKerjasama::whereYear('created_at', $tahunIni)
+        $trenPerBulan = Cooperation::whereYear('created_at', $tahunIni)
             ->select(DB::raw('MONTH(created_at) as bulan'), DB::raw('COUNT(*) as total'))
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get();
 
-        // B. Distribusi Sebaran Jenis Kerjasama (Donut)
-        $sebaranJenis = DB::table('kegiatan_jenis_kerjasamas')
-            ->join('jenis_kerjasamas', 'kegiatan_jenis_kerjasamas.id_jenis', '=', 'jenis_kerjasamas.id')
+        // B. Distribusi Sebaran Jenis Kerjasama (Donut) — from detail_kegiatans pivot
+        $sebaranJenis = DB::table('detail_kegiatans')
+            ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
             ->select('jenis_kerjasamas.nama_kerjasama', DB::raw('COUNT(*) as total'))
             ->groupBy('jenis_kerjasamas.nama_kerjasama')
             ->get();
 
-        // C. Kinerja Jurusan (Horizontal Bar)
-        $kinerjaJurusan = DB::table('kegiatan_jurusans')
-            ->join('jurusans', 'kegiatan_jurusans.id_jurusan', '=', 'jurusans.id')
+        // C. Kinerja Jurusan (Horizontal Bar) — from kerjasama_jurusan pivot
+        $kinerjaJurusan = DB::table('kerjasama_jurusan')
+            ->join('jurusans', 'kerjasama_jurusan.jurusan_id', '=', 'jurusans.id')
             ->select('jurusans.nama_jurusan', DB::raw('COUNT(*) as total'))
             ->groupBy('jurusans.nama_jurusan')
             ->orderByDesc('total')
             ->get();
 
-        // C2. Kinerja Unit Kerja (Horizontal Bar)
-        $kinerjaUnit = DB::table('kegiatan_units')
-            ->join('unit_kerjas', 'kegiatan_units.id_unit', '=', 'unit_kerjas.id')
-            ->select('unit_kerjas.nama_unit_pelaksana', DB::raw('COUNT(*) as total'))
-            ->groupBy('unit_kerjas.nama_unit_pelaksana')
+        // C2. Kinerja Unit Pelaksana — based on tipe_pelaksana grouping
+        $kinerjaUnit = Cooperation::whereNotNull('tipe_pelaksana')
+            ->select('tipe_pelaksana', DB::raw('COUNT(*) as total'))
+            ->groupBy('tipe_pelaksana')
             ->orderByDesc('total')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->nama_unit_pelaksana = match ($item->tipe_pelaksana) {
+                    'jurusan' => 'Jurusan',
+                    'upa' => 'UPA',
+                    'pusat' => 'Pusat',
+                    default => ucfirst($item->tipe_pelaksana),
+                };
+                return $item;
+            });
 
         // ── 3. TABEL AKSI CEPAT ──────────────────────────────────
 
-        $dokumenMenunggu = KegiatanKerjasama::with(['jurusans', 'unitKerjas'])
-            ->whereIn('status', ['menunggu_evaluasi', 'menunggu_validasi'])
+        $dokumenMenunggu = Cooperation::with(['mitra', 'jurusans'])
+            ->where('status_dokumen', 'Menunggu Evaluasi')
             ->latest()
             ->take(10)
             ->get();
@@ -91,7 +99,7 @@ class DashboardController
 
     public function pimpinanMonitoring()
     {
-        $dataKerjasama = KegiatanKerjasama::with(['jurusans', 'unitKerjas', 'mitras', 'evaluasis', 'kesimpulans'])
+        $dataKerjasama = Cooperation::with(['mitra', 'jurusans', 'details'])
             ->latest()
             ->get();
 
@@ -103,18 +111,17 @@ class DashboardController
 
     public function pimpinanMonitoringDetail($id)
     {
-        $kegiatan = KegiatanKerjasama::with([
-            'jurusans', 
-            'unitKerjas', 
-            'mitras', 
-            'tujuans', 
-            'pelaksanaans', 
-            'hasils', 
-            'dokumentasis', 
-            'evaluasis.penilai', 
-            'kesimpulans', 
-            'permasalahanSolusis',
-            'jenisKerjasama'
+        $kegiatan = Cooperation::with([
+            'mitra',
+            'jurusans',
+            'prodis',
+            'details.jenisKerjasama',
+            'details.sasaran',
+            'penandatanganInternal',
+            'pjInternal',
+            'penandatanganMitra',
+            'pjMitra',
+            'laporanFiles',
         ])->findOrFail($id);
 
         return view('auth.pimpinan', [
@@ -125,17 +132,20 @@ class DashboardController
 
     public function pimpinanEvaluasi()
     {
-        // 1. Antrean Laporan Jurusan (menunggu_evaluasi)
-        $laporanJurusan = KegiatanKerjasama::where('status', 'menunggu_evaluasi')
-            ->whereHas('jurusans')
-            ->with(['jurusans', 'mitras'])
+        // 1. Antrean Laporan Jurusan (Menunggu Evaluasi, tipe_pelaksana = jurusan)
+        $laporanJurusan = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
+            ->where('tipe_pelaksana', 'jurusan')
+            ->with(['jurusans', 'mitra'])
             ->latest()
             ->get();
 
-        // 2. Antrean Laporan Unit Kerja (menunggu_validasi atau menunggu_evaluasi)
-        $laporanUnit = KegiatanKerjasama::whereIn('status', ['menunggu_validasi', 'menunggu_evaluasi'])
-            ->whereHas('unitKerjas')
-            ->with(['unitKerjas', 'mitras', 'evaluasis'])
+        // 2. Antrean Laporan Unit Kerja (Menunggu Evaluasi, tipe != jurusan)
+        $laporanUnit = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
+            ->where(function ($q) {
+                $q->whereNull('tipe_pelaksana')
+                    ->orWhere('tipe_pelaksana', '!=', 'jurusan');
+            })
+            ->with(['mitra'])
             ->latest()
             ->get();
 
@@ -227,10 +237,10 @@ class DashboardController
         $totalUsers = User::count();
 
         // Menggunakan whereHas untuk keamanan jika ID role berubah
-        $totalPimpinan  = User::whereHas('role', fn($q) => $q->where('role_name', 'Pimpinan'))->count();
-        $totalJurusan   = User::whereHas('role', fn($q) => $q->where('role_name', 'Jurusan'))->count();
+        $totalPimpinan  = User::whereHas('role', fn($q) => $q->where('role_name', 'pimpinan'))->count();
+        $totalJurusan   = User::whereHas('role', fn($q) => $q->where('role_name', 'jurusan'))->count();
         $totalUnitKerja = User::whereHas('role', fn($q) => $q->where('role_name', 'unit_kerja'))->count();
-        $totalAdmin     = User::whereHas('role', fn($q) => $q->where('role_name', 'Admin'))->count();
+        $totalAdmin     = User::whereHas('role', fn($q) => $q->where('role_name', 'admin'))->count();
 
         // Persentase untuk progress bar role
         $pimpinanPct = $totalUsers > 0 ? round($totalPimpinan / $totalUsers * 100) : 0;
