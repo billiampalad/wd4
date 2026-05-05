@@ -1179,3 +1179,149 @@ if (!window.Turbo) {
         initNotifikasi();
     });
 }
+
+/* ==========================================================================
+   EVALUASI & VALIDASI MODULE (ALPINE COMPONENT)
+   ========================================================================== */
+function registerAlpineComponents() {
+    if (typeof Alpine === 'undefined') return;
+
+    // Hanya daftarkan komponen jika belum ada (atau override dengan aman di Alpine 3)
+    Alpine.data('evalDashboard', () => ({
+        isLoading: true,
+        isDetailLoading: false,
+        activeTab: 'jurusan',
+        activeId: null,
+        comments: {},
+        showErrors: {},
+        status: '',
+
+        init() {
+            setTimeout(() => {
+                this.isLoading = false;
+            }, 600);
+        },
+
+        openDetail(id) {
+            if(this.activeId === id) return;
+            this.isDetailLoading = true;
+            this.activeId = id;
+            if(this.comments[id] === undefined) this.comments[id] = '';
+            if(this.showErrors[id] === undefined) this.showErrors[id] = false;
+            
+            setTimeout(() => {
+                this.isDetailLoading = false;
+            }, 300);
+        },
+
+        appendComment(text, id) {
+            let current = this.comments[id] || '';
+            this.comments[id] = current.length > 0 ? current + ' ' + text : text;
+            this.showErrors[id] = false;
+        },
+
+        handleAction(actionStatus, id) {
+            this.status = actionStatus;
+            
+            if (actionStatus === 'tidak_layak' && (!this.comments[id] || this.comments[id].trim() === '')) {
+                this.showErrors[id] = true;
+                setTimeout(() => { this.showErrors[id] = false; }, 3000);
+                return;
+            }
+
+            if (actionStatus === 'layak') {
+                this.triggerConfetti();
+                setTimeout(() => {
+                    document.getElementById('form_' + id).submit();
+                }, 1500);
+            } else {
+                document.getElementById('form_' + id).submit();
+            }
+        },
+
+        triggerConfetti() {
+            if (typeof confetti === 'undefined') return;
+            var duration = 2000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    }));
+
+    Alpine.data('evaluationForm', () => ({
+        isLoading: true,
+        comment: '',
+        status: '',
+        showError: false,
+        
+        init() {
+            setTimeout(() => {
+                this.isLoading = false;
+            }, 800);
+        },
+
+        appendComment(text) {
+            if (this.comment.length > 0) {
+                this.comment += ' ' + text;
+            } else {
+                this.comment = text;
+            }
+            this.showError = false;
+        },
+
+        handleAction(actionStatus) {
+            this.status = actionStatus;
+            
+            if (actionStatus === 'tidak_layak' && this.comment.trim() === '') {
+                this.showError = true;
+                setTimeout(() => { this.showError = false; }, 2000);
+                return;
+            }
+
+            if (actionStatus === 'layak') {
+                this.triggerConfetti();
+                setTimeout(() => {
+                    document.getElementById('evaluateForm').submit();
+                }, 1200);
+            } else {
+                document.getElementById('evaluateForm').submit();
+            }
+        },
+
+        triggerConfetti() {
+            if (typeof confetti === 'undefined') return;
+            var duration = 15 * 100;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) { return clearInterval(interval); }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    }));
+}
+
+// Daftarkan saat awal (initial load)
+document.addEventListener('alpine:init', registerAlpineComponents);
+
+// Daftarkan ulang saat navigasi dengan Turbo Hotwired
+document.addEventListener('turbo:load', () => {
+    if (typeof Alpine !== 'undefined') {
+        registerAlpineComponents();
+    }
+});

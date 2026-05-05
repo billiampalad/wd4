@@ -291,19 +291,35 @@ class DashboardController
             ->latest()
             ->get();
 
-        // 2. Antrean Laporan Unit Kerja (Menunggu Evaluasi, tipe != jurusan)
+        // 2. Antrean Laporan UPA (Menunggu Evaluasi, tipe_pelaksana = upa)
+        $laporanUpa = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
+            ->where('tipe_pelaksana', 'upa')
+            ->with(['mitra', 'upas', 'evaluasis'])
+            ->latest()
+            ->get();
+
+        // 3. Antrean Laporan Pusat (Menunggu Evaluasi, tipe_pelaksana = pusat)
+        $laporanPusat = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
+            ->where('tipe_pelaksana', 'pusat')
+            ->with(['mitra', 'pusats', 'evaluasis'])
+            ->latest()
+            ->get();
+
+        // 4. Fallback: Laporan Unit Lainnya (jika ada yang tidak terdefinisi tipenya tapi bukan jurusan)
         $laporanUnit = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
             ->where(function ($q) {
                 $q->whereNull('tipe_pelaksana')
-                    ->orWhere('tipe_pelaksana', '!=', 'jurusan');
+                    ->orWhereNotIn('tipe_pelaksana', ['jurusan', 'upa', 'pusat']);
             })
-            ->with(['mitra', 'upas', 'pusats', 'evaluasis'])
+            ->with(['mitra', 'evaluasis'])
             ->latest()
             ->get();
 
         return view('auth.pimpinan', [
             'view' => 'evaluasi',
             'laporanJurusan' => $laporanJurusan,
+            'laporanUpa' => $laporanUpa,
+            'laporanPusat' => $laporanPusat,
             'laporanUnit' => $laporanUnit
         ]);
     }

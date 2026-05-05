@@ -116,36 +116,6 @@ class Cooperation extends Model
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
     }
 
-    public function tujuans()
-    {
-        return $this->hasMany(Tujuan::class, 'id_kegiatan');
-    }
-
-    public function pelaksanaans()
-    {
-        return $this->hasMany(Pelaksanaan::class, 'id_kegiatan');
-    }
-
-    public function hasils()
-    {
-        return $this->hasMany(Hasil::class, 'id_kegiatan');
-    }
-
-    public function dokumentasis()
-    {
-        return $this->hasMany(Dokumentasi::class, 'id_kegiatan');
-    }
-
-    public function kesimpulans()
-    {
-        return $this->hasMany(Kesimpulan::class, 'id_kegiatan');
-    }
-
-    public function permasalahanSolusis()
-    {
-        return $this->hasMany(PermasalahanSolusi::class, 'id_kegiatan');
-    }
-
     // ─── Accessors ───────────────────────────────────────
 
     public function getStatusLabelAttribute()
