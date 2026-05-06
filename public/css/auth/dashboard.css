@@ -219,66 +219,14 @@
     font-weight: 650;
 }
 
-.ud-progress-layout {
-    display: grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(220px, .9fr);
-    gap: 16px;
-}
-
-.ud-progress-ring {
-    min-height: 190px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(14, 165, 233, 0.05));
-    display: grid;
-    place-items: center;
-    border: 1px solid var(--ud-border);
-}
-
-.ud-ring {
-    width: 142px;
-    height: 142px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background:
-        radial-gradient(circle at center, var(--surface) 56%, transparent 57%),
-        conic-gradient(var(--accent) calc(var(--progress) * 1%), var(--border) 0);
-    box-shadow: inset 0 0 0 1px var(--ud-border);
-}
-
-.ud-ring span {
-    font-size: 26px;
-    font-weight: 850;
-    color: var(--accent);
-}
-
-.ud-track-list {
-    display: grid;
-    gap: 10px;
-}
-
-.ud-track-item {
+.ud-chart-layout {
+    position: relative;
+    width: 100%;
+    min-height: 240px;
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 13px 14px;
-    border: 1px solid var(--ud-border);
-    border-radius: 12px;
-    background: var(--surface2);
-}
-
-.ud-track-label {
-    color: var(--ud-muted);
-    font-size: 12px;
-    font-weight: 750;
-}
-
-.ud-track-value {
-    font-size: 16px;
-    font-weight: 850;
-    color: var(--ud-text);
-    text-align: right;
+    padding: 10px 0;
 }
 
 .ud-deadlines {
@@ -573,8 +521,7 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ud-bento,
-    .ud-progress-layout {
+    .ud-bento {
         grid-template-columns: 1fr;
     }
 }

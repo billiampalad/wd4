@@ -80,42 +80,14 @@
         <article class="ud-panel">
             <div class="ud-panel-head">
                 <div>
-                    <h3 class="ud-panel-title">Project Progress IA</h3>
-                    <p class="ud-panel-desc">Realisasi target dan tracking kontrak implementasi.</p>
+                    <h3 class="ud-panel-title">Distribusi Jenis Kerjasama</h3>
+                    <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
                 </div>
-                <span class="ud-type-badge"><i class="fas fa-file-invoice"></i> IA</span>
+                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i class="fas fa-chart-pie"></i> Chart</span>
             </div>
 
-            <div class="ud-progress-layout">
-                <div class="ud-progress-ring">
-                    <div class="ud-ring" style="--progress: {{ $realisasiTargetPercent ?? 0 }};">
-                        <span>{{ $realisasiTargetPercent ?? 0 }}%</span>
-                    </div>
-                </div>
-
-                <div class="ud-track-list">
-                    <div class="ud-track-item">
-                        <div>
-                            <div class="ud-track-label">Tujuan IA</div>
-                            <div class="ud-small">Target yang tercatat</div>
-                        </div>
-                        <div class="ud-track-value">{{ number_format($tujuanCount ?? 0) }}</div>
-                    </div>
-                    <div class="ud-track-item">
-                        <div>
-                            <div class="ud-track-label">Volume Luaran</div>
-                            <div class="ud-small">Luaran yang sudah diisi</div>
-                        </div>
-                        <div class="ud-track-value">{{ number_format($volumeCount ?? 0) }}</div>
-                    </div>
-                    <div class="ud-track-item">
-                        <div>
-                            <div class="ud-track-label">Financial Tracking</div>
-                            <div class="ud-small">Total nilai kontrak unit</div>
-                        </div>
-                        <div class="ud-track-value">Rp {{ number_format($totalNilaiKontrak ?? 0, 0, ',', '.') . '.000' }}</div>
-                    </div>
-                </div>
+            <div class="ud-chart-layout">
+                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}" data-ia="{{ $totalIA }}"></canvas>
             </div>
         </article>
 
