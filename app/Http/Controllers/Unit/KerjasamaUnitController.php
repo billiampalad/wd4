@@ -537,6 +537,32 @@ class KerjasamaUnitController extends Controller
 
     // ─── DESTROY ─────────────────────────────────────────
 
+    public function updateDocumentLink(Request $request, $id)
+    {
+        $request->validate([
+            'document_link' => 'nullable|string|max:255',
+        ]);
+
+        $user = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->first();
+
+        if (!$profile || !$profile->unit_kerja_id) {
+            return response()->json([
+                'message' => 'Profil unit kerja tidak ditemukan.',
+            ], 403);
+        }
+
+        $cooperation = Cooperation::findOrFail($id);
+        $cooperation->update([
+            'document_link' => $request->document_link,
+        ]);
+
+        return response()->json([
+            'message' => 'Link dokumen berhasil disimpan.',
+            'document_link' => $cooperation->document_link,
+        ]);
+    }
+
     public function destroy($id)
     {
         $kegiatan = Cooperation::findOrFail($id);

@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Profile;
 use App\Models\Cooperation;
 use App\Models\Evaluasi;
+use App\Models\DetailKegiatan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -325,6 +326,126 @@ class DashboardController
     }
 
     public function unit()
+    {
+        $user = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->with('unitKerja')->first();
+
+        if (!$profile || !$profile->unit_kerja_id) {
+            return redirect()->route('login')->with('error', 'Profil unit kerja tidak ditemukan.');
+        }
+
+        $unitId = $profile->unit_kerja_id;
+        $unitName = $profile->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja';
+        $today = now()->startOfDay();
+        $deadlineLimit = now()->addDays(30)->endOfDay();
+
+        $unitScopedExists = false;
+        if ($profile->jurusan_id) {
+            $unitScopedExists = true;
+        } elseif ($unitName) {
+            $unitScopedExists = Cooperation::where(function ($query) use ($unitName) {
+                $query->whereHas('jurusans', fn ($q) => $q->where('nama_jurusan', $unitName))
+                    ->orWhereHas('upas', fn ($q) => $q->where('nama_upa', $unitName))
+                    ->orWhereHas('pusats', fn ($q) => $q->where('nama_pusat', $unitName))
+                    ->orWhereHas('jurusan', fn ($q) => $q->where('nama_jurusan', $unitName))
+                    ->orWhereHas('upa', fn ($q) => $q->where('nama_upa', $unitName))
+                    ->orWhereHas('pusat', fn ($q) => $q->where('nama_pusat', $unitName));
+            })->exists();
+        }
+
+        $applyUnitScope = function ($query) use ($profile, $unitName, $unitScopedExists) {
+            if ($profile->jurusan_id) {
+                return $query->where(function ($q) use ($profile) {
+                    $q->where('jurusan_id', $profile->jurusan_id)
+                        ->orWhereHas('jurusans', fn ($sq) => $sq->where('jurusans.id', $profile->jurusan_id));
+                });
+            }
+
+            if ($unitScopedExists && $unitName) {
+                return $query->where(function ($q) use ($unitName) {
+                    $q->whereHas('jurusans', fn ($sq) => $sq->where('nama_jurusan', $unitName))
+                        ->orWhereHas('upas', fn ($sq) => $sq->where('nama_upa', $unitName))
+                        ->orWhereHas('pusats', fn ($sq) => $sq->where('nama_pusat', $unitName))
+                        ->orWhereHas('jurusan', fn ($sq) => $sq->where('nama_jurusan', $unitName))
+                        ->orWhereHas('upa', fn ($sq) => $sq->where('nama_upa', $unitName))
+                        ->orWhereHas('pusat', fn ($sq) => $sq->where('nama_pusat', $unitName));
+                });
+            }
+
+            return $query;
+        };
+
+        $kerjasamaUnit = $applyUnitScope(Cooperation::with([
+            'mitra',
+            'pjInternal',
+            'details',
+            'details.sasaran',
+            'jurusans',
+            'upas',
+            'pusats',
+        ]))
+            ->latest()
+            ->get();
+
+        $cooperationIds = $kerjasamaUnit->pluck('id');
+        $iaIds = $kerjasamaUnit
+            ->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'ia'))
+            ->pluck('id');
+
+        $totalKerjasama = $kerjasamaUnit->count();
+        $menungguValidasi = $kerjasamaUnit->where('status_dokumen', 'Menunggu Evaluasi')->count();
+        $dokumenKadaluarsa = $kerjasamaUnit->filter(function ($item) use ($today) {
+            $status = strtolower($item->status ?? '');
+            $statusExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+            $dateExpired = $item->end_date && $today->greaterThan($item->end_date->copy()->startOfDay());
+
+            return $statusExpired || $dateExpired;
+        })->count();
+        $laporanBelumDiunggah = $kerjasamaUnit->filter(fn ($item) => blank($item->document_link))->count();
+
+        $totalNilaiKontrak = DetailKegiatan::whereIn('cooperation_id', $cooperationIds)->sum('nilai_kontrak');
+        $iaDetails = DetailKegiatan::whereIn('cooperation_id', $iaIds)->get();
+        $tujuanCount = $iaDetails->filter(fn ($detail) => filled($detail->tujuan))->count();
+        $volumeCount = $iaDetails->filter(fn ($detail) => filled($detail->volume_luaran))->count();
+        $volumeLuaranTotal = $iaDetails->sum(function ($detail) {
+            return (float) preg_replace('/[^0-9.]/', '', (string) $detail->volume_luaran);
+        });
+        $realisasiTargetPercent = $tujuanCount > 0 ? min(100, (int) round(($volumeCount / $tujuanCount) * 100)) : 0;
+
+        $upcomingDeadlines = $kerjasamaUnit
+            ->filter(fn ($item) => $item->end_date && $item->end_date->between($today, $deadlineLimit))
+            ->sortBy('end_date')
+            ->take(6)
+            ->values();
+
+        $jenisCounts = collect([
+            'Semua' => $kerjasamaUnit->count(),
+            'MoU' => $kerjasamaUnit->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'mou'))->count(),
+            'MoA' => $kerjasamaUnit->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'moa'))->count(),
+            'IA' => $kerjasamaUnit->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'ia'))->count(),
+        ]);
+
+        $kerjasamaTable = $kerjasamaUnit->take(12)->values();
+
+        return view('auth.unit', compact(
+            'unitId',
+            'unitName',
+            'totalKerjasama',
+            'menungguValidasi',
+            'dokumenKadaluarsa',
+            'laporanBelumDiunggah',
+            'totalNilaiKontrak',
+            'tujuanCount',
+            'volumeCount',
+            'volumeLuaranTotal',
+            'realisasiTargetPercent',
+            'upcomingDeadlines',
+            'jenisCounts',
+            'kerjasamaTable'
+        ));
+    }
+
+    public function unitLegacy()
     {
         $user    = Auth::user();
         $profile = Profile::where('user_id', $user->id)->first();

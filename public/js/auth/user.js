@@ -1203,12 +1203,12 @@ function registerAlpineComponents() {
         },
 
         openDetail(id) {
-            if(this.activeId === id) return;
+            if (this.activeId === id) return;
             this.isDetailLoading = true;
             this.activeId = id;
-            if(this.comments[id] === undefined) this.comments[id] = '';
-            if(this.showErrors[id] === undefined) this.showErrors[id] = false;
-            
+            if (this.comments[id] === undefined) this.comments[id] = '';
+            if (this.showErrors[id] === undefined) this.showErrors[id] = false;
+
             setTimeout(() => {
                 this.isDetailLoading = false;
             }, 300);
@@ -1222,7 +1222,7 @@ function registerAlpineComponents() {
 
         handleAction(actionStatus, id) {
             this.status = actionStatus;
-            
+
             if (actionStatus === 'tidak_layak' && (!this.comments[id] || this.comments[id].trim() === '')) {
                 this.showErrors[id] = true;
                 setTimeout(() => { this.showErrors[id] = false; }, 3000);
@@ -1247,7 +1247,7 @@ function registerAlpineComponents() {
 
             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
-            var interval = setInterval(function() {
+            var interval = setInterval(function () {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) { return clearInterval(interval); }
                 var particleCount = 50 * (timeLeft / duration);
@@ -1262,7 +1262,7 @@ function registerAlpineComponents() {
         comment: '',
         status: '',
         showError: false,
-        
+
         init() {
             setTimeout(() => {
                 this.isLoading = false;
@@ -1280,7 +1280,7 @@ function registerAlpineComponents() {
 
         handleAction(actionStatus) {
             this.status = actionStatus;
-            
+
             if (actionStatus === 'tidak_layak' && this.comment.trim() === '') {
                 this.showError = true;
                 setTimeout(() => { this.showError = false; }, 2000);
@@ -1305,7 +1305,7 @@ function registerAlpineComponents() {
 
             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
-            var interval = setInterval(function() {
+            var interval = setInterval(function () {
                 var timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) { return clearInterval(interval); }
                 var particleCount = 50 * (timeLeft / duration);

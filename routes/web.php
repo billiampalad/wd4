@@ -185,6 +185,7 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'show'])->name('unit.kerjasama.show');
     Route::get('/unit/data-kerjasama/{id}/edit', [KerjasamaUnitController::class, 'edit'])->name('unit.kerjasama.edit');
     Route::put('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'update'])->name('unit.kerjasama.update');
+    Route::post('/unit/data-kerjasama/{id}/document-link', [KerjasamaUnitController::class, 'updateDocumentLink'])->name('unit.kerjasama.document-link.update');
     Route::delete('/unit/data-kerjasama/{id}', [KerjasamaUnitController::class, 'destroy'])->name('unit.kerjasama.destroy');
 
     // ─── Submit to Pimpinan ──────────────────────────────
