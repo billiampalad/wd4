@@ -1,4 +1,13 @@
 @php
+    $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
+    
+    $mitraNasional = \App\Models\Mitra::where('kategori', 'Nasional')->count() ?? 0;
+    $mitraInternasional = \App\Models\Mitra::where('kategori', 'Internasional')->count() ?? 0;
+    
+    $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
+    $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
+    $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
+
     $summaryCards = [
         [
             'label' => 'Total Kerjasama Unit',
@@ -8,25 +17,25 @@
             'tone' => 'blue',
         ],
         [
-            'label' => 'Menunggu Validasi',
-            'value' => $menungguValidasi ?? 0,
-            'hint' => 'Menunggu evaluasi Pimpinan',
-            'icon' => 'fa-hourglass-half',
+            'label' => 'Total Pendapatan',
+            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
+            'hint' => 'Dari seluruh nilai kontrak',
+            'icon' => 'fa-wallet',
+            'tone' => 'emerald',
+        ],
+        [
+            'label' => 'Jenis Kerjasama',
+            'value' => $totalMoU + $totalMoA + $totalIA,
+            'hint' => "MoU: $totalMoU | MoA: $totalMoA | IA: $totalIA",
+            'icon' => 'fa-file-signature',
             'tone' => 'amber',
         ],
         [
-            'label' => 'Dokumen Kadaluarsa',
-            'value' => $dokumenKadaluarsa ?? 0,
-            'hint' => 'Butuh tindak lanjut arsip/perpanjangan',
-            'icon' => 'fa-triangle-exclamation',
-            'tone' => 'red',
-        ],
-        [
-            'label' => 'Laporan Belum Diunggah',
-            'value' => $laporanBelumDiunggah ?? 0,
-            'hint' => 'Belum memiliki link Drive',
-            'icon' => 'fa-cloud-arrow-up',
-            'tone' => 'slate',
+            'label' => 'Distribusi Mitra',
+            'value' => $mitraNasional + $mitraInternasional,
+            'hint' => "Nasional: $mitraNasional | Internasional: $mitraInternasional",
+            'icon' => 'fa-globe',
+            'tone' => 'indigo',
         ],
     ];
 @endphp
@@ -60,7 +69,7 @@
                 <div class="ud-card-top">
                     <div class="ud-icon"><i class="fas {{ $card['icon'] }}"></i></div>
                 </div>
-                <div class="ud-metric-value">{{ number_format($card['value']) }}</div>
+                <div class="ud-metric-value">{{ is_numeric($card['value']) ? number_format($card['value']) : $card['value'] }}</div>
                 <div class="ud-metric-label">{{ $card['label'] }}</div>
                 <div class="ud-metric-hint">{{ $card['hint'] }}</div>
             </article>
@@ -104,7 +113,7 @@
                             <div class="ud-track-label">Financial Tracking</div>
                             <div class="ud-small">Total nilai kontrak unit</div>
                         </div>
-                        <div class="ud-track-value">Rp {{ number_format($totalNilaiKontrak ?? 0, 0, ',', '.') }}</div>
+                        <div class="ud-track-value">Rp {{ number_format($totalNilaiKontrak ?? 0, 0, ',', '.') . '.000' }}</div>
                     </div>
                 </div>
             </div>
