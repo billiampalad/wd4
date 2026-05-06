@@ -32,6 +32,7 @@ class Cooperation extends Model
         'upa_id',
         'pusat_id',
         'status_dokumen',
+        'perpanjangan_dari_id',
     ];
 
     protected $appends = ['status_label', 'status_class'];
@@ -114,6 +115,16 @@ class Cooperation extends Model
     public function evaluasis()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
+    public function perpanjanganDari()
+    {
+        return $this->belongsTo(self::class, 'perpanjangan_dari_id');
+    }
+
+    public function perpanjangans()
+    {
+        return $this->hasMany(self::class, 'perpanjangan_dari_id');
     }
 
     public function kesimpulans()

@@ -2,6 +2,8 @@
 $status = strtolower($kegiatan->status ?? '');
 $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 $isExtended = str_contains($status, 'perpanjangan');
+$statusDokumen = $kegiatan->status_dokumen ?? 'Draft';
+$canSubmitToPimpinan = in_array($statusDokumen, ['Draft', 'Revisi'], true);
 
 $statusClass = match (true) {
 $status === 'aktif' => 'dk-status-active',
@@ -51,15 +53,19 @@ $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
 $timeRemainingLabel = '-';
 $timeRemainingColor = 'var(--text)';
+$isPastDate = false;
+$daysUntilEnd = null;
 if ($kegiatan->end_date) {
 $now = now();
 $end = \Carbon\Carbon::parse($kegiatan->end_date);
 $diff = $now->diff($end);
 $isPast = $now->greaterThan($end);
+$isPastDate = $isPast;
 
 if ($isPast) {
 $timeRemainingLabel = 'Kadarluarsa';
 $timeRemainingColor = '#ef4444';
+$daysUntilEnd = 0;
 } else {
 $years = $diff->y;
 $months = $diff->m;
@@ -77,6 +83,7 @@ $timeRemainingLabel = implode(', ', array_slice($parts, 0, 2));
 
 // Color logic
 $totalDays = $now->diffInDays($end);
+$daysUntilEnd = $totalDays;
 if ($totalDays < 30) {
     $timeRemainingColor='#ef4444' ; // Red for < 1 month
     } elseif ($totalDays < 90) {
@@ -86,6 +93,8 @@ if ($totalDays < 30) {
     }
     }
     }
+$isNearExpiry = $daysUntilEnd !== null && $daysUntilEnd <= 30 && ! $isPastDate;
+$canAjukanPerpanjangan = $statusDokumen === 'Disahkan' && ! $isExtended && ($isExpired || $isPastDate || $isNearExpiry);
     @endphp
 
     <style>
@@ -668,25 +677,22 @@ if ($totalDays < 30) {
                         </a>
                         @endif
 
-                        @if($kegiatan->status_dokumen === 'Draft')
+                        @if($canSubmitToPimpinan)
                         <form action="{{ route('unit.kerjasama.submit', $kegiatan->id) }}" method="POST" class="dk-btn-full" id="submitForm">
                             @csrf
-                            <button type="submit" class="dk-warning-btn dk-btn-full" style="border: none; cursor: pointer;" onclick="return confirm('Apakah Anda yakin ingin mengirim permintaan persetujuan ke Pimpinan?')">
+                            <button type="submit" class="dk-warning-btn dk-btn-full" style="border: none; cursor: pointer;" onclick="return confirm('{{ $statusDokumen === 'Revisi' ? 'Kirim ulang dokumen revisi ini ke Pimpinan?' : 'Apakah Anda yakin ingin mengirim permintaan persetujuan ke Pimpinan?' }}')">
                                 <i class="fas fa-paper-plane"></i>
                                 <span>Minta Persetujuan Pimpinan</span>
                             </button>
                         </form>
-                        @else
-                        <button class="dk-warning-btn dk-btn-full" style="opacity: 0.6; cursor: not-allowed; border: none;" disabled title="Sudah diajukan atau sedang dalam proses">
-                            <i class="fas fa-check-circle"></i>
-                            <span>{{ $kegiatan->status_dokumen }}</span>
-                        </button>
                         @endif
 
-                        <a href="#" class="dk-info-btn dk-btn-full">
+                        @if($canAjukanPerpanjangan)
+                        <a href="{{ route('unit.kerjasama.create', ['perpanjangan_dari' => $kegiatan->id]) }}" class="dk-info-btn dk-btn-full">
                             <i class="fas fa-clock-rotate-left"></i>
                             <span>Ajukan Perpanjangan</span>
                         </a>
+                        @endif
 
                         <a href="{{ route('unit.dkerjasama') }}" class="dk-secondary-btn dk-btn-full dk-btn-back">
                             <i class="fas fa-arrow-left"></i>

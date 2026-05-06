@@ -1,3 +1,106 @@
+@php
+    $perpanjanganAsal = $perpanjanganAsal ?? null;
+    $isPerpanjangan = (bool) $perpanjanganAsal;
+    $normalizeIds = fn ($value) => collect((array) $value)
+        ->filter(fn ($id) => $id !== null && $id !== '')
+        ->map(fn ($id) => (int) $id)
+        ->values()
+        ->all();
+
+    $prefillJenis = $perpanjanganAsal?->jenis ?? 'MoU (Memorandum of Understanding)';
+    $prefillJurusanIds = $isPerpanjangan ? $perpanjanganAsal->jurusans->pluck('id')->values()->all() : [];
+    $prefillProdiIds = $isPerpanjangan ? $perpanjanganAsal->prodis->pluck('id')->values()->all() : [];
+    $prefillUpaIds = $isPerpanjangan ? $perpanjanganAsal->upas->pluck('id')->values()->all() : [];
+    $prefillPusatIds = $isPerpanjangan ? $perpanjanganAsal->pusats->pluck('id')->values()->all() : [];
+
+    $selectedJurusanIds = $normalizeIds(old('pelaksana_jurusan_ids', $prefillJurusanIds));
+    $selectedProdiIds = $normalizeIds(old('pelaksana_prodi_ids', $prefillProdiIds));
+    $selectedUpaIds = $normalizeIds(old('pelaksana_upa_ids', $prefillUpaIds));
+    $selectedPusatIds = $normalizeIds(old('pelaksana_pusat_ids', $prefillPusatIds));
+
+    $prefillDetailIds = $isPerpanjangan ? $perpanjanganAsal->details->pluck('jenis_kerjasama_id')->values()->all() : [];
+    $selectedDetailIds = $normalizeIds(old('id_jenis', $prefillDetailIds));
+    $detailFormData = [];
+
+    if ($isPerpanjangan) {
+        foreach ($perpanjanganAsal->details as $detail) {
+            $detailFormData[$detail->jenis_kerjasama_id] = [
+                'nilai_kontrak' => $detail->nilai_kontrak ? 'Rp ' . number_format($detail->nilai_kontrak, 0, ',', '.') : '',
+                'income' => $detail->income ?? '',
+                'volume' => $detail->volume_luaran ?? '',
+                'satuan_volume' => $detail->satuan_luaran ?? '',
+                'keterangan' => $detail->keterangan ?? '',
+                'tujuan' => $detail->tujuan ?? '',
+                'sasaran_id' => $detail->sasaran_id ?? '',
+                'indikator_kinerja' => $detail->indikator_kinerja ?? '',
+            ];
+        }
+    }
+
+    if (is_array(old('jenis_detail'))) {
+        $detailFormData = [];
+        foreach (old('jenis_detail') as $jenisId => $detail) {
+            $detailFormData[(int) $jenisId] = [
+                'nilai_kontrak' => $detail['nilai_kontrak'] ?? '',
+                'income' => $detail['income'] ?? '',
+                'volume' => $detail['volume'] ?? '',
+                'satuan_volume' => $detail['satuan_volume'] ?? '',
+                'keterangan' => $detail['keterangan'] ?? '',
+                'tujuan' => $detail['tujuan'] ?? '',
+                'sasaran_id' => $detail['sasaran_id'] ?? '',
+                'indikator_kinerja' => $detail['indikator_kinerja'] ?? '',
+            ];
+        }
+    }
+
+    $oldPenggiatMitraIds = old('penggiat_mitra_ids');
+    $oldPenggiat = old('penggiat');
+    $penggiatList = [];
+
+    if (is_array($oldPenggiatMitraIds)) {
+        foreach ($oldPenggiatMitraIds as $idx => $mitraId) {
+            $penggiat = is_array($oldPenggiat) ? ($oldPenggiat[$idx] ?? []) : [];
+            $penggiatList[] = [
+                'id' => 'pg-' . ($idx + 1),
+                'showPenandatangan' => filled($penggiat['nama_penandatangan'] ?? null) || filled($penggiat['jabatan_penandatangan'] ?? null),
+                'showPJ' => filled($penggiat['nama_pj'] ?? null) || filled($penggiat['jabatan_pj'] ?? null),
+                'mitraId' => (string) $mitraId,
+                'mitraOpen' => false,
+                'nama_penandatangan' => $penggiat['nama_penandatangan'] ?? '',
+                'jabatan_penandatangan' => $penggiat['jabatan_penandatangan'] ?? '',
+                'nama_pj' => $penggiat['nama_pj'] ?? '',
+                'jabatan_pj' => $penggiat['jabatan_pj'] ?? '',
+            ];
+        }
+    } elseif ($isPerpanjangan && $perpanjanganAsal->mitra_id) {
+        $penggiatList[] = [
+            'id' => 'pg-1',
+            'showPenandatangan' => filled($perpanjanganAsal->penandatanganMitra?->nama) || filled($perpanjanganAsal->penandatanganMitra?->jabatan),
+            'showPJ' => filled($perpanjanganAsal->pjMitra?->nama) || filled($perpanjanganAsal->pjMitra?->jabatan),
+            'mitraId' => (string) $perpanjanganAsal->mitra_id,
+            'mitraOpen' => false,
+            'nama_penandatangan' => $perpanjanganAsal->penandatanganMitra?->nama ?? '',
+            'jabatan_penandatangan' => $perpanjanganAsal->penandatanganMitra?->jabatan ?? '',
+            'nama_pj' => $perpanjanganAsal->pjMitra?->nama ?? '',
+            'jabatan_pj' => $perpanjanganAsal->pjMitra?->jabatan ?? '',
+        ];
+    }
+
+    if (empty($penggiatList)) {
+        $penggiatList[] = [
+            'id' => 'pg-1',
+            'showPenandatangan' => false,
+            'showPJ' => false,
+            'mitraId' => '',
+            'mitraOpen' => false,
+            'nama_penandatangan' => '',
+            'jabatan_penandatangan' => '',
+            'nama_pj' => '',
+            'jabatan_pj' => '',
+        ];
+    }
+@endphp
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
     <section class="dk-hero">
@@ -20,12 +123,12 @@
 
             <div class="dk-hero-main">
                 <div class="dk-hero-icon">
-                    <i class="fas fa-plus-circle"></i>
+                    <i class="fas {{ $isPerpanjangan ? 'fa-clock-rotate-left' : 'fa-plus-circle' }}"></i>
                 </div>
                 <div>
                     <span class="dk-eyebrow">Repositori Unit</span>
-                    <h2 id="pageTitle">Tambah Data Kerjasama</h2>
-                    <p id="pageDesc">Isi formulir untuk menambahkan kegiatan kerjasama baru.</p>
+                    <h2 id="pageTitle">{{ $isPerpanjangan ? 'Ajukan Perpanjangan Kerjasama' : 'Tambah Data Kerjasama' }}</h2>
+                    <p id="pageDesc">{{ $isPerpanjangan ? 'Lengkapi draft perpanjangan berdasarkan data kerja sama sebelumnya.' : 'Isi formulir untuk menambahkan kegiatan kerjasama baru.' }}</p>
                 </div>
             </div>
         </div>
@@ -38,7 +141,7 @@
     </div>
     @endif
 
-    <div class="card um-card dk-card" style="overflow: visible;" x-data="{ inputType: '{{ request('type', 'baru') }}' }">
+    <div class="card um-card dk-card" style="overflow: visible;" x-data="{ inputType: '{{ $isPerpanjangan ? 'baru' : request('type', 'baru') }}' }">
         <div class="card-header um-header dk-card-header">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon">
@@ -55,6 +158,9 @@
             <form action="{{ route('unit.kerjasama.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="input_type" :value="inputType">
+                @if($isPerpanjangan)
+                <input type="hidden" name="perpanjangan_dari_id" value="{{ $perpanjanganAsal->id }}">
+                @endif
                 {{-- ═══ TWO-COLUMN TOP LAYOUT: Masa Berlaku (Left) + Form Utama (Right) ═══ --}}
                 <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 24px;">
 
@@ -180,7 +286,7 @@
                                         </div>
                                         <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
                                             {{-- Periode Mulai --}}
-                                            <div class="mc-group" x-data="datepicker('{{ old('start_date') }}')">
+                                            <div class="mc-group" x-data="datepicker('{{ old('start_date', $perpanjanganAsal?->start_date ? $perpanjanganAsal->start_date->format('Y-m-d') : '') }}')">
                                                 <label class="mc-label">Tanggal Mulai</label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap">
@@ -244,7 +350,7 @@
                                             </div>
 
                                             {{-- Periode Selesai --}}
-                                            <div class="mc-group" x-data="datepicker('{{ old('end_date') }}')">
+                                            <div class="mc-group" x-data="datepicker('{{ old('end_date', $perpanjanganAsal?->end_date ? $perpanjanganAsal->end_date->format('Y-m-d') : '') }}')">
                                                 <label class="mc-label">Tanggal Selesai</label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap">
@@ -346,7 +452,7 @@
                                 {{-- Dokumen Kerjasama (Alpine Interactive) --}}
                                 <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
                             open: false, 
-                            selected: '{{ old('jenis', 'MoU (Memorandum of Understanding)') }}',
+                            selected: '{{ old('jenis', $prefillJenis) }}',
                             items: [
                                 { id: 'MoU (Memorandum of Understanding)', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
                                 { id: 'MoA (Memorandum of Agreement)', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
@@ -449,7 +555,7 @@
                                     <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-file-lines mc-icon-left"></i>
-                                        <input type="text" name="title" value="{{ old('title') }}"
+                                        <input type="text" name="title" value="{{ old('title', $perpanjanganAsal?->title ?? '') }}"
                                             placeholder="Contoh: Pelatihan Web Development Bersama Industri"
                                             class="mc-input @error('title') is-invalid @enderror" />
                                     </div>
@@ -465,7 +571,7 @@
                                         <textarea name="description" rows="3"
                                             placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
                                             class="mc-input"
-                                            style="resize: vertical; min-height: 100px;">{{ old('description') }}</textarea>
+                                            style="resize: vertical; min-height: 100px;">{{ old('description', $perpanjanganAsal?->description ?? '') }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -481,12 +587,12 @@
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
                         {{-- Card Header --}}
                         <div x-data="{
-                            showPenggiat: false,
-                            showPihak1: false,
-                            showPihak2: false,
-                            showPenandatangan1: false,
-                            showPJ1: false,
-                            penggiatList: [{ id: Date.now(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false, nama_penandatangan: '', jabatan_penandatangan: '', nama_pj: '', jabatan_pj: '' }],
+                            showPenggiat: {{ $isPerpanjangan ? 'true' : 'false' }},
+                            showPihak1: {{ $isPerpanjangan ? 'true' : 'false' }},
+                            showPihak2: {{ $isPerpanjangan ? 'true' : 'false' }},
+                            showPenandatangan1: {{ filled(old('nama_penandatangan', $perpanjanganAsal?->penandatanganInternal?->nama ?? '')) || filled(old('jabatan_penandatangan', $perpanjanganAsal?->penandatanganInternal?->jabatan ?? '')) ? 'true' : 'false' }},
+                            showPJ1: {{ filled(old('nama_penanggung_jawab', $perpanjanganAsal?->pjInternal?->nama ?? '')) || filled(old('jabatan_penanggung_jawab', $perpanjanganAsal?->pjInternal?->jabatan ?? '')) ? 'true' : 'false' }},
+                            penggiatList: {{ \Illuminate\Support\Js::from($penggiatList) }},
                             nextId() { return Date.now() + Math.random(); },
                             addPenggiat() {
                                 this.penggiatList.push({ 
@@ -560,12 +666,12 @@
                                         style="padding: 0 20px 20px 20px;">
                                         {{-- ══ Tipe Pelaksana Dropdown ══ --}}
                                         <div x-data="{
-                                            jenisDokumen: '{{ old('jenis_dokumen', 'MoU (Memorandum of Understanding)') }}',
-                                            tipePelaksana: '{{ old('tipe_pelaksana', '') }}',
+                                            jenisDokumen: '{{ old('jenis', $prefillJenis) }}',
+                                            tipePelaksana: '{{ old('tipe_pelaksana', $perpanjanganAsal?->tipe_pelaksana ?? '') }}',
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
-                                            selectedJurusans: [],
+                                            selectedJurusans: {{ \Illuminate\Support\Js::from($selectedJurusanIds) }},
                                             jurusanItems: [
                                                 @foreach($jurusans ?? [] as $jur)
                                                     { id: {{ $jur->id }}, nama: '{{ addslashes($jur->nama_jurusan) }}' },
@@ -585,7 +691,7 @@
                                             getJurusanName(id) { return this.jurusanItems.find(j => j.id === id)?.nama ?? ''; },
 
                                             {{-- Prodi data (used by nested x-data scopes) --}}
-                                            selectedProdis: [],
+                                            selectedProdis: {{ \Illuminate\Support\Js::from($selectedProdiIds) }},
                                             prodiItems: [
                                                 @foreach($prodis ?? [] as $p)
                                                     { id: {{ $p->id }}, jurusan_id: {{ $p->jurusan_id }}, nama: '{{ addslashes($p->nama_prodi) }}', jenjang: '{{ $p->jenjang }}' },
@@ -605,7 +711,7 @@
 
                                             {{-- UPA multi-select --}}
                                             upaOpen: false,
-                                            selectedUpas: [],
+                                            selectedUpas: {{ \Illuminate\Support\Js::from($selectedUpaIds) }},
                                             upaItems: [
                                                 @foreach($upas ?? [] as $u)
                                                     { id: {{ $u->id }}, nama: '{{ addslashes($u->nama_upa) }}' },
@@ -619,7 +725,7 @@
 
                                             {{-- Pusat multi-select --}}
                                             pusatOpen: false,
-                                            selectedPusats: [],
+                                            selectedPusats: {{ \Illuminate\Support\Js::from($selectedPusatIds) }},
                                             pusatItems: [
                                                 @foreach($pusats ?? [] as $ps)
                                                     { id: {{ $ps->id }}, nama: '{{ addslashes($ps->nama_pusat) }}' },
@@ -641,7 +747,7 @@
                                                     <div class="mc-input-wrap">
                                                         <i class="fas fa-building mc-icon-left"></i>
                                                         <input type="text" name="nama_instansi"
-                                                            value="{{ old('nama_instansi', 'Politeknik Negeri Manado') }}"
+                                                            value="{{ old('nama_instansi', $perpanjanganAsal?->internal_instansi ?? 'Politeknik Negeri Manado') }}"
                                                             class="mc-input" readonly
                                                             style="background: var(--surface2); color: var(--text); font-weight: 600;" />
                                                     </div>
@@ -1018,7 +1124,7 @@
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
                                                             <input type="text" name="nama_penandatangan"
-                                                                value="{{ old('nama_penandatangan') }}"
+                                                                value="{{ old('nama_penandatangan', $perpanjanganAsal?->penandatanganInternal?->nama ?? '') }}"
                                                                 placeholder="Nama penandatangan" class="mc-input" />
                                                         </div>
                                                     </div>
@@ -1027,7 +1133,7 @@
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
                                                             <input type="text" name="jabatan_penandatangan"
-                                                                value="{{ old('jabatan_penandatangan') }}"
+                                                                value="{{ old('jabatan_penandatangan', $perpanjanganAsal?->penandatanganInternal?->jabatan ?? '') }}"
                                                                 placeholder="Jabatan penandatangan" class="mc-input" />
                                                         </div>
                                                     </div>
@@ -1063,7 +1169,7 @@
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
                                                             <input type="text" name="nama_penanggung_jawab"
-                                                                value="{{ old('nama_penanggung_jawab') }}"
+                                                                value="{{ old('nama_penanggung_jawab', $perpanjanganAsal?->pjInternal?->nama ?? '') }}"
                                                                 placeholder="Nama penanggung jawab" class="mc-input" />
                                                         </div>
                                                     </div>
@@ -1072,7 +1178,7 @@
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
                                                             <input type="text" name="jabatan_penanggung_jawab"
-                                                                value="{{ old('jabatan_penanggung_jawab') }}"
+                                                                value="{{ old('jabatan_penanggung_jawab', $perpanjanganAsal?->pjInternal?->jabatan ?? '') }}"
                                                                 placeholder="Jabatan penanggung jawab"
                                                                 class="mc-input" />
                                                         </div>
@@ -1347,13 +1453,13 @@
                                 {{-- Jenis Kerjasama (Alpine Multi-Select with Dynamic Forms) --}}
                                 <div x-data="{ 
                                     open: false, 
-                                    selected: {{ json_encode(old('id_jenis', [])) }},
+                                    selected: {{ \Illuminate\Support\Js::from($selectedDetailIds) }},
                                     items: [
                                         @foreach($jenisKerjasama as $jenis)
                                             { id: {{ $jenis->id }}, label: '{{ $jenis->nama_kerjasama }}' },
                                         @endforeach
                                     ],
-                                    formData: {},
+                                    formData: {{ \Illuminate\Support\Js::from($detailFormData) }},
                                     sasaranOpen: {},
                                     sasaranOptions: [
                                         @foreach($sasarans as $sas)
@@ -1368,7 +1474,7 @@
                                             delete this.sasaranOpen[id];
                                         } else {
                                             this.selected.push(id);
-                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran: '', indikator_kinerja: '' };
+                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '' };
                                             this.sasaranOpen[id] = false;
                                         }
                                     },
@@ -1380,7 +1486,7 @@
                                     init() {
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
-                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran: '', indikator_kinerja: '' };
+                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '' };
                                                 this.sasaranOpen[id] = false;
                                             }
                                         });

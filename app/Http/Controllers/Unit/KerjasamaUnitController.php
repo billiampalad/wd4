@@ -36,7 +36,7 @@ class KerjasamaUnitController extends Controller
 
     // ─── CREATE PAGE ─────────────────────────────────────
 
-    public function create()
+    public function create(Request $request)
     {
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
@@ -45,8 +45,30 @@ class KerjasamaUnitController extends Controller
         $pusats = Pusat::orderBy('nama_pusat')->get();
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
+        $perpanjanganAsal = null;
 
-        return view('auth.unit', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
+        if ($request->filled('perpanjangan_dari')) {
+            $perpanjanganAsal = Cooperation::with([
+                'mitra',
+                'penandatanganInternal',
+                'pjInternal',
+                'penandatanganMitra',
+                'pjMitra',
+                'jurusans',
+                'prodis',
+                'upas',
+                'pusats',
+                'details',
+            ])->findOrFail((int) $request->query('perpanjangan_dari'));
+
+            if (! $this->canRequestExtension($perpanjanganAsal)) {
+                return redirect()
+                    ->route('unit.kerjasama.show', $perpanjanganAsal->id)
+                    ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
+            }
+        }
+
+        return view('auth.unit', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────
@@ -63,6 +85,7 @@ class KerjasamaUnitController extends Controller
             'end_date' => 'nullable|date',
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
+            'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
             // Tipe pelaksana hanya wajib jika jenis BUKAN MoU
             'tipe_pelaksana' => 'required_if:jenis,MoA (Memorandum of Agreement),IA (Implementation Agreement)|nullable|string|in:jurusan,upa,pusat',
 
@@ -76,6 +99,17 @@ class KerjasamaUnitController extends Controller
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
         ]);
 
+        $perpanjanganDariId = $request->filled('perpanjangan_dari_id') ? (int) $request->perpanjangan_dari_id : null;
+        if ($perpanjanganDariId) {
+            $perpanjanganAsal = Cooperation::findOrFail($perpanjanganDariId);
+
+            if (! $this->canRequestExtension($perpanjanganAsal)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
+            }
+        }
+
         DB::beginTransaction();
         try {
             // Handle status normalization (status masa berlaku)
@@ -83,6 +117,8 @@ class KerjasamaUnitController extends Controller
                 'Aktif' => 'aktif',
                 'Dalam Perpanjangan' => 'dalam perpanjangan',
                 'Kadarluarsa' => 'kadarluarsa',
+                'Kadaluarsa' => 'kadarluarsa',
+                'Kedaluwarsa' => 'kadarluarsa',
                 'Tidak Aktif' => 'tidak aktif',
             ];
 
@@ -143,6 +179,7 @@ class KerjasamaUnitController extends Controller
                 'end_date' => $request->end_date,
                 'status' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
                 'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
+                'perpanjangan_dari_id' => $perpanjanganDariId,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
                 'mitra_id' => $mitraId,
@@ -205,7 +242,20 @@ class KerjasamaUnitController extends Controller
 
     public function show($id)
     {
-        $kegiatan = Cooperation::findOrFail($id);
+        $kegiatan = Cooperation::with([
+            'mitra',
+            'penandatanganInternal',
+            'pjInternal',
+            'penandatanganMitra',
+            'pjMitra',
+            'jurusans',
+            'prodis',
+            'upas',
+            'pusats',
+            'details.jenisKerjasama',
+            'details.sasaran',
+        ])->findOrFail($id);
+
         return view('auth.unit', compact('kegiatan'));
     }
 
@@ -269,6 +319,8 @@ class KerjasamaUnitController extends Controller
                 'Aktif' => 'aktif',
                 'Dalam Perpanjangan' => 'dalam perpanjangan',
                 'Kadarluarsa' => 'kadarluarsa',
+                'Kadaluarsa' => 'kadarluarsa',
+                'Kedaluwarsa' => 'kadarluarsa',
                 'Tidak Aktif' => 'tidak aktif',
             ];
 
@@ -438,10 +490,12 @@ class KerjasamaUnitController extends Controller
             return back()->with('error', 'Anda tidak memiliki otoritas untuk mengirim data ini.');
         }
 
-        // Cek duplikasi pengajuan: hanya boleh jika status 'Draft'
-        if ($cooperation->status_dokumen !== 'Draft') {
-            return back()->with('error', 'Data ini sudah diajukan atau sedang dalam proses evaluasi.');
+        // Pengiriman hanya boleh pada awal pengajuan atau setelah revisi.
+        if (! in_array($cooperation->status_dokumen, ['Draft', 'Revisi'], true)) {
+            return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Revisi.');
         }
+
+        $kirimUlangSetelahRevisi = $cooperation->status_dokumen === 'Revisi';
 
         DB::beginTransaction();
         try {
@@ -456,15 +510,17 @@ class KerjasamaUnitController extends Controller
             })->get();
 
             // 3. Simpan notifikasi secara otomatis ke tabel notifikasis
-            $pesan = "Pengajuan kerjasama baru: '{$cooperation->title}' membutuhkan evaluasi dari Anda.";
-            $judul = 'Persetujuan Kerjasama Baru';
+            $pesan = $kirimUlangSetelahRevisi
+                ? "Dokumen kerjasama revisi: '{$cooperation->title}' telah dikirim ulang dan membutuhkan evaluasi dari Anda."
+                : "Pengajuan kerjasama baru: '{$cooperation->title}' membutuhkan evaluasi dari Anda.";
+            $judul = $kirimUlangSetelahRevisi ? 'Evaluasi Ulang Dokumen Revisi' : 'Persetujuan Kerjasama Baru';
 
             foreach ($pimpinans as $pimpinan) {
                 Notifikasi::send(
                     $pimpinan->id,      // user_id (receiver)
                     $user->id,          // sender_id
                     $cooperation->id,   // source_id
-                    'evaluasi',         // type
+                    $kirimUlangSetelahRevisi ? 'revisi' : 'evaluasi',
                     $judul,             // judul
                     $pesan,             // pesan
                     route('pimpinan.evaluasi.show', $cooperation->id) // link
@@ -487,5 +543,25 @@ class KerjasamaUnitController extends Controller
         $kegiatan->delete();
 
         return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
+    }
+
+    private function canRequestExtension(Cooperation $cooperation): bool
+    {
+        $status = strtolower($cooperation->status ?? '');
+        $isExpiredStatus = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+        $isInExtension = str_contains($status, 'perpanjangan');
+        $isExpiredDate = false;
+        $isNearExpiry = false;
+
+        if ($cooperation->end_date) {
+            $today = now()->startOfDay();
+            $endDate = \Carbon\Carbon::parse($cooperation->end_date)->startOfDay();
+            $isExpiredDate = $today->greaterThan($endDate);
+            $isNearExpiry = ! $isExpiredDate && $today->diffInDays($endDate) <= 30;
+        }
+
+        return $cooperation->status_dokumen === 'Disahkan'
+            && ! $isInExtension
+            && ($isExpiredStatus || $isExpiredDate || $isNearExpiry);
     }
 }
