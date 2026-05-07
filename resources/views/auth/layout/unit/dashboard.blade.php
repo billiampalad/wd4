@@ -163,24 +163,45 @@
         </article>
     </section>
 
-    <section class="ud-bento" style="grid-template-columns: 1fr; margin-bottom: 16px;">
+    <section class="ud-bento-full">
         <article class="ud-panel">
             <div class="ud-panel-head">
                 <div>
-                    <h3 class="ud-panel-title">Distribusi Kerjasama Berdasarkan Jurusan & Prodi</h3>
-                    <p class="ud-panel-desc">Klik pada salah satu batang grafik Jurusan untuk memfilter data Prodi yang terkait. Klik ruang kosong pada grafik untuk mereset.</p>
+                    <h3 class="ud-panel-title">Distribusi Kerjasama Akademik</h3>
+                    <p class="ud-panel-desc">Tinjauan visual distribusi kerjasama berdasarkan Jurusan dan Program Studi (Prodi).</p>
                 </div>
-                <span class="ud-type-badge" style="background: rgba(99, 102, 241, 0.1); color: var(--accent);"><i class="fas fa-filter"></i> Interactive</span>
+                <span class="ud-status-badge is-interactive" title="Klik pada batang grafik jurusan untuk memfilter prodi">
+                    <i class="fas fa-hand-pointer"></i> Interactive Filter
+                </span>
             </div>
 
-            <div class="ud-chart-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; min-height: 340px; padding: 10px;">
-                <div style="position: relative; width: 100%; height: 320px;">
-                    <h4 style="text-align: center; font-size: 14px; font-weight: 750; margin-bottom: 15px; color: var(--ud-text);">Grafik Jurusan</h4>
-                    <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}" data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+            <div class="ud-dual-chart-container">
+                <div class="ud-chart-wrapper">
+                    <div class="ud-chart-header">
+                        <div class="ud-chart-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i class="fas fa-building-columns"></i></div>
+                        <div>
+                            <h4>Grafik Jurusan</h4>
+                            <span>Klik batang grafik untuk memfilter prodi.</span>
+                        </div>
+                    </div>
+                    <div class="ud-canvas-container">
+                        <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}" data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+                    </div>
                 </div>
-                <div style="position: relative; width: 100%; height: 320px;">
-                    <h4 style="text-align: center; font-size: 14px; font-weight: 750; margin-bottom: 15px; color: var(--ud-text);">Grafik Program Studi <span id="prodiChartSubtitle" style="color: var(--accent); font-weight: 800;">(Semua)</span></h4>
-                    <canvas id="prodiChart"></canvas>
+
+                <div class="ud-chart-divider"></div>
+
+                <div class="ud-chart-wrapper">
+                    <div class="ud-chart-header">
+                        <div class="ud-chart-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i class="fas fa-graduation-cap"></i></div>
+                        <div>
+                            <h4>Grafik Program Studi</h4>
+                            <span id="prodiChartSubtitle">Menampilkan Semua Jurusan</span>
+                        </div>
+                    </div>
+                    <div class="ud-canvas-container">
+                        <canvas id="prodiChart"></canvas>
+                    </div>
                 </div>
             </div>
         </article>

@@ -194,9 +194,9 @@ function initJurusanProdiChart() {
                 label: 'Total Kerjasama',
                 data: jurusanData,
                 backgroundColor: jurusanColors,
-                borderRadius: 6,
+                borderRadius: 8,
                 borderSkipped: false,
-                barPercentage: 0.6,
+                barPercentage: 0.55,
                 hoverBackgroundColor: jurusanColors.map(c => c + 'E6') // 90% opacity on hover
             }]
         },
@@ -302,7 +302,9 @@ function initJurusanProdiChart() {
     });
 
     function updateProdiChart(jurusanId, jurusanName) {
-        document.getElementById('prodiChartSubtitle').innerText = `(${jurusanName})`;
+        document.getElementById('prodiChartSubtitle').innerText = jurusanName === 'Semua' 
+            ? 'Menampilkan Semua Jurusan' 
+            : `Filter: ${jurusanName}`;
         
         let filteredProdis = prodis;
         if (jurusanId !== null) {
