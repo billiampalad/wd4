@@ -8,6 +8,45 @@
     $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
     $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
 
+    $jurusans = \App\Models\Jurusan::with('prodis')->get();
+    
+    // Count dari pivot table (kerjasama_jurusan)
+    $jurusanCounts = \Illuminate\Support\Facades\DB::table('kerjasama_jurusan')
+        ->select('jurusan_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->groupBy('jurusan_id')
+        ->pluck('total', 'jurusan_id')
+        ->toArray();
+
+    // Count dari pivot table (kerjasama_prodi)
+    $prodiCounts = \Illuminate\Support\Facades\DB::table('kerjasama_prodi')
+        ->select('prodi_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->groupBy('prodi_id')
+        ->pluck('total', 'prodi_id')
+        ->toArray();
+
+    $chartDataJurusan = [];
+    $chartDataProdi = [];
+
+    foreach ($jurusans as $jurusan) {
+        $jCount = $jurusanCounts[$jurusan->id] ?? 0;
+        
+        $chartDataJurusan[] = [
+            'id' => $jurusan->id,
+            'name' => $jurusan->nama_jurusan,
+            'count' => $jCount,
+        ];
+
+        foreach ($jurusan->prodis as $prodi) {
+            $pCount = $prodiCounts[$prodi->id] ?? 0;
+            $chartDataProdi[] = [
+                'id' => $prodi->id,
+                'jurusan_id' => $jurusan->id,
+                'name' => $prodi->nama_prodi,
+                'count' => $pCount,
+            ];
+        }
+    }
+
     $summaryCards = [
         [
             'label' => 'Total Kerjasama Unit',
@@ -120,6 +159,29 @@
                 @empty
                     <div class="ud-empty">Tidak ada deadline kritis dalam 30 hari.</div>
                 @endforelse
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-bento" style="grid-template-columns: 1fr; margin-bottom: 16px;">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Distribusi Kerjasama Berdasarkan Jurusan & Prodi</h3>
+                    <p class="ud-panel-desc">Klik pada salah satu batang grafik Jurusan untuk memfilter data Prodi yang terkait. Klik ruang kosong pada grafik untuk mereset.</p>
+                </div>
+                <span class="ud-type-badge" style="background: rgba(99, 102, 241, 0.1); color: var(--accent);"><i class="fas fa-filter"></i> Interactive</span>
+            </div>
+
+            <div class="ud-chart-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; min-height: 340px; padding: 10px;">
+                <div style="position: relative; width: 100%; height: 320px;">
+                    <h4 style="text-align: center; font-size: 14px; font-weight: 750; margin-bottom: 15px; color: var(--ud-text);">Grafik Jurusan</h4>
+                    <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}" data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+                </div>
+                <div style="position: relative; width: 100%; height: 320px;">
+                    <h4 style="text-align: center; font-size: 14px; font-weight: 750; margin-bottom: 15px; color: var(--ud-text);">Grafik Program Studi <span id="prodiChartSubtitle" style="color: var(--accent); font-weight: 800;">(Semua)</span></h4>
+                    <canvas id="prodiChart"></canvas>
+                </div>
             </div>
         </article>
     </section>

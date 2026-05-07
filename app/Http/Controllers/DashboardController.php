@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
-use App\Models\Profile;
 use App\Models\Cooperation;
 use App\Models\Evaluasi;
+use App\Models\Profile;
 use App\Models\DetailKegiatan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

@@ -3,6 +3,7 @@ function initUnitDashboard() {
     if (!mainContent || !mainContent.classList.contains('unitdash')) return;
 
     initUnitChart();
+    initJurusanProdiChart();
 
     const tabs = document.querySelectorAll('[data-filter-tab]');
     const rows = document.querySelectorAll('[data-kerjasama-row]');
@@ -157,6 +158,176 @@ function initUnitChart() {
     };
 
     window.jenisKerjasamaChartInstance = new Chart(canvas, config);
+}
+
+function initJurusanProdiChart() {
+    const jurusanCanvas = document.getElementById('jurusanChart');
+    const prodiCanvas = document.getElementById('prodiChart');
+    if (!jurusanCanvas || !prodiCanvas || typeof Chart === 'undefined') return;
+
+    if (window.jurusanChartInstance) window.jurusanChartInstance.destroy();
+    if (window.prodiChartInstance) window.prodiChartInstance.destroy();
+
+    const jurusans = JSON.parse(jurusanCanvas.dataset.jurusans || '[]');
+    const prodis = JSON.parse(jurusanCanvas.dataset.prodis || '[]');
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#e2e8f0' : '#475569';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+    // Modern color palette
+    const palette = [
+        '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
+        '#0ea5e9', '#ec4899', '#f97316', '#6366f1', '#84cc16'
+    ];
+
+    // Jurusan Chart (Bar)
+    const jurusanLabels = jurusans.map(j => j.name);
+    const jurusanData = jurusans.map(j => j.count);
+    const jurusanColors = jurusans.map((_, i) => palette[i % palette.length]);
+
+    window.jurusanChartInstance = new Chart(jurusanCanvas, {
+        type: 'bar',
+        data: {
+            labels: jurusanLabels,
+            datasets: [{
+                label: 'Total Kerjasama',
+                data: jurusanData,
+                backgroundColor: jurusanColors,
+                borderRadius: 6,
+                borderSkipped: false,
+                barPercentage: 0.6,
+                hoverBackgroundColor: jurusanColors.map(c => c + 'E6') // 90% opacity on hover
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.parsed.y} Dokumen`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, color: textColor, font: { family: "'Inter', sans-serif" } },
+                    grid: { color: gridColor, drawBorder: false }
+                },
+                x: {
+                    ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
+                    grid: { display: false }
+                }
+            },
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
+            },
+            onClick: (e, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const selectedJurusan = jurusans[index];
+                    updateProdiChart(selectedJurusan.id, selectedJurusan.name);
+                } else {
+                    updateProdiChart(null, 'Semua');
+                }
+            },
+            onHover: (e, elements) => {
+                e.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+            }
+        }
+    });
+
+    // Prodi Chart (Doughnut)
+    function getProdiColors(count) {
+        // Offset the palette for Prodi so it contrasts nicely with Jurusan colors
+        return Array.from({length: count}).map((_, i) => palette[(i + 3) % palette.length]);
+    }
+
+    window.prodiChartInstance = new Chart(prodiCanvas, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: textColor,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 15,
+                        font: { family: "'Inter', sans-serif", size: 11 }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: ${context.parsed} Dokumen`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true,
+                duration: 800
+            }
+        }
+    });
+
+    function updateProdiChart(jurusanId, jurusanName) {
+        document.getElementById('prodiChartSubtitle').innerText = `(${jurusanName})`;
+        
+        let filteredProdis = prodis;
+        if (jurusanId !== null) {
+            filteredProdis = prodis.filter(p => p.jurusan_id === jurusanId);
+        }
+
+        let activeProdis = filteredProdis.filter(p => p.count > 0);
+        
+        if (activeProdis.length === 0) {
+            // Placeholder chart for empty state
+            activeProdis = [{ name: 'Belum ada data', count: 1 }];
+            window.prodiChartInstance.data.datasets[0].backgroundColor = [isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'];
+            window.prodiChartInstance.options.plugins.tooltip.enabled = false;
+        } else {
+            window.prodiChartInstance.data.datasets[0].backgroundColor = getProdiColors(activeProdis.length);
+            window.prodiChartInstance.options.plugins.tooltip.enabled = true;
+        }
+
+        window.prodiChartInstance.data.labels = activeProdis.map(p => p.name);
+        window.prodiChartInstance.data.datasets[0].data = activeProdis.map(p => p.count);
+        window.prodiChartInstance.update();
+    }
+
+    // Initialize with all prodis
+    updateProdiChart(null, 'Semua');
 }
 
 // Inisialisasi untuk Unit Dashboard
