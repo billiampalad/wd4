@@ -299,8 +299,8 @@
             <table class="ud-table">
                 <thead>
                     <tr>
-                        <th>Dokumen</th>
-                        <th>Tipe</th>
+                        <th>Judul Kegiatan</th>
+                        <th>tipe</th>
                         <th>Mitra</th>
                         <th>Status</th>
                         <th>Deadline</th>
