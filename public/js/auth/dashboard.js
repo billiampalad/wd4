@@ -4,6 +4,7 @@ function initUnitDashboard() {
 
     initUnitChart();
     initJurusanProdiChart();
+    initTrendChart();
 
     const tabs = document.querySelectorAll('[data-filter-tab]');
     const rows = document.querySelectorAll('[data-kerjasama-row]');
@@ -330,6 +331,109 @@ function initJurusanProdiChart() {
 
     // Initialize with all prodis
     updateProdiChart(null, 'Semua');
+}
+
+function initTrendChart() {
+    const canvas = document.getElementById('trendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (window.trendChartInstance) window.trendChartInstance.destroy();
+
+    const rawData = JSON.parse(canvas.dataset.trends || '{}');
+    if (!rawData.monthly) return;
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#e2e8f0' : '#475569';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+    
+    // Create gradient for the line chart fill
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+    gradient.addColorStop(0, isDark ? 'rgba(99, 102, 241, 0.4)' : 'rgba(79, 70, 229, 0.3)');
+    gradient.addColorStop(1, isDark ? 'rgba(99, 102, 241, 0.0)' : 'rgba(79, 70, 229, 0.0)');
+
+    const config = {
+        type: 'line',
+        data: {
+            labels: rawData.monthly.labels,
+            datasets: [{
+                label: 'Jumlah Kerjasama',
+                data: rawData.monthly.data,
+                borderColor: isDark ? '#818cf8' : '#4f46e5',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                pointBackgroundColor: isDark ? '#1e293b' : '#fff',
+                pointBorderColor: isDark ? '#818cf8' : '#4f46e5',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4 // Smooth curve
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return 'Periode: ' + context[0].label;
+                        },
+                        label: function(context) {
+                            return `${context.parsed.y} Dokumen Kerjasama`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, color: textColor, font: { family: "'Inter', sans-serif" } },
+                    grid: { color: gridColor, drawBorder: false },
+                    border: { display: false }
+                },
+                x: {
+                    ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
+                    grid: { display: false },
+                    border: { display: false }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            animation: {
+                duration: 800,
+                easing: 'easeOutQuart'
+            }
+        }
+    };
+
+    window.trendChartInstance = new Chart(canvas, config);
+
+    // Buttons logic
+    const buttons = document.querySelectorAll('.ud-trend-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            buttons.forEach(b => b.classList.remove('is-active'));
+            this.classList.add('is-active');
+
+            const trend = this.dataset.trend;
+            if (rawData[trend]) {
+                window.trendChartInstance.data.labels = rawData[trend].labels;
+                window.trendChartInstance.data.datasets[0].data = rawData[trend].data;
+                window.trendChartInstance.update();
+            }
+        });
+    });
 }
 
 // Inisialisasi untuk Unit Dashboard

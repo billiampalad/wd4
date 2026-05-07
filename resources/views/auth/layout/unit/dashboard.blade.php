@@ -47,6 +47,58 @@
         }
     }
 
+    // --- STATISTIK PERIODE KERJASAMA (TREND CHART) ---
+    $now = now();
+    
+    // 1. Mingguan (7 Hari Terakhir)
+    $weeklyRaw = \App\Models\Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
+        ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
+        ->groupBy('date_label')
+        ->pluck('total', 'date_label')
+        ->toArray();
+        
+    $trendWeekly = ['labels' => [], 'data' => []];
+    for ($i = 6; $i >= 0; $i--) {
+        $dateStr = $now->copy()->subDays($i)->format('Y-m-d');
+        $display = $now->copy()->subDays($i)->format('d M');
+        $trendWeekly['labels'][] = $display;
+        $trendWeekly['data'][] = $weeklyRaw[$dateStr] ?? 0;
+    }
+
+    // 2. Bulanan (12 Bulan di Tahun Ini)
+    $monthlyRaw = \App\Models\Cooperation::selectRaw('MONTH(created_at) as month_label, count(*) as total')
+        ->whereYear('created_at', $now->year)
+        ->groupBy('month_label')
+        ->pluck('total', 'month_label')
+        ->toArray();
+        
+    $trendMonthly = ['labels' => [], 'data' => []];
+    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    for ($i = 1; $i <= 12; $i++) {
+        $trendMonthly['labels'][] = $months[$i - 1];
+        $trendMonthly['data'][] = $monthlyRaw[$i] ?? 0;
+    }
+
+    // 3. Tahunan (5 Tahun Terakhir)
+    $yearlyRaw = \App\Models\Cooperation::selectRaw('YEAR(created_at) as year_label, count(*) as total')
+        ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
+        ->groupBy('year_label')
+        ->pluck('total', 'year_label')
+        ->toArray();
+        
+    $trendYearly = ['labels' => [], 'data' => []];
+    for ($i = 4; $i >= 0; $i--) {
+        $yr = $now->copy()->subYears($i)->year;
+        $trendYearly['labels'][] = (string)$yr;
+        $trendYearly['data'][] = $yearlyRaw[$yr] ?? 0;
+    }
+
+    $trendData = [
+        'weekly' => $trendWeekly,
+        'monthly' => $trendMonthly,
+        'yearly' => $trendYearly
+    ];
+
     $summaryCards = [
         [
             'label' => 'Total Kerjasama Unit',
@@ -203,6 +255,26 @@
                         <canvas id="prodiChart"></canvas>
                     </div>
                 </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-bento-full">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Tren Pertumbuhan Kerjasama</h3>
+                    <p class="ud-panel-desc">Statistik penambahan dokumen kerjasama baru berdasarkan rentang waktu terpilih.</p>
+                </div>
+                <div class="ud-trend-filters">
+                    <button type="button" class="ud-trend-btn" data-trend="weekly">7 Hari</button>
+                    <button type="button" class="ud-trend-btn is-active" data-trend="monthly">Tahun Ini</button>
+                    <button type="button" class="ud-trend-btn" data-trend="yearly">5 Tahun</button>
+                </div>
+            </div>
+
+            <div class="ud-trend-chart-layout">
+                <canvas id="trendChart" data-trends="{{ json_encode($trendData) }}"></canvas>
             </div>
         </article>
     </section>
