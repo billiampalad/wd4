@@ -591,18 +591,6 @@ function initLaporan() {
             if (btnTampilkan.dataset.laporanBound) return;
         });
     }
-
-    if (btnCetakPdf) {
-        btnCetakPdf.addEventListener('click', function () {
-            window.open(`${pdfUrl}?${getFilterParams()}`, '_blank');
-        });
-    }
-
-    if (btnExportExcel) {
-        btnExportExcel.addEventListener('click', function () {
-            window.location.href = `${excelUrl}?${getFilterParams()}`;
-        });
-    }
 }
 
 function initCustomDropdown() {

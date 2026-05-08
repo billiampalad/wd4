@@ -252,7 +252,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function getFormParams() {
         var fd = new FormData(form);
         var params = new URLSearchParams();
-        fd.forEach(function (val, key) { if (val) params.append(key, val); });
+        // Lewati nilai kosong dan sentinel 'all' agar tidak dikirim ke backend
+        fd.forEach(function (val, key) {
+            if (val && val !== 'all') params.append(key, val);
+        });
         return params.toString();
     }
 
