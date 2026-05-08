@@ -172,73 +172,51 @@ function initJurusanProdiChart() {
     const jurusans = JSON.parse(jurusanCanvas.dataset.jurusans || '[]');
     const prodis = JSON.parse(jurusanCanvas.dataset.prodis || '[]');
 
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const textColor = isDark ? '#e2e8f0' : '#475569';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-
-    // Modern color palette
-    const palette = [
-        '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
-        '#0ea5e9', '#ec4899', '#f97316', '#6366f1', '#84cc16'
+    // ── Warna sesuai spesifikasi Chart.js ──────────────────────────────
+    const bgColors = [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)'
+    ];
+    const borderColors = [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)'
     ];
 
-    // Jurusan Chart (Bar)
+    // ── Jurusan Chart ─────────────────────────────────────────────────
     const jurusanLabels = jurusans.map(j => j.name);
-    const jurusanData = jurusans.map(j => j.count);
-    const jurusanColors = jurusans.map((_, i) => palette[i % palette.length]);
+    const jurusanData   = jurusans.map(j => j.count);
+
+    const jurusanDataset = {
+        label: 'Jumlah Kerjasama',
+        data: jurusanData,
+        backgroundColor: jurusanLabels.map((_, i) => bgColors[i % bgColors.length]),
+        borderColor:     jurusanLabels.map((_, i) => borderColors[i % borderColors.length]),
+        borderWidth: 1
+    };
 
     window.jurusanChartInstance = new Chart(jurusanCanvas, {
         type: 'bar',
-        data: {
-            labels: jurusanLabels,
-            datasets: [{
-                label: 'Total Kerjasama',
-                data: jurusanData,
-                backgroundColor: jurusanColors,
-                borderRadius: 8,
-                borderSkipped: false,
-                barPercentage: 0.55,
-                hoverBackgroundColor: jurusanColors.map(c => c + 'E6') // 90% opacity on hover
-            }]
-        },
+        data: { labels: jurusanLabels, datasets: [jurusanDataset] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#fff',
-                    bodyColor: '#cbd5e1',
-                    padding: 12,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return ` ${context.parsed.y} Dokumen`;
-                        }
-                    }
-                }
-            },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { precision: 0, color: textColor, font: { family: "'Inter', sans-serif" } },
-                    grid: { color: gridColor, drawBorder: false }
-                },
-                x: {
-                    ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
-                    grid: { display: false }
-                }
-            },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
+                y: { beginAtZero: true }
             },
             onClick: (e, elements) => {
                 if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const selectedJurusan = jurusans[index];
-                    updateProdiChart(selectedJurusan.id, selectedJurusan.name);
+                    const idx = elements[0].index;
+                    updateProdiChart(jurusans[idx].id, jurusans[idx].name);
                 } else {
                     updateProdiChart(null, 'Semua');
                 }
@@ -249,87 +227,49 @@ function initJurusanProdiChart() {
         }
     });
 
-    // Prodi Chart (Doughnut)
-    function getProdiColors(count) {
-        // Offset the palette for Prodi so it contrasts nicely with Jurusan colors
-        return Array.from({length: count}).map((_, i) => palette[(i + 3) % palette.length]);
-    }
-
+    // ── Prodi Chart ───────────────────────────────────────────────────
     window.prodiChartInstance = new Chart(prodiCanvas, {
-        type: 'doughnut',
-        data: {
-            labels: [],
-            datasets: [{
-                data: [],
-                backgroundColor: [],
-                borderWidth: 0,
-                hoverOffset: 8
-            }]
-        },
+        type: 'bar',
+        data: { labels: [], datasets: [{
+            label: 'Jumlah Kerjasama',
+            data: [],
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 1
+        }] },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '65%',
-            plugins: {
-                legend: {
-                    position: 'right',
-                    labels: {
-                        color: textColor,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 15,
-                        font: { family: "'Inter', sans-serif", size: 11 }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
-                    titleColor: '#fff',
-                    bodyColor: '#cbd5e1',
-                    padding: 12,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return ` ${context.label}: ${context.parsed} Dokumen`;
-                        }
-                    }
-                }
-            },
-            animation: {
-                animateScale: true,
-                animateRotate: true,
-                duration: 800
+            scales: {
+                y: { beginAtZero: true }
             }
         }
     });
 
     function updateProdiChart(jurusanId, jurusanName) {
-        document.getElementById('prodiChartSubtitle').innerText = jurusanName === 'Semua' 
-            ? 'Menampilkan Semua Jurusan' 
-            : `Filter: ${jurusanName}`;
-        
-        let filteredProdis = prodis;
-        if (jurusanId !== null) {
-            filteredProdis = prodis.filter(p => p.jurusan_id === jurusanId);
+        const subtitle = document.getElementById('prodiChartSubtitle');
+        if (subtitle) {
+            subtitle.innerText = jurusanName === 'Semua'
+                ? 'Menampilkan Semua Jurusan'
+                : `Filter: ${jurusanName}`;
         }
 
-        let activeProdis = filteredProdis.filter(p => p.count > 0);
-        
-        if (activeProdis.length === 0) {
-            // Placeholder chart for empty state
-            activeProdis = [{ name: 'Belum ada data', count: 1 }];
-            window.prodiChartInstance.data.datasets[0].backgroundColor = [isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'];
-            window.prodiChartInstance.options.plugins.tooltip.enabled = false;
-        } else {
-            window.prodiChartInstance.data.datasets[0].backgroundColor = getProdiColors(activeProdis.length);
-            window.prodiChartInstance.options.plugins.tooltip.enabled = true;
-        }
+        let filtered = jurusanId !== null
+            ? prodis.filter(p => p.jurusan_id === jurusanId)
+            : prodis;
 
-        window.prodiChartInstance.data.labels = activeProdis.map(p => p.name);
-        window.prodiChartInstance.data.datasets[0].data = activeProdis.map(p => p.count);
+        // Tampilkan semua prodi (termasuk yang count=0)
+        const labels = filtered.map(p => p.name);
+        const data   = filtered.map(p => p.count);
+
+        window.prodiChartInstance.data.labels                         = labels;
+        window.prodiChartInstance.data.datasets[0].data              = data;
+        window.prodiChartInstance.data.datasets[0].backgroundColor   = labels.map((_, i) => bgColors[i % bgColors.length]);
+        window.prodiChartInstance.data.datasets[0].borderColor       = labels.map((_, i) => borderColors[i % borderColors.length]);
         window.prodiChartInstance.update();
     }
 
-    // Initialize with all prodis
+    // Inisialisasi awal dengan semua prodi
     updateProdiChart(null, 'Semua');
 }
 
