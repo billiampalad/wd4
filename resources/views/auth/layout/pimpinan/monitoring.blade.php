@@ -362,18 +362,21 @@
                         // Stage 1: MoU → MoA
                         $rateMouToMoa = $mouCount > 0 ? round(($moaCount / $mouCount) * 100, 1) : 0;
                         // Stage 2: MoA → IA
-                        $rateMoaToIa  = $moaCount > 0 ? round(($iaCount  / $moaCount) * 100, 1) : 0;
+                        $rateMoaToIa = $moaCount > 0 ? round(($iaCount / $moaCount) * 100, 1) : 0;
                         // Rata-rata konversi kedua tahap
                         $avgConversion = $mouCount > 0
                             ? round(($rateMouToMoa + $rateMoaToIa) / 2, 1)
                             : 0;
                     @endphp
-                    <div style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+                    <div
+                        style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
                         <span style="font-size:12px;color:var(--text-sub)">Conversion Rate MoU-MoA-IA:</span>
                         <span style="font-weight:800;color:#4f46e5;margin-left:6px">{{ $avgConversion }}%</span>
                         <div style="margin-top:6px;display:flex;gap:12px">
-                            <span style="font-size:11px;color:var(--text-sub)">MoU→MoA: <strong style="color:#6366f1">{{ $rateMouToMoa }}%</strong></span>
-                            <span style="font-size:11px;color:var(--text-sub)">MoA→IA: <strong style="color:#4f46e5">{{ $rateMoaToIa }}%</strong></span>
+                            <span style="font-size:11px;color:var(--text-sub)">MoU→MoA: <strong
+                                    style="color:#6366f1">{{ $rateMouToMoa }}%</strong></span>
+                            <span style="font-size:11px;color:var(--text-sub)">MoA→IA: <strong
+                                    style="color:#4f46e5">{{ $rateMoaToIa }}%</strong></span>
                         </div>
                     </div>
                 </div>
@@ -691,11 +694,11 @@
                                 data-search="{{ strtolower($k->mitra->nama_mitra ?? '') }} {{ strtolower($k->title ?? '') }}"
                                 data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
                                 data-jenis="{{ $k->jenis ?? '' }}" x-show="
-                                                    (search === '' || $el.dataset.search.includes(search.toLowerCase())) &&
-                                                    (filterTahun === '' || $el.dataset.tahun === filterTahun) &&
-                                                    (filterKategori === '' || $el.dataset.kategori === filterKategori) &&
-                                                    (filterJenis === '' || $el.dataset.jenis === filterJenis)
-                                                ">
+                                                                (search === '' || $el.dataset.search.includes(search.toLowerCase())) &&
+                                                                (filterTahun === '' || $el.dataset.tahun === filterTahun) &&
+                                                                (filterKategori === '' || $el.dataset.kategori === filterKategori) &&
+                                                                (filterJenis === '' || $el.dataset.jenis === filterJenis)
+                                                            ">
                                 <td><span
                                         style="font-weight:600;color:var(--text-sub);font-size:12px">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span>
                                 </td>

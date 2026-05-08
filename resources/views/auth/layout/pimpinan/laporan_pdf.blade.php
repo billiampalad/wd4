@@ -1,36 +1,126 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Laporan Global Kerjasama</title>
     <style>
-        body { font-family: 'Times New Roman', serif; font-size: 10pt; color: #000; line-height: 1.3; margin: 0; padding: 0; }
-        
-        .kop-surat { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px; }
-        .kop-surat h2 { margin: 0; font-size: 14pt; text-transform: uppercase; }
-        .kop-surat h3 { margin: 0; font-size: 12pt; text-transform: uppercase; }
-        .kop-surat p { margin: 2px 0; font-size: 9pt; font-style: italic; }
-        
-        .title-area { text-align: center; margin-bottom: 15px; }
-        .title-area h4 { margin: 0; font-size: 11pt; text-decoration: underline; text-transform: uppercase; }
-        
-        .item-container { margin-bottom: 25px; page-break-inside: avoid; }
-        .section-header { background-color: #f3f4f6; padding: 5px; font-weight: bold; border: 1px solid #000; margin-top: 10px; text-transform: uppercase; font-size: 10pt; }
-        
-        .table-detail { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
-        .table-detail td { border: 1px solid #000; padding: 5px; vertical-align: top; font-size: 9pt; word-wrap: break-word; }
-        .label { font-weight: bold; width: 35%; background-color: #fafafa; }
-        .value { width: 65%; }
-        
-        .footer-sign { margin-top: 30px; float: right; width: 200px; text-align: center; }
-        .footer-sign p { margin: 0; font-size: 10pt; }
-        .footer-sign .space { height: 60px; }
-        
-        @page { margin: 1.5cm 1cm; }
-        .page-break { page-break-after: always; }
-        .clear { clear: both; }
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 10pt;
+            color: #000;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .kop-surat {
+            text-align: center;
+            border-bottom: 3px double #000;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .kop-surat h2 {
+            margin: 0;
+            font-size: 14pt;
+            text-transform: uppercase;
+        }
+
+        .kop-surat h3 {
+            margin: 0;
+            font-size: 12pt;
+            text-transform: uppercase;
+        }
+
+        .kop-surat p {
+            margin: 2px 0;
+            font-size: 9pt;
+            font-style: italic;
+        }
+
+        .title-area {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .title-area h4 {
+            margin: 0;
+            font-size: 11pt;
+            text-decoration: underline;
+            text-transform: uppercase;
+        }
+
+        .item-container {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .section-header {
+            background-color: #f3f4f6;
+            padding: 5px;
+            font-weight: bold;
+            border: 1px solid #000;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-size: 10pt;
+        }
+
+        .table-detail {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            table-layout: fixed;
+        }
+
+        .table-detail td {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: top;
+            font-size: 9pt;
+            word-wrap: break-word;
+        }
+
+        .label {
+            font-weight: bold;
+            width: 35%;
+            background-color: #fafafa;
+        }
+
+        .value {
+            width: 65%;
+        }
+
+        .footer-sign {
+            margin-top: 30px;
+            float: right;
+            width: 200px;
+            text-align: center;
+        }
+
+        .footer-sign p {
+            margin: 0;
+            font-size: 10pt;
+        }
+
+        .footer-sign .space {
+            height: 60px;
+        }
+
+        @page {
+            margin: 1.5cm 1cm;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
+
 <body>
     <div class="kop-surat">
         <h2>KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI</h2>
@@ -41,7 +131,7 @@
 
     @php
         $mainTitle = "Rekapitulasi Kerja Sama Global";
-        if($request->filled('kategori_mitra') && $request->kategori_mitra != 'all') {
+        if ($request->filled('kategori_mitra') && $request->kategori_mitra != 'all') {
             $mainTitle = "Rekapitulasi Kerja Sama " . ucfirst($request->kategori_mitra);
         }
     @endphp
@@ -52,8 +142,9 @@
 
     @forelse($data as $index => $item)
         <div class="item-container">
-            <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">DATA KE-{{ $index + 1 }}: {{ strtoupper($item->nama_kegiatan) }}</div>
-            
+            <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">DATA KE-{{ $index + 1 }}:
+                {{ strtoupper($item->nama_kegiatan) }}</div>
+
             <!-- INFORMASI UMUM -->
             <div class="section-header">I. INFORMASI UMUM</div>
             <table class="table-detail">
@@ -77,7 +168,7 @@
                     <td class="label">UNIT PELAKSANA DI POLIMDO</td>
                     <td class="value">
                         @php
-                        $pengusul = $item->jurusans->pluck('nama_jurusan')->merge($item->unitKerjas->pluck('nama_unit_pelaksana'))->join(', ');
+                            $pengusul = $item->jurusans->pluck('nama_jurusan')->merge($item->unitKerjas->pluck('nama_unit_pelaksana'))->join(', ');
                         @endphp
                         {{ $pengusul ?: 'N/A' }}
                     </td>
@@ -85,7 +176,7 @@
                 <tr>
                     <td class="label">PERIODE PELAKSANAAN</td>
                     <td class="value">
-                        {{ $item->periode_mulai ? $item->periode_mulai->format('d M Y') : '-' }} s/d 
+                        {{ $item->periode_mulai ? $item->periode_mulai->format('d M Y') : '-' }} s/d
                         {{ $item->periode_selesai ? $item->periode_selesai->format('d M Y') : 'Selesai' }}
                     </td>
                 </tr>
@@ -158,7 +249,7 @@
                     <td class="value">{{ $h->manfaat_mitra ?? '-' }}</td>
                 </tr>
             </table>
-            
+
             <!-- EVALUASI KINERJA -->
             <div class="section-header">V. EVALUASI KINERJA / ASPEK PENILAIAN</div>
             @php $e = $item->evaluasis->first(); @endphp
@@ -212,7 +303,8 @@
                     <td class="value">
                         @foreach($item->dokumentasis as $dok)
                             @if($dok->link_drive)
-                                - {{ $dok->keterangan ?: 'Link Drive' }}: <a href="{{ $dok->link_drive }}" target="_blank">{{ $dok->link_drive }}</a> <br>
+                                - {{ $dok->keterangan ?: 'Link Drive' }}: <a href="{{ $dok->link_drive }}"
+                                    target="_blank">{{ $dok->link_drive }}</a> <br>
                             @endif
                         @endforeach
                         {{ $item->dokumentasis->whereNotNull('link_drive')->isEmpty() ? '-' : '' }}
@@ -232,7 +324,7 @@
                 </tr>
             </table>
         </div>
-        
+
         @if(!$loop->last)
             <div class="page-break"></div>
         @endif
@@ -250,6 +342,8 @@
     </div>
 
     <div class="clear"></div>
-    <p style="font-size: 8pt; color: #666; margin-top: 20px;">Dicetak otomatis oleh Sistem Informasi Kerjasama pada {{ date('d/m/Y H:i') }}</p>
+    <p style="font-size: 8pt; color: #666; margin-top: 20px;">Dicetak otomatis oleh Sistem Informasi Kerjasama pada
+        {{ date('d/m/Y H:i') }}</p>
 </body>
+
 </html>
