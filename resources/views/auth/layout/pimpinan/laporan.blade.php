@@ -33,8 +33,8 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 transform translate-y-0"
             x-transition:leave-end="opacity-0 transform -translate-y-4">
-            <form id="filterForm" class="rfc-form" data-preview-url="{{ route('unit.laporan.preview') }}"
-                data-pdf-url="{{ route('unit.laporan.pdf') }}" data-excel-url="{{ route('unit.laporan.excel') }}">
+            <form id="filterForm" class="rfc-form" data-preview-url="{{ route('pimpinan.laporan.preview') }}"
+                data-pdf-url="{{ route('pimpinan.laporan.pdf') }}" data-excel-url="{{ route('pimpinan.laporan.excel') }}">
 
                 <div class="rfc-grid">
                     <!-- Column 1: From -->

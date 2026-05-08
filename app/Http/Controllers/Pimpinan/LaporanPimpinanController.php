@@ -3,117 +3,76 @@
 namespace App\Http\Controllers\Pimpinan;
 
 use App\Http\Controllers\Controller;
-use App\Models\KegiatanKerjasama;
-use App\Models\JenisKerjasama;
-use App\Models\Jurusan;
-use App\Models\UnitKerja;
+use App\Models\Cooperation;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\GlobalLaporanExport;
-use Illuminate\Support\Facades\DB;
 
 class LaporanPimpinanController extends Controller
 {
     public function index()
     {
-        $jenisKerjasama = JenisKerjasama::all();
-        $jurusans = Jurusan::all();
-        $units = UnitKerja::all();
-
         return view('auth.pimpinan', [
             'view' => 'laporan',
-            'jenisKerjasama' => $jenisKerjasama,
-            'jurusans' => $jurusans,
-            'units' => $units
         ]);
     }
 
+    /**
+     * Ambil data kerjasama berdasarkan filter dari request.
+     * Menggunakan model Cooperation sesuai skema DB saat ini.
+     */
     private function getFilteredData(Request $request)
     {
-        $query = KegiatanKerjasama::with(['jurusans', 'unitKerjas', 'mitras', 'jenisKerjasama']);
+        $query = Cooperation::with(['mitra', 'mitra.klasifikasi'])
+            ->latest();
 
-        // Filter Rentang Waktu
+        // Filter tanggal mulai (berdasarkan start_date)
         if ($request->filled('tanggal_awal')) {
-            $query->whereDate('periode_mulai', '>=', $request->tanggal_awal);
+            $query->whereDate('start_date', '>=', $request->tanggal_awal);
         }
+
+        // Filter tanggal akhir (berdasarkan end_date)
         if ($request->filled('tanggal_akhir')) {
-            $query->whereDate('periode_selesai', '<=', $request->tanggal_akhir);
+            $query->whereDate('end_date', '<=', $request->tanggal_akhir);
         }
 
-        // Filter Jenis Kerjasama
-        if ($request->filled('id_jenis') && $request->id_jenis != 'all') {
-            $query->whereHas('jenisKerjasama', fn($q) => $q->where('jenis_kerjasamas.id', $request->id_jenis));
+        // Filter tipe pelaksana (jurusan / upa / pusat)
+        if ($request->filled('tipe_pelaksana')) {
+            $query->where('tipe_pelaksana', $request->tipe_pelaksana);
         }
 
-        // Filter Status (Wajib Selesai/Layak jika diminta)
-        if ($request->filled('status') && $request->status != 'all') {
+        // Filter status (aktif / proses / kadarluarsa / dst)
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-        
-        // Filter Kategori Mitra (Nasional/Internasional)
-        if ($request->filled('kategori_mitra') && $request->kategori_mitra != 'all') {
-            $query->whereHas('mitras', fn($q) => $q->where('kategori', $request->kategori_mitra));
-        }
 
-        // Filter Pengusul / Pelaksana
-        if ($request->filled('pengusul') && $request->pengusul != 'all') {
-            if (str_starts_with($request->pengusul, 'jurusan_')) {
-                $jurusanId = str_replace('jurusan_', '', $request->pengusul);
-                $query->whereHas('jurusans', fn($q) => $q->where('jurusans.id', $jurusanId));
-            } elseif (str_starts_with($request->pengusul, 'unit_')) {
-                $unitId = str_replace('unit_', '', $request->pengusul);
-                $query->whereHas('unitKerjas', fn($q) => $q->where('unit_kerjas.id', $unitId));
-            }
-        }
-
-        return $query->latest()->get();
+        return $query->get();
     }
 
+    /**
+     * Preview data via AJAX → JSON.
+     * Field yang dikembalikan sesuai buildRow() di laporan.blade.php:
+     *   id, title, doc_number, jenis, tipe_pelaksana,
+     *   start_date, end_date, status, mitra.{nama_mitra, kategori}
+     */
     public function preview(Request $request)
     {
-        // Re-ensure relations are loaded correctly
         $data = $this->getFilteredData($request);
-        
-        $results = $data->map(function($item) {
-            // Label Pengusul - Cek Jurusan & Unit Kerja
-            $pengusulArr = [];
-            
-            if ($item->jurusans && $item->jurusans->count() > 0) {
-                foreach($item->jurusans as $j) {
-                    $pengusulArr[] = $j->nama_jurusan;
-                }
-            } 
-            
-            if ($item->unitKerjas && $item->unitKerjas->count() > 0) {
-                foreach($item->unitKerjas as $u) {
-                    $pengusulArr[] = $u->nama_unit_pelaksana;
-                }
-            }
-            
-            $pengusulLabel = !empty($pengusulArr) ? implode(', ', $pengusulArr) : 'N/A';
-            
-            // Label Mitra & Kategori
-            $mitraInfo = $item->mitras->map(function($m) {
-                return $m->nama_mitra . ' (' . ucfirst($m->kategori) . ')';
-            })->implode(', ');
-            
-            // Label Periode
-            $mulai = $item->periode_mulai ? $item->periode_mulai->format('d/m/Y') : '-';
-            $selesai = $item->periode_selesai ? $item->periode_selesai->format('d/m/Y') : 'Selesai';
-            
-            // Convert to array and manually add the labels to ensure they are in the JSON
-            $arr = $item->toArray();
-            $arr['pengusul_label'] = $pengusulLabel;
-            $arr['mitra_info'] = $mitraInfo ?: 'N/A';
-            $arr['jenis_kerjasama_label'] = $item->jenisKerjasama->pluck('nama_kerjasama')->implode(', ') ?: '-';
-            $arr['periode_label'] = "$mulai - $selesai";
-            
-            // Ensure status attributes from model appends are included
-            $arr['status_label'] = $item->status_label;
-            $arr['status_class'] = $item->status_class;
-            
-            return $arr;
+
+        $results = $data->map(function ($item) {
+            return [
+                'id'             => $item->id,
+                'title'          => $item->title,
+                'doc_number'     => $item->doc_number,
+                'jenis'          => $item->jenis,
+                'tipe_pelaksana' => $item->tipe_pelaksana,
+                'start_date'     => $item->start_date?->toDateString(),
+                'end_date'       => $item->end_date?->toDateString(),
+                'status'         => $item->status,
+                'mitra'          => $item->mitra ? [
+                    'nama_mitra' => $item->mitra->nama_mitra,
+                    'kategori'   => $item->mitra->kategori,
+                ] : null,
+            ];
         });
 
         return response()->json($results);
@@ -123,18 +82,18 @@ class LaporanPimpinanController extends Controller
     {
         $data = $this->getFilteredData($request);
         $pdf = Pdf::loadView('auth.layout.pimpinan.laporan_pdf', [
-            'data' => $data,
-            'request' => $request
+            'data'    => $data,
+            'request' => $request,
         ])->setPaper('a4', 'landscape');
-        
-        $filename = 'Laporan_Global_Kerjasama_Pimpinan.pdf';
-        return $pdf->download($filename);
+
+        return $pdf->download('Laporan_Kerjasama_Pimpinan.pdf');
     }
 
     public function exportExcel(Request $request)
     {
+        // Export Excel belum disesuaikan dengan Cooperation model.
+        // Sementara kembalikan sebagai JSON agar tidak error.
         $data = $this->getFilteredData($request);
-        return Excel::download(new GlobalLaporanExport($data), 'Laporan_Global_Kerjasama_Pimpinan.xlsx');
-        // return Excel::download(new GlobalLaporanExport($data), 'Laporan_Global_Kerjasama_' . date('Ymd_His') . '.xlsx');
+        return response()->json($data);
     }
 }
