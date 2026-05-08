@@ -74,23 +74,23 @@ class UnitPageController extends Controller
     public function mitraStore(Request $request)
     {
         $request->validate([
-            'nama_mitra'   => 'required|string|max:255',
+            'nama_mitra' => 'required|string|max:255',
             'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
-            'alamat'       => 'nullable|string|max:255',
-            'kategori'     => 'required|string|in:nasional,internasional',
-            'negara'       => 'nullable|string|max:255',
-            'telp'         => 'nullable|string|max:20',
-            'website'      => 'nullable|string|max:255',
+            'alamat' => 'nullable|string|max:255',
+            'kategori' => 'required|string|in:nasional,internasional',
+            'negara' => 'nullable|string|max:255',
+            'telp' => 'nullable|string|max:20',
+            'website' => 'nullable|string|max:255',
         ]);
 
         $mitra = \App\Models\Mitra::create([
-            'nama_mitra'   => $request->nama_mitra,
+            'nama_mitra' => $request->nama_mitra,
             'id_klasifikasi' => $request->id_klasifikasi,
-            'alamat'       => $request->alamat,
-            'kategori'     => $request->kategori,
-            'negara'       => $request->negara ?? 'Indonesia',
-            'telp'         => $request->telp,
-            'website'      => $request->website,
+            'alamat' => $request->alamat,
+            'kategori' => $request->kategori,
+            'negara' => $request->negara ?? 'Indonesia',
+            'telp' => $request->telp,
+            'website' => $request->website,
         ]);
 
         if ($request->ajax() || $request->wantsJson()) {
@@ -124,24 +124,24 @@ class UnitPageController extends Controller
     public function mitraUpdate(Request $request, $id)
     {
         $request->validate([
-            'nama_mitra'   => 'required|string|max:255',
+            'nama_mitra' => 'required|string|max:255',
             'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
-            'alamat'       => 'nullable|string|max:255',
-            'kategori'     => 'required|string|in:nasional,internasional',
-            'negara'       => 'nullable|string|max:255',
-            'telp'         => 'nullable|string|max:20',
-            'website'      => 'nullable|string|max:255',
+            'alamat' => 'nullable|string|max:255',
+            'kategori' => 'required|string|in:nasional,internasional',
+            'negara' => 'nullable|string|max:255',
+            'telp' => 'nullable|string|max:20',
+            'website' => 'nullable|string|max:255',
         ]);
 
         $mitra = \App\Models\Mitra::findOrFail($id);
         $mitra->update([
-            'nama_mitra'   => $request->nama_mitra,
+            'nama_mitra' => $request->nama_mitra,
             'id_klasifikasi' => $request->id_klasifikasi,
-            'alamat'       => $request->alamat,
-            'kategori'     => $request->kategori,
-            'negara'       => $request->negara ?? 'Indonesia',
-            'telp'         => $request->telp,
-            'website'      => $request->website,
+            'alamat' => $request->alamat,
+            'kategori' => $request->kategori,
+            'negara' => $request->negara ?? 'Indonesia',
+            'telp' => $request->telp,
+            'website' => $request->website,
         ]);
 
         return redirect()->route('unit.mitra')->with('success', 'Data mitra berhasil diperbarui.');
@@ -205,11 +205,11 @@ class UnitPageController extends Controller
     {
         $request->validate([
             'sesuai_rencana' => 'required|integer|min:1|max:5',
-            'kualitas'       => 'required|integer|min:1|max:5',
-            'keterlibatan'   => 'required|integer|min:1|max:5',
-            'efisiensi'      => 'required|integer|min:1|max:5',
-            'kepuasan'       => 'required|integer|min:1|max:5',
-            'catatan'        => 'nullable|string|max:2000',
+            'kualitas' => 'required|integer|min:1|max:5',
+            'keterlibatan' => 'required|integer|min:1|max:5',
+            'efisiensi' => 'required|integer|min:1|max:5',
+            'kepuasan' => 'required|integer|min:1|max:5',
+            'catatan' => 'nullable|string|max:2000',
         ]);
 
         $unitId = $this->resolveUnitId();
@@ -217,13 +217,13 @@ class UnitPageController extends Controller
 
         Evaluasi::create([
             'cooperation_id' => $kegiatan->id,
-            'dinilai_oleh'  => Auth::id(),
+            'dinilai_oleh' => Auth::id(),
             'sesuai_rencana' => $request->sesuai_rencana,
-            'kualitas'       => $request->kualitas,
-            'keterlibatan'   => $request->keterlibatan,
-            'efisiensi'      => $request->efisiensi,
-            'kepuasan'       => $request->kepuasan,
-            'catatan'        => $request->catatan,
+            'kualitas' => $request->kualitas,
+            'keterlibatan' => $request->keterlibatan,
+            'efisiensi' => $request->efisiensi,
+            'kepuasan' => $request->kepuasan,
+            'catatan' => $request->catatan,
         ]);
 
         // Update status kegiatan menjadi menunggu validasi pimpinan
@@ -256,11 +256,11 @@ class UnitPageController extends Controller
     {
         $request->validate([
             'sesuai_rencana' => 'required|integer|min:1|max:5',
-            'kualitas'       => 'required|integer|min:1|max:5',
-            'keterlibatan'   => 'required|integer|min:1|max:5',
-            'efisiensi'      => 'required|integer|min:1|max:5',
-            'kepuasan'       => 'required|integer|min:1|max:5',
-            'catatan'        => 'nullable|string|max:2000',
+            'kualitas' => 'required|integer|min:1|max:5',
+            'keterlibatan' => 'required|integer|min:1|max:5',
+            'efisiensi' => 'required|integer|min:1|max:5',
+            'kepuasan' => 'required|integer|min:1|max:5',
+            'catatan' => 'nullable|string|max:2000',
         ]);
 
         $unitId = $this->resolveUnitId();
@@ -272,11 +272,11 @@ class UnitPageController extends Controller
 
         $eval->update([
             'sesuai_rencana' => $request->sesuai_rencana,
-            'kualitas'       => $request->kualitas,
-            'keterlibatan'   => $request->keterlibatan,
-            'efisiensi'      => $request->efisiensi,
-            'kepuasan'       => $request->kepuasan,
-            'catatan'        => $request->catatan,
+            'kualitas' => $request->kualitas,
+            'keterlibatan' => $request->keterlibatan,
+            'efisiensi' => $request->efisiensi,
+            'kepuasan' => $request->kepuasan,
+            'catatan' => $request->catatan,
         ]);
 
         // Update status kegiatan menjadi menunggu validasi pimpinan
@@ -348,20 +348,34 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
-
-        $kerjasamaUnit = Cooperation::orderBy('created_at', 'desc')
-            ->get();
-
-        return view('auth.unit', compact('jenisKerjasama', 'kerjasamaUnit'));
+        return view('auth.unit');
     }
 
     public function laporanPreview(Request $request)
     {
-        $data = $this->buildLaporanQuery($request)
-            ->get();
+        $rows = $this->buildLaporanQuery($request)
+            ->get()
+            ->filter(fn($c) => !empty($c->title))
+            ->values()
+            ->map(function ($c) {
+                return [
+                    'id'             => $c->id,
+                    'title'          => $c->title,
+                    'doc_number'     => $c->doc_number,
+                    'jenis'          => $c->jenis,
+                    'tipe_pelaksana' => $c->tipe_pelaksana,
+                    'start_date'     => $c->start_date ? $c->start_date->toDateString() : null,
+                    'end_date'       => $c->end_date   ? $c->end_date->toDateString()   : null,
+                    // status: coba field status dulu, fallback ke status_dokumen
+                    'status'         => $c->status ?? $c->status_dokumen ?? null,
+                    'mitra'  => $c->mitra  ? ['nama_mitra'   => $c->mitra->nama_mitra]   : null,
+                    'jurusan'=> $c->jurusan? ['nama_jurusan' => $c->jurusan->nama_jurusan]: null,
+                    'upa'    => $c->upa    ? ['nama_upa'     => $c->upa->nama_upa]        : null,
+                    'pusat'  => $c->pusat  ? ['nama_pusat'   => $c->pusat->nama_pusat]    : null,
+                ];
+            });
 
-        return response()->json($data);
+        return response()->json($rows);
     }
 
     public function laporanPdf(Request $request)
@@ -384,7 +398,8 @@ class UnitPageController extends Controller
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat']);
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+            ->orderBy('created_at', 'desc');
 
         if ($request->filled('tanggal_awal')) {
             $query->where('start_date', '>=', $request->tanggal_awal);
@@ -392,10 +407,17 @@ class UnitPageController extends Controller
         if ($request->filled('tanggal_akhir')) {
             $query->where('start_date', '<=', $request->tanggal_akhir);
         }
-        if ($request->filled('id_jenis') && $request->id_jenis != 'all') {
-            $query->where('jenis', 'like', '%' . $request->id_jenis . '%');
+        // Filter Unit Pelaksana berdasarkan kolom FK yang terisi
+        if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
+            match ($request->tipe_pelaksana) {
+                'jurusan' => $query->whereNotNull('jurusan_id'),
+                'upa'     => $query->whereNotNull('upa_id'),
+                'pusat'   => $query->whereNotNull('pusat_id'),
+                default   => null,
+            };
         }
-        if ($request->filled('status') && $request->status != 'all') {
+        // Filter status cocok dengan nilai ENUM DB: aktif | proses | dalam perpanjangan | kadarluarsa | tidak aktif
+        if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
@@ -427,7 +449,7 @@ class UnitPageController extends Controller
             ->get();
 
         // Rata-rata evaluasi
-        $avgEvaluasi = (object)[
+        $avgEvaluasi = (object) [
             'avg_kualitas' => 0,
             'avg_keterlibatan' => 0,
             'avg_efisiensi' => 0,
@@ -496,10 +518,10 @@ class UnitPageController extends Controller
         \App\Models\LaporanFile::create([
             'unit_kerja_id' => $unitId,
             'cooperation_id' => $request->cooperation_id,
-            'uploaded_by'   => Auth::id(),
-            'file_path'     => $path,
+            'uploaded_by' => Auth::id(),
+            'file_path' => $path,
             'original_name' => $originalName, // Tetap simpan nama asli untuk tampilan
-            'file_size'     => $file->getSize(),
+            'file_size' => $file->getSize(),
         ]);
 
         if ($request->has('cooperation_id')) {

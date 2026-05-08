@@ -121,24 +121,24 @@
                         </div>
                     </div>
 
-                    <!-- Column 3: Jenis Kerjasama -->
+                    <!-- Column 3: Unit Pelaksana -->
                     <div class="rfc-group" x-data="{
                         open: false,
                         selected: 'all',
-                        selectedLabel: 'Semua Jenis',
+                        selectedLabel: 'Semua Unit',
                         items: [
-                            { id: 'all', label: 'Semua Jenis' },
-                            @foreach($jenisKerjasama as $jenis)
-                            { id: '{{ $jenis->id }}', label: '{{ $jenis->nama_kerjasama }}' },
-                            @endforeach
+                            { id: 'all',     label: 'Semua Unit' },
+                            { id: 'jurusan', label: 'Jurusan' },
+                            { id: 'upa',     label: 'UPA' },
+                            { id: 'pusat',   label: 'Pusat' }
                         ]
                     }">
-                        <label>Jenis Kerjasama</label>
-                        <input type="hidden" name="id_jenis" :value="selected">
+                        <label>Unit Pelaksana</label>
+                        <input type="hidden" name="tipe_pelaksana" :value="selected">
                         <div class="alpine-dropdown" @click.outside="open = false">
                             <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-handshake" style="color: #9ca3af; font-size: 13px;"></i>
+                                    <i class="fas fa-sitemap" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
                                 </div>
                                 <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
@@ -159,11 +159,12 @@
                         selected: 'all',
                         selectedLabel: 'Semua Status',
                         items: [
-                            { id: 'all', label: 'Semua Status' },
-                            { id: 'draft', label: 'Draft' },
-                            { id: 'menunggu_evaluasi', label: 'Menunggu Evaluasi' },
-                            { id: 'menunggu_validasi', label: 'Menunggu Validasi Pimpinan' },
-                            { id: 'selesai', label: 'Selesai' }
+                            { id: 'all',               label: 'Semua Status' },
+                            { id: 'aktif',             label: 'Aktif' },
+                            { id: 'proses',            label: 'Proses' },
+                            { id: 'dalam perpanjangan',label: 'Dalam Perpanjangan' },
+                            { id: 'kadarluarsa',       label: 'Kadarluarsa' },
+                            { id: 'tidak aktif',       label: 'Tidak Aktif' }
                         ]
                     }">
                         <label>Status</label>
@@ -225,10 +226,13 @@
                         </tr>
                     </thead>
                     <tbody id="previewBody">
-                        <tr id="loadingRow">
-                            <td colspan="6" style="text-align:center; padding: 40px 0;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i>
-                                <p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p>
+                        <tr id="idleRow">
+                            <td colspan="6" class="um-empty">
+                                <div class="um-empty-state" style="padding:30px 0;">
+                                    <div class="um-empty-icon"><i class="fas fa-filter" style="font-size:28px; opacity:0.3; color:var(--text-sub);"></i></div>
+                                    <p class="um-empty-title">Belum ada data ditampilkan</p>
+                                    <p class="um-empty-sub">Gunakan filter di atas lalu klik <strong>Tampilkan</strong> untuk memuat data.</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -394,9 +398,6 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
             .then(function (res) { return res.json(); })
             .then(function (data) {
-                // Clear the loading skeleton
-                previewBody.innerHTML = '';
-
                 if (!data || data.length === 0) {
                     showEmpty();
                     return;
@@ -405,13 +406,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 previewCount.textContent = data.length + ' data';
                 previewCount.style.display = 'inline-block';
 
+                // Build all rows in a DocumentFragment first, then insert once
+                // to avoid the brief empty-tbody flash caused by innerHTML='' + per-row appendChild
+                var fragment = document.createDocumentFragment();
                 data.forEach(function (item, idx) {
                     try {
-                        previewBody.appendChild(buildRow(item, idx));
+                        fragment.appendChild(buildRow(item, idx));
                     } catch(e) {
                         console.error('Error rendering row ' + idx + ':', e);
                     }
                 });
+                previewBody.innerHTML = '';
+                previewBody.appendChild(fragment);
             })
             .catch(function (err) {
                 console.error(err);

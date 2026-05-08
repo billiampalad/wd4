@@ -575,125 +575,21 @@ function initLaporan() {
     const pdfUrl = filterForm.getAttribute('data-pdf-url');
     const excelUrl = filterForm.getAttribute('data-excel-url');
 
+    // Lewati nilai kosong dan sentinel 'all' agar parameter bersih di backend
     function getFilterParams() {
         const formData = new FormData(filterForm);
-        return new URLSearchParams(formData).toString();
+        const params = new URLSearchParams();
+        formData.forEach(function(val, key) {
+            if (val && val !== 'all') params.append(key, val);
+        });
+        return params.toString();
     }
 
     if (btnTampilkan) {
         btnTampilkan.addEventListener('click', function () {
-            previewBody.innerHTML = '<tr><td colspan="6" class="text-center py-4" style="color:var(--text-sub);"><i class="fas fa-spinner fa-spin me-2" style="color:var(--accent);"></i> Memuat data...</td></tr>';
-
-            fetch(`${previewUrl}?${getFilterParams()}`)
-                .then(response => response.json())
-                .then(data => {
-                    previewBody.innerHTML = '';
-                    if (data.length === 0) {
-                        previewBody.innerHTML = `
-                            <tr>
-                                <td colspan="6" class="um-empty">
-                                    <div class="um-empty-state" style="padding: 30px 0;">
-                                        <div class="um-empty-icon">
-                                            <i class="fas fa-folder-open" style="font-size: 28px; opacity: 0.3; color: var(--text-sub);"></i>
-                                        </div>
-                                        <p class="um-empty-title">Tidak ada data</p>
-                                        <p class="um-empty-sub">Silakan sesuaikan filter pencarian Anda.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        return;
-                    }
-
-                    const formatTgl = (tglStr) => {
-                        if (!tglStr) return '-';
-                        const date = new Date(tglStr);
-                        if (isNaN(date.getTime())) return tglStr;
-                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-                        return `${String(date.getDate()).padStart(2, '0')} ${months[date.getMonth()]} ${date.getFullYear()}`;
-                    };
-
-                    data.forEach((item, index) => {
-                        // Status yang berasal dari backend: draft | menunggu_evaluasi | revisi | selesai
-                        // (tetap toleran terhadap value lama "menunggu")
-                        let statusColor = 'orange';
-                        let statusIconColor = '#f59e0b';
-                        let statusBg = 'rgba(245,158,11,.12)';
-                        let statusLabel = 'Draft';
-
-                        if (item.status === 'selesai') {
-                            statusColor = 'green';
-                            statusIconColor = '#10b981';
-                            statusBg = 'rgba(16,185,129,.12)';
-                            statusLabel = 'Selesai/Layak';
-                            // } else if (item.status === 'revisi') {
-                            //     statusColor = 'red';
-                            //     statusIconColor = '#ef4444';
-                            //     statusBg = 'rgba(239,68,68,.12)';
-                            //     statusLabel = 'Revisi';
-                        } else if (item.status === 'menunggu' || item.status === 'menunggu_evaluasi') {
-                            statusColor = 'blue';
-                            statusIconColor = '#0ea5e9';
-                            statusBg = 'rgba(14,165,233,.12)';
-                            statusLabel = 'Menunggu Evaluasi';
-                        }
-
-                        const statusStyle = `background: ${statusBg}; color: ${statusIconColor}; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;`;
-
-                        let mitraHtml = '<span class="um-meta">-</span>';
-                        if (item.mitras && item.mitras.length > 0) {
-                            const allMitras = item.mitras.map(m => m.nama_mitra).join(', ');
-                            const firstMitra = item.mitras[0].nama_mitra;
-                            const extra = item.mitras.length > 1 ? ` +${item.mitras.length - 1} mitra lainnya` : '';
-                            mitraHtml = `<span class="um-meta" title="${allMitras}">${firstMitra}${extra}</span>`;
-                        }
-
-                        const tglMulai = formatTgl(item.periode_mulai);
-                        const tglSelesai = formatTgl(item.periode_selesai);
-
-                        const row = `
-                            <tr class="um-row">
-                                <td class="um-td um-td-num">
-                                    <span class="um-num">${String(index + 1).padStart(3, '0')}</span>
-                                </td>
-                                <td class="um-td">
-                                    <span class="um-name">${item.nama_kegiatan || '-'}</span>
-                                </td>
-                                <td class="um-td">
-                                    <span class="tag tag-purple" style="font-size: 11px;">
-                                        <i class="fas fa-handshake" style="font-size:9px; margin-right:4px;"></i>
-                                        ${item.jenis_kerjasama && item.jenis_kerjasama.length > 0 ? item.jenis_kerjasama.map(j => j.nama_kerjasama).join(', ') : '-'}
-                                    </span>
-                                </td>
-                                <td class="um-td">
-                                    ${mitraHtml}
-                                </td>
-                                <td class="um-td">
-                                    <span class="um-meta">${tglMulai} s/d ${tglSelesai}</span>
-                                </td>
-                                <td class="um-td">
-                                    <span class="tag tag-${statusColor}" style="${statusStyle}">
-                                        <i class="fas fa-circle" style="font-size:6px;"></i> ${statusLabel}
-                                    </span>
-                                </td>
-                            </tr>
-                        `;
-                        previewBody.insertAdjacentHTML('beforeend', row);
-                    });
-                    // Terapkan filter search jika ada input
-                    const searchInput = document.getElementById('navSearchInput');
-                    if (searchInput && searchInput.value.trim()) {
-                        searchInput.dispatchEvent(new Event('input'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    previewBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Gagal memuat data. Silakan coba lagi.</td></tr>';
-                });
+            // Cegah double-binding jika sudah ada handler dari blade inline script
+            if (btnTampilkan.dataset.laporanBound) return;
         });
-
-        // Trigger on load
-        btnTampilkan.click();
     }
 
     if (btnCetakPdf) {
