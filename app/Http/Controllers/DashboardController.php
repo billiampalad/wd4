@@ -137,10 +137,13 @@ class DashboardController
         // ── I. GRAFIK PERFORMA INSTANSI ───────────────────────────
 
         // 1. Funnel: MoU → MoA → IA conversion
-        $funnelData = Cooperation::select('jenis', DB::raw('COUNT(*) as total'))
-            ->whereNotNull('jenis')
-            ->groupBy('jenis')
-            ->pluck('total', 'jenis');
+        // Nilai enum di DB adalah string panjang misal "MoU (Memorandum of Understanding)",
+        // jadi kita gunakan LIKE untuk mencocokkan masing-masing tipe.
+        $funnelData = collect([
+            'MoU' => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%MoU%')->count(),
+            'MoA' => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%MoA%')->count(),
+            'IA'  => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%IA%')->count(),
+        ]);
 
         // 2. Capaian Sasaran / IKU
         $sasaranData = DB::table('detail_kegiatans')

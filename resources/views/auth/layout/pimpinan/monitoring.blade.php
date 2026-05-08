@@ -1,4 +1,4 @@
-﻿@php
+@php
     $kerjasamaList = $dataKerjasama ?? collect();
     $funnel = $funnelData ?? collect();
     $sasarans = $sasaranData ?? collect();
@@ -79,7 +79,8 @@
                     </div>
                     <div style="text-align:center">
                         <div style="font-size:32px;font-weight:800;color:#fff;line-height:1">Rp
-                            {{ number_format($kontrakAktif, 0, ',', '.') }}</div>
+                            {{ number_format($kontrakAktif, 0, ',', '.') }}
+                        </div>
                         <div style="font-size:12px;color:#34d399;font-weight:600;margin-top:4px"><i
                                 class="fas fa-wallet"></i> Potensi Pendapatan Aktif</div>
                     </div>
@@ -314,14 +315,14 @@
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px">
 
-            {{-- 1. Funnel MoU â†’ MoA â†’ IA --}}
+            {{-- 1. Funnel MoU - MoA - IA --}}
             <div class="mn-card">
                 <div class="mn-card-head">
                     <h3>
                         <div class="mn-icon mn-rag-purple"><i class="fas fa-filter"></i></div> Rasio Efektivitas
                         Kerjasama
                     </h3>
-                    <span style="font-size:11px;color:var(--text-sub)">MoU â†’ MoA â†’ IA Conversion</span>
+                    <span style="font-size:11px;color:var(--text-sub)">MoU - MoA - IA Conversion</span>
                 </div>
                 <div class="mn-card-body">
                     @php $maxFunnel = max($mouCount, $moaCount, $iaCount, 1); @endphp
@@ -333,7 +334,8 @@
                                     style="font-weight:800;color:#8b5cf6">{{ $mouCount }}</span></div>
                             <div class="mn-funnel-bar"
                                 style="width:{{ $maxFunnel > 0 ? max(($mouCount / $maxFunnel) * 100, 15) : 15 }}%;background:linear-gradient(90deg,#8b5cf6,#a78bfa)">
-                                {{ $mouCount }}</div>
+                                {{ $mouCount }}
+                            </div>
                         </div>
                         <div>
                             <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span
@@ -342,7 +344,8 @@
                                     style="font-weight:800;color:#6366f1">{{ $moaCount }}</span></div>
                             <div class="mn-funnel-bar"
                                 style="width:{{ $maxFunnel > 0 ? max(($moaCount / $maxFunnel) * 100, 15) : 15 }}%;background:linear-gradient(90deg,#6366f1,#818cf8)">
-                                {{ $moaCount }}</div>
+                                {{ $moaCount }}
+                            </div>
                         </div>
                         <div>
                             <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span
@@ -351,17 +354,28 @@
                                     style="font-weight:800;color:#4f46e5">{{ $iaCount }}</span></div>
                             <div class="mn-funnel-bar"
                                 style="width:{{ $maxFunnel > 0 ? max(($iaCount / $maxFunnel) * 100, 15) : 15 }}%;background:linear-gradient(90deg,#4f46e5,#6366f1)">
-                                {{ $iaCount }}</div>
+                                {{ $iaCount }}
+                            </div>
                         </div>
                     </div>
-                    @if($mouCount > 0)
-                        <div
-                            style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
-                            <span style="font-size:12px;color:var(--text-sub)">Conversion Rate MoUâ†’IA:</span>
-                            <span
-                                style="font-weight:800;color:#4f46e5;margin-left:6px">{{ round(($iaCount / $mouCount) * 100, 1) }}%</span>
+                    @php
+                        // Stage 1: MoU → MoA
+                        $rateMouToMoa = $mouCount > 0 ? round(($moaCount / $mouCount) * 100, 1) : 0;
+                        // Stage 2: MoA → IA
+                        $rateMoaToIa  = $moaCount > 0 ? round(($iaCount  / $moaCount) * 100, 1) : 0;
+                        // Rata-rata konversi kedua tahap
+                        $avgConversion = $mouCount > 0
+                            ? round(($rateMouToMoa + $rateMoaToIa) / 2, 1)
+                            : 0;
+                    @endphp
+                    <div style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+                        <span style="font-size:12px;color:var(--text-sub)">Conversion Rate MoU-MoA-IA:</span>
+                        <span style="font-weight:800;color:#4f46e5;margin-left:6px">{{ $avgConversion }}%</span>
+                        <div style="margin-top:6px;display:flex;gap:12px">
+                            <span style="font-size:11px;color:var(--text-sub)">MoU→MoA: <strong style="color:#6366f1">{{ $rateMouToMoa }}%</strong></span>
+                            <span style="font-size:11px;color:var(--text-sub)">MoA→IA: <strong style="color:#4f46e5">{{ $rateMoaToIa }}%</strong></span>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </div>
 
@@ -433,11 +447,13 @@
                             style="display:flex;align-items:center;gap:14px;padding:12px 22px;border-bottom:1px solid var(--border)">
                             <div
                                 style="width:28px;height:28px;border-radius:50%;background:{{ $idx < 3 ? 'linear-gradient(135deg,#f59e0b,#fbbf24)' : 'var(--bg)' }};color:{{ $idx < 3 ? '#fff' : 'var(--text-sub)' }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">
-                                {{ $idx + 1 }}</div>
+                                {{ $idx + 1 }}
+                            </div>
                             <div style="flex:1;min-width:0">
                                 <div
                                     style="font-weight:700;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                                    {{ $unit->nama }}</div>
+                                    {{ $unit->nama }}
+                                </div>
                                 <div style="font-size:11px;color:var(--text-sub)">{{ $unit->tipe }}</div>
                             </div>
                             <div style="display:flex;align-items:center;gap:8px">
@@ -538,7 +554,8 @@
                     <h3 style="font-size:13px">
                         <div class="mn-icon"
                             style="background:rgba(251,146,60,.1);color:#fb923c;width:30px;height:30px;font-size:13px">
-                            <i class="fas fa-pause"></i></div> Kerjasama Pasif
+                            <i class="fas fa-pause"></i>
+                        </div> Kerjasama Pasif
                     </h3>
                     <span class="mn-tag"
                         style="background:rgba(251,146,60,.1);color:#fb923c;font-size:13px">{{ $idle->count() }}</span>
@@ -550,7 +567,8 @@
                             <div style="flex:1;min-width:0">
                                 <div
                                     style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                                    {{ $i->title }}</div>
+                                    {{ $i->title }}
+                                </div>
                                 <div style="font-size:10px;color:var(--text-sub)">{{ $i->mitra->nama_mitra ?? '-' }}</div>
                             </div>
                         </div>
@@ -567,7 +585,8 @@
                     <h3 style="font-size:13px">
                         <div class="mn-icon"
                             style="background:rgba(107,114,128,.1);color:#6b7280;width:30px;height:30px;font-size:13px">
-                            <i class="fas fa-file-circle-exclamation"></i></div> Dokumen Tidak Lengkap
+                            <i class="fas fa-file-circle-exclamation"></i>
+                        </div> Dokumen Tidak Lengkap
                     </h3>
                     <span class="mn-tag"
                         style="background:rgba(107,114,128,.1);color:#6b7280;font-size:13px">{{ $compliance->count() }}</span>
@@ -579,7 +598,8 @@
                             <div style="flex:1;min-width:0">
                                 <div
                                     style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-                                    {{ $doc->title }}</div>
+                                    {{ $doc->title }}
+                                </div>
                                 <div style="font-size:10px;color:var(--text-sub)">
                                     @if(!$doc->document_link) <span style="color:#ef4444">âš  Tanpa Dokumen</span> @endif
                                     @if(!$doc->pks_number) <span style="color:#f59e0b">âš  Tanpa PKS</span> @endif
@@ -671,17 +691,18 @@
                                 data-search="{{ strtolower($k->mitra->nama_mitra ?? '') }} {{ strtolower($k->title ?? '') }}"
                                 data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
                                 data-jenis="{{ $k->jenis ?? '' }}" x-show="
-                                (search === '' || $el.dataset.search.includes(search.toLowerCase())) &&
-                                (filterTahun === '' || $el.dataset.tahun === filterTahun) &&
-                                (filterKategori === '' || $el.dataset.kategori === filterKategori) &&
-                                (filterJenis === '' || $el.dataset.jenis === filterJenis)
-                            ">
+                                                    (search === '' || $el.dataset.search.includes(search.toLowerCase())) &&
+                                                    (filterTahun === '' || $el.dataset.tahun === filterTahun) &&
+                                                    (filterKategori === '' || $el.dataset.kategori === filterKategori) &&
+                                                    (filterJenis === '' || $el.dataset.jenis === filterJenis)
+                                                ">
                                 <td><span
                                         style="font-weight:600;color:var(--text-sub);font-size:12px">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span>
                                 </td>
                                 <td>
                                     <div style="font-weight:700;font-size:13px;color:var(--text)">
-                                        {{ $k->mitra->nama_mitra ?? '-' }}</div>
+                                        {{ $k->mitra->nama_mitra ?? '-' }}
+                                    </div>
                                     <div style="font-size:11px;color:var(--text-sub);margin-top:2px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
                                         title="{{ $k->title }}">{{ $k->title }}</div>
                                 </td>
