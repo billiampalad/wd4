@@ -1,0 +1,667 @@
+/* Dashboard Pimpinan CSS */
+
+/* Page Header */
+.pimpinan-page-header {
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(255,255,255,0) 100%);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.pimpinan-header-bg {
+    position: absolute;
+    right: -50px;
+    top: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%);
+    border-radius: 50%;
+}
+
+.pimpinan-header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.pimpinan-breadcrumb {
+    margin-bottom: 8px;
+}
+
+.pimpinan-breadcrumb i {
+    font-size: 11px;
+}
+
+.pimpinan-page-title {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--text) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.pimpinan-page-desc {
+    color: var(--text-sub);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.pimpinan-header-actions {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 1;
+}
+
+.pimpinan-btn-filter {
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.pimpinan-btn-filter i {
+    color: var(--text-sub);
+}
+
+.pimpinan-btn-download {
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.pimpinan-btn-download:hover {
+    transform: translateY(-2px);
+}
+
+/* Stats Grid */
+.pimpinan-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.pimpinan-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.pimpinan-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.pimpinan-stat-bg-icon {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    font-size: 80px;
+    transform: rotate(15deg);
+    pointer-events: none;
+}
+.pimpinan-stat-bg-icon.success { color: rgba(16,185,129,0.05); }
+.pimpinan-stat-bg-icon.primary { color: rgba(59,130,246,0.05); }
+.pimpinan-stat-bg-icon.warning { color: rgba(245,158,11,0.05); }
+.pimpinan-stat-bg-icon.purple { color: rgba(139,92,246,0.05); }
+.pimpinan-stat-bg-icon.info { color: rgba(14,165,233,0.05); }
+
+.pimpinan-stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.pimpinan-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.pimpinan-stat-icon.success { background: rgba(16,185,129,0.1); color: #10b981; }
+.pimpinan-stat-icon.primary { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.pimpinan-stat-icon.warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.pimpinan-stat-icon.purple { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+
+.pimpinan-stat-tag {
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+}
+.pimpinan-stat-tag.success { background: rgba(16,185,129,0.1); color: #10b981; }
+.pimpinan-stat-tag.primary { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.pimpinan-stat-tag.warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.pimpinan-stat-tag.purple { background: rgba(139,92,246,0.1); color: #8b5cf6; }
+
+.pimpinan-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0;
+    line-height: 1;
+}
+.pimpinan-stat-value-medium {
+    font-size: 24px;
+    padding-top: 8px;
+}
+
+.pimpinan-stat-desc {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.pimpinan-sasaran-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pimpinan-sasaran-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.pimpinan-sasaran-name {
+    color: var(--text-sub);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 120px;
+}
+
+.pimpinan-sasaran-val {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.pimpinan-sasaran-bar-bg {
+    width: 100%;
+    background: var(--border);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.pimpinan-sasaran-bar-fill {
+    background: #8b5cf6;
+    height: 100%;
+    border-radius: 2px;
+}
+
+.pimpinan-sasaran-empty {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 0;
+}
+
+/* Grids & Cards */
+.pimpinan-grid-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.pimpinan-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.pimpinan-grid-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.pimpinan-card {
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 24px;
+}
+.pimpinan-card-sm-pad {
+    padding: 20px;
+}
+.pimpinan-card-no-pad {
+    padding: 0;
+}
+
+.pimpinan-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.pimpinan-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+.pimpinan-card-title-sm {
+    font-size: 15px;
+    margin-bottom: 16px;
+}
+
+.pimpinan-card-subtitle {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 4px 0 0 0;
+}
+
+.pimpinan-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pimpinan-card-icon.primary { background: rgba(79,70,229,0.1); color: #4f46e5; }
+.pimpinan-card-icon.pink { background: rgba(236,72,153,0.1); color: #ec4899; }
+
+.pimpinan-chart-280 { height: 280px; width: 100%; }
+.pimpinan-chart-250 { height: 250px; width: 100%; display: flex; justify-content: center; }
+.pimpinan-chart-200 { height: 200px; width: 100%; }
+
+.pimpinan-geo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pimpinan-geo-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 24px 0;
+    align-self: flex-start;
+    width: 100%;
+}
+
+.pimpinan-geo-content {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    z-index: 1;
+}
+
+.pimpinan-geo-item {
+    text-align: center;
+}
+
+.pimpinan-geo-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 auto 12px auto;
+}
+.pimpinan-geo-circle.nasional {
+    background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+    box-shadow: 0 4px 12px rgba(14,165,233,0.3);
+}
+.pimpinan-geo-circle.internasional {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+}
+
+.pimpinan-geo-label {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.pimpinan-geo-divider {
+    width: 1px;
+    background: var(--border);
+    height: 60px;
+    margin-top: 10px;
+}
+
+/* Alerts & Logs */
+.pimpinan-alert-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pimpinan-alert-header {
+    background: linear-gradient(90deg, rgba(239,68,68,0.1) 0%, rgba(245,158,11,0.1) 100%);
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pimpinan-alert-icon {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 8px;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.pimpinan-alert-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.pimpinan-alert-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.pimpinan-alert-item:hover { background: var(--hover); }
+.pimpinan-alert-item.last { border-bottom: none; }
+
+.pimpinan-alert-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pimpinan-alert-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.pimpinan-alert-dot.danger { background: #ef4444; }
+.pimpinan-alert-dot.warning { background: #f59e0b; }
+.pimpinan-alert-dot.gray { background: #6b7280; }
+
+.pimpinan-alert-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.pimpinan-alert-badge {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+.pimpinan-alert-badge.danger { background: rgba(239,68,68,0.1); color: #ef4444; }
+.pimpinan-alert-badge.warning { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.pimpinan-alert-badge.gray { background: rgba(107,114,128,0.1); color: #6b7280; }
+
+.pimpinan-impl-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pimpinan-impl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+}
+
+.pimpinan-impl-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(16,185,129,0.1);
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.pimpinan-impl-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.pimpinan-impl-desc {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin: 4px 0 0 0;
+}
+
+.pimpinan-luaran-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pimpinan-luaran-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pimpinan-luaran-val {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 14px;
+}
+
+.pimpinan-luaran-satuan {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+/* Table Card */
+.pimpinan-table-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.pimpinan-table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pimpinan-table-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+
+.pimpinan-table-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.pimpinan-table-link:hover {
+    background: rgba(79,70,229,0.1);
+}
+
+.pimpinan-table-wrapper {
+    overflow-x: auto;
+    flex: 1;
+}
+
+.pimpinan-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.pimpinan-table thead tr {
+    background: var(--bg);
+    border-bottom: 2px solid var(--border);
+}
+
+.pimpinan-table th {
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.pimpinan-table th.right {
+    text-align: right;
+}
+
+.pimpinan-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+}
+
+.pimpinan-table tbody tr:hover {
+    background: var(--hover);
+}
+
+.pimpinan-table td {
+    padding: 14px 20px;
+    white-space: nowrap;
+}
+
+.pimpinan-td-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pimpinan-td-doc {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-family: 'DM Mono', monospace;
+}
+
+.pimpinan-td-mitra {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.pimpinan-td-jenis {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+.pimpinan-td-date {
+    font-size: 12px;
+    color: var(--text);
+}
+.pimpinan-td-date.empty {
+    color: var(--text-sub);
+}
+
+.pimpinan-td-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.pimpinan-td-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.pimpinan-td-nilai {
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.pimpinan-table-empty {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-sub);
+    font-size: 13px;
+}
