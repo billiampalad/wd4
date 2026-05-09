@@ -8232,3 +8232,81 @@ body.sidebar-collapsed .dk-container {
         background-position: -200% 0;
     }
 }
+
+/* Custom Alpine Select for Entries */
+.custom-entries-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.entries-label {
+    color: var(--text-sub);
+}
+
+.custom-select-container {
+    position: relative;
+}
+
+.custom-select-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 65px;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.custom-select-button:hover {
+    border-color: var(--accent);
+}
+
+.custom-select-icon {
+    font-size: 10px;
+    color: var(--text-sub);
+    transition: transform 0.2s;
+}
+
+.custom-select-icon.rotate {
+    transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 50;
+    overflow: hidden;
+}
+
+.custom-select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.2s;
+    text-align: center;
+}
+
+.custom-select-option:hover {
+    background: var(--hover);
+}
+
+.custom-select-option.active {
+    background: rgba(79,70,229,0.1);
+    color: var(--accent);
+    font-weight: 700;
+}

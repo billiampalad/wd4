@@ -207,14 +207,30 @@ function initDashboard() {
                 const entriesWrap = document.createElement('div');
                 entriesWrap.className = 'table-entries-wrap';
                 entriesWrap.innerHTML = `
-                    <label>Tampilkan</label>
-                    <select class="entries-select">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <label>data</label>
+                    <div class="custom-entries-wrap" x-data="{ 
+                            open: false, 
+                            selected: 10,
+                            options: [10, 25, 50, 100],
+                            selectOption(opt) {
+                                this.selected = opt;
+                                this.open = false;
+                                this.$el.dispatchEvent(new CustomEvent('change-entries', { detail: opt, bubbles: true }));
+                            }
+                        }">
+                        <span class="entries-label">Tampilkan</span>
+                        <div class="custom-select-container" @click.away="open = false">
+                            <button type="button" class="custom-select-button" @click="open = !open">
+                                <span x-text="selected"></span>
+                                <i class="fas fa-chevron-down custom-select-icon" :class="{'rotate': open}"></i>
+                            </button>
+                            <div class="custom-select-dropdown" x-show="open" x-transition.opacity.duration.200ms style="display: none;">
+                                <template x-for="opt in options" :key="opt">
+                                    <div class="custom-select-option" :class="{'active': selected === opt}" @click="selectOption(opt)" x-text="opt"></div>
+                                </template>
+                            </div>
+                        </div>
+                        <span class="entries-label">data</span>
+                    </div>
                 `;
 
                 // Find where to insert in header
@@ -225,11 +241,11 @@ function initDashboard() {
                     header.appendChild(entriesWrap);
                 }
 
-                entriesWrap.querySelector('.entries-select').onchange = (e) => {
-                    table.setAttribute('data-page-size', e.target.value);
+                entriesWrap.addEventListener('change-entries', (e) => {
+                    table.setAttribute('data-page-size', e.detail);
                     table.setAttribute('data-current-page', '1');
                     updatePagination(table.querySelector('tbody'));
-                };
+                });
             }
 
             updatePagination(table.querySelector('tbody'));
