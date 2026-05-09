@@ -40,13 +40,13 @@ class EvaluasiPimpinanController extends Controller
     public function evaluate(Request $request, $id)
     {
         $kegiatan = Cooperation::with(['upas', 'pusats'])->findOrFail($id);
-        
+
         // Validasi Umum
         $request->validate([
-            'ringkasan'        => 'nullable|string',
-            'saran'            => 'nullable|string',
-            'status_validasi'  => 'required|in:layak,tidak_layak',
-            'tindak_lanjut'    => 'nullable|string',
+            'ringkasan' => 'nullable|string',
+            'saran' => 'nullable|string',
+            'status_validasi' => 'required|in:layak,tidak_layak',
+            'tindak_lanjut' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -64,20 +64,20 @@ class EvaluasiPimpinanController extends Controller
             if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $isJurusan) {
                 $request->validate([
                     'sesuai_rencana' => 'required|integer|min:1|max:5',
-                    'kualitas'       => 'required|integer|min:1|max:5',
-                    'keterlibatan'   => 'required|integer|min:1|max:5',
-                    'efisiensi'      => 'required|integer|min:1|max:5',
-                    'kepuasan'       => 'required|integer|min:1|max:5',
-                    'catatan'        => 'nullable|string',
+                    'kualitas' => 'required|integer|min:1|max:5',
+                    'keterlibatan' => 'required|integer|min:1|max:5',
+                    'efisiensi' => 'required|integer|min:1|max:5',
+                    'kepuasan' => 'required|integer|min:1|max:5',
+                    'catatan' => 'nullable|string',
                 ]);
 
                 $evaluasiData = array_merge($evaluasiData, [
                     'sesuai_rencana' => $request->sesuai_rencana,
-                    'kualitas'       => $request->kualitas,
-                    'keterlibatan'   => $request->keterlibatan,
-                    'efisiensi'      => $request->efisiensi,
-                    'kepuasan'       => $request->kepuasan,
-                    'catatan'        => $request->catatan,
+                    'kualitas' => $request->kualitas,
+                    'keterlibatan' => $request->keterlibatan,
+                    'efisiensi' => $request->efisiensi,
+                    'kepuasan' => $request->kepuasan,
+                    'catatan' => $request->catatan,
                 ]);
             }
 
@@ -90,17 +90,17 @@ class EvaluasiPimpinanController extends Controller
             $statusDokumen = $request->status_validasi === 'layak' ? 'Disahkan' : 'Revisi';
             $updateKegiatan = ['status_dokumen' => $statusDokumen];
 
-            if ($statusDokumen === 'Disahkan' && $this->isBerlakuAktifHariIni($kegiatan)) {
+            if ($statusDokumen === 'Disahkan') {
                 $updateKegiatan['status'] = 'aktif';
             }
 
             $kegiatan->update($updateKegiatan);
 
             // 4. KIRIM NOTIFIKASI KE PENGUSUL
-            $pesan = $statusDokumen === 'Disahkan' 
+            $pesan = $statusDokumen === 'Disahkan'
                 ? "Pimpinan telah menyetujui dokumen kerjasama: '{$kegiatan->title}'."
                 : "Pimpinan meminta revisi untuk dokumen kerjasama: '{$kegiatan->title}'.";
-            
+
             foreach ($this->unitRecipients($kegiatan) as $unitUser) {
                 Notifikasi::send(
                     $unitUser->id,

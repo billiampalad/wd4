@@ -22,38 +22,15 @@
 </head>
 
 <body>
+    {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
+        <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
     @endif
-
     @if(session('error'))
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: "{{ session('error') }}",
-                showConfirmButton: true
-            });
-        </script>
+        <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
     @endif
-
     @if($errors->any())
-        <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: "{{ $errors->first() }}",
-                showConfirmButton: true
-            });
-        </script>
+        <div id="swal-flash-validation" data-message="{{ $errors->first() }}" style="display:none;"></div>
     @endif
     <!-- navbar -->
     <nav>
