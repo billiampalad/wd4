@@ -263,6 +263,70 @@ $canAjukanPerpanjangan = $statusDokumen === 'Disahkan' && ! $isExtended && ($isE
                         </div>
                     </div>
 
+                    {{-- Card: Catatan Pimpinan (hanya tampil jika sudah dievaluasi) --}}
+                    @php $evaluasi = $kegiatan->evaluasis->first(); @endphp
+                    @if($evaluasi)
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-clipboard-check"></i></span>
+                                <span>
+                                    <strong>Catatan Pimpinan</strong>
+                                    <small>Hasil evaluasi dan arahan dari pimpinan</small>
+                                </span>
+                            </div>
+                            <div>
+                                @php
+                                    $dokStatus = $kegiatan->status_dokumen ?? '-';
+                                    $dokBadgeClass = match($dokStatus) {
+                                        'Disahkan' => 'dk-status-active',
+                                        'Revisi' => 'dk-status-warning',
+                                        'Menunggu Evaluasi' => 'dk-status-info',
+                                        default => 'dk-status-neutral',
+                                    };
+                                    $dokBadgeIcon = match($dokStatus) {
+                                        'Disahkan' => 'fa-circle-check',
+                                        'Revisi' => 'fa-pen-to-square',
+                                        'Menunggu Evaluasi' => 'fa-clock',
+                                        default => 'fa-circle-info',
+                                    };
+                                @endphp
+                                <span class="dk-status {{ $dokBadgeClass }}">
+                                    <i class="fas {{ $dokBadgeIcon }}"></i>
+                                    {{ $dokStatus }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body dk-card-body" style="padding: 28px;">
+                            {{-- Ringkasan / Catatan --}}
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+                                    <i class="fas fa-quote-left" style="margin-right: 4px; opacity: 0.5;"></i> Ringkasan Evaluasi
+                                </label>
+                                <div style="font-size: 14px; color: var(--text); line-height: 1.8; text-align: justify; white-space: pre-line; padding: 16px 20px; background: var(--surface2); border-radius: 12px; border-left: 4px solid {{ $dokStatus === 'Disahkan' ? '#10b981' : '#f59e0b' }};">
+                                    {{ $evaluasi->ringkasan ?: 'Tidak ada catatan dari pimpinan.' }}
+                                </div>
+                            </div>
+
+                            {{-- Penilai & Waktu --}}
+                            <div style="display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border);">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(79, 70, 229, 0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">
+                                    {{ strtoupper(substr($evaluasi->penilai->name ?? 'P', 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 13px; color: var(--text);">
+                                        {{ $evaluasi->penilai->name ?? 'Pimpinan' }}
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-sub);">
+                                        <i class="far fa-clock" style="margin-right: 4px;"></i>
+                                        {{ $evaluasi->updated_at?->format('d M Y, H:i') ?? '-' }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     {{-- Card: Pihak Terlibat --}}
                     <div class="card dk-card">
                         <div class="card-header dk-card-header">

@@ -954,28 +954,65 @@ function initNotifikasi() {
             const isUnread = item.is_read === 0;
             const timeAgoStr = timeAgo(new Date(item.created_at));
             const typeKey = (item.type || 'evaluasi').toString().toLowerCase();
-            const typeBadgeClass = typeKey === 'revisi' ? 'revisi' : typeKey;
-            const typeLabel = typeKey === 'revisi'
-                ? 'Sudah Revisi'
-                : (typeKey === 'evaluasi' ? 'Evaluasi' : typeKey.replace(/_/g, ' '));
 
-            // Tentukan ikon & warna berdasarkan pengirim
+            // Map type to badge class and label
+            let typeBadgeClass = typeKey;
+            let typeLabel = typeKey.replace(/_/g, ' ');
+            switch (typeKey) {
+                case 'revisi':
+                    typeBadgeClass = 'revisi';
+                    typeLabel = 'Perlu Revisi';
+                    break;
+                case 'sudah_revisi':
+                    typeBadgeClass = 'sudah_revisi';
+                    typeLabel = 'Sudah Direvisi';
+                    break;
+                case 'disahkan':
+                    typeBadgeClass = 'disahkan';
+                    typeLabel = 'Disahkan';
+                    break;
+                case 'evaluasi':
+                    typeBadgeClass = 'evaluasi';
+                    typeLabel = 'Evaluasi';
+                    break;
+            }
+
+            // Tentukan ikon & warna berdasarkan tipe notifikasi dan pengirim
             let icon = 'fa-building';
             let iconBg = 'rgba(79, 70, 229, 0.1)';
             let iconColor = 'var(--accent)';
             let senderName = '-';
 
+            // Notifikasi dari Pimpinan (revisi / disahkan)
+            if (typeKey === 'revisi') {
+                icon = 'fa-pen-to-square';
+                iconBg = 'rgba(245, 158, 11, 0.12)';
+                iconColor = '#d97706';
+            } else if (typeKey === 'sudah_revisi') {
+                icon = 'fa-rotate';
+                iconBg = 'rgba(6, 182, 212, 0.12)';
+                iconColor = '#0891b2';
+            } else if (typeKey === 'disahkan') {
+                icon = 'fa-circle-check';
+                iconBg = 'rgba(16, 185, 129, 0.12)';
+                iconColor = '#059669';
+            }
+
             if (item.sender && item.sender.profile) {
                 const profile = item.sender.profile;
                 if (profile.jurusan) {
-                    icon = 'fa-book';
-                    iconBg = 'rgba(124, 58, 237, 0.1)';
-                    iconColor = 'var(--accent2)';
+                    if (typeKey !== 'revisi' && typeKey !== 'disahkan' && typeKey !== 'sudah_revisi') {
+                        icon = 'fa-book';
+                        iconBg = 'rgba(124, 58, 237, 0.1)';
+                        iconColor = 'var(--accent2)';
+                    }
                     senderName = profile.jurusan.nama_jurusan;
                 } else if (profile.unit_kerja || profile.unit_kerja_id || profile.unitKerja) {
-                    icon = 'fa-building';
-                    iconBg = 'rgba(14, 165, 233, 0.1)';
-                    iconColor = 'var(--accent3)';
+                    if (typeKey !== 'revisi' && typeKey !== 'disahkan' && typeKey !== 'sudah_revisi') {
+                        icon = 'fa-building';
+                        iconBg = 'rgba(14, 165, 233, 0.1)';
+                        iconColor = 'var(--accent3)';
+                    }
                     const unit = profile.unit_kerja || profile.unitKerja;
                     senderName = unit ? unit.nama_unit_pelaksana : 'Unit Kerja';
                 }
@@ -1123,20 +1160,24 @@ function registerAlpineComponents() {
         handleAction(actionStatus, id) {
             this.status = actionStatus;
 
-            if (actionStatus === 'tidak_layak' && (!this.comments[id] || this.comments[id].trim() === '')) {
+            // Both 'tidak_layak' and 'revisi' require a comment
+            if ((actionStatus === 'tidak_layak' || actionStatus === 'revisi') && (!this.comments[id] || this.comments[id].trim() === '')) {
                 this.showErrors[id] = true;
                 setTimeout(() => { this.showErrors[id] = false; }, 3000);
                 return;
             }
 
-            if (actionStatus === 'layak') {
-                this.triggerConfetti();
-                setTimeout(() => {
+            // Use $nextTick to ensure Alpine updates the hidden input before submission
+            this.$nextTick(() => {
+                if (actionStatus === 'layak') {
+                    this.triggerConfetti();
+                    setTimeout(() => {
+                        document.getElementById('form_' + id).submit();
+                    }, 1500);
+                } else {
                     document.getElementById('form_' + id).submit();
-                }, 1500);
-            } else {
-                document.getElementById('form_' + id).submit();
-            }
+                }
+            });
         },
 
         triggerConfetti() {

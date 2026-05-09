@@ -366,7 +366,7 @@
 
                                             <textarea name="ringkasan" x-model="comments[{{ $keg->id }}]" class="ev-textarea" :class="{ 'error': showErrors[{{ $keg->id }}] }" placeholder="Tulis catatan eksekutif di sini..."></textarea>
                                             <div x-show="showErrors[{{ $keg->id }}]" class="ev-error-msg" x-cloak>
-                                                <i class="fas fa-exclamation-circle"></i> Catatan wajib diisi jika Anda menolak.
+                                                <i class="fas fa-exclamation-circle"></i> Catatan wajib diisi jika Anda meminta revisi.
                                             </div>
                                         </div>
 
@@ -375,8 +375,8 @@
 
                                 <!-- Action Buttons -->
                                 <div class="ev-panel-footer">
-                                    <button type="button" @click="handleAction('tidak_layak', {{ $keg->id }})" class="ev-btn-reject">
-                                        <i class="fas fa-times"></i> <span>Tolak</span>
+                                    <button type="button" @click="handleAction('revisi', {{ $keg->id }})" class="ev-btn-reject">
+                                        <i class="fas fa-pen-to-square"></i> <span>Revisi</span>
                                     </button>
                                     <button type="button" @click="handleAction('layak', {{ $keg->id }})" class="ev-btn-approve">
                                         <i class="fas fa-check-circle"></i> Sahkan & Setujui

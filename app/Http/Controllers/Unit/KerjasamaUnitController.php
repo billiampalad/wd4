@@ -61,7 +61,7 @@ class KerjasamaUnitController extends Controller
                 'details',
             ])->findOrFail((int) $request->query('perpanjangan_dari'));
 
-            if (! $this->canRequestExtension($perpanjanganAsal)) {
+            if (!$this->canRequestExtension($perpanjanganAsal)) {
                 return redirect()
                     ->route('unit.kerjasama.show', $perpanjanganAsal->id)
                     ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
@@ -103,7 +103,7 @@ class KerjasamaUnitController extends Controller
         if ($perpanjanganDariId) {
             $perpanjanganAsal = Cooperation::findOrFail($perpanjanganDariId);
 
-            if (! $this->canRequestExtension($perpanjanganAsal)) {
+            if (!$this->canRequestExtension($perpanjanganAsal)) {
                 return back()
                     ->withInput()
                     ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
@@ -254,6 +254,8 @@ class KerjasamaUnitController extends Controller
             'pusats',
             'details.jenisKerjasama',
             'details.sasaran',
+            'evaluasis.penilai',
+            'laporanFiles',
         ])->findOrFail($id);
 
         return view('auth.unit', compact('kegiatan'));
@@ -491,7 +493,7 @@ class KerjasamaUnitController extends Controller
         }
 
         // Pengiriman hanya boleh pada awal pengajuan atau setelah revisi.
-        if (! in_array($cooperation->status_dokumen, ['Draft', 'Revisi'], true)) {
+        if (!in_array($cooperation->status_dokumen, ['Draft', 'Revisi'], true)) {
             return back()->with('error', 'Pengiriman ke Pimpinan hanya tersedia untuk status Draft atau Revisi.');
         }
 
@@ -520,7 +522,7 @@ class KerjasamaUnitController extends Controller
                     $pimpinan->id,      // user_id (receiver)
                     $user->id,          // sender_id
                     $cooperation->id,   // source_id
-                    $kirimUlangSetelahRevisi ? 'revisi' : 'evaluasi',
+                    $kirimUlangSetelahRevisi ? 'sudah_revisi' : 'evaluasi',
                     $judul,             // judul
                     $pesan,             // pesan
                     route('pimpinan.evaluasi.show', $cooperation->id) // link
@@ -583,11 +585,11 @@ class KerjasamaUnitController extends Controller
             $today = now()->startOfDay();
             $endDate = \Carbon\Carbon::parse($cooperation->end_date)->startOfDay();
             $isExpiredDate = $today->greaterThan($endDate);
-            $isNearExpiry = ! $isExpiredDate && $today->diffInDays($endDate) <= 30;
+            $isNearExpiry = !$isExpiredDate && $today->diffInDays($endDate) <= 30;
         }
 
         return $cooperation->status_dokumen === 'Disahkan'
-            && ! $isInExtension
+            && !$isInExtension
             && ($isExpiredStatus || $isExpiredDate || $isNearExpiry);
     }
 }

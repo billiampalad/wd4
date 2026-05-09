@@ -172,15 +172,21 @@ class UnitPageController extends Controller
         // 1. List DRAFT (Status: Draft)
         $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->get();
 
-        // 2. List MENUNGGU EVALUASI
+        // 2. List REVISI (Status: Revisi — dikembalikan oleh Pimpinan)
+        $revisiList = (clone $baseQuery)->where('status_dokumen', 'Revisi')
+            ->with('evaluasis.penilai')
+            ->get();
+
+        // 3. List MENUNGGU EVALUASI
         $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->get();
 
-        // 3. List SUDAH DIEVALUASI / DISAHKAN
+        // 4. List SUDAH DIEVALUASI / DISAHKAN
         $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->get();
 
         return view('auth.unit', [
             'view' => 'evaluasi_kinerja',
             'draftList' => $draftList,
+            'revisiList' => $revisiList,
             'belumEvaluasi' => $belumEvaluasi,
             'evaluasiList' => $evaluasiList
         ]);

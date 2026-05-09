@@ -31,7 +31,7 @@ class NotifikasiController extends Controller
                     // Notifikasi sistem tanpa source_id
                     ->orWhereNull('source_id')
                     // Fallback berdasarkan tipe
-                    ->orWhereIn('type', ['evaluasi', 'revisi']);
+                    ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
             });
         }
 

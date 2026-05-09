@@ -100,7 +100,7 @@
                         $sq->where('status_dokumen', 'Menunggu Evaluasi');
                         })
                         ->orWhereNull('source_id')
-                        ->orWhereIn('type', ['evaluasi', 'revisi']);
+                        ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
                         });
                         }
                         $notifCount = $query->count();

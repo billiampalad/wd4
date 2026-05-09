@@ -132,7 +132,122 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════
-         2. MENUNGGU EVALUASI (Status Dokumen: Menunggu Evaluasi)
+         2. REVISI (Status Dokumen: Revisi — Dikembalikan Pimpinan)
+    ═══════════════════════════════════════════════════ -->
+    <div class="card um-card dk-card" style="margin-bottom: 24px;">
+        <div class="card-header um-header dk-card-header" style="background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(220,38,38,0.03));">
+            <div class="um-title dk-card-title">
+                <div style="width:32px; height:32px; border-radius:8px; background:rgba(239,68,68,0.12); color:#dc2626; display:flex; align-items:center; justify-content:center; font-size:14px;">
+                    <i class="fas fa-pen-to-square"></i>
+                </div>
+                <div>
+                    <span style="display:block; font-size:14px; font-weight: 700;">Perlu Revisi</span>
+                    <span style="display:block; font-size:11px; font-weight:500; color:var(--text-sub);">Dokumen dikembalikan oleh Pimpinan untuk diperbaiki</span>
+                </div>
+            </div>
+            @if(isset($revisiList) && $revisiList->count() > 0)
+            <span class="tag tag-red" style="font-size:12px; padding:5px 14px;">
+                {{ $revisiList->count() }} Revisi
+            </span>
+            @endif
+        </div>
+        <div class="card-body dk-card-body" style="padding: 0;">
+            <div class="table-wrap um-table-wrap dk-table-wrap">
+                <table class="um-table dk-table">
+                    <thead>
+                        <tr>
+                            <th class="um-th um-th-num">#</th>
+                            <th class="um-th dk-th-title" style="width: 400px;">Judul Kerjasama</th>
+                            <th class="um-th">Unit Pelaksana</th>
+                            <th class="um-th">Mitra</th>
+                            <th class="um-th um-th-aksi" style="text-align:center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse(($revisiList ?? collect()) as $kegiatan)
+                        @php
+                        $pelaksanaIcon = 'fa-building';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = '-';
+                        if ($kegiatan->tipe_pelaksana === 'jurusan') {
+                        $pelaksanaIcon = 'fa-microchip';
+                        $pelaksanaClass = 'dk-entity-indigo';
+                        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'upa') {
+                        $pelaksanaIcon = 'fa-building-columns';
+                        $pelaksanaClass = 'dk-entity-cyan';
+                        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
+                        } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
+                        $pelaksanaIcon = 'fa-landmark';
+                        $pelaksanaClass = 'dk-entity-violet';
+                        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
+                        }
+                        $docNumber = $kegiatan->doc_number ?? '';
+                        $title = $kegiatan->title ?? '';
+                        $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
+                        $evalRevisi = $kegiatan->evaluasis?->first();
+                        $catatanRevisi = $evalRevisi?->ringkasan ?? $evalRevisi?->saran ?? null;
+                        @endphp
+                        <tr class="um-row dk-row">
+                            <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            </td>
+                            <td class="um-td dk-title-cell" style="width: 400px; vertical-align: top; padding-top: 15px;">
+                                <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
+                                    <span class="dk-doc-number">#{{ $docNumber ?: '-' }}</span>
+                                    <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $title ?: '-' }}</span>
+                                    <span class="dk-doc-kind">{{ $kegiatan->jenis ?? '-' }}</span>
+                                    {{-- Catatan Revisi dari Pimpinan --}}
+                                    @if($catatanRevisi)
+                                    <div style="margin-top: 10px; padding: 10px 14px; background: rgba(239,68,68,0.05); border-left: 3px solid #ef4444; border-radius: 0 8px 8px 0; font-size: 12px; line-height: 1.6; color: var(--text);">
+                                        <div style="font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #dc2626; margin-bottom: 4px;">
+                                            <i class="fas fa-comment-dots" style="margin-right: 4px;"></i> Catatan Pimpinan
+                                        </div>
+                                        <span style="font-weight: 500;">{{ $catatanRevisi }}</span>
+                                    </div>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
+                                        <i class="fas {{ $pelaksanaIcon }}"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                </div>
+                            </td>
+                            <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                <div class="dk-entity" style="align-items: flex-start;">
+                                    <span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;">
+                                        <i class="fas fa-building"></i>
+                                    </span>
+                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $mitraName ?: '-' }}</span>
+                                </div>
+                            </td>
+                            <td class="um-td um-td-aksi" style="text-align:center; vertical-align: top; padding-top: 15px;">
+                                <a href="{{ route('unit.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn" style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #ef4444, #dc2626);">
+                                    <i class="fas fa-pen-to-square"></i> Perbaiki
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="um-empty">
+                                <div class="um-empty-state">
+                                    <i class="fas fa-circle-check" style="font-size: 24px; opacity: 0.4; color: #10b981; margin-bottom: 10px;"></i>
+                                    <p class="um-empty-title" style="font-size: 13px;">Tidak ada dokumen yang perlu direvisi</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         3. MENUNGGU EVALUASI (Status Dokumen: Menunggu Evaluasi)
     ═══════════════════════════════════════════════════ -->
     <div class="card um-card dk-card" style="margin-bottom: 24px;">
         <div class="card-header um-header dk-card-header" style="background: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(6,182,212,0.03));">
@@ -236,7 +351,7 @@
     </div>
 
     <!-- ═══════════════════════════════════════════════════
-         3. SUDAH DIEVALUASI / DISAHKAN (Status Dokumen: Disahkan)
+         4. SUDAH DIEVALUASI / DISAHKAN (Status Dokumen: Disahkan)
     ═══════════════════════════════════════════════════ -->
     <div class="card um-card dk-card">
         <div class="card-header um-header dk-card-header" style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(5,150,105,0.03));">

@@ -45,7 +45,7 @@ class EvaluasiPimpinanController extends Controller
         $request->validate([
             'ringkasan' => 'nullable|string',
             'saran' => 'nullable|string',
-            'status_validasi' => 'required|in:layak,tidak_layak',
+            'status_validasi' => 'required|in:layak,tidak_layak,revisi',
             'tindak_lanjut' => 'nullable|string',
         ]);
 
@@ -61,7 +61,7 @@ class EvaluasiPimpinanController extends Controller
                 'status_validasi' => $request->status_validasi,
             ];
 
-            if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $isJurusan) {
+            if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $isJurusan && $request->status_validasi === 'layak') {
                 $request->validate([
                     'sesuai_rencana' => 'required|integer|min:1|max:5',
                     'kualitas' => 'required|integer|min:1|max:5',
