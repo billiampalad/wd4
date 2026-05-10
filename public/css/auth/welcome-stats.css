@@ -4,6 +4,7 @@
     background:
         radial-gradient(circle at top left, rgba(159, 214, 225, 0.22), transparent 28%),
         linear-gradient(135deg, #f6fbff 0%, #eef5fb 48%, #f5f8f6 100%);
+    scroll-margin-top: 62px;
 }
 
 .stats-strip::before {

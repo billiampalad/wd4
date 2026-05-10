@@ -45,12 +45,12 @@
                 <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
                     aria-label="Ubah ke mode gelap">
                     <span class="theme-toggle-orb" aria-hidden="true">
-                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
                         </svg>
-                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
+                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="12" cy="12" r="4" />
                             <path d="M12 2v2" />
                             <path d="M12 20v2" />
@@ -133,7 +133,8 @@
 
                 <div class="hero-floating-stat">
                     <div class="hfs-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#378ADD" stroke-width="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#378ADD"
+                            stroke-width="2">
                             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
                             <polyline points="16 7 22 7 22 13" />
                         </svg>
@@ -235,13 +236,15 @@
     <div class="trust-strip">
         <div class="trust-inner">
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
                 Data terverifikasi & akurat
             </div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="2" y1="12" x2="22" y2="12" />
                     <path
@@ -250,14 +253,16 @@
                 Akses publik & transparan
             </div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <path d="M3 9h18M9 21V9" />
                 </svg>
                 Diperbarui secara berkala
             </div>
             <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -271,18 +276,18 @@
     <!-- ═══ MAIN DATA SECTION ══════════════════════════════════ -->
     <main class="main-wrap" id="data-kerjasama">
         @php
-        $selectedKategoriMitra = request('kategori_mitra', 'all');
-        $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
-        ? $selectedKategoriMitra
-        : 'all';
+            $selectedKategoriMitra = request('kategori_mitra', 'all');
+            $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
+                ? $selectedKategoriMitra
+                : 'all';
         @endphp
 
         <div class="section-top">
             <div>
                 <div class="section-eyebrow">Data Kerjasama</div>
                 <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
-                @if($selectedKategoriMitra !== 'all')
-                <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
+                @if ($selectedKategoriMitra !== 'all')
+                    <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
                 @endif
                 <p class="section-sub">Daftar kegiatan kerjasama yang sedang dan telah berjalan · Tampilan publik</p>
             </div>
@@ -312,34 +317,35 @@
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" name="search" class="search-input" placeholder="Cari data kerjasama Anda…"
-                        value="{{ request('search') }}">
+                    <input type="text" name="search" class="search-input"
+                        placeholder="Cari data kerjasama Anda…" value="{{ request('search') }}">
                 </div>
                 <button type="submit" class="btn-search">Cari</button>
             </form>
         </div>
 
-        @if(isset($kerjasama) && $kerjasama->count() > 0)
-        <div class="cards-grid">
-            @foreach($kerjasama as $item)
-            @php
-            $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status ?? '')));
-            $statusClass = match(true) {
-            $status === 'aktif' => 'badge-active',
-            str_contains($status, 'perpanjangan') => 'badge-warning',
-            in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
-            $status === 'tidak aktif' => 'badge-inactive',
-            $status === 'proses' => 'badge-process',
-            default => 'badge-inactive'
-            };
-            $statusLabel = ucwords($item->status ?? 'Draft');
+        @if (isset($kerjasama) && $kerjasama->count() > 0)
+            <div class="cards-grid">
+                @foreach ($kerjasama as $item)
+                    @php
+                        $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status ?? '')));
+                        $statusClass = match (true) {
+                            $status === 'aktif' => 'badge-active',
+                            str_contains($status, 'perpanjangan') => 'badge-warning',
+                            in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
+                            $status === 'tidak aktif' => 'badge-inactive',
+                            $status === 'proses' => 'badge-process',
+                            default => 'badge-inactive',
+                        };
+                        $statusLabel = ucwords($item->status ?? 'Draft');
 
-            $mitraNames = $item->mitra ? $item->mitra->nama_mitra : 'Mitra belum ditentukan';
-            $mitraInit = strtoupper(substr($mitraNames, 0, 2));
-            $hasDates = $item->start_date && $item->end_date;
-            @endphp
+                        $mitraNames = $item->mitra ? $item->mitra->nama_mitra : 'Mitra belum ditentukan';
+                        $mitraInit = strtoupper(substr($mitraNames, 0, 2));
+                        $hasDates = $item->start_date && $item->end_date;
+                    @endphp
 
-            <div class="kcard {{ $statusClass }}" onclick="openModal(
+                    <div class="kcard {{ $statusClass }}"
+                        onclick="openModal(
                                                     {{ $item->id }},
                                                     `{{ addslashes($item->title) }}`,
                                                     `{{ addslashes($mitraNames) }}`,
@@ -348,38 +354,39 @@
                                                     `{{ addslashes($statusLabel) }}`,
                                                     `{{ $statusClass }}`
                                                 )">
-                <div class="kcard-accent"></div>
+                        <div class="kcard-accent"></div>
 
-                <div class="kcard-top">
-                    <h3 class="kcard-title">{{ $item->title }}</h3>
-                    <span class="status-pill {{ $statusClass }}">{{ $statusLabel }}</span>
-                </div>
+                        <div class="kcard-top">
+                            <h3 class="kcard-title">{{ $item->title }}</h3>
+                            <span class="status-pill {{ $statusClass }}">{{ $statusLabel }}</span>
+                        </div>
 
-                <div class="kcard-mitra">
-                    <div class="mitra-dot">{{ $mitraInit }}</div>
-                    {{ $mitraNames }}
-                </div>
+                        <div class="kcard-mitra">
+                            <div class="mitra-dot">{{ $mitraInit }}</div>
+                            {{ $mitraNames }}
+                        </div>
 
-                <div class="kcard-meta">
-                    <div class="meta-row">
-                        <span class="meta-key">No. Dokumen</span>
-                        <span class="meta-val">{{ $item->doc_number ?? 'Belum ada' }}</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="meta-key">Durasi</span>
-                        <span class="meta-val">
-                            @if($hasDates)
-                            {{ $item->start_date->format('d M Y') }} – {{ $item->end_date->format('d M Y') }}
-                            @else
-                            Tanggal belum lengkap
-                            @endif
-                        </span>
-                    </div>
-                </div>
+                        <div class="kcard-meta">
+                            <div class="meta-row">
+                                <span class="meta-key">No. Dokumen</span>
+                                <span class="meta-val">{{ $item->doc_number ?? 'Belum ada' }}</span>
+                            </div>
+                            <div class="meta-row">
+                                <span class="meta-key">Durasi</span>
+                                <span class="meta-val">
+                                    @if ($hasDates)
+                                        {{ $item->start_date->format('d M Y') }} –
+                                        {{ $item->end_date->format('d M Y') }}
+                                    @else
+                                        Tanggal belum lengkap
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
 
-                <div class="kcard-footer">
-                    <button class="btn-detail"
-                        onclick="event.stopPropagation(); openModal(
+                        <div class="kcard-footer">
+                            <button class="btn-detail"
+                                onclick="event.stopPropagation(); openModal(
                             {{ $item->id }},
                                 `{{ addslashes($item->title) }}`,
                                 `{{ addslashes($mitraNames) }}`,
@@ -388,32 +395,33 @@
                                 `{{ addslashes($statusLabel) }}`,
                                 `{{ $statusClass }}`
                             )">
-                        Lihat Detail
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
+                                Lihat Detail
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-            @endforeach
-        </div>
 
-        <div class="pagination-wrap">
-            {{ $kerjasama->links('pagination::simple-bootstrap-4') }}
-        </div>
-
+            <div class="pagination-wrap">
+                {{ $kerjasama->links('pagination::simple-bootstrap-4') }}
+            </div>
         @else
-        <div class="empty-state">
-            <div class="empty-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </div>
+                <h3>Belum ada data kerjasama</h3>
+                <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci atau filter
+                    yang dipilih.</p>
             </div>
-            <h3>Belum ada data kerjasama</h3>
-            <p>Data kerjasama yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci atau filter yang dipilih.</p>
-        </div>
         @endif
     </main>
 

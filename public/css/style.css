@@ -249,10 +249,16 @@ body {
 
 /* ─── HERO ────────────────────────────────────────── */
 .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
     padding: 7.5rem 2rem 5rem;
     background: var(--surface);
+    border-bottom: 1px solid var(--border);
     position: relative;
     overflow: hidden;
+    scroll-margin-top: 62px;
 }
 
 .hero-grid-bg {
@@ -277,6 +283,7 @@ body {
 
 .hero-inner {
     position: relative;
+    width: 100%;
     max-width: 1160px;
     margin: 0 auto;
     display: grid;
@@ -289,15 +296,20 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    min-height: 2.15rem;
+    max-width: 100%;
     background: var(--blue-50);
     color: var(--blue-900);
     font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 0.06em;
+    line-height: 1.25;
     text-transform: uppercase;
-    padding: 0.3rem 0.75rem;
+    padding: 0.42rem 0.85rem;
     border-radius: 100px;
     margin-bottom: 1.25rem;
+    overflow: visible;
+    white-space: normal;
 }
 
 .hero-eyebrow::before {
@@ -306,6 +318,7 @@ body {
     height: 6px;
     border-radius: 50%;
     background: var(--blue-500);
+    flex: 0 0 6px;
 }
 
 .hero h1 {
@@ -1388,6 +1401,7 @@ html[data-theme='dark'] .page-item span {
 
 /* ─── RESPONSIVE ──────────────────────────────────── */
 @media (min-width: 1280px) {
+
     .nav-inner,
     .hero-inner {
         max-width: 1240px;
@@ -1437,6 +1451,12 @@ html[data-theme='dark'] .page-item span {
 
     .btn-nav {
         padding-inline: 0.95rem;
+    }
+
+    .hero {
+        align-items: center;
+        min-height: 100vh;
+        min-height: 100svh;
     }
 
     .hero-inner {
