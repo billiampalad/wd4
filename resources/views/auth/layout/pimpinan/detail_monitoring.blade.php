@@ -257,6 +257,107 @@
             border-bottom: none;
             padding-bottom: 0;
         }
+
+        .dm-main-layout,
+        .dm-main-column,
+        .dm-sidebar-column {
+            min-width: 0;
+        }
+
+        .dm-doc-content {
+            min-width: 0;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .dk-page {
+                padding-inline: 14px;
+            }
+
+            .dm-main-layout {
+                grid-template-columns: 1fr !important;
+                gap: 18px !important;
+            }
+
+            .dm-main-column,
+            .dm-sidebar-column {
+                width: 100%;
+                gap: 18px !important;
+            }
+
+            .dm-card {
+                border-radius: 14px;
+                margin-bottom: 18px;
+            }
+
+            .dm-card-header {
+                padding: 15px 16px;
+                gap: 10px;
+            }
+
+            .dm-card-title {
+                font-size: 14px;
+                line-height: 1.35;
+            }
+
+            .dm-card-body {
+                padding: 16px;
+            }
+
+            .dm-grid-2,
+            .dm-grid-3,
+            .dm-score-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .dm-score-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+
+            .dm-person-card,
+            .dm-doc-item,
+            .dm-stat-card {
+                align-items: flex-start;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .dm-doc-item {
+                width: 100%;
+            }
+
+            .dm-doc-content {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .dm-doc-title {
+                max-width: min(58vw, 260px) !important;
+            }
+
+            .dm-detail-row {
+                padding: 18px 0 !important;
+            }
+        }
+
+        @media only screen and (min-width: 768px) and (max-width: 1023px) {
+            .dm-main-layout {
+                grid-template-columns: 1fr !important;
+                gap: 22px !important;
+            }
+
+            .dm-sidebar-column {
+                width: 100%;
+            }
+
+            .dm-score-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+
+            .dm-doc-title {
+                max-width: 520px !important;
+            }
+        }
     </style>
 
     {{-- Hero Section --}}
@@ -386,10 +487,10 @@
         </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px; align-items: start;">
+    <div class="dm-main-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px; align-items: start;">
 
         {{-- Main Column --}}
-        <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div class="dm-main-column" style="display: flex; flex-direction: column; gap: 28px;">
 
             {{-- Ringkasan Dokumen --}}
             <div class="dm-card">
@@ -563,7 +664,7 @@
         </div>
 
         {{-- Sidebar Column --}}
-        <div style="display: flex; flex-direction: column; gap: 28px;">
+        <div class="dm-sidebar-column" style="display: flex; flex-direction: column; gap: 28px;">
 
             {{-- Evaluasi --}}
             <div class="dm-card">
@@ -576,7 +677,7 @@
                 <div class="dm-card-body">
                     @php $e = $kegiatan->evaluasis->first(); @endphp
                     @if($e)
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="dm-score-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div
                                 style="background: var(--surface2); padding: 16px; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
                                 <span class="dm-label" style="font-size: 10px;">Kesesuaian</span>
@@ -643,7 +744,7 @@
                                         style="width: 36px; height: 36px; border-radius: 10px; background: rgba(239,68,68,0.1); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                                         <i class="fas fa-file-pdf"></i>
                                     </div>
-                                    <div>
+                                    <div class="dm-doc-content">
                                         <div style="font-weight: 700; font-size: 13px; margin-bottom: 2px;">Naskah Kerjasama
                                         </div>
                                         <div style="font-size: 11px; color: var(--text-sub);">Dokumen legal (MoU/MoA/IA)
@@ -661,8 +762,8 @@
                                         style="width: 36px; height: 36px; border-radius: 10px; background: rgba(59,130,246,0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 18px;">
                                         <i class="fas fa-file-image"></i>
                                     </div>
-                                    <div>
-                                        <div style="font-weight: 700; font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;"
+                                    <div class="dm-doc-content">
+                                        <div class="dm-doc-title" style="font-weight: 700; font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;"
                                             title="{{ $file->nama_file ?: 'Lampiran Laporan' }}">
                                             {{ $file->nama_file ?: 'Lampiran Laporan' }}</div>
                                         <div style="font-size: 11px; color: var(--text-sub);">
