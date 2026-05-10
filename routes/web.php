@@ -30,8 +30,57 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 Route::get('/', function (\Illuminate\Http\Request $request) {
     $query = \App\Models\Cooperation::with('mitra')->latest();
 
-    if ($search = $request->get('search')) {
-        $query->where('title', 'like', "%{$search}%");
+    if ($search = trim((string) $request->get('search'))) {
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+                ->orWhere('doc_number', 'like', "%{$search}%")
+                ->orWhere('pks_number', 'like', "%{$search}%")
+                ->orWhere('jenis', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhere('status_dokumen', 'like', "%{$search}%")
+                ->orWhere('internal_instansi', 'like', "%{$search}%")
+                ->orWhere('start_date', 'like', "%{$search}%")
+                ->orWhere('end_date', 'like', "%{$search}%")
+                ->orWhereHas('mitra', function ($mitraQuery) use ($search) {
+                    $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
+                        ->orWhere('kategori', 'like', "%{$search}%")
+                        ->orWhere('negara', 'like', "%{$search}%")
+                        ->orWhere('alamat', 'like', "%{$search}%")
+                        ->orWhere('telp', 'like', "%{$search}%")
+                        ->orWhere('website', 'like', "%{$search}%")
+                        ->orWhereHas('klasifikasi', function ($klasifikasiQuery) use ($search) {
+                            $klasifikasiQuery->where('nama', 'like', "%{$search}%");
+                        });
+                })
+                ->orWhereHas('details', function ($detailQuery) use ($search) {
+                    $detailQuery->where('tujuan', 'like', "%{$search}%")
+                        ->orWhere('indikator_kinerja', 'like', "%{$search}%")
+                        ->orWhere('keterangan', 'like', "%{$search}%")
+                        ->orWhere('nilai_kontrak', 'like', "%{$search}%")
+                        ->orWhere('income', 'like', "%{$search}%")
+                        ->orWhere('volume_luaran', 'like', "%{$search}%")
+                        ->orWhere('satuan_luaran', 'like', "%{$search}%")
+                        ->orWhereHas('jenisKerjasama', function ($jenisQuery) use ($search) {
+                            $jenisQuery->where('nama_kerjasama', 'like', "%{$search}%");
+                        });
+                })
+                ->orWhereHas('jurusans', function ($jurusanQuery) use ($search) {
+                    $jurusanQuery->where('nama_jurusan', 'like', "%{$search}%")
+                        ->orWhere('kode_jurusan', 'like', "%{$search}%");
+                })
+                ->orWhereHas('prodis', function ($prodiQuery) use ($search) {
+                    $prodiQuery->where('nama_prodi', 'like', "%{$search}%")
+                        ->orWhere('kode_prodi', 'like', "%{$search}%")
+                        ->orWhere('jenjang', 'like', "%{$search}%");
+                })
+                ->orWhereHas('upas', function ($upaQuery) use ($search) {
+                    $upaQuery->where('nama_upa', 'like', "%{$search}%");
+                })
+                ->orWhereHas('pusats', function ($pusatQuery) use ($search) {
+                    $pusatQuery->where('nama_pusat', 'like', "%{$search}%");
+                });
+        });
     }
 
     $kategori = $request->get('kategori_mitra', 'all');
@@ -41,7 +90,7 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
         });
     }
 
-    $kerjasama = $query->paginate(9);
+    $kerjasama = $query->paginate(9)->withQueryString();
 
     $stats = [
         'total_kerjasama' => \App\Models\Cooperation::count(),
