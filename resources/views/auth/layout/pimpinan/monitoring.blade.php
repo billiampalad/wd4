@@ -277,56 +277,61 @@
         </div>
 
         {{-- 3. Combined: Idle + Compliance --}}
-        <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="mn-alert-stack">
             {{-- Idle Cooperations --}}
-            <div class="mn-card mn-alert-card orange" style="flex:1">
+            <div class="mn-card mn-alert-card mn-alert-card-fill orange">
                 <div class="mn-card-head mn-alert-head-orange">
-                    <h3 style="font-size:13px">
-                        <div class="mn-icon" style="background:rgba(251,146,60,.1);color:#fb923c;width:30px;height:30px;font-size:13px">
+                    <h3 class="mn-alert-head-title">
+                        <div class="mn-icon mn-alert-icon-orange">
                             <i class="fas fa-pause"></i>
                         </div> Kerjasama Pasif
                     </h3>
-                    <span class="mn-tag" style="background:rgba(251,146,60,.1);color:#fb923c;font-size:13px">{{ $idle->count() }}</span>
+                    <span class="mn-tag mn-tag-orange">{{ $idle->count() }}</span>
                 </div>
                 <div class="mn-alert-list-short">
                     @forelse($idle->take(3) as $i)
-                        <div class="mn-alert-row" style="padding:10px 18px">
+                        <div class="mn-alert-row mn-alert-row-compact">
                             <div class="mn-alert-dot orange"></div>
-                            <div style="flex:1;min-width:0">
+                            <div class="mn-alert-content">
                                 <div class="mn-alert-text-small">{{ $i->title }}</div>
                                 <div class="mn-alert-text-xs">{{ $i->mitra->nama_mitra ?? '-' }}</div>
                             </div>
                         </div>
                     @empty
-                        <div style="text-align:center;padding:16px;color:var(--text-sub);font-size:11px">Semua kerjasama aktif memiliki kegiatan.</div>
+                        <div class="mn-empty-compact">Semua kerjasama aktif memiliki kegiatan.</div>
                     @endforelse
                 </div>
             </div>
 
             {{-- Compliance Alert --}}
-            <div class="mn-card mn-alert-card gray" style="flex:1">
+            <div class="mn-card mn-alert-card mn-alert-card-fill gray">
                 <div class="mn-card-head mn-alert-head-gray">
-                    <h3 style="font-size:13px">
-                        <div class="mn-icon" style="background:rgba(107,114,128,.1);color:#6b7280;width:30px;height:30px;font-size:13px">
+                    <h3 class="mn-alert-head-title">
+                        <div class="mn-icon mn-alert-icon-gray">
                             <i class="fas fa-file-circle-exclamation"></i>
                         </div> Dokumen Tidak Lengkap
                     </h3>
-                    <span class="mn-tag" style="background:rgba(107,114,128,.1);color:#6b7280;font-size:13px">{{ $compliance->count() }}</span>
+                    <span class="mn-tag mn-tag-gray">{{ $compliance->count() }}</span>
                 </div>
-                <div class="mn-alert-list-short">
-                    @forelse($compliance->take(3) as $doc)
-                        <div class="mn-alert-row" style="padding:10px 18px">
+                <div class="mn-alert-list-short mn-alert-list-clean">
+                    @forelse($compliance as $doc)
+                        <div class="mn-alert-row mn-alert-row-compact mn-compliance-row">
                             <div class="mn-alert-dot gray"></div>
-                            <div style="flex:1;min-width:0">
+                            <div class="mn-alert-content">
                                 <div class="mn-alert-text-small">{{ $doc->title }}</div>
-                                <div class="mn-alert-text-xs">
-                                    @if(!$doc->document_link) <span style="color:#ef4444">⚠ Tanpa Dokumen</span> @endif
-                                    @if(!$doc->pks_number) <span style="color:#f59e0b">⚠ Tanpa PKS</span> @endif
+                                <div class="mn-alert-text-xs mn-alert-helper">Perlu dilengkapi:</div>
+                                <div class="mn-alert-missing-list">
+                                    @if(!$doc->document_link)
+                                        <span class="mn-missing-chip danger"><i class="fas fa-triangle-exclamation"></i> Dokumen</span>
+                                    @endif
+                                    @if(!$doc->pks_number)
+                                        <span class="mn-missing-chip warning"><i class="fas fa-triangle-exclamation"></i> Nomor PKS</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div style="text-align:center;padding:16px;color:var(--text-sub);font-size:11px">Semua dokumen lengkap.</div>
+                        <div class="mn-empty-compact">Semua dokumen lengkap.</div>
                     @endforelse
                 </div>
             </div>
