@@ -292,7 +292,7 @@ nav {
     position: absolute;
     top: -2px;
     right: -2px;
-    background: var(--danger);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 52%, #b91c1c 100%);
     color: white;
     font-size: 10px;
     font-weight: 800;
@@ -304,8 +304,10 @@ nav {
     align-items: center;
     justify-content: center;
     border: 2px solid var(--surface);
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.36), 0 0 0 3px rgba(239, 68, 68, 0.12);
     z-index: 2;
+    line-height: 1;
+    letter-spacing: -0.01em;
 }
 
 /* Icon bel dengan notifikasi (solid) */
@@ -338,7 +340,7 @@ nav {
 
 .notification-badge.has-new {
     animation: ring 0.5s ease-in-out infinite;
-    background: var(--danger);
+    background: linear-gradient(135deg, #fb7185 0%, #ef4444 48%, #b91c1c 100%);
 }
 
 .user-info {
@@ -904,6 +906,7 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .notification-time {
@@ -912,41 +915,118 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
 }
 
 .notification-badge-type {
+    --notif-status-bg: rgba(100, 116, 139, 0.1);
+    --notif-status-border: rgba(100, 116, 139, 0.2);
+    --notif-status-text: #475569;
+    --notif-status-dot: #64748b;
     font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 6px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 9px;
+    border: 1px solid var(--notif-status-border);
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--notif-status-bg), rgba(255, 255, 255, 0.72));
+    color: var(--notif-status-text);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    line-height: 1;
     text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.notification-badge-type::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--notif-status-dot);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--notif-status-dot) 14%, transparent);
+    flex-shrink: 0;
+}
+
+.notification-item:hover .notification-badge-type {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
 }
 
 .badge-evaluasi {
-    background: rgba(79, 70, 229, 0.1);
-    color: var(--accent);
+    --notif-status-bg: rgba(79, 70, 229, 0.12);
+    --notif-status-border: rgba(79, 70, 229, 0.24);
+    --notif-status-text: #4338ca;
+    --notif-status-dot: #4f46e5;
 }
 
 .badge-revisi {
-    background: rgba(245, 158, 11, 0.14);
-    color: #d97706;
+    --notif-status-bg: rgba(245, 158, 11, 0.14);
+    --notif-status-border: rgba(245, 158, 11, 0.26);
+    --notif-status-text: #b45309;
+    --notif-status-dot: #f59e0b;
 }
 
 .badge-disahkan {
-    background: rgba(16, 185, 129, 0.12);
-    color: #059669;
+    --notif-status-bg: rgba(16, 185, 129, 0.13);
+    --notif-status-border: rgba(16, 185, 129, 0.25);
+    --notif-status-text: #047857;
+    --notif-status-dot: #10b981;
 }
 
 .badge-sudah_revisi {
-    background: rgba(6, 182, 212, 0.12);
-    color: #0891b2;
+    --notif-status-bg: rgba(6, 182, 212, 0.13);
+    --notif-status-border: rgba(6, 182, 212, 0.25);
+    --notif-status-text: #0e7490;
+    --notif-status-dot: #06b6d4;
 }
 
 .badge-validasi {
-    background: rgba(245, 158, 11, 0.1);
-    color: var(--warning);
+    --notif-status-bg: rgba(245, 158, 11, 0.13);
+    --notif-status-border: rgba(245, 158, 11, 0.24);
+    --notif-status-text: #b45309;
+    --notif-status-dot: #f59e0b;
 }
 
 .badge-selesai {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
+    --notif-status-bg: rgba(16, 185, 129, 0.13);
+    --notif-status-border: rgba(16, 185, 129, 0.24);
+    --notif-status-text: #047857;
+    --notif-status-dot: #10b981;
+}
+
+[data-theme="dark"] .notification-badge-type {
+    background: linear-gradient(180deg, var(--notif-status-bg), rgba(15, 23, 42, 0.72));
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .badge-evaluasi {
+    --notif-status-bg: rgba(99, 102, 241, 0.18);
+    --notif-status-border: rgba(165, 180, 252, 0.24);
+    --notif-status-text: #c7d2fe;
+    --notif-status-dot: #818cf8;
+}
+
+[data-theme="dark"] .badge-revisi,
+[data-theme="dark"] .badge-validasi {
+    --notif-status-bg: rgba(245, 158, 11, 0.18);
+    --notif-status-border: rgba(251, 191, 36, 0.25);
+    --notif-status-text: #fde68a;
+    --notif-status-dot: #fbbf24;
+}
+
+[data-theme="dark"] .badge-disahkan,
+[data-theme="dark"] .badge-selesai {
+    --notif-status-bg: rgba(16, 185, 129, 0.18);
+    --notif-status-border: rgba(110, 231, 183, 0.25);
+    --notif-status-text: #a7f3d0;
+    --notif-status-dot: #34d399;
+}
+
+[data-theme="dark"] .badge-sudah_revisi {
+    --notif-status-bg: rgba(6, 182, 212, 0.18);
+    --notif-status-border: rgba(103, 232, 249, 0.25);
+    --notif-status-text: #a5f3fc;
+    --notif-status-dot: #22d3ee;
 }
 
 .notification-footer {
