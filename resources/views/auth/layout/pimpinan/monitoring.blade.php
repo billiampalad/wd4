@@ -353,10 +353,99 @@
         filterJenis: '',
         currentPage: 1,
         perPage: 10,
-        get filtered() {
+        perPageOpen: false,
+        perPageOptions: [5, 10, 25, 50],
+        init() {
+            ['search', 'filterTahun', 'filterKategori', 'filterJenis'].forEach(key => {
+                this.$watch(key, () => this.currentPage = 1);
+            });
+        },
+        get rows() {
             return this.$refs.rows ? Array.from(this.$refs.rows.querySelectorAll('tr[data-row]')) : [];
+        },
+        get filteredRows() {
+            return this.rows.filter(row => this.matchesRow(row));
+        },
+        get totalFiltered() {
+            return this.filteredRows.length;
+        },
+        get totalPages() {
+            return Math.max(1, Math.ceil(this.totalFiltered / this.perPage));
+        },
+        get startEntry() {
+            return this.totalFiltered === 0 ? 0 : ((this.currentPage - 1) * this.perPage) + 1;
+        },
+        get endEntry() {
+            return Math.min(this.currentPage * this.perPage, this.totalFiltered);
+        },
+        matchesRow(row) {
+            return (this.search === '' || row.dataset.search.includes(this.search.toLowerCase())) &&
+                (this.filterTahun === '' || row.dataset.tahun === this.filterTahun) &&
+                (this.filterKategori === '' || row.dataset.kategori === this.filterKategori) &&
+                (this.filterJenis === '' || row.dataset.jenis === this.filterJenis);
+        },
+        isRowVisible(row) {
+            const index = this.filteredRows.indexOf(row);
+            if (index === -1) return false;
+            return index >= ((this.currentPage - 1) * this.perPage) && index < (this.currentPage * this.perPage);
+        },
+        rowNumber(row) {
+            const index = this.filteredRows.indexOf(row);
+            return index === -1 ? 0 : index + 1;
+        },
+        formatRowNumber(value) {
+            return String(value || 0).padStart(3, '0');
+        },
+        pageNumbers() {
+            const total = this.totalPages;
+            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
+            return Array.from(pages).filter(page => page >= 1 && page <= total).sort((a, b) => a - b);
+        },
+        goToPage(page) {
+            this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+        },
+        setPerPage(value) {
+            this.perPage = value;
+            this.currentPage = 1;
+            this.perPageOpen = false;
+        },
+        clampPage() {
+            if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+            if (this.currentPage < 1) this.currentPage = 1;
         }
-    }">
+    }" x-effect="clampPage()">
+            <div class="mn-table-controls">
+                <div class="mn-table-entries">
+                    <span>Tampilkan</span>
+                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false">
+                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
+                            :class="{ 'is-open': perPageOpen }" aria-haspopup="listbox"
+                            :aria-expanded="perPageOpen.toString()">
+                            <span x-text="perPage">10</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="mn-entry-menu" x-show="perPageOpen" x-transition.origin.top x-cloak role="listbox">
+                            <template x-for="option in perPageOptions" :key="option">
+                                <button type="button" class="mn-entry-option"
+                                    :class="{ 'is-selected': option === perPage }"
+                                    @click="setPerPage(option)" role="option"
+                                    :aria-selected="(option === perPage).toString()">
+                                    <span x-text="option"></span>
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    <span>data</span>
+                </div>
+
+                <div class="mn-table-showing">
+                    Menampilkan <strong x-text="startEntry">0</strong> sampai <strong x-text="endEntry">0</strong> dari
+                    <strong x-text="totalFiltered">{{ $kerjasamaList->count() }}</strong> data
+                </div>
+            </div>
+
             <div class="mn-table-wrap">
                 <table class="mn-table">
                     <thead>
@@ -386,13 +475,8 @@
                             <tr data-row
                                 data-search="{{ strtolower($k->mitra->nama_mitra ?? '') }} {{ strtolower($k->title ?? '') }}"
                                 data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
-                                data-jenis="{{ $k->jenis ?? '' }}" x-show="
-                                    (search === '' || $el.dataset.search.includes(search.toLowerCase())) &&
-                                    (filterTahun === '' || $el.dataset.tahun === filterTahun) &&
-                                    (filterKategori === '' || $el.dataset.kategori === filterKategori) &&
-                                    (filterJenis === '' || $el.dataset.jenis === filterJenis)
-                                ">
-                                <td><span class="mn-table-num">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span></td>
+                                data-jenis="{{ $k->jenis ?? '' }}" x-show="isRowVisible($el)" x-cloak>
+                                <td><span class="mn-table-num" x-text="formatRowNumber(rowNumber($el.closest('tr')))">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span></td>
                                 <td>
                                     <div class="mn-table-title">{{ $k->mitra->nama_mitra ?? '-' }}</div>
                                     <div class="mn-table-desc" title="{{ $k->title }}">{{ $k->title }}</div>
@@ -435,6 +519,29 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mn-table-pagination" x-show="totalFiltered > 0" x-cloak>
+                <div class="mn-table-page-info">
+                    Halaman <strong x-text="currentPage">1</strong> dari <strong x-text="totalPages">1</strong>
+                </div>
+                <div class="mn-table-page-buttons" aria-label="Pindah halaman tabel monitoring">
+                    <button type="button" class="mn-page-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
+                        <i class="fas fa-angles-left"></i>
+                    </button>
+                    <button type="button" class="mn-page-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <template x-for="page in pageNumbers()" :key="page">
+                        <button type="button" class="mn-page-btn" :class="{ 'is-active': page === currentPage }" @click="goToPage(page)" x-text="page"></button>
+                    </template>
+                    <button type="button" class="mn-page-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="mn-page-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
+                        <i class="fas fa-angles-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

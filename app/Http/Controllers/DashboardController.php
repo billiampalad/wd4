@@ -131,7 +131,8 @@ class DashboardController
     public function pimpinanMonitoring()
     {
         $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran', 'pjInternal'])
-            ->latest()
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         // ── I. GRAFIK PERFORMA INSTANSI ───────────────────────────
