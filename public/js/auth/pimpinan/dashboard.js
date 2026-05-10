@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const isMobile = viewportWidth <= 767;
+    const isTablet = viewportWidth >= 768 && viewportWidth <= 1023;
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
     const textColor = isDark ? '#8b92a8' : '#6b7280';
@@ -65,7 +68,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: textColor, padding: 20, usePointStyle: true } }
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: textColor,
+                            padding: isMobile ? 12 : 20,
+                            boxWidth: isMobile ? 10 : 12,
+                            font: { size: isMobile ? 10 : 12 },
+                            usePointStyle: true
+                        }
+                    }
                 }
             }
         });
@@ -96,7 +108,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 plugins: { legend: { display: false } },
                 scales: {
                     x: { beginAtZero: true, grid: { color: gridColor }, ticks: { stepSize: 1, color: textColor } },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { size: 10 } } }
+                    y: {
+                        grid: { display: false },
+                        ticks: {
+                            color: textColor,
+                            font: { size: isMobile ? 9 : 10 },
+                            autoSkip: false
+                        }
+                    }
                 }
             }
         });
@@ -126,7 +145,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'right', labels: { color: textColor, font: { size: 10 }, usePointStyle: true } }
+                    legend: {
+                        position: isMobile || isTablet ? 'bottom' : 'right',
+                        labels: {
+                            color: textColor,
+                            font: { size: isMobile ? 9 : 10 },
+                            padding: isMobile ? 10 : 14,
+                            boxWidth: isMobile ? 10 : 12,
+                            usePointStyle: true
+                        }
+                    }
                 }
             }
         });

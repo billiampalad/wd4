@@ -665,3 +665,338 @@
     color: var(--text-sub);
     font-size: 13px;
 }
+
+/* ─── RESPONSIVE BREAKPOINTS ───────────────────────── */
+@media only screen and (max-width: 767px) {
+    .pimpinan-page-header {
+        padding: 18px;
+        margin-bottom: 18px;
+        border-radius: 14px;
+    }
+
+    .pimpinan-header-actions {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .pimpinan-btn-filter,
+    .pimpinan-btn-download {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 14px;
+    }
+
+    .pimpinan-breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .pimpinan-page-title {
+        font-size: clamp(21px, 7vw, 27px);
+        line-height: 1.15;
+    }
+
+    .pimpinan-page-desc {
+        font-size: 12.5px;
+        line-height: 1.55;
+    }
+
+    .pimpinan-stats-grid,
+    .pimpinan-grid-2-1,
+    .pimpinan-grid-3,
+    .pimpinan-grid-1-2 {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .pimpinan-stat-card,
+    .pimpinan-card {
+        border-radius: 14px;
+    }
+
+    .pimpinan-stat-card {
+        padding: 16px;
+    }
+
+    .pimpinan-stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        font-size: 18px;
+    }
+
+    .pimpinan-stat-value {
+        font-size: 28px;
+    }
+
+    .pimpinan-stat-value-medium {
+        font-size: 20px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .pimpinan-sasaran-name {
+        max-width: min(220px, 68vw);
+    }
+
+    .pimpinan-card {
+        padding: 16px;
+    }
+
+    .pimpinan-card-sm-pad {
+        padding: 16px;
+    }
+
+    .pimpinan-card-header,
+    .pimpinan-table-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .pimpinan-card-title,
+    .pimpinan-table-title {
+        font-size: 15px;
+        line-height: 1.35;
+    }
+
+    .pimpinan-card-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .pimpinan-chart-280 {
+        height: 250px;
+    }
+
+    .pimpinan-chart-250,
+    .pimpinan-chart-200 {
+        height: 230px;
+    }
+
+    .pimpinan-geo-content {
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .pimpinan-geo-circle {
+        width: 56px;
+        height: 56px;
+        font-size: 22px;
+    }
+
+    .pimpinan-alert-header,
+    .pimpinan-alert-item {
+        padding: 14px 16px;
+    }
+
+    .pimpinan-alert-item-left {
+        min-width: 0;
+    }
+
+    .pimpinan-alert-label {
+        font-size: 12.5px;
+        line-height: 1.35;
+    }
+
+    .pimpinan-impl-item {
+        gap: 10px;
+    }
+
+    .pimpinan-luaran-list {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .pimpinan-luaran-item {
+        justify-content: space-between;
+    }
+
+    .pimpinan-table-card {
+        padding: 0;
+    }
+
+    .pimpinan-table-header {
+        padding: 16px;
+    }
+
+    .pimpinan-table-link {
+        width: 100%;
+        text-align: center;
+        background: rgba(79,70,229,0.08);
+        padding: 9px 10px;
+    }
+
+    .pimpinan-table-wrapper {
+        border-top: 1px solid var(--border);
+    }
+
+    .pimpinan-table {
+        min-width: 860px;
+    }
+
+    .pimpinan-table th,
+    .pimpinan-table td {
+        padding: 12px 14px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    .pimpinan-page-header {
+        padding: 22px;
+    }
+
+    .pimpinan-header-actions {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+
+    .pimpinan-page-title {
+        font-size: 26px;
+    }
+
+    .pimpinan-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .pimpinan-grid-2-1,
+    .pimpinan-grid-1-2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .pimpinan-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .pimpinan-geo-card {
+        grid-column: 1 / -1;
+    }
+
+    .pimpinan-card {
+        padding: 20px;
+    }
+
+    .pimpinan-chart-280 {
+        height: 280px;
+    }
+
+    .pimpinan-chart-250,
+    .pimpinan-chart-200 {
+        height: 240px;
+    }
+
+    .pimpinan-table {
+        min-width: 920px;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1439px) {
+    .pimpinan-page-header {
+        padding: 22px;
+    }
+
+    .pimpinan-header-actions {
+        right: 22px;
+        gap: 10px;
+    }
+
+    .pimpinan-btn-filter,
+    .pimpinan-btn-download {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .pimpinan-stats-grid {
+        gap: 16px;
+    }
+
+    .pimpinan-stat-card {
+        padding: 18px;
+    }
+
+    .pimpinan-stat-value {
+        font-size: 29px;
+    }
+
+    .pimpinan-stat-value-medium {
+        font-size: 20px;
+        line-height: 1.25;
+    }
+
+    .pimpinan-grid-2-1,
+    .pimpinan-grid-3,
+    .pimpinan-grid-1-2 {
+        gap: 16px;
+    }
+
+    .pimpinan-card {
+        padding: 20px;
+    }
+
+    .pimpinan-grid-1-2 {
+        grid-template-columns: minmax(270px, 0.9fr) minmax(0, 2.1fr);
+    }
+
+    .pimpinan-chart-280 {
+        height: 260px;
+    }
+
+    .pimpinan-chart-250 {
+        height: 240px;
+    }
+
+    .pimpinan-chart-200 {
+        height: 210px;
+    }
+
+    .pimpinan-table {
+        min-width: 980px;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .pimpinan-page-header,
+    .pimpinan-stats-grid,
+    .pimpinan-grid-2-1,
+    .pimpinan-grid-3,
+    .pimpinan-grid-1-2 {
+        max-width: 1480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pimpinan-stats-grid,
+    .pimpinan-grid-2-1,
+    .pimpinan-grid-3,
+    .pimpinan-grid-1-2 {
+        margin-bottom: 28px;
+    }
+
+    .pimpinan-chart-280 {
+        height: 310px;
+    }
+
+    .pimpinan-chart-250 {
+        height: 280px;
+    }
+
+    .pimpinan-chart-200 {
+        height: 230px;
+    }
+}
