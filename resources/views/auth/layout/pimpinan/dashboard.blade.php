@@ -18,13 +18,19 @@
         </div>
         
         <!-- Global Filter & Export -->
+        @php
+            $latestMonitoringId = \App\Models\Cooperation::latest()->value('id');
+            $detailMonitoringUrl = $latestMonitoringId
+                ? route('pimpinan.monitoring.detail', $latestMonitoringId)
+                : route('pimpinan.monitoring');
+        @endphp
         <div class="pimpinan-header-actions">
-            <button class="pimpinan-btn-filter">
+            <a href="{{ route('pimpinan.laporan') }}" class="pimpinan-btn-filter">
                 <i class="fas fa-filter"></i> Filter Global
-            </button>
-            <button class="pimpinan-btn-download" onclick="window.print()">
+            </a>
+            <a href="{{ $detailMonitoringUrl }}" class="pimpinan-btn-download">
                 <i class="fas fa-file-pdf"></i> Download Laporan
-            </button>
+            </a>
         </div>
     </div>
 
