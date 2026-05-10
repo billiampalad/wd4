@@ -721,3 +721,353 @@
 [data-theme="dark"] .ud-trend-btn.is-active {
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
+
+/* ─── RESPONSIVE BREAKPOINTS ───────────────────────── */
+@media only screen and (max-width: 767px) {
+    .unitdash {
+        padding: 14px;
+    }
+
+    .ud-topbar,
+    .ud-panel-head,
+    .ud-table-head {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .ud-breadcrumb {
+        flex-wrap: wrap;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .ud-title {
+        font-size: clamp(22px, 8vw, 28px);
+        line-height: 1.15;
+    }
+
+    .ud-subtitle {
+        font-size: 12.5px;
+        line-height: 1.55;
+    }
+
+    .ud-live-chip {
+        width: 100%;
+        justify-content: center;
+        padding: 9px 12px;
+    }
+
+    .ud-summary,
+    .ud-bento {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .ud-card,
+    .ud-panel {
+        border-radius: 12px;
+    }
+
+    .ud-card {
+        padding: 16px;
+    }
+
+    .ud-card-top {
+        margin-bottom: 12px;
+    }
+
+    .ud-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .ud-metric-value {
+        font-size: 22px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .ud-panel {
+        padding: 16px;
+    }
+
+    .ud-panel-title {
+        font-size: 15px;
+    }
+
+    .ud-type-badge,
+    .ud-status-badge {
+        width: fit-content;
+    }
+
+    .ud-chart-layout {
+        min-height: 230px;
+        padding: 4px 0;
+    }
+
+    .ud-deadline-item {
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+    }
+
+    .ud-daybox {
+        width: 40px;
+        height: 40px;
+    }
+
+    .ud-link-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        height: 36px;
+    }
+
+    .ud-dual-chart-container {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 14px;
+        padding: 0;
+    }
+
+    .ud-chart-wrapper {
+        min-width: 0;
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .ud-chart-header {
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .ud-chart-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+
+    .ud-canvas-container {
+        min-height: 260px;
+    }
+
+    .ud-tabs {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: thin;
+    }
+
+    .ud-trend-filters {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .ud-tab {
+        flex: 0 0 auto;
+        min-width: max-content;
+        padding-inline: 10px;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .ud-trend-btn {
+        width: 100%;
+        padding-inline: 8px;
+        text-align: center;
+    }
+
+    .ud-trend-chart-layout {
+        height: 280px;
+    }
+
+    .ud-table-panel {
+        margin-inline: -2px;
+    }
+
+    .ud-table-head {
+        padding: 16px;
+    }
+
+    .ud-table-wrap {
+        border-top: 1px solid var(--ud-border);
+        margin-inline: -16px;
+        padding-inline: 16px;
+    }
+
+    .ud-table {
+        min-width: 760px;
+    }
+
+    .ud-table th,
+    .ud-table td {
+        padding: 12px 14px;
+    }
+
+    .ud-link-editor {
+        grid-template-columns: minmax(160px, 1fr) 36px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    .unitdash {
+        padding: 20px;
+    }
+
+    .ud-topbar {
+        align-items: flex-start;
+    }
+
+    .ud-title {
+        font-size: clamp(28px, 4vw, 32px);
+    }
+
+    .ud-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .ud-card {
+        padding: 20px;
+    }
+
+    .ud-bento {
+        grid-template-columns: 1fr;
+    }
+
+    .ud-panel-head,
+    .ud-table-head {
+        align-items: flex-start;
+    }
+
+    .ud-chart-layout {
+        min-height: 260px;
+    }
+
+    .ud-deadline-item {
+        grid-template-columns: 44px minmax(0, 1fr) 38px;
+    }
+
+    .ud-dual-chart-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .ud-chart-wrapper {
+        min-width: 0;
+    }
+
+    .ud-chart-divider {
+        display: none;
+    }
+
+    .ud-canvas-container {
+        min-height: 300px;
+    }
+
+    .ud-trend-chart-layout {
+        height: 320px;
+    }
+
+    .ud-tabs,
+    .ud-trend-filters {
+        flex-wrap: wrap;
+    }
+
+    .ud-table {
+        min-width: 860px;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1439px) {
+    .unitdash {
+        padding: 22px;
+    }
+
+    .ud-summary {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .ud-card {
+        padding: 18px;
+    }
+
+    .ud-metric-value {
+        font-size: clamp(19px, 1.9vw, 28px);
+    }
+
+    .ud-bento {
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.86fr);
+    }
+
+    .ud-panel {
+        padding: 18px;
+    }
+
+    .ud-chart-layout {
+        min-height: 250px;
+    }
+
+    .ud-dual-chart-container {
+        gap: 18px;
+    }
+
+    .ud-chart-wrapper {
+        min-width: 280px;
+        padding: 18px;
+    }
+
+    .ud-canvas-container {
+        min-height: 290px;
+    }
+
+    .ud-trend-chart-layout {
+        height: 320px;
+    }
+
+    .ud-table {
+        min-width: 920px;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .unitdash {
+        padding: 28px;
+    }
+
+    .ud-summary {
+        gap: 16px;
+    }
+
+    .ud-bento,
+    .ud-bento-full,
+    .ud-table-panel,
+    .ud-summary,
+    .ud-topbar {
+        max-width: 1480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ud-chart-layout {
+        min-height: 270px;
+    }
+
+    .ud-canvas-container {
+        min-height: 330px;
+    }
+
+    .ud-trend-chart-layout {
+        height: 360px;
+    }
+}

@@ -85,7 +85,7 @@ function initDashboard() {
     const searchInput = document.getElementById('navSearchInput');
     if (navSearch) {
         function checkSearch() {
-            navSearch.style.display = window.innerWidth > 900 ? 'flex' : 'none';
+            navSearch.style.display = window.innerWidth >= 1024 ? 'flex' : 'none';
         }
         checkSearch();
         window.onresize = checkSearch;

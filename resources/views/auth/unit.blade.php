@@ -72,8 +72,7 @@
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
-                            <button id="markAllRead"
-                                style="background:none; border:none; color:var(--accent); font-size:11px; font-weight:700; cursor:pointer;">Tandai
+                            <button id="markAllRead" class="notification-mark-read">Tandai
                                 semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
