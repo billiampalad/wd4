@@ -124,7 +124,7 @@
                     <div class="preview-mini-card" style="border-left-color: var(--green-500);">
                         <div class="pmcard-top">
                             <span class="pmcard-title">MoU Rekrutmen Alumni Program Teknik</span>
-                            <span class="pmcard-badge badge-selesai">Selesai</span>
+                            <span class="pmcard-badge badge-selesai">Disahkan</span>
                         </div>
                         <div class="pmcard-meta">CV Maju Bersama &nbsp;·&nbsp; MoU &nbsp;·&nbsp; Mar 2023 – Mar 2025
                         </div>
@@ -323,12 +323,14 @@
         <div class="cards-grid">
             @foreach($kerjasama as $item)
             @php
-            $status = strtolower($item->status ?? '');
+            $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status ?? '')));
             $statusClass = match(true) {
             $status === 'aktif' => 'badge-active',
             str_contains($status, 'perpanjangan') => 'badge-warning',
             in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
-            default => 'badge-draft'
+            $status === 'tidak aktif' => 'badge-inactive',
+            $status === 'proses' => 'badge-process',
+            default => 'badge-inactive'
             };
             $statusLabel = ucwords($item->status ?? 'Draft');
 
@@ -337,7 +339,7 @@
             $hasDates = $item->start_date && $item->end_date;
             @endphp
 
-            <div class="kcard" onclick="openModal(
+            <div class="kcard {{ $statusClass }}" onclick="openModal(
                                                     {{ $item->id }},
                                                     `{{ addslashes($item->title) }}`,
                                                     `{{ addslashes($mitraNames) }}`,
