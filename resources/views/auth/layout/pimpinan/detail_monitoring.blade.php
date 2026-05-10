@@ -268,6 +268,19 @@
             min-width: 0;
         }
 
+        .dm-activity-content,
+        .dm-activity-main,
+        .dm-activity-meta-item {
+            min-width: 0;
+        }
+
+        .dm-activity-target,
+        .dm-activity-title,
+        .dm-activity-meta-item .dm-value {
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+
         @media only screen and (max-width: 767px) {
             .dk-page {
                 padding-inline: 14px;
@@ -338,6 +351,70 @@
             .dm-detail-row {
                 padding: 18px 0 !important;
             }
+
+            .dm-activity-row {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                padding: 18px 16px !important;
+            }
+
+            .dm-activity-num {
+                width: 30px !important;
+                height: 30px !important;
+                margin-right: 0 !important;
+                font-size: 11px !important;
+            }
+
+            .dm-activity-content {
+                width: 100%;
+            }
+
+            .dm-activity-head {
+                flex-direction: column;
+                gap: 12px;
+                margin-bottom: 12px !important;
+            }
+
+            .dm-activity-main {
+                width: 100%;
+            }
+
+            .dm-activity-title {
+                font-size: 14px !important;
+                line-height: 1.45;
+            }
+
+            .dm-activity-target {
+                display: block;
+                font-size: 12px !important;
+                line-height: 1.55;
+            }
+
+            .dm-activity-value {
+                width: 100%;
+                text-align: left !important;
+                padding: 12px;
+                border: 1px solid rgba(16, 185, 129, .16);
+                border-radius: 12px;
+                background: rgba(16, 185, 129, .07);
+            }
+
+            .dm-activity-meta-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .dm-activity-meta-item {
+                padding-bottom: 12px;
+                border-bottom: 1px dashed var(--border);
+            }
+
+            .dm-activity-meta-item:last-child {
+                padding-bottom: 0;
+                border-bottom: 0;
+            }
         }
 
         @media only screen and (min-width: 768px) and (max-width: 1023px) {
@@ -356,6 +433,18 @@
 
             .dm-doc-title {
                 max-width: 520px !important;
+            }
+
+            .dm-activity-row {
+                padding: 20px !important;
+            }
+
+            .dm-activity-head {
+                gap: 16px;
+            }
+
+            .dm-activity-meta-grid {
+                gap: 16px !important;
             }
         }
     </style>
@@ -535,23 +624,23 @@
                 </div>
                 <div class="dm-card-body" style="padding: 0;">
                     @forelse($kegiatan->details as $idx => $det)
-                        <div class="dm-detail-row" style="padding: 24px;">
-                            <div
+                        <div class="dm-detail-row dm-activity-row" style="padding: 24px;">
+                            <div class="dm-activity-num"
                                 style="width: 32px; height: 32px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: var(--text-sub); margin-right: 16px;">
                                 {{ $idx + 1 }}</div>
-                            <div style="flex: 1;">
-                                <div
+                            <div class="dm-activity-content" style="flex: 1;">
+                                <div class="dm-activity-head"
                                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                    <div>
-                                        <div
+                                    <div class="dm-activity-main">
+                                        <div class="dm-activity-title"
                                             style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px;">
                                             {{ $det->jenisKerjasama->nama_kerjasama ?? 'Bentuk Kegiatan Tidak Spesifik' }}
                                         </div>
-                                        <div style="font-size: 12px; color: var(--text-sub);"><i class="fas fa-bullseye"
+                                        <div class="dm-activity-target" style="font-size: 12px; color: var(--text-sub);"><i class="fas fa-bullseye"
                                                 style="color:#8b5cf6; margin-right:4px;"></i> Sasaran:
                                             {{ $det->sasaran->deskripsi ?? '-' }}</div>
                                     </div>
-                                    <div style="text-align: right;">
+                                    <div class="dm-activity-value" style="text-align: right;">
                                         <div
                                             style="font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase;">
                                             Nilai Kontrak</div>
@@ -561,13 +650,13 @@
                                 </div>
                                 <div
                                     style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px;">
-                                    <div class="dm-grid-2">
-                                        <div>
+                                    <div class="dm-grid-2 dm-activity-meta-grid">
+                                        <div class="dm-activity-meta-item">
                                             <span class="dm-label" style="font-size: 10px;">Indikator Luaran</span>
                                             <span class="dm-value" style="font-size: 13px;">{{ $det->volume_luaran ?? 0 }}
                                                 {{ $det->satuan_luaran ?? '-' }}</span>
                                         </div>
-                                        <div>
+                                        <div class="dm-activity-meta-item">
                                             <span class="dm-label" style="font-size: 10px;">Keterangan Tambahan</span>
                                             <span class="dm-value"
                                                 style="font-size: 13px;">{{ $det->keterangan ?: '-' }}</span>
