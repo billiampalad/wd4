@@ -50,6 +50,7 @@
             }
         }));
 
+        parts.modal.removeAttribute('hidden');
         parts.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
@@ -73,6 +74,7 @@
 
         setTimeout(function () {
             parts.modal.style.display = 'none';
+            parts.modal.setAttribute('hidden', '');
             document.body.style.overflow = '';
         }, 300);
     };
@@ -163,9 +165,11 @@
                             text: 'Data mitra berhasil diperbarui.',
                             showConfirmButton: false,
                             timer: 2000
-                        }).then(function () {
-                            window.location.reload();
                         });
+
+                        if (typeof window.refreshMitraIndex === 'function') {
+                            window.refreshMitraIndex();
+                        }
                         return;
                     }
 

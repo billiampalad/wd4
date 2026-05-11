@@ -37,6 +37,7 @@
             return;
         }
 
+        parts.modal.removeAttribute('hidden');
         parts.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
@@ -60,6 +61,7 @@
 
         setTimeout(function () {
             parts.modal.style.display = 'none';
+            parts.modal.setAttribute('hidden', '');
             document.body.style.overflow = '';
 
             const form = document.getElementById('mitraModalForm');
@@ -144,6 +146,10 @@
                             showConfirmButton: false,
                             timer: 1500
                         });
+
+                        if (typeof window.refreshMitraIndex === 'function') {
+                            window.refreshMitraIndex();
+                        }
                         return;
                     }
 

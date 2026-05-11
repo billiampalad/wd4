@@ -1,6 +1,3 @@
-<link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}">
-<script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}"></script>
-
 @php
     $modalKlasifikasi = \App\Models\Klasifikasi::orderBy('nama', 'asc')->get();
     $modalKlasifikasiItems = $modalKlasifikasi->map(fn ($klas) => [
@@ -9,7 +6,7 @@
     ])->values();
 @endphp
 
-<div id="mitraModal" class="mitra-create-modal">
+<div id="mitraModal" class="mitra-create-modal" hidden>
     <div id="mitraModalBackdrop" class="mitra-create-backdrop"></div>
 
     <div id="mitraModalBox" class="mitra-create-box">

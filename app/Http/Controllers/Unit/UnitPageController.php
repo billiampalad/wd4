@@ -93,14 +93,13 @@ class UnitPageController extends Controller
             'website' => $request->website,
         ]);
 
+        $mitra->load('klasifikasi');
+
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Mitra berhasil ditambahkan.',
-                'data' => [
-                    'id' => $mitra->id,
-                    'nama' => $mitra->nama_mitra
-                ]
+                'data' => $this->mitraPayload($mitra),
             ]);
         }
 
@@ -144,20 +143,62 @@ class UnitPageController extends Controller
             'website' => $request->website,
         ]);
 
+        $mitra->load('klasifikasi');
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data mitra berhasil diperbarui.',
+                'data' => $this->mitraPayload($mitra),
+            ]);
+        }
+
         return redirect()->route('unit.mitra')->with('success', 'Data mitra berhasil diperbarui.');
     }
 
-    public function mitraDestroy($id)
+    public function mitraDestroy(Request $request, $id)
     {
         $mitra = \App\Models\Mitra::findOrFail($id);
 
         // Cek apakah mitra memiliki riwayat kerjasama
         if ($mitra->cooperations()->exists()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mitra tidak bisa dihapus karena masih memiliki riwayat kerjasama.',
+                ], 422);
+            }
+
             return back()->with('error', 'Mitra tidak bisa dihapus karena masih memiliki riwayat kerjasama.');
         }
 
         $mitra->delete();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Mitra berhasil dihapus.',
+                'deleted_id' => $id,
+            ]);
+        }
+
         return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil dihapus.');
+    }
+
+    private function mitraPayload($mitra)
+    {
+        return [
+            'id' => $mitra->id,
+            'nama' => $mitra->nama_mitra,
+            'nama_mitra' => $mitra->nama_mitra,
+            'id_klasifikasi' => $mitra->id_klasifikasi,
+            'klasifikasi' => $mitra->klasifikasi?->nama,
+            'kategori' => $mitra->kategori,
+            'negara' => $mitra->negara ?? 'Indonesia',
+            'alamat' => $mitra->alamat,
+            'telp' => $mitra->telp,
+            'website' => $mitra->website,
+        ];
     }
 
     // ─── Evaluasi Kinerja ────────────────────────────────────────

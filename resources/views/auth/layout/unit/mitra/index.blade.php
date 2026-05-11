@@ -133,7 +133,8 @@
                                         <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}')" class="dk-action-btn edit" title="Edit">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
-                                        <form action="{{ route('unit.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mitra ini?')">
+                                        <form action="{{ route('unit.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;"
+                                            data-mitra-delete-form data-confirm-message="Apakah Anda yakin ingin menghapus mitra ini?">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="dk-action-btn delete" title="Hapus">
@@ -153,7 +154,7 @@
                                         <p class="um-empty-title">Belum ada mitra terdaftar</p>
                                         <p class="um-empty-sub">Mulai kelola data mitra kerjasama unit Anda.</p>
                                         <button onclick="openMitraModal()" class="dk-empty-btn">
-                                            <i class="fas fa-plus">
+                                            <i class="fas fa-plus"></i>
                                             Tambah Mitra
                                         </button>
                                     </div>

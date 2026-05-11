@@ -15,6 +15,8 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/auth/user.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_edit.css') }}" data-turbo-track="reload">
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -23,13 +25,13 @@
 
 <body>
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
-    @if(session('success'))
+    @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
     @endif
-    @if(session('error'))
+    @if (session('error'))
         <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
     @endif
-    @if($errors->any())
+    @if ($errors->any())
         <div id="swal-flash-validation" data-message="{{ $errors->first() }}" style="display:none;"></div>
     @endif
     <!-- navbar -->
@@ -39,7 +41,8 @@
                 <button id="hamburger" aria-label="Toggle sidebar">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35" height="35">
+                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35"
+                        height="35">
                 </div>
                 <div class="brand-text">
                     <h1>POLIMDO &amp; DUDIKA</h1>
@@ -91,7 +94,8 @@
                     <div class="user-avatar" id="userAvatar">{{ auth()->user()->name }}</div>
                     <div class="user-info">
                         <div class="name" id="userName">{{ auth()->user()->profile?->jabatan ?? '-' }}</div>
-                        <div class="role">{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}</div>
+                        <div class="role">{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}
+                        </div>
                     </div>
                 </div>
 
@@ -120,7 +124,14 @@
             </a>
 
             @php
-                $isDataKerjasamaActive = request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*', 'unit.mitra', 'unit.mitra.*', 'unit.form', 'unit.form.*');
+                $isDataKerjasamaActive = request()->routeIs(
+                    'unit.dkerjasama',
+                    'unit.kerjasama.*',
+                    'unit.mitra',
+                    'unit.mitra.*',
+                    'unit.form',
+                    'unit.form.*',
+                );
             @endphp
             <div id="kerjasamaParent" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}"
@@ -139,7 +150,8 @@
                             href="{{ route('unit.mitra') }}">
                             <span class="submenu-dot"></span><span>Mitra</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('unit.form', 'unit.form.*') ? 'active' : '' }}" href="{{ route('unit.form') }}">
+                        <a class="submenu-item {{ request()->routeIs('unit.form', 'unit.form.*') ? 'active' : '' }}"
+                            href="{{ route('unit.form') }}">
                             <span class="submenu-dot"></span><span>Form Laporan</span>
                         </a>
                     </div>
@@ -166,8 +178,8 @@
 
         <!-- Main Content -->
         @yield('content')
-        @if(!View::hasSection('content'))
-            @if(request()->routeIs('unit.kerjasama.create'))
+        @if (!View::hasSection('content'))
+            @if (request()->routeIs('unit.kerjasama.create'))
                 @include('auth.layout.unit.create_kerjasama')
             @elseif(request()->routeIs('unit.kerjasama.edit'))
                 @include('auth.layout.unit.edit_kerjasama')
@@ -200,6 +212,9 @@
     </div>
 
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/index.js') }}" data-turbo-track="reload"></script>
 </body>
 
 </html>
