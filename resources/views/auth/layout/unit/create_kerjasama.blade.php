@@ -202,7 +202,7 @@
                                         </div>
                                         <div class="mc-group">
                                             <label class="mc-label">Status <span class="mc-req">*</span></label>
-                                            <input type="hidden" name="status" :value="inputType === 'baru' ? 'Proses' : statusValue">
+                                            <input type="hidden" name="status" :value="{{ $isPerpanjangan ? "'Dalam Perpanjangan'" : "inputType === 'baru' ? 'Proses' : statusValue" }}">
                                             <div class="alpine-dropdown" @click.outside="statusOpen = false"
                                                 style="position: relative;">
                                                 <div class="ad-trigger no-icon" :class="{'active': statusOpen, 'is-invalid': @error('status') true @else false @enderror}"

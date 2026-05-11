@@ -122,9 +122,14 @@ class KerjasamaUnitController extends Controller
                 'Tidak Aktif' => 'tidak aktif',
             ];
 
-            // Jika input baru, status masa berlaku otomatis 'proses'
-            // Jika input arsip, gunakan pilihan user
-            $status = ($request->input_type === 'baru') ? 'proses' : ($statusMap[$request->status] ?? 'aktif');
+            // Perpanjangan memiliki status masa berlaku tersendiri.
+            // Jika input baru biasa, status masa berlaku otomatis 'proses'.
+            // Jika input arsip, gunakan pilihan user.
+            if ($perpanjanganDariId) {
+                $status = 'dalam perpanjangan';
+            } else {
+                $status = ($request->input_type === 'baru') ? 'proses' : ($statusMap[$request->status] ?? 'aktif');
+            }
 
             // 1. Handle Internal Pejabats (Pihak 1)
             $penandatanganInternal = null;
