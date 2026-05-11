@@ -1,5 +1,5 @@
 <!-- Main Content -->
-<main id="mainContent" class="dk-page">
+<main id="mainContent" class="dk-page" data-mitra-index>
     {{-- ═══ HERO SECTION ═══ --}}
     <section class="dk-hero">
         <div class="dk-hero-content">

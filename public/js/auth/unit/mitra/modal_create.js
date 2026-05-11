@@ -119,7 +119,8 @@
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: formData
                     });
@@ -147,7 +148,7 @@
                             timer: 1500
                         });
 
-                        if (typeof window.refreshMitraIndex === 'function') {
+                        if (document.querySelector('[data-mitra-index]') && typeof window.refreshMitraIndex === 'function') {
                             window.refreshMitraIndex();
                         }
                         return;

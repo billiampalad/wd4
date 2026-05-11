@@ -19,6 +19,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class KerjasamaUnitController extends Controller
 {
@@ -78,8 +79,8 @@ class KerjasamaUnitController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
-            'doc_number' => 'nullable|string|max:255',
-            'pks_number' => 'nullable|string|max:255',
+            'doc_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'doc_number')],
+            'pks_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'pks_number')],
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
@@ -97,6 +98,8 @@ class KerjasamaUnitController extends Controller
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
             'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
+            'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
+            'pks_number.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
         ]);
 
         $perpanjanganDariId = $request->filled('perpanjangan_dari_id') ? (int) $request->perpanjangan_dari_id : null;
@@ -297,11 +300,13 @@ class KerjasamaUnitController extends Controller
 
     public function update(Request $request, $id)
     {
+        $cooperation = Cooperation::findOrFail($id);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
-            'doc_number' => 'nullable|string|max:255',
-            'pks_number' => 'nullable|string|max:255',
+            'doc_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'doc_number')->ignore($cooperation->id)],
+            'pks_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'pks_number')->ignore($cooperation->id)],
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
@@ -315,9 +320,9 @@ class KerjasamaUnitController extends Controller
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
             'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
+            'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
+            'pks_number.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
         ]);
-
-        $cooperation = Cooperation::findOrFail($id);
 
         DB::beginTransaction();
         try {

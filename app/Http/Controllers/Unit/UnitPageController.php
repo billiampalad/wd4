@@ -60,7 +60,9 @@ class UnitPageController extends Controller
         // Ambil semua mitra dengan hitungan kerjasama
         $mitras = \App\Models\Mitra::with('klasifikasi')
             ->withCount('cooperations')
-            ->orderBy('nama_mitra', 'asc')->get();
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
 
         return view('auth.unit', compact('mitras'));
     }

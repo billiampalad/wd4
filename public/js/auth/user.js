@@ -1,4 +1,37 @@
 function initDashboard() {
+    function showFlashAlert(id, options) {
+        const el = document.getElementById(id);
+        if (!el || el.dataset.shown === '1') return;
+
+        const message = el.dataset.message;
+        if (!message || typeof Swal === 'undefined') return;
+
+        el.dataset.shown = '1';
+        Swal.fire({
+            icon: options.icon,
+            title: options.title,
+            text: message,
+            confirmButtonColor: options.confirmButtonColor || '#7c3aed',
+        }).then(() => {
+            el.remove();
+        });
+    }
+
+    showFlashAlert('swal-flash-success', {
+        icon: 'success',
+        title: 'Berhasil!',
+    });
+    showFlashAlert('swal-flash-error', {
+        icon: 'error',
+        title: 'Gagal!',
+        confirmButtonColor: '#ef4444',
+    });
+    showFlashAlert('swal-flash-validation', {
+        icon: 'warning',
+        title: 'Data Duplikat / Tidak Valid',
+        confirmButtonColor: '#f59e0b',
+    });
+
     /* ─ Dark Mode ─ */
     const html = document.documentElement;
     const dmBtn = document.getElementById('darkModeBtn');

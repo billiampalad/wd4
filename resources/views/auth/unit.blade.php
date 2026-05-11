@@ -32,7 +32,7 @@
         <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
     @endif
     @if ($errors->any())
-        <div id="swal-flash-validation" data-message="{{ $errors->first() }}" style="display:none;"></div>
+        <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
     <!-- navbar -->
     <nav>
