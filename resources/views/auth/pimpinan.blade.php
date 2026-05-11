@@ -162,7 +162,7 @@
                 <span>Dashboard Eksekutif</span>
             </a>
 
-            <a class="menu-item {{ request()->routeIs('pimpinan.monitoring') ? 'active' : '' }}"
+            <a class="menu-item {{ request()->routeIs('pimpinan.monitoring', 'pimpinan.monitoring.*') || (isset($view) && $view === 'detail_monitoring') ? 'active' : '' }}"
                 href="{{ route('pimpinan.monitoring') }}">
                 <div class="menu-icon"><i class="fas fa-folder-open"></i></div>
                 <span>Monitoring Data</span>

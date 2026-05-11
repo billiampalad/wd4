@@ -384,7 +384,7 @@ aside {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 20px 12px;
-    z-index: 40;
+    z-index: 80;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         background var(--transition),
         border-color var(--transition),
@@ -590,7 +590,7 @@ body.sidebar-collapsed main {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 100;
+    z-index: 120;
     color: var(--text-sub);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
