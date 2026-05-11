@@ -173,7 +173,7 @@
             <a class="menu-item {{ request()->routeIs('pimpinan.evaluasi*') ? 'active' : '' }}"
                 href="{{ route('pimpinan.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
-                <span>Evaluasi & Validasi</span>
+                <span>Evaluasi Data Kerjasama</span>
             </a>
             <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}"
                 href="{{ route('pimpinan.laporan') }}">
