@@ -346,7 +346,7 @@ class UnitPageController extends Controller
                 'validasi',
                 'Dokumen Menunggu Validasi',
                 "$namaUnit mengirimkan evaluasi $kegiatan->title untuk divalidasi.",
-                route('pimpinan.dashboard')
+                route('pimpinan.evaluasi')
             );
         }
 
@@ -385,7 +385,7 @@ class UnitPageController extends Controller
                 'validasi',
                 'Dokumen Menunggu Validasi',
                 "$namaUnit mengirimkan evaluasi $kegiatan->title untuk divalidasi.",
-                route('pimpinan.dashboard')
+                route('pimpinan.evaluasi')
             );
         }
 

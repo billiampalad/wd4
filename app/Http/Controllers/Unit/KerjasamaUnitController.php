@@ -535,7 +535,7 @@ class KerjasamaUnitController extends Controller
                     $kirimUlangSetelahRevisi ? 'sudah_revisi' : 'evaluasi',
                     $judul,             // judul
                     $pesan,             // pesan
-                    route('pimpinan.evaluasi.show', $cooperation->id) // link
+                    route('pimpinan.evaluasi') // link
                 );
             }
 

@@ -50,6 +50,14 @@ class NotifikasiController extends Controller
             ->take(10)
             ->get();
 
+        if ($roleName === 'pimpinan') {
+            $notifikasis->each(function ($notifikasi) {
+                if (in_array($notifikasi->type, ['evaluasi', 'revisi', 'sudah_revisi', 'validasi'], true)) {
+                    $notifikasi->link = route('pimpinan.evaluasi');
+                }
+            });
+        }
+
         return response()->json([
             'success' => true,
             'data' => $notifikasis,
