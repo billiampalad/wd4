@@ -319,6 +319,10 @@ function initDashboard() {
                 searchClear.style.display = q ? 'flex' : 'none';
             }
 
+            window.dispatchEvent(new CustomEvent('pimpinan-global-search', {
+                detail: q
+            }));
+
             // Select all relevant table bodies
             const tables = Array.from(document.querySelectorAll('#mainContent .um-table tbody'));
             const previewBody = document.getElementById('previewBody');
@@ -405,6 +409,57 @@ function initDashboard() {
                     const table = tbody.closest('table');
                     const controls = table?.parentNode.querySelector('.table-pagination-controls');
                     if (controls) controls.style.display = '';
+                }
+            });
+
+            filterPimpinanSummaryTables(q);
+        }
+
+        function filterPimpinanSummaryTables(q) {
+            document.querySelectorAll('#mainContent .pimpinan-table tbody').forEach(tbody => {
+                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => !row.hasAttribute('data-search-no-results'));
+                const dataRows = rows.filter(row => row.querySelectorAll('td').length > 1);
+                let visibleCount = 0;
+
+                dataRows.forEach(row => {
+                    if (!row.hasAttribute('data-original-html')) {
+                        row.setAttribute('data-original-html', row.innerHTML);
+                    }
+
+                    row.innerHTML = row.getAttribute('data-original-html');
+
+                    const rowMatch = !q || row.textContent.toLowerCase().includes(q);
+                    row.style.display = rowMatch ? '' : 'none';
+
+                    if (rowMatch) {
+                        visibleCount++;
+                        if (q) {
+                            row.querySelectorAll('td').forEach(cell => highlightText(cell, q));
+                        }
+                    }
+                });
+
+                let noResultsRow = tbody.querySelector('tr[data-search-no-results]');
+                if (q && visibleCount === 0 && dataRows.length > 0) {
+                    const table = tbody.closest('table');
+                    const colCount = table ? table.querySelectorAll('thead th').length : 1;
+
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.setAttribute('data-search-no-results', '1');
+                        noResultsRow.innerHTML = `
+                            <td colspan="${colCount}" class="pimpinan-table-empty">
+                                Tidak ada hasil untuk "<span data-query></span>"
+                            </td>
+                        `;
+                        tbody.appendChild(noResultsRow);
+                    }
+
+                    const queryLabel = noResultsRow.querySelector('[data-query]');
+                    if (queryLabel) queryLabel.textContent = q;
+                    noResultsRow.style.display = '';
+                } else if (noResultsRow) {
+                    noResultsRow.style.display = 'none';
                 }
             });
         }

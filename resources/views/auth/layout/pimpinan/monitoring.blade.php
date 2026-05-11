@@ -414,7 +414,7 @@
             if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
             if (this.currentPage < 1) this.currentPage = 1;
         }
-    }" x-effect="clampPage()">
+    }" x-effect="clampPage()" @pimpinan-global-search.window="search = $event.detail; currentPage = 1">
             <div class="mn-table-controls">
                 <div class="mn-table-entries">
                     <span>Tampilkan</span>
@@ -473,7 +473,7 @@
                                 $luaran = $k->details->map(fn($d) => ($d->volume_luaran ? $d->volume_luaran . ' ' . ($d->satuan_luaran ?? '') : null))->filter()->implode(', ');
                             @endphp
                             <tr data-row
-                                data-search="{{ strtolower($k->mitra->nama_mitra ?? '') }} {{ strtolower($k->title ?? '') }}"
+                                data-search="{{ strtolower(($k->mitra->nama_mitra ?? '') . ' ' . ($k->title ?? '') . ' ' . ($k->mitra->klasifikasi->nama ?? '') . ' ' . ($k->jenis ?? '') . ' ' . ($k->doc_number ?? '') . ' ' . ($k->pks_number ?? '') . ' ' . ($k->status ?? '') . ' ' . ($k->status_dokumen ?? '')) }}"
                                 data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
                                 data-jenis="{{ $k->jenis ?? '' }}" x-show="isRowVisible($el)" x-cloak>
                                 <td><span class="mn-table-num" x-text="formatRowNumber(rowNumber($el.closest('tr')))">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span></td>
