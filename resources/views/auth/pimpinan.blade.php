@@ -134,7 +134,7 @@
                     <div class="user-avatar" id="userAvatar">{{ auth()->user()->name }}</div>
                     <div class="user-info">
                         <div class="name" id="userName">{{ auth()->user()->profile?->jabatan ?? '-' }}</div>
-                        <div class="role">{{ auth()->user()->profile?->jurusan?->nama_jurusan ?? '-' }}</div>
+                        {{-- <div class="role">{{ auth()->user()->profile?->unit_kerja?->nama_unit_pelaksana ?? '-' }}</div> --}}
                     </div>
                 </div>
 

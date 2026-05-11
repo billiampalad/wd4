@@ -1,0 +1,437 @@
+.mitra-create-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.mitra-create-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mitra-create-box {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.mitra-create-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(124, 58, 237, 0.04));
+    flex-shrink: 0;
+}
+
+.mitra-create-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+.mitra-create-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.mitra-create-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.mitra-create-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+.mitra-create-close {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.mitra-create-close:hover {
+    background: var(--surface);
+    color: #ef4444;
+    border-color: #fee2e2;
+}
+
+.mitra-create-close i {
+    font-size: 14px;
+}
+
+.mitra-create-body {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.mitra-create-content {
+    padding: 24px 28px;
+}
+
+.mitra-create-section {
+    margin-bottom: 18px;
+}
+
+.mitra-create-row {
+    margin-bottom: 18px;
+}
+
+.mitra-create-trigger-content,
+.mitra-create-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.mitra-create-trigger-content.is-compact {
+    gap: 10px;
+}
+
+.mitra-create-field-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.mitra-create-placeholder {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.mitra-create-selected {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.mitra-create-selected.is-normal {
+    font-weight: 500;
+}
+
+.mitra-create-chevron {
+    font-size: 11px;
+    color: #9ca3af;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+}
+
+.mitra-create-chevron.is-small {
+    font-size: 10px;
+}
+
+.mitra-create-chevron.is-open {
+    transform: rotate(180deg);
+}
+
+.mitra-create-menu {
+    z-index: 10001;
+}
+
+.mitra-create-menu.is-scrollable {
+    max-height: 240px;
+    display: flex;
+    flex-direction: column;
+}
+
+.mitra-create-search-wrap {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.mitra-create-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.mitra-create-search i {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.mitra-create-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    color: var(--text);
+    width: 100%;
+    font-family: inherit;
+}
+
+.mitra-create-menu-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.mitra-create-menu-list.is-country {
+    max-height: 180px;
+}
+
+.mitra-create-check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mitra-create-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.mitra-create-check.is-selected {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.mitra-create-check i {
+    font-size: 9px;
+    color: #fff;
+}
+
+.mitra-create-item-text {
+    font-size: 13px;
+}
+
+.mitra-create-empty {
+    padding: 12px 16px;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.mitra-create-error {
+    color: #ef4444;
+    font-size: 11px;
+    margin-top: 4px;
+    display: block;
+}
+
+.mitra-create-label-icon {
+    color: var(--accent);
+    margin-right: 6px;
+}
+
+.mitra-create-muted-icon {
+    color: #9ca3af;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.mitra-create-textarea-icon {
+    top: 14px;
+}
+
+.mitra-create-textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.mitra-create-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+    flex-shrink: 0;
+}
+
+.mitra-create-btn {
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+}
+
+.mitra-create-btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 22px;
+}
+
+.mitra-create-btn-secondary:hover {
+    background: var(--surface2);
+}
+
+.mitra-create-btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    transition: all 0.3s;
+}
+
+.mitra-create-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+}
+
+.mitra-create-btn-primary:disabled,
+.mitra-create-btn-primary.is-submitting {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mitra-create-btn-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+@media only screen and (max-width: 767px) {
+    .mitra-create-modal {
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .mitra-create-box {
+        max-width: 100%;
+        max-height: 94vh;
+        border-radius: 16px;
+    }
+
+    .mitra-create-header {
+        gap: 12px;
+        padding: 18px 16px;
+    }
+
+    .mitra-create-header-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        font-size: 18px;
+    }
+
+    .mitra-create-title {
+        font-size: 16px;
+    }
+
+    .mitra-create-subtitle {
+        font-size: 12px;
+    }
+
+    .mitra-create-content {
+        padding: 18px 16px;
+    }
+
+    .mitra-create-footer {
+        padding: 14px 16px;
+        flex-direction: column-reverse;
+    }
+
+    .mitra-create-btn {
+        width: 100%;
+    }
+
+    .mc-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    .mitra-create-modal {
+        padding: 18px;
+    }
+
+    .mitra-create-box {
+        max-width: 620px;
+        max-height: 88vh;
+    }
+
+    .mitra-create-header,
+    .mitra-create-content,
+    .mitra-create-footer {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1439px) {
+    .mitra-create-box {
+        max-width: 640px;
+        max-height: 90vh;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .mitra-create-box {
+        max-width: 700px;
+        max-height: 86vh;
+    }
+}
