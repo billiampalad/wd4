@@ -41,7 +41,6 @@
                 <span class="logo-text">POLIMDO <span>&</span> DUDIKA</span>
             </a>
             <div class="nav-right">
-                <a href="#data-kerjasama" class="nav-link">Data Kerjasama</a>
                 <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
                     aria-label="Ubah ke mode gelap">
                     <span class="theme-toggle-orb" aria-hidden="true">
@@ -76,9 +75,9 @@
         <div class="hero-inner">
             <div class="hero-text">
                 <div class="hero-eyebrow">Platform Resmi Kerjasama Kampus</div>
-                <h1>Transparansi Data<br><em>Kerjasama Strategis</em></h1>
+                <h1>Sistem Informasi<br><em>Kerjasama Politeknik Negeri Manado</em></h1>
                 <p class="hero-desc">
-                    Sistem terpadu untuk memantau dan menelusuri seluruh aktivitas kerjasama antara Kampus dengan Dunia
+                    Sistem informasi untuk memantau dan menelusuri seluruh aktivitas kerjasama antara Kampus dengan Dunia
                     Usaha, Dunia Industri, dan Institusi mitra lainnya.
                 </p>
                 <div class="hero-cta">
@@ -153,8 +152,8 @@
         <div class="stats-inner">
             <div class="stats-heading">
                 <span class="stats-kicker">Ikhtisar Publik</span>
-                <h2 id="stats-overview-title">Ringkasan cepat data kerjasama</h2>
-                <p>Setiap kartu menyorot metrik inti agar data kemitraan lebih cepat dipahami dari satu tampilan.</p>
+                <h2 id="stats-overview-title">Ringkasan data kerjasama</h2>
+                <p>Berikut adalah tampilan ringkasan </p>
             </div>
 
             <div class="stats-card-grid">
