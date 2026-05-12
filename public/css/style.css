@@ -41,6 +41,7 @@
     --overlay-bg: rgba(13, 27, 42, 0.45);
     --radius: 12px;
     --radius-sm: 8px;
+    --nav-offset: 62px;
 }
 
 html {
@@ -283,7 +284,7 @@ body {
     border-bottom: 1px solid var(--border);
     position: relative;
     overflow: hidden;
-    scroll-margin-top: 86px;
+    scroll-margin-top: 0;
 }
 
 .hero-grid-bg {
@@ -589,11 +590,17 @@ body {
 /* ─── STATS STRIP ─────────────────────────────────── */
 
 /* ─── MAIN SECTION ────────────────────────────────── */
+.data-section {
+    min-height: 100vh;
+    min-height: 100svh;
+    background: var(--bg);
+    scroll-margin-top: 0;
+}
+
 .main-wrap {
     max-width: 1160px;
     margin: 0 auto;
     padding: 3.5rem 2rem 5rem;
-    scroll-margin-top: 86px;
 }
 
 .section-top {
@@ -627,9 +634,9 @@ body {
     margin-top: 0.35rem;
 }
 
-.main-wrap.is-loading .cards-grid,
-.main-wrap.is-loading .pagination-wrap,
-.main-wrap.is-loading .empty-state {
+.data-section.is-loading .cards-grid,
+.data-section.is-loading .pagination-wrap,
+.data-section.is-loading .empty-state {
     opacity: 0.55;
     transition: opacity .2s ease;
 }
@@ -1466,6 +1473,10 @@ html[data-theme='dark'] .page-item span {
 }
 
 @media (max-width: 900px) {
+    :root {
+        --nav-offset: 96px;
+    }
+
     .nav-inner {
         min-height: 96px;
         flex-wrap: wrap;
@@ -1498,11 +1509,7 @@ html[data-theme='dark'] .page-item span {
         min-height: 100vh;
         min-height: 100svh;
         padding-top: 9.5rem;
-        scroll-margin-top: 128px;
-    }
-
-    .main-wrap {
-        scroll-margin-top: 128px;
+        scroll-margin-top: 0;
     }
 
     .hero-inner {
@@ -1534,6 +1541,10 @@ html[data-theme='dark'] .page-item span {
 }
 
 @media (max-width: 640px) {
+    :root {
+        --nav-offset: 112px;
+    }
+
     .top-nav {
         background: rgba(255, 255, 255, 0.94);
     }
@@ -1544,11 +1555,7 @@ html[data-theme='dark'] .page-item span {
 
     .hero {
         padding: 10rem 1.25rem 3.5rem;
-        scroll-margin-top: 140px;
-    }
-
-    .main-wrap {
-        scroll-margin-top: 140px;
+        scroll-margin-top: 0;
     }
 
     .nav-inner {

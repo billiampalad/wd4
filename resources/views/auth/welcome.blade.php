@@ -156,7 +156,6 @@
     <section class="stats-strip" id="ringkasan" aria-labelledby="stats-overview-title">
         <div class="stats-inner">
             <div class="stats-heading">
-                <span class="stats-kicker">Ikhtisar Publik</span>
                 <h2 id="stats-overview-title">Ringkasan data kerjasama</h2>
                 <p>Statistik terkini dari seluruh kegiatan kerja sama institusi kami. Berikut informasi ringkas mengenai jumlah kerjasama, jumlah mitra yang tergabung, lalu status pelaksanaan program, hingga persebaran skala kemitraan kami.</p>
             </div>
@@ -278,22 +277,23 @@
     </div>
 
     <!-- ═══ MAIN DATA SECTION ══════════════════════════════════ -->
-    <main class="main-wrap" id="data-kerjasama">
-        @php
-            $selectedKategoriMitra = request('kategori_mitra', 'all');
-            $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
-                ? $selectedKategoriMitra
-                : 'all';
-        @endphp
+    <section class="data-section" id="data-kerjasama">
+        <main class="main-wrap">
+            @php
+                $selectedKategoriMitra = request('kategori_mitra', 'all');
+                $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
+                    ? $selectedKategoriMitra
+                    : 'all';
+            @endphp
 
-        <div class="section-top">
-            <div>
-                <div class="section-eyebrow">Data Kerjasama</div>
-                <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
-                <p class="section-sub">Daftar kegiatan kerjasama yang telah berjalan</p>
-            </div>
+            <div class="section-top">
+                <div>
+                    <div class="section-eyebrow">Data Kerjasama</div>
+                    <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
+                    <p class="section-sub">Daftar kegiatan kerjasama yang telah berjalan</p>
+                </div>
 
-            <form action="/" method="GET" class="filter-bar" data-landing-filter>
+                <form action="/" method="GET" class="filter-bar" data-landing-filter>
                 <div class="filter-toggle" aria-label="Filter kategori kerjasama">
                     <label class="filter-option {{ $selectedKategoriMitra === 'all' ? 'is-active' : '' }}">
                         <input type="radio" name="kategori_mitra" value="all"
@@ -322,8 +322,8 @@
                         placeholder="Cari data kerjasama Anda…" value="{{ request('search') }}">
                 </div>
                 <button type="submit" class="btn-search">Cari</button>
-            </form>
-        </div>
+                </form>
+            </div>
 
         @if (isset($kerjasama) && $kerjasama->count() > 0)
             <div class="cards-grid">
@@ -424,7 +424,8 @@
                     yang dipilih.</p>
             </div>
         @endif
-    </main>
+        </main>
+    </section>
 
     <!-- ═══ MODAL DETAIL ════════════════════════════════════════ -->
     <div class="modal-overlay" id="detailModal" onclick="closeModal(event)">

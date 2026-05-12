@@ -36,6 +36,9 @@ document.addEventListener('keydown', function (e) {
         return;
     }
 
+    let pendingNavTarget = null;
+    let navScrollTimer = null;
+
     function setActiveNav(id) {
         navLinks.forEach(function (link) {
             const isActive = link.getAttribute('href') === '#' + id;
@@ -49,14 +52,67 @@ document.addEventListener('keydown', function (e) {
         });
     }
 
-    navLinks.forEach(function (link) {
-        link.addEventListener('click', function () {
-            const targetId = link.getAttribute('href').slice(1);
+    function getNavHeight() {
+        const nav = document.querySelector('.top-nav');
+        return nav ? Math.ceil(nav.getBoundingClientRect().height) : 0;
+    }
+
+    function scrollToSection(section) {
+        const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
+        const targetTop = Math.max(sectionTop - getNavHeight(), 0);
+
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth',
+        });
+    }
+
+    function lockActiveNav(targetId) {
+        pendingNavTarget = targetId;
+        window.clearTimeout(navScrollTimer);
+
+        navScrollTimer = window.setTimeout(function () {
             setActiveNav(targetId);
+            pendingNavTarget = null;
+        }, 180);
+    }
+
+    navLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            const targetId = link.getAttribute('href').slice(1);
+            const targetSection = document.getElementById(targetId);
+
+            if (!targetSection) {
+                return;
+            }
+
+            event.preventDefault();
+            setActiveNav(targetId);
+            lockActiveNav(targetId);
+            scrollToSection(targetSection);
+            window.history.pushState(null, '', '#' + targetId);
         });
     });
 
+    window.addEventListener('scrollend', function () {
+        if (pendingNavTarget) {
+            setActiveNav(pendingNavTarget);
+            pendingNavTarget = null;
+            window.clearTimeout(navScrollTimer);
+        }
+    });
+
+    window.addEventListener('scroll', function () {
+        if (pendingNavTarget) {
+            lockActiveNav(pendingNavTarget);
+        }
+    }, { passive: true });
+
     const observer = new IntersectionObserver(function (entries) {
+        if (pendingNavTarget) {
+            return;
+        }
+
         const visibleEntry = entries
             .filter(function (entry) {
                 return entry.isIntersecting;
@@ -151,6 +207,10 @@ document.addEventListener('keydown', function (e) {
 
     let activeController = null;
 
+    function getMainContent(section = mainSection) {
+        return section.querySelector('.main-wrap') || section;
+    }
+
     function syncFilterState(form) {
         if (!form) {
             return;
@@ -198,18 +258,20 @@ document.addEventListener('keydown', function (e) {
     }
 
     function replaceKerjasamaResults(nextMainSection) {
+        const currentContent = getMainContent();
+        const nextContent = getMainContent(nextMainSection);
         const resultClasses = ['cards-grid', 'pagination-wrap', 'empty-state'];
-        const currentResults = Array.from(mainSection.children).filter(function (element) {
+        const currentResults = Array.from(currentContent.children).filter(function (element) {
             return resultClasses.some(function (className) {
                 return element.classList.contains(className);
             });
         });
-        const nextResults = Array.from(nextMainSection.children).filter(function (element) {
+        const nextResults = Array.from(nextContent.children).filter(function (element) {
             return resultClasses.some(function (className) {
                 return element.classList.contains(className);
             });
         });
-        let insertAfter = mainSection.querySelector('.section-top');
+        let insertAfter = currentContent.querySelector('.section-top');
 
         currentResults.forEach(function (element) {
             element.remove();
