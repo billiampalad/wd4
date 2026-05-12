@@ -4,7 +4,7 @@
     background:
         radial-gradient(circle at top left, rgba(159, 214, 225, 0.22), transparent 28%),
         linear-gradient(135deg, #f6fbff 0%, #eef5fb 48%, #f5f8f6 100%);
-    scroll-margin-top: 62px;
+    scroll-margin-top: 86px;
 }
 
 .stats-strip::before {
@@ -391,6 +391,7 @@ html[data-theme='dark'] .stat-split-item {
 @media (max-width: 900px) {
     .stats-strip {
         padding: 3.5rem 1.5rem;
+        scroll-margin-top: 128px;
     }
 
     .stats-heading h2 {
@@ -405,6 +406,7 @@ html[data-theme='dark'] .stat-split-item {
 @media (max-width: 640px) {
     .stats-strip {
         padding: 3rem 1.25rem;
+        scroll-margin-top: 140px;
     }
 
     .stats-heading h2 {

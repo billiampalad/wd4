@@ -34,12 +34,17 @@
     <!-- ═══ NAV ═══════════════════════════════════════════════ -->
     <nav class="top-nav">
         <div class="nav-inner">
-            <a href="/" class="logo">
+            <a href="#home" class="logo">
                 <div class="logo-mark">
                     <img src="{{ asset('img/logo.png') }}" alt="Handshake" width="30" height="30">
                 </div>
                 <span class="logo-text">POLIMDO <span>&</span> DUDIKA</span>
             </a>
+            <div class="nav-menu" aria-label="Navigasi utama">
+                <a href="#home" class="nav-link is-active" data-nav-link>Home</a>
+                <a href="#ringkasan" class="nav-link" data-nav-link>Ringkasan</a>
+                <a href="#data-kerjasama" class="nav-link" data-nav-link>Data Kerjasama</a>
+            </div>
             <div class="nav-right">
                 <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
                     aria-label="Ubah ke mode gelap">
@@ -69,13 +74,13 @@
     </nav>
 
     <!-- ═══ HERO ════════════════════════════════════════════════ -->
-    <header class="hero">
+    <header class="hero" id="home">
         <div class="hero-grid-bg"></div>
         <div class="hero-blob"></div>
         <div class="hero-inner">
             <div class="hero-text">
                 <div class="hero-eyebrow">Platform Resmi Kerjasama Kampus</div>
-                <h1>Sistem Informasi<br><em>Kerjasama Politeknik Negeri Manado</em></h1>
+                <h1>Sistem Informasi Kerjasama<br><em>Politeknik Negeri Manado</em></h1>
                 <p class="hero-desc">
                     Sistem informasi untuk memantau dan menelusuri seluruh aktivitas kerjasama antara Kampus dengan Dunia
                     Usaha, Dunia Industri, dan Institusi mitra lainnya.
@@ -148,12 +153,12 @@
     </header>
 
     <!-- ═══ STATS CARD ═══════════════════════════════════════ -->
-    <section class="stats-strip" aria-labelledby="stats-overview-title">
+    <section class="stats-strip" id="ringkasan" aria-labelledby="stats-overview-title">
         <div class="stats-inner">
             <div class="stats-heading">
                 <span class="stats-kicker">Ikhtisar Publik</span>
                 <h2 id="stats-overview-title">Ringkasan data kerjasama</h2>
-                <p>Berikut adalah tampilan ringkasan </p>
+                <p>Statistik terkini dari seluruh kegiatan kerja sama institusi kami. Berikut informasi ringkas mengenai jumlah kerjasama, jumlah mitra yang tergabung, lalu status pelaksanaan program, hingga persebaran skala kemitraan kami.</p>
             </div>
 
             <div class="stats-card-grid">
@@ -169,7 +174,7 @@
                     <div class="stat-card-meta">Total Data</div>
                     <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
                     <div class="stat-lbl">Kerjasama Tercatat</div>
-                    <p class="stat-desc">Seluruh kegiatan yang sudah masuk dalam sistem informasi publik.</p>
+                    <p class="stat-desc">Seluruh kegiatan yang sudah masuk dalam sistem informasi</p>
                 </article>
 
                 <article class="stat-card">
@@ -198,8 +203,8 @@
                     </div>
                     <div class="stat-card-meta">Status Berjalan</div>
                     <div class="stat-num">{{ $stats['total_aktif'] ?? 0 }}</div>
-                    <div class="stat-lbl">Aktif / Selesai</div>
-                    <p class="stat-desc">Kerjasama yang sedang berjalan maupun yang telah dituntaskan.</p>
+                    <div class="stat-lbl">Aktif</div>
+                    <p class="stat-desc">Kerjasama yang sedang berjalan.</p>
                 </article>
 
                 <article class="stat-card stat-card-breakdown">
@@ -285,10 +290,7 @@
             <div>
                 <div class="section-eyebrow">Data Kerjasama</div>
                 <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
-                @if ($selectedKategoriMitra !== 'all')
-                    <p class="section-filter-note">Filter aktif: {{ ucfirst($selectedKategoriMitra) }}</p>
-                @endif
-                <p class="section-sub">Daftar kegiatan kerjasama yang sedang dan telah berjalan · Tampilan publik</p>
+                <p class="section-sub">Daftar kegiatan kerjasama yang telah berjalan</p>
             </div>
 
             <form action="/" method="GET" class="filter-bar" data-landing-filter>
