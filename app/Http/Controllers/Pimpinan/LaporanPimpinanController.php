@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Pimpinan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cooperation;
+use App\Models\Jurusan;
+use App\Models\Pusat;
+use App\Models\Upa;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -13,6 +16,9 @@ class LaporanPimpinanController extends Controller
     {
         return view('auth.pimpinan', [
             'view' => 'laporan',
+            'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
+            'upas' => Upa::orderBy('nama_upa')->get(),
+            'pusats' => Pusat::orderBy('nama_pusat')->get(),
         ]);
     }
 
@@ -22,7 +28,7 @@ class LaporanPimpinanController extends Controller
      */
     private function getFilteredData(Request $request)
     {
-        $query = Cooperation::with(['mitra', 'mitra.klasifikasi'])
+        $query = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusan', 'upa', 'pusat'])
             ->latest();
 
         // Filter tanggal mulai (berdasarkan start_date)
@@ -36,12 +42,24 @@ class LaporanPimpinanController extends Controller
         }
 
         // Filter tipe pelaksana (jurusan / upa / pusat)
-        if ($request->filled('tipe_pelaksana')) {
+        if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
             $query->where('tipe_pelaksana', $request->tipe_pelaksana);
         }
 
+        if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {
+            $query->where('jurusan_id', $request->jurusan_id);
+        }
+
+        if ($request->filled('upa_id') && $request->upa_id !== 'all') {
+            $query->where('upa_id', $request->upa_id);
+        }
+
+        if ($request->filled('pusat_id') && $request->pusat_id !== 'all') {
+            $query->where('pusat_id', $request->pusat_id);
+        }
+
         // Filter status (aktif / proses / kadarluarsa / dst)
-        if ($request->filled('status')) {
+        if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
@@ -71,6 +89,15 @@ class LaporanPimpinanController extends Controller
                 'mitra'          => $item->mitra ? [
                     'nama_mitra' => $item->mitra->nama_mitra,
                     'kategori'   => $item->mitra->kategori,
+                ] : null,
+                'jurusan'        => $item->jurusan ? [
+                    'nama_jurusan' => $item->jurusan->nama_jurusan,
+                ] : null,
+                'upa'            => $item->upa ? [
+                    'nama_upa' => $item->upa->nama_upa,
+                ] : null,
+                'pusat'          => $item->pusat ? [
+                    'nama_pusat' => $item->pusat->nama_pusat,
                 ] : null,
             ];
         });

@@ -9,7 +9,10 @@ use App\Models\Profile;
 use App\Models\Cooperation;
 use App\Models\Evaluasi;
 use App\Models\JenisKerjasama;
+use App\Models\Jurusan;
 use App\Models\Klasifikasi;
+use App\Models\Pusat;
+use App\Models\Upa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -397,7 +400,11 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        return view('auth.unit');
+        return view('auth.unit', [
+            'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
+            'upas' => Upa::orderBy('nama_upa')->get(),
+            'pusats' => Pusat::orderBy('nama_pusat')->get(),
+        ]);
     }
 
     public function laporanPreview(Request $request)
@@ -464,6 +471,15 @@ class UnitPageController extends Controller
                 'pusat'   => $query->whereNotNull('pusat_id'),
                 default   => null,
             };
+        }
+        if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {
+            $query->where('jurusan_id', $request->jurusan_id);
+        }
+        if ($request->filled('upa_id') && $request->upa_id !== 'all') {
+            $query->where('upa_id', $request->upa_id);
+        }
+        if ($request->filled('pusat_id') && $request->pusat_id !== 'all') {
+            $query->where('pusat_id', $request->pusat_id);
         }
         // Filter status cocok dengan nilai ENUM DB: aktif | proses | dalam perpanjangan | kadarluarsa | tidak aktif
         if ($request->filled('status') && $request->status !== 'all') {
