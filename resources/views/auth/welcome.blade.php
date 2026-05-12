@@ -34,6 +34,15 @@
     <!-- ═══ NAV ═══════════════════════════════════════════════ -->
     <nav class="top-nav">
         <div class="nav-inner">
+            <button type="button" class="mobile-menu-toggle" data-mobile-menu-toggle aria-controls="mobileSidebar"
+                aria-expanded="false" aria-label="Buka menu navigasi">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.4">
+                    <path d="M4 7h16" />
+                    <path d="M4 12h16" />
+                    <path d="M4 17h16" />
+                </svg>
+            </button>
             <a href="#home" class="logo">
                 <div class="logo-mark">
                     <img src="{{ asset('img/logo.png') }}" alt="Handshake" width="30" height="30">
@@ -72,6 +81,63 @@
             </div>
         </div>
     </nav>
+
+    <aside class="mobile-sidebar" id="mobileSidebar" aria-label="Menu navigasi mobile" aria-hidden="true">
+        <div class="mobile-sidebar-head">
+            <a href="#home" class="mobile-sidebar-brand" data-mobile-menu-close>
+                <span class="logo-mark">
+                    <img src="{{ asset('img/logo.png') }}" alt="Handshake" width="30" height="30">
+                </span>
+                <span class="logo-text">POLIMDO <span>&</span> DUDIKA</span>
+            </a>
+            <button type="button" class="mobile-sidebar-close" data-mobile-menu-close aria-label="Tutup menu navigasi">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.6">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-sidebar-section">Navigasi</div>
+        <div class="mobile-sidebar-menu">
+            <a href="#home" class="mobile-sidebar-link is-active" data-nav-link>
+                <span class="mobile-sidebar-icon" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="m3 10.5 9-7 9 7" />
+                        <path d="M5 10v10h14V10" />
+                    </svg>
+                </span>
+                <span>Home</span>
+            </a>
+            <a href="#ringkasan" class="mobile-sidebar-link" data-nav-link>
+                <span class="mobile-sidebar-icon" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M4 19V5" />
+                        <path d="M8 19V9" />
+                        <path d="M12 19V7" />
+                        <path d="M16 19v-5" />
+                        <path d="M20 19V3" />
+                    </svg>
+                </span>
+                <span>Ringkasan</span>
+            </a>
+            <a href="#data-kerjasama" class="mobile-sidebar-link" data-nav-link>
+                <span class="mobile-sidebar-icon" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M4 7h16" />
+                        <path d="M4 12h16" />
+                        <path d="M4 17h10" />
+                    </svg>
+                </span>
+                <span>Data Kerjasama</span>
+            </a>
+        </div>
+        <a href="{{ route('login') }}" class="mobile-sidebar-login">Login Sistem</a>
+    </aside>
+    <div class="mobile-sidebar-overlay" data-mobile-menu-overlay></div>
 
     <!-- ═══ HERO ════════════════════════════════════════════════ -->
     <header class="hero" id="home">
