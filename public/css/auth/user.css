@@ -436,7 +436,8 @@ body.sidebar-collapsed .menu-item span {
 /* Submenu Flyout saat Collapsed */
 body.sidebar-collapsed #dataMasterParent,
 body.sidebar-collapsed #kerjasamaParent,
-body.sidebar-collapsed #analitikParent {
+body.sidebar-collapsed #analitikParent,
+body.sidebar-collapsed #referensiParent {
     position: relative;
 }
 
@@ -460,7 +461,8 @@ body.sidebar-collapsed .submenu {
 
 body.sidebar-collapsed #dataMasterParent:hover .submenu,
 body.sidebar-collapsed #kerjasamaParent:hover .submenu,
-body.sidebar-collapsed #analitikParent:hover .submenu {
+body.sidebar-collapsed #analitikParent:hover .submenu,
+body.sidebar-collapsed #referensiParent:hover .submenu {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
@@ -471,7 +473,8 @@ body.sidebar-collapsed #analitikParent:hover .submenu {
 /* Delay sedikit saat mouse leave agar tidak langsung hilang */
 body.sidebar-collapsed #dataMasterParent .submenu,
 body.sidebar-collapsed #kerjasamaParent .submenu,
-body.sidebar-collapsed #analitikParent .submenu {
+body.sidebar-collapsed #analitikParent .submenu,
+body.sidebar-collapsed #referensiParent .submenu {
     transition-delay: 0.1s;
 }
 
@@ -557,7 +560,8 @@ body.sidebar-collapsed .menu-item:hover span {
 /* Sembunyikan tooltip khusus untuk menu dropdown karena sudah ada flyout */
 body.sidebar-collapsed #dataMasterBtn:hover span.menu-text,
 body.sidebar-collapsed #kerjasamaBtn:hover span.menu-text,
-body.sidebar-collapsed #analitikBtn:hover span.menu-text {
+body.sidebar-collapsed #analitikBtn:hover span.menu-text,
+body.sidebar-collapsed #referensiBtn:hover span.menu-text {
     opacity: 0;
     visibility: hidden;
 }

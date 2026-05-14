@@ -200,11 +200,39 @@
                 <span>Evaluasi Kinerja</span>
             </a>
 
-            <a class="menu-item {{ request()->routeIs('unit.laporan') ? 'active' : '' }}"
-                href="{{ route('unit.laporan') }}">
-                <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
-                <span>Laporan Data</span>
-            </a>
+            @php
+                $isReferensiActive = request()->routeIs(
+                    'unit.referensi.*',
+                );
+            @endphp
+            <div id="referensiParent" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div id="referensiBtn" class="menu-item {{ $isReferensiActive ? 'active submenu-open' : '' }}"
+                    style="margin:0; cursor: pointer;">
+                    <div class="menu-icon"><i class="fas fa-book-open"></i></div>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Referensi</span>
+                    <i class="fas fa-chevron-down menu-chevron"></i>
+                </div>
+                <div class="submenu {{ $isReferensiActive ? 'open' : '' }}" id="referensiSub">
+                    <div class="submenu-inner">
+                        <a class="submenu-item {{ request()->routeIs('unit.referensi.bentuk-kegiatan') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Bentuk Kegiatan</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.referensi.status-kerjasama') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Status Kerjasama</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.referensi.kriteria-mitra') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Kriteria Mitra</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.referensi.sumber-dana') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Sumber Dana</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </aside>
 
         <!-- Sidebar Toggle (Floating on Border) -->

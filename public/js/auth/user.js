@@ -99,7 +99,8 @@ function initDashboard() {
     const submenus = [
         { btn: 'dataMasterBtn', sub: 'dataMasterSub' },
         { btn: 'kerjasamaBtn', sub: 'kerjasamaSub' },
-        { btn: 'analitikBtn', sub: 'analitikSub' }
+        { btn: 'analitikBtn', sub: 'analitikSub' },
+        { btn: 'referensiBtn', sub: 'referensiSub' }
     ];
 
     submenus.forEach(item => {
