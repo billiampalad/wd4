@@ -128,7 +128,7 @@
                     'unit.analitik.*',
                 );
             @endphp
-            <div id="analitikParent" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="analitikParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="analitikBtn" class="menu-item {{ $isAnalitikActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
@@ -169,7 +169,7 @@
                     'unit.form.*',
                 );
             @endphp
-            <div id="kerjasamaParent" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="kerjasamaParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-folder"></i></div>
@@ -205,7 +205,7 @@
                     'unit.referensi.*',
                 );
             @endphp
-            <div id="referensiParent" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="referensiParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="referensiBtn" class="menu-item {{ $isReferensiActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-book-open"></i></div>
