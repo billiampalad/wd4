@@ -98,7 +98,8 @@ function initDashboard() {
     /* ─ Sidebar Submenus ─ */
     const submenus = [
         { btn: 'dataMasterBtn', sub: 'dataMasterSub' },
-        { btn: 'kerjasamaBtn', sub: 'kerjasamaSub' }
+        { btn: 'kerjasamaBtn', sub: 'kerjasamaSub' },
+        { btn: 'analitikBtn', sub: 'analitikSub' }
     ];
 
     submenus.forEach(item => {

@@ -124,6 +124,38 @@
             </a>
 
             @php
+                $isAnalitikActive = request()->routeIs(
+                    'unit.analitik.*',
+                );
+            @endphp
+            <div id="analitikParent" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div id="analitikBtn" class="menu-item {{ $isAnalitikActive ? 'active submenu-open' : '' }}"
+                    style="margin:0; cursor: pointer;">
+                    <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Analitik</span>
+                    <i class="fas fa-chevron-down menu-chevron"></i>
+                </div>
+                <div class="submenu {{ $isAnalitikActive ? 'open' : '' }}" id="analitikSub">
+                    <div class="submenu-inner">
+                        <a class="submenu-item {{ request()->routeIs('unit.analitik.status-kerjasama') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Status Kerjasama</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.analitik.klasifikasi-mitra') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Klarifikasi Mitra</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.analitik.geo-mitra') ? 'active' : '' }}"
+                            href="javascript:void(0)">
+                            <span class="submenu-dot"></span><span>Geo Mitra</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            @php
                 $isDataKerjasamaActive = request()->routeIs(
                     'unit.dkerjasama',
                     'unit.kerjasama.*',
