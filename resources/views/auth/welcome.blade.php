@@ -252,7 +252,7 @@
                             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
                     </div>
-                    <div class="stat-card-meta">Jaringan Mitra</div>
+                    <div class="stat-card-meta">Total Mitra</div>
                     <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
                     <div class="stat-lbl">Mitra Terdaftar</div>
                     <p class="stat-desc">Organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.</p>

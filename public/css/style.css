@@ -796,7 +796,7 @@ body.mobile-sidebar-open {
 
 .section-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
+    font-size: clamp(1.55rem, 1.25rem + 1.1vw, 2rem);
     color: var(--ink);
     line-height: 1.2;
 }
@@ -1721,6 +1721,16 @@ html[data-theme='dark'] .page-item span {
         font-size: 2.4rem;
     }
 
+    .section-title {
+        font-size: 1.7rem;
+        line-height: 1.18;
+    }
+
+    .section-sub {
+        font-size: 0.88rem;
+        line-height: 1.55;
+    }
+
     .hero-cta {
         align-items: stretch;
     }
@@ -1798,7 +1808,10 @@ html[data-theme='dark'] .page-item span {
     .theme-toggle {
         width: 40px;
         height: 40px;
-        padding: 0.3rem;
+        min-height: 40px;
+        padding: 0;
+        gap: 0;
+        justify-content: center;
     }
 
     .theme-toggle-text {
@@ -1831,6 +1844,19 @@ html[data-theme='dark'] .page-item span {
         align-items: flex-start;
     }
 
+    .section-eyebrow {
+        font-size: 0.72rem;
+    }
+
+    .section-title {
+        font-size: 1.45rem;
+        line-height: 1.16;
+    }
+
+    .section-sub {
+        font-size: 0.84rem;
+    }
+
     .filter-bar {
         width: 100%;
         justify-content: flex-start;
@@ -1861,9 +1887,12 @@ html[data-theme='dark'] .page-item span {
         width: 100%;
     }
 
+    .search-wrap {
+        flex: 1 0 100%;
+    }
+
     .search-input {
-        flex: 1;
-        width: auto;
+        width: 100%;
     }
 
     .cards-grid {
@@ -1895,6 +1924,14 @@ html[data-theme='dark'] .page-item span {
         line-height: 1.05;
     }
 
+    .section-title {
+        font-size: 1.34rem;
+    }
+
+    .section-sub {
+        font-size: 0.82rem;
+    }
+
     .btn-nav {
         min-height: 38px;
         padding-inline: 0.78rem;
@@ -1905,6 +1942,10 @@ html[data-theme='dark'] .page-item span {
     .theme-toggle-orb {
         width: 38px;
         height: 38px;
+    }
+
+    .theme-toggle {
+        min-height: 38px;
     }
 
     .hero {

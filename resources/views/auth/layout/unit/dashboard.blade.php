@@ -139,12 +139,10 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <span>Dashboard Unit Kerja</span>
+                <span>Dashboard</span>
             </div>
             <h2 class="ud-title">Operasional Kerjasama</h2>
             <p class="ud-subtitle">
-                {{ $unitName ?? auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}
-                <span style="color:#94a3b8;">/</span>
                 {{ now()->format('d M Y') }}
             </p>
         </div>
