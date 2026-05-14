@@ -674,12 +674,29 @@ function initLaporan() {
     const btnExportExcel = document.getElementById('btnExportExcel');
 
     if (!filterForm || !previewBody) return;
+    if (!filterForm.dataset.showUrlTemplate) return;
+    if (filterForm.dataset.filterBound === 'true') return;
+    filterForm.dataset.filterBound = 'true';
 
     const previewUrl = filterForm.getAttribute('data-preview-url');
     const pdfUrl = filterForm.getAttribute('data-pdf-url');
     const excelUrl = filterForm.getAttribute('data-excel-url');
+    const countLabel = document.getElementById('dkerjasamaCount');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    // Lewati nilai kosong dan sentinel 'all' agar parameter bersih di backend
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function routeFromTemplate(template, id) {
+        return String(template || '').replace('__ID__', encodeURIComponent(id));
+    }
+
     function getFilterParams() {
         const formData = new FormData(filterForm);
         const params = new URLSearchParams();
@@ -689,10 +706,163 @@ function initLaporan() {
         return params.toString();
     }
 
-    if (btnTampilkan) {
-        btnTampilkan.addEventListener('click', function () {
-            // Cegah double-binding jika sudah ada handler dari blade inline script
-            if (btnTampilkan.dataset.laporanBound) return;
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const str = String(dateStr).split('T')[0];
+        const d = new Date(str);
+        if (isNaN(d.getTime())) return escapeHtml(dateStr);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+        return String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function setCount(total) {
+        if (countLabel) countLabel.textContent = total + ' data ditemukan';
+    }
+
+    function showLoading() {
+        previewBody.innerHTML =
+            '<tr><td colspan="7" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
+    }
+
+    function showEmpty() {
+        setCount(0);
+        previewBody.innerHTML =
+            '<tr data-empty><td colspan="7" class="um-empty"><div class="um-empty-state dk-empty-state"><div class="um-empty-icon dk-empty-icon"><i class="fas fa-folder-open"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
+    }
+
+    function showError() {
+        previewBody.innerHTML =
+            '<tr><td colspan="7" class="um-empty"><div class="um-empty-state dk-empty-state"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
+    }
+
+    function buildRow(item, idx) {
+        const title = escapeHtml(item.title || '-');
+        const docNumber = escapeHtml(item.doc_number || '-');
+        const jenis = escapeHtml(item.jenis || '-');
+        const mitraName = escapeHtml((item.mitra && item.mitra.nama_mitra) ? item.mitra.nama_mitra : '-');
+
+        let pelaksanaIcon = 'fa-building';
+        let pelaksanaClass = 'dk-entity-indigo';
+        let pelaksanaName = '-';
+        if (item.tipe_pelaksana === 'jurusan') {
+            pelaksanaIcon = 'fa-microchip';
+            pelaksanaName = (item.jurusan && item.jurusan.nama_jurusan) ? item.jurusan.nama_jurusan : '-';
+        } else if (item.tipe_pelaksana === 'upa') {
+            pelaksanaIcon = 'fa-building-columns';
+            pelaksanaClass = 'dk-entity-cyan';
+            pelaksanaName = (item.upa && item.upa.nama_upa) ? item.upa.nama_upa : '-';
+        } else if (item.tipe_pelaksana === 'pusat') {
+            pelaksanaIcon = 'fa-landmark';
+            pelaksanaClass = 'dk-entity-violet';
+            pelaksanaName = (item.pusat && item.pusat.nama_pusat) ? item.pusat.nama_pusat : '-';
+        }
+
+        const status = (item.status || '').toLowerCase();
+        const isExpired = ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'].indexOf(status) !== -1;
+        const isExtended = status.indexOf('perpanjangan') !== -1;
+        let statusClass = 'dk-status-neutral';
+        let statusIcon = 'fa-circle-info';
+        let statusLabel = 'Belum Diatur';
+
+        if (status === 'aktif') {
+            statusClass = 'dk-status-active';
+            statusIcon = 'fa-circle-check';
+            statusLabel = 'Aktif';
+        } else if (status === 'proses' || status === 'menunggu_validasi') {
+            statusClass = 'dk-status-info';
+            statusIcon = 'fa-spinner fa-spin';
+            statusLabel = status === 'proses' ? 'Proses' : 'Menunggu Validasi';
+        } else if (isExtended) {
+            statusClass = 'dk-status-warning';
+            statusIcon = 'fa-clock';
+            statusLabel = 'Perpanjangan';
+        } else if (isExpired) {
+            statusClass = 'dk-status-danger';
+            statusIcon = 'fa-circle-xmark';
+            statusLabel = 'Kadarluarsa';
+        } else if (status === 'tidak aktif') {
+            statusClass = 'dk-status-muted';
+            statusIcon = 'fa-circle-minus';
+            statusLabel = 'Tidak Aktif';
+        } else if (status !== '') {
+            statusLabel = status.replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+        }
+
+        const showUrl = routeFromTemplate(filterForm.dataset.showUrlTemplate, item.id);
+        const editUrl = routeFromTemplate(filterForm.dataset.editUrlTemplate, item.id);
+        const deleteUrl = routeFromTemplate(filterForm.dataset.deleteUrlTemplate, item.id);
+
+        const tr = document.createElement('tr');
+        tr.className = 'um-row dk-row';
+        tr.innerHTML =
+            '<td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;"><span class="um-num dk-num">' + String(idx + 1).padStart(2, '0') + '</span></td>' +
+            '<td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;"><div class="dk-doc-cell" style="white-space: normal; word-break: break-word;"><span class="dk-doc-number">#' + docNumber + '</span><span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">' + title + '</span><span class="dk-doc-kind">' + jenis + '</span></div></td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div class="dk-entity" style="align-items: flex-start;"><span class="dk-entity-icon ' + pelaksanaClass + '" style="flex-shrink: 0;"><i class="fas ' + pelaksanaIcon + '"></i></span><span class="dk-entity-text" style="padding-top: 4px;">' + escapeHtml(pelaksanaName) + '</span></div></td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div class="dk-entity" style="align-items: flex-start;"><span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;"><i class="fas fa-building"></i></span><span class="dk-entity-text" style="padding-top: 4px;">' + mitraName + '</span></div></td>' +
+            '<td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;"><div class="dk-date-range-compact"><span class="date-val">' + formatDate(item.start_date) + '</span><span class="date-sep">s/d</span><span class="date-val">' + formatDate(item.end_date) + '</span></div></td>' +
+            '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><span class="dk-status ' + statusClass + '"><i class="fas ' + statusIcon + '"></i> ' + statusLabel + '</span></td>' +
+            '<td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;"><div class="um-actions dk-actions-compact"><a href="' + showUrl + '" class="dk-action-btn view" title="Detail"><i class="fas fa-eye"></i></a><a href="' + editUrl + '" class="dk-action-btn edit" title="Edit"><i class="fas fa-pen-to-square"></i></a><form action="' + deleteUrl + '" method="POST" class="dk-delete-form" style="display: inline;" onsubmit="return confirm(&quot;Yakin ingin menghapus data kerjasama ini?&quot;)"><input type="hidden" name="_token" value="' + escapeHtml(csrfToken) + '"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="dk-action-btn delete" title="Hapus"><i class="fas fa-trash-can"></i></button></form></div></td>';
+        return tr;
+    }
+
+    function loadData() {
+        showLoading();
+        btnTampilkan.disabled = true;
+        btnTampilkan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+
+        const query = getFilterParams();
+        const url = previewUrl + (query ? '?' + query : '');
+
+        fetch(url, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json();
+            })
+            .then(function(data) {
+                if (!data || data.length === 0) {
+                    showEmpty();
+                    return;
+                }
+
+                setCount(data.length);
+                const fragment = document.createDocumentFragment();
+                data.forEach(function(item, idx) {
+                    fragment.appendChild(buildRow(item, idx));
+                });
+                previewBody.innerHTML = '';
+                previewBody.appendChild(fragment);
+            })
+            .catch(function(err) {
+                console.error(err);
+                showError();
+            })
+            .finally(function() {
+                btnTampilkan.disabled = false;
+                btnTampilkan.innerHTML = '<i class="fas fa-search"></i> Tampilkan';
+            });
+    }
+
+    filterForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        loadData();
+    });
+
+    if (btnCetakPdf) {
+        btnCetakPdf.addEventListener('click', function() {
+            const query = getFilterParams();
+            window.open(pdfUrl + (query ? '?' + query : ''), '_blank');
+        });
+    }
+
+    if (btnExportExcel) {
+        btnExportExcel.addEventListener('click', function() {
+            const query = getFilterParams();
+            window.open(excelUrl + (query ? '?' + query : ''), '_blank');
         });
     }
 }

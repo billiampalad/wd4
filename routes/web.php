@@ -219,6 +219,9 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');
+    Route::get('/unit/data-kerjasama/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaPreview'])->name('unit.dkerjasama.preview');
+    Route::get('/unit/data-kerjasama/pdf', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaPdf'])->name('unit.dkerjasama.pdf');
+    Route::get('/unit/data-kerjasama/excel', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaExcel'])->name('unit.dkerjasama.excel');
 
     // ─── Mitra Unit CRUD ─────────────────────────────────
     Route::get('/unit/mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'mitra'])->name('unit.mitra');
@@ -273,9 +276,6 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // ─── Laporan Data ────────────────────────────────────
     Route::get('/unit/laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'laporan'])->name('unit.laporan');
-    Route::get('/unit/laporan/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPreview'])->name('unit.laporan.preview');
-    Route::get('/unit/laporan/pdf', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPdf'])->name('unit.laporan.pdf');
-    Route::get('/unit/laporan/excel', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanExcel'])->name('unit.laporan.excel');
 
     // ─── Form Laporan (PDF/Word Upload) ───────────────────
     Route::get('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporan'])->name('unit.form');

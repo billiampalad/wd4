@@ -44,15 +44,33 @@ class UnitPageController extends Controller
     }
 
     // ─── Data Kerjasama ──────────────────────────────────────────
-    public function dkerjasama()
+    public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();
 
-        $kerjasamaUnit = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $kerjasamaUnit = $this->buildLaporanQuery($request)->get();
 
-        return view('auth.unit', compact('kerjasamaUnit'));
+        return view('auth.unit', [
+            'kerjasamaUnit' => $kerjasamaUnit,
+            'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
+            'upas' => Upa::orderBy('nama_upa')->get(),
+            'pusats' => Pusat::orderBy('nama_pusat')->get(),
+        ]);
+    }
+
+    public function dkerjasamaPreview(Request $request)
+    {
+        return $this->laporanPreview($request);
+    }
+
+    public function dkerjasamaPdf(Request $request)
+    {
+        return $this->laporanPdf($request);
+    }
+
+    public function dkerjasamaExcel(Request $request)
+    {
+        return $this->laporanExcel($request);
     }
 
     // ─── Mitra Unit ──────────────────────────────────────────────

@@ -3246,6 +3246,10 @@ main {
     transition: box-shadow 0.3s ease;
 }
 
+.dk-page>.report-filter-container {
+    margin-bottom: 0;
+}
+
 [data-theme="dark"] .report-filter-container {
     background: #181c27;
     border-color: #2a2f45;
