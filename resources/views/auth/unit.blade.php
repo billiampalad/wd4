@@ -153,7 +153,11 @@
                 </div>
             </div>
 
-            
+            <a class="menu-item {{ request()->routeIs('unit.institusi') ? 'active' : '' }}"
+                href="{{ route('unit.institusi') }}">
+                <div class="menu-icon"><i class="fas fa-university"></i></div>
+                <span>Institusi</span>
+            </a>
 
             @php
                 $isDataKerjasamaActive = request()->routeIs(
@@ -229,6 +233,11 @@
                 @include('auth.layout.unit.form.index')
             @elseif(request()->routeIs('unit.mitra'))
                 @include('auth.layout.unit.mitra.index')
+
+            {{-- menu institusi --}}
+            @elseif(request()->routeIs('unit.institusi'))
+                @include('auth.layout.unit.institusi')
+
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')
             @elseif(request()->routeIs('unit.evaluasi'))
