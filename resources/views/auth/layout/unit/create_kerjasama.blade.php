@@ -110,12 +110,12 @@
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Data Kerjasama</span>
+                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current">Beranda</span>
                 </a>
                 <span class="sep">/</span>
                 <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Repositori</span>
+                    <span class="current">Daftar Kerjasama</span>
                 </a>
                 <span class="sep">/</span>
                 <span class="current">Tambah Data</span>

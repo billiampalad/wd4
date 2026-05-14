@@ -120,7 +120,7 @@
             <a class="menu-item {{ request()->routeIs('unit.dashboard') ? 'active' : '' }}"
                 href="{{ route('unit.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-home"></i></div>
-                <span>Dashboard</span>
+                <span>Beranda</span>
             </a>
 
             @php

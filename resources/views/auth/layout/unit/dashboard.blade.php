@@ -139,7 +139,7 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <span>Dashboard</span>
+                <span>Beranda</span>
             </div>
             <h2 class="ud-title">Operasional Kerjasama</h2>
             <p class="ud-subtitle">

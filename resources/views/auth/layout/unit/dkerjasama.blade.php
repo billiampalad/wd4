@@ -23,12 +23,12 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current" id="breadcrumbCurrent">Data Kerjasama</span>
+                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current" id="breadcrumbCurrent">Beranda</span>
                 </a>
                 <span class="sep">/</span>
                 <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Repositori</span>
+                    <span class="current">Daftar Kerjasama</span>
                 </a>
             </div>
 
