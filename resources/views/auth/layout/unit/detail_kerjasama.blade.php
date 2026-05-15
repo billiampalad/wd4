@@ -428,7 +428,7 @@
                             <span class="dk-title-icon"><i class="fas fa-list-check"></i></span>
                             <span>
                                 <strong>Ruang Lingkup Kegiatan</strong>
-                                <small>Detail implementasi kerjasama</small>
+                                <small>Detail implementasi kerjasama yang terkait</small>
                             </span>
                         </div>
                     </div>
