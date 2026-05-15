@@ -1,3 +1,11 @@
+@php
+    $pksNumberInputs = collect((array) old('pks_numbers', $kegiatan->pksNumbers->pluck('number')->all()))
+        ->map(fn ($number) => trim((string) $number))
+        ->values()
+        ->all();
+    $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
+@endphp
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
     <section class="dk-hero">
@@ -440,15 +448,30 @@
                                     </div>
 
                                     {{-- Nomor PKS --}}
-                                    <div style="margin-top: 12px;">
-                                        <label class="mc-label">Nomor PKS</label>
-                                        <div class="mc-input-wrap">
-                                            <i class="fas fa-file-contract mc-icon-left"></i>
-                                            <input type="text" name="pks_number"
-                                                value="{{ old('pks_number', $kegiatan->pks_number ?? '') }}"
-                                                placeholder="Masukkan nomor PKS..." class="mc-input"
-                                                style="height: 48px; margin-top: 5px" />
+                                    <div style="margin-top: 12px;" x-data="pksNumberFields(@js($pksNumberInputs))">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                            <label class="mc-label" style="margin: 0;">Nomor PKS</label>
+                                            <button type="button" class="rfc-btn rfc-btn-primary" @click="add()"
+                                                style="padding: 8px 12px; font-size: 12px;">
+                                                <i class="fas fa-plus"></i> Tambah PKS
+                                            </button>
                                         </div>
+                                        <template x-for="(number, index) in numbers" :key="index">
+                                            <div class="mc-input-wrap" style="margin-top: 8px;">
+                                                <i class="fas fa-file-contract mc-icon-left"></i>
+                                                <input type="text" name="pks_numbers[]" x-model="numbers[index]"
+                                                    placeholder="Masukkan nomor PKS..." class="mc-input @if($errors->has('pks_numbers.*')) is-invalid @endif"
+                                                    style="height: 48px; padding-right: 48px;" />
+                                                <button type="button" @click="remove(index)" x-show="numbers.length > 1"
+                                                    title="Hapus nomor PKS"
+                                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 0; border-radius: 8px; background: rgba(239,68,68,.1); color: #ef4444; cursor: pointer;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </template>
+                                        @if($errors->has('pks_numbers.*'))
+                                        <span class="text-danger" style="font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $errors->first('pks_numbers.*') }}</span>
+                                        @endif
                                     </div>
 
                                     @error('jenis')
@@ -1683,6 +1706,20 @@
 </main>
 
 <script>
+    function pksNumberFields(initialNumbers = ['']) {
+        return {
+            numbers: initialNumbers.length ? initialNumbers : [''],
+            add() {
+                this.numbers.push('');
+            },
+            remove(index) {
+                if (this.numbers.length > 1) {
+                    this.numbers.splice(index, 1);
+                }
+            }
+        };
+    }
+
     function mitraManager(initial = null) {
         return {
             mitras: initial || [{

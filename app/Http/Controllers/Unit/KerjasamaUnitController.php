@@ -60,6 +60,7 @@ class KerjasamaUnitController extends Controller
                 'upas',
                 'pusats',
                 'details',
+                'pksNumbers',
             ])->findOrFail((int) $request->query('perpanjangan_dari'));
 
             if (!$this->canRequestExtension($perpanjanganAsal)) {
@@ -76,11 +77,16 @@ class KerjasamaUnitController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+        ]);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
             'doc_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'doc_number')],
-            'pks_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'pks_number')],
+            'pks_numbers' => ['nullable', 'array'],
+            'pks_numbers.*' => ['nullable', 'string', 'max:255', 'distinct', Rule::unique('pks_numbers', 'number')],
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
@@ -99,7 +105,8 @@ class KerjasamaUnitController extends Controller
             'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
-            'pks_number.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
+            'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
+            'pks_numbers.*.distinct' => 'Nomor PKS tidak boleh duplikat dalam satu dokumen.',
         ]);
 
         $perpanjanganDariId = $request->filled('perpanjangan_dari_id') ? (int) $request->perpanjangan_dari_id : null;
@@ -181,7 +188,6 @@ class KerjasamaUnitController extends Controller
                 'title' => $request->title,
                 'jenis' => $request->jenis,
                 'doc_number' => $request->doc_number,
-                'pks_number' => $request->pks_number,
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
@@ -200,6 +206,8 @@ class KerjasamaUnitController extends Controller
                 'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
                 'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
+
+            $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
 
             // 4. Handle Pivot Tables
             if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
@@ -264,6 +272,7 @@ class KerjasamaUnitController extends Controller
             'details.sasaran',
             'evaluasis.penilai',
             'laporanFiles',
+            'pksNumbers',
         ])->findOrFail($id);
 
         return view('auth.unit', compact('kegiatan'));
@@ -283,7 +292,8 @@ class KerjasamaUnitController extends Controller
             'upas',
             'pusats',
             'prodis',
-            'details'
+            'details',
+            'pksNumbers',
         ])->findOrFail($id);
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jurusans = Jurusan::orderBy('nama_jurusan')->get();
@@ -302,11 +312,22 @@ class KerjasamaUnitController extends Controller
     {
         $cooperation = Cooperation::findOrFail($id);
 
+        $request->merge([
+            'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+        ]);
+
         $request->validate([
             'title' => 'required|string|max:255',
             'jenis' => 'required|string|in:MoU (Memorandum of Understanding),MoA (Memorandum of Agreement),IA (Implementation Agreement)',
             'doc_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'doc_number')->ignore($cooperation->id)],
-            'pks_number' => ['nullable', 'string', 'max:255', Rule::unique('cooperations', 'pks_number')->ignore($cooperation->id)],
+            'pks_numbers' => ['nullable', 'array'],
+            'pks_numbers.*' => [
+                'nullable',
+                'string',
+                'max:255',
+                'distinct',
+                Rule::unique('pks_numbers', 'number')->where(fn ($query) => $query->where('cooperation_id', '<>', $cooperation->id)),
+            ],
             'description' => 'nullable|string|max:2000',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
@@ -321,7 +342,8 @@ class KerjasamaUnitController extends Controller
             'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
-            'pks_number.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
+            'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
+            'pks_numbers.*.distinct' => 'Nomor PKS tidak boleh duplikat dalam satu dokumen.',
         ]);
 
         DB::beginTransaction();
@@ -412,7 +434,6 @@ class KerjasamaUnitController extends Controller
                 'title' => $request->title,
                 'jenis' => $request->jenis,
                 'doc_number' => $request->doc_number,
-                'pks_number' => $request->pks_number,
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
@@ -429,6 +450,8 @@ class KerjasamaUnitController extends Controller
                 'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
                 'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
+
+            $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
 
             // 4. Handle Pivot Tables (Jurusan, UPA, Pusat)
             // Reset dulu agar tidak dobel
@@ -601,5 +624,27 @@ class KerjasamaUnitController extends Controller
         return $cooperation->status_dokumen === 'Disahkan'
             && !$isInExtension
             && ($isExpiredStatus || $isExpiredDate || $isNearExpiry);
+    }
+
+    private function syncPksNumbers(Cooperation $cooperation, array $numbers): void
+    {
+        $cleanNumbers = $this->normalizedPksNumbers($numbers)->unique()->values();
+
+        $cooperation->pksNumbers()->delete();
+
+        $cleanNumbers->each(function (string $number, int $index) use ($cooperation) {
+            $cooperation->pksNumbers()->create([
+                'number' => $number,
+                'sort_order' => $index,
+            ]);
+        });
+    }
+
+    private function normalizedPksNumbers(array $numbers)
+    {
+        return collect($numbers)
+            ->map(fn ($number) => trim((string) $number))
+            ->filter()
+            ->values();
     }
 }

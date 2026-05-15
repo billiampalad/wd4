@@ -14,7 +14,6 @@ class Cooperation extends Model
     protected $fillable = [
         'jenis',
         'doc_number',
-        'pks_number',
         'title',
         'description',
         'start_date',
@@ -107,6 +106,11 @@ class Cooperation extends Model
         return $this->hasMany(LaporanFile::class, 'cooperation_id');
     }
 
+    public function pksNumbers()
+    {
+        return $this->hasMany(PksNumber::class, 'cooperation_id')->orderBy('sort_order')->orderBy('id');
+    }
+
     public function details()
     {
         return $this->hasMany(DetailKegiatan::class);
@@ -130,6 +134,15 @@ class Cooperation extends Model
     public function kesimpulans()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
+    public function getPksNumberAttribute($value)
+    {
+        if ($this->relationLoaded('pksNumbers')) {
+            return $this->pksNumbers->pluck('number')->filter()->implode(', ');
+        }
+
+        return $value ?: $this->pksNumbers()->pluck('number')->filter()->implode(', ');
     }
 
     // ─── Accessors ───────────────────────────────────────

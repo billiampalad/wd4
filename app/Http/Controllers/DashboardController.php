@@ -130,7 +130,7 @@ class DashboardController
 
     public function pimpinanMonitoring()
     {
-        $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran', 'pjInternal'])
+        $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran', 'pjInternal', 'pksNumbers'])
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc')
             ->get();
@@ -228,14 +228,13 @@ class DashboardController
             ->whereDoesntHave('details')
             ->get();
 
-        // 3. Compliance Alerts (aktif tapi document_link / pks_number NULL)
-        $complianceAlerts = Cooperation::with(['mitra'])
+        // 3. Compliance Alerts (aktif tapi document_link / nomor PKS kosong)
+        $complianceAlerts = Cooperation::with(['mitra', 'pksNumbers'])
             ->where('status', 'aktif')
             ->where(function($q) {
                 $q->whereNull('document_link')
                   ->orWhere('document_link', '')
-                  ->orWhereNull('pks_number')
-                  ->orWhere('pks_number', '');
+                  ->orWhereDoesntHave('pksNumbers');
             })
             ->get();
 
@@ -279,6 +278,7 @@ class DashboardController
             'penandatanganMitra',
             'pjMitra',
             'laporanFiles',
+            'pksNumbers',
         ])->findOrFail($id);
 
         return view('auth.pimpinan', [
@@ -387,6 +387,7 @@ class DashboardController
             'jurusans',
             'upas',
             'pusats',
+            'pksNumbers',
         ]))
             ->latest()
             ->get();

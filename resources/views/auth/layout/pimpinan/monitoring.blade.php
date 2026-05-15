@@ -324,7 +324,7 @@
                                     @if(!$doc->document_link)
                                         <span class="mn-missing-chip danger"><i class="fas fa-triangle-exclamation"></i> Dokumen</span>
                                     @endif
-                                    @if(!$doc->pks_number)
+                                    @if($doc->pksNumbers->isEmpty())
                                         <span class="mn-missing-chip warning"><i class="fas fa-triangle-exclamation"></i> Nomor PKS</span>
                                     @endif
                                 </div>
@@ -471,9 +471,10 @@
                                 $kategoriMitra = strtolower($k->mitra->kategori ?? '');
                                 $tahunMulai = $k->start_date ? $k->start_date->year : '';
                                 $luaran = $k->details->map(fn($d) => ($d->volume_luaran ? $d->volume_luaran . ' ' . ($d->satuan_luaran ?? '') : null))->filter()->implode(', ');
+                                $pksSearch = $k->pksNumbers->pluck('number')->implode(' ');
                             @endphp
                             <tr data-row
-                                data-search="{{ strtolower(($k->mitra->nama_mitra ?? '') . ' ' . ($k->title ?? '') . ' ' . ($k->mitra->klasifikasi->nama ?? '') . ' ' . ($k->jenis ?? '') . ' ' . ($k->doc_number ?? '') . ' ' . ($k->pks_number ?? '') . ' ' . ($k->status ?? '') . ' ' . ($k->status_dokumen ?? '')) }}"
+                                data-search="{{ strtolower(($k->mitra->nama_mitra ?? '') . ' ' . ($k->title ?? '') . ' ' . ($k->mitra->klasifikasi->nama ?? '') . ' ' . ($k->jenis ?? '') . ' ' . ($k->doc_number ?? '') . ' ' . $pksSearch . ' ' . ($k->status ?? '') . ' ' . ($k->status_dokumen ?? '')) }}"
                                 data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
                                 data-jenis="{{ $k->jenis ?? '' }}" x-show="isRowVisible($el)" x-cloak>
                                 <td><span class="mn-table-num" x-text="formatRowNumber(rowNumber($el.closest('tr')))">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span></td>

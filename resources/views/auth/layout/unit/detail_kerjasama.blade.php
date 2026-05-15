@@ -254,7 +254,11 @@
                                     PKS</label>
                                 <div
                                     style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border); word-break: break-all;">
-                                    {{ $kegiatan->pks_number ?: '-' }}
+                                    @forelse($kegiatan->pksNumbers as $pksNumber)
+                                        <div>{{ $pksNumber->number }}</div>
+                                    @empty
+                                        -
+                                    @endforelse
                                 </div>
                             </div>
                         </div>

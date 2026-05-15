@@ -601,7 +601,13 @@
                             style="background: var(--surface2); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
                             <span class="dm-label">Nomor Surat Polimdo (PKS)</span>
                             <span class="dm-value"
-                                style="font-family: 'DM Mono', monospace;">{{ $kegiatan->pks_number ?: 'Tidak ada nomor' }}</span>
+                                style="font-family: 'DM Mono', monospace;">
+                                @forelse($kegiatan->pksNumbers as $pksNumber)
+                                    <span style="display: block;">{{ $pksNumber->number }}</span>
+                                @empty
+                                    Tidak ada nomor
+                                @endforelse
+                            </span>
                         </div>
                     </div>
                     <div>

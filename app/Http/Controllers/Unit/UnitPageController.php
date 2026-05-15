@@ -230,7 +230,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         // Query dasar kerjasama
-        $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+        $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
             ->orderBy('created_at', 'asc');
 
         // 1. List DRAFT (Status: Draft)
@@ -472,7 +472,7 @@ class UnitPageController extends Controller
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
             ->orderBy('created_at', 'desc');
 
         if ($request->filled('tanggal_awal')) {
