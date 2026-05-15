@@ -101,28 +101,28 @@
 
     $summaryCards = [
         [
-            'label' => 'Total Kerjasama Unit',
+            'label' => 'Jumlah Kerjasama',
             'value' => $totalKerjasama ?? 0,
-            'hint' => 'Dokumen yang melibatkan unit ini',
+            'hint' => 'Jumlah kerjasama Politeknik sampai saat ini',
             'icon' => 'fa-layer-group',
             'tone' => 'blue',
         ],
         [
             'label' => 'Total Pendapatan',
             'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
-            'hint' => 'Dari seluruh nilai kontrak',
+            'hint' => 'Dari seluruh nilai kontrak kerjasama',
             'icon' => 'fa-wallet',
             'tone' => 'emerald',
         ],
         [
-            'label' => 'Jenis Kerjasama',
+            'label' => 'Jenis Dokumen Kerjasama',
             'value' => $totalMoU + $totalMoA + $totalIA,
             'hint' => "MoU: $totalMoU | MoA: $totalMoA | IA: $totalIA",
             'icon' => 'fa-file-signature',
             'tone' => 'amber',
         ],
         [
-            'label' => 'Distribusi Mitra',
+            'label' => 'Jumlah Mitra',
             'value' => $mitraNasional + $mitraInternasional,
             'hint' => "Nasional: $mitraNasional | Internasional: $mitraInternasional",
             'icon' => 'fa-globe',
@@ -135,21 +135,28 @@
 
 <main id="mainContent" class="unitdash">
     <section class="ud-topbar">
-        <div>
+        <div class="ud-hero-copy">
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
                 <span>Beranda</span>
             </div>
-            <h2 class="ud-title">Operasional Kerjasama</h2>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-handshake-angle"></i></span>
+                <h2 class="ud-title">Sistem Informasi Kerjasama</h2>
+            </div>
             <p class="ud-subtitle">
-                {{ now()->format('d M Y') }}
+                Gambaran besar aktivitas kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}
             </p>
         </div>
-        <div class="ud-live-chip">
-            <span class="ud-dot"></span>
-            <span>Operational Control</span>
-        </div>
+        <a href="{{ route('unit.kerjasama.create', ['type' => 'baru']) }}" class="ud-create-menu">
+            <span class="ud-create-icon"><i class="fas fa-file-circle-plus"></i></span>
+            <span class="ud-create-copy">
+                <strong>Tambah Kerjasama</strong>
+                <small>Buat dokumen MoU, MoA, atau IA baru</small>
+            </span>
+            <span class="ud-create-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
     </section>
 
     <section class="ud-summary">
@@ -169,7 +176,7 @@
         <article class="ud-panel">
             <div class="ud-panel-head">
                 <div>
-                    <h3 class="ud-panel-title">Distribusi Jenis Kerjasama</h3>
+                    <h3 class="ud-panel-title">Distribusi Jenis Dokumen Kerjasama</h3>
                     <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
                 </div>
                 <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i class="fas fa-chart-pie"></i> Chart</span>
@@ -374,4 +381,3 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ asset('js/auth/dashboard.js') }}" data-turbo-track="reload"></script>
-

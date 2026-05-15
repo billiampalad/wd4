@@ -236,10 +236,9 @@
                             <path d="M3 18h12" />
                         </svg>
                     </div>
-                    <div class="stat-card-meta">Total Data</div>
+                    <div class="stat-card-meta">Jumlah Kerjasama</div>
                     <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
-                    <div class="stat-lbl">Kerjasama Tercatat</div>
-                    <p class="stat-desc">Seluruh kegiatan yang sudah masuk dalam sistem informasi</p>
+                    <p class="stat-desc">Jumlah kerjasama Politeknik sampai saat ini</p>
                 </article>
 
                 <article class="stat-card">
@@ -252,9 +251,8 @@
                             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                         </svg>
                     </div>
-                    <div class="stat-card-meta">Total Mitra</div>
+                    <div class="stat-card-meta">Jumlah Mitra</div>
                     <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
-                    <div class="stat-lbl">Mitra Terdaftar</div>
                     <p class="stat-desc">Organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.</p>
                 </article>
 

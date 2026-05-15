@@ -23,10 +23,42 @@
 
 .ud-topbar {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
-    gap: 18px;
+    gap: 24px;
     margin-bottom: 22px;
+    padding: 24px;
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(248, 250, 252, 0.72)),
+        linear-gradient(120deg, rgba(79, 70, 229, 0.08), rgba(14, 165, 233, 0.08));
+    box-shadow: 0 18px 45px -24px rgba(15, 23, 42, 0.35);
+    overflow: hidden;
+}
+
+.ud-hero-copy {
+    min-width: 0;
+}
+
+.ud-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.ud-title-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--accent), #0ea5e9);
+    color: #fff;
+    font-size: 20px;
+    box-shadow: 0 16px 26px -16px rgba(79, 70, 229, 0.7);
 }
 
 .ud-breadcrumb {
@@ -41,7 +73,7 @@
 
 .ud-title {
     margin: 0;
-    font-size: clamp(24px, 3vw, 34px);
+    font-size: clamp(24px, 3vw, 30px);
     line-height: 1.1;
     font-weight: 850;
     color: var(--ud-text);
@@ -50,23 +82,75 @@
 .ud-subtitle {
     margin: 8px 0 0;
     color: var(--ud-muted);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
+    max-width: 680px;
+    line-height: 1.65;
 }
 
-.ud-live-chip {
-    display: inline-flex;
+.ud-create-menu {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 34px;
     align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border: 1px solid var(--ud-border);
-    border-radius: 999px;
-    background: var(--surface2);
-    box-shadow: var(--shadow);
-    color: var(--ud-text);
-    font-size: 12px;
-    font-weight: 800;
+    gap: 14px;
+    width: min(360px, 100%);
+    padding: 14px;
+    border: 1px solid rgba(79, 70, 229, 0.25);
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), #0ea5e9);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 20px 38px -20px rgba(79, 70, 229, 0.65);
+    transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
     white-space: nowrap;
+}
+
+.ud-create-menu:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 26px 48px -22px rgba(79, 70, 229, 0.78);
+    filter: saturate(1.05);
+}
+
+.ud-create-icon,
+.ud-create-arrow {
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+.ud-create-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+}
+
+.ud-create-copy {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+}
+
+.ud-create-copy strong {
+    font-size: 14px;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ud-create-copy small {
+    font-size: 11px;
+    font-weight: 650;
+    color: rgba(255, 255, 255, 0.82);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ud-create-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
 }
 
 .ud-dot {
@@ -75,6 +159,13 @@
     border-radius: 50%;
     background: var(--success);
     box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.12);
+}
+
+[data-theme="dark"] .ud-topbar {
+    background:
+        linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.82)),
+        linear-gradient(120deg, rgba(99, 102, 241, 0.14), rgba(14, 165, 233, 0.12));
+    box-shadow: 0 22px 46px -28px rgba(0, 0, 0, 0.75);
 }
 
 .ud-summary {
@@ -541,6 +632,10 @@
         flex-direction: column;
     }
 
+    .ud-create-menu {
+        width: 100%;
+    }
+
     .ud-summary {
         grid-template-columns: 1fr;
     }
@@ -752,10 +847,20 @@
         line-height: 1.55;
     }
 
-    .ud-live-chip {
+    .ud-create-menu {
         width: 100%;
-        justify-content: center;
-        padding: 9px 12px;
+        padding: 12px;
+    }
+
+    .ud-title-row {
+        align-items: flex-start;
+    }
+
+    .ud-title-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        font-size: 18px;
     }
 
     .ud-summary,
