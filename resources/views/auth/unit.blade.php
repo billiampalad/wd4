@@ -138,7 +138,7 @@
                 <div class="submenu {{ $isAnalitikActive ? 'open' : '' }}" id="analitikSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('unit.analitik.status-kerjasama') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.analitik.status-kerjasama') }}">
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.analitik.klasifikasi-mitra') ? 'active' : '' }}"
@@ -251,6 +251,8 @@
                 @include('auth.layout.unit.detail_kerjasama')
             @elseif(request()->routeIs('unit.dkerjasama'))
                 @include('auth.layout.unit.dkerjasama')
+            @elseif(request()->routeIs('unit.analitik.status-kerjasama'))
+                @include('auth.layout.unit.analitik.status_kerjasama')
             @elseif(request()->routeIs('unit.mitra.create'))
                 @include('auth.layout.unit.mitra.create')
             @elseif(request()->routeIs('unit.mitra.edit'))

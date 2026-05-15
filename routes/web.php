@@ -217,6 +217,9 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
 Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit', [DashboardController::class, 'unit'])->name('unit.dashboard');
 
+    // analitik
+    Route::get('/unit/analitik/status-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'statusKerjasama'])->name('unit.analitik.status-kerjasama');
+
     // institusi
     Route::get('/unit/institusi', [App\Http\Controllers\Unit\UnitPageController::class, 'institusi'])->name('unit.institusi');
 

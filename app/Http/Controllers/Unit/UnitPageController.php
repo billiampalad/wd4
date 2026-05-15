@@ -43,6 +43,81 @@ class UnitPageController extends Controller
         return $query;
     }
 
+    public function statusKerjasama()
+    {
+        $unitId = $this->resolveUnitId();
+        $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
+        $today = now()->toDateString();
+
+        $kadaluarsa = (clone $baseQuery)
+            ->where(function ($query) use ($today) {
+                $query->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
+                    ->orWhereDate('end_date', '<', $today);
+            })
+            ->whereNotIn(DB::raw("LOWER(COALESCE(status, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif'])
+            ->count();
+
+        $dalamPerpanjangan = (clone $baseQuery)
+            ->whereRaw("LOWER(COALESCE(status, '')) = ?", ['dalam perpanjangan'])
+            ->count();
+
+        $proses = (clone $baseQuery)
+            ->whereRaw("LOWER(COALESCE(status, '')) = ?", ['proses'])
+            ->count();
+
+        $tidakAktif = (clone $baseQuery)
+            ->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['tidak aktif', 'nonaktif', 'non aktif'])
+            ->count();
+
+        $totalKerjasama = (clone $baseQuery)->count();
+        $aktif = max($totalKerjasama - $kadaluarsa - $dalamPerpanjangan - $proses - $tidakAktif, 0);
+
+        $statusKerjasamaData = [
+            'labels' => ['Aktif', 'Dalam Perpanjangan', 'Kadaluarsa', 'Tidak Aktif', 'Proses'],
+            'data' => [$aktif, $dalamPerpanjangan, $kadaluarsa, $tidakAktif, $proses],
+            'colors' => ['#10b981', '#f59e0b', '#ef4444', '#94a3b8', '#8b5cf6'],
+        ];
+
+        $currentYear = now()->year;
+        $firstYear = (int) ((clone $baseQuery)->whereNotNull('created_at')->min(DB::raw('YEAR(created_at)')) ?: $currentYear);
+        $startYear = max($firstYear, $currentYear - 8);
+        $years = range($startYear, $currentYear);
+
+        $growthRows = (clone $baseQuery)
+            ->selectRaw('YEAR(created_at) as year_label')
+            ->selectRaw("SUM(CASE WHEN jenis LIKE '%MoU%' THEN 1 ELSE 0 END) as mou_total")
+            ->selectRaw("SUM(CASE WHEN jenis LIKE '%MoA%' THEN 1 ELSE 0 END) as moa_total")
+            ->selectRaw("SUM(CASE WHEN jenis LIKE '%IA%' THEN 1 ELSE 0 END) as ia_total")
+            ->whereNotNull('created_at')
+            ->whereYear('created_at', '>=', $startYear)
+            ->groupBy('year_label')
+            ->get()
+            ->keyBy('year_label');
+
+        $growthData = [
+            'labels' => array_map('strval', $years),
+            'mou' => [],
+            'moa' => [],
+            'ia' => [],
+        ];
+
+        foreach ($years as $year) {
+            $row = $growthRows->get($year);
+            $growthData['mou'][] = (int) ($row->mou_total ?? 0);
+            $growthData['moa'][] = (int) ($row->moa_total ?? 0);
+            $growthData['ia'][] = (int) ($row->ia_total ?? 0);
+        }
+
+        $yearCount = max(count($years), 1);
+        $growthAverages = [
+            'mou' => (int) round(array_sum($growthData['mou']) / $yearCount),
+            'moa' => (int) round(array_sum($growthData['moa']) / $yearCount),
+            'ia' => (int) round(array_sum($growthData['ia']) / $yearCount),
+        ];
+
+        return view('auth.unit', compact('statusKerjasamaData', 'growthData', 'growthAverages'));
+    }
+
     // ─── Data Kerjasama ──────────────────────────────────────────
     public function dkerjasama(Request $request)
     {

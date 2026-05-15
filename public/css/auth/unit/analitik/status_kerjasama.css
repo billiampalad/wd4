@@ -1,0 +1,257 @@
+.sk-page {
+    min-height:calc(100vh - var(--nav-h));
+    padding: 20px 25px;
+    display: grid;
+    grid-template-columns: minmax(320px, .95fr) minmax(520px, 2fr);
+    gap: 25px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.sk-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.sk-card-head {
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.sk-card-head-muted {
+    background: var(--surface2);
+}
+
+.sk-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-size: 20px;
+    line-height: 1.15;
+    font-weight: 400;
+}
+
+.sk-title-compact {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.sk-title i {
+    color: #5d6674;
+    font-size: .9em;
+}
+
+.sk-desc {
+    max-width: 330px;
+    margin: 6px 0 0;
+    color: var(--text-sub);
+    font-size: 10px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+.sk-donut-wrap {
+    position: relative;
+    width: min(90%, 340px);
+    aspect-ratio: 1;
+    margin: 20px auto 25px;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+/* tinggi grafik Pertumbuhan Kerjasama */
+.sk-line-wrap {
+    position: relative;
+    height: 360px;
+    padding: 8px 10px 6px;
+}
+
+.sk-legend {
+    width: fit-content;
+    max-width: calc(100% - 48px);
+    margin: 8px 18px 12px;
+    display: grid;
+    gap: 5px;
+    color: #52606f;
+    font-size: 10px;
+    line-height: 1.2;
+}
+
+.sk-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.sk-legend-swatch {
+    width: 13px;
+    height: 13px;
+    border: 1px solid #fff;
+    outline: 1px solid rgba(15, 23, 42, .25);
+    background: var(--swatch);
+    flex: 0 0 auto;
+}
+
+.sk-card-foot {
+    margin-top: auto;
+    min-height: 46px;
+    padding: 0 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* margin top AVG */
+.sk-avg-row {
+    margin-top: auto;
+    min-height: 70px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+}
+
+.sk-avg-item {
+    min-width: 0;
+    text-align: center;
+    color: #687386;
+}
+
+.sk-avg-item span {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+.sk-avg-item strong {
+    font-size: 20px;
+    line-height: .95;
+    font-weight: 400;
+}
+
+.sk-avg-item small {
+    margin-left: 4px;
+    font-size: 11px;
+    color: #7b8493;
+}
+
+.sk-avg-mou strong {
+    color: #1688cf;
+}
+
+.sk-avg-moa strong {
+    color: #f58200;
+}
+
+.sk-avg-ia strong {
+    color: #00a878;
+}
+
+[data-theme="dark"] .sk-card {
+    background: #181c27;
+    border-color: #2a2f45;
+    box-shadow: 0 18px 42px -28px rgba(0, 0, 0, .9);
+}
+
+[data-theme="dark"] .sk-card-head-muted,
+[data-theme="dark"] .sk-avg-row {
+    background: #1e2333;
+}
+
+[data-theme="dark"] .sk-title i {
+    color: #aab2c5;
+}
+
+[data-theme="dark"] .sk-legend {
+    color: #c3cad8;
+}
+
+[data-theme="dark"] .sk-legend-swatch {
+    border-color: #111827;
+    outline-color: rgba(226, 232, 240, .28);
+}
+
+[data-theme="dark"] .sk-avg-item,
+[data-theme="dark"] .sk-avg-item small {
+    color: #aab2c5;
+}
+
+@media only screen and (max-width: 1180px) {
+    .sk-page {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .sk-line-wrap {
+        height: 260px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .sk-page {
+        padding: 10px;
+    }
+
+    .sk-card-head {
+        min-height: auto;
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sk-title {
+        font-size: 18px;
+    }
+
+    .sk-title-compact {
+        font-size: 16px;
+    }
+
+    .sk-desc {
+        font-size: 11px;
+        margin-top: 8px;
+    }
+
+    .sk-donut-wrap {
+        width: min(78%, 280px);
+        margin-top: 12px;
+    }
+
+    .sk-line-wrap {
+        height: 230px;
+        padding: 8px 8px 4px;
+    }
+
+    .sk-avg-row {
+        min-height: auto;
+        padding: 8px 0;
+    }
+
+    .sk-avg-item span {
+        font-size: 11px;
+    }
+
+    .sk-avg-item strong {
+        font-size: 24px;
+    }
+
+    .sk-avg-item small {
+        display: block;
+        margin: 3px 0 0;
+        font-size: 12px;
+    }
+}
