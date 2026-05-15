@@ -1,15 +1,15 @@
 @php
     $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
-    
+
     $mitraNasional = \App\Models\Mitra::where('kategori', 'Nasional')->count() ?? 0;
     $mitraInternasional = \App\Models\Mitra::where('kategori', 'Internasional')->count() ?? 0;
-    
+
     $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
     $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
     $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
 
     $jurusans = \App\Models\Jurusan::with('prodis')->get();
-    
+
     // Count dari pivot table (kerjasama_jurusan)
     $jurusanCounts = \Illuminate\Support\Facades\DB::table('kerjasama_jurusan')
         ->select('jurusan_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
@@ -29,7 +29,7 @@
 
     foreach ($jurusans as $jurusan) {
         $jCount = $jurusanCounts[$jurusan->id] ?? 0;
-        
+
         $chartDataJurusan[] = [
             'id' => $jurusan->id,
             'name' => $jurusan->nama_jurusan,
@@ -49,14 +49,14 @@
 
     // --- STATISTIK PERIODE KERJASAMA (TREND CHART) ---
     $now = now();
-    
+
     // 1. Mingguan (7 Hari Terakhir)
     $weeklyRaw = \App\Models\Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
         ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
         ->groupBy('date_label')
         ->pluck('total', 'date_label')
         ->toArray();
-        
+
     $trendWeekly = ['labels' => [], 'data' => []];
     for ($i = 6; $i >= 0; $i--) {
         $dateStr = $now->copy()->subDays($i)->format('Y-m-d');
@@ -71,7 +71,7 @@
         ->groupBy('month_label')
         ->pluck('total', 'month_label')
         ->toArray();
-        
+
     $trendMonthly = ['labels' => [], 'data' => []];
     $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
     for ($i = 1; $i <= 12; $i++) {
@@ -85,37 +85,30 @@
         ->groupBy('year_label')
         ->pluck('total', 'year_label')
         ->toArray();
-        
+
     $trendYearly = ['labels' => [], 'data' => []];
     for ($i = 4; $i >= 0; $i--) {
         $yr = $now->copy()->subYears($i)->year;
-        $trendYearly['labels'][] = (string)$yr;
+        $trendYearly['labels'][] = (string) $yr;
         $trendYearly['data'][] = $yearlyRaw[$yr] ?? 0;
     }
 
     $trendData = [
         'weekly' => $trendWeekly,
         'monthly' => $trendMonthly,
-        'yearly' => $trendYearly
+        'yearly' => $trendYearly,
     ];
 
     $summaryCards = [
         [
             'label' => 'Jumlah Kerjasama',
             'value' => $totalKerjasama ?? 0,
-            'hint' => 'Jumlah kerjasama Politeknik sampai saat ini',
+            'hint' => 'Politeknik sampai saat ini',
             'icon' => 'fa-layer-group',
             'tone' => 'blue',
         ],
         [
-            'label' => 'Total Pendapatan',
-            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
-            'hint' => 'Dari seluruh nilai kontrak kerjasama',
-            'icon' => 'fa-wallet',
-            'tone' => 'emerald',
-        ],
-        [
-            'label' => 'Jenis Dokumen Kerjasama',
+            'label' => 'Jumlah Dokumen Kerjasama',
             'value' => $totalMoU + $totalMoA + $totalIA,
             'hint' => "MoU: $totalMoU | MoA: $totalMoA | IA: $totalIA",
             'icon' => 'fa-file-signature',
@@ -127,6 +120,14 @@
             'hint' => "Nasional: $mitraNasional | Internasional: $mitraInternasional",
             'icon' => 'fa-globe',
             'tone' => 'indigo',
+        ],
+
+        [
+            'label' => 'Total Pendapatan',
+            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
+            'hint' => 'Dari nilai kontrak kerjasama',
+            'icon' => 'fa-wallet',
+            'tone' => 'emerald',
         ],
     ];
 @endphp
@@ -160,14 +161,18 @@
     </section>
 
     <section class="ud-summary">
-        @foreach($summaryCards as $card)
+        @foreach ($summaryCards as $card)
             <article class="ud-card ud-tone-{{ $card['tone'] }}">
                 <div class="ud-card-top">
                     <div class="ud-icon"><i class="fas {{ $card['icon'] }}"></i></div>
+                    <div class="ud-metric-label">{{ $card['label'] }}</div>
                 </div>
-                <div class="ud-metric-value">{{ is_numeric($card['value']) ? number_format($card['value']) : $card['value'] }}</div>
-                <div class="ud-metric-label">{{ $card['label'] }}</div>
                 <div class="ud-metric-hint">{{ $card['hint'] }}</div>
+                <div class="ud-metric-value">
+                    {{ is_numeric($card['value']) ? number_format($card['value']) : $card['value'] }}</div>
+                <div class="ud-card-accent" aria-hidden="true">
+                    <i class="fas {{ $card['icon'] }}"></i>
+                </div>
             </article>
         @endforeach
     </section>
@@ -179,11 +184,13 @@
                     <h3 class="ud-panel-title">Distribusi Jenis Dokumen Kerjasama</h3>
                     <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
                 </div>
-                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i class="fas fa-chart-pie"></i> Chart</span>
+                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i
+                        class="fas fa-chart-pie"></i> Chart</span>
             </div>
 
             <div class="ud-chart-layout">
-                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}" data-ia="{{ $totalIA }}"></canvas>
+                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}"
+                    data-ia="{{ $totalIA }}"></canvas>
             </div>
         </article>
 
@@ -199,14 +206,17 @@
             <div class="ud-deadlines">
                 @forelse($upcomingDeadlines ?? [] as $deadline)
                     @php
-                        $daysLeft = now()->startOfDay()->diffInDays($deadline->end_date->copy()->startOfDay());
+                        $daysLeft = now()
+                            ->startOfDay()
+                            ->diffInDays($deadline->end_date->copy()->startOfDay());
                     @endphp
                     <div class="ud-deadline-item">
                         <div class="ud-daybox">{{ $daysLeft }}</div>
                         <div style="min-width:0;">
                             <div class="ud-deadline-title">{{ $deadline->title ?? '-' }}</div>
                             <div class="ud-deadline-meta">
-                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir {{ $deadline->end_date?->format('d M Y') }}
+                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
+                                {{ $deadline->end_date?->format('d M Y') }}
                             </div>
                         </div>
                         <a class="ud-link-btn" href="{{ route('unit.kerjasama.show', $deadline->id) }}" title="Detail">
@@ -225,9 +235,11 @@
             <div class="ud-panel-head">
                 <div>
                     <h3 class="ud-panel-title">Distribusi Kerjasama Akademik</h3>
-                    <p class="ud-panel-desc">Tinjauan visual distribusi kerjasama berdasarkan Jurusan dan Program Studi (Prodi).</p>
+                    <p class="ud-panel-desc">Tinjauan visual distribusi kerjasama berdasarkan Jurusan dan Program Studi
+                        (Prodi).</p>
                 </div>
-                <span class="ud-status-badge is-interactive" title="Klik pada batang grafik jurusan untuk memfilter prodi">
+                <span class="ud-status-badge is-interactive"
+                    title="Klik pada batang grafik jurusan untuk memfilter prodi">
                     <i class="fas fa-hand-pointer"></i> Interactive Filter
                 </span>
             </div>
@@ -235,14 +247,16 @@
             <div class="ud-dual-chart-container">
                 <div class="ud-chart-wrapper">
                     <div class="ud-chart-header">
-                        <div class="ud-chart-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i class="fas fa-building-columns"></i></div>
+                        <div class="ud-chart-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i
+                                class="fas fa-building-columns"></i></div>
                         <div>
                             <h4>Grafik Jurusan</h4>
                             <span>Klik batang grafik untuk memfilter prodi.</span>
                         </div>
                     </div>
                     <div class="ud-canvas-container">
-                        <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}" data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+                        <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}"
+                            data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
                     </div>
                 </div>
 
@@ -250,7 +264,8 @@
 
                 <div class="ud-chart-wrapper">
                     <div class="ud-chart-header">
-                        <div class="ud-chart-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="ud-chart-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i
+                                class="fas fa-graduation-cap"></i></div>
                         <div>
                             <h4>Grafik Program Studi</h4>
                             <span id="prodiChartSubtitle">Menampilkan Semua Jurusan</span>
@@ -269,7 +284,8 @@
             <div class="ud-panel-head">
                 <div>
                     <h3 class="ud-panel-title">Tren Pertumbuhan Kerjasama</h3>
-                    <p class="ud-panel-desc">Statistik penambahan dokumen kerjasama baru berdasarkan rentang waktu terpilih.</p>
+                    <p class="ud-panel-desc">Statistik penambahan dokumen kerjasama baru berdasarkan rentang waktu
+                        terpilih.</p>
                 </div>
                 <div class="ud-trend-filters">
                     <button type="button" class="ud-trend-btn" data-trend="weekly">7 Hari</button>
@@ -291,8 +307,9 @@
                 <p class="ud-panel-desc">Filtered view, quick edit link dokumen, dan status operasional.</p>
             </div>
             <div class="ud-tabs" aria-label="Filter tipe dokumen">
-                @foreach(['Semua', 'MoU', 'MoA', 'IA'] as $filter)
-                    <button type="button" class="ud-tab {{ $loop->first ? 'is-active' : '' }}" data-filter-tab="{{ $filter === 'Semua' ? 'all' : $filter }}">
+                @foreach (['Semua', 'MoU', 'MoA', 'IA'] as $filter)
+                    <button type="button" class="ud-tab {{ $loop->first ? 'is-active' : '' }}"
+                        data-filter-tab="{{ $filter === 'Semua' ? 'all' : $filter }}">
                         {{ $filter }}
                         <span>({{ $jenisCounts[$filter] ?? 0 }})</span>
                     </button>
@@ -316,13 +333,25 @@
                     @forelse($kerjasamaTable ?? [] as $item)
                         @php
                             $jenisLower = strtolower($item->jenis ?? '');
-                            $jenisShort = str_contains($jenisLower, 'mou') ? 'MoU' : (str_contains($jenisLower, 'moa') ? 'MoA' : (str_contains($jenisLower, 'ia') ? 'IA' : '-'));
+                            $jenisShort = str_contains($jenisLower, 'mou')
+                                ? 'MoU'
+                                : (str_contains($jenisLower, 'moa')
+                                    ? 'MoA'
+                                    : (str_contains($jenisLower, 'ia')
+                                        ? 'IA'
+                                        : '-'));
                             $statusRaw = strtolower($item->status ?? '');
-                            $isExpired = in_array($statusRaw, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true)
-                                || ($item->end_date && now()->startOfDay()->greaterThan($item->end_date->copy()->startOfDay()));
+                            $isExpired =
+                                in_array($statusRaw, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true) ||
+                                ($item->end_date &&
+                                    now()
+                                        ->startOfDay()
+                                        ->greaterThan($item->end_date->copy()->startOfDay()));
                             $isPending = ($item->status_dokumen ?? '') === 'Menunggu Evaluasi';
                             $statusClass = $isExpired ? 'is-expired' : ($isPending ? 'is-pending' : '');
-                            $statusLabel = $isExpired ? 'Kadaluarsa' : ($item->status_dokumen ?? ucfirst($item->status ?? 'Draft'));
+                            $statusLabel = $isExpired
+                                ? 'Kadaluarsa'
+                                : $item->status_dokumen ?? ucfirst($item->status ?? 'Draft');
                             $deadlineLabel = $item->end_date ? $item->end_date->format('d M Y') : '-';
                             $pjInternal = $item->pjInternal?->nama ?? '-';
                         @endphp
@@ -343,22 +372,28 @@
                             </td>
                             <td>
                                 <span class="ud-status-badge {{ $statusClass }}">
-                                    <i class="fas {{ $isExpired ? 'fa-triangle-exclamation' : ($isPending ? 'fa-clock' : 'fa-circle-check') }}"></i>
+                                    <i
+                                        class="fas {{ $isExpired ? 'fa-triangle-exclamation' : ($isPending ? 'fa-clock' : 'fa-circle-check') }}"></i>
                                     {{ $statusLabel }}
                                 </span>
                             </td>
                             <td>
                                 <strong>{{ $deadlineLabel }}</strong>
-                                <div class="ud-small">{{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
+                                <div class="ud-small">
+                                    {{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
                             </td>
                             <td>
                                 <div class="ud-link-editor" data-link-editor>
-                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}" placeholder="Paste link Drive..." data-document-link-input>
-                                    <button class="ud-save-btn" type="button" data-save-document-link data-update-url="{{ route('unit.kerjasama.document-link.update', $item->id) }}" title="Simpan link">
+                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
+                                        placeholder="Paste link Drive..." data-document-link-input>
+                                    <button class="ud-save-btn" type="button" data-save-document-link
+                                        data-update-url="{{ route('unit.kerjasama.document-link.update', $item->id) }}"
+                                        title="Simpan link">
                                         <i class="fas fa-floppy-disk"></i>
                                     </button>
                                 </div>
-                                <span class="ud-save-state" data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
+                                <span class="ud-save-state"
+                                    data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
                             </td>
                         </tr>
                     @empty
