@@ -778,16 +778,17 @@
 .sk-due-cell {
     width: var(--due-cell);
     height: var(--due-cell);
-    border: 0;
+    border: 1px solid #cbd5e1;
     border-radius: 3px;
-    background: #ebedf0;
+    background: #f1f5f9;
     display: block;
     padding: 0;
+    box-sizing: border-box;
 }
 
 button.sk-due-cell {
     cursor: pointer;
-    transition: transform .16s ease, box-shadow .16s ease, outline-color .16s ease;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
 
 button.sk-due-cell:hover,
@@ -795,6 +796,7 @@ button.sk-due-cell:focus-visible {
     transform: translateY(-1px);
     box-shadow: 0 0 0 2px rgba(15, 23, 42, .1);
     outline: 0;
+    border-color: #94a3b8;
 }
 
 .sk-due-cell-empty {
@@ -802,41 +804,49 @@ button.sk-due-cell:focus-visible {
 }
 
 .sk-due-level-0 {
-    background: #f8fafc;
+    background: #f1f5f9;
+    border-color: #cbd5e1;
 }
 
 .sk-due-level-1 {
     background: #dbeafe;
+    border-color: #93c5fd;
 }
 
 .sk-due-level-2 {
     background: #bfdbfe;
+    border-color: #60a5fa;
 }
 
 .sk-due-level-3 {
     background: #93c5fd;
+    border-color: #3b82f6;
 }
 
 .sk-due-level-4 {
     background: #60a5fa;
+    border-color: #2563eb;
 }
 
 .sk-due-level-5 {
     background: #2563eb;
+    border-color: #1d4ed8;
+}
+
+.sk-due-cell.is-month-start {
+    border-left: 2px solid #64748b;
+}
+
+.sk-due-cell.is-month-start:not(.sk-due-level-0) {
+    border-left-color: #3b82f6;
 }
 
 .sk-due-cell.is-today {
     box-shadow: 0 0 0 2px rgba(79, 70, 229, .35);
 }
 
-.sk-due-cell.is-month-start {
-    box-shadow: inset 2px 0 0 rgba(15, 23, 42, .28);
-}
-
 .sk-due-cell.is-today.is-month-start {
-    box-shadow:
-        inset 2px 0 0 rgba(15, 23, 42, .28),
-        0 0 0 2px rgba(79, 70, 229, .35);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, .35);
 }
 
 .sk-due-tooltip {
@@ -1155,31 +1165,41 @@ button.sk-due-cell:focus-visible {
 }
 
 [data-theme="dark"] .sk-due-level-0 {
-    background: #f8fafc;
+    background: #1e293b;
+    border-color: #334155;
 }
 
 [data-theme="dark"] .sk-due-level-1 {
-    background: #dbeafe;
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
 }
 
 [data-theme="dark"] .sk-due-level-2 {
-    background: #bfdbfe;
+    background: rgba(59, 130, 246, 0.4);
+    border-color: rgba(59, 130, 246, 0.6);
 }
 
 [data-theme="dark"] .sk-due-level-3 {
-    background: #93c5fd;
+    background: rgba(59, 130, 246, 0.6);
+    border-color: rgba(59, 130, 246, 0.8);
 }
 
 [data-theme="dark"] .sk-due-level-4 {
-    background: #60a5fa;
+    background: rgba(59, 130, 246, 0.8);
+    border-color: #3b82f6;
 }
 
 [data-theme="dark"] .sk-due-level-5 {
-    background: #2563eb;
+    background: #3b82f6;
+    border-color: #60a5fa;
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start {
-    box-shadow: inset 2px 0 0 rgba(203, 213, 225, .38);
+    border-left-color: #475569;
+}
+
+[data-theme="dark"] .sk-due-cell.is-month-start:not(.sk-due-level-0) {
+    border-left-color: #60a5fa;
 }
 
 [data-theme="dark"] .sk-due-cell.is-today {
@@ -1187,9 +1207,7 @@ button.sk-due-cell:focus-visible {
 }
 
 [data-theme="dark"] .sk-due-cell.is-today.is-month-start {
-    box-shadow:
-        inset 2px 0 0 rgba(203, 213, 225, .38),
-        0 0 0 2px rgba(165, 180, 252, .42);
+    box-shadow: 0 0 0 2px rgba(165, 180, 252, .42);
 }
 
 [data-theme="dark"] .sk-due-actions span {
