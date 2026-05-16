@@ -35,6 +35,21 @@ function statusKerjasamaTooltipColors() {
     };
 }
 
+function statusKerjasamaHexToRgba(hex, alpha) {
+    const cleanHex = String(hex || '').replace('#', '');
+    const value = cleanHex.length === 3
+        ? cleanHex.split('').map(function (char) { return char + char; }).join('')
+        : cleanHex;
+
+    if (value.length !== 6) return 'rgba(148, 163, 184, ' + alpha + ')';
+
+    const red = parseInt(value.slice(0, 2), 16);
+    const green = parseInt(value.slice(2, 4), 16);
+    const blue = parseInt(value.slice(4, 6), 16);
+
+    return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
+}
+
 function statusKerjasamaApplyThemeToCharts() {
     const textColor = statusKerjasamaTextColor();
     const gridColor = statusKerjasamaGridColor();
@@ -44,7 +59,7 @@ function statusKerjasamaApplyThemeToCharts() {
     if (window.statusKerjasamaDonutChart) {
         const donut = window.statusKerjasamaDonutChart;
 
-        donut.data.datasets.forEach(function(dataset) {
+        donut.data.datasets.forEach(function (dataset) {
             dataset.borderColor = surfaceColor;
         });
 
@@ -72,6 +87,21 @@ function statusKerjasamaApplyThemeToCharts() {
         line.options.scales.y.ticks.color = textColor;
         line.update('none');
     }
+
+    if (window.mouVsMoaIaChartInstance && typeof window.mouVsMoaIaChartInstance.update === 'function') {
+        const chart = window.mouVsMoaIaChartInstance;
+
+        chart.data.datasets.forEach(function (dataset) {
+            dataset.borderColor = surfaceColor;
+        });
+
+        chart.options.plugins.tooltip.backgroundColor = tooltipColors.background;
+        chart.options.plugins.tooltip.borderColor = tooltipColors.border;
+        chart.options.plugins.tooltip.borderWidth = 1;
+        chart.options.plugins.tooltip.titleColor = tooltipColors.title;
+        chart.options.plugins.tooltip.bodyColor = tooltipColors.body;
+        chart.update('none');
+    }
 }
 
 function createStatusKerjasamaCharts() {
@@ -80,6 +110,7 @@ function createStatusKerjasamaCharts() {
 
     const statusCanvas = document.getElementById('statusKerjasamaChart');
     const growthCanvas = document.getElementById('pertumbuhanKerjasamaChart');
+    const mouVsMoaIaCanvas = document.getElementById('mouVsMoaIaChart');
     const statusData = parseStatusKerjasamaJson('statusKerjasamaData', {
         labels: [],
         data: [],
@@ -90,6 +121,12 @@ function createStatusKerjasamaCharts() {
         mou: [],
         moa: [],
         ia: []
+    });
+    const mouVsMoaIaData = parseStatusKerjasamaJson('mouVsMoaIaData', {
+        labels: [],
+        colors: [],
+        mou: [],
+        moa_ia: []
     });
     const tooltipColors = statusKerjasamaTooltipColors();
 
@@ -128,8 +165,8 @@ function createStatusKerjasamaCharts() {
                         titleColor: tooltipColors.title,
                         bodyColor: tooltipColors.body,
                         callbacks: {
-                            label: function(context) {
-                                const total = context.dataset.data.reduce(function(sum, value) {
+                            label: function (context) {
+                                const total = context.dataset.data.reduce(function (sum, value) {
                                     return sum + Number(value || 0);
                                 }, 0);
                                 const value = Number(context.raw || 0);
@@ -205,7 +242,7 @@ function createStatusKerjasamaCharts() {
                         titleColor: tooltipColors.title,
                         bodyColor: tooltipColors.body,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 return context.dataset.label + ': ' + context.formattedValue;
                             }
                         }
@@ -245,6 +282,113 @@ function createStatusKerjasamaCharts() {
             }
         });
     }
+
+    if (mouVsMoaIaCanvas) {
+        if (window.mouVsMoaIaChartInstance && typeof window.mouVsMoaIaChartInstance.destroy === 'function') {
+            window.mouVsMoaIaChartInstance.destroy();
+        }
+
+        const statusLabels = Array.isArray(mouVsMoaIaData.labels) ? mouVsMoaIaData.labels : [];
+        const statusColors = Array.isArray(mouVsMoaIaData.colors) ? mouVsMoaIaData.colors : [];
+        const mouValues = Array.isArray(mouVsMoaIaData.mou) ? mouVsMoaIaData.mou : [];
+        const moaIaValues = Array.isArray(mouVsMoaIaData.moa_ia) ? mouVsMoaIaData.moa_ia : [];
+        const totalValues = statusLabels.map(function (label, index) {
+            return Number(mouValues[index] || 0) + Number(moaIaValues[index] || 0);
+        });
+        const grandTotal = totalValues.reduce(function (sum, value) {
+            return sum + Number(value || 0);
+        }, 0);
+        const fallbackValues = statusLabels.map(function () { return 1; });
+        const fallbackColors = statusColors.map(function (color) {
+            return statusKerjasamaHexToRgba(color, .22);
+        });
+        const moaIaColors = statusColors.map(function (color, index) {
+            const value = Number(moaIaValues[index] || 0);
+            const pairValue = Number(mouValues[index] || 0);
+            return statusKerjasamaHexToRgba(color, value >= pairValue ? 1 : .42);
+        });
+        const mouColors = statusColors.map(function (color, index) {
+            const value = Number(mouValues[index] || 0);
+            const pairValue = Number(moaIaValues[index] || 0);
+            return statusKerjasamaHexToRgba(color, value >= pairValue ? 1 : .42);
+        });
+
+        window.mouVsMoaIaChartInstance = new Chart(mouVsMoaIaCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    label: 'MoA/IA',
+                    sourceData: moaIaValues,
+                    pairedData: mouValues,
+                    data: grandTotal ? moaIaValues : fallbackValues,
+                    backgroundColor: grandTotal ? moaIaColors : fallbackColors,
+                    borderColor: statusKerjasamaSurfaceColor(),
+                    borderWidth: 3,
+                    hoverOffset: 5
+                }, {
+                    label: 'MoU',
+                    sourceData: mouValues,
+                    pairedData: moaIaValues,
+                    data: grandTotal ? mouValues : fallbackValues,
+                    backgroundColor: grandTotal ? mouColors : fallbackColors,
+                    borderColor: statusKerjasamaSurfaceColor(),
+                    borderWidth: 3,
+                    radius: '62%',
+                    hoverOffset: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '42%',
+                interaction: {
+                    mode: 'index',
+                    intersect: true
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: tooltipColors.background,
+                        borderColor: tooltipColors.border,
+                        borderWidth: 1,
+                        titleColor: tooltipColors.title,
+                        bodyColor: tooltipColors.body,
+                        callbacks: {
+                            title: function (contexts) {
+                                const context = contexts && contexts.length ? contexts[0] : null;
+                                return context ? context.label : '';
+                            },
+                            label: function (context) {
+                                const dataset = context.dataset || {};
+                                const value = Number((dataset.sourceData || [])[context.dataIndex] || 0);
+                                const pairValue = Number((dataset.pairedData || [])[context.dataIndex] || 0);
+                                const total = value + pairValue;
+                                const percent = total ? Math.round((value / total) * 100) : 0;
+
+                                return dataset.label + ' ' + value + ' (' + percent + '%)';
+                            },
+                            labelColor: function (context) {
+                                const dataset = context.dataset || {};
+                                const value = Number((dataset.sourceData || [])[context.dataIndex] || 0);
+                                const pairValue = Number((dataset.pairedData || [])[context.dataIndex] || 0);
+                                const baseColor = statusColors[context.dataIndex] || '#94a3b8';
+                                const alpha = value >= pairValue ? 1 : .42;
+                                const color = statusKerjasamaHexToRgba(baseColor, alpha);
+
+                                return {
+                                    borderColor: color,
+                                    backgroundColor: color
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
 
 function initDueDateContributionGraph() {
@@ -253,7 +397,7 @@ function initDueDateContributionGraph() {
 
     if (yearSelect && yearSelect.dataset.dueYearBound !== '1') {
         yearSelect.dataset.dueYearBound = '1';
-        yearSelect.addEventListener('change', function() {
+        yearSelect.addEventListener('change', function () {
             yearSelect.form.submit();
         });
     }
@@ -282,14 +426,14 @@ function initDueDateContributionGraph() {
         tooltip.classList.remove('is-visible');
     }
 
-    cells.forEach(function(cell) {
+    cells.forEach(function (cell) {
         if (cell.dataset.dueTooltipBound === '1') return;
 
         cell.dataset.dueTooltipBound = '1';
-        cell.addEventListener('mouseenter', function() {
+        cell.addEventListener('mouseenter', function () {
             showTooltip(cell);
         });
-        cell.addEventListener('focus', function() {
+        cell.addEventListener('focus', function () {
             showTooltip(cell);
         });
         cell.addEventListener('mouseleave', hideTooltip);
@@ -306,8 +450,8 @@ document.addEventListener('DOMContentLoaded', initStatusKerjasamaPage);
 document.addEventListener('turbo:load', initStatusKerjasamaPage);
 
 if (!window.statusKerjasamaThemeObserver) {
-    window.statusKerjasamaThemeObserver = new MutationObserver(function(mutations) {
-        const themeChanged = mutations.some(function(mutation) {
+    window.statusKerjasamaThemeObserver = new MutationObserver(function (mutations) {
+        const themeChanged = mutations.some(function (mutation) {
             return mutation.attributeName === 'data-theme';
         });
 

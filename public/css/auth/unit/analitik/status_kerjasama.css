@@ -8,7 +8,7 @@
     --ud-blue-2: var(--accent2);
     --ud-slate: var(--text-sub);
 
-    min-height:calc(100vh - var(--nav-h));
+    min-height: calc(100vh - var(--nav-h));
     padding: 20px 25px;
     display: grid;
     grid-template-columns: minmax(320px, .95fr) minmax(520px, 2fr);
@@ -294,6 +294,7 @@
     min-width: 0;
     display: grid;
     gap: 18px;
+    align-content: start;
 }
 
 .sk-calendar-panel {
@@ -809,28 +810,28 @@ button.sk-due-cell:focus-visible {
 }
 
 .sk-due-level-1 {
-    background: #dbeafe;
-    border-color: #93c5fd;
+    background: #e2e8f0;
+    border-color: #cbd5e1;
 }
 
 .sk-due-level-2 {
-    background: #bfdbfe;
-    border-color: #60a5fa;
+    background: #cbd5e1;
+    border-color: #94a3b8;
 }
 
 .sk-due-level-3 {
-    background: #93c5fd;
-    border-color: #3b82f6;
+    background: #94a3b8;
+    border-color: #64748b;
 }
 
 .sk-due-level-4 {
-    background: #60a5fa;
-    border-color: #2563eb;
+    background: #64748b;
+    border-color: #475569;
 }
 
 .sk-due-level-5 {
-    background: #2563eb;
-    border-color: #1d4ed8;
+    background: #475569;
+    border-color: #334155;
 }
 
 .sk-due-cell.is-month-start {
@@ -838,7 +839,7 @@ button.sk-due-cell:focus-visible {
 }
 
 .sk-due-cell.is-month-start:not(.sk-due-level-0) {
-    border-left-color: #3b82f6;
+    border-left-color: #334155;
 }
 
 .sk-due-cell.is-today {
@@ -909,7 +910,23 @@ button.sk-due-cell:focus-visible {
     min-width: 0;
     overflow-x: auto;
     padding-top: 28px;
+    padding-bottom: 8px;
     scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, .45) rgba(148, 163, 184, .14);
+}
+
+.sk-due-table-wrap::-webkit-scrollbar {
+    height: 10px;
+}
+
+.sk-due-table-wrap::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: rgba(148, 163, 184, .14);
+}
+
+.sk-due-table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(100, 116, 139, .45);
 }
 
 .sk-due-table-header {
@@ -978,10 +995,25 @@ button.sk-due-cell:focus-visible {
     background: var(--surface2);
 }
 
-.sk-col-no { width: 50px; text-align: center !important; font-weight: 600; color: var(--text-sub); }
-.sk-col-dokumen { width: 40%; }
-.sk-col-jenis { width: 30%; }
-.sk-col-aksi { width: 120px; text-align: center !important; }
+.sk-col-no {
+    width: 50px;
+    text-align: center !important;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+.sk-col-dokumen {
+    width: 40%;
+}
+
+.sk-col-jenis {
+    width: 30%;
+}
+
+.sk-col-aksi {
+    width: 120px;
+    text-align: center !important;
+}
 
 .sk-due-doc {
     color: var(--accent);
@@ -1129,6 +1161,51 @@ button.sk-due-cell.is-selected {
     background: #b7b9bb;
 }
 
+.sk-mou-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.sk-mou-head {
+    min-height: 74px;
+    padding: 0 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+}
+
+.sk-mou-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #5d6674;
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.sk-mou-title i {
+    font-size: 15px;
+}
+
+.sk-mou-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    padding: 28px;
+}
+
+.sk-mou-chart-wrap {
+    position: relative;
+    width: min(84%, 300px);
+    height: min(84vw, 300px);
+    max-height: 300px;
+    aspect-ratio: 1;
+}
+
 .sk-avg-item {
     min-width: 0;
     text-align: center;
@@ -1237,6 +1314,21 @@ button.sk-due-cell.is-selected {
     border-color: #2a2f45;
 }
 
+[data-theme="dark"] .sk-due-graph-scroll,
+[data-theme="dark"] .sk-due-table-wrap {
+    scrollbar-color: rgba(148, 163, 184, .3) rgba(15, 23, 42, .4);
+}
+
+[data-theme="dark"] .sk-due-graph-scroll::-webkit-scrollbar-track,
+[data-theme="dark"] .sk-due-table-wrap::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, .4);
+}
+
+[data-theme="dark"] .sk-due-graph-scroll::-webkit-scrollbar-thumb,
+[data-theme="dark"] .sk-due-table-wrap::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, .3);
+}
+
 [data-theme="dark"] .sk-due-month-labels span,
 [data-theme="dark"] .sk-due-weekday-labels,
 [data-theme="dark"] .sk-due-table,
@@ -1253,28 +1345,28 @@ button.sk-due-cell.is-selected {
 }
 
 [data-theme="dark"] .sk-due-level-1 {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
+    background: #334155;
+    border-color: #475569;
 }
 
 [data-theme="dark"] .sk-due-level-2 {
-    background: rgba(59, 130, 246, 0.4);
-    border-color: rgba(59, 130, 246, 0.6);
+    background: #475569;
+    border-color: #64748b;
 }
 
 [data-theme="dark"] .sk-due-level-3 {
-    background: rgba(59, 130, 246, 0.6);
-    border-color: rgba(59, 130, 246, 0.8);
+    background: #64748b;
+    border-color: #94a3b8;
 }
 
 [data-theme="dark"] .sk-due-level-4 {
-    background: rgba(59, 130, 246, 0.8);
-    border-color: #3b82f6;
+    background: #94a3b8;
+    border-color: #cbd5e1;
 }
 
 [data-theme="dark"] .sk-due-level-5 {
-    background: #3b82f6;
-    border-color: #60a5fa;
+    background: #cbd5e1;
+    border-color: #e2e8f0;
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start {
@@ -1282,7 +1374,7 @@ button.sk-due-cell.is-selected {
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start:not(.sk-due-level-0) {
-    border-left-color: #60a5fa;
+    border-left-color: #e2e8f0;
 }
 
 [data-theme="dark"] .sk-due-cell.is-today {
@@ -1315,6 +1407,14 @@ button.sk-due-cell.is-selected {
 
 [data-theme="dark"] .sk-due-scrollbar span {
     background: #64748b;
+}
+
+[data-theme="dark"] .sk-mou-head {
+    border-color: #2a2f45;
+}
+
+[data-theme="dark"] .sk-mou-title {
+    color: #c3cad8;
 }
 
 [data-theme="dark"] .sk-calendar-day.is-today {
@@ -1555,6 +1655,23 @@ button.sk-due-cell.is-selected {
         align-items: flex-start;
         flex-direction: column;
         font-size: 14px;
+    }
+
+    .sk-mou-panel {
+        min-height: 420px;
+    }
+
+    .sk-mou-head {
+        min-height: 62px;
+        padding: 0 16px;
+    }
+
+    .sk-mou-title {
+        font-size: 20px;
+    }
+
+    .sk-mou-body {
+        padding: 20px 12px;
     }
 
     .sk-avg-row {

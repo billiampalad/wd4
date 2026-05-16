@@ -78,6 +78,65 @@ class UnitPageController extends Controller
             'colors' => ['#10b981', '#f59e0b', '#ef4444', '#94a3b8', '#8b5cf6'],
         ];
 
+        $statusDefinitions = [
+            'dalam_perpanjangan' => function ($query) {
+                $query->whereRaw("LOWER(COALESCE(status, '')) = ?", ['dalam perpanjangan']);
+            },
+            'kadaluarsa' => function ($query) use ($today) {
+                $query->where(function ($statusQuery) use ($today) {
+                    $statusQuery->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
+                        ->orWhereDate('end_date', '<', $today);
+                })
+                    ->whereNotIn(DB::raw("LOWER(COALESCE(status, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif']);
+            },
+            'tidak_aktif' => function ($query) {
+                $query->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['tidak aktif', 'nonaktif', 'non aktif']);
+            },
+            'proses' => function ($query) {
+                $query->whereRaw("LOWER(COALESCE(status, '')) = ?", ['proses']);
+            },
+        ];
+
+        $buildJenisQuery = function (string $jenisKey) use ($baseQuery) {
+            $query = clone $baseQuery;
+
+            if ($jenisKey === 'mou') {
+                $query->where('jenis', 'like', '%MoU%');
+            } else {
+                $query->where(function ($jenisQuery) {
+                    $jenisQuery->where('jenis', 'like', '%MoA%')
+                        ->orWhere('jenis', 'like', '%IA%');
+                });
+            }
+
+            return $query;
+        };
+
+        $countStatusByJenis = function (string $statusKey, string $jenisKey) use ($buildJenisQuery, $statusDefinitions) {
+            $query = $buildJenisQuery($jenisKey);
+            $statusDefinitions[$statusKey]($query);
+
+            return $query->count();
+        };
+
+        $makeJenisStatusCounts = function (string $jenisKey) use ($buildJenisQuery, $countStatusByJenis) {
+            $total = $buildJenisQuery($jenisKey)->count();
+            $dalamPerpanjanganCount = $countStatusByJenis('dalam_perpanjangan', $jenisKey);
+            $kadaluarsaCount = $countStatusByJenis('kadaluarsa', $jenisKey);
+            $tidakAktifCount = $countStatusByJenis('tidak_aktif', $jenisKey);
+            $prosesCount = $countStatusByJenis('proses', $jenisKey);
+            $aktifCount = max($total - $dalamPerpanjanganCount - $kadaluarsaCount - $tidakAktifCount - $prosesCount, 0);
+
+            return [$aktifCount, $dalamPerpanjanganCount, $kadaluarsaCount, $tidakAktifCount, $prosesCount];
+        };
+
+        $mouVsMoaIaData = [
+            'labels' => $statusKerjasamaData['labels'],
+            'colors' => $statusKerjasamaData['colors'],
+            'mou' => $makeJenisStatusCounts('mou'),
+            'moa_ia' => $makeJenisStatusCounts('moa_ia'),
+        ];
+
         $currentYear = now()->year;
         $firstYear = (int) ((clone $baseQuery)->whereNotNull('created_at')->min(DB::raw('YEAR(created_at)')) ?: $currentYear);
         $startYear = max($firstYear, $currentYear - 8);
@@ -317,7 +376,8 @@ class UnitPageController extends Controller
             'growthData',
             'growthAverages',
             'calendarData',
-            'dueDateData'
+            'dueDateData',
+            'mouVsMoaIaData'
         ));
     }
 

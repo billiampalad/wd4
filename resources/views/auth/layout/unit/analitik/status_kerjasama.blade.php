@@ -381,12 +381,31 @@
                     </div>
                 </div>
             </div>
-            <div class="sk-two-column-panel"></div>
+            <div class="sk-two-column-stack">
+                <div class="sk-two-column-panel sk-mou-panel">
+                    <header class="sk-mou-head">
+                        <h2 class="sk-mou-title">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>MoU vs MoA/IA</span>
+                        </h2>
+                    </header>
+                    <div class="sk-mou-body">
+                        <div class="sk-mou-chart-wrap">
+                            <canvas id="mouVsMoaIaChart" aria-label="Grafik MoU vs MoA/IA"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sk-two-column-panel">
+                    <!-- Tampilan kedua (kosong) -->
+                </div>
+            </div>
         </div>
     </section>
 
     <script type="application/json" id="statusKerjasamaData">@json($statusKerjasamaData)</script>
     <script type="application/json" id="pertumbuhanKerjasamaData">@json($growthData)</script>
+    <script type="application/json" id="mouVsMoaIaData">@json($mouVsMoaIaData)</script>
 </main>
 
 <script src="{{ asset('js/auth/unit/analitik/status_kerjasama.js') }}" data-turbo-track="reload"></script>
