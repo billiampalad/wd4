@@ -19,6 +19,61 @@ function statusKerjasamaTextColor() {
     return isDark ? '#cbd5e1' : '#666';
 }
 
+function statusKerjasamaSurfaceColor() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return isDark ? '#181c27' : '#ffffff';
+}
+
+function statusKerjasamaTooltipColors() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+    return {
+        background: isDark ? '#0f172a' : '#ffffff',
+        border: isDark ? 'rgba(148, 163, 184, .28)' : 'rgba(15, 23, 42, .12)',
+        title: isDark ? '#f8fafc' : '#0f172a',
+        body: isDark ? '#cbd5e1' : '#475569'
+    };
+}
+
+function statusKerjasamaApplyThemeToCharts() {
+    const textColor = statusKerjasamaTextColor();
+    const gridColor = statusKerjasamaGridColor();
+    const surfaceColor = statusKerjasamaSurfaceColor();
+    const tooltipColors = statusKerjasamaTooltipColors();
+
+    if (window.statusKerjasamaDonutChart) {
+        const donut = window.statusKerjasamaDonutChart;
+
+        donut.data.datasets.forEach(function(dataset) {
+            dataset.borderColor = surfaceColor;
+        });
+
+        donut.options.plugins.tooltip.backgroundColor = tooltipColors.background;
+        donut.options.plugins.tooltip.borderColor = tooltipColors.border;
+        donut.options.plugins.tooltip.borderWidth = 1;
+        donut.options.plugins.tooltip.titleColor = tooltipColors.title;
+        donut.options.plugins.tooltip.bodyColor = tooltipColors.body;
+        donut.update('none');
+    }
+
+    if (window.pertumbuhanKerjasamaLineChart) {
+        const line = window.pertumbuhanKerjasamaLineChart;
+
+        line.options.plugins.legend.labels.color = textColor;
+        line.options.plugins.tooltip.backgroundColor = tooltipColors.background;
+        line.options.plugins.tooltip.borderColor = tooltipColors.border;
+        line.options.plugins.tooltip.borderWidth = 1;
+        line.options.plugins.tooltip.titleColor = tooltipColors.title;
+        line.options.plugins.tooltip.bodyColor = tooltipColors.body;
+        line.options.scales.x.grid.color = gridColor;
+        line.options.scales.x.ticks.color = textColor;
+        line.options.scales.y.grid.color = gridColor;
+        line.options.scales.y.border.color = gridColor;
+        line.options.scales.y.ticks.color = textColor;
+        line.update('none');
+    }
+}
+
 function createStatusKerjasamaCharts() {
     const page = document.getElementById('mainContent');
     if (!page || !page.classList.contains('sk-page') || typeof Chart === 'undefined') return;
@@ -36,6 +91,7 @@ function createStatusKerjasamaCharts() {
         moa: [],
         ia: []
     });
+    const tooltipColors = statusKerjasamaTooltipColors();
 
     if (statusCanvas) {
         if (window.statusKerjasamaDonutChart) {
@@ -49,7 +105,7 @@ function createStatusKerjasamaCharts() {
                 datasets: [{
                     data: statusData.data,
                     backgroundColor: statusData.colors,
-                    borderColor: '#ffffff',
+                    borderColor: statusKerjasamaSurfaceColor(),
                     borderWidth: 2,
                     hoverOffset: 5
                 }]
@@ -66,6 +122,11 @@ function createStatusKerjasamaCharts() {
                         display: false
                     },
                     tooltip: {
+                        backgroundColor: tooltipColors.background,
+                        borderColor: tooltipColors.border,
+                        borderWidth: 1,
+                        titleColor: tooltipColors.title,
+                        bodyColor: tooltipColors.body,
                         callbacks: {
                             label: function(context) {
                                 const total = context.dataset.data.reduce(function(sum, value) {
@@ -138,6 +199,11 @@ function createStatusKerjasamaCharts() {
                         }
                     },
                     tooltip: {
+                        backgroundColor: tooltipColors.background,
+                        borderColor: tooltipColors.border,
+                        borderWidth: 1,
+                        titleColor: tooltipColors.title,
+                        bodyColor: tooltipColors.body,
                         callbacks: {
                             label: function(context) {
                                 return context.dataset.label + ': ' + context.formattedValue;
@@ -183,3 +249,20 @@ function createStatusKerjasamaCharts() {
 
 document.addEventListener('DOMContentLoaded', createStatusKerjasamaCharts);
 document.addEventListener('turbo:load', createStatusKerjasamaCharts);
+
+if (!window.statusKerjasamaThemeObserver) {
+    window.statusKerjasamaThemeObserver = new MutationObserver(function(mutations) {
+        const themeChanged = mutations.some(function(mutation) {
+            return mutation.attributeName === 'data-theme';
+        });
+
+        if (themeChanged) {
+            statusKerjasamaApplyThemeToCharts();
+        }
+    });
+
+    window.statusKerjasamaThemeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+    });
+}

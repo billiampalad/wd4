@@ -115,7 +115,134 @@ class UnitPageController extends Controller
             'ia' => (int) round(array_sum($growthData['ia']) / $yearCount),
         ];
 
-        return view('auth.unit', compact('statusKerjasamaData', 'growthData', 'growthAverages'));
+        $calendarDate = now();
+        $calendarStart = $calendarDate->copy()->startOfMonth();
+        $calendarEnd = $calendarDate->copy()->endOfMonth();
+        $calendarEventsByDay = [];
+        $calendarEventItems = [];
+
+        $calendarCooperations = (clone $baseQuery)
+            ->with('mitra')
+            ->where(function ($query) use ($calendarStart, $calendarEnd) {
+                $query->whereBetween('start_date', [$calendarStart->toDateString(), $calendarEnd->toDateString()])
+                    ->orWhereBetween('end_date', [$calendarStart->toDateString(), $calendarEnd->toDateString()]);
+            })
+            ->orderByRaw('COALESCE(start_date, end_date) asc')
+            ->limit(20)
+            ->get();
+
+        foreach ($calendarCooperations as $cooperation) {
+            $calendarDates = [
+                ['date' => $cooperation->start_date, 'label' => 'Mulai', 'tone' => 'start'],
+                ['date' => $cooperation->end_date, 'label' => 'Berakhir', 'tone' => 'end'],
+            ];
+
+            foreach ($calendarDates as $calendarItem) {
+                $eventDate = $calendarItem['date'];
+
+                if (!$eventDate || $eventDate->lt($calendarStart) || $eventDate->gt($calendarEnd)) {
+                    continue;
+                }
+
+                $dateKey = $eventDate->toDateString();
+                $calendarEventsByDay[$dateKey][] = [
+                    'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                    'jenis' => $cooperation->jenis ?: 'Kerjasama',
+                    'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
+                    'label' => $calendarItem['label'],
+                    'tone' => $calendarItem['tone'],
+                    'date_label' => $eventDate->translatedFormat('d M Y'),
+                ];
+                $calendarEventItems[] = [
+                    'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                    'jenis' => $cooperation->jenis ?: 'Kerjasama',
+                    'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
+                    'label' => $calendarItem['label'],
+                    'tone' => $calendarItem['tone'],
+                    'date_label' => $eventDate->translatedFormat('d M Y'),
+                    'date_sort' => $dateKey,
+                    'status' => $cooperation->status ?: 'Status belum diisi',
+                ];
+            }
+        }
+
+        usort($calendarEventItems, function ($firstEvent, $secondEvent) {
+            return strcmp($firstEvent['date_sort'], $secondEvent['date_sort']);
+        });
+
+        $calendarDays = [];
+
+        for ($day = 1; $day <= $calendarDate->daysInMonth; $day++) {
+            $date = $calendarDate->copy()->day($day);
+            $dateKey = $date->toDateString();
+            $calendarDays[] = [
+                'day' => $day,
+                'date' => $dateKey,
+                'is_today' => $date->isToday(),
+                'events' => $calendarEventsByDay[$dateKey] ?? [],
+            ];
+        }
+
+        $calendarData = [
+            'month_label' => $calendarDate->translatedFormat('F Y'),
+            'weekdays' => ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+            'start_offset' => (int) $calendarStart->dayOfWeek,
+            'days' => $calendarDays,
+            'events' => $calendarEventItems,
+        ];
+
+        $dueDateYear = now()->year;
+        $dueDateMonths = collect(range(1, 12))->mapWithKeys(function ($month) {
+            return [
+                $month => [
+                    'label' => now()->month($month)->format('M'),
+                    'weekdays' => array_fill(0, 7, 0),
+                ],
+            ];
+        })->toArray();
+
+        $dueDateQuery = (clone $baseQuery)
+            ->with('mitra')
+            ->whereNotNull('end_date')
+            ->whereYear('end_date', $dueDateYear)
+            ->orderBy('end_date');
+
+        $dueDateTotal = (clone $dueDateQuery)->count();
+        $dueDateCooperations = $dueDateQuery->limit(5)->get();
+
+        $dueDateHeatRows = (clone $baseQuery)
+            ->whereNotNull('end_date')
+            ->whereYear('end_date', $dueDateYear)
+            ->get(['end_date']);
+
+        foreach ($dueDateHeatRows as $dueDateItem) {
+            $dueDateMonths[$dueDateItem->end_date->month]['weekdays'][$dueDateItem->end_date->dayOfWeek]++;
+        }
+
+        $dueDateData = [
+            'year' => $dueDateYear,
+            'total' => $dueDateTotal,
+            'showing' => $dueDateCooperations->count(),
+            'months' => array_values($dueDateMonths),
+            'rows' => $dueDateCooperations->map(function ($cooperation) {
+                return [
+                    'id' => $cooperation->id,
+                    'doc_number' => $cooperation->doc_number ?: '-',
+                    'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                    'jenis' => $cooperation->jenis ?: 'Kerjasama',
+                    'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
+                    'due' => optional($cooperation->end_date)->format('j/n/Y'),
+                ];
+            }),
+        ];
+
+        return view('auth.unit', compact(
+            'statusKerjasamaData',
+            'growthData',
+            'growthAverages',
+            'calendarData',
+            'dueDateData'
+        ));
     }
 
     // ─── Data Kerjasama ──────────────────────────────────────────
