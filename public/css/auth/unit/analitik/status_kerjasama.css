@@ -535,11 +535,19 @@
 }
 
 .sk-due-graph-shell {
+    position: relative;
     min-width: 0;
     padding: 14px 14px 12px;
     border: 1px solid rgba(148, 163, 184, .22);
     border-radius: 14px;
     background: linear-gradient(180deg, rgba(248, 250, 252, .72), rgba(248, 250, 252, .38));
+}
+
+.sk-due-panel.is-loading .sk-due-graph-scroll,
+.sk-due-panel.is-loading .sk-due-table-wrap,
+.sk-due-panel.is-loading .sk-due-footer {
+    opacity: .48;
+    pointer-events: none;
 }
 
 .sk-due-graph-head {
@@ -553,13 +561,134 @@
     font-weight: 800;
 }
 
+.sk-due-year-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.sk-due-year-label {
+    color: var(--text-sub);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.sk-due-year-picker {
+    position: relative;
+}
+
+.sk-due-year-trigger {
+    min-width: 112px;
+    height: 38px;
+    padding: 0 12px 0 14px;
+    border: 1px solid rgba(148, 163, 184, .34);
+    border-radius: 12px;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(248, 250, 252, .72)),
+        var(--surface);
+    color: var(--text);
+    box-shadow: 0 12px 28px -22px rgba(15, 23, 42, .5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.sk-due-year-trigger:hover,
+.sk-due-year-trigger[aria-expanded="true"] {
+    border-color: rgba(37, 99, 235, .48);
+    box-shadow: 0 18px 34px -22px rgba(37, 99, 235, .7);
+}
+
+.sk-due-year-trigger:focus-visible {
+    border-color: rgba(79, 70, 229, .55);
+    outline: 3px solid rgba(79, 70, 229, .14);
+}
+
+.sk-due-year-trigger i {
+    color: var(--text-sub);
+    font-size: 10px;
+    transition: transform .18s ease;
+}
+
+.sk-due-year-trigger i.is-open {
+    transform: rotate(180deg);
+}
+
+.sk-due-year-trigger:disabled,
+.sk-due-year-option:disabled {
+    cursor: wait;
+    opacity: .72;
+}
+
+.sk-due-year-options {
+    position: absolute;
+    z-index: 25;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 132px;
+    padding: 6px;
+    border: 1px solid rgba(148, 163, 184, .28);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: 0 22px 50px -28px rgba(15, 23, 42, .65);
+    display: grid;
+    gap: 4px;
+}
+
+.sk-due-year-option {
+    width: 100%;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.sk-due-year-option:hover,
+.sk-due-year-option.is-selected {
+    background: rgba(37, 99, 235, .1);
+    color: #2563eb;
+}
+
+.sk-due-year-option i {
+    font-size: 10px;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
 .sk-due-legend {
     display: flex;
     align-items: center;
     gap: 5px;
     color: var(--text-sub);
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 500;
+}
+
+.sk-due-legend .sk-due-cell {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    flex: 0 0 auto;
 }
 
 .sk-due-graph-scroll {
@@ -616,7 +745,7 @@
     color: var(--text-sub);
     font-size: 11px;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 500;
 }
 
 .sk-due-weekday-labels {
@@ -628,7 +757,7 @@
     color: var(--text-sub);
     font-size: 9px;
     line-height: var(--due-cell);
-    font-weight: 800;
+    font-weight: 500;
     text-align: right;
 }
 
@@ -673,23 +802,27 @@ button.sk-due-cell:focus-visible {
 }
 
 .sk-due-level-0 {
-    background: #ebedf0;
+    background: #f8fafc;
 }
 
 .sk-due-level-1 {
-    background: #9be9a8;
+    background: #dbeafe;
 }
 
 .sk-due-level-2 {
-    background: #40c463;
+    background: #bfdbfe;
 }
 
 .sk-due-level-3 {
-    background: #30a14e;
+    background: #93c5fd;
 }
 
 .sk-due-level-4 {
-    background: #216e39;
+    background: #60a5fa;
+}
+
+.sk-due-level-5 {
+    background: #2563eb;
 }
 
 .sk-due-cell.is-today {
@@ -737,6 +870,29 @@ button.sk-due-cell:focus-visible {
     height: 10px;
     background: inherit;
     transform: translateX(-50%) rotate(45deg);
+}
+
+.sk-due-loading,
+.sk-due-error {
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.sk-due-loading {
+    padding: 9px 10px;
+    background: rgba(37, 99, 235, .1);
+    color: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sk-due-error {
+    padding: 10px;
+    background: rgba(239, 68, 68, .1);
+    color: #dc2626;
 }
 
 .sk-due-table-wrap {
@@ -956,6 +1112,21 @@ button.sk-due-cell:focus-visible {
     color: #e2e8f0;
 }
 
+[data-theme="dark"] .sk-due-year-trigger,
+[data-theme="dark"] .sk-due-year-options {
+    background:
+        linear-gradient(135deg, rgba(17, 24, 39, .96), rgba(15, 23, 42, .88)),
+        #111827;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .sk-due-year-option:hover,
+[data-theme="dark"] .sk-due-year-option.is-selected {
+    background: rgba(59, 130, 246, .18);
+    color: #93c5fd;
+}
+
 [data-theme="dark"] .sk-calendar-month strong {
     background: rgba(99, 102, 241, .18);
     color: #a5b4fc;
@@ -984,23 +1155,27 @@ button.sk-due-cell:focus-visible {
 }
 
 [data-theme="dark"] .sk-due-level-0 {
-    background: #161b22;
+    background: #f8fafc;
 }
 
 [data-theme="dark"] .sk-due-level-1 {
-    background: #0e4429;
+    background: #dbeafe;
 }
 
 [data-theme="dark"] .sk-due-level-2 {
-    background: #006d32;
+    background: #bfdbfe;
 }
 
 [data-theme="dark"] .sk-due-level-3 {
-    background: #26a641;
+    background: #93c5fd;
 }
 
 [data-theme="dark"] .sk-due-level-4 {
-    background: #39d353;
+    background: #60a5fa;
+}
+
+[data-theme="dark"] .sk-due-level-5 {
+    background: #2563eb;
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start {
@@ -1249,6 +1424,11 @@ button.sk-due-cell:focus-visible {
 
     .sk-due-title {
         font-size: 20px;
+    }
+
+    .sk-due-graph-head {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .sk-due-body {

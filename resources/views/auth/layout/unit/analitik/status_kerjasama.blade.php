@@ -138,7 +138,56 @@
                     </div>
                 </div>
 
-                <div class="sk-two-column-panel sk-due-panel">
+                <div class="sk-two-column-panel sk-due-panel"
+                    x-data="{
+                        open: false,
+                        loading: false,
+                        error: '',
+                        selected: String(@js($dueDateData['year'] ?? now()->year)),
+                        data: @js($dueDateData ?? []),
+                        get pageCount() {
+                            return Math.min(5, Math.max(1, Math.ceil((this.data.total || 0) / 5)));
+                        },
+                        async choose(year) {
+                            const nextYear = String(year);
+                            this.open = false;
+
+                            if (nextYear === this.selected) return;
+
+                            this.selected = nextYear;
+                            this.loading = true;
+                            this.error = '';
+
+                            const url = new URL('{{ route('unit.analitik.status-kerjasama') }}', window.location.origin);
+                            url.searchParams.set('due_year', nextYear);
+                            url.searchParams.set('partial', 'due_date');
+
+                            try {
+                                const response = await fetch(url.toString(), {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest'
+                                    }
+                                });
+
+                                if (!response.ok) throw new Error('Gagal memuat data due date.');
+
+                                const payload = await response.json();
+                                this.data = payload.dueDateData || this.data;
+                                this.selected = String(this.data.year || nextYear);
+
+                                const browserUrl = new URL(window.location.href);
+                                browserUrl.searchParams.set('due_year', this.selected);
+                                window.history.replaceState({}, '', browserUrl.toString());
+
+                                this.$nextTick(() => initDueDateContributionGraph());
+                            } catch (error) {
+                                this.error = error.message || 'Gagal memuat data due date.';
+                            } finally {
+                                this.loading = false;
+                            }
+                        }
+                    }" @keydown.escape.window="open = false" :class="{ 'is-loading': loading }">
                     <header class="sk-due-head">
                         <h2 class="sk-due-title">
                             <i class="fas fa-calendar-alt"></i>
@@ -152,10 +201,32 @@
                     <div class="sk-due-body">
                         <div class="sk-due-graph-shell">
                             <div class="sk-due-graph-head">
-                                <span>{{ $dueDateData['year'] ?? now()->year }}</span>
+                                <div class="sk-due-year-form">
+                                    <span class="sk-due-year-label">Tahun</span>
+                                    <div class="sk-due-year-picker" @click.outside="open = false">
+                                        <button type="button" class="sk-due-year-trigger" @click="open = !open"
+                                            :aria-expanded="open.toString()" aria-haspopup="listbox" :disabled="loading">
+                                            <span x-text="selected"></span>
+                                            <i class="fas fa-chevron-down" :class="{ 'is-open': open }"></i>
+                                        </button>
+                                        <div class="sk-due-year-options" x-show="open" x-transition.origin.top.left
+                                            x-cloak role="listbox">
+                                            <template x-for="year in data.years" :key="year">
+                                                <button type="button" class="sk-due-year-option"
+                                                    :class="{ 'is-selected': String(year) === selected }"
+                                                    :disabled="loading"
+                                                    @click="choose(year)" role="option"
+                                                    :aria-selected="(String(year) === selected).toString()">
+                                                    <span x-text="year"></span>
+                                                    <i class="fas fa-check" x-show="String(year) === selected"></i>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="sk-due-legend" aria-label="Legenda intensitas due date">
                                     <span>Less</span>
-                                    @for ($level = 0; $level <= 4; $level++)
+                                    @for ($level = 1; $level <= 5; $level++)
                                         <i class="sk-due-cell sk-due-level-{{ $level }}"></i>
                                     @endfor
                                     <span>More</span>
@@ -165,37 +236,44 @@
                             <div class="sk-due-graph-scroll" tabindex="0" aria-label="Grafik kontribusi due date kerjasama">
                                 <div class="sk-due-contrib">
                                     <div class="sk-due-month-labels">
-                                        @foreach (($dueDateData['month_labels'] ?? []) as $month)
-                                            <span style="--month-week: {{ $month['week'] }}">{{ $month['label'] }}</span>
-                                        @endforeach
+                                        <template x-for="month in data.month_labels" :key="month.label + month.week">
+                                            <span :style="`--month-week: ${month.week}`" x-text="month.label"></span>
+                                        </template>
                                     </div>
 
                                     <div class="sk-due-weekday-labels" aria-hidden="true">
-                                        @foreach (($dueDateData['weekdays'] ?? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) as $weekday)
-                                            <span>{{ $weekday }}</span>
-                                        @endforeach
+                                        <template x-for="weekday in data.weekdays" :key="weekday">
+                                            <span x-text="weekday"></span>
+                                        </template>
                                     </div>
 
                                     <div class="sk-due-weeks">
-                                        @foreach (($dueDateData['weeks'] ?? []) as $week)
+                                        <template x-for="(week, weekIndex) in data.weeks" :key="weekIndex">
                                             <div class="sk-due-week">
-                                                @foreach ($week as $day)
-                                                    @if ($day)
-                                                        <button type="button"
-                                                            class="sk-due-cell sk-due-level-{{ $day['level'] }} {{ $day['is_today'] ? 'is-today' : '' }} {{ $day['is_month_start'] ? 'is-month-start' : '' }}"
-                                                            data-count="{{ $day['count'] }}"
-                                                            data-date="{{ $day['label'] }}"
-                                                            aria-label="{{ $day['count'] }} due date pada {{ $day['label'] }}">
-                                                        </button>
-                                                    @else
-                                                        <span class="sk-due-cell sk-due-cell-empty" aria-hidden="true"></span>
-                                                    @endif
-                                                @endforeach
+                                                <template x-for="(day, dayIndex) in week" :key="day ? day.date : `empty-${weekIndex}-${dayIndex}`">
+                                                    <button type="button" class="sk-due-cell"
+                                                        :class="day ? [
+                                                            `sk-due-level-${day.level}`,
+                                                            day.is_today ? 'is-today' : '',
+                                                            day.is_month_start ? 'is-month-start' : ''
+                                                        ] : 'sk-due-cell-empty'"
+                                                        :disabled="!day"
+                                                        :data-count="day ? day.count : 0"
+                                                        :data-date="day ? day.label : ''"
+                                                        :aria-hidden="(!day).toString()"
+                                                        :aria-label="day ? `${day.count} due date pada ${day.label}` : ''">
+                                                    </button>
+                                                </template>
                                             </div>
-                                        @endforeach
+                                        </template>
                                     </div>
                                 </div>
                             </div>
+                            <div class="sk-due-loading" x-show="loading" x-cloak>
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Memuat data tahun <span x-text="selected"></span>...</span>
+                            </div>
+                            <div class="sk-due-error" x-show="error" x-cloak x-text="error"></div>
                         </div>
 
                         <div class="sk-due-table-wrap">
@@ -208,38 +286,39 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse (($dueDateData['rows'] ?? []) as $row)
+                                    <template x-for="(row, index) in data.rows" :key="row.id">
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td x-text="index + 1"></td>
                                             <td>
-                                                <div class="sk-due-doc">{{ $row['doc_number'] }}</div>
-                                                <div class="sk-due-row-title">{{ $row['title'] }}</div>
+                                                <div class="sk-due-doc" x-text="row.doc_number"></div>
+                                                <div class="sk-due-row-title" x-text="row.title"></div>
                                                 <div class="sk-due-actions">
-                                                    <a href="{{ route('unit.kerjasama.show', $row['id']) }}">Detail <i class="fas fa-angle-double-right"></i></a>
-                                                    <span>{{ $row['jenis'] }}</span>
+                                                    <a :href="row.detail_url">Detail <i class="fas fa-angle-double-right"></i></a>
+                                                    <span x-text="row.jenis"></span>
                                                 </div>
                                             </td>
-                                            <td>{{ $row['due'] }}</td>
+                                            <td x-text="row.due"></td>
                                         </tr>
-                                    @empty
+                                    </template>
+                                    <template x-if="!data.rows || data.rows.length === 0">
                                         <tr>
                                             <td colspan="3">
                                                 <div class="sk-calendar-empty-state">Belum ada due date pada tahun ini.</div>
                                             </td>
                                         </tr>
-                                    @endforelse
+                                    </template>
                                 </tbody>
                             </table>
                         </div>
 
                         <div class="sk-due-footer">
-                            <span>Showing {{ ($dueDateData['showing'] ?? 0) ? 1 : 0 }} to {{ $dueDateData['showing'] ?? 0 }} of {{ $dueDateData['total'] ?? 0 }} entries</span>
+                            <span x-text="`Showing ${(data.showing || 0) ? 1 : 0} to ${data.showing || 0} of ${data.total || 0} entries`"></span>
                             <div class="sk-due-pages" aria-label="Pagination due date">
                                 <button type="button" disabled>Previous</button>
-                                @for ($page = 1; $page <= min(5, max(1, (int) ceil(($dueDateData['total'] ?? 0) / 5))); $page++)
-                                    <button type="button" class="{{ $page === 1 ? 'is-active' : '' }}">{{ $page }}</button>
-                                @endfor
-                                <button type="button" {{ ($dueDateData['total'] ?? 0) <= 5 ? 'disabled' : '' }}>Next</button>
+                                <template x-for="page in pageCount" :key="page">
+                                    <button type="button" :class="{ 'is-active': page === 1 }" x-text="page"></button>
+                                </template>
+                                <button type="button" :disabled="(data.total || 0) <= 5">Next</button>
                             </div>
                         </div>
 

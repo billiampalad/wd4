@@ -248,7 +248,16 @@ function createStatusKerjasamaCharts() {
 }
 
 function initDueDateContributionGraph() {
-    const cells = document.querySelectorAll('.sk-due-weeks button.sk-due-cell');
+    const cells = document.querySelectorAll('.sk-due-weeks button.sk-due-cell:not(.sk-due-cell-empty)');
+    const yearSelect = document.getElementById('dueYearSelect');
+
+    if (yearSelect && yearSelect.dataset.dueYearBound !== '1') {
+        yearSelect.dataset.dueYearBound = '1';
+        yearSelect.addEventListener('change', function() {
+            yearSelect.form.submit();
+        });
+    }
+
     if (!cells.length) return;
 
     let tooltip = document.querySelector('.sk-due-tooltip');

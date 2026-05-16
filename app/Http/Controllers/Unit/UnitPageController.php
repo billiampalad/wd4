@@ -43,7 +43,7 @@ class UnitPageController extends Controller
         return $query;
     }
 
-    public function statusKerjasama()
+    public function statusKerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();
         $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
@@ -191,7 +191,31 @@ class UnitPageController extends Controller
             'events' => $calendarEventItems,
         ];
 
-        $dueDateYear = now()->year;
+        $dueDateYears = (clone $baseQuery)
+            ->whereNotNull('end_date')
+            ->selectRaw('YEAR(end_date) as due_year')
+            ->distinct()
+            ->orderByDesc('due_year')
+            ->pluck('due_year')
+            ->map(fn ($year) => (int) $year)
+            ->filter()
+            ->values()
+            ->all();
+
+        if (empty($dueDateYears)) {
+            $dueDateYears = [now()->year];
+        }
+
+        $nextDueDateYear = max($dueDateYears) + 1;
+        $dueDateYears[] = $nextDueDateYear;
+        $dueDateYears = collect($dueDateYears)
+            ->unique()
+            ->sortDesc()
+            ->values()
+            ->all();
+
+        $requestedDueYear = (int) $request->query('due_year', now()->year);
+        $dueDateYear = in_array($requestedDueYear, $dueDateYears, true) ? $requestedDueYear : $dueDateYears[0];
         $dueDateYearStart = now()->setDate($dueDateYear, 1, 1)->startOfDay();
         $dueDateYearEnd = now()->setDate($dueDateYear, 12, 31)->startOfDay();
 
@@ -240,7 +264,7 @@ class UnitPageController extends Controller
                 'label' => $date->translatedFormat('d M Y'),
                 'day' => $date->day,
                 'count' => $count,
-                'level' => min($count, 4),
+                'level' => min($count, 5),
                 'is_today' => $date->isToday(),
                 'is_month_start' => $date->day === 1,
             ];
@@ -262,6 +286,7 @@ class UnitPageController extends Controller
 
         $dueDateData = [
             'year' => $dueDateYear,
+            'years' => $dueDateYears,
             'total' => $dueDateTotal,
             'showing' => $dueDateCooperations->count(),
             'weeks' => $dueDateWeeks,
@@ -275,9 +300,16 @@ class UnitPageController extends Controller
                     'jenis' => $cooperation->jenis ?: 'Kerjasama',
                     'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
                     'due' => optional($cooperation->end_date)->format('j/n/Y'),
+                    'detail_url' => route('unit.kerjasama.show', $cooperation->id),
                 ];
             }),
         ];
+
+        if ($request->query('partial') === 'due_date') {
+            return response()->json([
+                'dueDateData' => $dueDateData,
+            ]);
+        }
 
         return view('auth.unit', compact(
             'statusKerjasamaData',
