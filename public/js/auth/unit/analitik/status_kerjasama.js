@@ -114,6 +114,29 @@ function statusKerjasamaApplyThemeToCharts() {
 
         chart.update('none');
     }
+
+    if (window.sebaranDokumenChartInstance && typeof window.sebaranDokumenChartInstance.update === 'function') {
+        const sebaran = window.sebaranDokumenChartInstance;
+
+        sebaran.options.plugins.tooltip.backgroundColor = tooltipColors.background;
+        sebaran.options.plugins.tooltip.borderColor = tooltipColors.border;
+        sebaran.options.plugins.tooltip.borderWidth = 1;
+        sebaran.options.plugins.tooltip.titleColor = tooltipColors.title;
+        sebaran.options.plugins.tooltip.bodyColor = tooltipColors.body;
+        
+        if (sebaran.options.scales.x) {
+            sebaran.options.scales.x.grid.color = gridColor;
+            sebaran.options.scales.x.border.color = gridColor;
+            sebaran.options.scales.x.ticks.color = textColor;
+        }
+        if (sebaran.options.scales.y) {
+            sebaran.options.scales.y.border.color = gridColor;
+            sebaran.options.scales.y.ticks.color = textColor;
+            sebaran.options.scales.y.title.color = textColor;
+        }
+
+        sebaran.update('none');
+    }
 }
 
 function createStatusKerjasamaCharts() {
@@ -123,6 +146,7 @@ function createStatusKerjasamaCharts() {
     const statusCanvas = document.getElementById('statusKerjasamaChart');
     const growthCanvas = document.getElementById('pertumbuhanKerjasamaChart');
     const mouVsMoaIaCanvas = document.getElementById('mouVsMoaIaChart');
+    const sebaranCanvas = document.getElementById('sebaranDokumenChart');
     const statusData = parseStatusKerjasamaJson('statusKerjasamaData', {
         labels: [],
         data: [],
@@ -407,6 +431,107 @@ function createStatusKerjasamaCharts() {
                             precision: 0,
                             font: {
                                 size: 11,
+                                weight: '700'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (sebaranCanvas) {
+        if (window.sebaranDokumenChartInstance && typeof window.sebaranDokumenChartInstance.destroy === 'function') {
+            window.sebaranDokumenChartInstance.destroy();
+        }
+
+        const gridColor = statusKerjasamaGridColor();
+        const textColor = statusKerjasamaTextColor();
+
+        window.sebaranDokumenChartInstance = new Chart(sebaranCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['MoU', 'MoA', 'IA'],
+                datasets: [
+                    {
+                        label: 'Medium Blue',
+                        data: [45, 75, 0],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: { topRight: 999, bottomRight: 999 },
+                        barPercentage: 0.85,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Orange',
+                        data: [85, 60, 35],
+                        backgroundColor: '#f97316',
+                        borderRadius: { topRight: 999, bottomRight: 999 },
+                        barPercentage: 0.85,
+                        categoryPercentage: 0.8
+                    },
+                    {
+                        label: 'Light Blue',
+                        data: [15, 10, 0],
+                        backgroundColor: '#38bdf8',
+                        borderRadius: { topRight: 999, bottomRight: 999 },
+                        barPercentage: 0.85,
+                        categoryPercentage: 0.8
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: tooltipColors.background,
+                        borderColor: tooltipColors.border,
+                        borderWidth: 1,
+                        titleColor: tooltipColors.title,
+                        bodyColor: tooltipColors.body
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: gridColor,
+                            lineWidth: 1.4
+                        },
+                        border: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        border: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Dokumen',
+                            color: textColor,
+                            font: {
+                                size: 13,
                                 weight: '700'
                             }
                         }

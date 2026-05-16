@@ -396,8 +396,18 @@
                     </div>
                 </div>
 
-                <div class="sk-two-column-panel">
-                    <!-- Tampilan kedua (kosong) -->
+                <div class="sk-two-column-panel sk-sebaran-panel">
+                    <header class="sk-sebaran-head">
+                        <h2 class="sk-sebaran-title">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Sebaran Dokumen</span>
+                        </h2>
+                    </header>
+                    <div class="sk-sebaran-body">
+                        <div class="sk-sebaran-chart-wrap">
+                            <canvas id="sebaranDokumenChart" aria-label="Grafik Sebaran Dokumen"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
