@@ -38,7 +38,7 @@ function statusKerjasamaTooltipColors() {
 function statusKerjasamaHexToRgba(hex, alpha) {
     const cleanHex = String(hex || '').replace('#', '');
     const value = cleanHex.length === 3
-        ? cleanHex.split('').map(function (char) { return char + char; }).join('')
+        ? cleanHex.split('').map(function(char) { return char + char; }).join('')
         : cleanHex;
 
     if (value.length !== 6) return 'rgba(148, 163, 184, ' + alpha + ')';
@@ -59,7 +59,7 @@ function statusKerjasamaApplyThemeToCharts() {
     if (window.statusKerjasamaDonutChart) {
         const donut = window.statusKerjasamaDonutChart;
 
-        donut.data.datasets.forEach(function (dataset) {
+        donut.data.datasets.forEach(function(dataset) {
             dataset.borderColor = surfaceColor;
         });
 
@@ -91,7 +91,7 @@ function statusKerjasamaApplyThemeToCharts() {
     if (window.mouVsMoaIaChartInstance && typeof window.mouVsMoaIaChartInstance.update === 'function') {
         const chart = window.mouVsMoaIaChartInstance;
 
-        chart.data.datasets.forEach(function (dataset) {
+        chart.data.datasets.forEach(function(dataset) {
             dataset.borderColor = surfaceColor;
         });
 
@@ -100,6 +100,18 @@ function statusKerjasamaApplyThemeToCharts() {
         chart.options.plugins.tooltip.borderWidth = 1;
         chart.options.plugins.tooltip.titleColor = tooltipColors.title;
         chart.options.plugins.tooltip.bodyColor = tooltipColors.body;
+
+        if (chart.options.scales && chart.options.scales.r) {
+            chart.options.scales.r.grid.color = gridColor;
+            chart.options.scales.r.ticks.color = textColor;
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            chart.options.scales.r.ticks.backdropColor = statusKerjasamaHexToRgba(
+                isDark ? '#181c27' : '#ffffff', .85
+            );
+        }
+
+        chart.options.plugins.legend.labels.color = textColor;
+
         chart.update('none');
     }
 }
@@ -165,8 +177,8 @@ function createStatusKerjasamaCharts() {
                         titleColor: tooltipColors.title,
                         bodyColor: tooltipColors.body,
                         callbacks: {
-                            label: function (context) {
-                                const total = context.dataset.data.reduce(function (sum, value) {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce(function(sum, value) {
                                     return sum + Number(value || 0);
                                 }, 0);
                                 const value = Number(context.raw || 0);
@@ -242,7 +254,7 @@ function createStatusKerjasamaCharts() {
                         titleColor: tooltipColors.title,
                         bodyColor: tooltipColors.body,
                         callbacks: {
-                            label: function (context) {
+                            label: function(context) {
                                 return context.dataset.label + ': ' + context.formattedValue;
                             }
                         }
@@ -292,63 +304,58 @@ function createStatusKerjasamaCharts() {
         const statusColors = Array.isArray(mouVsMoaIaData.colors) ? mouVsMoaIaData.colors : [];
         const mouValues = Array.isArray(mouVsMoaIaData.mou) ? mouVsMoaIaData.mou : [];
         const moaIaValues = Array.isArray(mouVsMoaIaData.moa_ia) ? mouVsMoaIaData.moa_ia : [];
-        const totalValues = statusLabels.map(function (label, index) {
+        const totalValues = statusLabels.map(function(label, index) {
             return Number(mouValues[index] || 0) + Number(moaIaValues[index] || 0);
         });
-        const grandTotal = totalValues.reduce(function (sum, value) {
+        const grandTotal = totalValues.reduce(function(sum, value) {
             return sum + Number(value || 0);
         }, 0);
-        const fallbackValues = statusLabels.map(function () { return 1; });
-        const fallbackColors = statusColors.map(function (color) {
-            return statusKerjasamaHexToRgba(color, .22);
+
+        const bgColors = statusColors.map(function(color) {
+            return statusKerjasamaHexToRgba(color, .72);
         });
-        const moaIaColors = statusColors.map(function (color, index) {
-            const value = Number(moaIaValues[index] || 0);
-            const pairValue = Number(mouValues[index] || 0);
-            return statusKerjasamaHexToRgba(color, value >= pairValue ? 1 : .42);
-        });
-        const mouColors = statusColors.map(function (color, index) {
-            const value = Number(mouValues[index] || 0);
-            const pairValue = Number(moaIaValues[index] || 0);
-            return statusKerjasamaHexToRgba(color, value >= pairValue ? 1 : .42);
+        const borderColors = statusColors.map(function(color) {
+            return statusKerjasamaHexToRgba(color, 1);
         });
 
+        const gridColor = statusKerjasamaGridColor();
+        const textColor = statusKerjasamaTextColor();
+        const surfaceColor = statusKerjasamaSurfaceColor();
+
         window.mouVsMoaIaChartInstance = new Chart(mouVsMoaIaCanvas, {
-            type: 'doughnut',
+            type: 'polarArea',
             data: {
                 labels: statusLabels,
                 datasets: [{
-                    label: 'MoA/IA',
-                    sourceData: moaIaValues,
-                    pairedData: mouValues,
-                    data: grandTotal ? moaIaValues : fallbackValues,
-                    backgroundColor: grandTotal ? moaIaColors : fallbackColors,
-                    borderColor: statusKerjasamaSurfaceColor(),
-                    borderWidth: 3,
-                    hoverOffset: 5
-                }, {
-                    label: 'MoU',
-                    sourceData: mouValues,
-                    pairedData: moaIaValues,
-                    data: grandTotal ? mouValues : fallbackValues,
-                    backgroundColor: grandTotal ? mouColors : fallbackColors,
-                    borderColor: statusKerjasamaSurfaceColor(),
-                    borderWidth: 3,
-                    radius: '62%',
-                    hoverOffset: 3
+                    label: 'MoU vs MoA/IA',
+                    data: grandTotal ? totalValues : statusLabels.map(function() { return 1; }),
+                    backgroundColor: grandTotal ? bgColors : statusColors.map(function(color) {
+                        return statusKerjasamaHexToRgba(color, .22);
+                    }),
+                    borderColor: grandTotal ? borderColors : statusColors.map(function(color) {
+                        return statusKerjasamaHexToRgba(color, .35);
+                    }),
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '42%',
-                interaction: {
-                    mode: 'index',
-                    intersect: true
-                },
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 14,
+                            boxHeight: 14,
+                            padding: 12,
+                            color: textColor,
+                            font: {
+                                size: 11,
+                                weight: '600',
+                                family: "'Plus Jakarta Sans', sans-serif"
+                            }
+                        }
                     },
                     tooltip: {
                         backgroundColor: tooltipColors.background,
@@ -357,31 +364,50 @@ function createStatusKerjasamaCharts() {
                         titleColor: tooltipColors.title,
                         bodyColor: tooltipColors.body,
                         callbacks: {
-                            title: function (contexts) {
-                                const context = contexts && contexts.length ? contexts[0] : null;
+                            title: function(contexts) {
+                                var context = contexts && contexts.length ? contexts[0] : null;
                                 return context ? context.label : '';
                             },
-                            label: function (context) {
-                                const dataset = context.dataset || {};
-                                const value = Number((dataset.sourceData || [])[context.dataIndex] || 0);
-                                const pairValue = Number((dataset.pairedData || [])[context.dataIndex] || 0);
-                                const total = value + pairValue;
-                                const percent = total ? Math.round((value / total) * 100) : 0;
-
-                                return dataset.label + ' ' + value + ' (' + percent + '%)';
+                            label: function(context) {
+                                var index = context.dataIndex;
+                                var mou = Number(mouValues[index] || 0);
+                                var moaIa = Number(moaIaValues[index] || 0);
+                                var total = mou + moaIa;
+                                return [
+                                    'MoU: ' + mou + (total ? ' (' + Math.round((mou / total) * 100) + '%)' : ''),
+                                    'MoA/IA: ' + moaIa + (total ? ' (' + Math.round((moaIa / total) * 100) + '%)' : ''),
+                                    'Total: ' + total
+                                ];
                             },
-                            labelColor: function (context) {
-                                const dataset = context.dataset || {};
-                                const value = Number((dataset.sourceData || [])[context.dataIndex] || 0);
-                                const pairValue = Number((dataset.pairedData || [])[context.dataIndex] || 0);
-                                const baseColor = statusColors[context.dataIndex] || '#94a3b8';
-                                const alpha = value >= pairValue ? 1 : .42;
-                                const color = statusKerjasamaHexToRgba(baseColor, alpha);
-
+                            labelColor: function(context) {
+                                var color = statusColors[context.dataIndex] || '#94a3b8';
                                 return {
                                     borderColor: color,
                                     backgroundColor: color
                                 };
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        z: 1,
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            backdropColor: statusKerjasamaHexToRgba(
+                                surfaceColor.indexOf('#') === 0 ? surfaceColor : (
+                                    document.documentElement.getAttribute('data-theme') === 'dark' ? '#181c27' : '#ffffff'
+                                ), .85
+                            ),
+                            backdropPadding: 4,
+                            precision: 0,
+                            font: {
+                                size: 11,
+                                weight: '700'
                             }
                         }
                     }
@@ -397,7 +423,7 @@ function initDueDateContributionGraph() {
 
     if (yearSelect && yearSelect.dataset.dueYearBound !== '1') {
         yearSelect.dataset.dueYearBound = '1';
-        yearSelect.addEventListener('change', function () {
+        yearSelect.addEventListener('change', function() {
             yearSelect.form.submit();
         });
     }
@@ -426,14 +452,14 @@ function initDueDateContributionGraph() {
         tooltip.classList.remove('is-visible');
     }
 
-    cells.forEach(function (cell) {
+    cells.forEach(function(cell) {
         if (cell.dataset.dueTooltipBound === '1') return;
 
         cell.dataset.dueTooltipBound = '1';
-        cell.addEventListener('mouseenter', function () {
+        cell.addEventListener('mouseenter', function() {
             showTooltip(cell);
         });
-        cell.addEventListener('focus', function () {
+        cell.addEventListener('focus', function() {
             showTooltip(cell);
         });
         cell.addEventListener('mouseleave', hideTooltip);
@@ -450,8 +476,8 @@ document.addEventListener('DOMContentLoaded', initStatusKerjasamaPage);
 document.addEventListener('turbo:load', initStatusKerjasamaPage);
 
 if (!window.statusKerjasamaThemeObserver) {
-    window.statusKerjasamaThemeObserver = new MutationObserver(function (mutations) {
-        const themeChanged = mutations.some(function (mutation) {
+    window.statusKerjasamaThemeObserver = new MutationObserver(function(mutations) {
+        const themeChanged = mutations.some(function(mutation) {
             return mutation.attributeName === 'data-theme';
         });
 
