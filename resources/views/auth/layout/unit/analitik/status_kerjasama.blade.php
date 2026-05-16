@@ -416,6 +416,7 @@
     <script type="application/json" id="statusKerjasamaData">@json($statusKerjasamaData)</script>
     <script type="application/json" id="pertumbuhanKerjasamaData">@json($growthData)</script>
     <script type="application/json" id="mouVsMoaIaData">@json($mouVsMoaIaData)</script>
+    <script type="application/json" id="sebaranDokumenData">@json($sebaranDokumenData)</script>
 </main>
 
 <script src="{{ asset('js/auth/unit/analitik/status_kerjasama.js') }}" data-turbo-track="reload"></script>

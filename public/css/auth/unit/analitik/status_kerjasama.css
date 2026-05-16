@@ -805,41 +805,41 @@ button.sk-due-cell:focus-visible {
 }
 
 .sk-due-level-0 {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #eff6ff;
+    border-color: #bfdbfe;
 }
 
 .sk-due-level-1 {
-    background: #e2e8f0;
-    border-color: #cbd5e1;
+    background: #dbeafe;
+    border-color: #93c5fd;
 }
 
 .sk-due-level-2 {
-    background: #cbd5e1;
-    border-color: #94a3b8;
+    background: #93c5fd;
+    border-color: #60a5fa;
 }
 
 .sk-due-level-3 {
-    background: #94a3b8;
-    border-color: #64748b;
+    background: #3b82f6;
+    border-color: #2563eb;
 }
 
 .sk-due-level-4 {
-    background: #64748b;
-    border-color: #475569;
+    background: #1d4ed8;
+    border-color: #1e40af;
 }
 
 .sk-due-level-5 {
-    background: #475569;
-    border-color: #334155;
+    background: #1e3a8a;
+    border-color: #172554;
 }
 
 .sk-due-cell.is-month-start {
-    border-left: 2px solid #64748b;
+    border-left: 2px solid #1d4ed8;
 }
 
 .sk-due-cell.is-month-start:not(.sk-due-level-0) {
-    border-left-color: #334155;
+    border-left-color: #172554;
 }
 
 .sk-due-cell.is-today {
@@ -1384,41 +1384,41 @@ button.sk-due-cell.is-selected {
 }
 
 [data-theme="dark"] .sk-due-level-0 {
-    background: #1e293b;
-    border-color: #334155;
+    background: #0f172a;
+    border-color: #1e3a8a;
 }
 
 [data-theme="dark"] .sk-due-level-1 {
-    background: #334155;
-    border-color: #475569;
+    background: #172554;
+    border-color: #1e40af;
 }
 
 [data-theme="dark"] .sk-due-level-2 {
-    background: #475569;
-    border-color: #64748b;
+    background: #1e3a8a;
+    border-color: #1d4ed8;
 }
 
 [data-theme="dark"] .sk-due-level-3 {
-    background: #64748b;
-    border-color: #94a3b8;
+    background: #1d4ed8;
+    border-color: #2563eb;
 }
 
 [data-theme="dark"] .sk-due-level-4 {
-    background: #94a3b8;
-    border-color: #cbd5e1;
+    background: #2563eb;
+    border-color: #3b82f6;
 }
 
 [data-theme="dark"] .sk-due-level-5 {
-    background: #cbd5e1;
-    border-color: #e2e8f0;
+    background: #60a5fa;
+    border-color: #93c5fd;
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start {
-    border-left-color: #475569;
+    border-left-color: #2563eb;
 }
 
 [data-theme="dark"] .sk-due-cell.is-month-start:not(.sk-due-level-0) {
-    border-left-color: #e2e8f0;
+    border-left-color: #93c5fd;
 }
 
 [data-theme="dark"] .sk-due-cell.is-today {

@@ -137,6 +137,51 @@ class UnitPageController extends Controller
             'moa_ia' => $makeJenisStatusCounts('moa_ia'),
         ];
 
+        // ─── Sebaran Dokumen (per jenis individu × status) ───────
+        $buildSingleJenisQuery = function (string $jenisKey) use ($baseQuery) {
+            $query = clone $baseQuery;
+
+            if ($jenisKey === 'mou') {
+                $query->where('jenis', 'like', '%MoU%');
+            } elseif ($jenisKey === 'moa') {
+                $query->where('jenis', 'like', '%MoA%');
+            } else {
+                $query->where('jenis', 'like', '%IA%')
+                      ->where('jenis', 'not like', '%MoA%');
+            }
+
+            return $query;
+        };
+
+        $countSebaranStatus = function (string $statusKey, string $jenisKey) use ($buildSingleJenisQuery, $statusDefinitions) {
+            $query = $buildSingleJenisQuery($jenisKey);
+            $statusDefinitions[$statusKey]($query);
+
+            return $query->count();
+        };
+
+        $makeSebaranCounts = function (string $jenisKey) use ($buildSingleJenisQuery, $countSebaranStatus) {
+            $total = $buildSingleJenisQuery($jenisKey)->count();
+            $dalamPerpanjangan = $countSebaranStatus('dalam_perpanjangan', $jenisKey);
+            $kadaluarsa = $countSebaranStatus('kadaluarsa', $jenisKey);
+            $tidakAktif = $countSebaranStatus('tidak_aktif', $jenisKey);
+            $proses = $countSebaranStatus('proses', $jenisKey);
+            $aktif = max($total - $dalamPerpanjangan - $kadaluarsa - $tidakAktif - $proses, 0);
+
+            return ['aktif' => $aktif, 'dalam_perpanjangan' => $dalamPerpanjangan, 'kadaluarsa' => $kadaluarsa];
+        };
+
+        $sebaranMou = $makeSebaranCounts('mou');
+        $sebaranMoa = $makeSebaranCounts('moa');
+        $sebaranIa  = $makeSebaranCounts('ia');
+
+        $sebaranDokumenData = [
+            'labels' => ['MoU', 'MoA', 'IA'],
+            'aktif' => [$sebaranMou['aktif'], $sebaranMoa['aktif'], $sebaranIa['aktif']],
+            'dalam_perpanjangan' => [$sebaranMou['dalam_perpanjangan'], $sebaranMoa['dalam_perpanjangan'], $sebaranIa['dalam_perpanjangan']],
+            'kadaluarsa' => [$sebaranMou['kadaluarsa'], $sebaranMoa['kadaluarsa'], $sebaranIa['kadaluarsa']],
+        ];
+
         $currentYear = now()->year;
         $firstYear = (int) ((clone $baseQuery)->whereNotNull('created_at')->min(DB::raw('YEAR(created_at)')) ?: $currentYear);
         $startYear = max($firstYear, $currentYear - 8);
@@ -377,7 +422,8 @@ class UnitPageController extends Controller
             'growthAverages',
             'calendarData',
             'dueDateData',
-            'mouVsMoaIaData'
+            'mouVsMoaIaData',
+            'sebaranDokumenData'
         ));
     }
 
