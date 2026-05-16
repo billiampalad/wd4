@@ -226,7 +226,7 @@ class UnitPageController extends Controller
             ->orderBy('created_at');
 
         $dueDateTotal = (clone $dueDateQuery)->count();
-        $dueDateCooperations = $dueDateQuery->limit(5)->get();
+        $dueDateCooperations = $dueDateQuery->get();
 
         $dueDateHeatRows = (clone $baseQuery)
             ->whereNotNull('created_at')
@@ -301,6 +301,7 @@ class UnitPageController extends Controller
                     'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
                     'due' => optional($cooperation->end_date)->format('j/n/Y'),
                     'detail_url' => route('unit.kerjasama.show', $cooperation->id),
+                    'created_at_label' => $cooperation->created_at ? $cooperation->created_at->translatedFormat('d M Y') : '-',
                 ];
             }),
         ];

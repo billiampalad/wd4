@@ -143,9 +143,47 @@
                         error: '',
                         selected: String(@js($dueDateData['year'] ?? now()->year)),
                         data: @js($dueDateData ?? []),
-                        get pageCount() {
-                            return Math.min(5, Math.max(1, Math.ceil((this.data.total || 0) / 5)));
+                        
+                        selectedDate: null,
+                        currentPage: 1,
+                        itemsPerPage: 5,
+                        
+                        get filteredRows() {
+                            let rows = this.data.rows || [];
+                            if (this.selectedDate) {
+                                rows = rows.filter(row => row.created_at_label === this.selectedDate);
+                            }
+                            return rows;
                         },
+                        get pageCount() {
+                            return Math.max(1, Math.ceil(this.filteredRows.length / this.itemsPerPage));
+                        },
+                        get paginatedRows() {
+                            const start = (this.currentPage - 1) * this.itemsPerPage;
+                            const end = start + this.itemsPerPage;
+                            return this.filteredRows.slice(start, end);
+                        },
+                        get showingStart() {
+                            if (this.filteredRows.length === 0) return 0;
+                            return ((this.currentPage - 1) * this.itemsPerPage) + 1;
+                        },
+                        get showingEnd() {
+                            return Math.min(this.currentPage * this.itemsPerPage, this.filteredRows.length);
+                        },
+                        filterByDate(dateLabel) {
+                            if (this.selectedDate === dateLabel) {
+                                this.selectedDate = null;
+                            } else {
+                                this.selectedDate = dateLabel;
+                            }
+                            this.currentPage = 1;
+                        },
+                        goToPage(page) {
+                            if (page >= 1 && page <= this.pageCount) {
+                                this.currentPage = page;
+                            }
+                        },
+
                         async choose(year) {
                             const nextYear = String(year);
                             this.open = false;
@@ -173,6 +211,9 @@
                                 const payload = await response.json();
                                 this.data = payload.dueDateData || this.data;
                                 this.selected = String(this.data.year || nextYear);
+                                
+                                this.selectedDate = null;
+                                this.currentPage = 1;
 
                                 const browserUrl = new URL(window.location.href);
                                 browserUrl.searchParams.set('due_year', this.selected);
@@ -254,12 +295,14 @@
                                                     <button type="button" class="sk-due-cell" :class="day ? [
                                                             `sk-due-level-${day.level}`,
                                                             day.is_today ? 'is-today' : '',
-                                                            day.is_month_start ? 'is-month-start' : ''
+                                                            day.is_month_start ? 'is-month-start' : '',
+                                                            (selectedDate === day.label) ? 'is-selected' : ''
                                                         ] : 'sk-due-cell-empty'" :disabled="!day"
                                                         :data-count="day ? day.count : 0"
                                                         :data-date="day ? day.label : ''"
                                                         :aria-hidden="(!day).toString()"
-                                                        :aria-label="day ? (day.count ? `Pada ${day.label} : ${day.count}` : `Pada ${day.label}`) : ''">
+                                                        :aria-label="day ? (day.count ? `Pada ${day.label} : ${day.count}` : `Pada ${day.label}`) : ''"
+                                                        @click="day && day.count ? filterByDate(day.label) : null">
                                                     </button>
                                                 </template>
                                             </div>
@@ -275,34 +318,44 @@
                         </div>
 
                         <div class="sk-due-table-wrap">
+                            <div class="sk-due-table-header" x-show="selectedDate" x-cloak>
+                                <span>Filter Tanggal: <strong><span x-text="selectedDate"></span></strong></span>
+                                <button type="button" @click="filterByDate(selectedDate)" class="sk-due-clear-btn"
+                                    aria-label="Hapus filter"><i class="fas fa-times"></i> Hapus</button>
+                            </div>
                             <table class="sk-due-table">
                                 <thead>
                                     <tr>
-                                        <th>No.</th>
+                                        <th class="sk-col-no">No.</th>
                                         <th>Judul</th>
                                         <th>Due</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="(row, index) in data.rows" :key="row.id">
+                                    <template x-for="(row, index) in paginatedRows" :key="row.id">
                                         <tr>
-                                            <td x-text="index + 1"></td>
+                                            <td x-text="showingStart + index" class="sk-col-no"></td>
                                             <td>
                                                 <div class="sk-due-doc" x-text="row.doc_number"></div>
                                                 <div class="sk-due-row-title" x-text="row.title"></div>
                                                 <div class="sk-due-actions">
-                                                    <a :href="row.detail_url">Detail <i
-                                                            class="fas fa-angle-double-right"></i></a>
-                                                    <span x-text="row.jenis"></span>
+                                                    <a :href="row.detail_url" class="sk-due-action-btn">
+                                                        Detail <i class="fas fa-angle-double-right"></i>
+                                                    </a>
+                                                    <span class="sk-due-badge" x-text="row.jenis"></span>
                                                 </div>
                                             </td>
                                             <td x-text="row.due"></td>
                                         </tr>
                                     </template>
-                                    <template x-if="!data.rows || data.rows.length === 0">
+                                    <template x-if="filteredRows.length === 0">
                                         <tr>
                                             <td colspan="3">
-                                                <div class="sk-calendar-empty-state">Belum ada due date pada tahun ini.
+                                                <div class="sk-calendar-empty-state">
+                                                    <span x-show="selectedDate">Tidak ada data kerjasama pada tanggal
+                                                        <span x-text="selectedDate"></span>.</span>
+                                                    <span x-show="!selectedDate">Belum ada due date pada tahun
+                                                        ini.</span>
                                                 </div>
                                             </td>
                                         </tr>
@@ -313,18 +366,17 @@
 
                         <div class="sk-due-footer">
                             <span
-                                x-text="`Showing ${(data.showing || 0) ? 1 : 0} to ${data.showing || 0} of ${data.total || 0} entries`"></span>
+                                x-text="`Showing ${showingStart} to ${showingEnd} of ${filteredRows.length} entries`"></span>
                             <div class="sk-due-pages" aria-label="Pagination due date">
-                                <button type="button" disabled>Previous</button>
+                                <button type="button" :disabled="currentPage === 1"
+                                    @click="goToPage(currentPage - 1)">Previous</button>
                                 <template x-for="page in pageCount" :key="page">
-                                    <button type="button" :class="{ 'is-active': page === 1 }" x-text="page"></button>
+                                    <button type="button" :class="{ 'is-active': page === currentPage }"
+                                        @click="goToPage(page)" x-text="page"></button>
                                 </template>
-                                <button type="button" :disabled="(data.total || 0) <= 5">Next</button>
+                                <button type="button" :disabled="currentPage === pageCount || pageCount === 0"
+                                    @click="goToPage(currentPage + 1)">Next</button>
                             </div>
-                        </div>
-
-                        <div class="sk-due-scrollbar" aria-hidden="true">
-                            <span></span>
                         </div>
                     </div>
                 </div>
