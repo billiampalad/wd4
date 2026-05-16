@@ -1,6 +1,27 @@
 <link rel="stylesheet" href="{{ asset('css/auth/unit/analitik/status_kerjasama.css') }}" data-turbo-track="reload">
 
 <main id="mainContent" class="sk-page">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('unit.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <span>Status Kerjasama</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-chart-line"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title">Analitik Status Kerjasama</h2>
+                    <p class="ud-subtitle">
+                        Data status kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="sk-card sk-status-card">
         <header class="sk-card-head sk-card-head-muted">
             <div>
@@ -19,7 +40,8 @@
         <div class="sk-legend" aria-label="Legenda status kerjasama">
             @foreach ($statusKerjasamaData['labels'] as $index => $label)
                 <div class="sk-legend-item">
-                    <span class="sk-legend-swatch" style="--swatch: {{ $statusKerjasamaData['colors'][$index] }}"></span>
+                    <span class="sk-legend-swatch"
+                        style="--swatch: {{ $statusKerjasamaData['colors'][$index] }}"></span>
                     <span>{{ $label }}</span>
                 </div>
             @endforeach

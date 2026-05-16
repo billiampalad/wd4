@@ -48,6 +48,10 @@
     min-width: 0;
 }
 
+.ud-title-copy {
+    min-width: 0;
+}
+
 .ud-title-icon {
     width: 48px;
     height: 48px;

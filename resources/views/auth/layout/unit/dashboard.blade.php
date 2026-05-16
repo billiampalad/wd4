@@ -144,11 +144,13 @@
             </div>
             <div class="ud-title-row">
                 <span class="ud-title-icon"><i class="fas fa-handshake-angle"></i></span>
-                <h2 class="ud-title">Sistem Informasi Kerjasama</h2>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title">Sistem Informasi Kerjasama</h2>
+                    <p class="ud-subtitle">
+                        Gambaran aktivitas kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}
+                    </p>
+                </div>
             </div>
-            <p class="ud-subtitle">
-                Gambaran besar aktivitas kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}
-            </p>
         </div>
         <a href="{{ route('unit.kerjasama.create', ['type' => 'baru']) }}" class="ud-create-menu">
             <span class="ud-create-icon"><i class="fas fa-file-circle-plus"></i></span>
