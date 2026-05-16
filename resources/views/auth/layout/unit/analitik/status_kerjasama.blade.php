@@ -150,28 +150,51 @@
                     </header>
 
                     <div class="sk-due-body">
-                        <div class="sk-due-map">
-                            <div class="sk-due-year">{{ $dueDateData['year'] ?? now()->year }}</div>
-                            <div class="sk-due-weekdays" aria-hidden="true">
-                                <span>S</span>
-                                <span>M</span>
-                                <span>T</span>
-                                <span>W</span>
-                                <span>T</span>
-                                <span>F</span>
-                                <span>S</span>
+                        <div class="sk-due-graph-shell">
+                            <div class="sk-due-graph-head">
+                                <span>{{ $dueDateData['year'] ?? now()->year }}</span>
+                                <div class="sk-due-legend" aria-label="Legenda intensitas due date">
+                                    <span>Less</span>
+                                    @for ($level = 0; $level <= 4; $level++)
+                                        <i class="sk-due-cell sk-due-level-{{ $level }}"></i>
+                                    @endfor
+                                    <span>More</span>
+                                </div>
                             </div>
-                            <div class="sk-due-months">
-                                @foreach (($dueDateData['months'] ?? []) as $month)
-                                    <div class="sk-due-month">
-                                        <span>{{ $month['label'] }}</span>
-                                        <div class="sk-due-month-cells">
-                                            @foreach (($month['weekdays'] ?? []) as $count)
-                                                <i class="{{ $count > 0 ? 'is-active' : '' }}"></i>
-                                            @endforeach
-                                        </div>
+
+                            <div class="sk-due-graph-scroll" tabindex="0" aria-label="Grafik kontribusi due date kerjasama">
+                                <div class="sk-due-contrib">
+                                    <div class="sk-due-month-labels">
+                                        @foreach (($dueDateData['month_labels'] ?? []) as $month)
+                                            <span style="--month-week: {{ $month['week'] }}">{{ $month['label'] }}</span>
+                                        @endforeach
                                     </div>
-                                @endforeach
+
+                                    <div class="sk-due-weekday-labels" aria-hidden="true">
+                                        @foreach (($dueDateData['weekdays'] ?? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) as $weekday)
+                                            <span>{{ $weekday }}</span>
+                                        @endforeach
+                                    </div>
+
+                                    <div class="sk-due-weeks">
+                                        @foreach (($dueDateData['weeks'] ?? []) as $week)
+                                            <div class="sk-due-week">
+                                                @foreach ($week as $day)
+                                                    @if ($day)
+                                                        <button type="button"
+                                                            class="sk-due-cell sk-due-level-{{ $day['level'] }} {{ $day['is_today'] ? 'is-today' : '' }} {{ $day['is_month_start'] ? 'is-month-start' : '' }}"
+                                                            data-count="{{ $day['count'] }}"
+                                                            data-date="{{ $day['label'] }}"
+                                                            aria-label="{{ $day['count'] }} due date pada {{ $day['label'] }}">
+                                                        </button>
+                                                    @else
+                                                        <span class="sk-due-cell sk-due-cell-empty" aria-hidden="true"></span>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

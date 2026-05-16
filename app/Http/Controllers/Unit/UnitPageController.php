@@ -192,14 +192,8 @@ class UnitPageController extends Controller
         ];
 
         $dueDateYear = now()->year;
-        $dueDateMonths = collect(range(1, 12))->mapWithKeys(function ($month) {
-            return [
-                $month => [
-                    'label' => now()->month($month)->format('M'),
-                    'weekdays' => array_fill(0, 7, 0),
-                ],
-            ];
-        })->toArray();
+        $dueDateYearStart = now()->setDate($dueDateYear, 1, 1)->startOfDay();
+        $dueDateYearEnd = now()->setDate($dueDateYear, 12, 31)->startOfDay();
 
         $dueDateQuery = (clone $baseQuery)
             ->with('mitra')
@@ -215,15 +209,64 @@ class UnitPageController extends Controller
             ->whereYear('end_date', $dueDateYear)
             ->get(['end_date']);
 
+        $dueDateCountsByDate = [];
+
         foreach ($dueDateHeatRows as $dueDateItem) {
-            $dueDateMonths[$dueDateItem->end_date->month]['weekdays'][$dueDateItem->end_date->dayOfWeek]++;
+            $dueDateKey = $dueDateItem->end_date->toDateString();
+            $dueDateCountsByDate[$dueDateKey] = ($dueDateCountsByDate[$dueDateKey] ?? 0) + 1;
+        }
+
+        $dueDateWeeks = [];
+        $dueDateCurrentWeek = [];
+        $dueDateMonthLabels = [];
+        $dueDateWeekIndex = 0;
+
+        for ($emptyDay = 0; $emptyDay < $dueDateYearStart->dayOfWeek; $emptyDay++) {
+            $dueDateCurrentWeek[] = null;
+        }
+
+        for ($date = $dueDateYearStart->copy(); $date->lte($dueDateYearEnd); $date->addDay()) {
+            if ($date->day === 1) {
+                $dueDateMonthLabels[] = [
+                    'label' => $date->format('M'),
+                    'week' => $dueDateWeekIndex,
+                ];
+            }
+
+            $dateKey = $date->toDateString();
+            $count = $dueDateCountsByDate[$dateKey] ?? 0;
+            $dueDateCurrentWeek[] = [
+                'date' => $dateKey,
+                'label' => $date->translatedFormat('d M Y'),
+                'day' => $date->day,
+                'count' => $count,
+                'level' => min($count, 4),
+                'is_today' => $date->isToday(),
+                'is_month_start' => $date->day === 1,
+            ];
+
+            if (count($dueDateCurrentWeek) === 7) {
+                $dueDateWeeks[] = $dueDateCurrentWeek;
+                $dueDateCurrentWeek = [];
+                $dueDateWeekIndex++;
+            }
+        }
+
+        if ($dueDateCurrentWeek) {
+            while (count($dueDateCurrentWeek) < 7) {
+                $dueDateCurrentWeek[] = null;
+            }
+
+            $dueDateWeeks[] = $dueDateCurrentWeek;
         }
 
         $dueDateData = [
             'year' => $dueDateYear,
             'total' => $dueDateTotal,
             'showing' => $dueDateCooperations->count(),
-            'months' => array_values($dueDateMonths),
+            'weeks' => $dueDateWeeks,
+            'month_labels' => $dueDateMonthLabels,
+            'weekdays' => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             'rows' => $dueDateCooperations->map(function ($cooperation) {
                 return [
                     'id' => $cooperation->id,

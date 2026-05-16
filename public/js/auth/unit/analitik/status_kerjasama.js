@@ -247,8 +247,55 @@ function createStatusKerjasamaCharts() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', createStatusKerjasamaCharts);
-document.addEventListener('turbo:load', createStatusKerjasamaCharts);
+function initDueDateContributionGraph() {
+    const cells = document.querySelectorAll('.sk-due-weeks button.sk-due-cell');
+    if (!cells.length) return;
+
+    let tooltip = document.querySelector('.sk-due-tooltip');
+
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'sk-due-tooltip';
+        document.body.appendChild(tooltip);
+    }
+
+    function showTooltip(cell) {
+        const count = Number(cell.dataset.count || 0);
+        const label = count === 1 ? 'due date' : 'due dates';
+        const rect = cell.getBoundingClientRect();
+
+        tooltip.textContent = count + ' ' + label + ' pada ' + (cell.dataset.date || '-');
+        tooltip.style.left = rect.left + rect.width / 2 + 'px';
+        tooltip.style.top = rect.top - 10 + 'px';
+        tooltip.classList.add('is-visible');
+    }
+
+    function hideTooltip() {
+        tooltip.classList.remove('is-visible');
+    }
+
+    cells.forEach(function(cell) {
+        if (cell.dataset.dueTooltipBound === '1') return;
+
+        cell.dataset.dueTooltipBound = '1';
+        cell.addEventListener('mouseenter', function() {
+            showTooltip(cell);
+        });
+        cell.addEventListener('focus', function() {
+            showTooltip(cell);
+        });
+        cell.addEventListener('mouseleave', hideTooltip);
+        cell.addEventListener('blur', hideTooltip);
+    });
+}
+
+function initStatusKerjasamaPage() {
+    createStatusKerjasamaCharts();
+    initDueDateContributionGraph();
+}
+
+document.addEventListener('DOMContentLoaded', initStatusKerjasamaPage);
+document.addEventListener('turbo:load', initStatusKerjasamaPage);
 
 if (!window.statusKerjasamaThemeObserver) {
     window.statusKerjasamaThemeObserver = new MutationObserver(function(mutations) {
