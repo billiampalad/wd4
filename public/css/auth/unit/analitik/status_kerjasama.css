@@ -12,7 +12,7 @@
     padding: 20px 25px;
     display: grid;
     grid-template-columns: minmax(320px, .95fr) minmax(520px, 2fr);
-    gap: 25px;
+    gap: 18px;
     background: var(--bg);
     color: var(--text);
 }
@@ -116,6 +116,26 @@
     flex-direction: column;
 }
 
+.sk-status-card {
+    align-self: stretch;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.sk-growth-card {
+    align-self: stretch;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.sk-status-card .sk-card-head {
+    padding: 14px 18px;
+}
+
+.sk-growth-card .sk-card-head {
+    padding: 14px 18px;
+}
+
 .sk-card-head {
     padding: 20px 25px;
     border-bottom: 1px solid var(--border);
@@ -168,11 +188,22 @@
     box-sizing: border-box;
 }
 
+.sk-status-card .sk-donut-wrap {
+    width: min(80%, 260px);
+    margin: 5px auto 5px;
+    padding: 1px;
+}
+
 /* tinggi grafik Pertumbuhan Kerjasama */
 .sk-line-wrap {
     position: relative;
     height: 360px;
     padding: 8px 10px 6px;
+}
+
+.sk-growth-card .sk-line-wrap {
+    height: 350px;
+    padding: 8px 10px 4px;
 }
 
 .sk-legend {
@@ -184,6 +215,15 @@
     color: #52606f;
     font-size: 10px;
     line-height: 1.2;
+}
+
+.sk-status-card .sk-legend {
+    width: auto;
+    max-width: calc(100% - 36px);
+    margin: 0 18px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
 }
 
 .sk-legend-item {
@@ -220,6 +260,10 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: center;
+}
+
+.sk-growth-card .sk-avg-row {
+    min-height: 58px;
 }
 
 .sk-avg-item {
@@ -314,6 +358,10 @@
     .sk-line-wrap {
         height: 260px;
     }
+
+    .sk-growth-card .sk-line-wrap {
+        height: 240px;
+    }
 }
 
 @media only screen and (max-width: 767px) {
@@ -384,9 +432,26 @@
         margin-top: 12px;
     }
 
+    .sk-status-card .sk-donut-wrap {
+        width: min(62%, 220px);
+        margin: 10px auto 8px;
+    }
+
+    .sk-status-card .sk-legend {
+        margin-bottom: 12px;
+    }
+
+    .sk-growth-card .sk-card-head {
+        padding: 10px 12px;
+    }
+
     .sk-line-wrap {
         height: 230px;
         padding: 8px 8px 4px;
+    }
+
+    .sk-growth-card .sk-line-wrap {
+        height: 205px;
     }
 
     .sk-avg-row {
