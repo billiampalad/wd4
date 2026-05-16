@@ -40,8 +40,7 @@
         <div class="sk-legend" aria-label="Legenda status kerjasama">
             @foreach ($statusKerjasamaData['labels'] as $index => $label)
                 <div class="sk-legend-item">
-                    <span class="sk-legend-swatch"
-                        style="--swatch: {{ $statusKerjasamaData['colors'][$index] }}"></span>
+                    <span class="sk-legend-swatch" style="--swatch: {{ $statusKerjasamaData['colors'][$index] }}"></span>
                     <span>{{ $label }}</span>
                 </div>
             @endforeach
@@ -138,8 +137,7 @@
                     </div>
                 </div>
 
-                <div class="sk-two-column-panel sk-due-panel"
-                    x-data="{
+                <div class="sk-two-column-panel sk-due-panel" x-data="{
                         open: false,
                         loading: false,
                         error: '',
@@ -205,7 +203,8 @@
                                     <span class="sk-due-year-label">Tahun</span>
                                     <div class="sk-due-year-picker" @click.outside="open = false">
                                         <button type="button" class="sk-due-year-trigger" @click="open = !open"
-                                            :aria-expanded="open.toString()" aria-haspopup="listbox" :disabled="loading">
+                                            :aria-expanded="open.toString()" aria-haspopup="listbox"
+                                            :disabled="loading">
                                             <span x-text="selected"></span>
                                             <i class="fas fa-chevron-down" :class="{ 'is-open': open }"></i>
                                         </button>
@@ -214,8 +213,7 @@
                                             <template x-for="year in data.years" :key="year">
                                                 <button type="button" class="sk-due-year-option"
                                                     :class="{ 'is-selected': String(year) === selected }"
-                                                    :disabled="loading"
-                                                    @click="choose(year)" role="option"
+                                                    :disabled="loading" @click="choose(year)" role="option"
                                                     :aria-selected="(String(year) === selected).toString()">
                                                     <span x-text="year"></span>
                                                     <i class="fas fa-check" x-show="String(year) === selected"></i>
@@ -233,7 +231,8 @@
                                 </div>
                             </div>
 
-                            <div class="sk-due-graph-scroll" tabindex="0" aria-label="Grafik kontribusi due date kerjasama">
+                            <div class="sk-due-graph-scroll" tabindex="0"
+                                aria-label="Grafik kontribusi due date kerjasama">
                                 <div class="sk-due-contrib">
                                     <div class="sk-due-month-labels">
                                         <template x-for="month in data.month_labels" :key="month.label + month.week">
@@ -250,18 +249,17 @@
                                     <div class="sk-due-weeks">
                                         <template x-for="(week, weekIndex) in data.weeks" :key="weekIndex">
                                             <div class="sk-due-week">
-                                                <template x-for="(day, dayIndex) in week" :key="day ? day.date : `empty-${weekIndex}-${dayIndex}`">
-                                                    <button type="button" class="sk-due-cell"
-                                                        :class="day ? [
+                                                <template x-for="(day, dayIndex) in week"
+                                                    :key="day ? day.date : `empty-${weekIndex}-${dayIndex}`">
+                                                    <button type="button" class="sk-due-cell" :class="day ? [
                                                             `sk-due-level-${day.level}`,
                                                             day.is_today ? 'is-today' : '',
                                                             day.is_month_start ? 'is-month-start' : ''
-                                                        ] : 'sk-due-cell-empty'"
-                                                        :disabled="!day"
+                                                        ] : 'sk-due-cell-empty'" :disabled="!day"
                                                         :data-count="day ? day.count : 0"
                                                         :data-date="day ? day.label : ''"
                                                         :aria-hidden="(!day).toString()"
-                                                        :aria-label="day ? `${day.count} due date pada ${day.label}` : ''">
+                                                        :aria-label="day ? (day.count ? `Pada ${day.label} : ${day.count}` : `Pada ${day.label}`) : ''">
                                                     </button>
                                                 </template>
                                             </div>
@@ -293,7 +291,8 @@
                                                 <div class="sk-due-doc" x-text="row.doc_number"></div>
                                                 <div class="sk-due-row-title" x-text="row.title"></div>
                                                 <div class="sk-due-actions">
-                                                    <a :href="row.detail_url">Detail <i class="fas fa-angle-double-right"></i></a>
+                                                    <a :href="row.detail_url">Detail <i
+                                                            class="fas fa-angle-double-right"></i></a>
                                                     <span x-text="row.jenis"></span>
                                                 </div>
                                             </td>
@@ -303,7 +302,8 @@
                                     <template x-if="!data.rows || data.rows.length === 0">
                                         <tr>
                                             <td colspan="3">
-                                                <div class="sk-calendar-empty-state">Belum ada due date pada tahun ini.</div>
+                                                <div class="sk-calendar-empty-state">Belum ada due date pada tahun ini.
+                                                </div>
                                             </td>
                                         </tr>
                                     </template>
@@ -312,7 +312,8 @@
                         </div>
 
                         <div class="sk-due-footer">
-                            <span x-text="`Showing ${(data.showing || 0) ? 1 : 0} to ${data.showing || 0} of ${data.total || 0} entries`"></span>
+                            <span
+                                x-text="`Showing ${(data.showing || 0) ? 1 : 0} to ${data.showing || 0} of ${data.total || 0} entries`"></span>
                             <div class="sk-due-pages" aria-label="Pagination due date">
                                 <button type="button" disabled>Previous</button>
                                 <template x-for="page in pageCount" :key="page">

@@ -270,10 +270,9 @@ function initDueDateContributionGraph() {
 
     function showTooltip(cell) {
         const count = Number(cell.dataset.count || 0);
-        const label = count === 1 ? 'due date' : 'due dates';
         const rect = cell.getBoundingClientRect();
 
-        tooltip.textContent = count + ' ' + label + ' pada ' + (cell.dataset.date || '-');
+        tooltip.textContent = 'Pada ' + (cell.dataset.date || '-') + (count ? ' : ' + count : '');
         tooltip.style.left = rect.left + rect.width / 2 + 'px';
         tooltip.style.top = rect.top - 10 + 'px';
         tooltip.classList.add('is-visible');

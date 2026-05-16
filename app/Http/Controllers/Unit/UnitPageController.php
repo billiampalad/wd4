@@ -192,8 +192,8 @@ class UnitPageController extends Controller
         ];
 
         $dueDateYears = (clone $baseQuery)
-            ->whereNotNull('end_date')
-            ->selectRaw('YEAR(end_date) as due_year')
+            ->whereNotNull('created_at')
+            ->selectRaw('YEAR(created_at) as due_year')
             ->distinct()
             ->orderByDesc('due_year')
             ->pluck('due_year')
@@ -221,22 +221,22 @@ class UnitPageController extends Controller
 
         $dueDateQuery = (clone $baseQuery)
             ->with('mitra')
-            ->whereNotNull('end_date')
-            ->whereYear('end_date', $dueDateYear)
-            ->orderBy('end_date');
+            ->whereNotNull('created_at')
+            ->whereYear('created_at', $dueDateYear)
+            ->orderBy('created_at');
 
         $dueDateTotal = (clone $dueDateQuery)->count();
         $dueDateCooperations = $dueDateQuery->limit(5)->get();
 
         $dueDateHeatRows = (clone $baseQuery)
-            ->whereNotNull('end_date')
-            ->whereYear('end_date', $dueDateYear)
-            ->get(['end_date']);
+            ->whereNotNull('created_at')
+            ->whereYear('created_at', $dueDateYear)
+            ->get(['created_at']);
 
         $dueDateCountsByDate = [];
 
         foreach ($dueDateHeatRows as $dueDateItem) {
-            $dueDateKey = $dueDateItem->end_date->toDateString();
+            $dueDateKey = $dueDateItem->created_at->toDateString();
             $dueDateCountsByDate[$dueDateKey] = ($dueDateCountsByDate[$dueDateKey] ?? 0) + 1;
         }
 
