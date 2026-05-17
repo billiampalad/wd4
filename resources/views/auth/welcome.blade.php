@@ -227,7 +227,8 @@
             </div>
 
             <div class="stats-card-grid">
-                <article class="stat-card">
+                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="kerjasama"
+                    data-stat-kategori="all" data-stat-status="all">
                     <div class="stat-card-icon stat-card-icon-blue" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -239,9 +240,11 @@
                     <div class="stat-card-meta">Jumlah Kerjasama</div>
                     <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
                     <p class="stat-desc">Jumlah kerjasama Politeknik sampai saat ini</p>
-                </article>
+                    <span class="stat-card-cta">Klik untuk lihat seluruh daftar</span>
+                </a>
 
-                <article class="stat-card">
+                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="mitra"
+                    data-stat-kategori="all" data-stat-status="all" data-stat-sort="title">
                     <div class="stat-card-icon stat-card-icon-green" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -254,9 +257,11 @@
                     <div class="stat-card-meta">Jumlah Mitra</div>
                     <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
                     <p class="stat-desc">Organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.</p>
-                </article>
+                    <span class="stat-card-cta">Klik untuk eksplorasi daftar mitra</span>
+                </a>
 
-                <article class="stat-card">
+                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="kerjasama"
+                    data-stat-kategori="all" data-stat-status="aktif">
                     <div class="stat-card-icon stat-card-icon-amber" aria-hidden="true">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -268,7 +273,8 @@
                     <div class="stat-num">{{ $stats['total_aktif'] ?? 0 }}</div>
                     <div class="stat-lbl">Aktif</div>
                     <p class="stat-desc">Kerjasama yang sedang berjalan.</p>
-                </article>
+                    <span class="stat-card-cta">Klik untuk filter kerjasama aktif</span>
+                </a>
 
                 <article class="stat-card stat-card-breakdown">
                     <div class="stat-card-icon stat-card-icon-purple" aria-hidden="true">
@@ -285,14 +291,18 @@
                     <div class="stat-lbl">Mitra Nasional & Internasional</div>
 
                     <div class="stat-split" aria-label="Rincian kategori mitra">
-                        <div class="stat-split-item">
+                        <a href="#data-kerjasama" class="stat-split-item stat-split-item-action" data-landing-stat
+                            data-stat-scope="mitra" data-stat-kategori="nasional" data-stat-status="all"
+                            data-stat-sort="title">
                             <span class="stat-split-num">{{ $stats['mitra_nasional'] ?? 0 }}</span>
                             <span class="stat-split-lbl">Nasional</span>
-                        </div>
-                        <div class="stat-split-item">
+                        </a>
+                        <a href="#data-kerjasama" class="stat-split-item stat-split-item-action" data-landing-stat
+                            data-stat-scope="mitra" data-stat-kategori="internasional" data-stat-status="all"
+                            data-stat-sort="title">
                             <span class="stat-split-num">{{ $stats['mitra_internasional'] ?? 0 }}</span>
                             <span class="stat-split-lbl">Internasional</span>
-                        </div>
+                        </a>
                     </div>
                 </article>
             </div>
@@ -344,26 +354,58 @@
     <section class="data-section" id="data-kerjasama">
         <main class="main-wrap">
             @php
+                $selectedDataScope = $dataScope ?? request('data_scope', 'kerjasama');
+                $selectedDataScope = in_array($selectedDataScope, ['kerjasama', 'mitra'], true)
+                    ? $selectedDataScope
+                    : 'kerjasama';
                 $selectedKategoriMitra = request('kategori_mitra', 'all');
                 $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
                     ? $selectedKategoriMitra
                     : 'all';
                 $searchTerm = trim((string) request('search', ''));
                 $selectedSort = request('sort', 'latest');
-                $selectedSort = in_array($selectedSort, ['latest', 'oldest', 'title', 'ending_soon'], true)
-                    ? $selectedSort
-                    : 'latest';
+                $selectedSort = $selectedDataScope === 'mitra'
+                    ? (in_array($selectedSort, ['latest', 'oldest', 'title', 'title_desc', 'most_cooperations'], true)
+                        ? $selectedSort
+                        : 'latest')
+                    : (in_array($selectedSort, ['latest', 'oldest', 'title', 'ending_soon'], true)
+                        ? $selectedSort
+                        : 'latest');
+                $selectedStatusScope = request('status_scope', 'all');
+                $selectedStatusScope = in_array($selectedStatusScope, ['all', 'aktif'], true)
+                    ? $selectedStatusScope
+                    : 'all';
+                $selectedStatusScope = $selectedDataScope === 'kerjasama' ? $selectedStatusScope : 'all';
+                $dataScopeLabels = [
+                    'kerjasama' => 'Data Kerjasama',
+                    'mitra' => 'Data Mitra',
+                ];
                 $kategoriLabels = [
                     'nasional' => 'Mitra Nasional',
                     'internasional' => 'Mitra Internasional',
                 ];
-                $sortLabels = [
-                    'latest' => 'Terbaru',
-                    'oldest' => 'Terlama',
-                    'title' => 'A-Z',
-                    'ending_soon' => 'Segera Berakhir',
+                $sortLabels = $selectedDataScope === 'mitra'
+                    ? [
+                        'latest' => 'Terbaru',
+                        'oldest' => 'Terlama',
+                        'title' => 'Nama A-Z',
+                        'title_desc' => 'Nama Z-A',
+                        'most_cooperations' => 'Kerjasama Terbanyak',
+                    ]
+                    : [
+                        'latest' => 'Terbaru',
+                        'oldest' => 'Terlama',
+                        'title' => 'A-Z',
+                        'ending_soon' => 'Segera Berakhir',
+                    ];
+                $statusScopeLabels = [
+                    'aktif' => 'Status Aktif',
                 ];
                 $activeFilterChips = [];
+
+                if ($selectedDataScope !== 'kerjasama') {
+                    $activeFilterChips[] = $dataScopeLabels[$selectedDataScope] ?? ucfirst($selectedDataScope);
+                }
 
                 if ($selectedKategoriMitra !== 'all') {
                     $activeFilterChips[] = $kategoriLabels[$selectedKategoriMitra] ?? ucfirst($selectedKategoriMitra);
@@ -377,69 +419,125 @@
                     $activeFilterChips[] = 'Urutan: ' . ($sortLabels[$selectedSort] ?? ucfirst($selectedSort));
                 }
 
-                $totalResults = isset($kerjasama) ? $kerjasama->total() : 0;
+                if ($selectedStatusScope !== 'all') {
+                    $activeFilterChips[] = $statusScopeLabels[$selectedStatusScope] ?? ucfirst($selectedStatusScope);
+                }
+
+                $totalResults = $selectedDataScope === 'mitra'
+                    ? (isset($mitras) ? $mitras->total() : 0)
+                    : (isset($kerjasama) ? $kerjasama->total() : 0);
+                $resultLabel = $selectedDataScope === 'mitra' ? 'mitra' : 'kerjasama';
+                $sectionEyebrow = $selectedDataScope === 'mitra' ? 'Data Mitra' : 'Data Kerjasama';
+                $sectionTitle = $selectedDataScope === 'mitra'
+                    ? 'Eksplorasi Profil Mitra'
+                    : 'Eksplorasi Aktivitas Kerjasama';
+                $sectionSubtitle = $selectedDataScope === 'mitra'
+                    ? 'Telusuri organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.'
+                    : 'Daftar kegiatan kerjasama yang telah berjalan';
+                $searchPlaceholder = $selectedDataScope === 'mitra'
+                    ? 'Cari nama mitra, kategori, negara, atau klasifikasi...'
+                    : 'Cari data kerjasama Anda...';
             @endphp
 
             <div class="section-top">
-                <div>
-                    <div class="section-eyebrow">Data Kerjasama</div>
-                    <h2 class="section-title">Eksplorasi Aktivitas Kerjasama</h2>
-                    <p class="section-sub">Daftar kegiatan kerjasama yang telah berjalan</p>
+                <div class="section-top-copy">
+                    <div class="section-eyebrow">{{ $sectionEyebrow }}</div>
+                    <h2 class="section-title">{{ $sectionTitle }}</h2>
+                    <p class="section-sub">{{ $sectionSubtitle }}</p>
                 </div>
 
-                <form action="/" method="GET" class="filter-bar" data-landing-filter>
-                <div class="filter-toggle" aria-label="Filter kategori kerjasama">
-                    <label class="filter-option {{ $selectedKategoriMitra === 'all' ? 'is-active' : '' }}">
-                        <input type="radio" name="kategori_mitra" value="all"
-                            {{ $selectedKategoriMitra === 'all' ? 'checked' : '' }}>
-                        <span>Semua</span>
-                    </label>
-                    <label class="filter-option {{ $selectedKategoriMitra === 'nasional' ? 'is-active' : '' }}">
-                        <input type="radio" name="kategori_mitra" value="nasional"
-                            {{ $selectedKategoriMitra === 'nasional' ? 'checked' : '' }}>
-                        <span>Nasional</span>
-                    </label>
-                    <label class="filter-option {{ $selectedKategoriMitra === 'internasional' ? 'is-active' : '' }}">
-                        <input type="radio" name="kategori_mitra" value="internasional"
-                            {{ $selectedKategoriMitra === 'internasional' ? 'checked' : '' }}>
-                        <span>Internasional</span>
-                    </label>
-                </div>
+                <form action="/" method="GET" class="filter-panel" data-landing-filter>
+                    <input type="hidden" name="status_scope" value="{{ $selectedStatusScope }}">
 
-                <label class="sort-wrap">
-                    <span class="sort-label">Urutkan</span>
-                    <select name="sort" class="sort-select">
-                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
-                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>A-Z</option>
-                        <option value="ending_soon" {{ $selectedSort === 'ending_soon' ? 'selected' : '' }}>Segera Berakhir</option>
-                    </select>
-                </label>
+                    <div class="filter-bar">
+                        <div class="filter-stack filter-stack-primary">
+                            <div class="filter-group">
+                                <span class="filter-group-label">Tampilkan</span>
+                                <div class="filter-toggle scope-toggle" aria-label="Pilih tipe data publik">
+                                    <label class="filter-option {{ $selectedDataScope === 'kerjasama' ? 'is-active' : '' }}">
+                                        <input type="radio" name="data_scope" value="kerjasama"
+                                            {{ $selectedDataScope === 'kerjasama' ? 'checked' : '' }}>
+                                        <span>Kerjasama</span>
+                                    </label>
+                                    <label class="filter-option {{ $selectedDataScope === 'mitra' ? 'is-active' : '' }}">
+                                        <input type="radio" name="data_scope" value="mitra"
+                                            {{ $selectedDataScope === 'mitra' ? 'checked' : '' }}>
+                                        <span>Mitra</span>
+                                    </label>
+                                </div>
+                            </div>
 
-                <div class="search-wrap">
-                    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input type="text" name="search" class="search-input"
-                        placeholder="Cari data kerjasama Anda..." value="{{ request('search') }}">
-                </div>
-                <button type="button" class="btn-reset-search" data-search-reset @if ($searchTerm === '') hidden @endif>
-                    Reset pencarian
-                </button>
-                <button type="submit" class="btn-search">Cari</button>
+                            <div class="filter-group">
+                                <span class="filter-group-label">Kategori Mitra</span>
+                                <div class="filter-toggle category-toggle" aria-label="Filter kategori publik">
+                                    <label class="filter-option {{ $selectedKategoriMitra === 'all' ? 'is-active' : '' }}">
+                                        <input type="radio" name="kategori_mitra" value="all"
+                                            {{ $selectedKategoriMitra === 'all' ? 'checked' : '' }}>
+                                        <span>Semua</span>
+                                    </label>
+                                    <label class="filter-option {{ $selectedKategoriMitra === 'nasional' ? 'is-active' : '' }}">
+                                        <input type="radio" name="kategori_mitra" value="nasional"
+                                            {{ $selectedKategoriMitra === 'nasional' ? 'checked' : '' }}>
+                                        <span>Nasional</span>
+                                    </label>
+                                    <label class="filter-option {{ $selectedKategoriMitra === 'internasional' ? 'is-active' : '' }}">
+                                        <input type="radio" name="kategori_mitra" value="internasional"
+                                            {{ $selectedKategoriMitra === 'internasional' ? 'checked' : '' }}>
+                                        <span>Internasional</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-stack filter-stack-secondary">
+                            <div class="search-wrap filter-search">
+                                <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                                <input type="text" name="search" class="search-input"
+                                    placeholder="{{ $searchPlaceholder }}" value="{{ request('search') }}">
+                            </div>
+
+                            <label class="sort-wrap filter-sort">
+                                <span class="sort-label">Urutkan</span>
+                                <select name="sort" class="sort-select">
+                                    @if ($selectedDataScope === 'mitra')
+                                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
+                                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>Nama A-Z</option>
+                                        <option value="title_desc" {{ $selectedSort === 'title_desc' ? 'selected' : '' }}>Nama Z-A</option>
+                                        <option value="most_cooperations" {{ $selectedSort === 'most_cooperations' ? 'selected' : '' }}>Kerjasama Terbanyak</option>
+                                    @else
+                                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
+                                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>A-Z</option>
+                                        <option value="ending_soon" {{ $selectedSort === 'ending_soon' ? 'selected' : '' }}>Segera Berakhir</option>
+                                    @endif
+                                </select>
+                            </label>
+
+                            <div class="filter-buttons">
+                                <button type="submit" class="btn-search">Cari</button>
+                                <button type="button" class="btn-reset-search" data-search-reset @if ($searchTerm === '') hidden @endif>
+                                    Reset pencarian
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
             <div class="results-overview" aria-live="polite">
                 <div class="results-overview-copy">
-                    <p class="results-count">{{ number_format($totalResults, 0, ',', '.') }} kerjasama ditemukan</p>
+                    <span class="results-mode">{{ $dataScopeLabels[$selectedDataScope] ?? 'Data Publik' }}</span>
+                    <p class="results-count">{{ number_format($totalResults, 0, ',', '.') }} {{ $resultLabel }} ditemukan</p>
                     <p class="results-caption">
                         @if ($activeFilterChips)
-                            Menampilkan hasil yang sesuai dengan filter dan kata kunci aktif.
+                            Menampilkan {{ $resultLabel }} yang sesuai dengan filter dan kata kunci aktif.
                         @else
-                            Menampilkan seluruh data kerjasama publik yang tersedia saat ini.
+                            Menampilkan seluruh data {{ $resultLabel }} publik yang tersedia saat ini.
                         @endif
                     </p>
                 </div>
@@ -456,7 +554,87 @@
                 </div>
             </div>
 
-        @if (isset($kerjasama) && $kerjasama->count() > 0)
+        @if ($selectedDataScope === 'mitra')
+            @if (isset($mitras) && $mitras->count() > 0)
+                <div class="cards-grid cards-grid-mitra">
+                    @foreach ($mitras as $mitra)
+                        @php
+                            $mitraName = trim((string) ($mitra->nama_mitra ?? 'Mitra'));
+                            $mitraInitials = strtoupper(substr(preg_replace('/\s+/', '', $mitraName), 0, 2));
+                            $klasifikasiLabel = $mitra->klasifikasi?->nama ?? 'Klasifikasi belum ditetapkan';
+                            $kategoriLabel = $mitra->kategori ? ucfirst($mitra->kategori) : 'Kategori belum diisi';
+                            $negaraLabel = $mitra->negara ?: 'Belum diisi';
+                            $telpLabel = $mitra->telp ?: 'Belum diisi';
+                            $alamatLabel = $mitra->alamat ?: 'Alamat belum tersedia';
+                            $websiteUrl = $mitra->website;
+                            $websiteLabel = $websiteUrl ? \Illuminate\Support\Str::limit($websiteUrl, 30) : 'Belum diisi';
+                        @endphp
+
+                        <article class="mcard">
+                            <div class="mcard-top">
+                                <div class="mcard-avatar">{{ $mitraInitials ?: 'MT' }}</div>
+                                <div class="mcard-copy">
+                                    <h3 class="mcard-title">{{ $mitraName }}</h3>
+                                    <p class="mcard-subtitle">{{ $klasifikasiLabel }}</p>
+                                </div>
+                                <span class="mcard-category">{{ $kategoriLabel }}</span>
+                            </div>
+
+                            <div class="mcard-highlights">
+                                <div class="mcard-highlight">
+                                    <span class="mcard-highlight-key">Total Kerjasama</span>
+                                    <span class="mcard-highlight-val">{{ number_format($mitra->cooperations_count ?? 0, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="mcard-highlight">
+                                    <span class="mcard-highlight-key">Negara</span>
+                                    <span class="mcard-highlight-val">{{ $negaraLabel }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mcard-meta">
+                                <div class="meta-row">
+                                    <span class="meta-key">Telepon</span>
+                                    <span class="meta-val">{{ $telpLabel }}</span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-key">Alamat</span>
+                                    <span class="meta-val">{{ $alamatLabel }}</span>
+                                </div>
+                                <div class="meta-row">
+                                    <span class="meta-key">Website</span>
+                                    <span class="meta-val">
+                                        @if ($websiteUrl)
+                                            <a href="{{ $websiteUrl }}" class="inline-link" target="_blank" rel="noreferrer">
+                                                {{ $websiteLabel }}
+                                            </a>
+                                        @else
+                                            {{ $websiteLabel }}
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+
+                <div class="pagination-wrap">
+                    {{ $mitras->links('pagination::simple-bootstrap-4') }}
+                </div>
+            @else
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                    </div>
+                    <h3>Belum ada data mitra</h3>
+                    <p>Data mitra yang dipublikasikan belum tersedia atau tidak ditemukan untuk kata kunci dan filter
+                        yang dipilih.</p>
+                </div>
+            @endif
+        @elseif (isset($kerjasama) && $kerjasama->count() > 0)
             <div class="cards-grid">
                 @foreach ($kerjasama as $item)
                     @php

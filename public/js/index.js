@@ -264,6 +264,7 @@ document.addEventListener('keydown', function (e) {
     let activeController = null;
     let searchDebounceTimer = null;
     const searchDebounceDelay = 320;
+    const statFilterCards = Array.from(document.querySelectorAll('[data-landing-stat]'));
 
     function getMainContent(section = mainSection) {
         return section.querySelector('.main-wrap') || section;
@@ -275,9 +276,36 @@ document.addEventListener('keydown', function (e) {
         }
 
         form.querySelectorAll('.filter-option').forEach(function (option) {
-            const input = option.querySelector('input[name="kategori_mitra"]');
+            const input = option.querySelector('input');
             option.classList.toggle('is-active', Boolean(input && input.checked));
         });
+    }
+
+    function syncScopeDependentFields(form) {
+        if (!form) {
+            return;
+        }
+
+        const selectedScopeInput = form.querySelector('input[name="data_scope"]:checked');
+        const selectedScope = selectedScopeInput ? selectedScopeInput.value : 'kerjasama';
+        const statusScopeInput = form.querySelector('input[name="status_scope"]');
+        const sortSelect = form.querySelector('select[name="sort"]');
+
+        if (selectedScope !== 'kerjasama' && statusScopeInput) {
+            statusScopeInput.value = 'all';
+        }
+
+        if (!sortSelect) {
+            return;
+        }
+
+        if (selectedScope === 'mitra' && sortSelect.value === 'ending_soon') {
+            sortSelect.value = 'title';
+        }
+
+        if (selectedScope === 'kerjasama' && ['title_desc', 'most_cooperations'].includes(sortSelect.value)) {
+            sortSelect.value = 'latest';
+        }
     }
 
     function syncSearchResetState(form) {
@@ -310,27 +338,72 @@ document.addEventListener('keydown', function (e) {
         cancelPendingSearchDebounce();
         searchDebounceTimer = window.setTimeout(function () {
             searchDebounceTimer = null;
+            syncScopeDependentFields(form);
             syncFilterState(form);
             syncSearchResetState(form);
             loadKerjasamaSection(buildRequestUrl(form));
         }, searchDebounceDelay);
     }
 
+    function getNavHeight() {
+        const nav = document.querySelector('.top-nav');
+        return nav ? Math.ceil(nav.getBoundingClientRect().height) : 0;
+    }
+
+    function scrollToMainSection() {
+        const sectionTop = mainSection.getBoundingClientRect().top + window.pageYOffset;
+        const targetTop = Math.max(sectionTop - getNavHeight(), 0);
+
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth',
+        });
+    }
+
+    function syncStatCardStateFromUrl(url) {
+        const parsedUrl = new URL(url, window.location.origin);
+        const scope = parsedUrl.searchParams.get('data_scope') || 'kerjasama';
+        const kategori = parsedUrl.searchParams.get('kategori_mitra') || 'all';
+        const status = parsedUrl.searchParams.get('status_scope') || 'all';
+
+        statFilterCards.forEach(function (card) {
+            const cardScope = card.dataset.statScope || 'kerjasama';
+            const cardKategori = card.dataset.statKategori || 'all';
+            const cardStatus = card.dataset.statStatus || 'all';
+            const isActive = cardScope === scope && cardKategori === kategori && cardStatus === status;
+
+            card.classList.toggle('is-active', isActive);
+
+            if (isActive) {
+                card.setAttribute('aria-current', 'true');
+            } else {
+                card.removeAttribute('aria-current');
+            }
+        });
+    }
+
     function syncFilterStateFromUrl(url) {
         const parsedUrl = new URL(url, window.location.origin);
+        const dataScope = parsedUrl.searchParams.get('data_scope') || 'kerjasama';
         const kategoriMitra = parsedUrl.searchParams.get('kategori_mitra') || 'all';
         const sort = parsedUrl.searchParams.get('sort') || 'latest';
+        const statusScope = parsedUrl.searchParams.get('status_scope') || 'all';
         const form = mainSection.querySelector('[data-landing-filter]');
 
         if (!form) {
             return;
         }
 
+        const nextScopeInput = form.querySelector('input[name="data_scope"][value="' + dataScope + '"]');
+
+        if (nextScopeInput) {
+            nextScopeInput.checked = true;
+        }
+
         const nextInput = form.querySelector('input[name="kategori_mitra"][value="' + kategoriMitra + '"]');
 
         if (nextInput) {
             nextInput.checked = true;
-            syncFilterState(form);
         }
 
         const searchInput = form.querySelector('input[name="search"]');
@@ -345,7 +418,16 @@ document.addEventListener('keydown', function (e) {
             sortSelect.value = sort;
         }
 
+        const statusScopeInput = form.querySelector('input[name="status_scope"]');
+
+        if (statusScopeInput) {
+            statusScopeInput.value = statusScope;
+        }
+
+        syncScopeDependentFields(form);
+        syncFilterState(form);
         syncSearchResetState(form);
+        syncStatCardStateFromUrl(url);
     }
 
     function buildRequestUrl(form) {
@@ -356,12 +438,20 @@ document.addEventListener('keydown', function (e) {
             params.delete('search');
         }
 
+        if ((params.get('data_scope') || 'kerjasama') === 'kerjasama') {
+            params.delete('data_scope');
+        }
+
         if ((params.get('kategori_mitra') || 'all') === 'all') {
             params.delete('kategori_mitra');
         }
 
         if ((params.get('sort') || 'latest') === 'latest') {
             params.delete('sort');
+        }
+
+        if ((params.get('status_scope') || 'all') === 'all') {
+            params.delete('status_scope');
         }
 
         url.search = params.toString();
@@ -371,28 +461,9 @@ document.addEventListener('keydown', function (e) {
     function replaceKerjasamaResults(nextMainSection) {
         const currentContent = getMainContent();
         const nextContent = getMainContent(nextMainSection);
-        const resultClasses = ['results-overview', 'cards-grid', 'pagination-wrap', 'empty-state'];
-        const currentResults = Array.from(currentContent.children).filter(function (element) {
-            return resultClasses.some(function (className) {
-                return element.classList.contains(className);
-            });
-        });
-        const nextResults = Array.from(nextContent.children).filter(function (element) {
-            return resultClasses.some(function (className) {
-                return element.classList.contains(className);
-            });
-        });
-        let insertAfter = currentContent.querySelector('.section-top');
-
-        currentResults.forEach(function (element) {
-            element.remove();
-        });
-
-        nextResults.forEach(function (element) {
-            const nextElement = document.importNode(element, true);
-            nextElement.classList.add('result-refresh-enter');
-            insertAfter.after(nextElement);
-            insertAfter = nextElement;
+        currentContent.innerHTML = nextContent.innerHTML;
+        currentContent.querySelectorAll('.results-overview, .cards-grid, .pagination-wrap, .empty-state').forEach(function (element) {
+            element.classList.add('result-refresh-enter');
         });
     }
 
@@ -429,6 +500,7 @@ document.addEventListener('keydown', function (e) {
             }
 
             replaceKerjasamaResults(nextMainSection);
+            syncFilterStateFromUrl(url);
 
             if (pushState) {
                 window.history.pushState({ landingAsync: true }, '', url);
@@ -447,13 +519,14 @@ document.addEventListener('keydown', function (e) {
     }
 
     document.addEventListener('change', function (event) {
-        const filterInput = event.target.closest('[data-landing-filter] input[name="kategori_mitra"], [data-landing-filter] select[name="sort"]');
+        const filterInput = event.target.closest('[data-landing-filter] input[name="data_scope"], [data-landing-filter] input[name="kategori_mitra"], [data-landing-filter] select[name="sort"]');
 
         if (!filterInput) {
             return;
         }
 
         cancelPendingSearchDebounce();
+        syncScopeDependentFields(filterInput.form);
         syncFilterState(filterInput.form);
         syncSearchResetState(filterInput.form);
         loadKerjasamaSection(buildRequestUrl(filterInput.form));
@@ -479,6 +552,7 @@ document.addEventListener('keydown', function (e) {
 
         event.preventDefault();
         cancelPendingSearchDebounce();
+        syncScopeDependentFields(filterForm);
         syncFilterState(filterForm);
         syncSearchResetState(filterForm);
         loadKerjasamaSection(buildRequestUrl(filterForm));
@@ -488,6 +562,58 @@ document.addEventListener('keydown', function (e) {
         const paginationLink = event.target.closest('#data-kerjasama .pagination-wrap a');
         const resetSearchButton = event.target.closest('[data-search-reset]');
         const resetFiltersButton = event.target.closest('#data-kerjasama [data-reset-filters]');
+        const statCard = event.target.closest('[data-landing-stat]');
+
+        if (statCard) {
+            const filterForm = mainSection.querySelector('form[data-landing-filter]');
+
+            if (!filterForm) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const defaultScope = statCard.dataset.statScope || 'kerjasama';
+            const defaultKategori = statCard.dataset.statKategori || 'all';
+            const defaultStatus = statCard.dataset.statStatus || 'all';
+            const defaultSort = statCard.dataset.statSort || 'latest';
+            const scopeInput = filterForm.querySelector('input[name="data_scope"][value="' + defaultScope + '"]');
+            const kategoriInput = filterForm.querySelector('input[name="kategori_mitra"][value="' + defaultKategori + '"]');
+            const searchInput = filterForm.querySelector('input[name="search"]');
+            const statusScopeInput = filterForm.querySelector('input[name="status_scope"]');
+            const sortSelect = filterForm.querySelector('select[name="sort"]');
+
+            if (scopeInput) {
+                scopeInput.checked = true;
+            }
+
+            if (kategoriInput) {
+                kategoriInput.checked = true;
+            }
+
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
+            if (statusScopeInput) {
+                statusScopeInput.value = defaultStatus;
+            }
+
+            if (sortSelect) {
+                sortSelect.value = defaultSort;
+            }
+
+            cancelPendingSearchDebounce();
+            syncScopeDependentFields(filterForm);
+            syncFilterState(filterForm);
+            syncSearchResetState(filterForm);
+
+            const nextUrl = buildRequestUrl(filterForm);
+            syncStatCardStateFromUrl(nextUrl);
+            scrollToMainSection();
+            loadKerjasamaSection(nextUrl);
+            return;
+        }
 
         if (resetSearchButton) {
             const filterForm = resetSearchButton.closest('form[data-landing-filter]');
@@ -503,9 +629,12 @@ document.addEventListener('keydown', function (e) {
             }
 
             cancelPendingSearchDebounce();
+            syncScopeDependentFields(filterForm);
             syncFilterState(filterForm);
             syncSearchResetState(filterForm);
-            loadKerjasamaSection(buildRequestUrl(filterForm));
+            const nextUrl = buildRequestUrl(filterForm);
+            syncStatCardStateFromUrl(nextUrl);
+            loadKerjasamaSection(nextUrl);
             return;
         }
 
@@ -517,8 +646,13 @@ document.addEventListener('keydown', function (e) {
             }
 
             const defaultKategori = filterForm.querySelector('input[name="kategori_mitra"][value="all"]');
+            const defaultScope = filterForm.querySelector('input[name="data_scope"][value="kerjasama"]');
             const searchInput = filterForm.querySelector('input[name="search"]');
             const sortSelect = filterForm.querySelector('select[name="sort"]');
+
+            if (defaultScope) {
+                defaultScope.checked = true;
+            }
 
             if (defaultKategori) {
                 defaultKategori.checked = true;
@@ -532,10 +666,19 @@ document.addEventListener('keydown', function (e) {
                 sortSelect.value = 'latest';
             }
 
+            const statusScopeInput = filterForm.querySelector('input[name="status_scope"]');
+
+            if (statusScopeInput) {
+                statusScopeInput.value = 'all';
+            }
+
             cancelPendingSearchDebounce();
+            syncScopeDependentFields(filterForm);
             syncFilterState(filterForm);
             syncSearchResetState(filterForm);
-            loadKerjasamaSection(buildRequestUrl(filterForm));
+            const nextUrl = buildRequestUrl(filterForm);
+            syncStatCardStateFromUrl(nextUrl);
+            loadKerjasamaSection(nextUrl);
             return;
         }
 

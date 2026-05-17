@@ -28,84 +28,136 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Cooperation::with('mitra');
+    $dataScope = $request->get('data_scope', 'kerjasama');
+    $dataScope = in_array($dataScope, ['kerjasama', 'mitra'], true) ? $dataScope : 'kerjasama';
 
-    if ($search = trim((string) $request->get('search'))) {
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-                ->orWhere('doc_number', 'like', "%{$search}%")
-                ->orWhere('jenis', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('status', 'like', "%{$search}%")
-                ->orWhere('status_dokumen', 'like', "%{$search}%")
-                ->orWhere('internal_instansi', 'like', "%{$search}%")
-                ->orWhere('start_date', 'like', "%{$search}%")
-                ->orWhere('end_date', 'like', "%{$search}%")
-                ->orWhereHas('pksNumbers', function ($pksQuery) use ($search) {
-                    $pksQuery->where('number', 'like', "%{$search}%");
-                })
-                ->orWhereHas('mitra', function ($mitraQuery) use ($search) {
-                    $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
-                        ->orWhere('kategori', 'like', "%{$search}%")
-                        ->orWhere('negara', 'like', "%{$search}%")
-                        ->orWhere('alamat', 'like', "%{$search}%")
-                        ->orWhere('telp', 'like', "%{$search}%")
-                        ->orWhere('website', 'like', "%{$search}%")
-                        ->orWhereHas('klasifikasi', function ($klasifikasiQuery) use ($search) {
-                            $klasifikasiQuery->where('nama', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhereHas('details', function ($detailQuery) use ($search) {
-                    $detailQuery->where('tujuan', 'like', "%{$search}%")
-                        ->orWhere('indikator_kinerja', 'like', "%{$search}%")
-                        ->orWhere('keterangan', 'like', "%{$search}%")
-                        ->orWhere('nilai_kontrak', 'like', "%{$search}%")
-                        ->orWhere('income', 'like', "%{$search}%")
-                        ->orWhere('volume_luaran', 'like', "%{$search}%")
-                        ->orWhere('satuan_luaran', 'like', "%{$search}%")
-                        ->orWhereHas('jenisKerjasama', function ($jenisQuery) use ($search) {
-                            $jenisQuery->where('nama_kerjasama', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhereHas('jurusans', function ($jurusanQuery) use ($search) {
-                    $jurusanQuery->where('nama_jurusan', 'like', "%{$search}%")
-                        ->orWhere('kode_jurusan', 'like', "%{$search}%");
-                })
-                ->orWhereHas('prodis', function ($prodiQuery) use ($search) {
-                    $prodiQuery->where('nama_prodi', 'like', "%{$search}%")
-                        ->orWhere('kode_prodi', 'like', "%{$search}%")
-                        ->orWhere('jenjang', 'like', "%{$search}%");
-                })
-                ->orWhereHas('upas', function ($upaQuery) use ($search) {
-                    $upaQuery->where('nama_upa', 'like', "%{$search}%");
-                })
-                ->orWhereHas('pusats', function ($pusatQuery) use ($search) {
-                    $pusatQuery->where('nama_pusat', 'like', "%{$search}%");
-                });
-        });
-    }
-
+    $search = trim((string) $request->get('search', ''));
     $kategori = $request->get('kategori_mitra', 'all');
-    if ($kategori !== 'all') {
-        $query->whereHas('mitra', function ($q) use ($kategori) {
-            $q->where('kategori', $kategori);
-        });
+    $kategori = in_array($kategori, ['all', 'nasional', 'internasional'], true) ? $kategori : 'all';
+    $statusScope = $request->get('status_scope', 'all');
+    $statusScope = in_array($statusScope, ['all', 'aktif'], true) ? $statusScope : 'all';
+    $sort = (string) $request->get('sort', 'latest');
+
+    $kerjasama = null;
+    $mitras = null;
+
+    if ($dataScope === 'mitra') {
+        $mitraQuery = \App\Models\Mitra::query()
+            ->with('klasifikasi')
+            ->withCount('cooperations');
+
+        if ($search !== '') {
+            $mitraQuery->where(function ($q) use ($search) {
+                $q->where('nama_mitra', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%")
+                    ->orWhere('negara', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('telp', 'like', "%{$search}%")
+                    ->orWhere('website', 'like', "%{$search}%")
+                    ->orWhereHas('klasifikasi', function ($klasifikasiQuery) use ($search) {
+                        $klasifikasiQuery->where('nama', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($kategori !== 'all') {
+            $mitraQuery->where('kategori', $kategori);
+        }
+
+        $allowedSorts = ['latest', 'oldest', 'title', 'title_desc', 'most_cooperations'];
+        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'latest';
+
+        match ($sort) {
+            'oldest' => $mitraQuery->oldest(),
+            'title' => $mitraQuery->orderBy('nama_mitra'),
+            'title_desc' => $mitraQuery->orderByDesc('nama_mitra'),
+            'most_cooperations' => $mitraQuery->orderByDesc('cooperations_count')->orderBy('nama_mitra'),
+            default => $mitraQuery->latest(),
+        };
+
+        $mitras = $mitraQuery->paginate(9)->withQueryString();
+    } else {
+        $query = \App\Models\Cooperation::with('mitra');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('doc_number', 'like', "%{$search}%")
+                    ->orWhere('jenis', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('status_dokumen', 'like', "%{$search}%")
+                    ->orWhere('internal_instansi', 'like', "%{$search}%")
+                    ->orWhere('start_date', 'like', "%{$search}%")
+                    ->orWhere('end_date', 'like', "%{$search}%")
+                    ->orWhereHas('pksNumbers', function ($pksQuery) use ($search) {
+                        $pksQuery->where('number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('mitra', function ($mitraQuery) use ($search) {
+                        $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
+                            ->orWhere('kategori', 'like', "%{$search}%")
+                            ->orWhere('negara', 'like', "%{$search}%")
+                            ->orWhere('alamat', 'like', "%{$search}%")
+                            ->orWhere('telp', 'like', "%{$search}%")
+                            ->orWhere('website', 'like', "%{$search}%")
+                            ->orWhereHas('klasifikasi', function ($klasifikasiQuery) use ($search) {
+                                $klasifikasiQuery->where('nama', 'like', "%{$search}%");
+                            });
+                    })
+                    ->orWhereHas('details', function ($detailQuery) use ($search) {
+                        $detailQuery->where('tujuan', 'like', "%{$search}%")
+                            ->orWhere('indikator_kinerja', 'like', "%{$search}%")
+                            ->orWhere('keterangan', 'like', "%{$search}%")
+                            ->orWhere('nilai_kontrak', 'like', "%{$search}%")
+                            ->orWhere('income', 'like', "%{$search}%")
+                            ->orWhere('volume_luaran', 'like', "%{$search}%")
+                            ->orWhere('satuan_luaran', 'like', "%{$search}%")
+                            ->orWhereHas('jenisKerjasama', function ($jenisQuery) use ($search) {
+                                $jenisQuery->where('nama_kerjasama', 'like', "%{$search}%");
+                            });
+                    })
+                    ->orWhereHas('jurusans', function ($jurusanQuery) use ($search) {
+                        $jurusanQuery->where('nama_jurusan', 'like', "%{$search}%")
+                            ->orWhere('kode_jurusan', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('prodis', function ($prodiQuery) use ($search) {
+                        $prodiQuery->where('nama_prodi', 'like', "%{$search}%")
+                            ->orWhere('kode_prodi', 'like', "%{$search}%")
+                            ->orWhere('jenjang', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('upas', function ($upaQuery) use ($search) {
+                        $upaQuery->where('nama_upa', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('pusats', function ($pusatQuery) use ($search) {
+                        $pusatQuery->where('nama_pusat', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($kategori !== 'all') {
+            $query->whereHas('mitra', function ($mitraQuery) use ($kategori) {
+                $mitraQuery->where('kategori', $kategori);
+            });
+        }
+
+        if ($statusScope === 'aktif') {
+            $query->where('status', 'aktif');
+        }
+
+        $allowedSorts = ['latest', 'oldest', 'title', 'ending_soon'];
+        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'latest';
+
+        match ($sort) {
+            'oldest' => $query->oldest(),
+            'title' => $query->orderBy('title'),
+            'ending_soon' => $query
+                ->orderByRaw('case when end_date is null then 1 else 0 end')
+                ->orderBy('end_date'),
+            default => $query->latest(),
+        };
+
+        $kerjasama = $query->paginate(9)->withQueryString();
     }
-
-    $sort = $request->get('sort', 'latest');
-    $allowedSorts = ['latest', 'oldest', 'title', 'ending_soon'];
-    $sort = in_array($sort, $allowedSorts, true) ? $sort : 'latest';
-
-    match ($sort) {
-        'oldest' => $query->oldest(),
-        'title' => $query->orderBy('title'),
-        'ending_soon' => $query
-            ->orderByRaw('case when end_date is null then 1 else 0 end')
-            ->orderBy('end_date'),
-        default => $query->latest(),
-    };
-
-    $kerjasama = $query->paginate(9)->withQueryString();
 
     $stats = [
         'total_kerjasama' => \App\Models\Cooperation::count(),
@@ -134,7 +186,7 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
         'insight' => $heroInsight,
     ];
 
-    return view('auth.welcome', compact('kerjasama', 'stats', 'heroSnapshot'));
+    return view('auth.welcome', compact('kerjasama', 'mitras', 'stats', 'heroSnapshot', 'dataScope'));
 });
 
 /*
