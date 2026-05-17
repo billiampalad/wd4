@@ -374,6 +374,21 @@ function initTrendChart() {
             }
         });
     });
+    // Auto-wrap tables with dashboard-table-wrapper
+    document.querySelectorAll('table').forEach(function(table) {
+        var existingWrapper = table.closest('.dashboard-table-wrapper, .table-scroll-area, .table-responsive');
+
+        if (existingWrapper) {
+            existingWrapper.classList.add('dashboard-table-wrapper');
+            return;
+        }
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'dashboard-table-wrapper';
+
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+    });
 }
 
 // Inisialisasi untuk Unit Dashboard
