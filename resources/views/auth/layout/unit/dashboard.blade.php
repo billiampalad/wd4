@@ -324,7 +324,6 @@
                 <thead>
                     <tr>
                         <th>Judul Kegiatan</th>
-                        <th>tipe</th>
                         <th>Mitra</th>
                         <th>Status</th>
                         <th>Deadline</th>
@@ -342,6 +341,12 @@
                                     : (str_contains($jenisLower, 'ia')
                                         ? 'IA'
                                         : '-'));
+                            $jenisLabel = match($jenisShort) {
+                                'MoU' => 'Memorandum of Understanding (MoU)',
+                                'MoA' => 'Memorandum of Agreement (MoA)',
+                                'IA'  => 'Implementation Arrangement (IA)',
+                                default => $item->jenis ?? '-',
+                            };
                             $statusRaw = strtolower(trim($item->status ?? ''));
                             $statusMap = [
                                 'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
@@ -358,11 +363,9 @@
                         @endphp
                         <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
                             <td>
-                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
                                 <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
-                            </td>
-                            <td>
-                                <span class="ud-type-badge">{{ $jenisShort }}</span>
+                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
+                                <span class="ud-type-badge">{{ $jenisLabel }}</span>
                             </td>
                             <td>
                                 <span class="ud-mitra">
@@ -398,13 +401,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="5">
                                 <div class="ud-empty">Belum ada data kerjasama untuk ditampilkan.</div>
                             </td>
                         </tr>
                     @endforelse
                     <tr id="unitDashNoResult" style="display:none;">
-                        <td colspan="6">
+                        <td colspan="5">
                             <div class="ud-empty">Tidak ada dokumen pada filter ini.</div>
                         </td>
                     </tr>

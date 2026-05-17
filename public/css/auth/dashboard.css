@@ -627,7 +627,7 @@
 .ud-doc-title {
     font-weight: 750;
     color: var(--ud-text);
-    max-width: 290px;
+    max-width: 360px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -659,6 +659,7 @@
 .ud-type-badge {
     background: rgba(79, 70, 229, 0.1);
     color: var(--accent);
+    margin-top: 6px;
 }
 
 .ud-status-badge {
