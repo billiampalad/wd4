@@ -262,6 +262,8 @@ document.addEventListener('keydown', function (e) {
     }
 
     let activeController = null;
+    let searchDebounceTimer = null;
+    const searchDebounceDelay = 320;
 
     function getMainContent(section = mainSection) {
         return section.querySelector('.main-wrap') || section;
@@ -278,9 +280,46 @@ document.addEventListener('keydown', function (e) {
         });
     }
 
+    function syncSearchResetState(form) {
+        if (!form) {
+            return;
+        }
+
+        const searchInput = form.querySelector('input[name="search"]');
+        const resetButton = form.querySelector('[data-search-reset]');
+
+        if (!searchInput || !resetButton) {
+            return;
+        }
+
+        resetButton.hidden = searchInput.value.trim() === '';
+    }
+
+    function cancelPendingSearchDebounce() {
+        if (searchDebounceTimer) {
+            window.clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = null;
+        }
+    }
+
+    function scheduleSearchLoad(form) {
+        if (!form) {
+            return;
+        }
+
+        cancelPendingSearchDebounce();
+        searchDebounceTimer = window.setTimeout(function () {
+            searchDebounceTimer = null;
+            syncFilterState(form);
+            syncSearchResetState(form);
+            loadKerjasamaSection(buildRequestUrl(form));
+        }, searchDebounceDelay);
+    }
+
     function syncFilterStateFromUrl(url) {
         const parsedUrl = new URL(url, window.location.origin);
         const kategoriMitra = parsedUrl.searchParams.get('kategori_mitra') || 'all';
+        const sort = parsedUrl.searchParams.get('sort') || 'latest';
         const form = mainSection.querySelector('[data-landing-filter]');
 
         if (!form) {
@@ -299,6 +338,14 @@ document.addEventListener('keydown', function (e) {
         if (searchInput) {
             searchInput.value = parsedUrl.searchParams.get('search') || '';
         }
+
+        const sortSelect = form.querySelector('select[name="sort"]');
+
+        if (sortSelect) {
+            sortSelect.value = sort;
+        }
+
+        syncSearchResetState(form);
     }
 
     function buildRequestUrl(form) {
@@ -309,6 +356,14 @@ document.addEventListener('keydown', function (e) {
             params.delete('search');
         }
 
+        if ((params.get('kategori_mitra') || 'all') === 'all') {
+            params.delete('kategori_mitra');
+        }
+
+        if ((params.get('sort') || 'latest') === 'latest') {
+            params.delete('sort');
+        }
+
         url.search = params.toString();
         return url.toString();
     }
@@ -316,7 +371,7 @@ document.addEventListener('keydown', function (e) {
     function replaceKerjasamaResults(nextMainSection) {
         const currentContent = getMainContent();
         const nextContent = getMainContent(nextMainSection);
-        const resultClasses = ['cards-grid', 'pagination-wrap', 'empty-state'];
+        const resultClasses = ['results-overview', 'cards-grid', 'pagination-wrap', 'empty-state'];
         const currentResults = Array.from(currentContent.children).filter(function (element) {
             return resultClasses.some(function (className) {
                 return element.classList.contains(className);
@@ -335,6 +390,7 @@ document.addEventListener('keydown', function (e) {
 
         nextResults.forEach(function (element) {
             const nextElement = document.importNode(element, true);
+            nextElement.classList.add('result-refresh-enter');
             insertAfter.after(nextElement);
             insertAfter = nextElement;
         });
@@ -391,14 +447,27 @@ document.addEventListener('keydown', function (e) {
     }
 
     document.addEventListener('change', function (event) {
-        const filterInput = event.target.closest('[data-landing-filter] input[name="kategori_mitra"]');
+        const filterInput = event.target.closest('[data-landing-filter] input[name="kategori_mitra"], [data-landing-filter] select[name="sort"]');
 
         if (!filterInput) {
             return;
         }
 
+        cancelPendingSearchDebounce();
         syncFilterState(filterInput.form);
+        syncSearchResetState(filterInput.form);
         loadKerjasamaSection(buildRequestUrl(filterInput.form));
+    });
+
+    document.addEventListener('input', function (event) {
+        const searchInput = event.target.closest('[data-landing-filter] input[name="search"]');
+
+        if (!searchInput) {
+            return;
+        }
+
+        syncSearchResetState(searchInput.form);
+        scheduleSearchLoad(searchInput.form);
     });
 
     document.addEventListener('submit', function (event) {
@@ -409,22 +478,78 @@ document.addEventListener('keydown', function (e) {
         }
 
         event.preventDefault();
+        cancelPendingSearchDebounce();
         syncFilterState(filterForm);
+        syncSearchResetState(filterForm);
         loadKerjasamaSection(buildRequestUrl(filterForm));
     });
 
     document.addEventListener('click', function (event) {
         const paginationLink = event.target.closest('#data-kerjasama .pagination-wrap a');
+        const resetSearchButton = event.target.closest('[data-search-reset]');
+        const resetFiltersButton = event.target.closest('#data-kerjasama [data-reset-filters]');
+
+        if (resetSearchButton) {
+            const filterForm = resetSearchButton.closest('form[data-landing-filter]');
+
+            if (!filterForm) {
+                return;
+            }
+
+            const searchInput = filterForm.querySelector('input[name="search"]');
+
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
+            cancelPendingSearchDebounce();
+            syncFilterState(filterForm);
+            syncSearchResetState(filterForm);
+            loadKerjasamaSection(buildRequestUrl(filterForm));
+            return;
+        }
+
+        if (resetFiltersButton) {
+            const filterForm = mainSection.querySelector('form[data-landing-filter]');
+
+            if (!filterForm) {
+                return;
+            }
+
+            const defaultKategori = filterForm.querySelector('input[name="kategori_mitra"][value="all"]');
+            const searchInput = filterForm.querySelector('input[name="search"]');
+            const sortSelect = filterForm.querySelector('select[name="sort"]');
+
+            if (defaultKategori) {
+                defaultKategori.checked = true;
+            }
+
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
+            if (sortSelect) {
+                sortSelect.value = 'latest';
+            }
+
+            cancelPendingSearchDebounce();
+            syncFilterState(filterForm);
+            syncSearchResetState(filterForm);
+            loadKerjasamaSection(buildRequestUrl(filterForm));
+            return;
+        }
 
         if (!paginationLink || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
             return;
         }
 
         event.preventDefault();
+        cancelPendingSearchDebounce();
         loadKerjasamaSection(paginationLink.href);
     });
 
     window.addEventListener('popstate', function () {
+        cancelPendingSearchDebounce();
         syncFilterStateFromUrl(window.location.href);
         loadKerjasamaSection(window.location.href, { pushState: false });
     });

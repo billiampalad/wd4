@@ -28,13 +28,12 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Cooperation::with('mitra')->latest();
+    $query = \App\Models\Cooperation::with('mitra');
 
     if ($search = trim((string) $request->get('search'))) {
         $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
                 ->orWhere('doc_number', 'like', "%{$search}%")
-                ->orWhere('pks_number', 'like', "%{$search}%")
                 ->orWhere('jenis', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%")
                 ->orWhere('status', 'like', "%{$search}%")
@@ -42,6 +41,9 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
                 ->orWhere('internal_instansi', 'like', "%{$search}%")
                 ->orWhere('start_date', 'like', "%{$search}%")
                 ->orWhere('end_date', 'like', "%{$search}%")
+                ->orWhereHas('pksNumbers', function ($pksQuery) use ($search) {
+                    $pksQuery->where('number', 'like', "%{$search}%");
+                })
                 ->orWhereHas('mitra', function ($mitraQuery) use ($search) {
                     $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
                         ->orWhere('kategori', 'like', "%{$search}%")
@@ -90,6 +92,19 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
         });
     }
 
+    $sort = $request->get('sort', 'latest');
+    $allowedSorts = ['latest', 'oldest', 'title', 'ending_soon'];
+    $sort = in_array($sort, $allowedSorts, true) ? $sort : 'latest';
+
+    match ($sort) {
+        'oldest' => $query->oldest(),
+        'title' => $query->orderBy('title'),
+        'ending_soon' => $query
+            ->orderByRaw('case when end_date is null then 1 else 0 end')
+            ->orderBy('end_date'),
+        default => $query->latest(),
+    };
+
     $kerjasama = $query->paginate(9)->withQueryString();
 
     $stats = [
@@ -100,7 +115,26 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
         'mitra_internasional' => \App\Models\Mitra::where('kategori', 'internasional')->count(),
     ];
 
-    return view('auth.welcome', compact('kerjasama', 'stats'));
+    $latestUpdatedCooperation = \App\Models\Cooperation::query()
+        ->latest('updated_at')
+        ->first();
+
+    if ($stats['total_kerjasama'] === 0) {
+        $heroInsight = 'Belum ada kerja sama publik yang tercatat. Snapshot ini akan terisi otomatis saat data pertama dipublikasikan.';
+    } else {
+        $activeShare = (int) round(($stats['total_aktif'] / max($stats['total_kerjasama'], 1)) * 100);
+        $heroInsight = $activeShare > 0
+            ? "{$activeShare}% portofolio kerja sama saat ini masih berada dalam status aktif."
+            : 'Belum ada kerja sama aktif saat ini, sehingga fase tindak lanjut bisa menjadi fokus pembaruan berikutnya.';
+    }
+
+    $heroSnapshot = [
+        'updated_at_label' => $latestUpdatedCooperation?->updated_at?->format('d M Y, H:i') ?? 'Belum ada pembaruan',
+        'latest_title' => $latestUpdatedCooperation?->title,
+        'insight' => $heroInsight,
+    ];
+
+    return view('auth.welcome', compact('kerjasama', 'stats', 'heroSnapshot'));
 });
 
 /*

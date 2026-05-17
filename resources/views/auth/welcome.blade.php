@@ -348,6 +348,36 @@
                 $selectedKategoriMitra = in_array($selectedKategoriMitra, ['all', 'nasional', 'internasional'], true)
                     ? $selectedKategoriMitra
                     : 'all';
+                $searchTerm = trim((string) request('search', ''));
+                $selectedSort = request('sort', 'latest');
+                $selectedSort = in_array($selectedSort, ['latest', 'oldest', 'title', 'ending_soon'], true)
+                    ? $selectedSort
+                    : 'latest';
+                $kategoriLabels = [
+                    'nasional' => 'Mitra Nasional',
+                    'internasional' => 'Mitra Internasional',
+                ];
+                $sortLabels = [
+                    'latest' => 'Terbaru',
+                    'oldest' => 'Terlama',
+                    'title' => 'A-Z',
+                    'ending_soon' => 'Segera Berakhir',
+                ];
+                $activeFilterChips = [];
+
+                if ($selectedKategoriMitra !== 'all') {
+                    $activeFilterChips[] = $kategoriLabels[$selectedKategoriMitra] ?? ucfirst($selectedKategoriMitra);
+                }
+
+                if ($searchTerm !== '') {
+                    $activeFilterChips[] = 'Pencarian: "' . $searchTerm . '"';
+                }
+
+                if ($selectedSort !== 'latest') {
+                    $activeFilterChips[] = 'Urutan: ' . ($sortLabels[$selectedSort] ?? ucfirst($selectedSort));
+                }
+
+                $totalResults = isset($kerjasama) ? $kerjasama->total() : 0;
             @endphp
 
             <div class="section-top">
@@ -376,6 +406,16 @@
                     </label>
                 </div>
 
+                <label class="sort-wrap">
+                    <span class="sort-label">Urutkan</span>
+                    <select name="sort" class="sort-select">
+                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>A-Z</option>
+                        <option value="ending_soon" {{ $selectedSort === 'ending_soon' ? 'selected' : '' }}>Segera Berakhir</option>
+                    </select>
+                </label>
+
                 <div class="search-wrap">
                     <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2">
@@ -383,10 +423,37 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
                     <input type="text" name="search" class="search-input"
-                        placeholder="Cari data kerjasama Anda…" value="{{ request('search') }}">
+                        placeholder="Cari data kerjasama Anda..." value="{{ request('search') }}">
                 </div>
+                <button type="button" class="btn-reset-search" data-search-reset @if ($searchTerm === '') hidden @endif>
+                    Reset pencarian
+                </button>
                 <button type="submit" class="btn-search">Cari</button>
                 </form>
+            </div>
+
+            <div class="results-overview" aria-live="polite">
+                <div class="results-overview-copy">
+                    <p class="results-count">{{ number_format($totalResults, 0, ',', '.') }} kerjasama ditemukan</p>
+                    <p class="results-caption">
+                        @if ($activeFilterChips)
+                            Menampilkan hasil yang sesuai dengan filter dan kata kunci aktif.
+                        @else
+                            Menampilkan seluruh data kerjasama publik yang tersedia saat ini.
+                        @endif
+                    </p>
+                </div>
+                <div class="results-chips" aria-label="Filter aktif">
+                    @forelse ($activeFilterChips as $chip)
+                        <span class="result-chip is-active">{{ $chip }}</span>
+                    @empty
+                        <span class="result-chip">Semua data publik</span>
+                    @endforelse
+
+                    @if ($activeFilterChips)
+                        <button type="button" class="result-chip result-chip-reset" data-reset-filters>Reset filter</button>
+                    @endif
+                </div>
             </div>
 
         @if (isset($kerjasama) && $kerjasama->count() > 0)
