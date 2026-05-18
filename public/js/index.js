@@ -215,6 +215,12 @@ document.addEventListener('keydown', function (e) {
         if (themeLabel) {
             themeLabel.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
         }
+
+        document.dispatchEvent(new CustomEvent('landingthemechange', {
+            detail: {
+                theme: isDark ? 'dark' : 'light',
+            },
+        }));
     }
 
     function getInitialTheme() {
@@ -255,6 +261,7 @@ document.addEventListener('keydown', function (e) {
 })();
 
 (function () {
+    const analyticsSection = document.getElementById('visualisasi-data');
     const mainSection = document.getElementById('data-kerjasama');
 
     if (!mainSection) {
@@ -268,6 +275,14 @@ document.addEventListener('keydown', function (e) {
 
     function getMainContent(section = mainSection) {
         return section.querySelector('.main-wrap') || section;
+    }
+
+    function getAnalyticsContent(section = analyticsSection) {
+        if (!section) {
+            return null;
+        }
+
+        return section.querySelector('.analytics-shell') || section;
     }
 
     function syncFilterState(form) {
@@ -358,6 +373,442 @@ document.addEventListener('keydown', function (e) {
             top: targetTop,
             behavior: 'smooth',
         });
+    }
+
+    function parseJsonScript(container, selector, fallback) {
+        if (!container) {
+            return fallback;
+        }
+
+        const script = container.querySelector(selector);
+
+        if (!script) {
+            return fallback;
+        }
+
+        try {
+            return JSON.parse(script.textContent || '');
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    function hexToRgba(hex, alpha) {
+        const normalized = String(hex || '').trim().replace('#', '');
+
+        if (normalized.length !== 6) {
+            return 'rgba(55, 138, 221, ' + alpha + ')';
+        }
+
+        const value = Number.parseInt(normalized, 16);
+        const r = (value >> 16) & 255;
+        const g = (value >> 8) & 255;
+        const b = value & 255;
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    }
+
+    function getAnalyticsToneColor(tone) {
+        const style = getComputedStyle(document.documentElement);
+        const map = {
+            success: style.getPropertyValue('--green-500').trim() || '#1D9E75',
+            warning: style.getPropertyValue('--amber-500').trim() || '#BA7517',
+            danger: '#d14a4a',
+            neutral: '#708198',
+            violet: '#6e55d9',
+            info: style.getPropertyValue('--blue-500').trim() || '#378ADD',
+            indigo: '#455fdf',
+        };
+
+        return map[tone] || map.info;
+    }
+
+    function getAnalyticsTheme() {
+        const style = getComputedStyle(document.documentElement);
+        const isDark = document.documentElement.dataset.theme === 'dark';
+
+        return {
+            text: style.getPropertyValue('--ink-muted').trim() || (isDark ? '#a9b8cc' : '#4a5568'),
+            title: style.getPropertyValue('--ink').trim() || (isDark ? '#e7eef8' : '#0d1b2a'),
+            faint: style.getPropertyValue('--ink-faint').trim() || (isDark ? '#7f93ad' : '#8a9ab0'),
+            surface: style.getPropertyValue('--surface').trim() || (isDark ? '#0f1726' : '#ffffff'),
+            grid: isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(13, 27, 42, 0.08)',
+        };
+    }
+
+    function wrapChartLabel(label, limit = 20) {
+        const text = String(label || '').trim();
+
+        if (!text) {
+            return ['-'];
+        }
+
+        if (text.length <= limit) {
+            return [text];
+        }
+
+        const words = text.split(/\s+/);
+        const lines = [];
+        let currentLine = '';
+
+        words.forEach(function (word) {
+            const nextLine = currentLine ? currentLine + ' ' + word : word;
+
+            if (nextLine.length <= limit || !currentLine) {
+                currentLine = nextLine;
+                return;
+            }
+
+            lines.push(currentLine);
+            currentLine = word;
+        });
+
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+
+        return lines.slice(0, 3);
+    }
+
+    const doughnutCenterTextPlugin = {
+        id: 'landingDoughnutCenterText',
+        beforeDraw: function (chart, args, options) {
+            if (!options || !options.line1) {
+                return;
+            }
+
+            const meta = chart.getDatasetMeta(0);
+
+            if (!meta || !meta.data || !meta.data[0]) {
+                return;
+            }
+
+            const arc = meta.data[0];
+            const ctx = chart.ctx;
+            const theme = getAnalyticsTheme();
+            const x = arc.x;
+            const y = arc.y;
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = theme.title;
+            ctx.font = '700 22px "DM Sans", sans-serif';
+            ctx.fillText(options.line1, x, y - 6);
+            ctx.fillStyle = theme.faint;
+            ctx.font = '500 11px "DM Sans", sans-serif';
+            ctx.fillText(options.line2 || '', x, y + 14);
+            ctx.restore();
+        },
+    };
+
+    function createAnalyticsChart(canvas, config) {
+        if (!canvas || typeof Chart === 'undefined') {
+            return null;
+        }
+
+        if (canvas._landingChart) {
+            canvas._landingChart.destroy();
+        }
+
+        canvas._landingChart = new Chart(canvas, config);
+        return canvas._landingChart;
+    }
+
+    function animateAnalyticsCards(section = analyticsSection) {
+        const shell = getAnalyticsContent(section);
+
+        if (!shell) {
+            return;
+        }
+
+        shell.querySelectorAll('[data-analytics-card]').forEach(function (card, index) {
+            card.classList.remove('is-visible');
+            card.style.setProperty('--analytics-delay', String(index * 70) + 'ms');
+
+            window.requestAnimationFrame(function () {
+                card.classList.add('is-visible');
+            });
+        });
+    }
+
+    function initLandingAnalyticsSection(section = analyticsSection) {
+        const shell = getAnalyticsContent(section);
+
+        if (!shell) {
+            return;
+        }
+
+        if (typeof Chart === 'undefined') {
+            animateAnalyticsCards(section);
+            return;
+        }
+
+        const payload = parseJsonScript(shell, '[data-analytics-payload]', {});
+        const theme = getAnalyticsTheme();
+        const commonAnimation = {
+            duration: 900,
+            easing: 'easeOutCubic',
+        };
+
+        const tooltipCallbacks = {
+            label: function (context) {
+                const value = Number(context.raw || 0);
+                return context.label + ': ' + value.toLocaleString('id-ID');
+            },
+        };
+
+        const statusCanvas = shell.querySelector('[data-analytics-chart="status"]');
+        const trendCanvas = shell.querySelector('[data-analytics-chart="trend"]');
+        const mitraCanvas = shell.querySelector('[data-analytics-chart="mitra"]');
+        const classificationCanvas = shell.querySelector('[data-analytics-chart="classifications"]');
+        const fieldsCanvas = shell.querySelector('[data-analytics-chart="fields"]');
+
+        if (statusCanvas && payload.status && Array.isArray(payload.status.values) && payload.status.values.length) {
+            createAnalyticsChart(statusCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: payload.status.labels,
+                    datasets: [{
+                        data: payload.status.values,
+                        backgroundColor: (payload.status.tones || []).map(getAnalyticsToneColor),
+                        borderColor: theme.surface,
+                        borderWidth: 4,
+                        hoverOffset: 8,
+                    }],
+                },
+                plugins: [doughnutCenterTextPlugin],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    animation: commonAnimation,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: tooltipCallbacks,
+                        },
+                        landingDoughnutCenterText: {
+                            line1: Number(payload.status.total || 0).toLocaleString('id-ID'),
+                            line2: 'Portofolio',
+                        },
+                    },
+                },
+            });
+        }
+
+        if (mitraCanvas && payload.mitra && Array.isArray(payload.mitra.values) && payload.mitra.values.length) {
+            createAnalyticsChart(mitraCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: payload.mitra.labels,
+                    datasets: [{
+                        data: payload.mitra.values,
+                        backgroundColor: (payload.mitra.tones || []).map(getAnalyticsToneColor),
+                        borderColor: theme.surface,
+                        borderWidth: 4,
+                        hoverOffset: 8,
+                    }],
+                },
+                plugins: [doughnutCenterTextPlugin],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '74%',
+                    animation: commonAnimation,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: tooltipCallbacks,
+                        },
+                        landingDoughnutCenterText: {
+                            line1: Number(payload.mitra.total || 0).toLocaleString('id-ID'),
+                            line2: 'Mitra',
+                        },
+                    },
+                },
+            });
+        }
+
+        if (trendCanvas && payload.trend && Array.isArray(payload.trend.values) && payload.trend.values.length) {
+            createAnalyticsChart(trendCanvas, {
+                type: 'bar',
+                data: {
+                    labels: payload.trend.labels,
+                    datasets: [{
+                        data: payload.trend.values,
+                        borderRadius: 18,
+                        borderSkipped: false,
+                        backgroundColor: payload.trend.values.map(function (_, index) {
+                            return index === payload.trend.values.length - 1
+                                ? getAnalyticsToneColor('success')
+                                : getAnalyticsToneColor('info');
+                        }),
+                        hoverBackgroundColor: payload.trend.values.map(function (_, index) {
+                            return index === payload.trend.values.length - 1
+                                ? hexToRgba(getAnalyticsToneColor('success'), 0.82)
+                                : hexToRgba(getAnalyticsToneColor('info'), 0.82);
+                        }),
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: commonAnimation,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: tooltipCallbacks,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: theme.text,
+                                font: {
+                                    size: 11,
+                                    weight: '700',
+                                },
+                            },
+                            grid: {
+                                display: false,
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1,
+                                color: theme.faint,
+                                font: {
+                                    size: 10,
+                                },
+                            },
+                            grid: {
+                                color: theme.grid,
+                                drawBorder: false,
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function buildHorizontalBarChart(canvas, labels, values, tone) {
+            if (!canvas || !Array.isArray(values) || !values.length) {
+                return;
+            }
+
+            createAnalyticsChart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(function (label) {
+                        return wrapChartLabel(label, 22);
+                    }),
+                    datasets: [{
+                        data: values,
+                        borderRadius: 999,
+                        borderSkipped: false,
+                        backgroundColor: values.map(function () {
+                            return hexToRgba(getAnalyticsToneColor(tone), 0.88);
+                        }),
+                        hoverBackgroundColor: values.map(function () {
+                            return getAnalyticsToneColor(tone);
+                        }),
+                        barThickness: 12,
+                        maxBarThickness: 12,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: commonAnimation,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return Number(context.raw || 0).toLocaleString('id-ID') + ' data';
+                                },
+                                title: function (items) {
+                                    const index = items[0] ? items[0].dataIndex : 0;
+                                    return labels[index] || '';
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1,
+                                color: theme.faint,
+                                font: {
+                                    size: 10,
+                                },
+                            },
+                            grid: {
+                                color: theme.grid,
+                                drawBorder: false,
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                        y: {
+                            ticks: {
+                                color: theme.text,
+                                font: {
+                                    size: 10,
+                                    weight: '700',
+                                },
+                            },
+                            grid: {
+                                display: false,
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        if (classificationCanvas && payload.classifications) {
+            buildHorizontalBarChart(
+                classificationCanvas,
+                payload.classifications.labels || [],
+                payload.classifications.values || [],
+                'indigo',
+            );
+        }
+
+        if (fieldsCanvas && payload.fields) {
+            buildHorizontalBarChart(
+                fieldsCanvas,
+                payload.fields.labels || [],
+                payload.fields.values || [],
+                'success',
+            );
+        }
+
+        animateAnalyticsCards(section);
     }
 
     function syncStatCardStateFromUrl(url) {
@@ -458,13 +909,23 @@ document.addEventListener('keydown', function (e) {
         return url.toString();
     }
 
-    function replaceKerjasamaResults(nextMainSection) {
-        const currentContent = getMainContent();
-        const nextContent = getMainContent(nextMainSection);
-        currentContent.innerHTML = nextContent.innerHTML;
-        currentContent.querySelectorAll('.results-overview, .cards-grid, .pagination-wrap, .empty-state').forEach(function (element) {
+    function replaceLandingResults(nextAnalyticsSection, nextMainSection) {
+        const currentMainContent = getMainContent();
+        const nextMainContent = getMainContent(nextMainSection);
+        currentMainContent.innerHTML = nextMainContent.innerHTML;
+
+        const currentAnalyticsContent = getAnalyticsContent();
+        const nextAnalyticsContent = getAnalyticsContent(nextAnalyticsSection);
+
+        if (currentAnalyticsContent && nextAnalyticsContent) {
+            currentAnalyticsContent.innerHTML = nextAnalyticsContent.innerHTML;
+        }
+
+        document.querySelectorAll('.results-overview, .cards-grid, .pagination-wrap, .empty-state, .analytics-shell').forEach(function (element) {
             element.classList.add('result-refresh-enter');
         });
+
+        initLandingAnalyticsSection();
     }
 
     async function loadKerjasamaSection(url, options = {}) {
@@ -478,6 +939,11 @@ document.addEventListener('keydown', function (e) {
         activeController = controller;
         mainSection.classList.add('is-loading');
         mainSection.setAttribute('aria-busy', 'true');
+
+        if (analyticsSection) {
+            analyticsSection.classList.add('is-loading');
+            analyticsSection.setAttribute('aria-busy', 'true');
+        }
 
         try {
             const response = await fetch(url, {
@@ -493,13 +959,14 @@ document.addEventListener('keydown', function (e) {
 
             const html = await response.text();
             const parsed = new DOMParser().parseFromString(html, 'text/html');
+            const nextAnalyticsSection = parsed.getElementById('visualisasi-data');
             const nextMainSection = parsed.getElementById('data-kerjasama');
 
-            if (!nextMainSection) {
+            if (!nextMainSection || (analyticsSection && !nextAnalyticsSection)) {
                 throw new Error('Landing section not found in response');
             }
 
-            replaceKerjasamaResults(nextMainSection);
+            replaceLandingResults(nextAnalyticsSection, nextMainSection);
             syncFilterStateFromUrl(url);
 
             if (pushState) {
@@ -514,6 +981,11 @@ document.addEventListener('keydown', function (e) {
                 activeController = null;
                 mainSection.classList.remove('is-loading');
                 mainSection.removeAttribute('aria-busy');
+
+                if (analyticsSection) {
+                    analyticsSection.classList.remove('is-loading');
+                    analyticsSection.removeAttribute('aria-busy');
+                }
             }
         }
     }
@@ -697,5 +1169,10 @@ document.addEventListener('keydown', function (e) {
         loadKerjasamaSection(window.location.href, { pushState: false });
     });
 
+    document.addEventListener('landingthemechange', function () {
+        initLandingAnalyticsSection();
+    });
+
     syncFilterStateFromUrl(window.location.href);
+    initLandingAnalyticsSection();
 })();
