@@ -203,38 +203,41 @@
             </div>
 
             <div class="dashboard-cooperation-layout__grid">
-                <div class="dashboard-cooperation-layout__column">
-                    <div class="dashboard-cooperation-layout__column-header">
-                        <div class="dashboard-cooperation-layout__table-wrap">
-                            <table class="ud-table dashboard-cooperation-layout__table">
-                                <thead>
+                <div class="dashboard-cooperation-layout__table-wrap">
+                    <div class="dashboard-cooperation-layout__table-body">
+                        <table class="ud-table dashboard-cooperation-layout__table">
+                            <colgroup>
+                                <col class="dashboard-cooperation-layout__col-no">
+                                <col>
+                                <col class="dashboard-cooperation-layout__col-total">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Ruang Lingkup</th>
+                                    <th>Jumlah Kerjasama yang Terlibat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($ruangLingkupKerjasama as $ruangLingkup)
                                     <tr>
-                                        <th>No</th>
-                                        <th>Ruang Lingkup</th>
-                                        <th>Jumlah Kerjasama yang Terlibat</th>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $ruangLingkup->nama_kerjasama }}</td>
+                                        <td>
+                                            <span class="dashboard-cooperation-layout__count">
+                                                {{ number_format($ruangLingkup->total_kerjasama) }}
+                                            </span>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($ruangLingkupKerjasama as $ruangLingkup)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $ruangLingkup->nama_kerjasama }}</td>
-                                            <td>
-                                                <span class="dashboard-cooperation-layout__count">
-                                                    {{ number_format($ruangLingkup->total_kerjasama) }}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="3">
-                                                <div class="ud-empty">Belum ada ruang lingkup kerjasama untuk ditampilkan.</div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                                @empty
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="ud-empty">Belum ada ruang lingkup kerjasama untuk ditampilkan.</div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
