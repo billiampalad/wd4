@@ -241,9 +241,26 @@
                     </div>
                 </div>
 
-                <div class="dashboard-cooperation-layout__column">
+                <div class="dashboard-cooperation-layout__column dashboard-cooperation-chart" data-cooperation-chart>
                     <div class="dashboard-cooperation-layout__column-header">
                     </div>
+                    <div class="dashboard-cooperation-chart__header">
+                        <div>
+                            <p class="dashboard-cooperation-chart__eyebrow">Visualisasi Data</p>
+                            <h3 class="dashboard-cooperation-chart__title">Grafik Kerja Sama</h3>
+                        </div>
+                        <button class="dashboard-cooperation-chart__reset" type="button" data-cooperation-chart-reset>
+                            Semua data
+                        </button>
+                    </div>
+                    <div class="dashboard-cooperation-chart__meta" data-cooperation-chart-meta>
+                        Pilih baris tabel untuk memfilter grafik.
+                    </div>
+                    <div class="dashboard-cooperation-chart__body" data-cooperation-chart-body></div>
+                    <div class="dashboard-cooperation-chart__empty" data-cooperation-chart-empty>
+                        Belum ada data tabel yang dapat divisualisasikan.
+                    </div>
+                    <div class="dashboard-cooperation-chart__tooltip" data-cooperation-chart-tooltip></div>
                 </div>
             </div>
         </article>

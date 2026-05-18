@@ -1777,3 +1777,373 @@ body::-webkit-scrollbar-corner,
 .dashboard-page *::-webkit-scrollbar-corner {
     background: var(--dashboard-scrollbar-track) !important;
 }
+.dashboard-cooperation-chart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 360px;
+    padding: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.dashboard-cooperation-chart::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, #2563eb, #14b8a6, #f59e0b);
+}
+
+.dashboard-cooperation-chart__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.dashboard-cooperation-chart__eyebrow {
+    margin: 0 0 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.dashboard-cooperation-chart__title {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.dashboard-cooperation-chart__reset {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.dashboard-cooperation-chart__reset:hover,
+.dashboard-cooperation-chart__reset:focus-visible {
+    border-color: rgba(37, 99, 235, 0.32);
+    background: #dbeafe;
+    color: #1e40af;
+    transform: translateY(-1px);
+}
+
+.dashboard-cooperation-chart__meta {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.dashboard-cooperation-chart__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.dashboard-cooperation-chart__row {
+    display: grid;
+    grid-template-columns: minmax(110px, 0.95fr) minmax(130px, 1.7fr) minmax(48px, auto);
+    align-items: center;
+    gap: 12px;
+    min-height: 42px;
+    animation: dashboardChartFadeIn 360ms ease both;
+}
+
+.dashboard-cooperation-chart__label {
+    min-width: 0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dashboard-cooperation-chart__track {
+    position: relative;
+    height: 18px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+}
+
+.dashboard-cooperation-chart__bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2563eb, #14b8a6);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+    transition: width 720ms cubic-bezier(0.22, 1, 0.36, 1), filter 180ms ease;
+}
+
+.dashboard-cooperation-chart__row:hover .dashboard-cooperation-chart__bar,
+.dashboard-cooperation-chart__row:focus-within .dashboard-cooperation-chart__bar {
+    filter: saturate(1.15) brightness(1.02);
+}
+
+.dashboard-cooperation-chart__value {
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dashboard-cooperation-chart__empty {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    border: 1px dashed rgba(100, 116, 139, 0.28);
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 14px;
+    text-align: center;
+}
+
+.dashboard-cooperation-chart.is-empty .dashboard-cooperation-chart__body {
+    display: none;
+}
+
+.dashboard-cooperation-chart.is-empty .dashboard-cooperation-chart__empty {
+    display: flex;
+}
+
+.dashboard-cooperation-chart__tooltip {
+    position: fixed;
+    z-index: 60;
+    display: none;
+    max-width: 260px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.24);
+    font-size: 12px;
+    line-height: 1.45;
+    pointer-events: none;
+    transform: translate(14px, -50%);
+}
+
+.dashboard-cooperation-chart__tooltip strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.dashboard-cooperation-layout table tbody tr {
+    cursor: pointer;
+    transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dashboard-cooperation-layout table tbody tr.is-chart-selected {
+    background: #eff6ff;
+    box-shadow: inset 4px 0 0 #2563eb;
+}
+
+@keyframes dashboardChartFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-cooperation-chart {
+        padding: 16px;
+    }
+
+    .dashboard-cooperation-chart__header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .dashboard-cooperation-chart__reset {
+        width: 100%;
+    }
+
+    .dashboard-cooperation-chart__row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .dashboard-cooperation-chart__value {
+        text-align: left;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .dashboard-cooperation-chart {
+        border-color: rgba(148, 163, 184, 0.18);
+        background: #0f172a;
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    }
+
+    .dashboard-cooperation-chart__eyebrow,
+    .dashboard-cooperation-chart__meta,
+    .dashboard-cooperation-chart__empty {
+        color: #94a3b8;
+    }
+
+    .dashboard-cooperation-chart__title,
+    .dashboard-cooperation-chart__label,
+    .dashboard-cooperation-chart__value {
+        color: #e2e8f0;
+    }
+
+    .dashboard-cooperation-chart__reset {
+        border-color: rgba(96, 165, 250, 0.26);
+        background: rgba(37, 99, 235, 0.18);
+        color: #bfdbfe;
+    }
+
+    .dashboard-cooperation-chart__reset:hover,
+    .dashboard-cooperation-chart__reset:focus-visible {
+        border-color: rgba(96, 165, 250, 0.42);
+        background: rgba(37, 99, 235, 0.28);
+        color: #dbeafe;
+    }
+
+    .dashboard-cooperation-chart__track {
+        background: #1e293b;
+    }
+
+    .dashboard-cooperation-chart__bar {
+        background: linear-gradient(90deg, #60a5fa, #2dd4bf);
+        box-shadow: 0 8px 18px rgba(45, 212, 191, 0.18);
+    }
+
+    .dashboard-cooperation-chart__empty {
+        border-color: rgba(148, 163, 184, 0.24);
+    }
+
+    .dashboard-cooperation-chart__tooltip {
+        background: #e2e8f0;
+        color: #0f172a;
+        box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+    }
+
+    .dashboard-cooperation-chart__tooltip strong {
+        color: #0f172a;
+    }
+
+    .dashboard-cooperation-layout table tbody tr.is-chart-selected {
+        background: rgba(37, 99, 235, 0.18);
+        box-shadow: inset 4px 0 0 #60a5fa;
+    }
+}
+
+.dark .dashboard-cooperation-chart,
+[data-theme="dark"] .dashboard-cooperation-chart,
+body.dark-mode .dashboard-cooperation-chart {
+    border-color: rgba(148, 163, 184, 0.18);
+    background: #0f172a;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+}
+
+.dark .dashboard-cooperation-chart__eyebrow,
+.dark .dashboard-cooperation-chart__meta,
+.dark .dashboard-cooperation-chart__empty,
+[data-theme="dark"] .dashboard-cooperation-chart__eyebrow,
+[data-theme="dark"] .dashboard-cooperation-chart__meta,
+[data-theme="dark"] .dashboard-cooperation-chart__empty,
+body.dark-mode .dashboard-cooperation-chart__eyebrow,
+body.dark-mode .dashboard-cooperation-chart__meta,
+body.dark-mode .dashboard-cooperation-chart__empty {
+    color: #94a3b8;
+}
+
+.dark .dashboard-cooperation-chart__title,
+.dark .dashboard-cooperation-chart__label,
+.dark .dashboard-cooperation-chart__value,
+[data-theme="dark"] .dashboard-cooperation-chart__title,
+[data-theme="dark"] .dashboard-cooperation-chart__label,
+[data-theme="dark"] .dashboard-cooperation-chart__value,
+body.dark-mode .dashboard-cooperation-chart__title,
+body.dark-mode .dashboard-cooperation-chart__label,
+body.dark-mode .dashboard-cooperation-chart__value {
+    color: #e2e8f0;
+}
+
+.dark .dashboard-cooperation-chart__reset,
+[data-theme="dark"] .dashboard-cooperation-chart__reset,
+body.dark-mode .dashboard-cooperation-chart__reset {
+    border-color: rgba(96, 165, 250, 0.26);
+    background: rgba(37, 99, 235, 0.18);
+    color: #bfdbfe;
+}
+
+.dark .dashboard-cooperation-chart__reset:hover,
+.dark .dashboard-cooperation-chart__reset:focus-visible,
+[data-theme="dark"] .dashboard-cooperation-chart__reset:hover,
+[data-theme="dark"] .dashboard-cooperation-chart__reset:focus-visible,
+body.dark-mode .dashboard-cooperation-chart__reset:hover,
+body.dark-mode .dashboard-cooperation-chart__reset:focus-visible {
+    border-color: rgba(96, 165, 250, 0.42);
+    background: rgba(37, 99, 235, 0.28);
+    color: #dbeafe;
+}
+
+.dark .dashboard-cooperation-chart__track,
+[data-theme="dark"] .dashboard-cooperation-chart__track,
+body.dark-mode .dashboard-cooperation-chart__track {
+    background: #1e293b;
+}
+
+.dark .dashboard-cooperation-chart__bar,
+[data-theme="dark"] .dashboard-cooperation-chart__bar,
+body.dark-mode .dashboard-cooperation-chart__bar {
+    background: linear-gradient(90deg, #60a5fa, #2dd4bf);
+    box-shadow: 0 8px 18px rgba(45, 212, 191, 0.18);
+}
+
+.dark .dashboard-cooperation-chart__empty,
+[data-theme="dark"] .dashboard-cooperation-chart__empty,
+body.dark-mode .dashboard-cooperation-chart__empty {
+    border-color: rgba(148, 163, 184, 0.24);
+}
+
+.dark .dashboard-cooperation-chart__tooltip,
+[data-theme="dark"] .dashboard-cooperation-chart__tooltip,
+body.dark-mode .dashboard-cooperation-chart__tooltip {
+    background: #e2e8f0;
+    color: #0f172a;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.32);
+}
+
+.dark .dashboard-cooperation-chart__tooltip strong,
+[data-theme="dark"] .dashboard-cooperation-chart__tooltip strong,
+body.dark-mode .dashboard-cooperation-chart__tooltip strong {
+    color: #0f172a;
+}
+
+.dark .dashboard-cooperation-layout table tbody tr.is-chart-selected,
+[data-theme="dark"] .dashboard-cooperation-layout table tbody tr.is-chart-selected,
+body.dark-mode .dashboard-cooperation-layout table tbody tr.is-chart-selected {
+    background: rgba(37, 99, 235, 0.18);
+    box-shadow: inset 4px 0 0 #60a5fa;
+}

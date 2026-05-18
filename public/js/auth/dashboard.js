@@ -430,3 +430,231 @@ document.addEventListener('turbo:load', initUnitDashboard);
         subtree: true,
     });
 })();
+document.addEventListener('DOMContentLoaded', () => {
+    const chart = document.querySelector('[data-cooperation-chart]');
+
+    if (!chart) {
+        return;
+    }
+
+    const layout = chart.closest('.dashboard-cooperation-layout') || document;
+    const table = Array.from(layout.querySelectorAll('table')).find((item) => !chart.contains(item));
+    const body = chart.querySelector('[data-cooperation-chart-body]');
+    const empty = chart.querySelector('[data-cooperation-chart-empty]');
+    const meta = chart.querySelector('[data-cooperation-chart-meta]');
+    const resetButton = chart.querySelector('[data-cooperation-chart-reset]');
+    const tooltip = chart.querySelector('[data-cooperation-chart-tooltip]');
+    let rows = [];
+    let selectedRow = null;
+
+    const numberFormatter = new Intl.NumberFormat('id-ID');
+
+    const parseNumber = (value) => {
+        const normalized = String(value || '')
+            .replace(/[^\d,.-]/g, '')
+            .replace(/\.(?=\d{3}(\D|$))/g, '')
+            .replace(',', '.');
+        const parsed = Number.parseFloat(normalized);
+
+        return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    const getCells = (row) => Array.from(row.querySelectorAll('td, th'));
+
+    const getLabel = (cells) => {
+        const preferredCell = cells.find((cell) => {
+            const text = cell.textContent.trim();
+
+            return text.length > 0 && parseNumber(text) === null;
+        });
+
+        return (preferredCell || cells[0])?.textContent.trim() || 'Tanpa label';
+    };
+
+    const getValue = (cells) => {
+        const numericCells = cells
+            .map((cell) => parseNumber(cell.textContent))
+            .filter((value) => value !== null);
+
+        if (numericCells.length === 0) {
+            return null;
+        }
+
+        return numericCells[numericCells.length - 1];
+    };
+
+    const readTableData = () => {
+        if (!table) {
+            return [];
+        }
+
+        return Array.from(table.querySelectorAll('tbody tr'))
+            .map((row, index) => {
+                const cells = getCells(row);
+                const label = getLabel(cells);
+                const value = getValue(cells);
+
+                return {
+                    index,
+                    row,
+                    label,
+                    value,
+                    detail: cells.map((cell) => cell.textContent.trim()).filter(Boolean).join(' | '),
+                };
+            })
+            .filter((item) => item.value !== null);
+    };
+
+    const showTooltip = (event, item) => {
+        if (!tooltip) {
+            return;
+        }
+
+        const rect = event.currentTarget.getBoundingClientRect();
+        const left = Number.isFinite(event.clientX) && event.clientX > 0 ? event.clientX : rect.right;
+        const top = Number.isFinite(event.clientY) && event.clientY > 0 ? event.clientY : rect.top + rect.height / 2;
+
+        tooltip.innerHTML = `<strong>${item.label}</strong><span>${numberFormatter.format(item.value)} data</span>`;
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
+
+    const moveTooltip = (event) => {
+        if (!tooltip || tooltip.style.display !== 'block') {
+            return;
+        }
+
+        tooltip.style.left = `${event.clientX}px`;
+        tooltip.style.top = `${event.clientY}px`;
+    };
+
+    const hideTooltip = () => {
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    };
+
+    const renderChart = (items = rows) => {
+        const visibleItems = items.filter((item) => item.value !== null);
+        const maxValue = Math.max(...visibleItems.map((item) => item.value), 0);
+
+        chart.classList.toggle('is-empty', visibleItems.length === 0);
+        body.innerHTML = '';
+
+        if (meta) {
+            meta.textContent = selectedRow
+                ? `Menampilkan data terpilih: ${selectedRow.label}`
+                : `Menampilkan ${visibleItems.length} item dari tabel. Klik baris tabel untuk filter.`;
+        }
+
+        if (visibleItems.length === 0) {
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        visibleItems.forEach((item) => {
+            const percentage = maxValue > 0 ? Math.max((item.value / maxValue) * 100, 4) : 0;
+            const row = document.createElement('div');
+            const label = document.createElement('div');
+            const track = document.createElement('div');
+            const bar = document.createElement('div');
+            const value = document.createElement('div');
+
+            row.className = 'dashboard-cooperation-chart__row';
+            row.setAttribute('tabindex', '0');
+            row.setAttribute('aria-label', `${item.label}: ${numberFormatter.format(item.value)}`);
+
+            label.className = 'dashboard-cooperation-chart__label';
+            label.textContent = item.label;
+            label.title = item.detail || item.label;
+
+            track.className = 'dashboard-cooperation-chart__track';
+            bar.className = 'dashboard-cooperation-chart__bar';
+            track.appendChild(bar);
+
+            value.className = 'dashboard-cooperation-chart__value';
+            value.textContent = numberFormatter.format(item.value);
+
+            row.append(label, track, value);
+            row.addEventListener('mouseenter', (event) => showTooltip(event, item));
+            row.addEventListener('mousemove', moveTooltip);
+            row.addEventListener('mouseleave', hideTooltip);
+            row.addEventListener('focus', (event) => showTooltip(event, item));
+            row.addEventListener('blur', hideTooltip);
+
+            fragment.appendChild(row);
+            window.requestAnimationFrame(() => {
+                bar.style.width = `${percentage}%`;
+            });
+        });
+
+        body.appendChild(fragment);
+    };
+
+    const clearSelection = () => {
+        selectedRow = null;
+        rows.forEach((item) => item.row.classList.remove('is-chart-selected'));
+        renderChart(rows);
+    };
+
+    const selectTableRow = (item) => {
+        selectedRow = item;
+        rows.forEach((rowItem) => {
+            rowItem.row.classList.toggle('is-chart-selected', rowItem.index === item.index);
+        });
+        renderChart([item]);
+    };
+
+    const activateTableRow = (row) => {
+        const item = rows.find((rowItem) => rowItem.row === row);
+
+        if (item) {
+            selectTableRow(item);
+        }
+    };
+
+    const bindTableRows = () => {
+        rows.forEach((item) => {
+            if (item.row.dataset.cooperationChartBound === 'true') {
+                return;
+            }
+
+            item.row.dataset.cooperationChartBound = 'true';
+            item.row.addEventListener('click', () => activateTableRow(item.row));
+            item.row.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activateTableRow(item.row);
+                }
+            });
+
+            if (!item.row.hasAttribute('tabindex')) {
+                item.row.setAttribute('tabindex', '0');
+            }
+        });
+    };
+
+    const refreshChart = () => {
+        rows = readTableData();
+        selectedRow = null;
+        bindTableRows();
+        renderChart(rows);
+    };
+
+    if (resetButton) {
+        resetButton.addEventListener('click', clearSelection);
+    }
+
+    refreshChart();
+
+    if (table) {
+        const observer = new MutationObserver(refreshChart);
+        observer.observe(table, {
+            childList: true,
+            subtree: true,
+            characterData: true,
+        });
+    }
+});
