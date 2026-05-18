@@ -428,6 +428,17 @@ class UnitPageController extends Controller
     }
 
     // ─── Data Kerjasama ──────────────────────────────────────────
+    public function institusi()
+    {
+        $this->resolveUnitId();
+
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
+        $upas = Upa::orderBy('nama_upa')->get();
+        $pusats = Pusat::orderBy('nama_pusat')->get();
+
+        return view('auth.unit', compact('jurusans', 'upas', 'pusats'));
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();
@@ -436,6 +447,7 @@ class UnitPageController extends Controller
 
         return view('auth.unit', [
             'kerjasamaUnit' => $kerjasamaUnit,
+            'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
             'upas' => Upa::orderBy('nama_upa')->get(),
             'pusats' => Pusat::orderBy('nama_pusat')->get(),
@@ -803,6 +815,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         return view('auth.unit', [
+            'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
             'upas' => Upa::orderBy('nama_upa')->get(),
             'pusats' => Pusat::orderBy('nama_pusat')->get(),
@@ -865,6 +878,20 @@ class UnitPageController extends Controller
         if ($request->filled('tanggal_akhir')) {
             $query->where('start_date', '<=', $request->tanggal_akhir);
         }
+        if ($request->filled('jenis_dokumentasi') && $request->jenis_dokumentasi !== 'all') {
+            $jenisDokumentasi = strtolower($request->jenis_dokumentasi);
+
+            $query->where(function ($jenisQuery) use ($jenisDokumentasi) {
+                if ($jenisDokumentasi === 'mou') {
+                    $jenisQuery->where('jenis', 'like', '%MoU%');
+                } elseif ($jenisDokumentasi === 'moa') {
+                    $jenisQuery->where('jenis', 'like', '%MoA%');
+                } elseif ($jenisDokumentasi === 'ia') {
+                    $jenisQuery->where('jenis', 'like', '%IA%')
+                        ->where('jenis', 'not like', '%MoA%');
+                }
+            });
+        }
         // Filter Unit Pelaksana berdasarkan kolom FK yang terisi
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
             match ($request->tipe_pelaksana) {
@@ -893,6 +920,11 @@ class UnitPageController extends Controller
 
 
     // ─── Statistik Data ──────────────────────────────────────────
+    private function jenisDokumentasiOptions()
+    {
+        return collect(['MoU', 'MoA', 'IA']);
+    }
+
     public function statistik()
     {
         $unitId = $this->resolveUnitId();

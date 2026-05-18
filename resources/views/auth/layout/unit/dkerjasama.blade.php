@@ -207,6 +207,35 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         </div>
                     </div>
 
+                    <div class="rfc-group" x-data="{
+                        open: false,
+                        selected: @js(request('jenis_dokumentasi', 'all')),
+                        items: @js(($jenisDokumentasiOptions ?? collect())->map(fn($jenis) => ['id' => $jenis, 'label' => $jenis])->prepend(['id' => 'all', 'label' => 'Semua Jenis'])->values()),
+                        get selectedLabel() {
+                            const selectedItem = this.items.find((item) => item.id === this.selected);
+                            return selectedItem ? selectedItem.label : 'Semua Jenis Dokumentasi';
+                        }
+                    }">
+                        <label>Jenis Dokumentasi</label>
+                        <input type="hidden" name="jenis_dokumentasi" :value="selected">
+                        <div class="alpine-dropdown" @click.outside="open = false">
+                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-file-signature" style="color: #9ca3af; font-size: 13px;"></i>
+                                    <span x-text="selectedLabel"></span>
+                                </div>
+                                <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                            </div>
+                            <div class="ad-menu" x-show="open" x-transition>
+                                <template x-for="item in items" :key="item.id">
+                                    <div class="ad-item" :class="{ 'selected': selected == item.id }"
+                                        @click="selected = item.id; open = false"
+                                        x-text="item.label"></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="rfc-group" x-data="{ open: false, selected: 'all', selectedLabel: 'Semua Unit', items: [{ id: 'all', label: 'Semua Unit' }, { id: 'jurusan', label: 'Jurusan' }, { id: 'upa', label: 'UPA' }, { id: 'pusat', label: 'Pusat' }] }">
                         <label>Unit Pelaksana</label>
                         <input type="hidden" name="tipe_pelaksana" :value="selected">
