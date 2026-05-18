@@ -24,6 +24,19 @@
         ->pluck('total', 'prodi_id')
         ->toArray();
 
+    $ruangLingkupKerjasama = \Illuminate\Support\Facades\DB::table('detail_kegiatans')
+        ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
+        ->select(
+            'jenis_kerjasamas.nama_kerjasama',
+            \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT detail_kegiatans.cooperation_id) as total_kerjasama'),
+        )
+        ->whereNotNull('detail_kegiatans.jenis_kerjasama_id')
+        ->groupBy('jenis_kerjasamas.id', 'jenis_kerjasamas.nama_kerjasama')
+        ->having('total_kerjasama', '>', 0)
+        ->orderByDesc('total_kerjasama')
+        ->orderBy('jenis_kerjasamas.nama_kerjasama')
+        ->get();
+
     $chartDataJurusan = [];
     $chartDataProdi = [];
 
@@ -192,6 +205,36 @@
             <div class="dashboard-cooperation-layout__grid">
                 <div class="dashboard-cooperation-layout__column">
                     <div class="dashboard-cooperation-layout__column-header">
+                        <div class="dashboard-cooperation-layout__table-wrap">
+                            <table class="ud-table dashboard-cooperation-layout__table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Ruang Lingkup</th>
+                                        <th>Jumlah Kerjasama yang Terlibat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($ruangLingkupKerjasama as $ruangLingkup)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $ruangLingkup->nama_kerjasama }}</td>
+                                            <td>
+                                                <span class="dashboard-cooperation-layout__count">
+                                                    {{ number_format($ruangLingkup->total_kerjasama) }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="ud-empty">Belum ada ruang lingkup kerjasama untuk ditampilkan.</div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
