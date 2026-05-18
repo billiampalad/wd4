@@ -394,3 +394,39 @@ function initTrendChart() {
 // Inisialisasi untuk Unit Dashboard
 document.addEventListener('DOMContentLoaded', initUnitDashboard);
 document.addEventListener('turbo:load', initUnitDashboard);
+(() => {
+    const scrollableClass = 'dashboard-scrollbar-target';
+    const overflowPattern = /(auto|scroll|overlay)/;
+
+    const isScrollable = (element) => {
+        const style = window.getComputedStyle(element);
+        const canScrollY = overflowPattern.test(style.overflowY) && element.scrollHeight > element.clientHeight;
+        const canScrollX = overflowPattern.test(style.overflowX) && element.scrollWidth > element.clientWidth;
+
+        return canScrollY || canScrollX;
+    };
+
+    const markScrollableElements = () => {
+        document.documentElement.classList.add(scrollableClass);
+        document.body.classList.add(scrollableClass);
+
+        document.querySelectorAll('body *').forEach((element) => {
+            element.classList.toggle(scrollableClass, isScrollable(element));
+        });
+    };
+
+    const scheduleMarking = () => window.requestAnimationFrame(markScrollableElements);
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', markScrollableElements, { once: true });
+    } else {
+        markScrollableElements();
+    }
+
+    window.addEventListener('resize', scheduleMarking);
+
+    new MutationObserver(scheduleMarking).observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+    });
+})();
