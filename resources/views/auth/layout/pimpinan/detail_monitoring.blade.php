@@ -59,37 +59,44 @@
     $timeRemainingIcon = 'fa-hourglass-half';
 
     if ($kegiatan->end_date) {
-        $now = now();
-        $end = \Carbon\Carbon::parse($kegiatan->end_date);
-        $diff = $now->diff($end);
-        $isPast = $now->greaterThan($end);
+        $today = now()->startOfDay();
+        $threeMonthsFromToday = $today->copy()->addMonthsNoOverflow(3)->endOfDay();
+        $end = \Carbon\Carbon::parse($kegiatan->end_date)->startOfDay();
+        $daysUntilEnd = (int) $today->diffInDays($end, false);
+        $isPast = $daysUntilEnd < 0;
+        $isNearExpiry = !$isPast && $end->lte($threeMonthsFromToday);
 
         if ($isPast) {
             $timeRemainingLabel = 'Telah Kadaluarsa';
             $timeRemainingColor = '#ef4444';
             $timeRemainingBg = 'rgba(239,68,68,0.1)';
             $timeRemainingIcon = 'fa-calendar-times';
+        } elseif ($daysUntilEnd === 0) {
+            $timeRemainingLabel = 'Berakhir Hari Ini';
+            $timeRemainingColor = '#ef4444';
+            $timeRemainingBg = 'rgba(239,68,68,0.1)';
+            $timeRemainingIcon = 'fa-fire';
         } else {
-            $years = $diff->y;
-            $months = $diff->m;
-            $days = $diff->d;
-
+            $diff = $today->diff($end);
             $parts = [];
-            if ($years > 0)
-                $parts[] = $years . ' Thn';
-            if ($months > 0)
-                $parts[] = $months . ' Bln';
-            if ($days > 0 || empty($parts))
-                $parts[] = $days . ' Hari';
+
+            if ($diff->y > 0) {
+                $parts[] = $diff->y . ' Thn';
+            }
+            if ($diff->m > 0) {
+                $parts[] = $diff->m . ' Bln';
+            }
+            if ($diff->d > 0 || empty($parts)) {
+                $parts[] = $diff->d . ' Hari';
+            }
 
             $timeRemainingLabel = implode(', ', array_slice($parts, 0, 2)) . ' Lagi';
 
-            $totalDays = $now->diffInDays($end);
-            if ($totalDays < 30) {
+            if ($daysUntilEnd <= 30) {
                 $timeRemainingColor = '#ef4444';
                 $timeRemainingBg = 'rgba(239,68,68,0.1)';
                 $timeRemainingIcon = 'fa-fire';
-            } elseif ($totalDays < 90) {
+            } elseif ($isNearExpiry) {
                 $timeRemainingColor = '#f59e0b';
                 $timeRemainingBg = 'rgba(245,158,11,0.1)';
                 $timeRemainingIcon = 'fa-clock';
