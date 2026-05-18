@@ -1235,6 +1235,10 @@ function initNotifikasi() {
                     typeBadgeClass = 'evaluasi';
                     typeLabel = 'Evaluasi';
                     break;
+                case 'pengajuan_mitra':
+                    typeBadgeClass = 'pengajuan_mitra';
+                    typeLabel = 'Pengajuan Mitra';
+                    break;
             }
 
             // Tentukan ikon & warna berdasarkan tipe notifikasi dan pengirim
@@ -1256,6 +1260,11 @@ function initNotifikasi() {
                 icon = 'fa-circle-check';
                 iconBg = 'rgba(16, 185, 129, 0.12)';
                 iconColor = '#059669';
+            } else if (typeKey === 'pengajuan_mitra') {
+                icon = 'fa-handshake-angle';
+                iconBg = 'rgba(14, 165, 233, 0.12)';
+                iconColor = '#0284c7';
+                senderName = 'Portal Publik';
             }
 
             if (item.sender && item.sender.profile) {

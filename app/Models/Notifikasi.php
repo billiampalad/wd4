@@ -15,6 +15,7 @@ class Notifikasi extends Model
         'user_id',
         'sender_id',
         'source_id',
+        'source_type',
         'type',
         'judul',
         'pesan',
@@ -37,12 +38,18 @@ class Notifikasi extends Model
         return $this->belongsTo(Cooperation::class, 'source_id');
     }
 
-    public static function send($userId, $senderId, $sourceId, $type, $judul, $pesan, $link)
+    public function pengajuanKerjasamaMitra()
+    {
+        return $this->belongsTo(PengajuanKerjasamaMitra::class, 'source_id');
+    }
+
+    public static function send($userId, $senderId, $sourceId, $type, $judul, $pesan, $link, $sourceType = 'cooperation')
     {
         return self::create([
             'user_id' => $userId,
             'sender_id' => $senderId,
             'source_id' => $sourceId,
+            'source_type' => $sourceId ? $sourceType : null,
             'type' => $type,
             'judul' => $judul,
             'pesan' => $pesan,

@@ -166,8 +166,8 @@
                 </p>
                 <div class="hero-cta">
                     <a href="#data-kerjasama" class="btn-primary">Telusuri Data Kerjasama</a>
-                    <a href="{{ route('login') }}" class="btn-ghost">
-                        Login untuk pengelola
+                    <a href="{{ route('pengajuan.kerjasama.create') }}" class="btn-ghost">
+                        Ajukan kerja sama
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />

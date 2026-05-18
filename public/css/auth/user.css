@@ -6,6 +6,281 @@
     padding: 0;
 }
 
+.submission-dashboard {
+    padding: 26px 24px 36px;
+    display: grid;
+    gap: 24px;
+}
+
+.submission-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.submission-stack {
+    display: grid;
+    gap: 20px;
+}
+
+.submission-section {
+    display: grid;
+    gap: 18px;
+}
+
+.submission-card {
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, var(--surface), var(--surface2));
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 18px;
+}
+
+.submission-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.submission-card-title {
+    display: grid;
+    gap: 6px;
+}
+
+.submission-card-title h3 {
+    font-size: 20px;
+    line-height: 1.35;
+    color: var(--text);
+}
+
+.submission-card-code {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    font-weight: 700;
+}
+
+.submission-card-subtitle {
+    font-size: 14px;
+    color: var(--text-sub);
+    line-height: 1.6;
+}
+
+.submission-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.submission-status.pending {
+    color: #9a3412;
+    background: rgba(249, 115, 22, 0.12);
+    border-color: rgba(249, 115, 22, 0.2);
+}
+
+.submission-status.approved {
+    color: #047857;
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.submission-status.rejected {
+    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.submission-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.submission-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.submission-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+}
+
+.submission-detail {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: grid;
+    gap: 6px;
+}
+
+.submission-detail-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    font-weight: 700;
+}
+
+.submission-detail-value {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.submission-detail-value a {
+    color: var(--accent3);
+    text-decoration: none;
+}
+
+.submission-note {
+    display: grid;
+    gap: 10px;
+}
+
+.submission-note-box {
+    border-radius: 16px;
+    padding: 16px;
+    background: rgba(79, 70, 229, 0.06);
+    border: 1px solid rgba(79, 70, 229, 0.12);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.submission-form {
+    display: grid;
+    gap: 14px;
+}
+
+.submission-form label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.submission-textarea {
+    min-height: 120px;
+    resize: vertical;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.submission-textarea:focus {
+    border-color: var(--accent3);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+}
+
+.submission-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.submission-history-list {
+    display: grid;
+    gap: 14px;
+}
+
+.submission-history-item {
+    display: grid;
+    gap: 12px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    background: var(--surface);
+}
+
+.submission-history-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.submission-history-meta {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.7;
+}
+
+.submission-history-note {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+}
+
+@media (max-width: 1080px) {
+    .submission-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .submission-dashboard {
+        padding: 18px 16px 28px;
+    }
+
+    .submission-card-head,
+    .submission-history-head {
+        flex-direction: column;
+    }
+
+    .submission-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .submission-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .submission-actions {
+        justify-content: stretch;
+    }
+
+    .submission-actions .ev-btn-approve,
+    .submission-actions .ev-btn-reject {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 :root {
     --bg: #f0f2f8;
     --surface: #ffffff;
@@ -999,6 +1274,13 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     --notif-status-dot: #f59e0b;
 }
 
+.badge-pengajuan_mitra {
+    --notif-status-bg: rgba(14, 165, 233, 0.13);
+    --notif-status-border: rgba(14, 165, 233, 0.24);
+    --notif-status-text: #0369a1;
+    --notif-status-dot: #0ea5e9;
+}
+
 .badge-selesai {
     --notif-status-bg: rgba(16, 185, 129, 0.13);
     --notif-status-border: rgba(16, 185, 129, 0.24);
@@ -1024,6 +1306,13 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     --notif-status-border: rgba(251, 191, 36, 0.25);
     --notif-status-text: #fde68a;
     --notif-status-dot: #fbbf24;
+}
+
+[data-theme="dark"] .badge-pengajuan_mitra {
+    --notif-status-bg: rgba(14, 165, 233, 0.18);
+    --notif-status-border: rgba(125, 211, 252, 0.24);
+    --notif-status-text: #bae6fd;
+    --notif-status-dot: #38bdf8;
 }
 
 [data-theme="dark"] .badge-disahkan,

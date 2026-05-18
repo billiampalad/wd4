@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notifikasi;
-use App\Models\Cooperation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,9 +23,26 @@ class NotifikasiController extends Controller
         $roleName = strtolower($user->role->role_name ?? '');
         if ($roleName === 'pimpinan') {
             $query->where(function ($q) {
-                // Relasi ke model baru (Cooperation)
-                $q->whereHas('cooperation', function ($sq) {
-                    $sq->where('status_dokumen', 'Menunggu Evaluasi');
+                $q->where(function ($sourceQuery) {
+                    $sourceQuery
+                        ->where(function ($typedQuery) {
+                            $typedQuery
+                                ->where(function ($typeQuery) {
+                                    $typeQuery
+                                        ->whereNull('source_type')
+                                        ->orWhere('source_type', 'cooperation');
+                                })
+                                ->whereHas('cooperation', function ($cooperationQuery) {
+                                    $cooperationQuery->where('status_dokumen', 'Menunggu Evaluasi');
+                                });
+                        })
+                        ->orWhere(function ($typedQuery) {
+                            $typedQuery
+                                ->where('source_type', 'pengajuan_mitra')
+                                ->whereHas('pengajuanKerjasamaMitra', function ($submissionQuery) {
+                                    $submissionQuery->where('status', 'diajukan');
+                                });
+                        });
                 })
                     // Notifikasi sistem tanpa source_id
                     ->orWhereNull('source_id')
@@ -45,6 +61,7 @@ class NotifikasiController extends Controller
             'cooperation.jurusans',
             'cooperation.upas',
             'cooperation.pusats',
+            'pengajuanKerjasamaMitra',
         ])
             ->latest()
             ->take(10)
@@ -54,6 +71,8 @@ class NotifikasiController extends Controller
             $notifikasis->each(function ($notifikasi) {
                 if (in_array($notifikasi->type, ['evaluasi', 'revisi', 'sudah_revisi', 'validasi'], true)) {
                     $notifikasi->link = route('pimpinan.evaluasi');
+                } elseif ($notifikasi->type === 'pengajuan_mitra') {
+                    $notifikasi->link = route('pimpinan.pengajuan_mitra');
                 }
             });
         }

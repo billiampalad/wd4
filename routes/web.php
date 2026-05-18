@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 // use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicLandingController;
+use App\Http\Controllers\PublicPengajuanKerjasamaController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Admin\PusatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
 use App\Http\Controllers\Jurusan\KerjasamaJurusanController;
+use App\Http\Controllers\Pimpinan\PengajuanKerjasamaMitraController;
 use App\Http\Controllers\Unit\KerjasamaUnitController;
 
 /*
@@ -29,6 +31,8 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 */
 
 Route::get('/', [PublicLandingController::class, 'index']);
+Route::get('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'create'])->name('pengajuan.kerjasama.create');
+Route::post('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'store'])->name('pengajuan.kerjasama.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +83,8 @@ Route::middleware(['auth', 'role:pimpinan'])->group(function () {
     Route::get('/pimpinan/monitoring', [DashboardController::class, 'pimpinanMonitoring'])->name('pimpinan.monitoring');
     Route::get('/pimpinan/monitoring/{id}', [DashboardController::class, 'pimpinanMonitoringDetail'])->name('pimpinan.monitoring.detail');
     Route::get('/pimpinan/evaluasi', [DashboardController::class, 'pimpinanEvaluasi'])->name('pimpinan.evaluasi');
+    Route::get('/pimpinan/pengajuan-mitra', [PengajuanKerjasamaMitraController::class, 'index'])->name('pimpinan.pengajuan_mitra');
+    Route::post('/pimpinan/pengajuan-mitra/{id}/review', [PengajuanKerjasamaMitraController::class, 'review'])->name('pimpinan.pengajuan_mitra.review');
     Route::get('/pimpinan/evaluasi/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'show'])->name('pimpinan.evaluasi.show');
     Route::post('/pimpinan/evaluate/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'evaluate'])->name('pimpinan.evaluate');
 
