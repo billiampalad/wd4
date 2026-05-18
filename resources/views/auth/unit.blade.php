@@ -176,7 +176,7 @@
                             <a href="#">Lihat Semua Notifikasi</a>
                         </div>
                     </div>
-                    <script type="application/json" id="unitExpiryNotificationsData">
+                    <script type="application/json" id="expiryNotificationsData">
                         @json($unitExpiryNotifications)
                     </script>
                 </div>

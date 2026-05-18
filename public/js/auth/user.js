@@ -1193,7 +1193,8 @@ function initNotifikasi() {
     }
 
     function readExpiryNotifications() {
-        const dataScript = document.getElementById('unitExpiryNotificationsData');
+        const dataScript = document.getElementById('expiryNotificationsData')
+            || document.getElementById('unitExpiryNotificationsData');
 
         if (!dataScript) return [];
 

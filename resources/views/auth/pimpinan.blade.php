@@ -57,6 +57,41 @@
         });
     </script>
     @endif
+    @php
+        $pimpinanExpiryNotifications = collect();
+        $pimpinanNotificationToday = now()->startOfDay();
+        $pimpinanNotificationLimit = $pimpinanNotificationToday->copy()->addMonthsNoOverflow(3)->endOfDay();
+
+        $pimpinanExpiryNotifications = \App\Models\Cooperation::query()
+            ->select(['id', 'title', 'doc_number', 'jenis', 'end_date', 'status'])
+            ->where('status', 'aktif')
+            ->whereNotNull('end_date')
+            ->whereDate('end_date', '>=', $pimpinanNotificationToday->toDateString())
+            ->whereDate('end_date', '<=', $pimpinanNotificationLimit->toDateString())
+            ->orderBy('end_date')
+            ->get()
+            ->unique('id')
+            ->map(function ($cooperation) use ($pimpinanNotificationToday) {
+                $endDate = \Carbon\Carbon::parse($cooperation->end_date)->startOfDay();
+                $daysRemaining = max(0, (int) $pimpinanNotificationToday->diffInDays($endDate, false));
+                $remainingLabel = $daysRemaining === 0
+                    ? 'berakhir hari ini'
+                    : ($daysRemaining . ' hari lagi');
+
+                return [
+                    'id' => $cooperation->id,
+                    'system_id' => 'expiry-' . $cooperation->id,
+                    'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                    'doc_number' => $cooperation->doc_number,
+                    'jenis' => $cooperation->jenis,
+                    'days_remaining' => $daysRemaining,
+                    'remaining_label' => $remainingLabel,
+                    'end_date_label' => $endDate->format('d M Y'),
+                    'link' => route('pimpinan.monitoring.detail', $cooperation->id),
+                ];
+            })
+            ->values();
+    @endphp
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
@@ -104,9 +139,10 @@
                         });
                         }
                         $notifCount = $query->count();
+                        $totalNotifCount = $notifCount + $pimpinanExpiryNotifications->count();
                         @endphp
-                        <span class="notification-badge" id="notifBadge" style="{{ $notifCount > 0 ? 'display: flex;' : 'display: none;' }}">
-                            {{ $notifCount > 9 ? '9+' : $notifCount }}
+                        <span class="notification-badge" id="notifBadge" style="{{ $totalNotifCount > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $totalNotifCount > 9 ? '9+' : $totalNotifCount }}
                         </span>
                     </button>
 
@@ -118,16 +154,42 @@
                                 semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
-                            <!-- Items will be loaded here via JS -->
-                            <div class="notification-empty">
-                                <i class="fas fa-bell-slash"></i>
-                                <p>Tidak ada notifikasi baru</p>
-                            </div>
+                            @forelse ($pimpinanExpiryNotifications as $expiryNotification)
+                                <a href="{{ $expiryNotification['link'] }}"
+                                    class="notification-item unread notification-expiry-item"
+                                    data-system-notification="true"
+                                    data-system-id="{{ $expiryNotification['system_id'] }}">
+                                    <div class="notification-icon-wrapper"
+                                        style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <span class="notification-sender">Masa Aktif Kerjasama</span>
+                                        <span class="notification-message">
+                                            {{ $expiryNotification['title'] }} akan berakhir {{ $expiryNotification['remaining_label'] }}.
+                                        </span>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">
+                                                Selesai {{ $expiryNotification['end_date_label'] }}
+                                            </span>
+                                            <span class="notification-badge-type badge-masa-aktif">Masa Aktif</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="notification-empty">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>Tidak ada notifikasi baru</p>
+                                </div>
+                            @endforelse
                         </div>
                         <!-- <div class="notification-footer">
                             <a href="#">Lihat Semua Notifikasi</a>
                         </div> -->
                     </div>
+                    <script type="application/json" id="expiryNotificationsData">
+                        @json($pimpinanExpiryNotifications)
+                    </script>
                 </div>
 
                 <div class="user-chip">
