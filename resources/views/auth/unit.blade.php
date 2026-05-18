@@ -34,6 +34,67 @@
     @if ($errors->any())
         <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
+    @php
+        $unitExpiryNotifications = collect();
+        $notificationUser = auth()->user();
+
+        if ($notificationUser) {
+            $notificationUser->loadMissing('profile.unitKerja');
+            $notificationProfile = $notificationUser->profile;
+            $notificationUnitName = $notificationProfile?->unitKerja?->nama_unit_pelaksana;
+            $notificationToday = now()->startOfDay();
+            $notificationLimit = $notificationToday->copy()->addMonthsNoOverflow(3)->endOfDay();
+
+            $expiryQuery = \App\Models\Cooperation::query()
+                ->select(['id', 'title', 'doc_number', 'jenis', 'end_date', 'status'])
+                ->whereNotNull('end_date')
+                ->whereDate('end_date', '>=', $notificationToday->toDateString())
+                ->whereDate('end_date', '<=', $notificationLimit->toDateString());
+
+            if ($notificationProfile?->jurusan_id) {
+                $expiryQuery->where(function ($query) use ($notificationProfile) {
+                    $query->where('jurusan_id', $notificationProfile->jurusan_id)
+                        ->orWhereHas('jurusans', fn ($subQuery) => $subQuery->where('jurusans.id', $notificationProfile->jurusan_id));
+                });
+            } elseif ($notificationUnitName) {
+                $expiryQuery->where(function ($query) use ($notificationUnitName) {
+                    $query->whereHas('jurusans', fn ($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
+                        ->orWhereHas('upas', fn ($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
+                        ->orWhereHas('pusats', fn ($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName))
+                        ->orWhereHas('jurusan', fn ($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
+                        ->orWhereHas('upa', fn ($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
+                        ->orWhereHas('pusat', fn ($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName));
+                });
+            } else {
+                $expiryQuery->whereRaw('1 = 0');
+            }
+
+            $unitExpiryNotifications = $expiryQuery
+                ->orderBy('end_date')
+                ->get()
+                ->unique('id')
+                ->map(function ($cooperation) use ($notificationToday) {
+                    $endDate = \Carbon\Carbon::parse($cooperation->end_date)->startOfDay();
+                    $daysRemaining = max(0, (int) $notificationToday->diffInDays($endDate, false));
+                    $remainingLabel = $daysRemaining === 0
+                        ? 'berakhir hari ini'
+                        : ($daysRemaining . ' hari lagi');
+
+                    return [
+                        'id' => $cooperation->id,
+                        'system_id' => 'expiry-' . $cooperation->id,
+                        'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                        'doc_number' => $cooperation->doc_number,
+                        'jenis' => $cooperation->jenis,
+                        'days_remaining' => $daysRemaining,
+                        'remaining_label' => $remainingLabel,
+                        'end_date_label' => $endDate->format('d M Y'),
+                        'link' => route('unit.kerjasama.show', $cooperation->id),
+                    ];
+                })
+                ->values();
+        }
+    @endphp
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
@@ -69,25 +130,55 @@
                 <div class="notification-container">
                     <button class="icon-btn" id="notificationBtn" title="Notifications">
                         <i class="fas fa-bell" id="notificationIcon"></i>
-                        <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                        <span class="notification-badge" id="notifBadge"
+                            style="{{ $unitExpiryNotifications->count() > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $unitExpiryNotifications->count() > 9 ? '9+' : $unitExpiryNotifications->count() }}
+                        </span>
                     </button>
 
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
-                            <button id="markAllRead" class="notification-mark-read">Tandai
+                            <button id="markAllRead" class="notification-mark-read" style="display: none;">Tandai
                                 semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
-                            <div class="notification-empty">
-                                <i class="fas fa-bell-slash"></i>
-                                <p>Tidak ada notifikasi baru</p>
-                            </div>
+                            @forelse ($unitExpiryNotifications as $expiryNotification)
+                                <a href="{{ $expiryNotification['link'] }}"
+                                    class="notification-item unread notification-expiry-item"
+                                    data-system-notification="true"
+                                    data-system-id="{{ $expiryNotification['system_id'] }}">
+                                    <div class="notification-icon-wrapper"
+                                        style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <span class="notification-sender">Masa Aktif Kerjasama</span>
+                                        <span class="notification-message">
+                                            {{ $expiryNotification['title'] }} akan berakhir {{ $expiryNotification['remaining_label'] }}.
+                                        </span>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">
+                                                Selesai {{ $expiryNotification['end_date_label'] }}
+                                            </span>
+                                            <span class="notification-badge-type badge-masa-aktif">Masa Aktif</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="notification-empty">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>Tidak ada notifikasi baru</p>
+                                </div>
+                            @endforelse
                         </div>
                         <div class="notification-footer">
                             <a href="#">Lihat Semua Notifikasi</a>
                         </div>
                     </div>
+                    <script type="application/json" id="unitExpiryNotificationsData">
+                        @json($unitExpiryNotifications)
+                    </script>
                 </div>
 
                 <div class="user-chip">

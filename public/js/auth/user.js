@@ -1119,6 +1119,7 @@ function initNotifikasi() {
     const notifList = document.getElementById('notifList');
     const notifBadge = document.getElementById('notifBadge');
     const markAllReadBtn = document.getElementById('markAllRead');
+    const expiryNotifications = readExpiryNotifications();
 
     if (!notifBtn || !notifDropdown) return;
 
@@ -1179,13 +1180,39 @@ function initNotifikasi() {
     }
 
     function updateBadge(count) {
-        if (count > 0) {
-            notifBadge.textContent = count > 9 ? '9+' : count;
+        const totalCount = Number(count || 0) + expiryNotifications.length;
+
+        if (totalCount > 0) {
+            notifBadge.textContent = totalCount > 9 ? '9+' : totalCount;
             notifBadge.style.display = 'flex';
-            if (markAllReadBtn) markAllReadBtn.style.display = 'block';
+            if (markAllReadBtn) markAllReadBtn.style.display = Number(count || 0) > 0 ? 'block' : 'none';
         } else {
             notifBadge.style.display = 'none';
             if (markAllReadBtn) markAllReadBtn.style.display = 'none';
+        }
+    }
+
+    function readExpiryNotifications() {
+        const dataScript = document.getElementById('unitExpiryNotificationsData');
+
+        if (!dataScript) return [];
+
+        try {
+            const parsed = JSON.parse(dataScript.textContent || '[]');
+            const unique = new Map();
+
+            parsed.forEach(item => {
+                const key = item.system_id || `expiry-${item.id}`;
+
+                if (!unique.has(key)) {
+                    unique.set(key, item);
+                }
+            });
+
+            return Array.from(unique.values());
+        } catch (error) {
+            console.error('Gagal membaca notifikasi masa aktif:', error);
+            return [];
         }
     }
 
@@ -1200,7 +1227,15 @@ function initNotifikasi() {
     }
 
     function renderNotifications(data) {
-        if (data.length === 0) {
+        const apiData = Array.isArray(data) ? data : [];
+        const systemItems = expiryNotifications.map(item => ({
+            ...item,
+            id: item.system_id || `expiry-${item.id}`,
+            is_system_expiry: true,
+        }));
+        const items = [...systemItems, ...apiData];
+
+        if (items.length === 0) {
             notifList.innerHTML = `
                 <div class="notification-empty">
                     <i class="fas fa-bell-slash"></i>
@@ -1210,7 +1245,25 @@ function initNotifikasi() {
             return;
         }
 
-        notifList.innerHTML = data.map(item => {
+        notifList.innerHTML = items.map(item => {
+            if (item.is_system_expiry) {
+                return `
+                    <a href="${item.link || '#'}" class="notification-item unread notification-expiry-item" data-system-notification="true" data-system-id="${escapeNotifHtml(item.id)}">
+                        <div class="notification-icon-wrapper" style="background:rgba(245, 158, 11, 0.12); color:#d97706;">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="notification-content">
+                            <span class="notification-sender">Masa Aktif Kerjasama</span>
+                            <span class="notification-message">${escapeNotifHtml(item.title || 'Kerjasama Tanpa Judul')} akan berakhir ${escapeNotifHtml(item.remaining_label || '')}.</span>
+                            <div class="notification-meta">
+                                <span class="notification-time">Selesai ${escapeNotifHtml(item.end_date_label || '-')}</span>
+                                <span class="notification-badge-type badge-masa-aktif">Masa Aktif</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }
+
             const isUnread = item.is_read === 0;
             const timeAgoStr = timeAgo(new Date(item.created_at));
             const typeKey = (item.type || 'evaluasi').toString().toLowerCase();
@@ -1307,8 +1360,15 @@ function initNotifikasi() {
         // Add click event to mark as read
         document.querySelectorAll('.notification-item').forEach(el => {
             el.addEventListener('click', function (e) {
+                if (this.dataset.systemNotification === 'true') {
+                    return;
+                }
+
                 const id = this.getAttribute('data-id');
-                markAsRead(id);
+
+                if (id) {
+                    markAsRead(id);
+                }
             });
         });
     }

@@ -959,6 +959,20 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     flex-shrink: 0;
 }
 
+.notification-badge-type.badge-masa-aktif {
+    --notif-status-bg: rgba(245, 158, 11, 0.12);
+    --notif-status-border: rgba(245, 158, 11, 0.28);
+    --notif-status-text: #b45309;
+    --notif-status-dot: #f59e0b;
+}
+
+[data-theme="dark"] .notification-badge-type.badge-masa-aktif {
+    --notif-status-bg: rgba(245, 158, 11, 0.18);
+    --notif-status-border: rgba(251, 191, 36, 0.32);
+    --notif-status-text: #fbbf24;
+    --notif-status-dot: #fbbf24;
+}
+
 .notification-item:hover .notification-badge-type {
     transform: translateY(-1px);
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);

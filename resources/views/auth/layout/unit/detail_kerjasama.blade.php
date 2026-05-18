@@ -54,49 +54,48 @@
     $timeRemainingLabel = '-';
     $timeRemainingColor = 'var(--text)';
     $isPastDate = false;
+    $isNearExpiry = false;
     $daysUntilEnd = null;
     if ($kegiatan->end_date) {
-        $now = now();
-        $end = \Carbon\Carbon::parse($kegiatan->end_date);
-        $diff = $now->diff($end);
-        $isPast = $now->greaterThan($end);
-        $isPastDate = $isPast;
+        $today = now()->startOfDay();
+        $threeMonthsFromToday = $today->copy()->addMonthsNoOverflow(3)->endOfDay();
+        $end = \Carbon\Carbon::parse($kegiatan->end_date)->startOfDay();
+        $daysUntilEnd = (int) $today->diffInDays($end, false);
+        $isPastDate = $daysUntilEnd < 0;
+        $isNearExpiry = !$isPastDate && $end->lte($threeMonthsFromToday);
 
-        if ($isPast) {
+        if ($isPastDate) {
             $timeRemainingLabel = 'Kadarluarsa';
             $timeRemainingColor = '#ef4444';
             $daysUntilEnd = 0;
+        } elseif ($daysUntilEnd === 0) {
+            $timeRemainingLabel = 'Berakhir Hari Ini';
+            $timeRemainingColor = '#ef4444';
         } else {
-            $years = $diff->y;
-            $months = $diff->m;
-            $days = $diff->d;
-
+            $diff = $today->diff($end);
             $parts = [];
-            if ($years > 0) {
-                $parts[] = $years . ' Thn';
+
+            if ($diff->y > 0) {
+                $parts[] = $diff->y . ' Thn';
             }
-            if ($months > 0) {
-                $parts[] = $months . ' Bln';
+            if ($diff->m > 0) {
+                $parts[] = $diff->m . ' Bln';
             }
-            if ($days > 0 || empty($parts)) {
-                $parts[] = $days . ' Hari';
+            if ($diff->d > 0 || empty($parts)) {
+                $parts[] = $diff->d . ' Hari';
             }
 
-            $timeRemainingLabel = implode(', ', array_slice($parts, 0, 2));
+            $timeRemainingLabel = implode(', ', array_slice($parts, 0, 2)) . ' Lagi';
 
-            // Color logic
-            $totalDays = $now->diffInDays($end);
-            $daysUntilEnd = $totalDays;
-            if ($totalDays < 30) {
-                $timeRemainingColor = '#ef4444'; // Red for < 1 month
-            } elseif ($totalDays < 90) {
-                $timeRemainingColor = '#f59e0b'; // Orange for < 3 months
+            if ($daysUntilEnd <= 30) {
+                $timeRemainingColor = '#ef4444';
+            } elseif ($isNearExpiry) {
+                $timeRemainingColor = '#f59e0b';
             } else {
-                $timeRemainingColor = '#10b981'; // Green for safe
+                $timeRemainingColor = '#10b981';
             }
         }
     }
-    $isNearExpiry = $daysUntilEnd !== null && $daysUntilEnd <= 30 && !$isPastDate;
     $canAjukanPerpanjangan =
         $statusDokumen === 'Disahkan' && !$isExtended && ($isExpired || $isPastDate || $isNearExpiry);
 @endphp
