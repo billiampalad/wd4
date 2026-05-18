@@ -1480,6 +1480,99 @@
     --dashboard-scrollbar-thumb: #2563eb;
     --dashboard-scrollbar-thumb-hover: #1d4ed8;
     --dashboard-scrollbar-track: rgba(37, 99, 235, 0.16);
+    --dashboard-cooperation-border: rgba(148, 163, 184, 0.24);
+    --dashboard-cooperation-surface: #ffffff;
+    --dashboard-cooperation-column: #f8fafc;
+    --dashboard-cooperation-title: #0f172a;
+    --dashboard-cooperation-text: #64748b;
+}
+
+.dark {
+    --dashboard-cooperation-border: rgba(148, 163, 184, 0.22);
+    --dashboard-cooperation-surface: #111827;
+    --dashboard-cooperation-column: rgba(15, 23, 42, 0.72);
+    --dashboard-cooperation-title: #f8fafc;
+    --dashboard-cooperation-text: #94a3b8;
+}
+
+.dashboard-cooperation-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: var(--dashboard-cooperation-surface);
+    border: 1px solid var(--dashboard-cooperation-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-cooperation-layout__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.dashboard-cooperation-layout__header h3,
+.dashboard-cooperation-layout__column-header h4 {
+    margin: 0;
+    color: var(--dashboard-cooperation-title);
+    line-height: 1.35;
+}
+
+.dashboard-cooperation-layout__header h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.dashboard-cooperation-layout__header p,
+.dashboard-cooperation-layout__column-header p {
+    margin: 0;
+    color: var(--dashboard-cooperation-text);
+    line-height: 1.6;
+}
+
+.dashboard-cooperation-layout__header p {
+    font-size: 0.875rem;
+}
+
+.dashboard-cooperation-layout__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.dashboard-cooperation-layout__column {
+    min-height: 13rem;
+    padding: 1rem;
+    background: var(--dashboard-cooperation-column);
+    border: 1px dashed var(--dashboard-cooperation-border);
+    border-radius: 0.65rem;
+}
+
+.dashboard-cooperation-layout__column-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.dashboard-cooperation-layout__column-header h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.dashboard-cooperation-layout__column-header p {
+    font-size: 0.78rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-cooperation-layout {
+        padding: 1rem;
+    }
+
+    .dashboard-cooperation-layout__grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 html,

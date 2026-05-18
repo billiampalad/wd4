@@ -179,55 +179,26 @@
         @endforeach
     </section>
 
-    <section class="ud-bento">
-        <article class="ud-panel">
-            <div class="ud-panel-head">
+    <section class="ud-bento-full">
+        <article class="ud-panel dashboard-cooperation-layout">
+            <div class="ud-panel-head dashboard-cooperation-layout__header">
                 <div>
-                    <h3 class="ud-panel-title">Distribusi Jenis Dokumen Kerjasama</h3>
-                    <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
+                    <h4 class="ud-panel-title" id="dashboard-cooperation-layout-title">Ruang Lingkup Kerjasama</h4>
+                    <p class="ud-panel-desc">Layout dua kolom untuk menyiapkan tampilan ringkasan data kerjasama
+                        akademik.</p>
                 </div>
-                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i
-                        class="fas fa-chart-pie"></i> Chart</span>
             </div>
 
-            <div class="ud-chart-layout">
-                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}"
-                    data-ia="{{ $totalIA }}"></canvas>
-            </div>
-        </article>
-
-        <article class="ud-panel">
-            <div class="ud-panel-head">
-                <div>
-                    <h3 class="ud-panel-title">Upcoming Deadlines</h3>
-                    <p class="ud-panel-desc">Dokumen dengan masa berlaku tersisa maksimal 30 hari.</p>
-                </div>
-                <span class="ud-status-badge is-pending"><i class="fas fa-clock"></i> 30 hari</span>
-            </div>
-
-            <div class="ud-deadlines">
-                @forelse($upcomingDeadlines ?? [] as $deadline)
-                    @php
-                        $daysLeft = now()
-                            ->startOfDay()
-                            ->diffInDays($deadline->end_date->copy()->startOfDay());
-                    @endphp
-                    <div class="ud-deadline-item">
-                        <div class="ud-daybox">{{ $daysLeft }}</div>
-                        <div style="min-width:0;">
-                            <div class="ud-deadline-title">{{ $deadline->title ?? '-' }}</div>
-                            <div class="ud-deadline-meta">
-                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
-                                {{ $deadline->end_date?->format('d M Y') }}
-                            </div>
-                        </div>
-                        <a class="ud-link-btn" href="{{ route('unit.kerjasama.show', $deadline->id) }}" title="Detail">
-                            <i class="fas fa-arrow-up-right-from-square"></i>
-                        </a>
+            <div class="dashboard-cooperation-layout__grid">
+                <div class="dashboard-cooperation-layout__column">
+                    <div class="dashboard-cooperation-layout__column-header">
                     </div>
-                @empty
-                    <div class="ud-empty">Tidak ada deadline kritis dalam 30 hari.</div>
-                @endforelse
+                </div>
+
+                <div class="dashboard-cooperation-layout__column">
+                    <div class="dashboard-cooperation-layout__column-header">
+                    </div>
+                </div>
             </div>
         </article>
     </section>
@@ -277,6 +248,59 @@
                         <canvas id="prodiChart"></canvas>
                     </div>
                 </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-bento">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Distribusi Jenis Dokumen Kerjasama</h3>
+                    <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
+                </div>
+                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i
+                        class="fas fa-chart-pie"></i> Chart</span>
+            </div>
+
+            <div class="ud-chart-layout">
+                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}"
+                    data-ia="{{ $totalIA }}"></canvas>
+            </div>
+        </article>
+
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Upcoming Deadlines</h3>
+                    <p class="ud-panel-desc">Dokumen dengan masa berlaku tersisa maksimal 30 hari.</p>
+                </div>
+                <span class="ud-status-badge is-pending"><i class="fas fa-clock"></i> 30 hari</span>
+            </div>
+
+            <div class="ud-deadlines">
+                @forelse($upcomingDeadlines ?? [] as $deadline)
+                    @php
+                        $daysLeft = now()
+                            ->startOfDay()
+                            ->diffInDays($deadline->end_date->copy()->startOfDay());
+                    @endphp
+                    <div class="ud-deadline-item">
+                        <div class="ud-daybox">{{ $daysLeft }}</div>
+                        <div style="min-width:0;">
+                            <div class="ud-deadline-title">{{ $deadline->title ?? '-' }}</div>
+                            <div class="ud-deadline-meta">
+                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
+                                {{ $deadline->end_date?->format('d M Y') }}
+                            </div>
+                        </div>
+                        <a class="ud-link-btn" href="{{ route('unit.kerjasama.show', $deadline->id) }}" title="Detail">
+                            <i class="fas fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                @empty
+                    <div class="ud-empty">Tidak ada deadline kritis dalam 30 hari.</div>
+                @endforelse
             </div>
         </article>
     </section>
