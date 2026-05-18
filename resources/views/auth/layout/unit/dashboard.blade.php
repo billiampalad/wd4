@@ -204,8 +204,8 @@
 
             <div class="dashboard-cooperation-layout__grid">
                 <div class="dashboard-cooperation-layout__table-wrap">
-                    <div class="dashboard-cooperation-layout__table-body">
-                        <table class="ud-table dashboard-cooperation-layout__table">
+                    <div class="dashboard-cooperation-layout__table">
+                        <table class="dashboard-cooperation-layout__table">
                             <colgroup>
                                 <col class="dashboard-cooperation-layout__col-no">
                                 <col>

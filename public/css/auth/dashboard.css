@@ -566,7 +566,7 @@
     justify-content: space-between;
     gap: 16px;
     align-items: flex-start;
-    padding: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--ud-border);
 }
 
@@ -864,8 +864,15 @@
 }
 
 @keyframes udFadeInUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .ud-dual-chart-container {
@@ -1458,6 +1465,7 @@
 }
 
 @media (max-width: 768px) {
+
     .dashboard-table-wrapper,
     .table-scroll-area,
     .table-responsive {
@@ -1475,6 +1483,7 @@
         font-size: 12px;
     }
 }
+
 /* Dashboard scrollbars: keep every vertical and horizontal scrollbar blue in light and dark mode. */
 :root {
     --dashboard-scrollbar-thumb: #2563eb;
@@ -1561,7 +1570,8 @@
     align-self: start;
     width: 100%;
     min-width: 0;
-    overflow-x: auto;
+    max-width: 100%;
+    overflow-x: hidden;
     overflow-y: hidden;
     border: 1px solid var(--ud-border);
     border-radius: 0.75rem;
@@ -1572,16 +1582,15 @@
 .dashboard-cooperation-layout__table {
     display: block;
     width: 100%;
-    min-width: 42rem;
-    table-layout: fixed;
+    min-width: 0;
+    max-width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 }
 
 .dashboard-cooperation-layout__table thead {
-    display: table;
+    display: block;
     width: 100%;
-    table-layout: fixed;
     position: sticky;
     top: 0;
     z-index: 3;
@@ -1589,9 +1598,9 @@
 
 .dashboard-cooperation-layout__table thead tr,
 .dashboard-cooperation-layout__table tbody tr {
-    display: table;
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) 16rem;
     width: 100%;
-    table-layout: fixed;
 }
 
 .dashboard-cooperation-layout__table--head {
@@ -1616,13 +1625,17 @@
 }
 
 .dashboard-cooperation-layout__table-body {
+    width: 100%;
+    max-width: 100%;
     overflow-y: hidden;
-    overflow-x: auto;
+    overflow-x: hidden;
     scrollbar-gutter: stable;
 }
 
 .dashboard-cooperation-layout__table tbody {
     display: block;
+    width: 100%;
+    max-width: 100%;
     max-height: 17.5rem;
     overflow-y: auto;
     overflow-x: hidden;
@@ -1650,6 +1663,10 @@
 
 .dashboard-cooperation-layout__table tbody tr:last-child td {
     border-bottom: 0;
+}
+
+.dashboard-cooperation-layout__table tbody tr:has(td[colspan]) {
+    grid-template-columns: 1fr;
 }
 
 .dashboard-cooperation-layout__table tbody tr:hover td {
