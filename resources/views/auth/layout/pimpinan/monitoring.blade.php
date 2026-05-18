@@ -464,7 +464,11 @@
                         @forelse($kerjasamaList as $k)
                             @php
                                 $endDate = $k->end_date;
-                                $sisaHari = $endDate ? (int) now()->diffInDays($endDate, false) : null;
+                                $today = now()->startOfDay();
+                                $threeMonthsFromToday = $today->copy()->addMonthsNoOverflow(3)->endOfDay();
+                                $end = $endDate ? \Carbon\Carbon::parse($endDate)->startOfDay() : null;
+                                $sisaHari = $end ? (int) $today->diffInDays($end, false) : null;
+                                $isNearExpiry = $end && $sisaHari >= 0 && $end->lte($threeMonthsFromToday);
                                 $statusKerjasama = strtolower($k->status ?? '');
                                 $isExpired = in_array($statusKerjasama, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']);
                                 $isAktif = $statusKerjasama === 'aktif';
@@ -489,9 +493,11 @@
                                     @if($sisaHari !== null)
                                         @if($sisaHari < 0)
                                             <span class="mn-countdown" style="background:rgba(239,68,68,.1);color:#ef4444"><i class="fas fa-times-circle"></i> Lewat {{ abs($sisaHari) }}hr</span>
+                                        @elseif($sisaHari === 0)
+                                            <span class="mn-countdown" style="background:rgba(239,68,68,.1);color:#ef4444"><i class="fas fa-fire"></i> Hari ini</span>
                                         @elseif($sisaHari <= 30)
                                             <span class="mn-countdown" style="background:rgba(239,68,68,.1);color:#ef4444"><i class="fas fa-fire"></i> {{ $sisaHari }} hari</span>
-                                        @elseif($sisaHari <= 90)
+                                        @elseif($isNearExpiry)
                                             <span class="mn-countdown" style="background:rgba(245,158,11,.1);color:#f59e0b"><i class="fas fa-clock"></i> {{ $sisaHari }} hari</span>
                                         @else
                                             <span class="mn-countdown" style="background:rgba(16,185,129,.1);color:#10b981"><i class="fas fa-check-circle"></i> {{ $sisaHari }} hari</span>
