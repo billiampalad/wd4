@@ -505,6 +505,17 @@ class UnitPageController extends Controller
         return view('auth.unit', compact('jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
 
+    public function bentukKegiatan()
+    {
+        $this->resolveUnitId();
+
+        $bentukKegiatans = \App\Models\JenisKerjasama::withCount(['details as total_count'])
+            ->orderBy('nama_kerjasama', 'asc')
+            ->get();
+
+        return view('auth.unit', compact('bentukKegiatans'));
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

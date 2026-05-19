@@ -306,7 +306,7 @@
                 <div class="submenu {{ $isReferensiActive ? 'open' : '' }}" id="referensiSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.bentuk-kegiatan') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.referensi.bentuk-kegiatan') }}">
                             <span class="submenu-dot"></span><span>Bentuk Kegiatan</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.status-kerjasama') ? 'active' : '' }}"
@@ -358,6 +358,9 @@
             {{-- menu institusi --}}
             @elseif(request()->routeIs('unit.institusi'))
                 @include('auth.layout.unit.institusi')
+
+            @elseif(request()->routeIs('unit.referensi.bentuk-kegiatan'))
+                @include('auth.layout.unit.referensi.bentuk-kegiatan')
 
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')

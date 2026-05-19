@@ -223,6 +223,9 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     // institusi
     Route::get('/unit/institusi', [App\Http\Controllers\Unit\UnitPageController::class, 'institusi'])->name('unit.institusi');
 
+    // referensi
+    Route::get('/unit/referensi/bentuk-kegiatan', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatan'])->name('unit.referensi.bentuk-kegiatan');
+
     // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');
     Route::get('/unit/data-kerjasama/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaPreview'])->name('unit.dkerjasama.preview');

@@ -17,4 +17,9 @@ class JenisKerjasama extends Model
     {
         return $this->belongsToMany(KegiatanKerjasama::class, 'kegiatan_jenis_kerjasamas', 'id_jenis', 'id_kegiatan');
     }
+
+    public function details()
+    {
+        return $this->hasMany(DetailKegiatan::class, 'jenis_kerjasama_id');
+    }
 }
