@@ -140,13 +140,13 @@
 .dk-stat-card {
     background: var(--ud-card);
     border: 1px solid var(--ud-border);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 18px;
+    padding: 24px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 18px;
-    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.06);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -156,36 +156,35 @@
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+    right: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.15;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
     z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
 }
 
 .dk-stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.15);
-    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.15);
 }
 
 .dk-stat-card:hover::before {
-    opacity: 1;
+    opacity: 0.3;
 }
 
 .dk-stat-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 14px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
     display: grid;
     place-items: center;
-    font-size: 24px;
+    font-size: 22px;
     flex-shrink: 0;
-    background: #f1f5f9;
-    color: var(--ud-muted);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dk-stat-card:hover .dk-stat-icon {
@@ -195,19 +194,19 @@
 .dk-stat-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .dk-stat-label {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
     color: var(--ud-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    line-height: 1.4;
 }
 
 .dk-stat-value {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 850;
     color: var(--ud-text);
     line-height: 1;
@@ -220,33 +219,37 @@
     font-size: 13px;
     font-weight: 600;
     color: var(--ud-muted);
-    text-transform: none;
-    letter-spacing: 0;
 }
 
-/* Card Variants */
+/* Card Variants – Background blur color */
+.dk-stat-total::before { background: #0284c7; }
+.dk-stat-primary::before { background: #7c3aed; }
+.dk-stat-warning::before { background: #d97706; }
+.dk-stat-success::before { background: #16a34a; }
+
+/* Card Variants – Icon Colors */
 .dk-stat-total .dk-stat-icon {
     background: linear-gradient(135deg, #e0f2fe, #bae6fd);
     color: #0284c7;
-    box-shadow: 0 8px 16px -8px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 8px 18px -8px rgba(2, 132, 199, 0.4);
 }
 
 .dk-stat-primary .dk-stat-icon {
     background: linear-gradient(135deg, #ede9fe, #ddd6fe);
     color: #7c3aed;
-    box-shadow: 0 8px 16px -8px rgba(124, 58, 237, 0.4);
+    box-shadow: 0 8px 18px -8px rgba(124, 58, 237, 0.4);
 }
 
 .dk-stat-warning .dk-stat-icon {
     background: linear-gradient(135deg, #fef3c7, #fde68a);
     color: #d97706;
-    box-shadow: 0 8px 16px -8px rgba(217, 119, 6, 0.4);
+    box-shadow: 0 8px 18px -8px rgba(217, 119, 6, 0.4);
 }
 
 .dk-stat-success .dk-stat-icon {
     background: linear-gradient(135deg, #dcfce7, #bbf7d0);
     color: #16a34a;
-    box-shadow: 0 8px 16px -8px rgba(22, 163, 74, 0.4);
+    box-shadow: 0 8px 18px -8px rgba(22, 163, 74, 0.4);
 }
 
 /* Dark Mode Overrides */
@@ -256,33 +259,214 @@
     box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .dk-stat-card::before {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
-}
-
 [data-theme="dark"] .dk-stat-card:hover {
-    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.6);
-    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
+    border-color: rgba(99, 102, 241, 0.4);
 }
 
 [data-theme="dark"] .dk-stat-total .dk-stat-icon {
-    background: rgba(2, 132, 199, 0.2);
+    background: rgba(2, 132, 199, 0.18);
     color: #38bdf8;
 }
 
 [data-theme="dark"] .dk-stat-primary .dk-stat-icon {
-    background: rgba(124, 58, 237, 0.2);
+    background: rgba(124, 58, 237, 0.18);
     color: #a78bfa;
 }
 
 [data-theme="dark"] .dk-stat-warning .dk-stat-icon {
-    background: rgba(217, 119, 6, 0.2);
+    background: rgba(217, 119, 6, 0.18);
     color: #fbbf24;
 }
 
 [data-theme="dark"] .dk-stat-success .dk-stat-icon {
-    background: rgba(22, 163, 74, 0.2);
+    background: rgba(22, 163, 74, 0.18);
     color: #4ade80;
+}
+
+/* JENIS KERJASAMA CARDS */
+.dk-jenis-card {
+    background: var(--ud-card);
+    border: 1px solid var(--ud-border);
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.06);
+}
+
+.dk-jenis-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.15;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.dk-jenis-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.15);
+}
+
+.dk-jenis-card:hover::before {
+    opacity: 0.3;
+}
+
+.dk-jenis-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dk-jenis-card:hover .dk-jenis-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.dk-jenis-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.dk-jenis-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ud-muted);
+    line-height: 1.4;
+}
+
+.dk-jenis-value {
+    font-size: 30px;
+    font-weight: 850;
+    color: var(--ud-text);
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dk-jenis-value span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ud-muted);
+}
+
+.dk-jenis-abbr {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* MoU Variant – Indigo */
+.dk-jenis-mou::before {
+    background: #6366f1;
+}
+
+.dk-jenis-mou .dk-jenis-icon {
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    color: #4f46e5;
+    box-shadow: 0 8px 18px -8px rgba(79, 70, 229, 0.4);
+}
+
+.dk-jenis-mou .dk-jenis-abbr {
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+}
+
+/* MoA Variant – Teal */
+.dk-jenis-moa::before {
+    background: #14b8a6;
+}
+
+.dk-jenis-moa .dk-jenis-icon {
+    background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+    color: #0d9488;
+    box-shadow: 0 8px 18px -8px rgba(13, 148, 136, 0.4);
+}
+
+.dk-jenis-moa .dk-jenis-abbr {
+    background: rgba(13, 148, 136, 0.1);
+    color: #0d9488;
+}
+
+/* IA Variant – Rose */
+.dk-jenis-ia::before {
+    background: #f43f5e;
+}
+
+.dk-jenis-ia .dk-jenis-icon {
+    background: linear-gradient(135deg, #fff1f2, #ffe4e6);
+    color: #e11d48;
+    box-shadow: 0 8px 18px -8px rgba(225, 29, 72, 0.4);
+}
+
+.dk-jenis-ia .dk-jenis-abbr {
+    background: rgba(225, 29, 72, 0.1);
+    color: #e11d48;
+}
+
+/* Dark Mode – Jenis Cards */
+[data-theme="dark"] .dk-jenis-card {
+    background: var(--ud-card);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .dk-jenis-card:hover {
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+[data-theme="dark"] .dk-jenis-mou .dk-jenis-icon {
+    background: rgba(79, 70, 229, 0.18);
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .dk-jenis-mou .dk-jenis-abbr {
+    background: rgba(79, 70, 229, 0.15);
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .dk-jenis-moa .dk-jenis-icon {
+    background: rgba(13, 148, 136, 0.18);
+    color: #5eead4;
+}
+
+[data-theme="dark"] .dk-jenis-moa .dk-jenis-abbr {
+    background: rgba(13, 148, 136, 0.15);
+    color: #5eead4;
+}
+
+[data-theme="dark"] .dk-jenis-ia .dk-jenis-icon {
+    background: rgba(225, 29, 72, 0.18);
+    color: #fda4af;
+}
+
+[data-theme="dark"] .dk-jenis-ia .dk-jenis-abbr {
+    background: rgba(225, 29, 72, 0.15);
+    color: #fda4af;
 }
 
 @media only screen and (max-width: 1180px) {
@@ -304,6 +488,10 @@
 
     .dk-stat-grid {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .dk-jenis-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     }
 }
 
@@ -348,5 +536,24 @@
     .ud-subtitle {
         font-size: 12px;
         line-height: 1.55;
+    }
+
+    .dk-jenis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dk-jenis-card {
+        padding: 18px;
+    }
+
+    .dk-jenis-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        border-radius: 14px;
+    }
+
+    .dk-jenis-value {
+        font-size: 24px;
     }
 }

@@ -58,6 +58,30 @@
                 <div class="dk-stat-value">{{ $pusatList->count() }} <span>Data</span></div>
             </div>
         </div>
+        <div class="dk-jenis-card dk-jenis-mou">
+            <div class="dk-jenis-icon"><i class="fas fa-file-signature"></i></div>
+            <div class="dk-jenis-content">
+                <span class="dk-jenis-label">Memorandum of Understanding</span>
+                <div class="dk-jenis-value">{{ $mouCount ?? 0 }} <span>Dokumen</span></div>
+                <span class="dk-jenis-abbr">MoU</span>
+            </div>
+        </div>
+        <div class="dk-jenis-card dk-jenis-moa">
+            <div class="dk-jenis-icon"><i class="fas fa-file-contract"></i></div>
+            <div class="dk-jenis-content">
+                <span class="dk-jenis-label">Memorandum of Agreement</span>
+                <div class="dk-jenis-value">{{ $moaCount ?? 0 }} <span>Dokumen</span></div>
+                <span class="dk-jenis-abbr">MoA</span>
+            </div>
+        </div>
+        <div class="dk-jenis-card dk-jenis-ia">
+            <div class="dk-jenis-icon"><i class="fas fa-file-circle-check"></i></div>
+            <div class="dk-jenis-content">
+                <span class="dk-jenis-label">Implementation Agreement</span>
+                <div class="dk-jenis-value">{{ $iaCount ?? 0 }} <span>Dokumen</span></div>
+                <span class="dk-jenis-abbr">IA</span>
+            </div>
+        </div>
     </section>
 
     <div class="card um-card dk-card">

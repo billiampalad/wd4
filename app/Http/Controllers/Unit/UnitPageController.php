@@ -436,7 +436,14 @@ class UnitPageController extends Controller
         $upas = Upa::orderBy('nama_upa')->get();
         $pusats = Pusat::orderBy('nama_pusat')->get();
 
-        return view('auth.unit', compact('jurusans', 'upas', 'pusats'));
+        // Count cooperations by jenis
+        $mouCount = Cooperation::where('jenis', 'like', '%MoU%')->count();
+        $moaCount = Cooperation::where('jenis', 'like', '%MoA%')->count();
+        $iaCount  = Cooperation::where('jenis', 'like', '%IA%')
+                        ->where('jenis', 'not like', '%MoA%')
+                        ->count();
+
+        return view('auth.unit', compact('jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
 
     public function dkerjasama(Request $request)
