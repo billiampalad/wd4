@@ -574,3 +574,28 @@
     white-space: nowrap;
     overflow-wrap: normal;
 }
+
+/* Interactive Filter Cursor and Active Styles */
+.dk-stat-card,
+.dk-jenis-card {
+    cursor: pointer;
+    user-select: none;
+}
+
+.dk-stat-card.active,
+.dk-jenis-card.active {
+    border-color: var(--ud-indigo, #4f46e5) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 16px 40px -16px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-5px);
+}
+
+.dk-stat-card.active::before,
+.dk-jenis-card.active::before {
+    opacity: 0.25;
+}
+
+[data-theme="dark"] .dk-stat-card.active,
+[data-theme="dark"] .dk-jenis-card.active {
+    border-color: #818cf8 !important;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25), 0 16px 40px -16px rgba(0, 0, 0, 0.4) !important;
+}

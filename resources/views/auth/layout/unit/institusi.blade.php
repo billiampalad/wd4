@@ -30,28 +30,28 @@
     </section>
 
     <section class="dk-stat-grid">
-        <div class="dk-stat-card dk-stat-total">
+        <div class="dk-stat-card dk-stat-total" data-filter="all">
             <div class="dk-stat-icon"><i class="fas fa-layer-group"></i></div>
             <div class="dk-stat-content">
                 <span class="dk-stat-label">Jumlah Institusi</span>
                 <div class="dk-stat-value">{{ $totalInstitusi }} <span>Data</span></div>
             </div>
         </div>
-        <div class="dk-stat-card dk-stat-primary">
+        <div class="dk-stat-card dk-stat-primary" data-filter="type-jurusan">
             <div class="dk-stat-icon"><i class="fas fa-microchip"></i></div>
             <div class="dk-stat-content">
                 <span class="dk-stat-label">Jumlah Jurusan</span>
                 <div class="dk-stat-value">{{ $jurusanList->count() }} <span>Data</span></div>
             </div>
         </div>
-        <div class="dk-stat-card dk-stat-warning">
+        <div class="dk-stat-card dk-stat-warning" data-filter="type-upa">
             <div class="dk-stat-icon"><i class="fas fa-building-columns"></i></div>
             <div class="dk-stat-content">
                 <span class="dk-stat-label">Jumlah UPA</span>
                 <div class="dk-stat-value">{{ $upaList->count() }} <span>Data</span></div>
             </div>
         </div>
-        <div class="dk-stat-card dk-stat-success">
+        <div class="dk-stat-card dk-stat-success" data-filter="type-pusat">
             <div class="dk-stat-icon"><i class="fas fa-landmark"></i></div>
             <div class="dk-stat-content">
                 <span class="dk-stat-label">Jumlah Pusat</span>
@@ -61,7 +61,7 @@
     </section>
 
     <section class="dk-jenis-grid">
-        <div class="dk-jenis-card dk-jenis-mou">
+        <div class="dk-jenis-card dk-jenis-mou" data-filter="doc-mou">
             <div class="dk-jenis-icon"><i class="fas fa-file-signature"></i></div>
             <div class="dk-jenis-content">
                 <span class="dk-jenis-label">Memorandum of Understanding</span>
@@ -69,7 +69,7 @@
                 <span class="dk-jenis-abbr">MoU</span>
             </div>
         </div>
-        <div class="dk-jenis-card dk-jenis-moa">
+        <div class="dk-jenis-card dk-jenis-moa" data-filter="doc-moa">
             <div class="dk-jenis-icon"><i class="fas fa-file-contract"></i></div>
             <div class="dk-jenis-content">
                 <span class="dk-jenis-label">Memorandum of Agreement</span>
@@ -77,7 +77,7 @@
                 <span class="dk-jenis-abbr">MoA</span>
             </div>
         </div>
-        <div class="dk-jenis-card dk-jenis-ia">
+        <div class="dk-jenis-card dk-jenis-ia" data-filter="doc-ia">
             <div class="dk-jenis-icon"><i class="fas fa-file-circle-check"></i></div>
             <div class="dk-jenis-content">
                 <span class="dk-jenis-label">Implementation Agreement</span>
@@ -113,7 +113,8 @@
                     </thead>
                     <tbody>
                         @forelse ($jurusanList as $jurusan)
-                            <tr class="um-row dk-row">
+                            <tr class="um-row dk-row" data-type="jurusan" data-mou="{{ $jurusan->mou_count }}"
+                                data-moa="{{ $jurusan->moa_count }}" data-ia="{{ $jurusan->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -152,7 +153,8 @@
 
                         @foreach ($upaList as $upa)
                             @php $index = $jurusanList->count() + $loop->iteration; @endphp
-                            <tr class="um-row dk-row">
+                            <tr class="um-row dk-row" data-type="upa" data-mou="{{ $upa->mou_count }}"
+                                data-moa="{{ $upa->moa_count }}" data-ia="{{ $upa->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -191,7 +193,8 @@
 
                         @foreach ($pusatList as $pusat)
                             @php $index = $jurusanList->count() + $upaList->count() + $loop->iteration; @endphp
-                            <tr class="um-row dk-row">
+                            <tr class="um-row dk-row" data-type="pusat" data-mou="{{ $pusat->mou_count }}"
+                                data-moa="{{ $pusat->moa_count }}" data-ia="{{ $pusat->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -245,4 +248,4 @@
     </div>
 </main>
 
-<script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
+<script src="{{ asset('js/auth/unit/institusi.js') }}" data-turbo-track="reload"></script>
