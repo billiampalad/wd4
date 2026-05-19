@@ -229,10 +229,21 @@
 }
 
 /* Card Variants – Background blur color */
-.dk-stat-total::before { background: #0284c7; }
-.dk-stat-primary::before { background: #7c3aed; }
-.dk-stat-warning::before { background: #d97706; }
-.dk-stat-success::before { background: #16a34a; }
+.dk-stat-total::before {
+    background: #0284c7;
+}
+
+.dk-stat-primary::before {
+    background: #7c3aed;
+}
+
+.dk-stat-warning::before {
+    background: #d97706;
+}
+
+.dk-stat-success::before {
+    background: #16a34a;
+}
 
 /* Card Variants – Icon Colors */
 .dk-stat-total .dk-stat-icon {

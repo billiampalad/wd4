@@ -87,9 +87,9 @@
         </div>
     </section>
 
-    <div class="card um-card dk-card">
+    <div class="card dk-card">
         <div class="card-header um-header dk-card-header">
-            <div class="um-title dk-card-title">
+            <div class="dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-list-ul"></i></span>
                 <span>
                     <strong>Daftar Institusi</strong>
@@ -98,54 +98,102 @@
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="um-table dk-table">
-                <thead>
-                    <tr>
-                        <th class="um-th" style="width: 72px;">No</th>
-                        <th class="um-th">Nama Institusi</th>
-                        <th class="um-th" style="width: 180px;">Jenis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($jurusanList as $jurusan)
+        <div class="card-body dk-card-body">
+            <div class="table-wrap um-table-wrap dk-table-wrap">
+                <table class="um-table dk-table">
+                    <thead>
                         <tr>
-                            <td class="um-td">{{ $loop->iteration }}</td>
-                            <td class="um-td">{{ $jurusan->nama_jurusan }}</td>
-                            <td class="um-td"><span class="dk-badge dk-badge-info">Jurusan</span></td>
+                            <th class="um-th um-th-num" style="width: 72px;">#</th>
+                            <th class="um-th">Nama Institusi</th>
+                            <th class="um-th" style="width: 180px;">Jenis</th>
                         </tr>
-                    @empty
-                    @endforelse
+                    </thead>
+                    <tbody>
+                        @forelse ($jurusanList as $jurusan)
+                            <tr class="um-row dk-row">
+                                <td class="um-td um-td-num" style="vertical-align: middle;">
+                                    <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <div class="dk-entity">
+                                        <span class="dk-entity-icon dk-entity-indigo" style="flex-shrink: 0;">
+                                            <i class="fas fa-microchip"></i>
+                                        </span>
+                                        <span class="dk-entity-text">{{ $jurusan->nama_jurusan }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <span class="dk-status dk-status-info">
+                                        <i class="fas fa-microchip"></i>
+                                        Jurusan
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                        @endforelse
 
-                    @foreach ($upaList as $upa)
-                        <tr>
-                            <td class="um-td">{{ $jurusanList->count() + $loop->iteration }}</td>
-                            <td class="um-td">{{ $upa->nama_upa }}</td>
-                            <td class="um-td"><span class="dk-badge dk-badge-warning">UPA</span></td>
-                        </tr>
-                    @endforeach
+                        @foreach ($upaList as $upa)
+                            @php $index = $jurusanList->count() + $loop->iteration; @endphp
+                            <tr class="um-row dk-row">
+                                <td class="um-td um-td-num" style="vertical-align: middle;">
+                                    <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <div class="dk-entity">
+                                        <span class="dk-entity-icon dk-entity-cyan" style="flex-shrink: 0;">
+                                            <i class="fas fa-building-columns"></i>
+                                        </span>
+                                        <span class="dk-entity-text">{{ $upa->nama_upa }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <span class="dk-status dk-status-warning">
+                                        <i class="fas fa-building-columns"></i>
+                                        UPA
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
 
-                    @foreach ($pusatList as $pusat)
-                        <tr>
-                            <td class="um-td">{{ $jurusanList->count() + $upaList->count() + $loop->iteration }}</td>
-                            <td class="um-td">{{ $pusat->nama_pusat }}</td>
-                            <td class="um-td"><span class="dk-badge dk-badge-success">Pusat</span></td>
-                        </tr>
-                    @endforeach
+                        @foreach ($pusatList as $pusat)
+                            @php $index = $jurusanList->count() + $upaList->count() + $loop->iteration; @endphp
+                            <tr class="um-row dk-row">
+                                <td class="um-td um-td-num" style="vertical-align: middle;">
+                                    <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <div class="dk-entity">
+                                        <span class="dk-entity-icon dk-entity-violet" style="flex-shrink: 0;">
+                                            <i class="fas fa-landmark"></i>
+                                        </span>
+                                        <span class="dk-entity-text">{{ $pusat->nama_pusat }}</span>
+                                    </div>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle;">
+                                    <span class="dk-status dk-status-active">
+                                        <i class="fas fa-landmark"></i>
+                                        Pusat
+                                    </span>
+                                </td>
+                            </tr>
+                        @endforeach
 
-                    @if ($totalInstitusi === 0)
-                        <tr>
-                            <td colspan="3" class="um-empty">
-                                <div class="um-empty-state dk-empty-state">
-                                    <div class="um-empty-icon dk-empty-icon"><i class="fas fa-university"></i></div>
-                                    <p class="um-empty-title">Belum ada data institusi</p>
-                                    <p class="um-empty-sub">Data jurusan, UPA, dan pusat akan tampil di sini.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
+                        @if ($totalInstitusi === 0)
+                            <tr data-empty>
+                                <td colspan="3" class="um-empty">
+                                    <div class="um-empty-state dk-empty-state">
+                                        <div class="um-empty-icon dk-empty-icon"><i class="fas fa-university"></i></div>
+                                        <p class="um-empty-title">Belum ada data institusi</p>
+                                        <p class="um-empty-sub">Data jurusan, UPA, dan pusat akan tampil di sini.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
+
+<script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
