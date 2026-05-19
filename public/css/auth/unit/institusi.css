@@ -100,26 +100,6 @@
     min-width: 0;
 }
 
-.ud-title-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-width: 0;
-}
-
-.ud-title-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-    background: linear-gradient(135deg, var(--accent), #0ea5e9);
-    color: #fff;
-    font-size: 20px;
-    box-shadow: 0 16px 26px -16px rgba(79, 70, 229, 0.7);
-}
-
 .ud-subtitle {
     margin: 8px 0 0;
     color: var(--ud-muted);
