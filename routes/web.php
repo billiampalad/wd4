@@ -225,6 +225,7 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // referensi
     Route::get('/unit/referensi/bentuk-kegiatan', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatan'])->name('unit.referensi.bentuk-kegiatan');
+    Route::get('/unit/referensi/status-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'statusKerjasamaReferensi'])->name('unit.referensi.status-kerjasama');
 
     // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');

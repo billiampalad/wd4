@@ -516,6 +516,57 @@ class UnitPageController extends Controller
         return view('auth.unit', compact('bentukKegiatans'));
     }
 
+    public function statusKerjasamaReferensi()
+    {
+        $this->resolveUnitId();
+
+        $counts = \App\Models\Cooperation::query()
+            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->all();
+
+        $statusList = collect([
+            [
+                'key' => 'aktif',
+                'name' => 'Aktif',
+                'badge' => 'dk-status-active',
+                'description' => 'Kerjasama yang sedang berjalan dan masa berlakunya masih aktif.',
+                'total' => $counts['aktif'] ?? 0,
+            ],
+            [
+                'key' => 'proses',
+                'name' => 'Proses',
+                'badge' => 'dk-status-info',
+                'description' => 'Kerjasama dalam tahap pengajuan, pembahasan draft, atau penandatanganan.',
+                'total' => $counts['proses'] ?? 0,
+            ],
+            [
+                'key' => 'dalam perpanjangan',
+                'name' => 'Dalam Perpanjangan',
+                'badge' => 'dk-status-warning',
+                'description' => 'Masa berlaku kerjasama telah habis namun sedang dalam proses perpanjangan masa aktif.',
+                'total' => $counts['dalam perpanjangan'] ?? 0,
+            ],
+            [
+                'key' => 'kadarluarsa',
+                'name' => 'Kadaluarsa',
+                'badge' => 'dk-status-danger',
+                'description' => 'Masa berlaku kerjasama telah berakhir dan tidak diperpanjang.',
+                'total' => ($counts['kadarluarsa'] ?? 0) + ($counts['kadaluarsa'] ?? 0) + ($counts['kedaluwarsa'] ?? 0),
+            ],
+            [
+                'key' => 'tidak aktif',
+                'name' => 'Tidak Aktif',
+                'badge' => 'dk-status-muted',
+                'description' => 'Kerjasama dibatalkan atau dinonaktifkan secara resmi.',
+                'total' => ($counts['tidak aktif'] ?? 0) + ($counts['nonaktif'] ?? 0) + ($counts['non aktif'] ?? 0),
+            ],
+        ]);
+
+        return view('auth.unit', ['referensiStatus' => $statusList]);
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

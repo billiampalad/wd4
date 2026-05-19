@@ -310,7 +310,7 @@
                             <span class="submenu-dot"></span><span>Bentuk Kegiatan</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.status-kerjasama') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.referensi.status-kerjasama') }}">
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.kriteria-mitra') ? 'active' : '' }}"
@@ -361,6 +361,9 @@
 
             @elseif(request()->routeIs('unit.referensi.bentuk-kegiatan'))
                 @include('auth.layout.unit.referensi.bentuk-kegiatan')
+
+            @elseif(request()->routeIs('unit.referensi.status-kerjasama'))
+                @include('auth.layout.unit.referensi.status-kerjasama')
 
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')
