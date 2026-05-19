@@ -58,6 +58,9 @@
                 <div class="dk-stat-value">{{ $pusatList->count() }} <span>Data</span></div>
             </div>
         </div>
+    </section>
+
+    <section class="dk-jenis-grid">
         <div class="dk-jenis-card dk-jenis-mou">
             <div class="dk-jenis-icon"><i class="fas fa-file-signature"></i></div>
             <div class="dk-jenis-content">
