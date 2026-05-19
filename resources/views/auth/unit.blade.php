@@ -323,10 +323,10 @@
                             href="{{ route('unit.referensi.kriteria-mitra') }}">
                             <span class="submenu-dot"></span><span>Kriteria Mitra</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('unit.referensi.sumber-dana') ? 'active' : '' }}"
+                        <!-- <a class="submenu-item {{ request()->routeIs('unit.referensi.sumber-dana') ? 'active' : '' }}"
                             href="javascript:void(0)">
                             <span class="submenu-dot"></span><span>Sumber Dana</span>
-                        </a>
+                        </a> -->
                     </div>
                 </div>
             </div>
