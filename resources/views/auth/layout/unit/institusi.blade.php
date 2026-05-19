@@ -18,7 +18,7 @@
                 <span>Institusi</span>
             </div>
             <div class="ud-title-row">
-                <span class="ud-title-icon"><i class="fas fa-chart-line"></i></span>
+                <span class="ud-title-icon"><i class="fas fa-university"></i></span>
                 <div class="ud-title-copy">
                     <h2 class="ud-title">Institusi Pelaksana</h2>
                     <p class="ud-subtitle">
