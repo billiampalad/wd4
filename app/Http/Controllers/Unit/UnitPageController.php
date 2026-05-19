@@ -611,6 +611,17 @@ class UnitPageController extends Controller
         return view('auth.unit', ['referensiStatusEvaluasi' => $statusList]);
     }
 
+    public function kriteriaMitraReferensi()
+    {
+        $this->resolveUnitId();
+
+        $kriterias = \App\Models\Klasifikasi::withCount(['mitras as total_count'])
+            ->orderBy('nama', 'asc')
+            ->get();
+
+        return view('auth.unit', compact('kriterias'));
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

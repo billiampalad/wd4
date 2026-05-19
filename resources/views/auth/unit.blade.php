@@ -320,7 +320,7 @@
                             <span class="submenu-dot"></span><span>Status Evaluasi</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.kriteria-mitra') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.referensi.kriteria-mitra') }}">
                             <span class="submenu-dot"></span><span>Kriteria Mitra</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.sumber-dana') ? 'active' : '' }}"
@@ -373,6 +373,9 @@
 
             @elseif(request()->routeIs('unit.referensi.status-evaluasi'))
                 @include('auth.layout.unit.referensi.status-evaluasi')
+
+            @elseif(request()->routeIs('unit.referensi.kriteria-mitra'))
+                @include('auth.layout.unit.referensi.kriteria-mitra')
 
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')
