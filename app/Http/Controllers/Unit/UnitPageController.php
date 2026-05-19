@@ -567,6 +567,50 @@ class UnitPageController extends Controller
         return view('auth.unit', ['referensiStatus' => $statusList]);
     }
 
+    public function statusEvaluasiReferensi()
+    {
+        $this->resolveUnitId();
+
+        $counts = \App\Models\Cooperation::query()
+            ->select('status_dokumen', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('status_dokumen')
+            ->pluck('total', 'status_dokumen')
+            ->all();
+
+        $statusList = collect([
+            [
+                'key' => 'Draft',
+                'name' => 'Draft',
+                'badge' => 'dk-status-warning',
+                'description' => 'Dokumen kerjasama baru dibuat dan belum dikirim untuk evaluasi.',
+                'total' => $counts['Draft'] ?? 0,
+            ],
+            [
+                'key' => 'Menunggu Evaluasi',
+                'name' => 'Menunggu Evaluasi',
+                'badge' => 'dk-status-info',
+                'description' => 'Evaluasi telah diisi oleh unit terkait dan sedang menunggu persetujuan/validasi dari Pimpinan.',
+                'total' => $counts['Menunggu Evaluasi'] ?? 0,
+            ],
+            [
+                'key' => 'Disahkan',
+                'name' => 'Disahkan',
+                'badge' => 'dk-status-active',
+                'description' => 'Evaluasi kerjasama telah disetujui, divalidasi, dan disahkan oleh Pimpinan.',
+                'total' => $counts['Disahkan'] ?? 0,
+            ],
+            [
+                'key' => 'Revisi',
+                'name' => 'Revisi',
+                'badge' => 'dk-status-danger',
+                'description' => 'Dokumen evaluasi ditolak atau dikembalikan oleh Pimpinan untuk diperbaiki.',
+                'total' => $counts['Revisi'] ?? 0,
+            ],
+        ]);
+
+        return view('auth.unit', ['referensiStatusEvaluasi' => $statusList]);
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

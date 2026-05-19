@@ -1,5 +1,5 @@
 @php
-    $statusList = $referensiStatus ?? collect();
+    $statusList = $referensiStatusEvaluasi ?? collect();
     $totalStatus = $statusList->count();
     $totalCooperationsCount = $statusList->sum('total');
 
@@ -19,14 +19,14 @@
                 <span>/</span>
                 <a href="{{ route('unit.dashboard') }}">Beranda</a>
                 <span>/</span>
-                <span>Status Kerjasama</span>
+                <span>Status Evaluasi</span>
             </div>
             <div class="ud-title-row">
-                <span class="ud-title-icon"><i class="fas fa-check-circle"></i></span>
+                <span class="ud-title-icon"><i class="fas fa-file-signature"></i></span>
                 <div class="ud-title-copy">
-                    <h2 class="ud-title">Status Kerjasama</h2>
+                    <h2 class="ud-title">Status Evaluasi</h2>
                     <p class="ud-subtitle">
-                        Referensi status yang menentukan tahapan siklus hidup kerjasama.
+                        Referensi status tahapan evaluasi dokumen kerjasama oleh Pimpinan.
                     </p>
                 </div>
             </div>
@@ -35,7 +35,7 @@
 
     <section class="dk-stat-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
         <div class="dk-stat-card dk-stat-total">
-            <div class="dk-stat-icon"><i class="fas fa-toggle-on"></i></div>
+            <div class="dk-stat-icon"><i class="fas fa-clipboard-list"></i></div>
             <div class="dk-stat-content">
                 <span class="dk-stat-label">Total Tipe Status</span>
                 <div class="dk-stat-value">{{ $totalStatus }} <span>Kategori</span></div>
@@ -68,8 +68,8 @@
             <div class="dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-list-ul"></i></span>
                 <span>
-                    <strong>Daftar Status Kerjasama</strong>
-                    <small>Referensi status alur kerja dokumen</small>
+                    <strong>Daftar Status Evaluasi</strong>
+                    <small>Referensi status evaluasi dan persetujuan dokumen</small>
                 </span>
             </div>
         </div>
@@ -118,7 +118,7 @@
                                     <div class="um-empty-state dk-empty-state">
                                         <div class="um-empty-icon dk-empty-icon"><i class="fas fa-check-circle"></i></div>
                                         <p class="um-empty-title">Belum ada data status</p>
-                                        <p class="um-empty-sub">Referensi status kerjasama akan tampil di sini.</p>
+                                        <p class="um-empty-sub">Referensi status evaluasi kerjasama akan tampil di sini.</p>
                                     </div>
                                 </td>
                             </tr>

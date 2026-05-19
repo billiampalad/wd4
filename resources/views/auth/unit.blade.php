@@ -54,16 +54,16 @@
             if ($notificationProfile?->jurusan_id) {
                 $expiryQuery->where(function ($query) use ($notificationProfile) {
                     $query->where('jurusan_id', $notificationProfile->jurusan_id)
-                        ->orWhereHas('jurusans', fn ($subQuery) => $subQuery->where('jurusans.id', $notificationProfile->jurusan_id));
+                        ->orWhereHas('jurusans', fn($subQuery) => $subQuery->where('jurusans.id', $notificationProfile->jurusan_id));
                 });
             } elseif ($notificationUnitName) {
                 $expiryQuery->where(function ($query) use ($notificationUnitName) {
-                    $query->whereHas('jurusans', fn ($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
-                        ->orWhereHas('upas', fn ($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
-                        ->orWhereHas('pusats', fn ($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName))
-                        ->orWhereHas('jurusan', fn ($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
-                        ->orWhereHas('upa', fn ($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
-                        ->orWhereHas('pusat', fn ($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName));
+                    $query->whereHas('jurusans', fn($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
+                        ->orWhereHas('upas', fn($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
+                        ->orWhereHas('pusats', fn($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName))
+                        ->orWhereHas('jurusan', fn($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
+                        ->orWhereHas('upa', fn($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
+                        ->orWhereHas('pusat', fn($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName));
                 });
             } else {
                 $expiryQuery->whereRaw('1 = 0');
@@ -102,8 +102,7 @@
                 <button id="hamburger" aria-label="Toggle sidebar">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35"
-                        height="35">
+                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35" height="35">
                 </div>
                 <div class="brand-text">
                     <h1>POLIMDO &amp; DUDIKA</h1>
@@ -146,8 +145,7 @@
                             @forelse ($unitExpiryNotifications as $expiryNotification)
                                 <a href="{{ $expiryNotification['link'] }}"
                                     class="notification-item unread notification-expiry-item"
-                                    data-system-notification="true"
-                                    data-system-id="{{ $expiryNotification['system_id'] }}">
+                                    data-system-notification="true" data-system-id="{{ $expiryNotification['system_id'] }}">
                                     <div class="notification-icon-wrapper"
                                         style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
                                         <i class="fas fa-hourglass-half"></i>
@@ -155,7 +153,8 @@
                                     <div class="notification-content">
                                         <span class="notification-sender">Masa Aktif Kerjasama</span>
                                         <span class="notification-message">
-                                            {{ $expiryNotification['title'] }} akan berakhir {{ $expiryNotification['remaining_label'] }}.
+                                            {{ $expiryNotification['title'] }} akan berakhir
+                                            {{ $expiryNotification['remaining_label'] }}.
                                         </span>
                                         <div class="notification-meta">
                                             <span class="notification-time">
@@ -219,7 +218,8 @@
                     'unit.analitik.*',
                 );
             @endphp
-            <div id="analitikParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="analitikParent" class="sidebar-dropdown"
+                style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="analitikBtn" class="menu-item {{ $isAnalitikActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
@@ -260,7 +260,8 @@
                     'unit.form.*',
                 );
             @endphp
-            <div id="kerjasamaParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="kerjasamaParent" class="sidebar-dropdown"
+                style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="kerjasamaBtn" class="menu-item {{ $isDataKerjasamaActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-folder"></i></div>
@@ -296,7 +297,8 @@
                     'unit.referensi.*',
                 );
             @endphp
-            <div id="referensiParent" class="sidebar-dropdown" style="display:flex; flex-direction:column; align-items:stretch;">
+            <div id="referensiParent" class="sidebar-dropdown"
+                style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="referensiBtn" class="menu-item {{ $isReferensiActive ? 'active submenu-open' : '' }}"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-book-open"></i></div>
@@ -312,6 +314,10 @@
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.status-kerjasama') ? 'active' : '' }}"
                             href="{{ route('unit.referensi.status-kerjasama') }}">
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.referensi.status-evaluasi') ? 'active' : '' }}"
+                            href="{{ route('unit.referensi.status-evaluasi') }}">
+                            <span class="submenu-dot"></span><span>Status Evaluasi</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.referensi.kriteria-mitra') ? 'active' : '' }}"
                             href="javascript:void(0)">
@@ -355,7 +361,7 @@
             @elseif(request()->routeIs('unit.mitra'))
                 @include('auth.layout.unit.mitra.index')
 
-            {{-- menu institusi --}}
+                {{-- menu institusi --}}
             @elseif(request()->routeIs('unit.institusi'))
                 @include('auth.layout.unit.institusi')
 
@@ -364,6 +370,9 @@
 
             @elseif(request()->routeIs('unit.referensi.status-kerjasama'))
                 @include('auth.layout.unit.referensi.status-kerjasama')
+
+            @elseif(request()->routeIs('unit.referensi.status-evaluasi'))
+                @include('auth.layout.unit.referensi.status-evaluasi')
 
             @elseif(request()->routeIs('unit.evaluasi.form'))
                 @include('auth.layout.unit.form_evaluasi')
