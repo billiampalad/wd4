@@ -1,3 +1,4 @@
+/* Header */
 .sk-page {
     --ud-bg: var(--bg);
     --ud-card: var(--surface);
@@ -128,6 +129,162 @@
     line-height: 1.65;
 }
 
+/* STAT CARDS */
+.dk-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-content: start;
+}
+
+.dk-stat-card {
+    background: var(--ud-card);
+    border: 1px solid var(--ud-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.dk-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dk-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dk-stat-card:hover::before {
+    opacity: 1;
+}
+
+.dk-stat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    background: #f1f5f9;
+    color: var(--ud-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dk-stat-card:hover .dk-stat-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.dk-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dk-stat-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ud-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dk-stat-value {
+    font-size: 28px;
+    font-weight: 850;
+    color: var(--ud-text);
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.dk-stat-value span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ud-muted);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* Card Variants */
+.dk-stat-total .dk-stat-icon {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    color: #0284c7;
+    box-shadow: 0 8px 16px -8px rgba(2, 132, 199, 0.4);
+}
+
+.dk-stat-primary .dk-stat-icon {
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    color: #7c3aed;
+    box-shadow: 0 8px 16px -8px rgba(124, 58, 237, 0.4);
+}
+
+.dk-stat-warning .dk-stat-icon {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #d97706;
+    box-shadow: 0 8px 16px -8px rgba(217, 119, 6, 0.4);
+}
+
+.dk-stat-success .dk-stat-icon {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    color: #16a34a;
+    box-shadow: 0 8px 16px -8px rgba(22, 163, 74, 0.4);
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] .dk-stat-card {
+    background: var(--ud-card);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px -10px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .dk-stat-card::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+}
+
+[data-theme="dark"] .dk-stat-card:hover {
+    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.6);
+    border-color: rgba(99, 102, 241, 0.5);
+}
+
+[data-theme="dark"] .dk-stat-total .dk-stat-icon {
+    background: rgba(2, 132, 199, 0.2);
+    color: #38bdf8;
+}
+
+[data-theme="dark"] .dk-stat-primary .dk-stat-icon {
+    background: rgba(124, 58, 237, 0.2);
+    color: #a78bfa;
+}
+
+[data-theme="dark"] .dk-stat-warning .dk-stat-icon {
+    background: rgba(217, 119, 6, 0.2);
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .dk-stat-success .dk-stat-icon {
+    background: rgba(22, 163, 74, 0.2);
+    color: #4ade80;
+}
+
 @media only screen and (max-width: 1180px) {
     .sk-page {
         grid-template-columns: 1fr;
@@ -143,6 +300,10 @@
         flex-wrap: wrap;
         font-size: 11px;
         margin-bottom: 8px;
+    }
+
+    .dk-stat-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 }
 

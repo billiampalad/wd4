@@ -29,33 +29,33 @@
         </div>
     </section>
 
-    <section class="dk-stats-grid">
+    <section class="dk-stat-grid">
         <div class="dk-stat-card dk-stat-total">
             <div class="dk-stat-icon"><i class="fas fa-layer-group"></i></div>
-            <div>
-                <span class="dk-stat-label">Total Institusi</span>
-                <div>{{ $totalInstitusi }} Data</div>
+            <div class="dk-stat-content">
+                <span class="dk-stat-label">Jumlah Institusi</span>
+                <div class="dk-stat-value">{{ $totalInstitusi }} <span>Data</span></div>
             </div>
         </div>
-        <div class="dk-stat-card dk-stat-active">
+        <div class="dk-stat-card dk-stat-primary">
             <div class="dk-stat-icon"><i class="fas fa-microchip"></i></div>
-            <div>
-                <span class="dk-stat-label">Jurusan</span>
-                <div>{{ $jurusanList->count() }} Data</div>
+            <div class="dk-stat-content">
+                <span class="dk-stat-label">Jumlah Jurusan</span>
+                <div class="dk-stat-value">{{ $jurusanList->count() }} <span>Data</span></div>
             </div>
         </div>
         <div class="dk-stat-card dk-stat-warning">
             <div class="dk-stat-icon"><i class="fas fa-building-columns"></i></div>
-            <div>
-                <span class="dk-stat-label">UPA</span>
-                <div>{{ $upaList->count() }} Data</div>
+            <div class="dk-stat-content">
+                <span class="dk-stat-label">Jumlah UPA</span>
+                <div class="dk-stat-value">{{ $upaList->count() }} <span>Data</span></div>
             </div>
         </div>
-        <div class="dk-stat-card dk-stat-danger">
+        <div class="dk-stat-card dk-stat-success">
             <div class="dk-stat-icon"><i class="fas fa-landmark"></i></div>
-            <div>
-                <span class="dk-stat-label">Pusat</span>
-                <div>{{ $pusatList->count() }} Data</div>
+            <div class="dk-stat-content">
+                <span class="dk-stat-label">Jumlah Pusat</span>
+                <div class="dk-stat-value">{{ $pusatList->count() }} <span>Data</span></div>
             </div>
         </div>
     </section>
