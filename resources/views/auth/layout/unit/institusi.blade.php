@@ -103,9 +103,12 @@
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
-                            <th class="um-th um-th-num" style="width: 72px;">#</th>
-                            <th class="um-th">Nama Institusi</th>
-                            <th class="um-th" style="width: 180px;">Jenis</th>
+                            <th class="um-th um-th-num">#</th>
+                            <th class="um-th dk-col-name">Nama Institusi</th>
+                            <th class="um-th" style="text-align: center;">MoU</th>
+                            <th class="um-th" style="text-align: center;">MoA</th>
+                            <th class="um-th" style="text-align: center;">IA</th>
+                            <th class="um-th" style="text-align: center;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,19 +117,34 @@
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <div class="dk-entity">
-                                        <span class="dk-entity-icon dk-entity-indigo" style="flex-shrink: 0;">
-                                            <i class="fas fa-microchip"></i>
-                                        </span>
-                                        <span class="dk-entity-text">{{ $jurusan->nama_jurusan }}</span>
+                                <td class="um-td dk-col-name" style="vertical-align: middle;">
+                                    <div class="dk-entity" style="gap: 14px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span class="dk-entity-text"
+                                                style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $jurusan->nama_jurusan }}</span>
+                                            <span class="dk-status dk-status-info"
+                                                style="width: fit-content; font-size: 10.5px; padding: 1px 8px; height: auto;">
+                                                <i class="fas fa-microchip" style="font-size: 9px; margin-right: 4px;"></i>
+                                                Jurusan
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <span class="dk-status dk-status-info">
-                                        <i class="fas fa-microchip"></i>
-                                        Jurusan
-                                    </span>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-info"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $jurusan->mou_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-warning"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $jurusan->moa_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-danger"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $jurusan->ia_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-active"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $jurusan->total_count }}</span>
                                 </td>
                             </tr>
                         @empty
@@ -138,19 +156,35 @@
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <div class="dk-entity">
-                                        <span class="dk-entity-icon dk-entity-cyan" style="flex-shrink: 0;">
-                                            <i class="fas fa-building-columns"></i>
-                                        </span>
-                                        <span class="dk-entity-text">{{ $upa->nama_upa }}</span>
+                                <td class="um-td dk-col-name" style="vertical-align: middle;">
+                                    <div class="dk-entity" style="gap: 14px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span class="dk-entity-text"
+                                                style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $upa->nama_upa }}</span>
+                                            <span class="dk-status dk-status-warning"
+                                                style="width: fit-content; font-size: 10.5px; padding: 1px 8px; height: auto;">
+                                                <i class="fas fa-building-columns"
+                                                    style="font-size: 9px; margin-right: 4px;"></i>
+                                                UPA
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <span class="dk-status dk-status-warning">
-                                        <i class="fas fa-building-columns"></i>
-                                        UPA
-                                    </span>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-info"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $upa->mou_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-warning"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $upa->moa_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-danger"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $upa->ia_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-active"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $upa->total_count }}</span>
                                 </td>
                             </tr>
                         @endforeach
@@ -161,26 +195,41 @@
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
                                     <span class="um-num dk-num">{{ str_pad($index, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <div class="dk-entity">
-                                        <span class="dk-entity-icon dk-entity-violet" style="flex-shrink: 0;">
-                                            <i class="fas fa-landmark"></i>
-                                        </span>
-                                        <span class="dk-entity-text">{{ $pusat->nama_pusat }}</span>
+                                <td class="um-td dk-col-name" style="vertical-align: middle;">
+                                    <div class="dk-entity" style="gap: 14px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span class="dk-entity-text"
+                                                style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $pusat->nama_pusat }}</span>
+                                            <span class="dk-status dk-status-active"
+                                                style="width: fit-content; font-size: 10.5px; padding: 1px 8px; height: auto;">
+                                                <i class="fas fa-landmark" style="font-size: 9px; margin-right: 4px;"></i>
+                                                Pusat
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="um-td" style="vertical-align: middle;">
-                                    <span class="dk-status dk-status-active">
-                                        <i class="fas fa-landmark"></i>
-                                        Pusat
-                                    </span>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-info"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $pusat->mou_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-warning"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $pusat->moa_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-danger"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $pusat->ia_count }}</span>
+                                </td>
+                                <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                    <span class="dk-status dk-status-active"
+                                        style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $pusat->total_count }}</span>
                                 </td>
                             </tr>
                         @endforeach
 
                         @if ($totalInstitusi === 0)
                             <tr data-empty>
-                                <td colspan="3" class="um-empty">
+                                <td colspan="6" class="um-empty">
                                     <div class="um-empty-state dk-empty-state">
                                         <div class="um-empty-icon dk-empty-icon"><i class="fas fa-university"></i></div>
                                         <p class="um-empty-title">Belum ada data institusi</p>

@@ -568,3 +568,9 @@
         font-size: 22px;
     }
 }
+
+/* Table Name Column Custom Width */
+.dk-col-name .dk-entity-text {
+    white-space: nowrap;
+    overflow-wrap: normal;
+}

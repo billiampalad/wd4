@@ -432,16 +432,75 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $upas = Upa::orderBy('nama_upa')->get();
-        $pusats = Pusat::orderBy('nama_pusat')->get();
-
-        // Count cooperations by jenis
+        // Count cooperations by jenis (global/top bar stats)
         $mouCount = Cooperation::where('jenis', 'like', '%MoU%')->count();
         $moaCount = Cooperation::where('jenis', 'like', '%MoA%')->count();
         $iaCount  = Cooperation::where('jenis', 'like', '%IA%')
                         ->where('jenis', 'not like', '%MoA%')
                         ->count();
+
+        // Single aggregate query to get counts grouped by institution and jenis
+        $coopCounts = Cooperation::select('jurusan_id', 'upa_id', 'pusat_id', 'jenis', DB::raw('count(*) as count'))
+            ->where(function($q) {
+                $q->whereNotNull('jurusan_id')
+                  ->orWhereNotNull('upa_id')
+                  ->orWhereNotNull('pusat_id');
+            })
+            ->groupBy('jurusan_id', 'upa_id', 'pusat_id', 'jenis')
+            ->get();
+
+        $getCounts = function($type, $id) use ($coopCounts) {
+            $mou = 0;
+            $moa = 0;
+            $ia = 0;
+
+            foreach ($coopCounts as $row) {
+                if ($row->{$type . '_id'} == $id) {
+                    $jenis = strtolower($row->jenis);
+                    if (str_contains($jenis, 'mou')) {
+                        $mou += $row->count;
+                    } elseif (str_contains($jenis, 'moa')) {
+                        $moa += $row->count;
+                    } elseif (str_contains($jenis, 'ia')) {
+                        $ia += $row->count;
+                    }
+                }
+            }
+
+            return [
+                'mou_count' => $mou,
+                'moa_count' => $moa,
+                'ia_count' => $ia,
+                'total_count' => $mou + $moa + $ia
+            ];
+        };
+
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get()->map(function ($jurusan) use ($getCounts) {
+            $counts = $getCounts('jurusan', $jurusan->id);
+            $jurusan->mou_count = $counts['mou_count'];
+            $jurusan->moa_count = $counts['moa_count'];
+            $jurusan->ia_count = $counts['ia_count'];
+            $jurusan->total_count = $counts['total_count'];
+            return $jurusan;
+        });
+
+        $upas = Upa::orderBy('nama_upa')->get()->map(function ($upa) use ($getCounts) {
+            $counts = $getCounts('upa', $upa->id);
+            $upa->mou_count = $counts['mou_count'];
+            $upa->moa_count = $counts['moa_count'];
+            $upa->ia_count = $counts['ia_count'];
+            $upa->total_count = $counts['total_count'];
+            return $upa;
+        });
+
+        $pusats = Pusat::orderBy('nama_pusat')->get()->map(function ($pusat) use ($getCounts) {
+            $counts = $getCounts('pusat', $pusat->id);
+            $pusat->mou_count = $counts['mou_count'];
+            $pusat->moa_count = $counts['moa_count'];
+            $pusat->ia_count = $counts['ia_count'];
+            $pusat->total_count = $counts['total_count'];
+            return $pusat;
+        });
 
         return view('auth.unit', compact('jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
