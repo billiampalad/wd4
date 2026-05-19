@@ -5,25 +5,25 @@
     $totalInstitusi = $jurusanList->count() + $upaList->count() + $pusatList->count();
 @endphp
 
-<main id="mainContent" class="dk-page">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <span class="current">Institusi</span>
-            </div>
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
 
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas fa-university"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Referensi Unit</span>
-                    <h2 id="pageTitle">Institusi Pelaksana</h2>
-                    <p id="pageDesc">Daftar jurusan, UPA, dan pusat yang terlibat dalam pengelolaan kerjasama.</p>
+<main id="mainContent" class="sk-page">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('unit.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <span>Institusi</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-chart-line"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title">Institusi Pelaksana</h2>
+                    <p class="ud-subtitle">
+                        Daftar jurusan, UPA, dan pusat yang terlibat dalam pengelolaan kerjasama.
+                    </p>
                 </div>
             </div>
         </div>
