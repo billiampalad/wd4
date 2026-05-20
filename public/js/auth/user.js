@@ -85,6 +85,10 @@ function initDashboard() {
                 document.body.classList.remove('sidebar-collapsed');
             }
             localStorage.setItem('sidebar_collapsed', collapsed ? '1' : '0');
+
+            window.setTimeout(function () {
+                window.dispatchEvent(new Event('resize'));
+            }, 420);
         }
 
         // Apply saved state on first load

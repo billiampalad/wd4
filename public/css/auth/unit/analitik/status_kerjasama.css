@@ -119,6 +119,9 @@
 .geo-page {
     grid-template-columns: 1fr;
     gap: 24px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .geo-stat-grid {
@@ -176,8 +179,9 @@
 
 .geo-layout {
     min-width: 0;
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(420px, 1fr) minmax(300px, 380px);
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
     gap: 20px;
     align-items: start;
 }
@@ -190,8 +194,9 @@
 
 .geo-chart-grid {
     min-width: 0;
+    width: 100%;
     display: grid;
-    grid-template-columns: minmax(240px, 1fr) minmax(280px, 1.5fr);
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.35fr);
     gap: 20px;
 }
 
@@ -1633,6 +1638,16 @@ button.sk-due-cell.is-selected {
 
     .sk-two-column-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media only screen and (min-width: 1181px) and (max-width: 1380px) {
+    body:not(.sidebar-collapsed) .geo-layout {
+        grid-template-columns: 1fr;
+    }
+
+    body:not(.sidebar-collapsed) .geo-chart-grid {
+        grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr);
     }
 }
 
