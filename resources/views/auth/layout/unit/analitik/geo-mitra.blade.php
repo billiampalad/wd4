@@ -8,7 +8,7 @@
                 <span>/</span>
                 <a href="{{ route('unit.dashboard') }}">Beranda</a>
                 <span>/</span>
-                <span>Geo Sebaran Mitra</span>
+                <span>Geo Mitra</span>
             </div>
             <div class="ud-title-row">
                 <span class="ud-title-icon"><i class="fas fa-globe-asia"></i></span>
@@ -156,36 +156,36 @@
                     </table>
                 </div>
             </section>
-        </div>
 
-        <!-- Right: Latest International Mitras -->
-        <section class="sk-card" style="border-radius: 18px; padding: 20px;">
-            <header style="margin-bottom: 20px;">
-                <h2 class="sk-title" style="font-size: 16px; font-weight: 800;">
-                    <i class="fas fa-globe-americas"></i>
-                    <span>Mitra Internasional Terbaru</span>
-                </h2>
-                <p style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">Pendaftaran mitra berskala internasional teranyar.</p>
-            </header>
+            <!-- Latest International Mitras -->
+            <section class="sk-card" style="border-radius: 18px; padding: 20px;">
+                <header style="margin-bottom: 20px;">
+                    <h2 class="sk-title" style="font-size: 16px; font-weight: 800;">
+                        <i class="fas fa-globe-americas"></i>
+                        <span>Mitra Internasional Terbaru</span>
+                    </h2>
+                    <p style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">Pendaftaran mitra berskala internasional teranyar.</p>
+                </header>
 
-            <div style="display: grid; gap: 14px;">
-                @forelse ($latestInternational as $mitra)
-                    <div style="border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface2); display: flex; flex-direction: column; gap: 6px;">
-                        <strong style="color: var(--text); font-size: 13.5px; font-weight: 800; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                            {{ $mitra->nama_mitra }}
-                        </strong>
-                        <span style="font-size: 11.5px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-map-marker-alt"></i> {{ $mitra->negara }}
-                        </span>
-                        <div style="margin-top: 4px; font-size: 11px; color: var(--text-sub);">
-                            Terdaftar: {{ $mitra->created_at ? $mitra->created_at->translatedFormat('d M Y') : '-' }}
+                <div style="display: grid; gap: 14px;">
+                    @forelse ($latestInternational as $mitra)
+                        <div style="border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface2); display: flex; flex-direction: column; gap: 6px;">
+                            <strong style="color: var(--text); font-size: 13.5px; font-weight: 800; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                                {{ $mitra->nama_mitra }}
+                            </strong>
+                            <span style="font-size: 11.5px; color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-map-marker-alt"></i> {{ $mitra->negara }}
+                            </span>
+                            <div style="margin-top: 4px; font-size: 11px; color: var(--text-sub);">
+                                Terdaftar: {{ $mitra->created_at ? $mitra->created_at->translatedFormat('d M Y') : '-' }}
+                            </div>
                         </div>
-                    </div>
-                @empty
-                    <div style="text-align: center; padding: 20px; color: var(--text-sub); font-size: 13px;">Belum ada data mitra internasional</div>
-                @endforelse
-            </div>
-        </section>
+                    @empty
+                        <div style="text-align: center; padding: 20px; color: var(--text-sub); font-size: 13px;">Belum ada data mitra internasional</div>
+                    @endforelse
+                </div>
+            </section>
+        </div>
     </div>
 
     <!-- Hidden Payload for Chart JS -->
