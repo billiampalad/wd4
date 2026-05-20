@@ -324,6 +324,9 @@ function initDashboard() {
             window.dispatchEvent(new CustomEvent('pimpinan-global-search', {
                 detail: q
             }));
+            window.dispatchEvent(new CustomEvent('unit-dashboard-global-search', {
+                detail: q
+            }));
 
             // Select all relevant table bodies
             const tables = Array.from(document.querySelectorAll('#mainContent .um-table tbody'));

@@ -9,27 +9,51 @@ function initUnitDashboard() {
     const tabs = document.querySelectorAll('[data-filter-tab]');
     const rows = document.querySelectorAll('[data-kerjasama-row]');
     const noResult = document.getElementById('unitDashNoResult');
+    const navSearchInput = document.getElementById('navSearchInput');
+    let activeDocFilter = 'all';
+    let dashboardSearchQuery = (navSearchInput?.value || '').trim().toLowerCase();
+
+    function applyDashboardTableFilter() {
+        let visibleCount = 0;
+
+        rows.forEach(function(row) {
+            const matchesTab = activeDocFilter === 'all' || row.dataset.docType === activeDocFilter;
+            const matchesSearch = !dashboardSearchQuery || row.textContent.toLowerCase().includes(dashboardSearchQuery);
+            const isVisible = matchesTab && matchesSearch;
+
+            row.style.display = isVisible ? '' : 'none';
+            if (isVisible) visibleCount += 1;
+        });
+
+        if (noResult) {
+            noResult.style.display = visibleCount === 0 && rows.length > 0 ? '' : 'none';
+            const empty = noResult.querySelector('.ud-empty');
+            if (empty) {
+                empty.textContent = dashboardSearchQuery
+                    ? 'Tidak ada dokumen yang cocok dengan pencarian ini.'
+                    : 'Tidak ada dokumen pada filter ini.';
+            }
+        }
+    }
 
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function() {
-            const filter = tab.dataset.filterTab;
-            let visibleCount = 0;
+            activeDocFilter = tab.dataset.filterTab;
 
             tabs.forEach(function(item) {
                 item.classList.toggle('is-active', item === tab);
             });
 
-            rows.forEach(function(row) {
-                const isVisible = filter === 'all' || row.dataset.docType === filter;
-                row.style.display = isVisible ? '' : 'none';
-                if (isVisible) visibleCount += 1;
-            });
-
-            if (noResult) {
-                noResult.style.display = visibleCount === 0 ? '' : 'none';
-            }
+            applyDashboardTableFilter();
         });
     });
+
+    window.addEventListener('unit-dashboard-global-search', function(event) {
+        dashboardSearchQuery = String(event.detail || '').trim().toLowerCase();
+        applyDashboardTableFilter();
+    });
+
+    applyDashboardTableFilter();
 
     document.querySelectorAll('[data-save-document-link]').forEach(function(button) {
         button.addEventListener('click', async function() {
