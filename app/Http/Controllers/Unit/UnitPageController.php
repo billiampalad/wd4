@@ -622,6 +622,55 @@ class UnitPageController extends Controller
         return view('auth.unit', compact('kriterias'));
     }
 
+    public function klasifikasiMitra()
+    {
+        $this->resolveUnitId();
+
+        $totalMitras = \App\Models\Mitra::count();
+
+        $classifications = \App\Models\Klasifikasi::withCount('mitras')
+            ->orderBy('mitras_count', 'desc')
+            ->get();
+
+        $chartLabels = $classifications->pluck('nama')->all();
+        $chartData = $classifications->pluck('mitras_count')->all();
+
+        $colors = [
+            '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b',
+            '#ef4444', '#14b8a6', '#6366f1', '#a855f7', '#f43f5e',
+            '#eab308', '#06b6d4', '#f97316', '#84cc16', '#64748b'
+        ];
+
+        while (count($colors) < count($chartLabels)) {
+            $colors[] = '#' . substr(md5(rand()), 0, 6);
+        }
+        $chartColors = array_slice($colors, 0, count($chartLabels));
+
+        $chartDataPayload = [
+            'labels' => $chartLabels,
+            'data' => $chartData,
+            'colors' => $chartColors,
+        ];
+
+        $mostFrequent = $classifications->first();
+        $mostFrequentName = $mostFrequent && $mostFrequent->mitras_count > 0 ? $mostFrequent->nama : '-';
+        $mostFrequentCount = $mostFrequent ? $mostFrequent->mitras_count : 0;
+
+        $topMitras = \App\Models\Mitra::withCount('cooperations')
+            ->orderBy('cooperations_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('auth.unit', compact(
+            'totalMitras',
+            'classifications',
+            'chartDataPayload',
+            'mostFrequentName',
+            'mostFrequentCount',
+            'topMitras'
+        ));
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

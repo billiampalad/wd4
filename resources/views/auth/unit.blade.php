@@ -233,7 +233,7 @@
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.analitik.klasifikasi-mitra') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.analitik.klasifikasi-mitra') }}">
                             <span class="submenu-dot"></span><span>Klarifikasi Mitra</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.analitik.geo-mitra') ? 'active' : '' }}"
@@ -350,6 +350,8 @@
                 @include('auth.layout.unit.dkerjasama')
             @elseif(request()->routeIs('unit.analitik.status-kerjasama'))
                 @include('auth.layout.unit.analitik.status_kerjasama')
+            @elseif(request()->routeIs('unit.analitik.klasifikasi-mitra'))
+                @include('auth.layout.unit.analitik.klarifikasi-mitra')
             @elseif(request()->routeIs('unit.mitra.create'))
                 @include('auth.layout.unit.mitra.create')
             @elseif(request()->routeIs('unit.mitra.edit'))
