@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 // use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PublicLandingController;
+use App\Http\Controllers\PublicPengajuanKerjasamaController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AdminAuthController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Admin\PusatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
 use App\Http\Controllers\Jurusan\KerjasamaJurusanController;
+use App\Http\Controllers\Pimpinan\PengajuanKerjasamaMitraController;
 use App\Http\Controllers\Unit\KerjasamaUnitController;
 
 /*
@@ -27,81 +30,9 @@ use App\Http\Controllers\Unit\KerjasamaUnitController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function (\Illuminate\Http\Request $request) {
-    $query = \App\Models\Cooperation::with('mitra')->latest();
-
-    if ($search = trim((string) $request->get('search'))) {
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-                ->orWhere('doc_number', 'like', "%{$search}%")
-                ->orWhere('pks_number', 'like', "%{$search}%")
-                ->orWhere('jenis', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('status', 'like', "%{$search}%")
-                ->orWhere('status_dokumen', 'like', "%{$search}%")
-                ->orWhere('internal_instansi', 'like', "%{$search}%")
-                ->orWhere('start_date', 'like', "%{$search}%")
-                ->orWhere('end_date', 'like', "%{$search}%")
-                ->orWhereHas('mitra', function ($mitraQuery) use ($search) {
-                    $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
-                        ->orWhere('kategori', 'like', "%{$search}%")
-                        ->orWhere('negara', 'like', "%{$search}%")
-                        ->orWhere('alamat', 'like', "%{$search}%")
-                        ->orWhere('telp', 'like', "%{$search}%")
-                        ->orWhere('website', 'like', "%{$search}%")
-                        ->orWhereHas('klasifikasi', function ($klasifikasiQuery) use ($search) {
-                            $klasifikasiQuery->where('nama', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhereHas('details', function ($detailQuery) use ($search) {
-                    $detailQuery->where('tujuan', 'like', "%{$search}%")
-                        ->orWhere('indikator_kinerja', 'like', "%{$search}%")
-                        ->orWhere('keterangan', 'like', "%{$search}%")
-                        ->orWhere('nilai_kontrak', 'like', "%{$search}%")
-                        ->orWhere('income', 'like', "%{$search}%")
-                        ->orWhere('volume_luaran', 'like', "%{$search}%")
-                        ->orWhere('satuan_luaran', 'like', "%{$search}%")
-                        ->orWhereHas('jenisKerjasama', function ($jenisQuery) use ($search) {
-                            $jenisQuery->where('nama_kerjasama', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhereHas('jurusans', function ($jurusanQuery) use ($search) {
-                    $jurusanQuery->where('nama_jurusan', 'like', "%{$search}%")
-                        ->orWhere('kode_jurusan', 'like', "%{$search}%");
-                })
-                ->orWhereHas('prodis', function ($prodiQuery) use ($search) {
-                    $prodiQuery->where('nama_prodi', 'like', "%{$search}%")
-                        ->orWhere('kode_prodi', 'like', "%{$search}%")
-                        ->orWhere('jenjang', 'like', "%{$search}%");
-                })
-                ->orWhereHas('upas', function ($upaQuery) use ($search) {
-                    $upaQuery->where('nama_upa', 'like', "%{$search}%");
-                })
-                ->orWhereHas('pusats', function ($pusatQuery) use ($search) {
-                    $pusatQuery->where('nama_pusat', 'like', "%{$search}%");
-                });
-        });
-    }
-
-    $kategori = $request->get('kategori_mitra', 'all');
-    if ($kategori !== 'all') {
-        $query->whereHas('mitra', function ($q) use ($kategori) {
-            $q->where('kategori', $kategori);
-        });
-    }
-
-    $kerjasama = $query->paginate(9)->withQueryString();
-
-    $stats = [
-        'total_kerjasama' => \App\Models\Cooperation::count(),
-        'total_mitra' => \App\Models\Mitra::count(),
-        'total_aktif' => \App\Models\Cooperation::where('status', 'aktif')->count(),
-        'mitra_nasional' => \App\Models\Mitra::where('kategori', 'nasional')->count(),
-        'mitra_internasional' => \App\Models\Mitra::where('kategori', 'internasional')->count(),
-    ];
-
-    return view('auth.welcome', compact('kerjasama', 'stats'));
-});
+Route::get('/', [PublicLandingController::class, 'index']);
+Route::get('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'create'])->name('pengajuan.kerjasama.create');
+Route::post('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'store'])->name('pengajuan.kerjasama.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +83,8 @@ Route::middleware(['auth', 'role:pimpinan'])->group(function () {
     Route::get('/pimpinan/monitoring', [DashboardController::class, 'pimpinanMonitoring'])->name('pimpinan.monitoring');
     Route::get('/pimpinan/monitoring/{id}', [DashboardController::class, 'pimpinanMonitoringDetail'])->name('pimpinan.monitoring.detail');
     Route::get('/pimpinan/evaluasi', [DashboardController::class, 'pimpinanEvaluasi'])->name('pimpinan.evaluasi');
+    Route::get('/pimpinan/pengajuan-mitra', [PengajuanKerjasamaMitraController::class, 'index'])->name('pimpinan.pengajuan_mitra');
+    Route::post('/pimpinan/pengajuan-mitra/{id}/review', [PengajuanKerjasamaMitraController::class, 'review'])->name('pimpinan.pengajuan_mitra.review');
     Route::get('/pimpinan/evaluasi/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'show'])->name('pimpinan.evaluasi.show');
     Route::post('/pimpinan/evaluate/{id}', [\App\Http\Controllers\Pimpinan\EvaluasiPimpinanController::class, 'evaluate'])->name('pimpinan.evaluate');
 

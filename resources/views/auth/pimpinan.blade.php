@@ -131,8 +131,26 @@
                         // Filter khusus pimpinan agar angka sinkron dengan data yang butuh evaluasi
                         if (strtolower($user->role->role_name ?? '') === 'pimpinan') {
                         $query->where(function($q) {
-                        $q->whereHas('cooperation', function($sq) {
+                        $q->where(function($sourceQuery) {
+                        $sourceQuery
+                        ->where(function($typedQuery) {
+                        $typedQuery
+                        ->where(function($typeQuery) {
+                        $typeQuery
+                        ->whereNull('source_type')
+                        ->orWhere('source_type', 'cooperation');
+                        })
+                        ->whereHas('cooperation', function($sq) {
                         $sq->where('status_dokumen', 'Menunggu Evaluasi');
+                        });
+                        })
+                        ->orWhere(function($typedQuery) {
+                        $typedQuery
+                        ->where('source_type', 'pengajuan_mitra')
+                        ->whereHas('pengajuanKerjasamaMitra', function($sq) {
+                        $sq->where('status', 'diajukan');
+                        });
+                        });
                         })
                         ->orWhereNull('source_id')
                         ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
@@ -237,6 +255,11 @@
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
                 <span>Evaluasi Data Kerjasama</span>
             </a>
+            <a class="menu-item {{ request()->routeIs('pimpinan.pengajuan_mitra*') ? 'active' : '' }}"
+                href="{{ route('pimpinan.pengajuan_mitra') }}">
+                <div class="menu-icon"><i class="fas fa-handshake-angle"></i></div>
+                <span>Pengajuan Mitra</span>
+            </a>
             <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}"
                 href="{{ route('pimpinan.laporan') }}">
                 <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>
@@ -256,6 +279,8 @@
         @include('auth.layout.pimpinan.monitoring')
         @elseif(request()->routeIs('pimpinan.evaluasi'))
         @include('auth.layout.pimpinan.evaluasivalidasi')
+        @elseif(request()->routeIs('pimpinan.pengajuan_mitra') || (isset($view) && $view == 'pengajuan_mitra'))
+        @include('auth.layout.pimpinan.pengajuan_mitra')
         @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
         @include('auth.layout.pimpinan.detail_monitoring')
         @elseif(isset($view) && $view == 'detail_evaluasi')

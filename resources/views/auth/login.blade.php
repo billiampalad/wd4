@@ -11,9 +11,18 @@
 
 <body>
 
-    <div class="bg-shape bg-shape-1"></div>
-    <div class="bg-shape bg-shape-2"></div>
-    <div class="dots"></div>
+    <div class="login-background" aria-hidden="true">
+        <div class="background-orb orb-top"></div>
+        <div class="background-orb orb-bottom"></div>
+        <div class="background-grid"></div>
+        <div class="background-bar bar-1"></div>
+        <div class="background-bar bar-2"></div>
+        <div class="background-bar bar-3"></div>
+        <div class="background-bar bar-4"></div>
+        <div class="background-bar bar-5"></div>
+        <div class="background-bar bar-6"></div>
+        <div class="background-bar bar-7"></div>
+    </div>
 
     <div class="card-wrapper">
 
