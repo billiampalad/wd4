@@ -671,6 +671,63 @@ class UnitPageController extends Controller
         ));
     }
 
+    public function geoMitra()
+    {
+        $this->resolveUnitId();
+
+        $nasionalCount = \App\Models\Mitra::where('kategori', 'nasional')->count();
+        $internasionalCount = \App\Models\Mitra::where('kategori', 'internasional')->count();
+        $totalMitras = $nasionalCount + $internasionalCount;
+
+        $totalCountries = \App\Models\Mitra::whereNotNull('negara')
+            ->where('negara', '<>', '')
+            ->distinct('negara')
+            ->count('negara');
+
+        if ($totalCountries === 0 && $totalMitras > 0) {
+            $totalCountries = 1;
+        }
+
+        $rawCountries = \App\Models\Mitra::select(
+                DB::raw("COALESCE(NULLIF(TRIM(negara), ''), 'Indonesia') as country_name"),
+                DB::raw("COUNT(*) as mitras_count"),
+                DB::raw("SUM(CASE WHEN kategori = 'nasional' THEN 1 ELSE 0 END) as nasional_count"),
+                DB::raw("SUM(CASE WHEN kategori = 'internasional' THEN 1 ELSE 0 END) as internasional_count")
+            )
+            ->groupBy('country_name')
+            ->orderBy('mitras_count', 'desc')
+            ->get();
+
+        $categoryChartData = [
+            'labels' => ['Nasional', 'Internasional'],
+            'data' => [$nasionalCount, $internasionalCount],
+            'colors' => ['#10b981', '#3b82f6']
+        ];
+
+        $topCountries = $rawCountries->take(10);
+        $countryChartData = [
+            'labels' => $topCountries->pluck('country_name')->all(),
+            'data' => $topCountries->pluck('mitras_count')->all(),
+            'colors' => ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81', '#1e1b4b', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc']
+        ];
+
+        $latestInternational = \App\Models\Mitra::where('kategori', 'internasional')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('auth.unit', compact(
+            'nasionalCount',
+            'internasionalCount',
+            'totalMitras',
+            'totalCountries',
+            'rawCountries',
+            'categoryChartData',
+            'countryChartData',
+            'latestInternational'
+        ));
+    }
+
     public function dkerjasama(Request $request)
     {
         $unitId = $this->resolveUnitId();

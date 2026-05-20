@@ -237,7 +237,7 @@
                             <span class="submenu-dot"></span><span>Klarifikasi Mitra</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.analitik.geo-mitra') ? 'active' : '' }}"
-                            href="javascript:void(0)">
+                            href="{{ route('unit.analitik.geo-mitra') }}">
                             <span class="submenu-dot"></span><span>Geo Mitra</span>
                         </a>
                     </div>
@@ -352,6 +352,8 @@
                 @include('auth.layout.unit.analitik.status_kerjasama')
             @elseif(request()->routeIs('unit.analitik.klasifikasi-mitra'))
                 @include('auth.layout.unit.analitik.klarifikasi-mitra')
+            @elseif(request()->routeIs('unit.analitik.geo-mitra'))
+                @include('auth.layout.unit.analitik.geo-mitra')
             @elseif(request()->routeIs('unit.mitra.create'))
                 @include('auth.layout.unit.mitra.create')
             @elseif(request()->routeIs('unit.mitra.edit'))

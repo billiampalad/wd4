@@ -116,6 +116,105 @@
     flex-direction: column;
 }
 
+.geo-page {
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.geo-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.geo-stat-card {
+    min-width: 0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.geo-stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    font-size: 16px;
+}
+
+.geo-stat-copy {
+    min-width: 0;
+}
+
+.geo-stat-copy span {
+    display: block;
+    overflow: hidden;
+    color: var(--text-sub);
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.geo-stat-copy strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 850;
+    line-height: 1;
+}
+
+.geo-layout {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(420px, 1fr) minmax(300px, 380px);
+    gap: 20px;
+    align-items: start;
+}
+
+.geo-stack {
+    min-width: 0;
+    display: grid;
+    gap: 20px;
+}
+
+.geo-chart-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(280px, 1.5fr);
+    gap: 20px;
+}
+
+.geo-chart-wrap {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.geo-chart-wrap-kategori {
+    height: 200px;
+}
+
+.geo-chart-wrap-negara {
+    height: 250px;
+}
+
+.geo-chart-wrap canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .sk-status-card {
     align-self: stretch;
     border-radius: 18px;
@@ -1507,6 +1606,14 @@ button.sk-due-cell.is-selected {
         gap: 18px;
     }
 
+    .geo-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-chart-grid {
+        grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.35fr);
+    }
+
     .ud-topbar {
         align-items: stretch;
         flex-direction: column;
@@ -1532,6 +1639,50 @@ button.sk-due-cell.is-selected {
 @media only screen and (max-width: 767px) {
     .sk-page {
         padding: 10px;
+    }
+
+    .geo-page {
+        gap: 16px;
+    }
+
+    .geo-stat-grid,
+    .geo-layout,
+    .geo-stack,
+    .geo-chart-grid {
+        gap: 12px;
+    }
+
+    .geo-stat-grid {
+        grid-template-columns: repeat(4, minmax(136px, 1fr));
+    }
+
+    .geo-stat-card {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .geo-stat-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        font-size: 14px;
+    }
+
+    .geo-stat-copy span {
+        font-size: 9px;
+    }
+
+    .geo-stat-copy strong {
+        font-size: 18px;
+    }
+
+    .geo-chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .geo-chart-wrap-kategori,
+    .geo-chart-wrap-negara {
+        height: 230px;
     }
 
     .ud-topbar {
