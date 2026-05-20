@@ -16,6 +16,9 @@ class Mitra extends Model
         'alamat',
         'kategori',
         'negara',
+        'country_code',
+        'provinsi',
+        'province_code',
         'telp',
         'website',
     ];

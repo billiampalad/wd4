@@ -160,6 +160,77 @@
                 @endif
             </article>
 
+             <article class="analytics-card analytics-card-full analytics-card-geo" data-analytics-card data-geo-card>
+                 <div class="analytics-card-head geo-card-head">
+                     <div>
+                         <span class="analytics-card-label">Sebaran Geografis</span>
+                         <h4 class="analytics-card-title">Choropleth kerja sama berdasarkan lokasi mitra</h4>
+                     </div>
+
+                    <div class="geo-controls">
+                        <div class="geo-toggle" role="tablist" aria-label="Pilih peta">
+                            <button type="button" class="geo-toggle-btn is-active" data-geo-toggle="world"
+                                id="geo-tab-world" role="tab" aria-selected="true" aria-controls="geo-panel-world">
+                                Dunia
+                            </button>
+                            <button type="button" class="geo-toggle-btn" data-geo-toggle="indonesia" id="geo-tab-indonesia"
+                                role="tab" aria-selected="false" aria-controls="geo-panel-indonesia">
+                                Indonesia
+                            </button>
+                        </div>
+
+                        <div class="geo-metric-controls" aria-label="Pengaturan visualisasi peta">
+                            <label class="geo-metric">
+                                <span class="geo-metric-label">Metrik</span>
+                                <select class="geo-metric-select" data-geo-metric>
+                                    <option value="cooperations_total">Jumlah kerja sama</option>
+                                    <option value="cooperations_active">Kerja sama aktif</option>
+                                    <option value="mitras_unique">Mitra unik</option>
+                                    <option value="cooperations_expiring_90">Akan berakhir (90 hari)</option>
+                                </select>
+                            </label>
+
+                            <div class="geo-scale" role="group" aria-label="Skala nilai peta">
+                                <button type="button" class="geo-scale-btn is-active" data-geo-scale="absolute"
+                                    aria-pressed="true">
+                                    Absolut
+                                </button>
+                                <button type="button" class="geo-scale-btn" data-geo-scale="share" aria-pressed="false">
+                                    Persen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+
+                 <div class="geo-card-body">
+                     <div class="geo-panel is-active" id="geo-panel-world" role="tabpanel" aria-labelledby="geo-tab-world">
+                         <div class="geo-map" data-geo-map="world" role="img"
+                             aria-label="Peta dunia choropleth sebaran kerja sama"></div>
+                        <div class="geo-summary" data-geo-summary="world" aria-live="polite"></div>
+                     </div>
+
+                     <div class="geo-panel" id="geo-panel-indonesia" role="tabpanel" aria-labelledby="geo-tab-indonesia"
+                         hidden>
+                         <div class="geo-map" data-geo-map="indonesia" role="img"
+                             aria-label="Peta Indonesia choropleth sebaran kerja sama"></div>
+                        <div class="geo-summary" data-geo-summary="indonesia" aria-live="polite"></div>
+                         <p class="geo-hint" data-geo-hint hidden>
+                             Tip: lengkapi data provinsi mitra agar peta Indonesia lebih akurat.
+                         </p>
+                     </div>
+
+                     <div class="geo-legend" aria-label="Legenda choropleth">
+                         <span class="geo-legend-min" data-geo-legend-min>0</span>
+                         <span class="geo-legend-bar" aria-hidden="true"></span>
+                         <span class="geo-legend-max" data-geo-legend-max>0</span>
+                     </div>
+                    <p class="geo-footnote">
+                        Klik negara/provinsi untuk memfilter daftar data di bawah.
+                    </p>
+                 </div>
+             </article>
+
             <article class="analytics-card analytics-card-full" data-analytics-card>
                 <div class="analytics-card-head">
                     <div>

@@ -27,6 +27,8 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/welcome-stats.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 
 <body>
@@ -450,6 +452,17 @@
                     $activeFilterChips[] = $statusScopeLabels[$selectedStatusScope] ?? ucfirst($selectedStatusScope);
                 }
 
+                $geoCountry = trim((string) request('geo_country', ''));
+                $geoProvince = trim((string) request('geo_province', ''));
+
+                if ($geoCountry !== '') {
+                    $activeFilterChips[] = 'Negara: ' . ucwords($geoCountry);
+                }
+
+                if ($geoProvince !== '') {
+                    $activeFilterChips[] = 'Provinsi: ' . ucwords($geoProvince);
+                }
+
                 $totalResults = $selectedDataScope === 'mitra'
                     ? (isset($mitras) ? $mitras->total() : 0)
                     : (isset($kerjasama) ? $kerjasama->total() : 0);
@@ -473,10 +486,14 @@
                     <p class="section-sub">{{ $sectionSubtitle }}</p>
                 </div>
 
-                <form action="/" method="GET" class="filter-panel" data-landing-filter>
+                 <form action="/" method="GET" class="filter-panel" data-landing-filter>
                     <input type="hidden" name="status_scope" value="{{ $selectedStatusScope }}">
+                    <input type="hidden" name="geo_country" value="{{ request('geo_country', '') }}">
+                    <input type="hidden" name="geo_province" value="{{ request('geo_province', '') }}">
+                    <input type="hidden" name="geo_country_code" value="{{ request('geo_country_code', '') }}">
+                    <input type="hidden" name="geo_province_code" value="{{ request('geo_province_code', '') }}">
 
-                    <div class="filter-bar">
+                     <div class="filter-bar">
                         <div class="filter-stack filter-stack-primary">
                             <div class="filter-group">
                                 <span class="filter-group-label">Tampilkan</span>
@@ -1039,6 +1056,9 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
     <script src="{{ asset('js/index.js') }}" data-turbo-track="reload"></script>
 </body>
 

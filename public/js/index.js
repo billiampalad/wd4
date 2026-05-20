@@ -272,6 +272,16 @@ document.addEventListener('keydown', function (e) {
     let searchDebounceTimer = null;
     const searchDebounceDelay = 320;
     const statFilterCards = Array.from(document.querySelectorAll('[data-landing-stat]'));
+    const geoMapDataSources = {
+        world: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',
+        indonesia: 'https://cdn.jsdelivr.net/gh/junwatu/indonesia.json@master/indonesia.json',
+    };
+    const geoTopologyCache = {
+        world: null,
+        worldPromise: null,
+        indonesia: null,
+        indonesiaPromise: null,
+    };
 
     function getMainContent(section = mainSection) {
         return section.querySelector('.main-wrap') || section;
@@ -435,6 +445,864 @@ document.addEventListener('keydown', function (e) {
         };
     }
 
+    function normalizeGeoText(value) {
+        return String(value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    }
+
+    function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, function (match) {
+            return ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;',
+            })[match] || match;
+        });
+    }
+
+    const geoWorldAliases = {
+        'dr congo': 'dem rep congo',
+        'democratic republic of the congo': 'dem rep congo',
+        'ivory coast': 'cote d ivoire',
+        'east timor': 'timor leste',
+        'cabo verde': 'cape verde',
+        'united states': 'united states of america',
+        'usa': 'united states of america',
+        'uk': 'united kingdom',
+        'south korea': 'korea',
+        'north korea': 'dem rep korea',
+        'vietnam': 'viet nam',
+        'syria': 'syrian arab republic',
+        'russia': 'russian federation',
+        'iran': 'iran',
+    };
+
+    const geoIndonesiaAliases = {
+        'dki jakarta': 'jakarta',
+        'daerah khusus ibukota jakarta': 'jakarta',
+        'jakarta raya': 'jakarta',
+        'di yogyakarta': 'yogyakarta',
+        'daerah istimewa yogyakarta': 'yogyakarta',
+        'bangka belitung': 'kepulauan bangka belitung',
+        'kep bangka belitung': 'kepulauan bangka belitung',
+        'kepulauan bangka belitung': 'kepulauan bangka belitung',
+        'irian jaya barat': 'papua barat',
+    };
+
+    const geoCountryCodeAliases = {
+        indonesia: 'ID',
+        id: 'ID',
+        idn: 'ID',
+        'united states': 'US',
+        'united states of america': 'US',
+        usa: 'US',
+        uk: 'GB',
+        'united kingdom': 'GB',
+        australia: 'AU',
+        japan: 'JP',
+        china: 'CN',
+        singapore: 'SG',
+        malaysia: 'MY',
+        thailand: 'TH',
+        vietnam: 'VN',
+        'viet nam': 'VN',
+        philippines: 'PH',
+        'new zealand': 'NZ',
+        russia: 'RU',
+        'russian federation': 'RU',
+        india: 'IN',
+        netherlands: 'NL',
+        germany: 'DE',
+        france: 'FR',
+        spain: 'ES',
+        italy: 'IT',
+        'south korea': 'KR',
+    };
+
+    const geoIndonesiaProvinceCodes = {
+        aceh: '11',
+        'sumatera utara': '12',
+        'sumatera barat': '13',
+        riau: '14',
+        jambi: '15',
+        'sumatera selatan': '16',
+        bengkulu: '17',
+        lampung: '18',
+        'kepulauan bangka belitung': '19',
+        'kepulauan riau': '21',
+        'dki jakarta': '31',
+        'jawa barat': '32',
+        'jawa tengah': '33',
+        'di yogyakarta': '34',
+        'jawa timur': '35',
+        banten: '36',
+        bali: '51',
+        'nusa tenggara barat': '52',
+        'nusa tenggara timur': '53',
+        'kalimantan barat': '61',
+        'kalimantan tengah': '62',
+        'kalimantan selatan': '63',
+        'kalimantan timur': '64',
+        'kalimantan utara': '65',
+        'sulawesi utara': '71',
+        'sulawesi tengah': '72',
+        'sulawesi selatan': '73',
+        'sulawesi tenggara': '74',
+        gorontalo: '75',
+        'sulawesi barat': '76',
+        maluku: '81',
+        'maluku utara': '82',
+        'papua barat': '91',
+        'papua tengah': '92',
+        'papua selatan': '93',
+        papua: '94',
+        'papua pegunungan': '95',
+        'papua barat daya': '96',
+        jakarta: '31',
+        yogyakarta: '34',
+    };
+
+    function buildGeoCountIndex(rawCounts, aliases) {
+        const index = {};
+        let maxValue = 0;
+
+        if (!rawCounts || typeof rawCounts !== 'object') {
+            return { index, max: maxValue };
+        }
+
+        Object.keys(rawCounts).forEach(function (label) {
+            const value = Number(rawCounts[label] || 0);
+
+            if (!value) {
+                return;
+            }
+
+            const normalized = normalizeGeoText(label);
+            const canonical = aliases && aliases[normalized] ? aliases[normalized] : normalized;
+            const nextValue = (index[canonical] || 0) + value;
+            index[canonical] = nextValue;
+            maxValue = Math.max(maxValue, nextValue);
+        });
+
+        return { index, max: maxValue };
+    }
+
+    function hexToRgb(hex) {
+        const normalized = String(hex || '').trim().replace('#', '');
+
+        if (normalized.length !== 6) {
+            return { r: 55, g: 138, b: 221 };
+        }
+
+        const value = Number.parseInt(normalized, 16);
+        return {
+            r: (value >> 16) & 255,
+            g: (value >> 8) & 255,
+            b: value & 255,
+        };
+    }
+
+    function clampNumber(value, min, max) {
+        const num = Number(value);
+
+        if (!Number.isFinite(num)) {
+            return min;
+        }
+
+        return Math.min(Math.max(num, min), max);
+    }
+
+    function mixHexColors(colorA, colorB, t) {
+        const ratio = clampNumber(t, 0, 1);
+        const rgbA = hexToRgb(colorA);
+        const rgbB = hexToRgb(colorB);
+        const r = Math.round(rgbA.r + (rgbB.r - rgbA.r) * ratio);
+        const g = Math.round(rgbA.g + (rgbB.g - rgbA.g) * ratio);
+        const b = Math.round(rgbA.b + (rgbB.b - rgbA.b) * ratio);
+
+        return '#' + [r, g, b].map(function (component) {
+            return component.toString(16).padStart(2, '0');
+        }).join('');
+    }
+
+    function getChoroplethFillColor(value, maxValue, toneColor, isDark) {
+        if (!maxValue || maxValue <= 0 || !value) {
+            return isDark ? '#162033' : '#f1f6fd';
+        }
+
+        const ratio = Math.pow(value / maxValue, 0.65);
+        const from = isDark ? '#162033' : '#f1f6fd';
+        return mixHexColors(from, toneColor, ratio);
+    }
+
+    async function loadGeoTopology(kind) {
+        if (kind === 'world') {
+            if (geoTopologyCache.world) {
+                return geoTopologyCache.world;
+            }
+
+            if (!geoTopologyCache.worldPromise) {
+                geoTopologyCache.worldPromise = fetch(geoMapDataSources.world)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (topology) {
+                        geoTopologyCache.world = topology;
+                        return topology;
+                    })
+                    .catch(function (error) {
+                        geoTopologyCache.worldPromise = null;
+                        throw error;
+                    });
+            }
+
+            return geoTopologyCache.worldPromise;
+        }
+
+        if (geoTopologyCache.indonesia) {
+            return geoTopologyCache.indonesia;
+        }
+
+        if (!geoTopologyCache.indonesiaPromise) {
+            geoTopologyCache.indonesiaPromise = fetch(geoMapDataSources.indonesia)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (topology) {
+                    geoTopologyCache.indonesia = topology;
+                    return topology;
+                })
+                .catch(function (error) {
+                    geoTopologyCache.indonesiaPromise = null;
+                    throw error;
+                });
+        }
+
+        return geoTopologyCache.indonesiaPromise;
+    }
+
+    function destroyLeafletMap(container) {
+        if (!container) {
+            return;
+        }
+
+        if (container._landingLeafletMap) {
+            container._landingLeafletMap.remove();
+            container._landingLeafletMap = null;
+        }
+
+        if (container._leaflet_id) {
+            delete container._leaflet_id;
+        }
+
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+    }
+
+    function buildChoroplethTooltip(label, value, metricLabel, extra = {}) {
+        const safeLabel = escapeHtml(label);
+        const formatted = Number(value || 0).toLocaleString('id-ID');
+        const unit = escapeHtml(metricLabel || 'Data');
+        const share = Number(extra.share || 0);
+        const shareText = Number.isFinite(share) && share > 0
+            ? '<div class="geo-tooltip-sub">' + share.toFixed(1) + '% dari total</div>'
+            : '';
+
+        return '<div class="geo-tooltip-title">' + safeLabel + '</div>'
+            + '<div class="geo-tooltip-value">' + formatted + '</div>'
+            + '<div class="geo-tooltip-meta">' + unit + '</div>'
+            + shareText;
+    }
+
+    function getGeoFeatureLabel(feature) {
+        if (!feature || !feature.properties) {
+            return '';
+        }
+
+        return feature.properties.name
+            || feature.properties.NAME
+            || feature.properties.NAME_1
+            || feature.properties.state
+            || feature.properties.provinsi
+            || feature.properties.province
+            || '';
+    }
+
+    function featureCrossesAntimeridian(feature) {
+        if (!feature || !feature.geometry) {
+            return false;
+        }
+
+        if (typeof feature._landingCrossesAntimeridian === 'boolean') {
+            return feature._landingCrossesAntimeridian;
+        }
+
+        function scanLineString(points) {
+            if (!Array.isArray(points) || points.length < 2) {
+                return false;
+            }
+
+            let prevLon = null;
+            for (let i = 0; i < points.length; i += 1) {
+                const coord = points[i];
+                if (!Array.isArray(coord) || coord.length < 2) {
+                    continue;
+                }
+
+                const lon = Number(coord[0]);
+                if (!Number.isFinite(lon)) {
+                    continue;
+                }
+
+                if (prevLon !== null && Math.abs(lon - prevLon) > 180) {
+                    return true;
+                }
+
+                prevLon = lon;
+            }
+
+            return false;
+        }
+
+        function scanPolygon(rings) {
+            if (!Array.isArray(rings)) {
+                return false;
+            }
+
+            for (let i = 0; i < rings.length; i += 1) {
+                if (scanLineString(rings[i])) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        const geometry = feature.geometry;
+        let crosses = false;
+
+        if (geometry.type === 'Polygon') {
+            crosses = scanPolygon(geometry.coordinates);
+        } else if (geometry.type === 'MultiPolygon' && Array.isArray(geometry.coordinates)) {
+            for (let i = 0; i < geometry.coordinates.length; i += 1) {
+                if (scanPolygon(geometry.coordinates[i])) {
+                    crosses = true;
+                    break;
+                }
+            }
+        }
+
+        feature._landingCrossesAntimeridian = crosses;
+        return crosses;
+    }
+
+    async function renderChoroplethMap(container, kind, mapPayload) {
+        if (!container || typeof L === 'undefined' || typeof topojson === 'undefined') {
+            return;
+        }
+
+        const topology = await loadGeoTopology(kind);
+        const objectName = kind === 'world' ? 'countries' : 'states_provinces';
+
+        if (!topology || !topology.objects || !topology.objects[objectName]) {
+            return;
+        }
+
+        const theme = getAnalyticsTheme();
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        const toneColor = getAnalyticsToneColor('info');
+        const borderColor = isDark ? hexToRgba('#94a3b8', 0.55) : hexToRgba('#0d1b2a', 0.22);
+        const borderHover = theme.title;
+
+        const rawCounts = kind === 'world' ? (mapPayload.world || {}) : (mapPayload.indonesia || {});
+        const absoluteCounts = kind === 'world'
+            ? (mapPayload.world_abs || mapPayload.world || {})
+            : (mapPayload.indonesia_abs || mapPayload.indonesia || {});
+        const aliasMap = kind === 'world' ? geoWorldAliases : geoIndonesiaAliases;
+        const countsResult = buildGeoCountIndex(rawCounts, aliasMap);
+        const countsIndex = countsResult.index;
+        const maxValue = mapPayload && mapPayload.mode === 'share' ? 100 : countsResult.max;
+        const totals = mapPayload && mapPayload.totals ? mapPayload.totals : {};
+        const totalValue = kind === 'world' ? Number(totals.world_total || 0) : Number(totals.indonesia_total || 0);
+        const metricLabel = mapPayload && mapPayload.mode === 'share'
+            ? 'Persen dari total'
+            : (mapPayload.unit || mapPayload.metric_label || 'Jumlah');
+        const absoluteIndex = buildGeoCountIndex(absoluteCounts, aliasMap).index;
+
+        const geojson = topojson.feature(topology, topology.objects[objectName]);
+        destroyLeafletMap(container);
+
+        const map = L.map(container, {
+            zoomControl: false,
+            attributionControl: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            boxZoom: false,
+            keyboard: false,
+            tap: false,
+            dragging: true,
+        });
+
+        container._landingLeafletMap = map;
+
+        if (L.control && L.control.zoom) {
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+        }
+
+        const suppressAntimeridianStroke = kind === 'world';
+
+        function styleFeature(feature) {
+            const label = getGeoFeatureLabel(feature);
+            const key = normalizeGeoText(label);
+            const canonical = aliasMap[key] || key;
+            const value = Number(countsIndex[canonical] || 0);
+
+            const style = {
+                color: borderColor,
+                weight: 1,
+                fillColor: getChoroplethFillColor(value, maxValue, toneColor, isDark),
+                fillOpacity: isDark ? 0.72 : 0.78,
+            };
+
+            if (suppressAntimeridianStroke && featureCrossesAntimeridian(feature)) {
+                style.stroke = false;
+                style.weight = 0;
+            }
+
+            return style;
+        }
+
+        function bindFeatureInteractions(feature, featureLayer) {
+            const label = getGeoFeatureLabel(feature);
+            const key = normalizeGeoText(label);
+            const canonical = aliasMap[key] || key;
+            const value = Number(countsIndex[canonical] || 0);
+
+                featureLayer.bindTooltip(
+                    buildChoroplethTooltip(label, value, metricLabel, {
+                        share: totalValue > 0 ? (Number(absoluteIndex[canonical] || 0) / totalValue) * 100 : 0,
+                    }),
+                    {
+                        sticky: true,
+                        direction: 'top',
+                        className: 'geo-tooltip',
+                        opacity: 0.98,
+                    }
+                );
+
+            featureLayer.on('mouseover', function () {
+                featureLayer.setStyle({ weight: 2, color: borderHover });
+
+                if (featureLayer.bringToFront) {
+                    featureLayer.bringToFront();
+                }
+            });
+
+            featureLayer.on('mouseout', function () {
+                featureLayer.setStyle({ weight: 1, color: borderColor });
+            });
+
+            featureLayer.on('click', function () {
+                const form = mainSection ? mainSection.querySelector('form[data-landing-filter]') : null;
+                if (!form) {
+                    return;
+                }
+
+                const geoCountryInput = form.querySelector('input[name="geo_country"]');
+                const geoProvinceInput = form.querySelector('input[name="geo_province"]');
+                const geoCountryCodeInput = form.querySelector('input[name="geo_country_code"]');
+                const geoProvinceCodeInput = form.querySelector('input[name="geo_province_code"]');
+
+                if (kind === 'world') {
+                    if (geoCountryInput) {
+                        geoCountryInput.value = canonical || label || '';
+                    }
+                    if (geoProvinceInput) {
+                        geoProvinceInput.value = '';
+                    }
+                    if (geoProvinceCodeInput) {
+                        geoProvinceCodeInput.value = '';
+                    }
+                    if (geoCountryCodeInput) {
+                        const normalizedCountry = normalizeGeoText(canonical || label || '');
+                        geoCountryCodeInput.value = geoCountryCodeAliases[normalizedCountry] || '';
+                    }
+                } else {
+                    if (geoCountryInput) {
+                        geoCountryInput.value = 'Indonesia';
+                    }
+                    if (geoProvinceInput) {
+                        geoProvinceInput.value = canonical || label || '';
+                    }
+                    if (geoCountryCodeInput) {
+                        geoCountryCodeInput.value = 'ID';
+                    }
+                    if (geoProvinceCodeInput) {
+                        const normalizedProvince = normalizeGeoText(canonical || label || '');
+                        geoProvinceCodeInput.value = geoIndonesiaProvinceCodes[normalizedProvince] || '';
+                    }
+                }
+
+                cancelPendingSearchDebounce();
+                syncScopeDependentFields(form);
+                syncFilterState(form);
+                syncSearchResetState(form);
+                const nextUrl = buildRequestUrl(form);
+                syncStatCardStateFromUrl(nextUrl);
+                scrollToMainSection();
+                loadKerjasamaSection(nextUrl);
+            });
+        }
+
+        const layer = L.geoJSON(geojson, { style: styleFeature, onEachFeature: bindFeatureInteractions });
+
+        layer.addTo(map);
+
+        const layerBounds = (function () {
+            try {
+                return layer.getBounds();
+            } catch (error) {
+                return null;
+            }
+        })();
+
+        window.requestAnimationFrame(function () {
+            map.invalidateSize(true);
+
+            if (!layerBounds) {
+                map.setView([0, 0], kind === 'world' ? 1 : 4);
+                return;
+            }
+
+            try {
+                map.fitBounds(layerBounds.pad(0.04), {
+                    padding: [24, 24],
+                    maxZoom: kind === 'world' ? 2 : 6,
+                });
+            } catch (error) {
+                map.setView([0, 0], kind === 'world' ? 1 : 4);
+            }
+        });
+    }
+
+    function initLandingGeoChoropleth(shell, payload) {
+        if (!shell) {
+            return;
+        }
+
+        const card = shell.querySelector('[data-geo-card]');
+
+        if (!card) {
+            return;
+        }
+
+        const mapPayload = payload && payload.maps ? payload.maps : null;
+        const worldContainer = card.querySelector('[data-geo-map="world"]');
+        const indonesiaContainer = card.querySelector('[data-geo-map="indonesia"]');
+        const hint = card.querySelector('[data-geo-hint]');
+        const legendMin = card.querySelector('[data-geo-legend-min]');
+        const legendMax = card.querySelector('[data-geo-legend-max]');
+        const legendBar = card.querySelector('.geo-legend-bar');
+        const metricSelect = card.querySelector('[data-geo-metric]');
+        const scaleButtons = Array.from(card.querySelectorAll('[data-geo-scale]'));
+        const worldSummary = card.querySelector('[data-geo-summary="world"]');
+        const indonesiaSummary = card.querySelector('[data-geo-summary="indonesia"]');
+        const buttons = Array.from(card.querySelectorAll('[data-geo-toggle]'));
+        const panels = Array.from(card.querySelectorAll('[role="tabpanel"]'));
+
+        if (!mapPayload || !worldContainer || !indonesiaContainer) {
+            return;
+        }
+
+        const metrics = mapPayload && mapPayload.metrics ? mapPayload.metrics : null;
+        const defaultMetricKey = mapPayload && mapPayload.default_metric ? mapPayload.default_metric : 'cooperations_total';
+        const storageMetricKey = 'landing-geo-metric';
+        const storageScaleKey = 'landing-geo-scale';
+
+        function sumCounts(counts) {
+            if (!counts || typeof counts !== 'object') {
+                return 0;
+            }
+
+            return Object.values(counts).reduce(function (total, value) {
+                return total + Number(value || 0);
+            }, 0);
+        }
+
+        function resolveMetricKey(nextKey) {
+            const key = String(nextKey || '').trim();
+            if (!metrics || typeof metrics !== 'object') {
+                return defaultMetricKey;
+            }
+
+            return metrics[key] ? key : defaultMetricKey;
+        }
+
+        let activeMetricKey = resolveMetricKey((function () {
+            if (card.dataset.geoMetric) {
+                return card.dataset.geoMetric;
+            }
+
+            try {
+                return localStorage.getItem(storageMetricKey);
+            } catch (error) {
+                return null;
+            }
+        })() || defaultMetricKey);
+
+        let activeScale = String((function () {
+            if (card.dataset.geoScale) {
+                return card.dataset.geoScale;
+            }
+
+            try {
+                return localStorage.getItem(storageScaleKey);
+            } catch (error) {
+                return null;
+            }
+        })() || 'absolute');
+
+        if (!['absolute', 'share'].includes(activeScale)) {
+            activeScale = 'absolute';
+        }
+
+        function buildScaledCounts(counts, scaleMode) {
+            const absolute = counts || {};
+            const total = sumCounts(absolute);
+
+            if (scaleMode !== 'share') {
+                return { display: absolute, absolute, total };
+            }
+
+            const display = {};
+            Object.keys(absolute).forEach(function (key) {
+                const value = Number(absolute[key] || 0);
+                display[key] = total > 0 ? Math.round((value / total) * 1000) / 10 : 0;
+            });
+
+            return { display, absolute, total };
+        }
+
+        function getActiveMetric() {
+            if (!metrics || typeof metrics !== 'object') {
+                return null;
+            }
+
+            return metrics[activeMetricKey] || metrics[defaultMetricKey] || null;
+        }
+
+        function buildRenderPayload() {
+            const metric = getActiveMetric();
+            const metricLabel = metric && metric.label ? metric.label : 'Jumlah';
+            const unit = metric && metric.unit ? metric.unit : 'Data';
+            const worldScaled = buildScaledCounts(metric ? metric.world : {}, activeScale);
+            const indonesiaScaled = buildScaledCounts(metric ? metric.indonesia : {}, activeScale);
+
+            return {
+                metric_key: activeMetricKey,
+                metric_label: activeScale === 'share' ? metricLabel + ' (%)' : metricLabel,
+                unit,
+                mode: activeScale,
+                world: worldScaled.display,
+                indonesia: indonesiaScaled.display,
+                world_abs: worldScaled.absolute,
+                indonesia_abs: indonesiaScaled.absolute,
+                totals: {
+                    world_total: worldScaled.total,
+                    indonesia_total: indonesiaScaled.total,
+                },
+            };
+        }
+
+        function updateMetricControls() {
+            if (metricSelect) {
+                metricSelect.value = activeMetricKey;
+            }
+
+            scaleButtons.forEach(function (button) {
+                const mode = button.dataset.geoScale || 'absolute';
+                const isActive = mode === activeScale;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+        }
+
+        const activeTheme = document.documentElement.dataset.theme || 'light';
+        const themeChanged = Boolean(card._landingGeoTheme && card._landingGeoTheme !== activeTheme);
+        card._landingGeoTheme = activeTheme;
+
+        function updateLegend(kind, renderPayload) {
+            const counts = kind === 'world' ? renderPayload.world : renderPayload.indonesia;
+            const aliasMap = kind === 'world' ? geoWorldAliases : geoIndonesiaAliases;
+            const countsResult = buildGeoCountIndex(counts || {}, aliasMap);
+            const maxValue = activeScale === 'share' ? 100 : (countsResult.max || 0);
+            const isDark = document.documentElement.dataset.theme === 'dark';
+            const toneColor = getAnalyticsToneColor('info');
+            const from = isDark ? '#162033' : '#f1f6fd';
+            const mid = mixHexColors(from, toneColor, 0.55);
+
+            if (legendMin) {
+                legendMin.textContent = activeScale === 'share' ? '0%' : '0';
+            }
+
+            if (legendMax) {
+                legendMax.textContent = activeScale === 'share'
+                    ? '100%'
+                    : Number(maxValue).toLocaleString('id-ID');
+            }
+
+            if (legendBar) {
+                legendBar.style.background = 'linear-gradient(90deg,' + from + ',' + mid + ',' + toneColor + ')';
+            }
+        }
+
+        function renderSummary(kind, renderPayload) {
+            const summaryEl = kind === 'world' ? worldSummary : indonesiaSummary;
+            if (!summaryEl) {
+                return;
+            }
+
+            const absCounts = kind === 'world' ? renderPayload.world_abs : renderPayload.indonesia_abs;
+            const unit = renderPayload.unit || 'Data';
+            const total = kind === 'world' ? (renderPayload.totals.world_total || 0) : (renderPayload.totals.indonesia_total || 0);
+            const items = Object.keys(absCounts || {}).map(function (key) {
+                return { key, value: Number(absCounts[key] || 0) };
+            }).filter(function (item) {
+                return item.value > 0;
+            }).sort(function (a, b) {
+                return b.value - a.value;
+            }).slice(0, 5);
+
+            if (!items.length) {
+                summaryEl.textContent = 'Belum ada data untuk diringkas pada peta ini.';
+                return;
+            }
+
+            const lines = items.map(function (item, index) {
+                const share = total > 0 ? Math.round((item.value / total) * 1000) / 10 : 0;
+                return (index + 1) + '. ' + item.key + ' — ' + item.value.toLocaleString('id-ID') + ' ' + unit + ' (' + share + '%)';
+            });
+
+            summaryEl.innerHTML = '<strong>Ringkasan Top 5</strong><br>' + lines.map(escapeHtml).join('<br>');
+        }
+
+        function setActive(kind, options = {}) {
+            const forceRender = Boolean(options.forceRender);
+            const renderPayload = buildRenderPayload();
+            card._landingGeoActiveKind = kind;
+            const metric = getActiveMetric();
+            const hasIndonesia = Boolean(metric && metric.indonesia && Object.keys(metric.indonesia || {}).length > 0);
+            if (hint) {
+                hint.hidden = hasIndonesia;
+            }
+            buttons.forEach(function (button) {
+                const isActive = button.dataset.geoToggle === kind;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            panels.forEach(function (panel) {
+                const isTarget = panel.id === (kind === 'world' ? 'geo-panel-world' : 'geo-panel-indonesia');
+
+                if (isTarget) {
+                    panel.removeAttribute('hidden');
+                    panel.classList.add('is-active');
+                } else {
+                    panel.setAttribute('hidden', '');
+                    panel.classList.remove('is-active');
+                }
+            });
+
+            updateLegend(kind, renderPayload);
+            renderSummary(kind, renderPayload);
+
+            const targetContainer = kind === 'world' ? worldContainer : indonesiaContainer;
+            const themeMismatch = Boolean(targetContainer._landingLeafletTheme && targetContainer._landingLeafletTheme !== activeTheme);
+
+            if (forceRender || themeMismatch || !targetContainer._landingLeafletReady) {
+                targetContainer._landingLeafletReady = true;
+                targetContainer._landingLeafletTheme = activeTheme;
+                renderChoroplethMap(targetContainer, kind, renderPayload).catch(function () {
+                    // Ignore map rendering errors (e.g. offline / topology fetch failure).
+                });
+                return;
+            }
+
+            if (targetContainer._landingLeafletMap) {
+                window.requestAnimationFrame(function () {
+                    targetContainer._landingLeafletMap.invalidateSize(true);
+                });
+            }
+        }
+
+        const initialButton = buttons.find(function (button) {
+            return button.getAttribute('aria-selected') === 'true' || button.classList.contains('is-active');
+        }) || buttons[0];
+
+        const initialKind = initialButton ? initialButton.dataset.geoToggle : 'world';
+        const metric = getActiveMetric();
+        const hasIndonesia = Boolean(metric && metric.indonesia && Object.keys(metric.indonesia || {}).length > 0);
+
+        if (hint) {
+            hint.hidden = hasIndonesia;
+        }
+
+        if (!card._landingGeoBound) {
+            card._landingGeoBound = true;
+            if (metricSelect) {
+                metricSelect.addEventListener('change', function () {
+                    activeMetricKey = resolveMetricKey(metricSelect.value);
+                    card.dataset.geoMetric = activeMetricKey;
+                    try {
+                        localStorage.setItem(storageMetricKey, activeMetricKey);
+                    } catch (error) {
+                        // ignore
+                    }
+
+                    updateMetricControls();
+                    setActive(card._landingGeoActiveKind || initialKind || 'world', { forceRender: true });
+                });
+            }
+
+            scaleButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const mode = button.dataset.geoScale || 'absolute';
+                    if (!['absolute', 'share'].includes(mode) || mode === activeScale) {
+                        return;
+                    }
+
+                    activeScale = mode;
+                    card.dataset.geoScale = activeScale;
+                    try {
+                        localStorage.setItem(storageScaleKey, activeScale);
+                    } catch (error) {
+                        // ignore
+                    }
+
+                    updateMetricControls();
+                    setActive(card._landingGeoActiveKind || initialKind || 'world', { forceRender: true });
+                });
+            });
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const kind = button.dataset.geoToggle || 'world';
+                    setActive(kind);
+                });
+            });
+        }
+
+        updateMetricControls();
+        setActive(initialKind || 'world', { forceRender: themeChanged });
+    }
+
     function wrapChartLabel(label, limit = 20) {
         const text = String(label || '').trim();
 
@@ -538,12 +1406,14 @@ document.addEventListener('keydown', function (e) {
             return;
         }
 
+        const payload = parseJsonScript(shell, '[data-analytics-payload]', {});
+        initLandingGeoChoropleth(shell, payload);
+
         if (typeof Chart === 'undefined') {
             animateAnalyticsCards(section);
             return;
         }
 
-        const payload = parseJsonScript(shell, '[data-analytics-payload]', {});
         const theme = getAnalyticsTheme();
         const commonAnimation = {
             duration: 900,
@@ -839,6 +1709,10 @@ document.addEventListener('keydown', function (e) {
         const kategoriMitra = parsedUrl.searchParams.get('kategori_mitra') || 'all';
         const sort = parsedUrl.searchParams.get('sort') || 'latest';
         const statusScope = parsedUrl.searchParams.get('status_scope') || 'all';
+        const geoCountry = parsedUrl.searchParams.get('geo_country') || '';
+        const geoProvince = parsedUrl.searchParams.get('geo_province') || '';
+        const geoCountryCode = parsedUrl.searchParams.get('geo_country_code') || '';
+        const geoProvinceCode = parsedUrl.searchParams.get('geo_province_code') || '';
         const form = mainSection.querySelector('[data-landing-filter]');
 
         if (!form) {
@@ -875,6 +1749,26 @@ document.addEventListener('keydown', function (e) {
             statusScopeInput.value = statusScope;
         }
 
+        const geoCountryInput = form.querySelector('input[name="geo_country"]');
+        if (geoCountryInput) {
+            geoCountryInput.value = geoCountry;
+        }
+
+        const geoProvinceInput = form.querySelector('input[name="geo_province"]');
+        if (geoProvinceInput) {
+            geoProvinceInput.value = geoProvince;
+        }
+
+        const geoCountryCodeInput = form.querySelector('input[name="geo_country_code"]');
+        if (geoCountryCodeInput) {
+            geoCountryCodeInput.value = geoCountryCode;
+        }
+
+        const geoProvinceCodeInput = form.querySelector('input[name="geo_province_code"]');
+        if (geoProvinceCodeInput) {
+            geoProvinceCodeInput.value = geoProvinceCode;
+        }
+
         syncScopeDependentFields(form);
         syncFilterState(form);
         syncSearchResetState(form);
@@ -905,6 +1799,22 @@ document.addEventListener('keydown', function (e) {
             params.delete('status_scope');
         }
 
+        if (!params.get('geo_country')) {
+            params.delete('geo_country');
+        }
+
+        if (!params.get('geo_province')) {
+            params.delete('geo_province');
+        }
+
+        if (!params.get('geo_country_code')) {
+            params.delete('geo_country_code');
+        }
+
+        if (!params.get('geo_province_code')) {
+            params.delete('geo_province_code');
+        }
+
         url.search = params.toString();
         return url.toString();
     }
@@ -916,6 +1826,12 @@ document.addEventListener('keydown', function (e) {
 
         const currentAnalyticsContent = getAnalyticsContent();
         const nextAnalyticsContent = getAnalyticsContent(nextAnalyticsSection);
+
+        if (currentAnalyticsContent) {
+            currentAnalyticsContent.querySelectorAll('[data-geo-map]').forEach(function (container) {
+                destroyLeafletMap(container);
+            });
+        }
 
         if (currentAnalyticsContent && nextAnalyticsContent) {
             currentAnalyticsContent.innerHTML = nextAnalyticsContent.innerHTML;
@@ -1142,6 +2058,26 @@ document.addEventListener('keydown', function (e) {
 
             if (statusScopeInput) {
                 statusScopeInput.value = 'all';
+            }
+
+            const geoCountryInput = filterForm.querySelector('input[name="geo_country"]');
+            if (geoCountryInput) {
+                geoCountryInput.value = '';
+            }
+
+            const geoProvinceInput = filterForm.querySelector('input[name="geo_province"]');
+            if (geoProvinceInput) {
+                geoProvinceInput.value = '';
+            }
+
+            const geoCountryCodeInput = filterForm.querySelector('input[name="geo_country_code"]');
+            if (geoCountryCodeInput) {
+                geoCountryCodeInput.value = '';
+            }
+
+            const geoProvinceCodeInput = filterForm.querySelector('input[name="geo_province_code"]');
+            if (geoProvinceCodeInput) {
+                geoProvinceCodeInput.value = '';
             }
 
             cancelPendingSearchDebounce();

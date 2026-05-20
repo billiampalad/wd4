@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use App\Support\GeoNormalizer;
+use Illuminate\Support\Facades\Schema;
 
 class PublicLandingController extends Controller
 {
@@ -80,12 +82,33 @@ class PublicLandingController extends Controller
             $sort = 'latest';
         }
 
+        $geoCountry = trim((string) $request->get('geo_country', ''));
+        $geoCountry = mb_substr($geoCountry, 0, 120);
+
+        $geoProvince = trim((string) $request->get('geo_province', ''));
+        $geoProvince = mb_substr($geoProvince, 0, 120);
+
+        $geoCountryCode = strtoupper(trim((string) $request->get('geo_country_code', '')));
+        $geoCountryCode = preg_match('/^[A-Z]{2}$/', $geoCountryCode) === 1 ? $geoCountryCode : null;
+        $geoCountryCode = $geoCountryCode ?? GeoNormalizer::normalizeCountryCode($geoCountry);
+
+        $geoProvinceCode = trim((string) $request->get('geo_province_code', ''));
+        $geoProvinceCode = preg_match('/^[0-9]{2}([0-9]{0,8})$/', $geoProvinceCode) === 1 ? $geoProvinceCode : null;
+
+        if ($geoProvince !== '' && $geoCountry === '') {
+            $geoCountry = 'Indonesia';
+        }
+
         return [
             'data_scope' => $dataScope,
             'kategori_mitra' => $kategori,
             'status_scope' => $statusScope,
             'search' => $search,
             'sort' => $sort,
+            'geo_country' => $geoCountry,
+            'geo_province' => $geoProvince,
+            'geo_country_code' => $geoCountryCode,
+            'geo_province_code' => $geoProvinceCode,
         ];
     }
 
@@ -155,6 +178,41 @@ class PublicLandingController extends Controller
             });
         }
 
+        if ($filters['geo_country'] !== '' || $filters['geo_province'] !== '') {
+            $country = mb_strtolower(trim((string) $filters['geo_country']));
+            $province = mb_strtolower(trim((string) $filters['geo_province']));
+            $countryCode = strtoupper(trim((string) ($filters['geo_country_code'] ?? '')));
+            $provinceCode = trim((string) ($filters['geo_province_code'] ?? ''));
+
+            $hasCountryCode = Schema::hasColumn('mitras', 'country_code');
+            $hasProvinceCode = Schema::hasColumn('mitras', 'province_code');
+            $hasProvinsi = Schema::hasColumn('mitras', 'provinsi');
+
+            $query->whereHas('mitra', function (Builder $mitraQuery) use ($country, $province, $countryCode, $provinceCode, $hasCountryCode, $hasProvinceCode, $hasProvinsi) {
+                if ($countryCode !== '') {
+                    if ($hasCountryCode) {
+                        $mitraQuery->where('country_code', $countryCode);
+                    } elseif ($country !== '') {
+                        $mitraQuery->whereRaw('lower(negara) = ?', [$country]);
+                    }
+                } elseif ($country !== '') {
+                    $mitraQuery->whereRaw('lower(negara) = ?', [$country]);
+                }
+
+                if ($provinceCode !== '') {
+                    if ($hasProvinceCode) {
+                        $mitraQuery->where('province_code', $provinceCode);
+                    } elseif ($province !== '' && $hasProvinsi) {
+                        $mitraQuery->whereRaw('lower(provinsi) = ?', [$province]);
+                    }
+                } elseif ($province !== '') {
+                    if ($hasProvinsi) {
+                        $mitraQuery->whereRaw('lower(provinsi) = ?', [$province]);
+                    }
+                }
+            });
+        }
+
         if ($filters['status_scope'] === 'aktif') {
             $query->where('status', 'aktif');
         }
@@ -183,6 +241,38 @@ class PublicLandingController extends Controller
 
         if ($filters['kategori_mitra'] !== 'all') {
             $query->where('kategori', $filters['kategori_mitra']);
+        }
+
+        if ($filters['geo_country'] !== '' || $filters['geo_province'] !== '') {
+            $country = mb_strtolower(trim((string) $filters['geo_country']));
+            $province = mb_strtolower(trim((string) $filters['geo_province']));
+            $countryCode = strtoupper(trim((string) ($filters['geo_country_code'] ?? '')));
+            $provinceCode = trim((string) ($filters['geo_province_code'] ?? ''));
+            $hasCountryCode = Schema::hasColumn('mitras', 'country_code');
+            $hasProvinceCode = Schema::hasColumn('mitras', 'province_code');
+            $hasProvinsi = Schema::hasColumn('mitras', 'provinsi');
+
+            if ($countryCode !== '') {
+                if ($hasCountryCode) {
+                    $query->where('country_code', $countryCode);
+                } elseif ($country !== '') {
+                    $query->whereRaw('lower(negara) = ?', [$country]);
+                }
+            } elseif ($country !== '') {
+                $query->whereRaw('lower(negara) = ?', [$country]);
+            }
+
+            if ($provinceCode !== '') {
+                if ($hasProvinceCode) {
+                    $query->where('province_code', $provinceCode);
+                } elseif ($province !== '' && $hasProvinsi) {
+                    $query->whereRaw('lower(provinsi) = ?', [$province]);
+                }
+            } elseif ($province !== '') {
+                if ($hasProvinsi) {
+                    $query->whereRaw('lower(provinsi) = ?', [$province]);
+                }
+            }
         }
 
         return $query;
@@ -284,6 +374,17 @@ class PublicLandingController extends Controller
         $mitraComposition = $this->buildMitraComposition($mitras);
         $topClassifications = $this->buildTopClassifications($mitras);
         $topFields = $this->buildTopFields($cooperations);
+        $geoMapPayload = $this->buildGeoMapPayload($cooperations);
+
+        $chartPayload = $this->buildChartPayload(
+            $statusBreakdown,
+            $trendByYear,
+            $mitraComposition,
+            $topClassifications,
+            $topFields,
+        );
+
+        $chartPayload['maps'] = $geoMapPayload;
 
         return [
             'context' => $filters['data_scope'] === 'mitra'
@@ -294,13 +395,7 @@ class PublicLandingController extends Controller
             'mitra_composition' => $mitraComposition,
             'top_classifications' => $topClassifications,
             'top_fields' => $topFields,
-            'chart_payload' => $this->buildChartPayload(
-                $statusBreakdown,
-                $trendByYear,
-                $mitraComposition,
-                $topClassifications,
-                $topFields,
-            ),
+            'chart_payload' => $chartPayload,
             'attention' => $this->buildAttentionPanel($cooperations),
         ];
     }
@@ -338,6 +433,142 @@ class PublicLandingController extends Controller
                 'labels' => array_column($topFields['items'] ?? [], 'label'),
                 'values' => array_column($topFields['items'] ?? [], 'count'),
             ],
+        ];
+    }
+
+    private function buildGeoMapPayload(Collection $cooperations): array
+    {
+        $worldTotals = [];
+        $worldActive = [];
+        $worldExpiring = [];
+        $worldMitraSets = [];
+        $worldStatusBreakdowns = [];
+
+        $indonesiaTotals = [];
+        $indonesiaActive = [];
+        $indonesiaExpiring = [];
+        $indonesiaMitraSets = [];
+        $indonesiaStatusBreakdowns = [];
+
+        $today = Carbon::today();
+        $limitDate = $today->copy()->addDays(90);
+
+        foreach ($cooperations as $cooperation) {
+            $mitra = $cooperation->mitra;
+
+            if (! $mitra) {
+                continue;
+            }
+
+            $country = trim((string) ($mitra->negara ?? ''));
+            $statusKey = $this->normalizeCooperationStatus($cooperation);
+            $isActive = $statusKey === 'aktif';
+            $isExpiring = $cooperation->end_date !== null && $cooperation->end_date->betweenIncluded($today, $limitDate);
+
+            if ($country !== '') {
+                $worldTotals[$country] = ($worldTotals[$country] ?? 0) + 1;
+                $worldStatusBreakdowns[$country] = $worldStatusBreakdowns[$country] ?? [];
+                $worldStatusBreakdowns[$country][$statusKey] = ($worldStatusBreakdowns[$country][$statusKey] ?? 0) + 1;
+
+                if ($isActive) {
+                    $worldActive[$country] = ($worldActive[$country] ?? 0) + 1;
+                }
+
+                if ($isExpiring) {
+                    $worldExpiring[$country] = ($worldExpiring[$country] ?? 0) + 1;
+                }
+
+                $mitraId = $mitra->id;
+                if ($mitraId !== null) {
+                    $worldMitraSets[$country] = $worldMitraSets[$country] ?? [];
+                    $worldMitraSets[$country][$mitraId] = true;
+                }
+            }
+
+            if (! GeoNormalizer::isIndonesia($country, $mitra->country_code ?? null)) {
+                continue;
+            }
+
+            $provinceNormalization = GeoNormalizer::normalizeIndonesiaProvince($mitra->provinsi ?? null, $mitra->alamat ?? null);
+            $province = $provinceNormalization['name'];
+
+            if ($province !== null && $province !== '') {
+                $indonesiaTotals[$province] = ($indonesiaTotals[$province] ?? 0) + 1;
+                $indonesiaStatusBreakdowns[$province] = $indonesiaStatusBreakdowns[$province] ?? [];
+                $indonesiaStatusBreakdowns[$province][$statusKey] = ($indonesiaStatusBreakdowns[$province][$statusKey] ?? 0) + 1;
+
+                if ($isActive) {
+                    $indonesiaActive[$province] = ($indonesiaActive[$province] ?? 0) + 1;
+                }
+
+                if ($isExpiring) {
+                    $indonesiaExpiring[$province] = ($indonesiaExpiring[$province] ?? 0) + 1;
+                }
+
+                $mitraId = $mitra->id;
+                if ($mitraId !== null) {
+                    $indonesiaMitraSets[$province] = $indonesiaMitraSets[$province] ?? [];
+                    $indonesiaMitraSets[$province][$mitraId] = true;
+                }
+            }
+        }
+
+        $worldUnique = [];
+        foreach ($worldMitraSets as $country => $set) {
+            $worldUnique[$country] = count($set);
+        }
+
+        $indonesiaUnique = [];
+        foreach ($indonesiaMitraSets as $province => $set) {
+            $indonesiaUnique[$province] = count($set);
+        }
+
+        ksort($worldTotals);
+        ksort($worldActive);
+        ksort($worldExpiring);
+        ksort($worldUnique);
+        ksort($worldStatusBreakdowns);
+
+        ksort($indonesiaTotals);
+        ksort($indonesiaActive);
+        ksort($indonesiaExpiring);
+        ksort($indonesiaUnique);
+        ksort($indonesiaStatusBreakdowns);
+
+        $metrics = [
+            'cooperations_total' => [
+                'label' => 'Jumlah Kerja Sama',
+                'unit' => 'Kerja Sama',
+                'world' => $worldTotals,
+                'indonesia' => $indonesiaTotals,
+                'breakdowns' => [
+                    'world_status' => $worldStatusBreakdowns,
+                    'indonesia_status' => $indonesiaStatusBreakdowns,
+                ],
+            ],
+            'cooperations_active' => [
+                'label' => 'Kerja Sama Aktif',
+                'unit' => 'Kerja Sama',
+                'world' => $worldActive,
+                'indonesia' => $indonesiaActive,
+            ],
+            'mitras_unique' => [
+                'label' => 'Mitra Unik',
+                'unit' => 'Mitra',
+                'world' => $worldUnique,
+                'indonesia' => $indonesiaUnique,
+            ],
+            'cooperations_expiring_90' => [
+                'label' => 'Akan Berakhir (90 hari)',
+                'unit' => 'Kerja Sama',
+                'world' => $worldExpiring,
+                'indonesia' => $indonesiaExpiring,
+            ],
+        ];
+
+        return [
+            'default_metric' => 'cooperations_total',
+            'metrics' => $metrics,
         ];
     }
 
