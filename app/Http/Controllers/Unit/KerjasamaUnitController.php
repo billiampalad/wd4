@@ -241,6 +241,8 @@ class KerjasamaUnitController extends Controller
                             'keterangan' => $detailData['keterangan'] ?: null,
                             'tujuan' => $detailData['tujuan'] ?: null,
                             'indikator_kinerja' => $detailData['indikator_kinerja'] ?: null,
+                            'output' => $detailData['output'] ?: null,
+                            'outcome' => $detailData['outcome'] ?: null,
                         ]);
                     }
                 }
@@ -492,6 +494,8 @@ class KerjasamaUnitController extends Controller
                             'keterangan' => $detailData['keterangan'] ?? null,
                             'tujuan' => $detailData['tujuan'] ?? null,
                             'indikator_kinerja' => $detailData['indikator_kinerja'] ?? null,
+                            'output' => $detailData['output'] ?? null,
+                            'outcome' => $detailData['outcome'] ?? null,
                         ]);
                     }
                 }

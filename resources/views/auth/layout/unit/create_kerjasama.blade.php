@@ -33,6 +33,8 @@
                 'tujuan' => $detail->tujuan ?? '',
                 'sasaran_id' => $detail->sasaran_id ?? '',
                 'indikator_kinerja' => $detail->indikator_kinerja ?? '',
+                'output' => $detail->output ?? '',
+                'outcome' => $detail->outcome ?? '',
             ];
         }
     }
@@ -49,6 +51,8 @@
                 'tujuan' => $detail['tujuan'] ?? '',
                 'sasaran_id' => $detail['sasaran_id'] ?? '',
                 'indikator_kinerja' => $detail['indikator_kinerja'] ?? '',
+                'output' => $detail['output'] ?? '',
+                'outcome' => $detail['outcome'] ?? '',
             ];
         }
     }
@@ -1524,7 +1528,7 @@
                                             delete this.sasaranOpen[id];
                                         } else {
                                             this.selected.push(id);
-                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '' };
+                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
                                             this.sasaranOpen[id] = false;
                                         }
                                     },
@@ -1536,7 +1540,7 @@
                                     init() {
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
-                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '' };
+                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
                                                 this.sasaranOpen[id] = false;
                                             }
                                         });
@@ -1651,7 +1655,43 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Row 2: Luaran (Volume + Satuan Volume) --}}
+                                                {{-- Row 2: Output & Outcome --}}
+                                                <div
+                                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                                                    {{-- Output --}}
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Output <span
+                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Hasil
+                                                                langsung kegiatan)</span></label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-box-open mc-icon-left"
+                                                                style="top: 14px;"></i>
+                                                            <textarea :name="'jenis_detail[' + id + '][output]'"
+                                                                x-model="formData[id].output" rows="2"
+                                                                placeholder="Jelaskan output / hasil langsung kegiatan..."
+                                                                class="mc-input"
+                                                                style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- Outcome --}}
+                                                    <div class="mc-group">
+                                                        <label class="mc-label">Outcome <span
+                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Dampak
+                                                                / manfaat kegiatan)</span></label>
+                                                        <div class="mc-input-wrap">
+                                                            <i class="fas fa-seedling mc-icon-left"
+                                                                style="top: 14px;"></i>
+                                                            <textarea :name="'jenis_detail[' + id + '][outcome]'"
+                                                                x-model="formData[id].outcome" rows="2"
+                                                                placeholder="Jelaskan outcome / dampak manfaat kegiatan..."
+                                                                class="mc-input"
+                                                                style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Row 3: Luaran (Volume + Satuan Volume) --}}
                                                 <div style="margin-bottom: 14px;">
                                                     <label class="mc-label"
                                                         style="margin-bottom: 8px; display: block;">Luaran</label>
@@ -1678,7 +1718,7 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Row 3: Keterangan + Tujuan --}}
+                                                {{-- Row 4: Keterangan + Tujuan --}}
                                                 <div
                                                     style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
                                                     {{-- Keterangan --}}
@@ -1714,7 +1754,7 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Row 4: Sasaran (Custom Dropdown) + Indikator Kinerja --}}
+                                                {{-- Row 5: Sasaran (Custom Dropdown) + Indikator Kinerja --}}
                                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                                                     {{-- Sasaran Dropdown --}}
                                                     <div class="mc-group">

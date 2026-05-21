@@ -18,6 +18,8 @@ class DetailKegiatan extends Model
         'keterangan',
         'tujuan',
         'indikator_kinerja',
+        'output',
+        'outcome',
     ];
 
     public function cooperation()

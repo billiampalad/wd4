@@ -444,6 +444,8 @@
                                         <th>Bentuk Kegiatan</th>
                                         <th>Sasaran</th>
                                         <th style="text-align: right;">Nilai Kontrak</th>
+                                        <th>Output</th>
+                                        <th>Outcome</th>
                                         <th>Luaran</th>
                                     </tr>
                                 </thead>
@@ -480,6 +482,26 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                @if ($item->output)
+                                                    <div
+                                                        style="font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-line;">
+                                                        {{ $item->output }}
+                                                    </div>
+                                                @else
+                                                    <span style="color: var(--text-sub);">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($item->outcome)
+                                                    <div
+                                                        style="font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-line;">
+                                                        {{ $item->outcome }}
+                                                    </div>
+                                                @else
+                                                    <span style="color: var(--text-sub);">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
                                                 @if ($item->volume_luaran)
                                                     <div
                                                         style="font-weight: 700; font-size: 13px; color: var(--text);">
@@ -493,7 +515,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5"
+                                            <td colspan="7"
                                                 style="text-align: center; padding: 50px; color: var(--text-sub);">
                                                 <i class="fas fa-inbox"
                                                     style="font-size: 32px; opacity: 0.2; margin-bottom: 12px; display: block;"></i>
