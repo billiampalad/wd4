@@ -43,7 +43,18 @@ class LaporanPimpinanController extends Controller
 
         // Filter tipe pelaksana (jurusan / upa / pusat)
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
-            $query->where('tipe_pelaksana', $request->tipe_pelaksana);
+            if ($request->tipe_pelaksana === 'instansi') {
+                $query->where('jenis', 'like', '%MoU%')
+                    ->where(function ($typeQuery) {
+                        $typeQuery->whereNull('tipe_pelaksana')
+                            ->orWhere('tipe_pelaksana', '');
+                    })
+                    ->whereNull('jurusan_id')
+                    ->whereNull('upa_id')
+                    ->whereNull('pusat_id');
+            } else {
+                $query->where('tipe_pelaksana', $request->tipe_pelaksana);
+            }
         }
 
         if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {

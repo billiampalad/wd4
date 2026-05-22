@@ -162,6 +162,7 @@
                         selectedLabel: 'Semua Unit',
                         items: [
                             { id: 'all',     label: 'Semua Unit' },
+                            { id: 'instansi', label: 'Instansi' },
                             { id: 'jurusan', label: 'Jurusan' },
                             { id: 'upa',     label: 'UPA' },
                             { id: 'pusat',   label: 'Pusat' }

@@ -1202,12 +1202,23 @@ class UnitPageController extends Controller
         }
         // Filter Unit Pelaksana berdasarkan kolom FK yang terisi
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
-            match ($request->tipe_pelaksana) {
-                'jurusan' => $query->whereNotNull('jurusan_id'),
-                'upa'     => $query->whereNotNull('upa_id'),
-                'pusat'   => $query->whereNotNull('pusat_id'),
-                default   => null,
-            };
+            if ($request->tipe_pelaksana === 'instansi') {
+                $query->where('jenis', 'like', '%MoU%')
+                    ->where(function ($typeQuery) {
+                        $typeQuery->whereNull('tipe_pelaksana')
+                            ->orWhere('tipe_pelaksana', '');
+                    })
+                    ->whereNull('jurusan_id')
+                    ->whereNull('upa_id')
+                    ->whereNull('pusat_id');
+            } else {
+                match ($request->tipe_pelaksana) {
+                    'jurusan' => $query->whereNotNull('jurusan_id'),
+                    'upa'     => $query->whereNotNull('upa_id'),
+                    'pusat'   => $query->whereNotNull('pusat_id'),
+                    default   => null,
+                };
+            }
         }
         if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {
             $query->where('jurusan_id', $request->jurusan_id);

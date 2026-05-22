@@ -236,7 +236,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         </div>
                     </div>
 
-                    <div class="rfc-group" x-data="{ open: false, selected: 'all', selectedLabel: 'Semua Unit', items: [{ id: 'all', label: 'Semua Unit' }, { id: 'jurusan', label: 'Jurusan' }, { id: 'upa', label: 'UPA' }, { id: 'pusat', label: 'Pusat' }] }">
+                    <div class="rfc-group" x-data="{ open: false, selected: 'all', selectedLabel: 'Semua Unit', items: [{ id: 'all', label: 'Semua Unit' }, { id: 'instansi', label: 'Instansi' }, { id: 'jurusan', label: 'Jurusan' }, { id: 'upa', label: 'UPA' }, { id: 'pusat', label: 'Pusat' }] }">
                         <label>Unit Pelaksana</label>
                         <input type="hidden" name="tipe_pelaksana" :value="selected">
                         <div class="alpine-dropdown" @click.outside="open = false">
