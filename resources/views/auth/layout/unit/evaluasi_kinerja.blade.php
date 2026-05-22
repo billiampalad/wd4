@@ -76,22 +76,9 @@
                     <tbody>
                         @forelse(($draftList ?? collect()) as $kegiatan)
                             @php
-                                $pelaksanaIcon = 'fa-building';
-                                $pelaksanaClass = 'dk-entity-indigo';
-                                $pelaksanaName = '-';
-                                if ($kegiatan->tipe_pelaksana === 'jurusan') {
-                                    $pelaksanaIcon = 'fa-microchip';
-                                    $pelaksanaClass = 'dk-entity-indigo';
-                                    $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-                                    $pelaksanaIcon = 'fa-building-columns';
-                                    $pelaksanaClass = 'dk-entity-cyan';
-                                    $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-                                    $pelaksanaIcon = 'fa-landmark';
-                                    $pelaksanaClass = 'dk-entity-violet';
-                                    $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-                                }
+                                $pelaksanaIcon = $kegiatan->pelaksana_icon;
+                                $pelaksanaClass = $kegiatan->pelaksana_class;
+                                $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
                                 $title = $kegiatan->title ?? '';
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
@@ -189,22 +176,9 @@
                     <tbody>
                         @forelse(($revisiList ?? collect()) as $kegiatan)
                             @php
-                                $pelaksanaIcon = 'fa-building';
-                                $pelaksanaClass = 'dk-entity-indigo';
-                                $pelaksanaName = '-';
-                                if ($kegiatan->tipe_pelaksana === 'jurusan') {
-                                    $pelaksanaIcon = 'fa-microchip';
-                                    $pelaksanaClass = 'dk-entity-indigo';
-                                    $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-                                    $pelaksanaIcon = 'fa-building-columns';
-                                    $pelaksanaClass = 'dk-entity-cyan';
-                                    $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-                                    $pelaksanaIcon = 'fa-landmark';
-                                    $pelaksanaClass = 'dk-entity-violet';
-                                    $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-                                }
+                                $pelaksanaIcon = $kegiatan->pelaksana_icon;
+                                $pelaksanaClass = $kegiatan->pelaksana_class;
+                                $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
                                 $title = $kegiatan->title ?? '';
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
@@ -317,22 +291,9 @@
                     <tbody>
                         @forelse(($belumEvaluasi ?? collect()) as $kegiatan)
                             @php
-                                $pelaksanaIcon = 'fa-building';
-                                $pelaksanaClass = 'dk-entity-indigo';
-                                $pelaksanaName = '-';
-                                if ($kegiatan->tipe_pelaksana === 'jurusan') {
-                                    $pelaksanaIcon = 'fa-microchip';
-                                    $pelaksanaClass = 'dk-entity-indigo';
-                                    $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-                                    $pelaksanaIcon = 'fa-building-columns';
-                                    $pelaksanaClass = 'dk-entity-cyan';
-                                    $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-                                    $pelaksanaIcon = 'fa-landmark';
-                                    $pelaksanaClass = 'dk-entity-violet';
-                                    $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-                                }
+                                $pelaksanaIcon = $kegiatan->pelaksana_icon;
+                                $pelaksanaClass = $kegiatan->pelaksana_class;
+                                $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
                                 $title = $kegiatan->title ?? '';
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
@@ -431,22 +392,9 @@
                                     ? round(($eval->kualitas + $eval->keterlibatan + $eval->efisiensi + $eval->kepuasan) / 4, 1)
                                     : 0;
 
-                                $pelaksanaIcon = 'fa-building';
-                                $pelaksanaClass = 'dk-entity-indigo';
-                                $pelaksanaName = '-';
-                                if ($kegiatan->tipe_pelaksana === 'jurusan') {
-                                    $pelaksanaIcon = 'fa-microchip';
-                                    $pelaksanaClass = 'dk-entity-indigo';
-                                    $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-                                    $pelaksanaIcon = 'fa-building-columns';
-                                    $pelaksanaClass = 'dk-entity-cyan';
-                                    $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-                                } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-                                    $pelaksanaIcon = 'fa-landmark';
-                                    $pelaksanaClass = 'dk-entity-violet';
-                                    $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-                                }
+                                $pelaksanaIcon = $kegiatan->pelaksana_icon;
+                                $pelaksanaClass = $kegiatan->pelaksana_class;
+                                $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
                                 $title = $kegiatan->title ?? '';
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
