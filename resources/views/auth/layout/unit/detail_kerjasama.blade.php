@@ -48,6 +48,7 @@
         $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
         $pelaksanaType = 'Pusat';
     }
+    $hasPelaksanaData = $pelaksanaType !== '' && $pelaksanaName !== '-';
 
     $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
@@ -687,44 +688,46 @@
                     </div>
                 </div>
 
-                {{-- Card: Pelaksana --}}
-                <div class="card dk-card">
-                    <div class="card-header dk-card-header">
-                        <div class="dk-card-title">
-                            <span class="dk-title-icon"><i class="fas fa-users-gear"></i></span>
-                            <span>
-                                <strong>Unit Pelaksana</strong>
-                                <small>Instansi pengelola kegiatan</small>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
-                        <div class="dk-entity-card">
-                            <span class="dk-entity-icon {{ $pelaksanaClass }}">
-                                <i class="fas {{ $pelaksanaIcon }}"></i>
-                            </span>
-                            <div class="dk-entity-text">
-                                <small
-                                    class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType ?: 'Unit' }}</small>
-                                <strong>{{ $pelaksanaName }}</strong>
+                @if ($hasPelaksanaData)
+                    {{-- Card: Pelaksana --}}
+                    <div class="card dk-card">
+                        <div class="card-header dk-card-header">
+                            <div class="dk-card-title">
+                                <span class="dk-title-icon"><i class="fas fa-users-gear"></i></span>
+                                <span>
+                                    <strong>Unit Pelaksana</strong>
+                                    <small>Instansi pengelola kegiatan</small>
+                                </span>
                             </div>
                         </div>
-
-                        @if ($kegiatan->prodis->count() > 0)
-                            <div class="dk-prodi-list">
-                                <label class="dk-prodi-label">Program Studi Terkait</label>
-                                <div class="dk-prodi-container">
-                                    @foreach ($kegiatan->prodis as $prodi)
-                                        <div class="dk-prodi-item">
-                                            <i class="fas fa-graduation-cap"></i>
-                                            <span>{{ $prodi->nama_prodi }}</span>
-                                        </div>
-                                    @endforeach
+                        <div class="card-body dk-card-body" style="padding: 28px;">
+                            <div class="dk-entity-card">
+                                <span class="dk-entity-icon {{ $pelaksanaClass }}">
+                                    <i class="fas {{ $pelaksanaIcon }}"></i>
+                                </span>
+                                <div class="dk-entity-text">
+                                    <small
+                                        class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType }}</small>
+                                    <strong>{{ $pelaksanaName }}</strong>
                                 </div>
                             </div>
-                        @endif
+
+                            @if ($kegiatan->prodis->count() > 0)
+                                <div class="dk-prodi-list">
+                                    <label class="dk-prodi-label">Program Studi Terkait</label>
+                                    <div class="dk-prodi-container">
+                                        @foreach ($kegiatan->prodis as $prodi)
+                                            <div class="dk-prodi-item">
+                                                <i class="fas fa-graduation-cap"></i>
+                                                <span>{{ $prodi->nama_prodi }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 {{-- Card: Profil Mitra --}}
                 <div class="card dk-card">
