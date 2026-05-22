@@ -368,11 +368,16 @@
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function initPimpinanLaporan() {
         var form = document.getElementById('filterForm');
         var previewBody = document.getElementById('previewBody');
         var previewCount = document.getElementById('previewCount');
         var btnTampilkan = document.getElementById('btnTampilkan');
+        var previewTable = document.getElementById('previewTable');
+
+        if (!form || !previewBody || !previewCount || !btnTampilkan || !previewTable) return;
+        if (previewTable.dataset.laporanPimpinanBound === 'true') return;
+        previewTable.dataset.laporanPimpinanBound = 'true';
 
         function getFormParams() {
             var fd = new FormData(form);
@@ -419,18 +424,18 @@
 
             var pelaksanaIcon = 'fa-building';
             var pelaksanaClass = 'dk-entity-indigo';
-            var pelaksanaName = '-';
+            var pelaksanaName = item.pelaksana_name || '-';
             if (item.tipe_pelaksana === 'jurusan') {
                 pelaksanaIcon = 'fa-microchip';
-                pelaksanaName = (item.jurusan && item.jurusan.nama_jurusan) ? item.jurusan.nama_jurusan : '-';
             } else if (item.tipe_pelaksana === 'upa') {
                 pelaksanaIcon = 'fa-building-columns';
                 pelaksanaClass = 'dk-entity-cyan';
-                pelaksanaName = (item.upa && item.upa.nama_upa) ? item.upa.nama_upa : '-';
             } else if (item.tipe_pelaksana === 'pusat') {
                 pelaksanaIcon = 'fa-landmark';
                 pelaksanaClass = 'dk-entity-violet';
-                pelaksanaName = (item.pusat && item.pusat.nama_pusat) ? item.pusat.nama_pusat : '-';
+            } else {
+                pelaksanaIcon = item.pelaksana_icon || pelaksanaIcon;
+                pelaksanaClass = item.pelaksana_class || pelaksanaClass;
             }
 
             var mulai = formatDate(item.start_date);
@@ -524,7 +529,10 @@
             var url = form.dataset.previewUrl + '?' + getFormParams();
 
             fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
-                .then(function (res) { return res.json(); })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Request gagal: ' + res.status);
+                    return res.json();
+                })
                 .then(function (data) {
                     if (!data || data.length === 0) {
                         showEmpty();
@@ -572,5 +580,13 @@
 
         // Auto-load data on page load (call directly, no click simulation)
         loadData();
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPimpinanLaporan);
+    } else {
+        initPimpinanLaporan();
+    }
+
+    document.addEventListener('turbo:load', initPimpinanLaporan);
 </script>
