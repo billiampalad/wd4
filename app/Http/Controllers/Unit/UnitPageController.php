@@ -439,6 +439,22 @@ class UnitPageController extends Controller
                         ->where('jenis', 'not like', '%MoA%')
                         ->count();
 
+        $instansi = (object) [
+            'nama_instansi' => Cooperation::DEFAULT_MOU_PELAKSANA,
+            'mou_count' => Cooperation::where('jenis', 'like', '%MoU%')
+                ->where(function ($query) {
+                    $query->whereNull('tipe_pelaksana')
+                        ->orWhere('tipe_pelaksana', '');
+                })
+                ->whereNull('jurusan_id')
+                ->whereNull('upa_id')
+                ->whereNull('pusat_id')
+                ->count(),
+            'moa_count' => 0,
+            'ia_count' => 0,
+        ];
+        $instansi->total_count = $instansi->mou_count + $instansi->moa_count + $instansi->ia_count;
+
         // Single aggregate query to get counts grouped by institution and jenis
         $coopCounts = Cooperation::select('jurusan_id', 'upa_id', 'pusat_id', 'jenis', DB::raw('count(*) as count'))
             ->where(function($q) {
@@ -502,7 +518,7 @@ class UnitPageController extends Controller
             return $pusat;
         });
 
-        return view('auth.unit', compact('jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
+        return view('auth.unit', compact('instansi', 'jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
 
     public function bentukKegiatan()

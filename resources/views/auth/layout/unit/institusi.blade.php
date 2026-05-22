@@ -2,7 +2,14 @@
     $jurusanList = $jurusans ?? collect();
     $upaList = $upas ?? collect();
     $pusatList = $pusats ?? collect();
-    $totalInstitusi = $jurusanList->count() + $upaList->count() + $pusatList->count();
+    $instansiData = $instansi ?? (object) [
+        'nama_instansi' => 'Politeknik Negeri Manado',
+        'mou_count' => 0,
+        'moa_count' => 0,
+        'ia_count' => 0,
+        'total_count' => 0,
+    ];
+    $totalInstitusi = 1 + $jurusanList->count() + $upaList->count() + $pusatList->count();
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -22,7 +29,7 @@
                 <div class="ud-title-copy">
                     <h2 class="ud-title">Institusi Pelaksana</h2>
                     <p class="ud-subtitle">
-                        Daftar jurusan, UPA, dan pusat yang terlibat dalam pengelolaan kerjasama.
+                        Daftar Instansi, jurusan, UPA, dan pusat yang terlibat dalam pengelolaan kerjasama.
                     </p>
                 </div>
             </div>
@@ -112,11 +119,47 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr class="um-row dk-row" data-type="instansi" data-mou="{{ $instansiData->mou_count }}"
+                            data-moa="{{ $instansiData->moa_count }}" data-ia="{{ $instansiData->ia_count }}">
+                            <td class="um-td um-td-num" style="vertical-align: middle;">
+                                <span class="um-num dk-num">01</span>
+                            </td>
+                            <td class="um-td dk-col-name" style="vertical-align: middle;">
+                                <div class="dk-entity" style="gap: 14px;">
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span class="dk-entity-text"
+                                            style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $instansiData->nama_instansi }}</span>
+                                        <span class="dk-status dk-status-active"
+                                            style="width: fit-content; font-size: 10.5px; padding: 1px 8px; height: auto;">
+                                            <i class="fas fa-university" style="font-size: 9px; margin-right: 4px;"></i>
+                                            Instansi
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                <span class="dk-status dk-status-info"
+                                    style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $instansiData->mou_count }}</span>
+                            </td>
+                            <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                <span class="dk-status dk-status-warning"
+                                    style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $instansiData->moa_count }}</span>
+                            </td>
+                            <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                <span class="dk-status dk-status-danger"
+                                    style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $instansiData->ia_count }}</span>
+                            </td>
+                            <td class="um-td" style="vertical-align: middle; text-align: center;">
+                                <span class="dk-status dk-status-active"
+                                    style="font-weight: 700; justify-content: center; width: 40px; margin: 0 auto; padding: 4px 0;">{{ $instansiData->total_count }}</span>
+                            </td>
+                        </tr>
+
                         @forelse ($jurusanList as $jurusan)
                             <tr class="um-row dk-row" data-type="jurusan" data-mou="{{ $jurusan->mou_count }}"
                                 data-moa="{{ $jurusan->moa_count }}" data-ia="{{ $jurusan->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
-                                    <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="um-num dk-num">{{ str_pad($loop->iteration + 1, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
                                 <td class="um-td dk-col-name" style="vertical-align: middle;">
                                     <div class="dk-entity" style="gap: 14px;">
@@ -152,7 +195,7 @@
                         @endforelse
 
                         @foreach ($upaList as $upa)
-                            @php $index = $jurusanList->count() + $loop->iteration; @endphp
+                            @php $index = 1 + $jurusanList->count() + $loop->iteration; @endphp
                             <tr class="um-row dk-row" data-type="upa" data-mou="{{ $upa->mou_count }}"
                                 data-moa="{{ $upa->moa_count }}" data-ia="{{ $upa->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
@@ -192,7 +235,7 @@
                         @endforeach
 
                         @foreach ($pusatList as $pusat)
-                            @php $index = $jurusanList->count() + $upaList->count() + $loop->iteration; @endphp
+                            @php $index = 1 + $jurusanList->count() + $upaList->count() + $loop->iteration; @endphp
                             <tr class="um-row dk-row" data-type="pusat" data-mou="{{ $pusat->mou_count }}"
                                 data-moa="{{ $pusat->moa_count }}" data-ia="{{ $pusat->ia_count }}">
                                 <td class="um-td um-td-num" style="vertical-align: middle;">
