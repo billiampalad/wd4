@@ -35,6 +35,18 @@ function statusKerjasamaTooltipColors() {
     };
 }
 
+function klasifikasiMitraChartCutout() {
+    return window.matchMedia('(max-width: 767px)').matches ? '58%' : '60%';
+}
+
+function resizeKlasifikasiMitraChart() {
+    if (!window.klasifikasiMitraDonutChart) return;
+
+    window.klasifikasiMitraDonutChart.options.cutout = klasifikasiMitraChartCutout();
+    window.klasifikasiMitraDonutChart.resize();
+    window.klasifikasiMitraDonutChart.update('none');
+}
+
 function applyThemeToKlasifikasiChart() {
     const surfaceColor = statusKerjasamaSurfaceColor();
     const tooltipColors = statusKerjasamaTooltipColors();
@@ -111,7 +123,7 @@ function createKlasifikasiMitraChart() {
             layout: {
                 padding: 10
             },
-            cutout: '60%',
+            cutout: klasifikasiMitraChartCutout(),
             plugins: {
                 legend: {
                     display: false
@@ -140,10 +152,13 @@ function createKlasifikasiMitraChart() {
 
 function initKlasifikasiMitraPage() {
     createKlasifikasiMitraChart();
+    resizeKlasifikasiMitraChart();
 }
 
 document.addEventListener('DOMContentLoaded', initKlasifikasiMitraPage);
 document.addEventListener('turbo:load', initKlasifikasiMitraPage);
+window.addEventListener('resize', resizeKlasifikasiMitraChart);
+window.addEventListener('orientationchange', resizeKlasifikasiMitraChart);
 
 if (!window.klasifikasiMitraThemeObserver) {
     window.klasifikasiMitraThemeObserver = new MutationObserver(function (mutations) {

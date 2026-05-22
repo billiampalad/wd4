@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="{{ asset('css/auth/unit/analitik/status_kerjasama.css') }}" data-turbo-track="reload">
 
-<main id="mainContent" class="sk-page" style="grid-template-columns: 1fr; gap: 24px;">
+<main id="mainContent" class="sk-page klasifikasi-page">
     <section class="ud-topbar">
         <div class="ud-hero-copy">
             <div class="ud-breadcrumb">
@@ -23,8 +23,8 @@
     </section>
 
     <!-- Stat cards grid -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
-        <div class="sk-card"
+    <div class="klasifikasi-stat-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+        <div class="sk-card klasifikasi-stat-card"
             style="border-radius: 14px; padding: 18px; display: flex; flex-direction: row; align-items: center; gap: 16px;">
             <div
                 style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: grid; place-items: center; font-size: 20px;">
@@ -37,7 +37,7 @@
                 <strong style="font-size: 24px; font-weight: 850; color: var(--text);">{{ $totalMitras }}</strong>
             </div>
         </div>
-        <div class="sk-card"
+        <div class="sk-card klasifikasi-stat-card"
             style="border-radius: 14px; padding: 18px; display: flex; flex-direction: row; align-items: center; gap: 16px;">
             <div
                 style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: grid; place-items: center; font-size: 20px;">
@@ -52,7 +52,7 @@
                 <span style="font-size: 12px; color: var(--text-sub);">({{ $mostFrequentCount }} Mitra)</span>
             </div>
         </div>
-        <div class="sk-card"
+        <div class="sk-card klasifikasi-stat-card"
             style="border-radius: 14px; padding: 18px; display: flex; flex-direction: row; align-items: center; gap: 16px;">
             <div
                 style="width: 48px; height: 48px; border-radius: 12px; background: rgba(139, 92, 246, 0.1); color: #8b5cf6; display: grid; place-items: center; font-size: 20px;">
@@ -72,14 +72,14 @@
     </div>
 
     <!-- Visualizations and Lists -->
-    <div
+    <div class="klasifikasi-main-grid"
         style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 380px); gap: 20px; align-items: start;">
 
         <!-- Left: Chart & Full List -->
-        <div style="display: grid; gap: 20px;">
+        <div class="klasifikasi-left-stack" style="display: grid; gap: 20px;">
 
             <!-- Chart Card -->
-            <section class="sk-card" style="border-radius: 18px; padding: 20px;">
+            <section class="sk-card klasifikasi-card" style="border-radius: 18px; padding: 20px;">
                 <header style="margin-bottom: 20px;">
                     <h2 class="sk-title" style="font-size: 16px; font-weight: 800;">
                         <i class="fas fa-chart-pie"></i>
@@ -89,23 +89,23 @@
                         kriteria klasifikasi.</p>
                 </header>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center;">
-                    <div style="position: relative; height: 260px;">
+                <div class="klasifikasi-chart-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center;">
+                    <div class="klasifikasi-chart-wrap" style="position: relative; height: 260px;">
                         <canvas id="klasifikasiMitraChart" aria-label="Grafik Klasifikasi Mitra"></canvas>
                     </div>
-                    <div
+                    <div class="klasifikasi-legend-list"
                         style="max-height: 260px; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 8px;">
                         @foreach ($classifications as $index => $cls)
                             @if ($cls->mitras_count > 0)
-                                <div
+                                <div class="klasifikasi-legend-item"
                                     style="display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px;">
-                                    <div style="display: flex; align-items: center; gap: 8px; min-width: 0;">
-                                        <span
+                                    <div class="klasifikasi-legend-main" style="display: flex; align-items: center; gap: 8px; min-width: 0;">
+                                        <span class="klasifikasi-legend-swatch"
                                             style="width: 10px; height: 10px; border-radius: 3px; background: {{ $chartDataPayload['colors'][$index] }}; flex-shrink: 0;"></span>
-                                        <span
+                                        <span class="klasifikasi-legend-name" tabindex="0" title="{{ $cls->nama }}"
                                             style="color: var(--text); font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $cls->nama }}</span>
                                     </div>
-                                    <strong style="color: var(--text);">{{ $cls->mitras_count }}</strong>
+                                    <strong class="klasifikasi-legend-count" style="color: var(--text);">{{ $cls->mitras_count }}</strong>
                                 </div>
                             @endif
                         @endforeach
@@ -114,7 +114,7 @@
             </section>
 
             <!-- Table Card -->
-            <section class="sk-card" style="border-radius: 18px; padding: 20px;">
+            <section class="sk-card klasifikasi-card" style="border-radius: 18px; padding: 20px;">
                 <header style="margin-bottom: 16px;">
                     <h2 class="sk-title" style="font-size: 16px; font-weight: 800;">
                         <i class="fas fa-list-ul"></i>
@@ -122,8 +122,8 @@
                     </h2>
                 </header>
 
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <div class="klasifikasi-table-wrap" style="overflow-x: auto;">
+                    <table class="klasifikasi-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
                         <thead>
                             <tr style="border-bottom: 2px solid var(--border); color: var(--text-sub);">
                                 <th style="padding: 10px 8px; font-weight: 700; width: 60px;">#</th>
@@ -137,18 +137,18 @@
                         <tbody>
                             @forelse ($classifications as $cls)
                                 <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;">
-                                    <td style="padding: 12px 8px; color: var(--text-sub); font-weight: 600;">
+                                    <td data-label="#" style="padding: 12px 8px; color: var(--text-sub); font-weight: 600;">
                                         {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
                                     </td>
-                                    <td style="padding: 12px 8px; color: var(--text); font-weight: 700;">{{ $cls->nama }}
+                                    <td data-label="Nama Klasifikasi" style="padding: 12px 8px; color: var(--text); font-weight: 700;">{{ $cls->nama }}
                                     </td>
-                                    <td style="padding: 12px 8px; text-align: center;">
+                                    <td data-label="Jumlah Mitra" style="padding: 12px 8px; text-align: center;">
                                         <span
                                             style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; font-weight: 700; padding: 3px 8px; border-radius: 6px; font-size: 12px;">
                                             {{ $cls->mitras_count }} Mitra
                                         </span>
                                     </td>
-                                    <td
+                                    <td data-label="Persentase"
                                         style="padding: 12px 8px; text-align: center; font-weight: 700; color: var(--text);">
                                         {{ $totalMitras > 0 ? round(($cls->mitras_count / $totalMitras) * 100, 1) : 0 }}%
                                     </td>
@@ -166,7 +166,7 @@
         </div>
 
         <!-- Right: Top 5 Active Mitras -->
-        <section class="sk-card" style="border-radius: 18px; padding: 20px;">
+        <section class="sk-card klasifikasi-card klasifikasi-top-card" style="border-radius: 18px; padding: 20px;">
             <header style="margin-bottom: 20px;">
                 <h2 class="sk-title" style="font-size: 16px; font-weight: 800;">
                     <i class="fas fa-trophy"></i>
@@ -176,7 +176,7 @@
                     kerjasama terbanyak.</p>
             </header>
 
-            <div style="display: grid; gap: 14px;">
+            <div class="klasifikasi-top-list" style="display: grid; gap: 14px;">
                 @forelse ($topMitras as $mitra)
                     <div
                         style="border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: var(--surface2); display: flex; flex-direction: column; gap: 6px; position: relative;">
