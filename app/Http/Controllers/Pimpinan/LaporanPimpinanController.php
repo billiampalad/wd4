@@ -41,6 +41,21 @@ class LaporanPimpinanController extends Controller
             $query->whereDate('end_date', '<=', $request->tanggal_akhir);
         }
 
+        if ($request->filled('jenis_dokumentasi') && $request->jenis_dokumentasi !== 'all') {
+            $jenisDokumentasi = strtolower($request->jenis_dokumentasi);
+
+            $query->where(function ($jenisQuery) use ($jenisDokumentasi) {
+                if ($jenisDokumentasi === 'mou') {
+                    $jenisQuery->where('jenis', 'like', '%MoU%');
+                } elseif ($jenisDokumentasi === 'moa') {
+                    $jenisQuery->where('jenis', 'like', '%MoA%');
+                } elseif ($jenisDokumentasi === 'ia') {
+                    $jenisQuery->where('jenis', 'like', '%IA%')
+                        ->where('jenis', 'not like', '%MoA%');
+                }
+            });
+        }
+
         // Filter tipe pelaksana (jurusan / upa / pusat)
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
             if ($request->tipe_pelaksana === 'instansi') {
