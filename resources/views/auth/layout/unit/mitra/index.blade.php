@@ -8,12 +8,12 @@
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('unit.mitra') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Mitra</span>
+                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                    <span class="current">Repositori</span>
                 </a>
                 <span class="sep">/</span>
                 <a href="{{ route('unit.mitra') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Repositori</span>
+                    <span class="current">Daftar Mitra</span>
                 </a>
             </div>
 
