@@ -65,14 +65,7 @@
         <tbody>
             @foreach($data as $index => $item)
                 @php
-                    $pengusul = '-';
-                    if ($item->tipe_pelaksana === 'jurusan') {
-                        $pengusul = $item->jurusan->nama_jurusan ?? '-';
-                    } elseif ($item->tipe_pelaksana === 'upa') {
-                        $pengusul = $item->upa->nama_upa ?? '-';
-                    } elseif ($item->tipe_pelaksana === 'pusat') {
-                        $pengusul = $item->pusat->nama_pusat ?? '-';
-                    }
+                    $pengusul = $item->pelaksana_name;
                     
                     $mitraNames = $item->mitra->nama_mitra ?? '-';
                     $mitraNegara = $item->mitra->negara ?? 'Indonesia';

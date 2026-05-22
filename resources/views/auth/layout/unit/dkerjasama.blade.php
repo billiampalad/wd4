@@ -522,22 +522,9 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         default => 'Belum Diatur',
                         };
 
-                        $pelaksanaIcon = 'fa-building';
-                        $pelaksanaClass = 'dk-entity-indigo';
-                        $pelaksanaName = '-';
-                        if ($kegiatan->tipe_pelaksana === 'jurusan') {
-                        $pelaksanaIcon = 'fa-microchip';
-                        $pelaksanaClass = 'dk-entity-indigo';
-                        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-                        } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-                        $pelaksanaIcon = 'fa-building-columns';
-                        $pelaksanaClass = 'dk-entity-cyan';
-                        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-                        } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-                        $pelaksanaIcon = 'fa-landmark';
-                        $pelaksanaClass = 'dk-entity-violet';
-                        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-                        }
+                        $pelaksanaIcon = $kegiatan->pelaksana_icon;
+                        $pelaksanaClass = $kegiatan->pelaksana_class;
+                        $pelaksanaName = $kegiatan->pelaksana_name;
 
                         $mulai = $kegiatan->start_date?->format('d M Y');
                         $selesai = $kegiatan->end_date?->format('d M Y');
@@ -701,18 +688,18 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 
             var pelaksanaIcon = 'fa-building';
             var pelaksanaClass = 'dk-entity-indigo';
-            var pelaksanaName = '-';
+            var pelaksanaName = item.pelaksana_name || '-';
             if (item.tipe_pelaksana === 'jurusan') {
                 pelaksanaIcon = 'fa-microchip';
-                pelaksanaName = (item.jurusan && item.jurusan.nama_jurusan) ? item.jurusan.nama_jurusan : '-';
             } else if (item.tipe_pelaksana === 'upa') {
                 pelaksanaIcon = 'fa-building-columns';
                 pelaksanaClass = 'dk-entity-cyan';
-                pelaksanaName = (item.upa && item.upa.nama_upa) ? item.upa.nama_upa : '-';
             } else if (item.tipe_pelaksana === 'pusat') {
                 pelaksanaIcon = 'fa-landmark';
                 pelaksanaClass = 'dk-entity-violet';
-                pelaksanaName = (item.pusat && item.pusat.nama_pusat) ? item.pusat.nama_pusat : '-';
+            } else {
+                pelaksanaIcon = item.pelaksana_icon || pelaksanaIcon;
+                pelaksanaClass = item.pelaksana_class || pelaksanaClass;
             }
 
             var status = (item.status || '').toLowerCase();

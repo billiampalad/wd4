@@ -34,6 +34,8 @@ class Cooperation extends Model
         'perpanjangan_dari_id',
     ];
 
+    public const DEFAULT_MOU_PELAKSANA = 'Politeknik Negeri Manado';
+
     protected $appends = ['status_label', 'status_class'];
 
     protected $casts = [
@@ -160,6 +162,37 @@ class Cooperation extends Model
             'Disahkan' => 'tag-green',
             'Revisi' => 'tag-red',
             default => 'tag-orange',
+        };
+    }
+
+    public function getPelaksanaNameAttribute()
+    {
+        return match ($this->tipe_pelaksana) {
+            'jurusan' => $this->jurusan?->nama_jurusan ?: '-',
+            'upa' => $this->upa?->nama_upa ?: '-',
+            'pusat' => $this->pusat?->nama_pusat ?: '-',
+            default => str_contains(strtolower($this->jenis ?? ''), 'mou')
+                ? self::DEFAULT_MOU_PELAKSANA
+                : '-',
+        };
+    }
+
+    public function getPelaksanaIconAttribute()
+    {
+        return match ($this->tipe_pelaksana) {
+            'jurusan' => 'fa-microchip',
+            'upa' => 'fa-building-columns',
+            'pusat' => 'fa-landmark',
+            default => 'fa-building',
+        };
+    }
+
+    public function getPelaksanaClassAttribute()
+    {
+        return match ($this->tipe_pelaksana) {
+            'upa' => 'dk-entity-cyan',
+            'pusat' => 'dk-entity-violet',
+            default => 'dk-entity-indigo',
         };
     }
 }

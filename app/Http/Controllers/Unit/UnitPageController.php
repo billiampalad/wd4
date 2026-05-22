@@ -1124,6 +1124,9 @@ class UnitPageController extends Controller
                     'doc_number'     => $c->doc_number,
                     'jenis'          => $c->jenis,
                     'tipe_pelaksana' => $c->tipe_pelaksana,
+                    'pelaksana_name' => $c->pelaksana_name,
+                    'pelaksana_icon' => $c->pelaksana_icon,
+                    'pelaksana_class' => $c->pelaksana_class,
                     'start_date'     => $c->start_date ? $c->start_date->toDateString() : null,
                     'end_date'       => $c->end_date   ? $c->end_date->toDateString()   : null,
                     // status: coba field status dulu, fallback ke status_dokumen
