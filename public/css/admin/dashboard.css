@@ -2557,6 +2557,13 @@ aside,
 }
 
 /* ── Form card ───────────────────────────────────────────────── */
+.ue-form-col,
+.ue-form-card,
+.ue-form-card .card-body,
+.ue-body {
+    overflow: visible;
+}
+
 .ue-form-header {
     padding: 16px 22px 14px;
     border-bottom: 1px solid var(--border, #e2e8f0);
@@ -2618,6 +2625,7 @@ aside,
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 20px;
+    overflow: visible;
 }
 
 .ue-grid-3 {
@@ -2625,6 +2633,7 @@ aside,
     grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
     margin-bottom: 20px;
+    overflow: visible;
 }
 
 @media (max-width: 680px) {
@@ -2640,6 +2649,7 @@ aside,
     display: flex;
     flex-direction: column;
     gap: 5px;
+    overflow: visible;
 }
 
 .ue-label {
