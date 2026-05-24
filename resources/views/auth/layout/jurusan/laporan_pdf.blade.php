@@ -34,58 +34,40 @@
 
     @foreach($data as $index => $item)
         <div class="item-container">
-            <div class="section-title">#{{ $index + 1 }}: {{ $item->nama_kegiatan }}</div>
+            <div class="section-title">#{{ $index + 1 }}: {{ $item->title }}</div>
             
             <table class="table" style="margin-top: 10px;">
                 <tr>
                     <th width="25%">Jenis Kerjasama</th>
-                    <td>{{ $item->jenisKerjasama->pluck('nama_kerjasama')->join(', ') ?: '-' }}</td>
+                    <td>{{ $item->jenis ?: '-' }}</td>
                 </tr>
                 <tr>
                     <th>Mitra</th>
-                    <td>{{ $item->mitras->pluck('nama_mitra')->join(', ') }}</td>
+                    <td>{{ $item->mitra->nama_mitra ?? '-' }}</td>
                 </tr>
                 <tr>
                     <th>Periode</th>
-                    <td>{{ $item->periode_mulai ? $item->periode_mulai->format('d/m/Y') : '-' }} s/d {{ $item->periode_selesai ? $item->periode_selesai->format('d/m/Y') : '-' }}</td>
+                    <td>{{ $item->start_date ? $item->start_date->format('d/m/Y') : '-' }} s/d {{ $item->end_date ? $item->end_date->format('d/m/Y') : '-' }}</td>
                 </tr>
                 <tr>
                     <th>Status</th>
                     <td>
                         <span class="badge badge-{{ $item->status }}">
-                            {{ $item->status == 'selesai' ? 'Selesai/Layak' : ($item->status == 'menunggu' ? 'Menunggu Evaluasi' : 'Draft') }}
+                            {{ ucfirst($item->status) }}
                         </span>
                     </td>
                 </tr>
                 <tr>
-                    <th>Nomor MoU/MoA</th>
-                    <td>{{ $item->nomor_mou ?? '-' }} (Tgl: {{ $item->tanggal_mou ? $item->tanggal_mou->format('d/m/Y') : '-' }})</td>
+                    <th>Nomor Dokumen</th>
+                    <td>{{ $item->doc_number ?? '-' }}</td>
                 </tr>
             </table>
 
-            @if($item->tujuans->count() > 0)
-                <strong>Tujuan & Sasaran:</strong>
+            @if($item->detail_kegiatans && $item->detail_kegiatans->count() > 0)
+                <strong>Detail Kegiatan:</strong>
                 <ul>
-                    @foreach($item->tujuans as $tujuan)
-                        <li><strong>Tujuan:</strong> {{ $tujuan->tujuan }} <br> <strong>Sasaran:</strong> {{ $tujuan->sasaran }}</li>
-                    @endforeach
-                </ul>
-            @endif
-
-            @if($item->pelaksanaans->count() > 0)
-                <strong>Pelaksanaan:</strong>
-                <ul>
-                    @foreach($item->pelaksanaans as $p)
-                        <li>{{ $p->deskripsi }} (Peserta: {{ $p->jumlah_peserta ?? 0 }}, Sumber Daya: {{ $p->sumber_daya ?? '-' }})</li>
-                    @endforeach
-                </ul>
-            @endif
-
-            @if($item->hasils->count() > 0)
-                <strong>Dampak & Manfaat:</strong>
-                <ul>
-                    @foreach($item->hasils as $h)
-                        <li>{{ $h->dampak ?? '-' }} <br> Manfaat Mahasiswa: {{ $h->manfaat_mahasiswa ?? '-' }}</li>
+                    @foreach($item->detail_kegiatans as $dk)
+                        <li>{{ $dk->bentuk_kegiatan ?? '-' }} (Biaya: {{ number_format($dk->nilai_biaya ?? 0) }})</li>
                     @endforeach
                 </ul>
             @endif

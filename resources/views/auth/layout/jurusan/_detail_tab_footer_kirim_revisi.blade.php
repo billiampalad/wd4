@@ -14,7 +14,7 @@
             Pastikan perbaikan sesuai catatan Pimpinan, lalu kirim kembali untuk evaluasi.
         </div>
     </div>
-    <button type="button" onclick="confirmSubmitKerjasamaJurusan()" style="padding: 10px 22px; background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(79,70,229,.28); white-space: nowrap;">
+    <button type="button" onclick="confirmSubmitKerjasamaUnit()" style="padding: 10px 22px; background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(79,70,229,.28); white-space: nowrap;">
         <i class="fas fa-paper-plane"></i> Kirim ke Pimpinan
     </button>
 </div>

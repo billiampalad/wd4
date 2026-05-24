@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Unit;
+namespace App\Http\Controllers\Jurusan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -13,34 +13,39 @@ use App\Models\Jurusan;
 use App\Models\Klasifikasi;
 use App\Models\Pusat;
 use App\Models\Upa;
+use App\Support\CooperationAccess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class UnitPageController extends Controller
+class JurusanPageController extends Controller
 {
     /**
-     * Resolve the unit_kerja_id for the currently logged-in user.
+     * Resolve the jurusan_id for the currently logged-in user.
      */
     private function resolveUnitId()
     {
         $user = Auth::user();
-        $profile = Profile::where('user_id', $user->id)->first();
+        $profile = CooperationAccess::profileForUser($user);
 
-        if (!$profile || !$profile->unit_kerja_id) {
-            abort(403, 'Profil unit kerja tidak ditemukan.');
+        if (!$profile->jurusan_id) {
+            abort(403, 'Profil jurusan tidak ditemukan.');
         }
 
-        return $profile->unit_kerja_id;
+        return $profile->jurusan_id;
     }
 
     /**
-     * Helper: scope query to kegiatan belonging to this unit.
+     * Helper: scope query to kegiatan belonging to this jurusan.
      */
     private function scopeUnit($query, $unitId)
     {
-        // Temporarily disabled unit scoping as cooperations table lacks unit relation
-        return $query;
+        return CooperationAccess::scopeForProfile($query, CooperationAccess::profileForUser(Auth::user()));
+    }
+
+    private function findOwnedCooperation($id): Cooperation
+    {
+        return $this->scopeUnit(Cooperation::query(), null)->findOrFail($id);
     }
 
     public function statusKerjasama(Request $request)
@@ -404,7 +409,7 @@ class UnitPageController extends Controller
                     'jenis' => $cooperation->jenis ?: 'Kerjasama',
                     'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
                     'due' => optional($cooperation->end_date)->format('j/n/Y'),
-                    'detail_url' => route('unit.kerjasama.show', $cooperation->id),
+                    'detail_url' => route('jurusan.kerjasama.show', $cooperation->id),
                     'created_at_label' => $cooperation->created_at ? $cooperation->created_at->translatedFormat('d M Y') : '-',
                 ];
             }),
@@ -416,7 +421,7 @@ class UnitPageController extends Controller
             ]);
         }
 
-        return view('auth.unit', compact(
+        return view('auth.jurusan', compact(
             'statusKerjasamaData',
             'growthData',
             'growthAverages',
@@ -518,7 +523,7 @@ class UnitPageController extends Controller
             return $pusat;
         });
 
-        return view('auth.unit', compact('instansi', 'jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
+        return view('auth.jurusan', compact('instansi', 'jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
 
     public function bentukKegiatan()
@@ -529,14 +534,14 @@ class UnitPageController extends Controller
             ->orderBy('nama_kerjasama', 'asc')
             ->get();
 
-        return view('auth.unit', compact('bentukKegiatans'));
+        return view('auth.jurusan', compact('bentukKegiatans'));
     }
 
     public function statusKerjasamaReferensi()
     {
         $this->resolveUnitId();
 
-        $counts = \App\Models\Cooperation::query()
+        $counts = $this->scopeUnit(Cooperation::query(), $this->resolveUnitId())
             ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status')
@@ -580,14 +585,14 @@ class UnitPageController extends Controller
             ],
         ]);
 
-        return view('auth.unit', ['referensiStatus' => $statusList]);
+        return view('auth.jurusan', ['referensiStatus' => $statusList]);
     }
 
     public function statusEvaluasiReferensi()
     {
         $this->resolveUnitId();
 
-        $counts = \App\Models\Cooperation::query()
+        $counts = $this->scopeUnit(Cooperation::query(), $this->resolveUnitId())
             ->select('status_dokumen', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('status_dokumen')
             ->pluck('total', 'status_dokumen')
@@ -624,7 +629,7 @@ class UnitPageController extends Controller
             ],
         ]);
 
-        return view('auth.unit', ['referensiStatusEvaluasi' => $statusList]);
+        return view('auth.jurusan', ['referensiStatusEvaluasi' => $statusList]);
     }
 
     public function kriteriaMitraReferensi()
@@ -635,7 +640,7 @@ class UnitPageController extends Controller
             ->orderBy('nama', 'asc')
             ->get();
 
-        return view('auth.unit', compact('kriterias'));
+        return view('auth.jurusan', compact('kriterias'));
     }
 
     public function klasifikasiMitra()
@@ -677,7 +682,7 @@ class UnitPageController extends Controller
             ->limit(5)
             ->get();
 
-        return view('auth.unit', compact(
+        return view('auth.jurusan', compact(
             'totalMitras',
             'classifications',
             'chartDataPayload',
@@ -732,7 +737,7 @@ class UnitPageController extends Controller
             ->limit(5)
             ->get();
 
-        return view('auth.unit', compact(
+        return view('auth.jurusan', compact(
             'nasionalCount',
             'internasionalCount',
             'totalMitras',
@@ -750,7 +755,7 @@ class UnitPageController extends Controller
 
         $kerjasamaUnit = $this->buildLaporanQuery($request)->get();
 
-        return view('auth.unit', [
+        return view('auth.jurusan', [
             'kerjasamaUnit' => $kerjasamaUnit,
             'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
@@ -786,13 +791,13 @@ class UnitPageController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        return view('auth.unit', compact('mitras'));
+        return view('auth.jurusan', compact('mitras'));
     }
 
     public function mitraCreate()
     {
         $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.unit', compact('klasifikasi'));
+        return view('auth.jurusan', compact('klasifikasi'));
     }
 
     public function mitraStore(Request $request)
@@ -827,21 +832,21 @@ class UnitPageController extends Controller
             ]);
         }
 
-        return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil ditambahkan.');
+        return redirect()->route('jurusan.mitra')->with('success', 'Mitra berhasil ditambahkan.');
     }
 
     public function mitraShow($id)
     {
         $mitra = \App\Models\Mitra::with(['klasifikasi', 'cooperations'])->findOrFail($id);
 
-        return view('auth.unit', compact('mitra'));
+        return view('auth.jurusan', compact('mitra'));
     }
 
     public function mitraEdit($id)
     {
         $mitra = \App\Models\Mitra::with('klasifikasi')->findOrFail($id);
         $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.unit', compact('mitra', 'klasifikasi'));
+        return view('auth.jurusan', compact('mitra', 'klasifikasi'));
     }
 
     public function mitraUpdate(Request $request, $id)
@@ -877,7 +882,7 @@ class UnitPageController extends Controller
             ]);
         }
 
-        return redirect()->route('unit.mitra')->with('success', 'Data mitra berhasil diperbarui.');
+        return redirect()->route('jurusan.mitra')->with('success', 'Data mitra berhasil diperbarui.');
     }
 
     public function mitraDestroy(Request $request, $id)
@@ -906,7 +911,7 @@ class UnitPageController extends Controller
             ]);
         }
 
-        return redirect()->route('unit.mitra')->with('success', 'Mitra berhasil dihapus.');
+        return redirect()->route('jurusan.mitra')->with('success', 'Mitra berhasil dihapus.');
     }
 
     private function mitraPayload($mitra)
@@ -931,7 +936,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         // Query dasar kerjasama
-        $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
+        $baseQuery = $this->scopeUnit(Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']), $unitId)
             ->orderBy('created_at', 'asc');
 
         // 1. List DRAFT (Status: Draft)
@@ -948,7 +953,7 @@ class UnitPageController extends Controller
         // 4. List SUDAH DIEVALUASI / DISAHKAN
         $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->get();
 
-        return view('auth.unit', [
+        return view('auth.jurusan', [
             'view' => 'evaluasi_kinerja',
             'draftList' => $draftList,
             'revisiList' => $revisiList,
@@ -962,13 +967,13 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        $kegiatan = Cooperation::findOrFail($id);
+        $kegiatan = $this->findOwnedCooperation($id);
 
         $existingEval = Evaluasi::where('cooperation_id', $kegiatan->id)
             ->where('dinilai_oleh', Auth::id())
             ->first();
 
-        return view('auth.unit', compact('kegiatan', 'existingEval'));
+        return view('auth.jurusan', compact('kegiatan', 'existingEval'));
     }
 
     // ─── Store Evaluasi (POST) ──────────────────────────────────
@@ -984,7 +989,7 @@ class UnitPageController extends Controller
         ]);
 
         $unitId = $this->resolveUnitId();
-        $kegiatan = Cooperation::findOrFail($id);
+        $kegiatan = $this->findOwnedCooperation($id);
 
         Evaluasi::create([
             'cooperation_id' => $kegiatan->id,
@@ -1005,7 +1010,7 @@ class UnitPageController extends Controller
             $q->where('role_name', 'pimpinan');
         })->get();
 
-        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        $namaUnit = Auth::user()->profile?->jurusan?->nama_jurusan ?? Auth::user()->name;
 
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
@@ -1019,7 +1024,7 @@ class UnitPageController extends Controller
             );
         }
 
-        return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
+        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }
 
     // ─── Update Evaluasi (PUT) ──────────────────────────────────
@@ -1035,7 +1040,7 @@ class UnitPageController extends Controller
         ]);
 
         $unitId = $this->resolveUnitId();
-        $kegiatan = Cooperation::findOrFail($id);
+        $kegiatan = $this->findOwnedCooperation($id);
 
         $eval = Evaluasi::where('cooperation_id', $kegiatan->id)
             ->where('dinilai_oleh', Auth::id())
@@ -1058,7 +1063,7 @@ class UnitPageController extends Controller
             $q->where('role_name', 'pimpinan');
         })->get();
 
-        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        $namaUnit = Auth::user()->profile?->jurusan?->nama_jurusan ?? Auth::user()->name;
 
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
@@ -1072,14 +1077,14 @@ class UnitPageController extends Controller
             );
         }
 
-        return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil diperbarui dan dikirim ke Pimpinan.');
+        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil diperbarui dan dikirim ke Pimpinan.');
     }
 
     // ─── Submit Evaluasi to Pimpinan (POST) ─────────────────────
     public function submitEvaluasiToPimpinan($id)
     {
         $unitId = $this->resolveUnitId();
-        $kegiatan = Cooperation::findOrFail($id);
+        $kegiatan = $this->findOwnedCooperation($id);
 
         // Pastikan sudah ada evaluasi
         $hasEval = Evaluasi::where('cooperation_id', $kegiatan->id)
@@ -1097,7 +1102,7 @@ class UnitPageController extends Controller
             $q->where('role_name', 'pimpinan');
         })->get();
 
-        $namaUnit = Auth::user()->profile->unitKerja->nama_unit_pelaksana;
+        $namaUnit = Auth::user()->profile?->jurusan?->nama_jurusan ?? Auth::user()->name;
 
         foreach ($pimpinans as $pimpinan) {
             \App\Models\Notifikasi::send(
@@ -1111,7 +1116,7 @@ class UnitPageController extends Controller
             );
         }
 
-        return redirect()->route('unit.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
+        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }
 
     // ─── Laporan Data ────────────────────────────────────────────
@@ -1119,7 +1124,7 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        return view('auth.unit', [
+        return view('auth.jurusan', [
             'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
             'upas' => Upa::orderBy('nama_upa')->get(),
@@ -1162,8 +1167,8 @@ class UnitPageController extends Controller
         $data = $this->buildLaporanQuery($request)
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('auth.layout.unit.laporan_pdf', compact('data'));
-        return $pdf->download('laporan_kerjasama_unit.pdf');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('auth.layout.jurusan.laporan_pdf', compact('data'));
+        return $pdf->download('laporan_kerjasama_jurusan.pdf');
     }
 
     public function laporanExcel(Request $request)
@@ -1171,13 +1176,13 @@ class UnitPageController extends Controller
         $data = $this->buildLaporanQuery($request)
             ->get();
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.unit.laporan_excel'), 'laporan_kerjasama_unit.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.jurusan.laporan_excel'), 'laporan_kerjasama_jurusan.xlsx');
     }
 
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
+        $query = $this->scopeUnit(Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']), $unitId)
             ->orderBy('created_at', 'desc');
 
         if ($request->filled('tanggal_awal')) {
@@ -1248,21 +1253,23 @@ class UnitPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        $totalKerjasama = Cooperation::count();
+        $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
+
+        $totalKerjasama = (clone $baseQuery)->count();
 
         // Status breakdown
-        $statusBreakdown = Cooperation::select('jenis', DB::raw('count(*) as total'))
+        $statusBreakdown = (clone $baseQuery)->select('jenis', DB::raw('count(*) as total'))
             ->groupBy('jenis')
             ->pluck('total', 'jenis');
 
         // Tren per tahun
-        $trenPerTahun = Cooperation::select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
+        $trenPerTahun = (clone $baseQuery)->select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
             ->groupBy('tahun')
             ->orderBy('tahun')
             ->get();
 
         // Sebaran jenis kerjasama
-        $sebaranJenis = Cooperation::select('jenis', DB::raw('count(*) as total'))
+        $sebaranJenis = (clone $baseQuery)->select('jenis', DB::raw('count(*) as total'))
             ->groupBy('jenis')
             ->get();
 
@@ -1275,7 +1282,7 @@ class UnitPageController extends Controller
         ];
 
 
-        return view('auth.unit', compact(
+        return view('auth.jurusan', compact(
             'totalKerjasama',
             'statusBreakdown',
             'trenPerTahun',
@@ -1287,7 +1294,7 @@ class UnitPageController extends Controller
     // ─── Form Laporan (PDF Upload) ──────────────────────────────
     public function formLaporan()
     {
-        return view('auth.unit');
+        return view('auth.jurusan');
     }
 
     public function previewTemplate()
@@ -1326,12 +1333,12 @@ class UnitPageController extends Controller
         // Logika Unik: Jika file sudah ada, tambahkan angka di belakangnya
         $filename = $cleanName;
         $counter = 1;
-        while (Storage::disk('public')->exists('laporan_unit/' . $filename)) {
+        while (Storage::disk('public')->exists('laporan_jurusan/' . $filename)) {
             $filename = Str::slug($nameOnly) . '-' . $counter . '.' . $extension;
             $counter++;
         }
 
-        $path = $file->storeAs('laporan_unit', $filename, 'public');
+        $path = $file->storeAs('laporan_jurusan', $filename, 'public');
 
         \App\Models\LaporanFile::create([
             'unit_kerja_id' => $unitId,
@@ -1346,7 +1353,7 @@ class UnitPageController extends Controller
             return back()->with('success', 'Dokumen laporan berhasil diupload.');
         }
 
-        return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
+        return redirect()->route('jurusan.form')->with('success', 'Laporan berhasil diupload.');
     }
 
     public function formLaporanDestroy($id)

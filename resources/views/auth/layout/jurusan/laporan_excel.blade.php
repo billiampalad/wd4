@@ -65,67 +65,62 @@
         <tbody>
             @foreach($data as $index => $item)
                 @php
-                    $pengusul = '';
-                    if ($item->jurusans->isNotEmpty()) {
-                        $pengusul = $item->jurusans->pluck('nama_jurusan')->implode(', ');
-                    } elseif ($item->unitKerjas->isNotEmpty()) {
-                        $pengusul = $item->unitKerjas->pluck('nama_unit_pelaksana')->implode(', ');
-                    }
+                    $pengusul = $item->pelaksana_name;
                     
-                    $mitraNames = $item->mitras->pluck('nama_mitra')->join(', ');
-                    $mitraNegara = $item->mitras->pluck('negara')->unique()->join(', ');
+                    $mitraNames = $item->mitra->nama_mitra ?? '-';
+                    $mitraNegara = $item->mitra->negara ?? 'Indonesia';
                     
-                    $tujuanText = $item->tujuans->pluck('tujuan')->join("\n");
-                    $sasaranText = $item->tujuans->pluck('sasaran')->join("\n");
+                    $tujuanText = '-';
+                    $sasaranText = '-';
                     
-                    $pelaksanaan = $item->pelaksanaans->first();
-                    $hasil = $item->hasils->first();
-                    $eval = $item->evaluasis->first();
-                    $masalah = $item->permasalahanSolusis->first();
-                    $kesimpulan = $item->kesimpulans->first();
-                    $dokumentasi = $item->dokumentasis->pluck('link_drive')->filter()->join("\n");
+                    $pelaksanaan = null;
+                    $hasil = null;
+                    $eval = $item->evaluasis ? $item->evaluasis->first() : null;
+                    $masalah = null;
+                    $kesimpulan = null;
+                    $dokumentasi = '-';
                 @endphp
                 <tr>
                     <td style="border: 1px solid #000; vertical-align: top;">{{ $index + 1 }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->nama_kegiatan }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->jenisKerjasama->pluck('nama_kerjasama')->join(', ') }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->title }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->jenis }}</td>
                     <td style="border: 1px solid #000; vertical-align: top;">{{ $mitraNames }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $mitraNegara ?: 'Indonesia' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pengusul ?: 'N/A' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->periode_mulai ? $item->periode_mulai->format('d/m/Y') : '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->periode_selesai ? $item->periode_selesai->format('d/m/Y') : '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->nomor_mou ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->tanggal_mou ? $item->tanggal_mou->format('d/m/Y') : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $mitraNegara }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pengusul }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->start_date ? $item->start_date->format('d/m/Y') : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->end_date ? $item->end_date->format('d/m/Y') : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->doc_number ?? '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">{{ $item->start_date ? $item->start_date->format('d/m/Y') : '-' }}</td>
                     
                     <td style="border: 1px solid #000; vertical-align: top;">{{ $tujuanText }}</td>
                     <td style="border: 1px solid #000; vertical-align: top;">{{ $sasaranText }}</td>
                     
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pelaksanaan->deskripsi ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pelaksanaan->cakupan ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pelaksanaan->jumlah_peserta ?? 0 }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $pelaksanaan->sumber_daya ?? '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
                     
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $hasil->hasil_langsung ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $hasil->dampak ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $hasil->manfaat_mahasiswa ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $hasil->manfaat_polimdo ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $hasil->manfaat_mitra ?? '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
                     
-                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval->sesuai_rencana ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval->kualitas ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval->keterlibatan ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval->efisiensi ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval->kepuasan ?? '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval ? $eval->sesuai_rencana : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval ? $eval->kualitas : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval ? $eval->keterlibatan : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval ? $eval->efisiensi : '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top; text-align: center;">{{ $eval ? $eval->kepuasan : '-' }}</td>
                     
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $masalah->kendala ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $masalah->solusi ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $masalah->rekomendasi ?? '-' }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
                     
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $dokumentasi ?: '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $kesimpulan->ringkasan ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $kesimpulan->saran ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top;">{{ $kesimpulan->tindak_lanjut ?? '-' }}</td>
-                    <td style="border: 1px solid #000; vertical-align: top; font-weight: bold;">{{ $item->status_label }}</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top;">-</td>
+                    <td style="border: 1px solid #000; vertical-align: top; font-weight: bold;">{{ ucfirst($item->status) }}</td>
                 </tr>
             @endforeach
         </tbody>

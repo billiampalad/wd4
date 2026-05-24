@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\UpaController;
 use App\Http\Controllers\Admin\PusatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
+use App\Http\Controllers\Jurusan\JurusanPageController;
 use App\Http\Controllers\Jurusan\KerjasamaJurusanController;
 use App\Http\Controllers\Pimpinan\PengajuanKerjasamaMitraController;
 use App\Http\Controllers\Unit\KerjasamaUnitController;
@@ -98,8 +99,20 @@ Route::middleware(['auth', 'role:pimpinan'])->group(function () {
 Route::middleware(['auth', 'role:jurusan'])->group(function () {
     Route::get('/jurusan', [DashboardJurusanController::class, 'index'])->name('jurusan.dashboard');
 
+    Route::get('/jurusan/analitik/status-kerjasama', [JurusanPageController::class, 'statusKerjasama'])->name('jurusan.analitik.status-kerjasama');
+    Route::get('/jurusan/analitik/klasifikasi-mitra', [JurusanPageController::class, 'klasifikasiMitra'])->name('jurusan.analitik.klasifikasi-mitra');
+    Route::get('/jurusan/analitik/geo-mitra', [JurusanPageController::class, 'geoMitra'])->name('jurusan.analitik.geo-mitra');
+    Route::get('/jurusan/institusi', [JurusanPageController::class, 'institusi'])->name('jurusan.institusi');
+    Route::get('/jurusan/referensi/bentuk-kegiatan', [JurusanPageController::class, 'bentukKegiatan'])->name('jurusan.referensi.bentuk-kegiatan');
+    Route::get('/jurusan/referensi/status-kerjasama', [JurusanPageController::class, 'statusKerjasamaReferensi'])->name('jurusan.referensi.status-kerjasama');
+    Route::get('/jurusan/referensi/status-evaluasi', [JurusanPageController::class, 'statusEvaluasiReferensi'])->name('jurusan.referensi.status-evaluasi');
+    Route::get('/jurusan/referensi/kriteria-mitra', [JurusanPageController::class, 'kriteriaMitraReferensi'])->name('jurusan.referensi.kriteria-mitra');
+
     // ─── Data Kerjasama CRUD ─────────────────────────────
-    Route::get('/jurusan/data-kerjasama', [KerjasamaJurusanController::class, 'index'])->name('jurusan.dkerjasama');
+    Route::get('/jurusan/data-kerjasama', [JurusanPageController::class, 'dkerjasama'])->name('jurusan.dkerjasama');
+    Route::get('/jurusan/data-kerjasama/preview', [JurusanPageController::class, 'dkerjasamaPreview'])->name('jurusan.dkerjasama.preview');
+    Route::get('/jurusan/data-kerjasama/pdf', [JurusanPageController::class, 'dkerjasamaPdf'])->name('jurusan.dkerjasama.pdf');
+    Route::get('/jurusan/data-kerjasama/excel', [JurusanPageController::class, 'dkerjasamaExcel'])->name('jurusan.dkerjasama.excel');
 
     // ─── Hasil Evaluasi ─────────────────────────────────
     Route::get('/jurusan/hasil-evaluasi', [DashboardJurusanController::class, 'hasilEvaluasi'])->name('jurusan.hasil_evaluasi');
@@ -110,6 +123,7 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
     Route::get('/jurusan/data-kerjasama/{id}', [KerjasamaJurusanController::class, 'show'])->name('jurusan.kerjasama.show');
     Route::get('/jurusan/data-kerjasama/{id}/edit', [KerjasamaJurusanController::class, 'edit'])->name('jurusan.kerjasama.edit');
     Route::put('/jurusan/data-kerjasama/{id}', [KerjasamaJurusanController::class, 'update'])->name('jurusan.kerjasama.update');
+    Route::post('/jurusan/data-kerjasama/{id}/document-link', [KerjasamaJurusanController::class, 'updateDocumentLink'])->name('jurusan.kerjasama.document-link.update');
     Route::delete('/jurusan/data-kerjasama/{id}', [KerjasamaJurusanController::class, 'destroy'])->name('jurusan.kerjasama.destroy');
 
     // ─── Sub-resource: Tujuan ────────────────────────────
@@ -139,6 +153,24 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
 
     // ─── Submit to Pimpinan ──────────────────────────────
     Route::post('/jurusan/data-kerjasama/{id}/submit', [KerjasamaJurusanController::class, 'submitToPimpinan'])->name('jurusan.kerjasama.submit');
+
+    Route::get('/jurusan/mitra', [JurusanPageController::class, 'mitra'])->name('jurusan.mitra');
+    Route::get('/jurusan/mitra/create', [JurusanPageController::class, 'mitraCreate'])->name('jurusan.mitra.create');
+    Route::post('/jurusan/mitra', [JurusanPageController::class, 'mitraStore'])->name('jurusan.mitra.store');
+    Route::get('/jurusan/mitra/{id}', [JurusanPageController::class, 'mitraShow'])->name('jurusan.mitra.show');
+    Route::get('/jurusan/mitra/{id}/edit', [JurusanPageController::class, 'mitraEdit'])->name('jurusan.mitra.edit');
+    Route::put('/jurusan/mitra/{id}', [JurusanPageController::class, 'mitraUpdate'])->name('jurusan.mitra.update');
+    Route::delete('/jurusan/mitra/{id}', [JurusanPageController::class, 'mitraDestroy'])->name('jurusan.mitra.destroy');
+
+    Route::get('/jurusan/evaluasi', [JurusanPageController::class, 'evaluasi'])->name('jurusan.evaluasi');
+    Route::get('/jurusan/evaluasi/{id}', [JurusanPageController::class, 'formEvaluasi'])->name('jurusan.evaluasi.form_unit');
+    Route::post('/jurusan/evaluasi/{id}', [JurusanPageController::class, 'storeEvaluasi'])->name('jurusan.evaluasi.store');
+    Route::put('/jurusan/evaluasi/{id}', [JurusanPageController::class, 'updateEvaluasi'])->name('jurusan.evaluasi.update');
+    Route::post('/jurusan/evaluasi/{id}/submit', [JurusanPageController::class, 'submitEvaluasiToPimpinan'])->name('jurusan.evaluasi.submit');
+
+    Route::get('/jurusan/form-laporan', [JurusanPageController::class, 'formLaporan'])->name('jurusan.form');
+    Route::post('/jurusan/form-laporan', [JurusanPageController::class, 'formLaporanStore'])->name('jurusan.form.store');
+    Route::delete('/jurusan/form-laporan/{id}', [JurusanPageController::class, 'formLaporanDestroy'])->name('jurusan.form.destroy');
 
     // ─── Laporan Data ────────────────────────────────────
     Route::get('/jurusan/laporan', [App\Http\Controllers\Jurusan\LaporanJurusanController::class, 'index'])->name('jurusan.laporan');

@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\KegiatanKerjasama;
+use App\Models\Cooperation;
 use App\Models\Notifikasi;
 use App\Models\Profile;
+use App\Support\CooperationAccess;
 use Illuminate\Support\Facades\DB;
 
 class DashboardJurusanController extends Controller
@@ -36,27 +37,27 @@ class DashboardJurusanController extends Controller
 
         $id_jurusan = $profile->jurusan_id;
 
-        // Helper closure for scoping to jurusan via pivot
-        $scopeJurusan = fn($query) => $query->whereHas('jurusans', fn($q) => $q->where('jurusans.id', $id_jurusan));
+        $scopeJurusan = fn($query) => CooperationAccess::scopeForProfile($query, $profile);
 
         // 2. Hitung Total Kerjasama (Hanya milik jurusannya)
-        $totalKerjasama = $scopeJurusan(KegiatanKerjasama::query())->count();
+        $baseQuery = $scopeJurusan(Cooperation::query());
+        $totalKerjasama = (clone $baseQuery)->count();
 
         // 3. Hitung yang Belum Dievaluasi (misal statusnya masih draft atau menunggu_evaluasi)
-        $draftCount = $scopeJurusan(KegiatanKerjasama::query())
-                            ->where('status', 'draft')
+        $draftCount = (clone $baseQuery)
+                            ->where('status_dokumen', 'Draft')
                             ->count();
 
-        $menungguEvaluasi = $scopeJurusan(KegiatanKerjasama::query())
-                            ->where('status', 'menunggu_evaluasi')
+        $menungguEvaluasi = (clone $baseQuery)
+                            ->where('status_dokumen', 'Menunggu Evaluasi')
                             ->count();
 
         // Tetap sediakan agregat lama (untuk backward compatibility)
         $belumDievaluasi = $draftCount + $menungguEvaluasi;
 
         // 4. Hitung yang Sudah Dievaluasi (misal statusnya selesai atau revisi)
-        $sudahDievaluasi = $scopeJurusan(KegiatanKerjasama::query())
-                            ->whereIn('status', ['selesai', 'revisi'])
+        $sudahDievaluasi = (clone $baseQuery)
+                            ->whereIn('status_dokumen', ['Disahkan', 'Revisi'])
                             ->count();
 
         // 5. Ambil 5 Notifikasi Terbaru khusus untuk user ini
@@ -66,36 +67,63 @@ class DashboardJurusanController extends Controller
                             ->get();
 
         // 6. (Opsional) Ambil 5 data kerjasama terbaru untuk ditampilkan di tabel summary
-        $kerjasamaTerbaru = $scopeJurusan(KegiatanKerjasama::query())
+        $kerjasamaTerbaru = (clone $baseQuery)
+                            ->with(['mitra', 'pjInternal', 'pksNumbers'])
                             ->orderBy('created_at', 'asc')
                             ->get()
                             ->take(-5);
 
         // 7. Statistik Tambahan
-        // Mitra Stats: Nasional vs Internasional (via pivot kegiatan_jurusans)
         $mitraStats = DB::table('mitras')
-            ->join('kegiatan_mitras', 'mitras.id', '=', 'kegiatan_mitras.id_mitra')
-            ->join('kegiatan_jurusans', 'kegiatan_mitras.id_kegiatan', '=', 'kegiatan_jurusans.id_kegiatan')
-            ->where('kegiatan_jurusans.id_jurusan', $id_jurusan)
+            ->join('cooperations', 'mitras.id', '=', 'cooperations.mitra_id')
+            ->leftJoin('kerjasama_jurusan', 'cooperations.id', '=', 'kerjasama_jurusan.cooperation_id')
+            ->where(function ($query) use ($id_jurusan) {
+                $query->where('cooperations.jurusan_id', $id_jurusan)
+                    ->orWhere('kerjasama_jurusan.jurusan_id', $id_jurusan);
+            })
             ->select('mitras.kategori', DB::raw('count(DISTINCT mitras.id) as total'))
             ->groupBy('mitras.kategori')
             ->pluck('total', 'kategori');
 
         // Tren Kerjasama per Tahun
-        $trenKerjasama = $scopeJurusan(KegiatanKerjasama::query())
+        $trenKerjasama = (clone $baseQuery)
             ->select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
             ->groupBy('tahun')
             ->orderBy('tahun', 'asc')
             ->get();
 
-        // Sebaran Jenis Kerjasama (via pivot kegiatan_jenis_kerjasamas)
-        $sebaranJenis = DB::table('kegiatan_jenis_kerjasamas')
-            ->join('jenis_kerjasamas', 'kegiatan_jenis_kerjasamas.id_jenis', '=', 'jenis_kerjasamas.id')
-            ->join('kegiatan_jurusans', 'kegiatan_jenis_kerjasamas.id_kegiatan', '=', 'kegiatan_jurusans.id_kegiatan')
-            ->where('kegiatan_jurusans.id_jurusan', $id_jurusan)
+        $sebaranJenis = DB::table('detail_kegiatans')
+            ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
+            ->join('cooperations', 'detail_kegiatans.cooperation_id', '=', 'cooperations.id')
+            ->leftJoin('kerjasama_jurusan', 'cooperations.id', '=', 'kerjasama_jurusan.cooperation_id')
+            ->where(function ($query) use ($id_jurusan) {
+                $query->where('cooperations.jurusan_id', $id_jurusan)
+                    ->orWhere('kerjasama_jurusan.jurusan_id', $id_jurusan);
+            })
             ->select('jenis_kerjasamas.nama_kerjasama', DB::raw('count(*) as total'))
             ->groupBy('jenis_kerjasamas.nama_kerjasama')
             ->get();
+
+        $today = now()->startOfDay();
+        $upcomingDeadlines = (clone $baseQuery)
+            ->with(['mitra', 'pjInternal', 'pksNumbers'])
+            ->whereNotNull('end_date')
+            ->whereBetween('end_date', [$today, now()->addDays(30)->endOfDay()])
+            ->orderBy('end_date')
+            ->get();
+
+        $kerjasamaTable = (clone $baseQuery)
+            ->with(['mitra', 'pjInternal', 'pksNumbers'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $jenisCounts = collect([
+            'Semua' => (clone $baseQuery)->count(),
+            'MoU' => (clone $baseQuery)->where('jenis', 'like', '%MoU%')->count(),
+            'MoA' => (clone $baseQuery)->where('jenis', 'like', '%MoA%')->count(),
+            'IA' => (clone $baseQuery)->where('jenis', 'like', '%IA%')->count(),
+        ]);
 
         // Lempar data ke view dashboard jurusan
         return view('auth.jurusan', compact(
@@ -108,7 +136,10 @@ class DashboardJurusanController extends Controller
             'kerjasamaTerbaru',
             'mitraStats',
             'trenKerjasama',
-            'sebaranJenis'
+            'sebaranJenis',
+            'upcomingDeadlines',
+            'kerjasamaTable',
+            'jenisCounts'
         ));
     }
 

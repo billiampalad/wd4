@@ -4,13 +4,13 @@
         <div class="breadcrumb">
             <i class="fas fa-home" style="font-size:11px;"></i>
             <span class="sep">/</span>
-            <a href="{{ route('jurusan.hasil_evaluasi') }}"
-                style="text-decoration:none; color:var(--accent); font-weight:600;">Hasil Evaluasi</a>
+            <a href="{{ route('jurusan.evaluasi') }}"
+                style="text-decoration:none; color:var(--accent); font-weight:600;">Evaluasi Kinerja</a>
             <span class="sep">/</span>
-            <span class="current">Detail Evaluasi</span>
+            <span class="current">{{ $existingEval ? 'Edit Evaluasi' : 'Beri Evaluasi' }}</span>
         </div>
-        <h2 id="pageTitle">Detail Evaluasi Kinerja</h2>
-        <p id="pageDesc">Detail evaluasi kinerja untuk kegiatan <strong>{{ $kegiatan->nama_kegiatan }}</strong>.</p>
+        <h2 id="pageTitle">{{ $existingEval ? 'Edit Evaluasi Kinerja' : 'Beri Evaluasi Kinerja' }}</h2>
+        <p id="pageDesc">Nilai kinerja kerjasama untuk kegiatan <strong>{{ $kegiatan->nama_kegiatan }}</strong>.</p>
     </div>
 
     @if(session('success'))
@@ -289,9 +289,9 @@
     </div>
 
     {{-- ═══ FORM EVALUASI ═══ --}}
-    @if(!($readonly ?? false) && $kegiatan->status !== 'menunggu_validasi' && $kegiatan->status !== 'selesai')
+    @if($kegiatan->status !== 'menunggu_validasi' && $kegiatan->status !== 'selesai')
         <form
-            action="{{ $existingEval ? route('unit.evaluasi.update', $kegiatan->id) : route('unit.evaluasi.store', $kegiatan->id) }}"
+            action="{{ $existingEval ? route('jurusan.evaluasi.update', $kegiatan->id) : route('jurusan.evaluasi.store', $kegiatan->id) }}"
             method="POST" id="formEvaluasi" onsubmit="return confirmSubmitEval(event)">
             @csrf
             @if($existingEval) @method('PUT') @endif
@@ -363,7 +363,7 @@
                 </div>
             </div>
 
-            {{-- Catatan --}}
+            <!-- {{-- Catatan --}}
             <div class="card um-card" style="margin-bottom: 24px;">
                 <div class="card-header um-header" style="display:flex; align-items:center; padding:15px 20px;">
                     <div class="um-title"
@@ -382,7 +382,7 @@
                         onfocus="this.style.borderColor='var(--accent)'; this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
                         onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">{{ old('catatan', $existingEval?->catatan ?? '') }}</textarea>
                 </div>
-            </div>
+            </div> -->
 
             {{-- Summary & Save --}}
             <div class="card um-card" style="margin-bottom: 24px;">
@@ -399,7 +399,7 @@
                             </div>
                         </div>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <a href="{{ route('unit.evaluasi') }}"
+                            <a href="{{ route('jurusan.evaluasi') }}"
                                 style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:var(--card-bg, #f1f5f9); color:var(--text-sub); border-radius:10px; text-decoration:none; font-size:13px; font-weight:700; border:1px solid var(--border, rgba(0,0,0,.1));"><i
                                     class="fas fa-arrow-left" style="font-size:11px;"></i> Kembali</a>
                             <button type="submit"
@@ -502,9 +502,9 @@
     @endif
 
     <div style="margin-bottom: 24px;">
-        <a href="{{ route('jurusan.hasil_evaluasi') }}" class="rfc-btn"
+        <a href="{{ route('jurusan.evaluasi') }}" class="rfc-btn"
             style="background:var(--surface); color:var(--text-sub); border:1px solid var(--border); text-decoration:none; font-size:13px; font-weight:700;"><i
-                class="fas fa-arrow-left"></i> Kembali ke Hasil Evaluasi</a>
+                class="fas fa-arrow-left"></i> Kembali ke Evaluasi Kinerja</a>
     </div>
 </main>
 

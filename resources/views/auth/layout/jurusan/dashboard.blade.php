@@ -1,224 +1,508 @@
-<!-- Main Content -->
-<main id="mainContent">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-home" style="font-size:11px;"></i>
-            <span class="sep">/</span>
-            <span class="current" id="breadcrumbCurrent">Dashboard Jurusan</span>
-        </div>
-        <h2 id="pageTitle">Selamat Datang, {{ auth()->user()->name }}</h2>
-        <p id="pageDesc">Ringkasan data kerjasama untuk <strong>{{ auth()->user()->profile?->jurusan?->nama_jurusan ?? 'Jurusan' }}</strong></p>
-    </div>
+@php
+    $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
 
-    <!-- Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon" style="background:rgba(79,70,229,0.1); color:#4f46e5;">
-                    <i class="fas fa-folder-open"></i>
+    $mitraNasional = \App\Models\Mitra::where('kategori', 'Nasional')->count() ?? 0;
+    $mitraInternasional = \App\Models\Mitra::where('kategori', 'Internasional')->count() ?? 0;
+
+    $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
+    $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
+    $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
+
+    $jurusans = \App\Models\Jurusan::with('prodis')->get();
+
+    // Count dari pivot table (kerjasama_jurusan)
+    $jurusanCounts = \Illuminate\Support\Facades\DB::table('kerjasama_jurusan')
+        ->select('jurusan_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->groupBy('jurusan_id')
+        ->pluck('total', 'jurusan_id')
+        ->toArray();
+
+    // Count dari pivot table (kerjasama_prodi)
+    $prodiCounts = \Illuminate\Support\Facades\DB::table('kerjasama_prodi')
+        ->select('prodi_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->groupBy('prodi_id')
+        ->pluck('total', 'prodi_id')
+        ->toArray();
+
+    $ruangLingkupKerjasama = \Illuminate\Support\Facades\DB::table('detail_kegiatans')
+        ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
+        ->select(
+            'jenis_kerjasamas.nama_kerjasama',
+            \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT detail_kegiatans.cooperation_id) as total_kerjasama'),
+        )
+        ->whereNotNull('detail_kegiatans.jenis_kerjasama_id')
+        ->groupBy('jenis_kerjasamas.id', 'jenis_kerjasamas.nama_kerjasama')
+        ->having('total_kerjasama', '>', 0)
+        ->orderByDesc('total_kerjasama')
+        ->orderBy('jenis_kerjasamas.nama_kerjasama')
+        ->get();
+
+    $chartDataJurusan = [];
+    $chartDataProdi = [];
+
+    foreach ($jurusans as $jurusan) {
+        $jCount = $jurusanCounts[$jurusan->id] ?? 0;
+
+        $chartDataJurusan[] = [
+            'id' => $jurusan->id,
+            'name' => $jurusan->nama_jurusan,
+            'count' => $jCount,
+        ];
+
+        foreach ($jurusan->prodis as $prodi) {
+            $pCount = $prodiCounts[$prodi->id] ?? 0;
+            $chartDataProdi[] = [
+                'id' => $prodi->id,
+                'jurusan_id' => $jurusan->id,
+                'name' => $prodi->nama_prodi,
+                'count' => $pCount,
+            ];
+        }
+    }
+
+    // --- STATISTIK PERIODE KERJASAMA (TREND CHART) ---
+    $now = now();
+
+    // 1. Mingguan (7 Hari Terakhir)
+    $weeklyRaw = \App\Models\Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
+        ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
+        ->groupBy('date_label')
+        ->pluck('total', 'date_label')
+        ->toArray();
+
+    $trendWeekly = ['labels' => [], 'data' => []];
+    for ($i = 6; $i >= 0; $i--) {
+        $dateStr = $now->copy()->subDays($i)->format('Y-m-d');
+        $display = $now->copy()->subDays($i)->format('d M');
+        $trendWeekly['labels'][] = $display;
+        $trendWeekly['data'][] = $weeklyRaw[$dateStr] ?? 0;
+    }
+
+    // 2. Bulanan (12 Bulan di Tahun Ini)
+    $monthlyRaw = \App\Models\Cooperation::selectRaw('MONTH(created_at) as month_label, count(*) as total')
+        ->whereYear('created_at', $now->year)
+        ->groupBy('month_label')
+        ->pluck('total', 'month_label')
+        ->toArray();
+
+    $trendMonthly = ['labels' => [], 'data' => []];
+    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    for ($i = 1; $i <= 12; $i++) {
+        $trendMonthly['labels'][] = $months[$i - 1];
+        $trendMonthly['data'][] = $monthlyRaw[$i] ?? 0;
+    }
+
+    // 3. Tahunan (5 Tahun Terakhir)
+    $yearlyRaw = \App\Models\Cooperation::selectRaw('YEAR(created_at) as year_label, count(*) as total')
+        ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
+        ->groupBy('year_label')
+        ->pluck('total', 'year_label')
+        ->toArray();
+
+    $trendYearly = ['labels' => [], 'data' => []];
+    for ($i = 4; $i >= 0; $i--) {
+        $yr = $now->copy()->subYears($i)->year;
+        $trendYearly['labels'][] = (string) $yr;
+        $trendYearly['data'][] = $yearlyRaw[$yr] ?? 0;
+    }
+
+    $trendData = [
+        'weekly' => $trendWeekly,
+        'monthly' => $trendMonthly,
+        'yearly' => $trendYearly,
+    ];
+
+    $summaryCards = [
+        [
+            'label' => 'Jumlah Kerjasama',
+            'value' => $totalKerjasama ?? 0,
+            'hint' => 'Politeknik sampai saat ini',
+            'icon' => 'fa-layer-group',
+            'tone' => 'blue',
+        ],
+        [
+            'label' => 'Jumlah Dokumen Kerjasama',
+            'value' => $totalMoU + $totalMoA + $totalIA,
+            'hint' => "MoU: $totalMoU | MoA: $totalMoA | IA: $totalIA",
+            'icon' => 'fa-file-signature',
+            'tone' => 'amber',
+        ],
+        [
+            'label' => 'Jumlah Mitra',
+            'value' => $mitraNasional + $mitraInternasional,
+            'hint' => "Nasional: $mitraNasional | Internasional: $mitraInternasional",
+            'icon' => 'fa-globe',
+            'tone' => 'indigo',
+        ],
+
+        [
+            'label' => 'Total Pendapatan',
+            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
+            'hint' => 'Dari nilai kontrak kerjasama',
+            'icon' => 'fa-wallet',
+            'tone' => 'emerald',
+        ],
+    ];
+@endphp
+
+<link rel="stylesheet" href="{{ asset('css/auth/dashboard.css') }}" data-turbo-track="reload">
+
+<main id="mainContent" class="unitdash">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <span>Beranda</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-handshake-angle"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title">Sistem Informasi Kerjasama</h2>
+                    <p class="ud-subtitle">
+                        Gambaran aktivitas kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}
+                    </p>
                 </div>
-                <div class="stat-badge" style="background:rgba(79,70,229,0.1); color:#4f46e5; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700;">
-                    <i class="fas fa-info-circle" style="font-size:8px;"></i> Total
+            </div>
+        </div>
+        <a href="{{ route('jurusan.kerjasama.create', ['type' => 'baru']) }}" class="ud-create-menu">
+            <span class="ud-create-icon"><i class="fas fa-file-circle-plus"></i></span>
+            <span class="ud-create-copy">
+                <strong>Tambah Kerjasama</strong>
+                <small>Buat dokumen MoU, MoA, atau IA baru</small>
+            </span>
+            <span class="ud-create-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+    </section>
+
+    <section class="ud-summary">
+        @foreach ($summaryCards as $card)
+            <article class="ud-card ud-tone-{{ $card['tone'] }}">
+                <div class="ud-card-top">
+                    <div class="ud-icon"><i class="fas {{ $card['icon'] }}"></i></div>
+                    <div class="ud-metric-label">{{ $card['label'] }}</div>
+                </div>
+                <div class="ud-metric-hint">{{ $card['hint'] }}</div>
+                <div class="ud-metric-value">
+                    {{ is_numeric($card['value']) ? number_format($card['value']) : $card['value'] }}</div>
+                <div class="ud-card-accent" aria-hidden="true">
+                    <i class="fas {{ $card['icon'] }}"></i>
+                </div>
+            </article>
+        @endforeach
+    </section>
+
+    <section class="ud-bento-full">
+        <article class="ud-panel dashboard-cooperation-layout">
+            <div class="ud-panel-head dashboard-cooperation-layout__header">
+                <div>
+                    <h4 class="ud-panel-title" id="dashboard-cooperation-layout-title">Ruang Lingkup Kerjasama</h4>
+                    <p class="ud-panel-desc">Layout dua kolom untuk menyiapkan tampilan ringkasan data kerjasama
+                        akademik.</p>
                 </div>
             </div>
-            <div class="stat-content">
-                <div class="stat-value" style="font-size: 28px; font-weight: 800; color: var(--text); line-height: 1;">{{ $totalKerjasama }}</div>
-                <div class="stat-label" style="font-size: 13px; color: var(--text-sub); font-weight: 600; margin-top: 6px;">Total Kerjasama</div>
-            </div>
-        </div>
 
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon" style="background:rgba(245,158,11,0.1); color:#f59e0b;">
-                    <i class="fas fa-pen-to-square"></i>
+            <div class="dashboard-cooperation-layout__grid">
+                <div class="dashboard-cooperation-layout__table-wrap">
+                    <div class="dashboard-cooperation-layout__table">
+                        <table class="dashboard-cooperation-layout__table">
+                            <colgroup>
+                                <col class="dashboard-cooperation-layout__col-no">
+                                <col>
+                                <col class="dashboard-cooperation-layout__col-total">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Ruang Lingkup</th>
+                                    <th>Jumlah Kerjasama yang Terlibat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($ruangLingkupKerjasama as $ruangLingkup)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $ruangLingkup->nama_kerjasama }}</td>
+                                        <td>
+                                            <span class="dashboard-cooperation-layout__count">
+                                                {{ number_format($ruangLingkup->total_kerjasama) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="ud-empty">Belum ada ruang lingkup kerjasama untuk ditampilkan.</div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="stat-badge" style="background:rgba(245,158,11,0.1); color:#f59e0b; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700;">
-                    <i class="fas fa-file-lines" style="font-size:8px;"></i> Draft
-                </div>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value" style="font-size: 28px; font-weight: 800; color: var(--text); line-height: 1;">{{ $draftCount }}</div>
-                <div class="stat-label" style="font-size: 13px; color: var(--text-sub); font-weight: 600; margin-top: 6px;">Draft Kerjasama</div>
-            </div>
-        </div>
 
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon" style="background:rgba(16,185,129,0.1); color:#10b981;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-badge" style="background:rgba(16,185,129,0.1); color:#10b981; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700;">
-                    <i class="fas fa-check" style="font-size:8px;"></i> Selesai
-                </div>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value" style="font-size: 28px; font-weight: 800; color: var(--text); line-height: 1;">{{ $sudahDievaluasi }}</div>
-                <div class="stat-label" style="font-size: 13px; color: var(--text-sub); font-weight: 600; margin-top: 6px;">Total Selesai</div>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-top">
-                <div class="stat-icon" style="background:rgba(14,165,233,0.1); color:#0ea5e9;">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <div class="stat-badge" style="background:rgba(14,165,233,0.1); color:#0ea5e9; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: 700;">
-                    <i class="fas fa-spinner" style="font-size:8px;"></i> Menunggu
-                </div>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value" style="font-size: 28px; font-weight: 800; color: var(--text); line-height: 1;">{{ $menungguEvaluasi }}</div>
-                <div class="stat-label" style="font-size: 13px; color: var(--text-sub); font-weight: 600; margin-top: 6px;">Menunggu Evaluasi</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts Section -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px;">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fas fa-chart-pie"></i> Perbandingan Mitra</div>
-            </div>
-            <div class="card-body" style="height: 300px;">
-                <canvas id="mitraChart"></canvas>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fas fa-chart-bar"></i> Sebaran Jenis Kerjasama</div>
-            </div>
-            <div class="card-body" style="height: 300px;">
-                <canvas id="jenisChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" style="margin-bottom: 28px;">
-        <div class="card-header">
-            <div class="card-title"><i class="fas fa-chart-line"></i> Tren Kerjasama Per Tahun</div>
-        </div>
-        <div class="card-body" style="height: 300px;">
-            <canvas id="trenChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Content Row -->
-    <div class="content-row">
-
-        <!-- Tabel Kerjasama Terbaru -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title"><i class="fas fa-list-alt"></i> Kerjasama Terbaru</div>
-                <a href="{{ route('jurusan.dkerjasama') }}" class="card-action" style="text-decoration: none; color: var(--accent); font-size: 12px; font-weight: 600;">Lihat Semua</a>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nama Kegiatan</th>
-                            <th>Nomor MOU</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($kerjasamaTerbaru as $index => $kegiatan)
-                        <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">{{ str_pad($index + 1, 3, '0', STR_PAD_LEFT) }}</span></td>
-                            <td>
-                                <div style="font-weight:600; font-size:13px;">{{ $kegiatan->nama_kegiatan }}</div>
-                                <div style="font-size:11px; color:var(--text-sub);">PJ: {{ $kegiatan->penanggung_jawab ?? '-' }}</div>
-                            </td>
-                            <td style="font-size: 12px;">{{ $kegiatan->nomor_mou ?? '-' }}</td>
-                            <td>
-                                @php
-                                    $statusClass = match($kegiatan->status) {
-                                        'draft' => 'tag-orange',
-                                        'menunggu_evaluasi' => 'tag-blue',
-                                        'revisi' => 'tag-red',
-                                        'selesai' => 'tag-green',
-                                        default => 'tag-gray'
-                                    };
-                                    $statusLabel = match($kegiatan->status) {
-                                        'draft' => 'Draft',
-                                        'menunggu_evaluasi' => 'Menunggu',
-                                        'revisi' => 'Revisi',
-                                        'selesai' => 'Selesai',
-                                        default => ucfirst($kegiatan->status)
-                                    };
-                                @endphp
-                                <span class="tag {{ $statusClass }}"><i class="fas fa-circle" style="font-size:6px;"></i> {{ $statusLabel }}</span>
-                            </td>
-                            <td style="font-size: 12px; color: var(--text-sub);">{{ $kegiatan->created_at->format('d/m/Y') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-sub);">Belum ada data kerjasama.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Right column -->
-        <div style="display:flex; flex-direction:column; gap:20px;">
-
-            <!-- Notifikasi Terbaru -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title"><i class="fas fa-bell"></i> Pemberitahuan</div>
-                </div>
-                <div class="card-body" style="padding: 0;">
-                    <div class="notification-list">
-                        @forelse($notifikasiTerbaru as $notif)
-                        <div class="notification-item" style="padding: 15px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start;">
-                            <div class="notif-icon" style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <i class="fas fa-info-circle" style="font-size: 14px;"></i>
-                            </div>
-                            <div class="notif-content">
-                                <div style="font-weight: 600; font-size: 13px; color: var(--text);">{{ $notif->judul }}</div>
-                                <div style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">{{ $notif->pesan }}</div>
-                                <div style="font-size: 10px; color: #94a3b8; margin-top: 4px;">{{ $notif->created_at->diffForHumans() }}</div>
-                            </div>
+                <div class="dashboard-cooperation-layout__column dashboard-cooperation-chart" data-cooperation-chart>
+                    <div class="dashboard-cooperation-layout__column-header">
+                    </div>
+                    <div class="dashboard-cooperation-chart__header">
+                        <div>
+                            <p class="dashboard-cooperation-chart__eyebrow">Visualisasi Data</p>
+                            <h3 class="dashboard-cooperation-chart__title">Grafik Kerja Sama</h3>
                         </div>
-                        @empty
-                        <div style="padding: 30px; text-align: center; color: var(--text-sub); font-size: 13px;">
-                            <i class="fas fa-bell-slash" style="display: block; font-size: 24px; margin-bottom: 10px; opacity: 0.3;"></i>
-                            Tidak ada notifikasi baru
+                        <button class="dashboard-cooperation-chart__reset" type="button" data-cooperation-chart-reset>
+                            Semua data
+                        </button>
+                    </div>
+                    <div class="dashboard-cooperation-chart__meta" data-cooperation-chart-meta>
+                        Pilih baris tabel untuk memfilter grafik.
+                    </div>
+                    <div class="dashboard-cooperation-chart__body" data-cooperation-chart-body></div>
+                    <div class="dashboard-cooperation-chart__empty" data-cooperation-chart-empty>
+                        Belum ada data tabel yang dapat divisualisasikan.
+                    </div>
+                    <div class="dashboard-cooperation-chart__tooltip" data-cooperation-chart-tooltip></div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-bento-full">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Distribusi Kerjasama Akademik</h3>
+                    <p class="ud-panel-desc">Tinjauan visual distribusi kerjasama berdasarkan Jurusan dan Program Studi
+                        (Prodi).</p>
+                </div>
+                <span class="ud-status-badge is-interactive"
+                    title="Klik pada batang grafik jurusan untuk memfilter prodi">
+                    <i class="fas fa-hand-pointer"></i> Interactive Filter
+                </span>
+            </div>
+
+            <div class="ud-dual-chart-container">
+                <div class="ud-chart-wrapper">
+                    <div class="ud-chart-header">
+                        <div class="ud-chart-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i
+                                class="fas fa-building-columns"></i></div>
+                        <div>
+                            <h4>Grafik Jurusan</h4>
+                            <span>Klik batang grafik untuk memfilter prodi.</span>
                         </div>
-                        @endforelse
+                    </div>
+                    <div class="ud-canvas-container">
+                        <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}"
+                            data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+                    </div>
+                </div>
+
+                <div class="ud-chart-divider"></div>
+
+                <div class="ud-chart-wrapper">
+                    <div class="ud-chart-header">
+                        <div class="ud-chart-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i
+                                class="fas fa-graduation-cap"></i></div>
+                        <div>
+                            <h4>Grafik Program Studi</h4>
+                            <span id="prodiChartSubtitle">Menampilkan Semua Jurusan</span>
+                        </div>
+                    </div>
+                    <div class="ud-canvas-container">
+                        <canvas id="prodiChart"></canvas>
                     </div>
                 </div>
             </div>
+        </article>
+    </section>
 
-            <!-- Quick Actions -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title"><i class="fas fa-bolt"></i> Aksi Cepat</div>
+    <section class="ud-bento">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Distribusi Jenis Dokumen Kerjasama</h3>
+                    <p class="ud-panel-desc">Proporsi dokumen MoU, MoA, dan IA.</p>
                 </div>
-                <div class="card-body" style="display: flex; flex-direction: column; gap: 10px; padding: 15px;">
-                    <a href="{{ route('jurusan.dkerjasama') }}" class="btn-quick" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 500; transition: all 0.2s;">
-                        <i class="fas fa-plus-circle" style="color: var(--accent);"></i>
-                        Input Kerjasama Baru
-                    </a>
-                    <a href="#" class="btn-quick" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: #f8fafc; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13px; font-weight: 500; transition: all 0.2s;">
-                        <i class="fas fa-file-export" style="color: #10b981;"></i>
-                        Unduh Laporan PDF
-                    </a>
+                <span class="ud-type-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--accent);"><i
+                        class="fas fa-chart-pie"></i> Chart</span>
+            </div>
+
+            <div class="ud-chart-layout">
+                <canvas id="jenisKerjasamaChart" data-mou="{{ $totalMoU }}" data-moa="{{ $totalMoA }}"
+                    data-ia="{{ $totalIA }}"></canvas>
+            </div>
+        </article>
+
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Upcoming Deadlines</h3>
+                    <p class="ud-panel-desc">Dokumen dengan masa berlaku tersisa maksimal 30 hari.</p>
+                </div>
+                <span class="ud-status-badge is-pending"><i class="fas fa-clock"></i> 30 hari</span>
+            </div>
+
+            <div class="ud-deadlines">
+                @forelse($upcomingDeadlines ?? [] as $deadline)
+                    @php
+                        $daysLeft = now()
+                            ->startOfDay()
+                            ->diffInDays($deadline->end_date->copy()->startOfDay());
+                    @endphp
+                    <div class="ud-deadline-item">
+                        <div class="ud-daybox">{{ $daysLeft }}</div>
+                        <div style="min-width:0;">
+                            <div class="ud-deadline-title">{{ $deadline->title ?? '-' }}</div>
+                            <div class="ud-deadline-meta">
+                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
+                                {{ $deadline->end_date?->format('d M Y') }}
+                            </div>
+                        </div>
+                        <a class="ud-link-btn" href="{{ route('jurusan.kerjasama.show', $deadline->id) }}" title="Detail">
+                            <i class="fas fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                @empty
+                    <div class="ud-empty">Tidak ada deadline kritis dalam 30 hari.</div>
+                @endforelse
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-bento-full">
+        <article class="ud-panel">
+            <div class="ud-panel-head">
+                <div>
+                    <h3 class="ud-panel-title">Tren Pertumbuhan Kerjasama</h3>
+                    <p class="ud-panel-desc">Statistik penambahan dokumen kerjasama baru berdasarkan rentang waktu
+                        terpilih.</p>
+                </div>
+                <div class="ud-trend-filters">
+                    <button type="button" class="ud-trend-btn" data-trend="weekly">7 Hari</button>
+                    <button type="button" class="ud-trend-btn is-active" data-trend="monthly">Tahun Ini</button>
+                    <button type="button" class="ud-trend-btn" data-trend="yearly">5 Tahun</button>
                 </div>
             </div>
+
+            <div class="ud-trend-chart-layout">
+                <canvas id="trendChart" data-trends="{{ json_encode($trendData) }}"></canvas>
+            </div>
+        </article>
+    </section>
+
+    <section class="ud-panel ud-table-panel">
+        <div class="ud-table-head">
+            <div>
+                <h3 class="ud-panel-title">Data Teknis Kerjasama</h3>
+                <p class="ud-panel-desc">Filtered view, quick edit link dokumen, dan status operasional.</p>
+            </div>
+            <div class="ud-tabs" aria-label="Filter tipe dokumen">
+                @foreach (['Semua', 'MoU', 'MoA', 'IA'] as $filter)
+                    <button type="button" class="ud-tab {{ $loop->first ? 'is-active' : '' }}"
+                        data-filter-tab="{{ $filter === 'Semua' ? 'all' : $filter }}">
+                        {{ $filter }}
+                        <span>({{ $jenisCounts[$filter] ?? 0 }})</span>
+                    </button>
+                @endforeach
+            </div>
         </div>
-    </div>
+
+        <div class="ud-table-wrap">
+            <table class="ud-table">
+                <thead>
+                    <tr>
+                        <th>Judul Kegiatan</th>
+                        <th>Mitra</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Link Dokumen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($kerjasamaTable ?? [] as $item)
+                        @php
+                            $jenisLower = strtolower($item->jenis ?? '');
+                            $jenisShort = str_contains($jenisLower, 'mou')
+                                ? 'MoU'
+                                : (str_contains($jenisLower, 'moa')
+                                    ? 'MoA'
+                                    : (str_contains($jenisLower, 'ia')
+                                        ? 'IA'
+                                        : '-'));
+                            $jenisLabel = match($jenisShort) {
+                                'MoU' => 'Memorandum of Understanding (MoU)',
+                                'MoA' => 'Memorandum of Agreement (MoA)',
+                                'IA'  => 'Implementation Arrangement (IA)',
+                                default => $item->jenis ?? '-',
+                            };
+                            $statusRaw = strtolower(trim($item->status ?? ''));
+                            $statusMap = [
+                                'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
+                                'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
+                                'kadarluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'kedaluwarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'tidak aktif' => ['label' => 'Tidak Aktif', 'class' => 'is-inactive', 'icon' => 'fa-circle-xmark'],
+                                'proses' => ['label' => 'Proses', 'class' => 'is-pending', 'icon' => 'fa-spinner'],
+                            ];
+                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
+                            $deadlineLabel = $item->end_date ? $item->end_date->format('d M Y') : '-';
+                            $pjInternal = $item->pjInternal?->nama ?? '-';
+                        @endphp
+                        <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
+                            <td>
+                                <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
+                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
+                                <span class="ud-type-badge">{{ $jenisLabel }}</span>
+                            </td>
+                            <td>
+                                <span class="ud-mitra">
+                                    <i class="fas fa-building"></i>
+                                    {{ $item->mitra?->nama_mitra ?? '-' }}
+                                    <span class="ud-tooltip">PJ Internal: {{ $pjInternal }}</span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="ud-status-badge {{ $statusInfo['class'] }}">
+                                    <i class="fas {{ $statusInfo['icon'] }}"></i>
+                                    {{ $statusInfo['label'] }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong>{{ $deadlineLabel }}</strong>
+                                <div class="ud-small">
+                                    {{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
+                            </td>
+                            <td>
+                                <div class="ud-link-editor" data-link-editor>
+                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
+                                        placeholder="Paste link Drive..." data-document-link-input>
+                                    <button class="ud-save-btn" type="button" data-save-document-link
+                                        data-update-url="{{ route('jurusan.kerjasama.document-link.update', $item->id) }}"
+                                        title="Simpan link">
+                                        <i class="fas fa-floppy-disk"></i>
+                                    </button>
+                                </div>
+                                <span class="ud-save-state"
+                                    data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5">
+                                <div class="ud-empty">Belum ada data kerjasama untuk ditampilkan.</div>
+                            </td>
+                        </tr>
+                    @endforelse
+                    <tr id="unitDashNoResult" style="display:none;">
+                        <td colspan="5">
+                            <div class="ud-empty">Tidak ada dokumen pada filter ini.</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
-@if(isset($mitraStats))
-<div id="dashboardStatsData" 
-    data-mitra='{!! json_encode($mitraStats) !!}'
-    data-jenis='{!! json_encode($sebaranJenis) !!}'
-    data-tren='{!! json_encode($trenKerjasama) !!}'
-    style="display: none;">
-</div>
-@endif
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ asset('js/auth/dashboard.js') }}" data-turbo-track="reload"></script>

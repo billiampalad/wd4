@@ -15,8 +15,19 @@ class RoleMiddleware
         }
 
         if (Auth::user()->role->role_name !== $role) {
-            Auth::logout();
-            return redirect()->route('login')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            $dashboardRoute = match (Auth::user()->role?->role_name) {
+                'pimpinan' => 'pimpinan.dashboard',
+                'jurusan' => 'jurusan.dashboard',
+                'unit_kerja' => 'unit.dashboard',
+                'admin' => 'admin.dashboard',
+                default => null,
+            };
+
+            if ($dashboardRoute && \Illuminate\Support\Facades\Route::has($dashboardRoute)) {
+                return redirect()->route($dashboardRoute)->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
+            }
+
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 
         return $next($request);
