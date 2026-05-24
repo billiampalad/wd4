@@ -1,6 +1,14 @@
 @extends('admin.dashboard')
 
 @section('content')
+@php
+    $roleLabels = [
+        'pimpinan' => 'Pimpinan',
+        'jurusan' => 'Jurusan',
+        'unit_kerja' => 'Humas',
+        'admin' => 'Admin',
+    ];
+@endphp
 <main class="main-content">
     <div class="page-header">
         <div class="breadcrumb">
@@ -64,7 +72,7 @@
                         </td>
                         <td class="um-td">
                             <span class="tag tag-{{ strtolower($user->role?->role_name ?? 'default') }} um-role-tag">
-                                {{ $user->role?->role_name ?? '-' }}
+                                {{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? '-' }}
                             </span>
                         </td>
                         <td class="um-td"><span class="um-meta">{{ $user->profile?->jabatan ?? '-' }}</span></td>
