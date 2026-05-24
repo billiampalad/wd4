@@ -9,7 +9,6 @@
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <title>Jurusan | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
 
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -187,7 +186,7 @@
                     <div class="user-avatar" id="userAvatar">{{ auth()->user()->name }}</div>
                     <div class="user-info">
                         <div class="name" id="userName">{{ auth()->user()->profile?->jabatan ?? '-' }}</div>
-                        <div class="role">{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}
+                        <div class="role">{{ auth()->user()->profile?->jurusan?->nama_jurusan ?? '-' }}
                         </div>
                     </div>
                 </div>
