@@ -143,6 +143,14 @@
 
                         <div class="uc-grid-2">
                             <div class="uc-form-group">
+                                @php
+                                    $roleLabels = [
+                                        'pimpinan' => 'Pimpinan',
+                                        'jurusan' => 'Jurusan',
+                                        'unit_kerja' => 'Humas',
+                                        'admin' => 'Admin',
+                                    ];
+                                @endphp
                                 <label class="uc-label" for="role_id">
                                     <i class="fas fa-shield-halved uc-label-icon"></i>
                                     Role
@@ -155,7 +163,7 @@
                                         selectedValue: @js((string) old('role_id', '')),
                                         items: @js($roles->map(fn ($role) => [
                                             'value' => (string) $role->id,
-                                            'label' => $role->role_name,
+                                            'label' => $roleLabels[$role->role_name] ?? $role->role_name,
                                             'meta' => $role->role_name,
                                         ])->values())
                                     })"
@@ -178,7 +186,7 @@
                                             data-role-name="{{ $role->role_name }}"
                                             {{ old('role_id') == $role->id ? 'selected' : '' }}
                                         >
-                                            {{ $role->role_name }}
+                                            {{ $roleLabels[$role->role_name] ?? $role->role_name }}
                                         </option>
                                         @endforeach
                                     </select>
@@ -325,7 +333,7 @@
                             <div class="uc-form-group" data-profile-field="unit">
                                 <label class="uc-label" for="unit_kerja_id">
                                     <i class="fas fa-building uc-label-icon"></i>
-                                    Nama Unit
+                                    Nama Staf
                                 </label>
                                 <div
                                     class="uc-alpine-select"
