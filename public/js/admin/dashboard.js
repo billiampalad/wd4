@@ -492,6 +492,57 @@ function togglePass(btnOrId) {
     }
 }
 
+function adminUserSelect(config) {
+    return {
+        open: false,
+        disabled: false,
+        placeholder: config.placeholder || 'Pilih data',
+        selectedValue: config.selectedValue || '',
+        selectedLabel: '',
+        items: config.items || [],
+
+        init() {
+            this.syncLabel();
+        },
+
+        toggle() {
+            if (this.disabled) return;
+            this.open = !this.open;
+        },
+
+        choose(item) {
+            if (this.disabled) return;
+            this.selectedValue = item.value;
+            this.selectedLabel = item.label;
+            this.open = false;
+
+            this.$nextTick(() => {
+                const select = this.$root.querySelector('select');
+                if (!select) return;
+
+                select.value = this.selectedValue;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+        },
+
+        syncFromNative() {
+            this.syncLabel();
+        },
+
+        syncLabel() {
+            const selected = this.items.find(item => item.value === this.selectedValue);
+            this.selectedLabel = selected ? selected.label : '';
+        },
+
+        setDisabled(isDisabled) {
+            this.disabled = isDisabled;
+            if (isDisabled) {
+                this.open = false;
+            }
+        },
+    };
+}
+
 function getSelectedOptionText(selectId) {
     const el = document.getElementById(selectId);
     if (!el || el.disabled || !el.value) return '';
@@ -529,10 +580,17 @@ function updateProfileFields() {
         const controls = field.querySelectorAll('input, select, textarea');
 
         field.hidden = !isVisible;
+        field.querySelectorAll('.uc-alpine-select').forEach(selectWrap => {
+            if (selectWrap._x_dataStack?.[0]?.setDisabled) {
+                selectWrap._x_dataStack[0].setDisabled(!isVisible);
+            }
+        });
+
         controls.forEach(control => {
             control.disabled = !isVisible;
-            if (!isVisible) {
+            if (!isVisible && control.value !== '') {
                 control.value = '';
+                control.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     });
@@ -568,6 +626,9 @@ function refreshUserForm(input) {
 
 function resetPreview() {
     setTimeout(() => {
+        document.querySelectorAll('.uc-native-select').forEach(select => {
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        });
         updateProfileFields();
         updatePreview();
         checkStrength('');
