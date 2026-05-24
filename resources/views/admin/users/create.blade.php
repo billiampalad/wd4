@@ -168,6 +168,7 @@
                                         ])->values())
                                     })"
                                     x-init="init()"
+                                    :class="{ 'is-open': open }"
                                     @click.outside="open = false"
                                 >
                                     <select
@@ -287,6 +288,7 @@
                                         ])->values())
                                     })"
                                     x-init="init()"
+                                    :class="{ 'is-open': open }"
                                     @click.outside="open = false"
                                 >
                                     <select
@@ -346,6 +348,7 @@
                                         ])->values())
                                     })"
                                     x-init="init()"
+                                    :class="{ 'is-open': open }"
                                     @click.outside="open = false"
                                 >
                                     <select

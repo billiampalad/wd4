@@ -1934,6 +1934,13 @@ aside,
 }
 
 /* ── Form card ───────────────────────────────────────────────── */
+.uc-form-col,
+.uc-form-card,
+.uc-form-card .card-body,
+.uc-body {
+    overflow: visible;
+}
+
 .uc-form-header {
     padding: 18px 22px 14px;
     border-bottom: 1px solid var(--border, #e2e8f0);
@@ -1979,6 +1986,7 @@ aside,
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     margin-bottom: 20px;
+    overflow: visible;
 }
 
 .uc-grid-3 {
@@ -1986,6 +1994,7 @@ aside,
     grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
     margin-bottom: 20px;
+    overflow: visible;
 }
 
 .uc-profile-pointer {
@@ -2021,6 +2030,7 @@ aside,
     display: flex;
     flex-direction: column;
     gap: 5px;
+    overflow: visible;
 }
 
 /* ── Label ───────────────────────────────────────────────────── */
@@ -2095,6 +2105,11 @@ aside,
 
 .uc-alpine-select {
     position: relative;
+    z-index: 1;
+}
+
+.uc-alpine-select.is-open {
+    z-index: 1000;
 }
 
 .uc-native-select {
