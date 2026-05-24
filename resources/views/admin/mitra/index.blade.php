@@ -59,14 +59,16 @@
                         </td>
                         <td class="um-td">
                             <span class="tag tag-green" style="font-family: 'DM Mono', monospace;">
-                                {{ $mitra->kegiatanKerjasamas->count() }} Kegiatan
+                                {{ $mitra->cooperations->count() }} Kegiatan
                             </span>
                         </td>
                         <td class="um-td">
                             @php
-                                $kegiatanAktif = $mitra->kegiatanKerjasamas->filter(fn($k) => $k->isAktif())->count();
+                                $kegiatanAktif = $mitra->cooperations
+                                    ->filter(fn($cooperation) => !$cooperation->end_date || now()->isBefore($cooperation->end_date))
+                                    ->count();
                             @endphp
-                            @if($mitra->kegiatanKerjasamas->count() > 0)
+                            @if($mitra->cooperations->count() > 0)
                                 @if($kegiatanAktif > 0)
                                     <span class="tag tag-green"><i class="fas fa-check-circle" style="margin-right: 4px;"></i> {{ $kegiatanAktif }} Aktif</span>
                                 @else

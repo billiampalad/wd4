@@ -10,7 +10,7 @@ class MitraController extends Controller
 {
     public function index()
     {
-        $mitras = Mitra::with('kegiatanKerjasamas')->latest()->get();
+        $mitras = Mitra::with('cooperations')->latest()->get();
         return view('admin.mitra.index', compact('mitras'));
     }
 
