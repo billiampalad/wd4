@@ -15,7 +15,7 @@ class CooperationAccess
 {
     public static function profileForUser(User $user): Profile
     {
-        $profile = Profile::with('unitKerja')->where('user_id', $user->id)->first();
+        $profile = Profile::with(['jurusan', 'unitKerja'])->where('user_id', $user->id)->first();
 
         if (!$profile) {
             abort(403, 'Profil pengguna tidak ditemukan.');

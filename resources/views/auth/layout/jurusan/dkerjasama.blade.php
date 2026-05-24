@@ -1,10 +1,10 @@
 @php
-$kerjasamaList = $kerjasamaUnit ?? collect();
+$kerjasamaList = $kerjasamaJurusan ?? $kerjasamaUnit ?? collect();
 if (! $kerjasamaList instanceof \Illuminate\Support\Collection) {
 $kerjasamaList = collect($kerjasamaList);
 }
 
-$unitName = auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja';
+$unitName = auth()->user()->profile?->jurusan?->nama_jurusan ?? 'Jurusan';
 $totalKerjasama = $kerjasamaList->count();
 $aktifCount = $kerjasamaList->filter(fn ($item) => strtolower($item->status ?? '') === 'aktif')->count();
 $perpanjanganCount = $kerjasamaList->filter(fn ($item) => str_contains(strtolower($item->status ?? ''), 'perpanjangan'))->count();

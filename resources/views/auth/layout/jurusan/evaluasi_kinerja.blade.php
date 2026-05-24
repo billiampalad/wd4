@@ -17,7 +17,7 @@
                     <h2 class="ud-title">Evaluasi Kinerja Kerjasama</h2>
                     <p class="ud-subtitle">
                         Kelola penilaian kinerja kerjasama untuk
-                        <strong>{{ auth()->user()->profile?->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja' }}</strong>.
+                        <strong>{{ auth()->user()->profile?->jurusan?->nama_jurusan ?? 'Jurusan' }}</strong>.
                     </p>
                 </div>
             </div>

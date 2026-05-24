@@ -41,9 +41,8 @@
         $notificationUser = auth()->user();
 
         if ($notificationUser) {
-            $notificationUser->loadMissing('profile.unitKerja');
+            $notificationUser->loadMissing('profile.jurusan');
             $notificationProfile = $notificationUser->profile;
-            $notificationUnitName = $notificationProfile?->unitKerja?->nama_unit_pelaksana;
             $notificationToday = now()->startOfDay();
             $notificationLimit = $notificationToday->copy()->addMonthsNoOverflow(3)->endOfDay();
 
@@ -57,15 +56,6 @@
                 $expiryQuery->where(function ($query) use ($notificationProfile) {
                     $query->where('jurusan_id', $notificationProfile->jurusan_id)
                         ->orWhereHas('jurusans', fn($subQuery) => $subQuery->where('jurusans.id', $notificationProfile->jurusan_id));
-                });
-            } elseif ($notificationUnitName) {
-                $expiryQuery->where(function ($query) use ($notificationUnitName) {
-                    $query->whereHas('jurusans', fn($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
-                        ->orWhereHas('upas', fn($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
-                        ->orWhereHas('pusats', fn($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName))
-                        ->orWhereHas('jurusan', fn($subQuery) => $subQuery->where('nama_jurusan', $notificationUnitName))
-                        ->orWhereHas('upa', fn($subQuery) => $subQuery->where('nama_upa', $notificationUnitName))
-                        ->orWhereHas('pusat', fn($subQuery) => $subQuery->where('nama_pusat', $notificationUnitName));
                 });
             } else {
                 $expiryQuery->whereRaw('1 = 0');

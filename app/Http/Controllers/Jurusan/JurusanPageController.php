@@ -753,12 +753,16 @@ class JurusanPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        $kerjasamaUnit = $this->buildLaporanQuery($request)->get();
+        $kerjasamaJurusan = $this->buildLaporanQuery($request)->get();
+        $kerjasamaUnit = $kerjasamaJurusan;
+        $currentJurusan = Auth::user()->profile?->jurusan;
 
         return view('auth.jurusan', [
             'kerjasamaUnit' => $kerjasamaUnit,
+            'kerjasamaJurusan' => $kerjasamaJurusan,
+            'currentJurusan' => $currentJurusan,
             'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
-            'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
+            'jurusans' => $currentJurusan ? collect([$currentJurusan]) : Jurusan::orderBy('nama_jurusan')->get(),
             'upas' => Upa::orderBy('nama_upa')->get(),
             'pusats' => Pusat::orderBy('nama_pusat')->get(),
         ]);
@@ -1226,7 +1230,12 @@ class JurusanPageController extends Controller
             }
         }
         if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {
-            $query->where('jurusan_id', $request->jurusan_id);
+            $jurusanId = (int) $request->jurusan_id;
+
+            $query->where(function ($jurusanQuery) use ($jurusanId) {
+                $jurusanQuery->where('jurusan_id', $jurusanId)
+                    ->orWhereHas('jurusans', fn ($relationQuery) => $relationQuery->whereKey($jurusanId));
+            });
         }
         if ($request->filled('upa_id') && $request->upa_id !== 'all') {
             $query->where('upa_id', $request->upa_id);
