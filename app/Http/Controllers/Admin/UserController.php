@@ -36,6 +36,8 @@ class UserController
      */
     public function store(Request $request)
     {
+        $profileData = $this->profileDataForRole($request);
+
         $user = User::create([
             'nik' => $request->nik,
             'name' => $request->name,
@@ -43,11 +45,7 @@ class UserController
             'role_id' => $request->role_id
         ]);
 
-        $user->profile()->create([
-            'jabatan' => $request->jabatan,
-            'jurusan_id' => $request->jurusan_id,
-            'unit_kerja_id' => $request->unit_kerja_id,
-        ]);
+        $user->profile()->create($profileData);
 
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
     }
@@ -71,6 +69,7 @@ class UserController
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        $profileData = $this->profileDataForRole($request);
 
         $userData = $request->only('name', 'nik', 'role_id');
         if ($request->filled('password')) {
@@ -81,11 +80,7 @@ class UserController
 
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],
-            [
-                'jabatan' => $request->jabatan,
-                'jurusan_id' => $request->jurusan_id,
-                'unit_kerja_id' => $request->unit_kerja_id,
-            ]
+            $profileData
         );
 
         return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
@@ -98,5 +93,17 @@ class UserController
     {
         User::destroy($id);
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    private function profileDataForRole(Request $request): array
+    {
+        $roleName = Role::whereKey($request->role_id)->value('role_name');
+        $roleName = strtolower(str_replace(' ', '_', (string) $roleName));
+
+        return [
+            'jabatan' => $request->jabatan,
+            'jurusan_id' => $roleName === 'jurusan' ? $request->jurusan_id : null,
+            'unit_kerja_id' => $roleName === 'unit_kerja' ? $request->unit_kerja_id : null,
+        ];
     }
 }

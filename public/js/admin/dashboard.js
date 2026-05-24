@@ -425,11 +425,17 @@ function initDashboard() {
     /* Live preview (untuk halaman create/edit user) */
     const createForm = document.querySelector('form[action*="users"]');
     if (createForm && document.getElementById('previewAvatar')) {
+        updateProfileFields();
         updatePreview();
         // Tambahkan event listener untuk input
         const inputs = createForm.querySelectorAll('input, select');
         inputs.forEach(input => {
-            input.oninput = updatePreview;
+            input.oninput = function() {
+                refreshUserForm(input);
+            };
+            input.onchange = function() {
+                refreshUserForm(input);
+            };
         });
     }
 }
@@ -486,21 +492,105 @@ function togglePass(btnOrId) {
     }
 }
 
+function getSelectedOptionText(selectId) {
+    const el = document.getElementById(selectId);
+    if (!el || el.disabled || !el.value) return '';
+
+    return (el.options[el.selectedIndex]?.text ?? '').trim();
+}
+
+function getSelectedRoleName() {
+    const roleEl = document.getElementById('role_id');
+    if (!roleEl || !roleEl.value) return '';
+
+    const selected = roleEl.options[roleEl.selectedIndex];
+    return (selected?.dataset.roleName || selected?.text || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '_');
+}
+
+function updateProfileFields() {
+    const fields = document.querySelectorAll('[data-profile-field]');
+    const previewRows = document.querySelectorAll('[data-preview-field]');
+    const pointer = document.getElementById('profileRolePointer');
+    if (!fields.length && !previewRows.length) return;
+
+    const roleName = getSelectedRoleName();
+    const visibleFields = {
+        pimpinan: ['jabatan'],
+        admin: ['jabatan'],
+        jurusan: ['jabatan', 'jurusan'],
+        unit_kerja: ['jabatan', 'unit'],
+    }[roleName] || ['jabatan', 'jurusan', 'unit'];
+
+    fields.forEach(field => {
+        const isVisible = visibleFields.includes(field.dataset.profileField);
+        const controls = field.querySelectorAll('input, select, textarea');
+
+        field.hidden = !isVisible;
+        controls.forEach(control => {
+            control.disabled = !isVisible;
+            if (!isVisible) {
+                control.value = '';
+            }
+        });
+    });
+
+    previewRows.forEach(row => {
+        row.hidden = !visibleFields.includes(row.dataset.previewField);
+    });
+
+    if (pointer) {
+        const messages = {
+            pimpinan: 'Role pimpinan hanya dapat mengisi Jabatan. Nama Jurusan dan Nama Unit tidak digunakan untuk role ini.',
+            admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan dan Nama Unit tidak digunakan untuk role ini.',
+            jurusan: 'Role jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Unit tidak digunakan untuk role ini.',
+            unit_kerja: 'Role unit kerja dapat mengisi Jabatan dan Nama Unit. Nama Jurusan tidak digunakan untuk role ini.',
+        };
+
+        pointer.innerHTML = '<i class="fas fa-circle-info"></i><span>' +
+            (messages[roleName] || 'Pilih role terlebih dahulu untuk melihat form profil yang dapat digunakan.') +
+            '</span>';
+    }
+}
+
+function refreshUserForm(input) {
+    updateProfileFields();
+
+    if (input && input.id === 'password') {
+        checkStrength(input.value);
+        return;
+    }
+
+    updatePreview();
+}
+
+function resetPreview() {
+    setTimeout(() => {
+        updateProfileFields();
+        updatePreview();
+        checkStrength('');
+    }, 0);
+}
+
+function restorePreview() {
+    resetPreview();
+}
+
 function updatePreview() {
     const nameInput = document.getElementById('name');
     const nikInput = document.getElementById('nik');
     const roleEl = document.getElementById('role_id');
     const jabatanInput = document.getElementById('jabatan');
-    const jurusanInput = document.getElementById('nama_jurusan');
-    const unitInput = document.getElementById('nama_unit');
 
     if (!nameInput) return;
 
     const name = nameInput.value.trim();
     const nik = nikInput ? nikInput.value.trim() : '';
-    const jabatan = jabatanInput ? jabatanInput.value.trim() : '';
-    const jurusan = jurusanInput ? jurusanInput.value.trim() : '';
-    const unit = unitInput ? unitInput.value.trim() : '';
+    const jabatan = jabatanInput && !jabatanInput.disabled ? jabatanInput.value.trim() : '';
+    const jurusan = getSelectedOptionText('jurusan_id');
+    const unit = getSelectedOptionText('unit_kerja_id');
     const roleText = roleEl ? (roleEl.options[roleEl.selectedIndex]?.text ?? '') : '';
 
     const previewAvatar = document.getElementById('previewAvatar');

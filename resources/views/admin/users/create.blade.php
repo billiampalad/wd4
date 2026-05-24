@@ -29,21 +29,21 @@
                 </div>
                 <div class="uc-preview-divider"></div>
                 <div class="uc-preview-info">
-                    <div class="uc-info-row">
+                    <div class="uc-info-row" data-preview-field="jabatan">
                         <span class="uc-info-icon" style="background:rgba(79,70,229,.1);color:#4f46e5;"><i class="fas fa-briefcase"></i></span>
                         <div>
                             <div class="uc-info-label">Jabatan</div>
                             <div class="uc-info-val" id="previewJabatan">—</div>
                         </div>
                     </div>
-                    <div class="uc-info-row">
+                    <div class="uc-info-row" data-preview-field="jurusan">
                         <span class="uc-info-icon" style="background:rgba(14,165,233,.1);color:#0ea5e9;"><i class="fas fa-graduation-cap"></i></span>
                         <div>
                             <div class="uc-info-label">Jurusan</div>
                             <div class="uc-info-val" id="previewJurusan">—</div>
                         </div>
                     </div>
-                    <div class="uc-info-row">
+                    <div class="uc-info-row" data-preview-field="unit">
                         <span class="uc-info-icon" style="background:rgba(16,185,129,.1);color:#10b981;"><i class="fas fa-building"></i></span>
                         <div>
                             <div class="uc-info-label">Unit Kerja</div>
@@ -151,12 +151,16 @@
                                 <select
                                     id="role_id" name="role_id"
                                     class="uc-input uc-select @error('role_id') uc-input-error @enderror"
-                                    onchange="updatePreview()"
+                                    onchange="updateProfileFields(); updatePreview()"
                                     required
                                 >
                                     <option value="" disabled selected>— Pilih Role —</option>
                                     @foreach($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                    <option
+                                        value="{{ $role->id }}"
+                                        data-role-name="{{ $role->role_name }}"
+                                        {{ old('role_id') == $role->id ? 'selected' : '' }}
+                                    >
                                         {{ $role->role_name }}
                                     </option>
                                     @endforeach
@@ -199,9 +203,12 @@
                             <span class="uc-section-num">03</span>
                             <span>Data Profil</span>
                         </div>
+                        <div class="uc-profile-pointer" id="profileRolePointer" aria-live="polite">
+                            Pilih role terlebih dahulu untuk melihat form profil yang dapat digunakan.
+                        </div>
 
-                        <div class="uc-grid-3">
-                            <div class="uc-form-group">
+                        <div class="uc-grid-3" id="profileFields">
+                            <div class="uc-form-group" data-profile-field="jabatan">
                                 <label class="uc-label" for="jabatan">
                                     <i class="fas fa-briefcase uc-label-icon"></i>
                                     Jabatan
@@ -215,12 +222,12 @@
                                 />
                             </div>
 
-                            <div class="uc-form-group">
+                            <div class="uc-form-group" data-profile-field="jurusan">
                                 <label class="uc-label" for="jurusan_id">
                                     <i class="fas fa-graduation-cap uc-label-icon"></i>
                                     Nama Jurusan
                                 </label>
-                                <select id="jurusan_id" name="jurusan_id" class="uc-input">
+                                <select id="jurusan_id" name="jurusan_id" class="uc-input" onchange="updatePreview()">
                                     <option value="">-- Pilih Jurusan --</option>
                                     @foreach($jurusans as $jurusan)
                                         <option value="{{ $jurusan->id }}" {{ old('jurusan_id') == $jurusan->id ? 'selected' : '' }}>
@@ -230,12 +237,12 @@
                                 </select>
                             </div>
 
-                            <div class="uc-form-group">
+                            <div class="uc-form-group" data-profile-field="unit">
                                 <label class="uc-label" for="unit_kerja_id">
                                     <i class="fas fa-building uc-label-icon"></i>
                                     Nama Unit
                                 </label>
-                                <select id="unit_kerja_id" name="unit_kerja_id" class="uc-input">
+                                <select id="unit_kerja_id" name="unit_kerja_id" class="uc-input" onchange="updatePreview()">
                                     <option value="">-- Pilih Unit Kerja --</option>
                                     @foreach($unitKerjas as $unit)
                                         <option value="{{ $unit->id }}" {{ old('unit_kerja_id') == $unit->id ? 'selected' : '' }}>
