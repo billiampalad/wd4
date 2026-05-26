@@ -42,7 +42,9 @@
                         <th class="um-th">Role</th>
                         <th class="um-th">Jabatan</th>
                         <th class="um-th">Jurusan</th>
-                        <th class="um-th">Unit/UPA/Pusat</th>
+                        <th class="um-th">Unit</th>
+                        <th class="um-th">UPA</th>
+                        <th class="um-th">Pusat</th>
                         <th class="um-th">Dibuat</th>
                         <th class="um-th">Diperbarui</th>
                         <th class="um-th um-th-aksi">Aksi</th>
@@ -80,12 +82,13 @@
                         <td class="um-td"><span class="um-meta">{{ $user->profile?->jabatan ?? '-' }}</span></td>
                         <td class="um-td"><span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span></td>
                         <td class="um-td">
-                            <span class="um-meta">
-                                {{ $user->profile?->unitKerja?->nama_unit_pelaksana
-                                    ?? $user->profile?->upa?->nama_upa
-                                    ?? $user->profile?->pusat?->nama_pusat
-                                    ?? '-' }}
-                            </span>
+                            <span class="um-meta">{{ $user->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}</span>
+                        </td>
+                        <td class="um-td">
+                            <span class="um-meta">{{ $user->profile?->upa?->nama_upa ?? '-' }}</span>
+                        </td>
+                        <td class="um-td">
+                            <span class="um-meta">{{ $user->profile?->pusat?->nama_pusat ?? '-' }}</span>
                         </td>
                         <td class="um-td">
                             <div class="um-date">
@@ -116,7 +119,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="11" class="um-empty">
+                        <td colspan="13" class="um-empty">
                             <div class="um-empty-state">
                                 <div class="um-empty-icon">
                                     <i class="fas fa-users-slash"></i>
