@@ -4,15 +4,15 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('pusat.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('pusat.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Repositori</span>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.mitra') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('pusat.mitra') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Daftar Mitra</span>
                 </a>
             </div>
@@ -127,13 +127,13 @@
                                 </td>
                                 <td class="um-td um-td-aksi">
                                     <div class="um-actions dk-actions-compact">
-                                        <a href="{{ route('jurusan.mitra.show', $mitra->id) }}" class="dk-action-btn view" title="Detail">
+                                        <a href="{{ route('pusat.mitra.show', $mitra->id) }}" class="dk-action-btn view" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}')" class="dk-action-btn edit" title="Edit">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
-                                        <form action="{{ route('jurusan.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;"
+                                        <form action="{{ route('pusat.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;"
                                             data-mitra-delete-form data-confirm-message="Apakah Anda yakin ingin menghapus mitra ini?">
                                             @csrf
                                             @method('DELETE')
@@ -168,5 +168,5 @@
     </div>
 </main>
 
-@include('auth.layout.jurusan.mitra._modal_create')
-@include('auth.layout.jurusan.mitra._modal_edit')
+@include('auth.layout.pusat.mitra._modal_create')
+@include('auth.layout.pusat.mitra._modal_edit')

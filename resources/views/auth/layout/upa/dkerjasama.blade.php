@@ -19,15 +19,15 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit;">
                     <span class="current" id="breadcrumbCurrent">Beranda</span>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Daftar Kerjasama</span>
                 </a>
             </div>
@@ -102,13 +102,13 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 transform translate-y-0"
             x-transition:leave-end="opacity-0 transform -translate-y-4">
-            <form id="filterForm" class="rfc-form" method="GET" action="{{ route('jurusan.dkerjasama') }}"
-                data-preview-url="{{ route('jurusan.dkerjasama.preview') }}"
-                data-pdf-url="{{ route('jurusan.dkerjasama.pdf') }}"
-                data-excel-url="{{ route('jurusan.dkerjasama.excel') }}"
-                data-show-url-template="{{ route('jurusan.kerjasama.show', '__ID__') }}"
-                data-edit-url-template="{{ route('jurusan.kerjasama.edit', '__ID__') }}"
-                data-delete-url-template="{{ route('jurusan.kerjasama.destroy', '__ID__') }}">
+            <form id="filterForm" class="rfc-form" method="GET" action="{{ route('upa.dkerjasama') }}"
+                data-preview-url="{{ route('upa.dkerjasama.preview') }}"
+                data-pdf-url="{{ route('upa.dkerjasama.pdf') }}"
+                data-excel-url="{{ route('upa.dkerjasama.excel') }}"
+                data-show-url-template="{{ route('upa.kerjasama.show', '__ID__') }}"
+                data-edit-url-template="{{ route('upa.kerjasama.edit', '__ID__') }}"
+                data-delete-url-template="{{ route('upa.kerjasama.destroy', '__ID__') }}">
 
                 <div class="rfc-grid">
                     <div class="rfc-group" x-data="datepicker('')">
@@ -426,7 +426,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         <div style="padding: 32px;">
                             <div style="display: flex; flex-direction: column; gap: 20px;">
                                 {{-- Opsi 1: Pengajuan Baru --}}
-                                <a href="{{ route('jurusan.kerjasama.create', ['type' => 'baru']) }}"
+                                <a href="{{ route('upa.kerjasama.create', ['type' => 'baru']) }}"
                                     class="modal-option-card"
                                     style="display: flex; align-items: center; gap: 20px; padding: 24px; border-radius: 20px; border: 2px solid var(--border); background: var(--surface); text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); group;"
                                     onmouseover="this.style.borderColor='#4f46e5'; this.style.background='rgba(79,70,229,0.03)'; this.style.transform='translateY(-4px)';"
@@ -442,7 +442,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                                 </a>
 
                                 {{-- Opsi 2: Arsip Lama --}}
-                                <a href="{{ route('jurusan.kerjasama.create', ['type' => 'arsip']) }}"
+                                <a href="{{ route('upa.kerjasama.create', ['type' => 'arsip']) }}"
                                     class="modal-option-card"
                                     style="display: flex; align-items: center; gap: 20px; padding: 24px; border-radius: 20px; border: 2px solid var(--border); background: var(--surface); text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"
                                     onmouseover="this.style.borderColor='#d97706'; this.style.background='rgba(217,119,6,0.03)'; this.style.transform='translateY(-4px)';"
@@ -574,13 +574,13 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                             </td>
                             <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
                                 <div class="um-actions dk-actions-compact">
-                                    <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Detail">
+                                    <a href="{{ route('upa.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('jurusan.kerjasama.edit', $kegiatan->id) }}" class="dk-action-btn edit" title="Edit">
+                                    <a href="{{ route('upa.kerjasama.edit', $kegiatan->id) }}" class="dk-action-btn edit" title="Edit">
                                         <i class="fas fa-pen-to-square"></i>
                                     </a>
-                                    <form action="{{ route('jurusan.kerjasama.destroy', $kegiatan->id) }}" method="POST"
+                                    <form action="{{ route('upa.kerjasama.destroy', $kegiatan->id) }}" method="POST"
                                         class="dk-delete-form" style="display: inline;"
                                         onsubmit="return confirm('Yakin ingin menghapus data kerjasama ini?')">
                                         @csrf
@@ -601,7 +601,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                                     </div>
                                     <p class="um-empty-title">Belum ada data kerjasama</p>
                                     <p class="um-empty-sub">Tambahkan dokumen pertama agar repositori unit mulai terisi.</p>
-                                    <a href="{{ route('jurusan.kerjasama.create') }}" class="dk-empty-btn">
+                                    <a href="{{ route('upa.kerjasama.create') }}" class="dk-empty-btn">
                                         <i class="fas fa-plus"></i>
                                         Tambah Data
                                     </a>

@@ -7,7 +7,7 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <a href="{{ route('pusat.dashboard') }}">Beranda</a>
                 <span>/</span>
                 <span>Evaluasi Kerjasama</span>
             </div>
@@ -115,7 +115,7 @@
                                 </td>
                                 <td class="um-td um-td-aksi"
                                     style="text-align:center; vertical-align: top; padding-top: 15px;">
-                                    <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
+                                    <a href="{{ route('pusat.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
                                         style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-arrow-right"></i> Lengkapi
                                     </a>
@@ -229,7 +229,7 @@
                                 </td>
                                 <td class="um-td um-td-aksi"
                                     style="text-align:center; vertical-align: top; padding-top: 15px;">
-                                    <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
+                                    <a href="{{ route('pusat.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
                                         style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #ef4444, #dc2626);">
                                         <i class="fas fa-pen-to-square"></i> Perbaiki
                                     </a>
@@ -330,7 +330,7 @@
                                 </td>
                                 <td class="um-td um-td-aksi"
                                     style="text-align:center; vertical-align: top; padding-top: 15px;">
-                                    <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
+                                    <a href="{{ route('pusat.kerjasama.show', $kegiatan->id) }}" class="dk-primary-btn"
                                         style="padding: 6px 12px; font-size: 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
                                         <i class="fas fa-eye"></i> Lihat Detail
                                     </a>
@@ -443,7 +443,7 @@
                                 </td>
                                 <td class="um-td um-td-aksi"
                                     style="text-align:center; vertical-align: top; padding-top: 15px;">
-                                    <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view"
+                                    <a href="{{ route('pusat.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view"
                                         title="Lihat Detail">
                                         <i class="fas fa-eye"></i>
                                     </a>

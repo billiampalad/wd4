@@ -116,15 +116,15 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Beranda</span>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Daftar Kerjasama</span>
                 </a>
                 <span class="sep">/</span>
@@ -165,7 +165,7 @@
         </div>
 
         <div class="card-body dk-card-body" style="padding: 0;">
-            <form action="{{ route('jurusan.kerjasama.store') }}" method="POST">
+            <form action="{{ route('upa.kerjasama.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="input_type" :value="inputType">
                 @if($isPerpanjangan)
@@ -951,7 +951,7 @@
 
                                                                     {{-- Selected Prodi Tags --}}
                                                                     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"
-                                                                        x-show="selectedInJurusan.length > 0">
+                                                                        x-show="selectedInupa.length > 0">
                                                                         <template x-for="pId in selectedInJurusan"
                                                                             :key="'ptag'+pId">
                                                                             <span
@@ -1822,7 +1822,7 @@
                 {{-- Footer --}}
                 <div class="mc-footer"
                     style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                    <a href="{{ route('jurusan.dkerjasama') }}" class="rfc-btn rfc-btn-danger"
+                    <a href="{{ route('upa.dkerjasama') }}" class="rfc-btn rfc-btn-danger"
                         style="text-decoration: none;">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
@@ -1837,7 +1837,7 @@
     </div>
 </main>
 
-@include('auth.layout.jurusan.mitra._modal_create')
+@include('auth.layout.upa.mitra._modal_create')
 
 <script>
     function pksNumberFields(initialNumbers = ['']) {

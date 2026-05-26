@@ -4,7 +4,7 @@
         <div class="breadcrumb">
             <i class="fas fa-home" style="font-size:11px;"></i>
             <span class="sep">/</span>
-            <a href="{{ route('jurusan.evaluasi') }}"
+            <a href="{{ route('pusat.evaluasi') }}"
                 style="text-decoration:none; color:var(--accent); font-weight:600;">Evaluasi Kinerja</a>
             <span class="sep">/</span>
             <span class="current">{{ $existingEval ? 'Edit Evaluasi' : 'Beri Evaluasi' }}</span>
@@ -291,7 +291,7 @@
     {{-- ═══ FORM EVALUASI ═══ --}}
     @if($kegiatan->status !== 'menunggu_validasi' && $kegiatan->status !== 'selesai')
         <form
-            action="{{ $existingEval ? route('jurusan.evaluasi.update', $kegiatan->id) : route('jurusan.evaluasi.store', $kegiatan->id) }}"
+            action="{{ $existingEval ? route('pusat.evaluasi.update', $kegiatan->id) : route('pusat.evaluasi.store', $kegiatan->id) }}"
             method="POST" id="formEvaluasi" onsubmit="return confirmSubmitEval(event)">
             @csrf
             @if($existingEval) @method('PUT') @endif
@@ -399,7 +399,7 @@
                             </div>
                         </div>
                         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <a href="{{ route('jurusan.evaluasi') }}"
+                            <a href="{{ route('pusat.evaluasi') }}"
                                 style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:var(--card-bg, #f1f5f9); color:var(--text-sub); border-radius:10px; text-decoration:none; font-size:13px; font-weight:700; border:1px solid var(--border, rgba(0,0,0,.1));"><i
                                     class="fas fa-arrow-left" style="font-size:11px;"></i> Kembali</a>
                             <button type="submit"
@@ -502,7 +502,7 @@
     @endif
 
     <div style="margin-bottom: 24px;">
-        <a href="{{ route('jurusan.evaluasi') }}" class="rfc-btn"
+        <a href="{{ route('pusat.evaluasi') }}" class="rfc-btn"
             style="background:var(--surface); color:var(--text-sub); border:1px solid var(--border); text-decoration:none; font-size:13px; font-weight:700;"><i
                 class="fas fa-arrow-left"></i> Kembali ke Evaluasi Kinerja</a>
     </div>

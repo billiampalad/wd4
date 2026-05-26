@@ -10,11 +10,11 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.mitra') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.mitra') }}" style="text-decoration: none; color: inherit;">
                     <span>Daftar Mitra</span>
                 </a>
                 <span class="sep">/</span>
@@ -133,7 +133,7 @@
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <a href="{{ route('jurusan.mitra') }}" class="dk-secondary-btn" style="width: 100%; justify-content: center; height: 48px; border-radius: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border);">
+                <a href="{{ route('upa.mitra') }}" class="dk-secondary-btn" style="width: 100%; justify-content: center; height: 48px; border-radius: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border);">
                     <i class="fas fa-arrow-left"></i>
                     <span>Kembali ke Daftar</span>
                 </a>
@@ -216,7 +216,7 @@
                                     </td>
                                     <td>
                                         <div class="um-actions dk-actions-compact">
-                                            <a href="{{ route('jurusan.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Detail Dokumen">
+                                            <a href="{{ route('upa.kerjasama.show', $kegiatan->id) }}" class="dk-action-btn view" title="Detail Dokumen">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </div>
@@ -238,4 +238,4 @@
     </div>
 </main>
 
-@include('auth.layout.jurusan.mitra._modal_edit')
+@include('auth.layout.upa.mitra._modal_edit')

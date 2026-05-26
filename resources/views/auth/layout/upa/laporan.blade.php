@@ -17,7 +17,7 @@
                 </div>
                 <p class="um-empty-title">Filter laporan tersedia di Data Kerjasama</p>
                 <p class="um-empty-sub">Gunakan halaman repositori untuk menyaring data, melihat hasil, mencetak PDF, atau export Excel.</p>
-                <a href="{{ route('jurusan.dkerjasama') }}" class="rfc-btn rfc-btn-primary" style="display:inline-flex; margin-top: 14px; text-decoration:none;">
+                <a href="{{ route('upa.dkerjasama') }}" class="rfc-btn rfc-btn-primary" style="display:inline-flex; margin-top: 14px; text-decoration:none;">
                     <i class="fas fa-folder-open"></i>
                     Buka Data Kerjasama
                 </a>

@@ -20,7 +20,7 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <a href="{{ route('pusat.dashboard') }}">Beranda</a>
                 <span>/</span>
                 <span>Institusi</span>
             </div>

@@ -24,6 +24,10 @@ use App\Http\Controllers\Jurusan\JurusanPageController;
 use App\Http\Controllers\Jurusan\KerjasamaJurusanController;
 use App\Http\Controllers\Pimpinan\PengajuanKerjasamaMitraController;
 use App\Http\Controllers\Unit\KerjasamaUnitController;
+use App\Http\Controllers\Upa\UpaPageController;
+use App\Http\Controllers\Upa\KerjasamaUpaController;
+use App\Http\Controllers\Pusat\PusatPageController;
+use App\Http\Controllers\Pusat\KerjasamaPusatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -264,10 +268,138 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
 Route::middleware(['auth', 'role:upa'])->group(function () {
     Route::get('/upa', [DashboardController::class, 'upa'])->name('upa.dashboard');
+
+    Route::get('/upa/analitik/status-kerjasama', [UpaPageController::class, 'statusKerjasama'])->name('upa.analitik.status-kerjasama');
+    Route::get('/upa/analitik/klasifikasi-mitra', [UpaPageController::class, 'klasifikasiMitra'])->name('upa.analitik.klasifikasi-mitra');
+    Route::get('/upa/analitik/geo-mitra', [UpaPageController::class, 'geoMitra'])->name('upa.analitik.geo-mitra');
+    Route::get('/upa/institusi', [UpaPageController::class, 'institusi'])->name('upa.institusi');
+    Route::get('/upa/referensi/bentuk-kegiatan', [UpaPageController::class, 'bentukKegiatan'])->name('upa.referensi.bentuk-kegiatan');
+    Route::get('/upa/referensi/status-kerjasama', [UpaPageController::class, 'statusKerjasamaReferensi'])->name('upa.referensi.status-kerjasama');
+    Route::get('/upa/referensi/status-evaluasi', [UpaPageController::class, 'statusEvaluasiReferensi'])->name('upa.referensi.status-evaluasi');
+    Route::get('/upa/referensi/kriteria-mitra', [UpaPageController::class, 'kriteriaMitraReferensi'])->name('upa.referensi.kriteria-mitra');
+
+    Route::get('/upa/data-kerjasama', [UpaPageController::class, 'dkerjasama'])->name('upa.dkerjasama');
+    Route::get('/upa/data-kerjasama/preview', [UpaPageController::class, 'dkerjasamaPreview'])->name('upa.dkerjasama.preview');
+    Route::get('/upa/data-kerjasama/pdf', [UpaPageController::class, 'dkerjasamaPdf'])->name('upa.dkerjasama.pdf');
+    Route::get('/upa/data-kerjasama/excel', [UpaPageController::class, 'dkerjasamaExcel'])->name('upa.dkerjasama.excel');
+
+    Route::get('/upa/mitra', [UpaPageController::class, 'mitra'])->name('upa.mitra');
+    Route::get('/upa/mitra/create', [UpaPageController::class, 'mitraCreate'])->name('upa.mitra.create');
+    Route::post('/upa/mitra', [UpaPageController::class, 'mitraStore'])->name('upa.mitra.store');
+    Route::get('/upa/mitra/{id}', [UpaPageController::class, 'mitraShow'])->name('upa.mitra.show');
+    Route::get('/upa/mitra/{id}/edit', [UpaPageController::class, 'mitraEdit'])->name('upa.mitra.edit');
+    Route::put('/upa/mitra/{id}', [UpaPageController::class, 'mitraUpdate'])->name('upa.mitra.update');
+    Route::delete('/upa/mitra/{id}', [UpaPageController::class, 'mitraDestroy'])->name('upa.mitra.destroy');
+
+    Route::get('/upa/data-kerjasama/create', [KerjasamaUpaController::class, 'create'])->name('upa.kerjasama.create');
+    Route::post('/upa/data-kerjasama', [KerjasamaUpaController::class, 'store'])->name('upa.kerjasama.store');
+    Route::get('/upa/data-kerjasama/{id}', [KerjasamaUpaController::class, 'show'])->name('upa.kerjasama.show');
+    Route::get('/upa/data-kerjasama/{id}/edit', [KerjasamaUpaController::class, 'edit'])->name('upa.kerjasama.edit');
+    Route::put('/upa/data-kerjasama/{id}', [KerjasamaUpaController::class, 'update'])->name('upa.kerjasama.update');
+    Route::post('/upa/data-kerjasama/{id}/document-link', [KerjasamaUpaController::class, 'updateDocumentLink'])->name('upa.kerjasama.document-link.update');
+    Route::delete('/upa/data-kerjasama/{id}', [KerjasamaUpaController::class, 'destroy'])->name('upa.kerjasama.destroy');
+
+    Route::post('/upa/data-kerjasama/{id}/tujuan', [KerjasamaUpaController::class, 'storeTujuan'])->name('upa.kerjasama.tujuan.store');
+    Route::put('/upa/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaUpaController::class, 'updateTujuan'])->name('upa.kerjasama.tujuan.update');
+    Route::delete('/upa/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaUpaController::class, 'destroyTujuan'])->name('upa.kerjasama.tujuan.destroy');
+    Route::post('/upa/data-kerjasama/{id}/pelaksanaan', [KerjasamaUpaController::class, 'storePelaksanaan'])->name('upa.kerjasama.pelaksanaan.store');
+    Route::put('/upa/data-kerjasama/{id}/pelaksanaan/{pelaksanaanId}', [KerjasamaUpaController::class, 'updatePelaksanaan'])->name('upa.kerjasama.pelaksanaan.update');
+    Route::delete('/upa/data-kerjasama/{id}/pelaksanaan/{pelaksanaanId}', [KerjasamaUpaController::class, 'destroyPelaksanaan'])->name('upa.kerjasama.pelaksanaan.destroy');
+    Route::post('/upa/data-kerjasama/{id}/hasil', [KerjasamaUpaController::class, 'storeHasil'])->name('upa.kerjasama.hasil.store');
+    Route::put('/upa/data-kerjasama/{id}/hasil/{hasilId}', [KerjasamaUpaController::class, 'updateHasil'])->name('upa.kerjasama.hasil.update');
+    Route::delete('/upa/data-kerjasama/{id}/hasil/{hasilId}', [KerjasamaUpaController::class, 'destroyHasil'])->name('upa.kerjasama.hasil.destroy');
+    Route::post('/upa/data-kerjasama/{id}/dokumentasi', [KerjasamaUpaController::class, 'storeDokumentasi'])->name('upa.kerjasama.dokumentasi.store');
+    Route::put('/upa/data-kerjasama/{id}/dokumentasi/{dokId}', [KerjasamaUpaController::class, 'updateDokumentasi'])->name('upa.kerjasama.dokumentasi.update');
+    Route::delete('/upa/data-kerjasama/{id}/dokumentasi/{dokId}', [KerjasamaUpaController::class, 'destroyDokumentasi'])->name('upa.kerjasama.dokumentasi.destroy');
+    Route::post('/upa/data-kerjasama/{id}/permasalahan', [KerjasamaUpaController::class, 'storePermasalahan'])->name('upa.kerjasama.permasalahan.store');
+    Route::put('/upa/data-kerjasama/{id}/permasalahan/{masalahId}', [KerjasamaUpaController::class, 'updatePermasalahan'])->name('upa.kerjasama.permasalahan.update');
+    Route::delete('/upa/data-kerjasama/{id}/permasalahan/{masalahId}', [KerjasamaUpaController::class, 'destroyPermasalahan'])->name('upa.kerjasama.permasalahan.destroy');
+    Route::post('/upa/data-kerjasama/{id}/submit', [KerjasamaUpaController::class, 'submitToPimpinan'])->name('upa.kerjasama.submit');
+
+    Route::get('/upa/evaluasi', [UpaPageController::class, 'evaluasi'])->name('upa.evaluasi');
+    Route::get('/upa/hasil-evaluasi', [UpaPageController::class, 'evaluasi'])->name('upa.hasil_evaluasi');
+    Route::get('/upa/hasil-evaluasi/{id}', [UpaPageController::class, 'formEvaluasi'])->name('upa.evaluasi.form');
+    Route::get('/upa/evaluasi/{id}', [UpaPageController::class, 'formEvaluasi'])->name('upa.evaluasi.form_unit');
+    Route::post('/upa/evaluasi/{id}', [UpaPageController::class, 'storeEvaluasi'])->name('upa.evaluasi.store');
+    Route::put('/upa/evaluasi/{id}', [UpaPageController::class, 'updateEvaluasi'])->name('upa.evaluasi.update');
+    Route::post('/upa/evaluasi/{id}/submit', [UpaPageController::class, 'submitEvaluasiToPimpinan'])->name('upa.evaluasi.submit');
+
+    Route::get('/upa/laporan', [UpaPageController::class, 'laporan'])->name('upa.laporan');
+    Route::get('/upa/laporan/preview', [UpaPageController::class, 'laporanPreview'])->name('upa.laporan.preview');
+    Route::get('/upa/laporan/pdf', [UpaPageController::class, 'laporanPdf'])->name('upa.laporan.pdf');
+    Route::get('/upa/laporan/excel', [UpaPageController::class, 'laporanExcel'])->name('upa.laporan.excel');
+
+    Route::get('/upa/form-laporan', [UpaPageController::class, 'formLaporan'])->name('upa.form');
+    Route::post('/upa/form-laporan', [UpaPageController::class, 'formLaporanStore'])->name('upa.form.store');
+    Route::delete('/upa/form-laporan/{id}', [UpaPageController::class, 'formLaporanDestroy'])->name('upa.form.destroy');
 });
 
 Route::middleware(['auth', 'role:pusat'])->group(function () {
     Route::get('/pusat', [DashboardController::class, 'pusat'])->name('pusat.dashboard');
+
+    Route::get('/pusat/analitik/status-kerjasama', [PusatPageController::class, 'statusKerjasama'])->name('pusat.analitik.status-kerjasama');
+    Route::get('/pusat/analitik/klasifikasi-mitra', [PusatPageController::class, 'klasifikasiMitra'])->name('pusat.analitik.klasifikasi-mitra');
+    Route::get('/pusat/analitik/geo-mitra', [PusatPageController::class, 'geoMitra'])->name('pusat.analitik.geo-mitra');
+    Route::get('/pusat/institusi', [PusatPageController::class, 'institusi'])->name('pusat.institusi');
+    Route::get('/pusat/referensi/bentuk-kegiatan', [PusatPageController::class, 'bentukKegiatan'])->name('pusat.referensi.bentuk-kegiatan');
+    Route::get('/pusat/referensi/status-kerjasama', [PusatPageController::class, 'statusKerjasamaReferensi'])->name('pusat.referensi.status-kerjasama');
+    Route::get('/pusat/referensi/status-evaluasi', [PusatPageController::class, 'statusEvaluasiReferensi'])->name('pusat.referensi.status-evaluasi');
+    Route::get('/pusat/referensi/kriteria-mitra', [PusatPageController::class, 'kriteriaMitraReferensi'])->name('pusat.referensi.kriteria-mitra');
+
+    Route::get('/pusat/data-kerjasama', [PusatPageController::class, 'dkerjasama'])->name('pusat.dkerjasama');
+    Route::get('/pusat/data-kerjasama/preview', [PusatPageController::class, 'dkerjasamaPreview'])->name('pusat.dkerjasama.preview');
+    Route::get('/pusat/data-kerjasama/pdf', [PusatPageController::class, 'dkerjasamaPdf'])->name('pusat.dkerjasama.pdf');
+    Route::get('/pusat/data-kerjasama/excel', [PusatPageController::class, 'dkerjasamaExcel'])->name('pusat.dkerjasama.excel');
+
+    Route::get('/pusat/mitra', [PusatPageController::class, 'mitra'])->name('pusat.mitra');
+    Route::get('/pusat/mitra/create', [PusatPageController::class, 'mitraCreate'])->name('pusat.mitra.create');
+    Route::post('/pusat/mitra', [PusatPageController::class, 'mitraStore'])->name('pusat.mitra.store');
+    Route::get('/pusat/mitra/{id}', [PusatPageController::class, 'mitraShow'])->name('pusat.mitra.show');
+    Route::get('/pusat/mitra/{id}/edit', [PusatPageController::class, 'mitraEdit'])->name('pusat.mitra.edit');
+    Route::put('/pusat/mitra/{id}', [PusatPageController::class, 'mitraUpdate'])->name('pusat.mitra.update');
+    Route::delete('/pusat/mitra/{id}', [PusatPageController::class, 'mitraDestroy'])->name('pusat.mitra.destroy');
+
+    Route::get('/pusat/data-kerjasama/create', [KerjasamaPusatController::class, 'create'])->name('pusat.kerjasama.create');
+    Route::post('/pusat/data-kerjasama', [KerjasamaPusatController::class, 'store'])->name('pusat.kerjasama.store');
+    Route::get('/pusat/data-kerjasama/{id}', [KerjasamaPusatController::class, 'show'])->name('pusat.kerjasama.show');
+    Route::get('/pusat/data-kerjasama/{id}/edit', [KerjasamaPusatController::class, 'edit'])->name('pusat.kerjasama.edit');
+    Route::put('/pusat/data-kerjasama/{id}', [KerjasamaPusatController::class, 'update'])->name('pusat.kerjasama.update');
+    Route::post('/pusat/data-kerjasama/{id}/document-link', [KerjasamaPusatController::class, 'updateDocumentLink'])->name('pusat.kerjasama.document-link.update');
+    Route::delete('/pusat/data-kerjasama/{id}', [KerjasamaPusatController::class, 'destroy'])->name('pusat.kerjasama.destroy');
+
+    Route::post('/pusat/data-kerjasama/{id}/tujuan', [KerjasamaPusatController::class, 'storeTujuan'])->name('pusat.kerjasama.tujuan.store');
+    Route::put('/pusat/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaPusatController::class, 'updateTujuan'])->name('pusat.kerjasama.tujuan.update');
+    Route::delete('/pusat/data-kerjasama/{id}/tujuan/{tujuanId}', [KerjasamaPusatController::class, 'destroyTujuan'])->name('pusat.kerjasama.tujuan.destroy');
+    Route::post('/pusat/data-kerjasama/{id}/pelaksanaan', [KerjasamaPusatController::class, 'storePelaksanaan'])->name('pusat.kerjasama.pelaksanaan.store');
+    Route::put('/pusat/data-kerjasama/{id}/pelaksanaan/{pelaksanaanId}', [KerjasamaPusatController::class, 'updatePelaksanaan'])->name('pusat.kerjasama.pelaksanaan.update');
+    Route::delete('/pusat/data-kerjasama/{id}/pelaksanaan/{pelaksanaanId}', [KerjasamaPusatController::class, 'destroyPelaksanaan'])->name('pusat.kerjasama.pelaksanaan.destroy');
+    Route::post('/pusat/data-kerjasama/{id}/hasil', [KerjasamaPusatController::class, 'storeHasil'])->name('pusat.kerjasama.hasil.store');
+    Route::put('/pusat/data-kerjasama/{id}/hasil/{hasilId}', [KerjasamaPusatController::class, 'updateHasil'])->name('pusat.kerjasama.hasil.update');
+    Route::delete('/pusat/data-kerjasama/{id}/hasil/{hasilId}', [KerjasamaPusatController::class, 'destroyHasil'])->name('pusat.kerjasama.hasil.destroy');
+    Route::post('/pusat/data-kerjasama/{id}/dokumentasi', [KerjasamaPusatController::class, 'storeDokumentasi'])->name('pusat.kerjasama.dokumentasi.store');
+    Route::put('/pusat/data-kerjasama/{id}/dokumentasi/{dokId}', [KerjasamaPusatController::class, 'updateDokumentasi'])->name('pusat.kerjasama.dokumentasi.update');
+    Route::delete('/pusat/data-kerjasama/{id}/dokumentasi/{dokId}', [KerjasamaPusatController::class, 'destroyDokumentasi'])->name('pusat.kerjasama.dokumentasi.destroy');
+    Route::post('/pusat/data-kerjasama/{id}/permasalahan', [KerjasamaPusatController::class, 'storePermasalahan'])->name('pusat.kerjasama.permasalahan.store');
+    Route::put('/pusat/data-kerjasama/{id}/permasalahan/{masalahId}', [KerjasamaPusatController::class, 'updatePermasalahan'])->name('pusat.kerjasama.permasalahan.update');
+    Route::delete('/pusat/data-kerjasama/{id}/permasalahan/{masalahId}', [KerjasamaPusatController::class, 'destroyPermasalahan'])->name('pusat.kerjasama.permasalahan.destroy');
+    Route::post('/pusat/data-kerjasama/{id}/submit', [KerjasamaPusatController::class, 'submitToPimpinan'])->name('pusat.kerjasama.submit');
+
+    Route::get('/pusat/evaluasi', [PusatPageController::class, 'evaluasi'])->name('pusat.evaluasi');
+    Route::get('/pusat/hasil-evaluasi', [PusatPageController::class, 'evaluasi'])->name('pusat.hasil_evaluasi');
+    Route::get('/pusat/hasil-evaluasi/{id}', [PusatPageController::class, 'formEvaluasi'])->name('pusat.evaluasi.form');
+    Route::get('/pusat/evaluasi/{id}', [PusatPageController::class, 'formEvaluasi'])->name('pusat.evaluasi.form_unit');
+    Route::post('/pusat/evaluasi/{id}', [PusatPageController::class, 'storeEvaluasi'])->name('pusat.evaluasi.store');
+    Route::put('/pusat/evaluasi/{id}', [PusatPageController::class, 'updateEvaluasi'])->name('pusat.evaluasi.update');
+    Route::post('/pusat/evaluasi/{id}/submit', [PusatPageController::class, 'submitEvaluasiToPimpinan'])->name('pusat.evaluasi.submit');
+
+    Route::get('/pusat/laporan', [PusatPageController::class, 'laporan'])->name('pusat.laporan');
+    Route::get('/pusat/laporan/preview', [PusatPageController::class, 'laporanPreview'])->name('pusat.laporan.preview');
+    Route::get('/pusat/laporan/pdf', [PusatPageController::class, 'laporanPdf'])->name('pusat.laporan.pdf');
+    Route::get('/pusat/laporan/excel', [PusatPageController::class, 'laporanExcel'])->name('pusat.laporan.excel');
+
+    Route::get('/pusat/form-laporan', [PusatPageController::class, 'formLaporan'])->name('pusat.form');
+    Route::post('/pusat/form-laporan', [PusatPageController::class, 'formLaporanStore'])->name('pusat.form.store');
+    Route::delete('/pusat/form-laporan/{id}', [PusatPageController::class, 'formLaporanDestroy'])->name('pusat.form.destroy');
 });
 
 /*

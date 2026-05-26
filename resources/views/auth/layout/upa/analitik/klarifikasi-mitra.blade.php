@@ -6,7 +6,7 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <a href="{{ route('upa.dashboard') }}">Beranda</a>
                 <span>/</span>
                 <span>Klarifikasi Mitra</span>
             </div>

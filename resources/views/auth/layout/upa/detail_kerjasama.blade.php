@@ -134,14 +134,14 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" class="breadcrumb-item">
+                <a href="{{ route('upa.dashboard') }}" class="breadcrumb-item">
                     <i class="fas fa-home"></i>
                 </a>
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Beranda</span>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Daftar Kerjasama</span>
                 </a>
                 <span class="sep">/</span>
@@ -173,7 +173,7 @@
                     </div>
                 </div>
                 <div class="dk-hero-action">
-                    <a href="{{ route('jurusan.kerjasama.edit', $kegiatan->id) }}" class="dk-primary-btn">
+                    <a href="{{ route('upa.kerjasama.edit', $kegiatan->id) }}" class="dk-primary-btn">
                         <i class="fas fa-pen-to-square"></i>
                         <span>Edit Data</span>
                     </a>
@@ -603,7 +603,7 @@
                                                     <i class="fas fa-external-link-alt"></i>
                                                 </a>
 
-                                                <form action="{{ route('jurusan.form.destroy', $file->id) }}"
+                                                <form action="{{ route('upa.form.destroy', $file->id) }}"
                                                     method="POST"
                                                     onsubmit="return confirm('Hapus dokumen ini dari riwayat?')"
                                                     style="display: inline;">
@@ -640,7 +640,7 @@
                             x-transition:enter-start="opacity-0 translate-y-4"
                             x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
 
-                            <form action="{{ route('jurusan.form.store') }}" method="POST"
+                            <form action="{{ route('upa.form.store') }}" method="POST"
                                 enctype="multipart/form-data" x-data="{ fileName: '' }">
                                 @csrf
                                 <input type="hidden" name="cooperation_id" value="{{ $kegiatan->id }}">
@@ -793,7 +793,7 @@
                     @endif
 
                     @if ($canSubmitToPimpinan)
-                        <form action="{{ route('jurusan.kerjasama.submit', $kegiatan->id) }}" method="POST"
+                        <form action="{{ route('upa.kerjasama.submit', $kegiatan->id) }}" method="POST"
                             class="dk-btn-full" id="submitForm">
                             @csrf
                             <button type="submit" class="dk-warning-btn dk-btn-full"
@@ -806,14 +806,14 @@
                     @endif
 
                     @if ($canAjukanPerpanjangan)
-                        <a href="{{ route('jurusan.kerjasama.create', ['perpanjangan_dari' => $kegiatan->id]) }}"
+                        <a href="{{ route('upa.kerjasama.create', ['perpanjangan_dari' => $kegiatan->id]) }}"
                             class="dk-info-btn dk-btn-full">
                             <i class="fas fa-clock-rotate-left"></i>
                             <span>Ajukan Perpanjangan</span>
                         </a>
                     @endif
 
-                    <a href="{{ route('jurusan.dkerjasama') }}" class="dk-secondary-btn dk-btn-full dk-btn-back">
+                    <a href="{{ route('upa.dkerjasama') }}" class="dk-secondary-btn dk-btn-full dk-btn-back">
                         <i class="fas fa-arrow-left"></i>
                         <span>Kembali ke Repositori</span>
                     </a>

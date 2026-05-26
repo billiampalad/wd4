@@ -3,11 +3,11 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('pusat.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('pusat.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span>Kerjasama</span>
                 </a>
                 <span class="sep">/</span>

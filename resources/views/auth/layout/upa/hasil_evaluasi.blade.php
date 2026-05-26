@@ -84,7 +84,7 @@
                                     </span>
                                 </td>
                                 <td class="um-td um-td-aksi" style="text-align:center;">
-                                    <a href="{{ route('jurusan.evaluasi.form', $kegiatan->id) }}" class="um-btn-edit" title="Detail" data-turbo="false"
+                                    <a href="{{ route('upa.evaluasi.form', $kegiatan->id) }}" class="um-btn-edit" title="Detail" data-turbo="false"
                                         style="background: rgba(79,70,229,.12); color: #4f46e5;">
                                         <i class="fas fa-eye"></i>
                                     </a>

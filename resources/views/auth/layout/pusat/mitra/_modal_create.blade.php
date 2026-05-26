@@ -24,7 +24,7 @@
         </div>
 
         <div class="mitra-create-body"
-            data-store-url="{{ route('jurusan.mitra.store') }}"
+            data-store-url="{{ route('pusat.mitra.store') }}"
             data-klasifikasi-items='@json($modalKlasifikasiItems)'
             x-data="createMitraModalFromElement($el)">
             <form id="mitraModalForm" @submit.prevent="submitMitra()">

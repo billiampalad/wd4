@@ -165,7 +165,7 @@
                 </div>
             </div>
         </div>
-        <a href="{{ route('jurusan.kerjasama.create', ['type' => 'baru']) }}" class="ud-create-menu">
+        <a href="{{ route('upa.kerjasama.create', ['type' => 'baru']) }}" class="ud-create-menu">
             <span class="ud-create-icon"><i class="fas fa-file-circle-plus"></i></span>
             <span class="ud-create-copy">
                 <strong>Tambah Kerjasama</strong>
@@ -357,7 +357,7 @@
                                 {{ $deadline->end_date?->format('d M Y') }}
                             </div>
                         </div>
-                        <a class="ud-link-btn" href="{{ route('jurusan.kerjasama.show', $deadline->id) }}" title="Detail">
+                        <a class="ud-link-btn" href="{{ route('upa.kerjasama.show', $deadline->id) }}" title="Detail">
                             <i class="fas fa-arrow-up-right-from-square"></i>
                         </a>
                     </div>
@@ -477,7 +477,7 @@
                                     <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
                                         placeholder="Paste link Drive..." data-document-link-input>
                                     <button class="ud-save-btn" type="button" data-save-document-link
-                                        data-update-url="{{ route('jurusan.kerjasama.document-link.update', $item->id) }}"
+                                        data-update-url="{{ route('upa.kerjasama.document-link.update', $item->id) }}"
                                         title="Simpan link">
                                         <i class="fas fa-floppy-disk"></i>
                                     </button>

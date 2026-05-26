@@ -11,15 +11,15 @@
     <section class="dk-hero">
         <div class="dk-hero-content">
             <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Beranda</span>
                 </a>
                 <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
+                <a href="{{ route('upa.dkerjasama') }}" style="text-decoration: none; color: inherit;">
                     <span class="current">Daftar Kerjasama</span>
                 </a>
                 <span class="sep">/</span>
@@ -58,7 +58,7 @@
         </div>
 
         <div class="card-body dk-card-body" style="padding: 0;">
-            <form action="{{ route('jurusan.kerjasama.update', $kegiatan->id) }}" method="POST">
+            <form action="{{ route('upa.kerjasama.update', $kegiatan->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 {{-- ═══ TWO-COLUMN TOP LAYOUT: Masa Berlaku (Left) + Form Utama (Right) ═══ --}}
@@ -841,7 +841,7 @@
 
                                                                     {{-- Selected Prodi Tags --}}
                                                                     <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"
-                                                                        x-show="selectedInJurusan.length > 0">
+                                                                        x-show="selectedInupa.length > 0">
                                                                         <template x-for="pId in selectedInJurusan"
                                                                             :key="'ptag'+pId">
                                                                             <span
@@ -1235,7 +1235,7 @@
                                                             </div>
                                                         </div>
                                                         {{-- Add New Mitra Button --}}
-                                                        <a href="{{ route('jurusan.mitra.create') }}"
+                                                        <a href="{{ route('upa.mitra.create') }}"
                                                             style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
                                                             onmouseover="this.style.transform='scale(1.08)'"
                                                             onmouseout="this.style.transform='scale(1)'"
@@ -1728,7 +1728,7 @@
                 {{-- Footer --}}
                 <div class="mc-footer"
                     style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-                    <a href="{{ route('jurusan.dkerjasama') }}" class="rfc-btn rfc-btn-danger"
+                    <a href="{{ route('upa.dkerjasama') }}" class="rfc-btn rfc-btn-danger"
                         style="text-decoration: none;">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>

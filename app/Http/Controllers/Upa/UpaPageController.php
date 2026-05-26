@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Jurusan;
+namespace App\Http\Controllers\Upa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -18,25 +18,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class JurusanPageController extends Controller
+class UpaPageController extends Controller
 {
     /**
-     * Resolve the jurusan_id for the currently logged-in user.
+     * Resolve the upa_id for the currently logged-in user.
      */
     private function resolveUnitId()
     {
         $user = Auth::user();
         $profile = CooperationAccess::profileForUser($user);
 
-        if (!$profile->jurusan_id) {
-            abort(403, 'Profil jurusan tidak ditemukan.');
+        if (!$profile->upa_id) {
+            abort(403, 'Profil UPA tidak ditemukan.');
         }
 
-        return $profile->jurusan_id;
+        return $profile->upa_id;
     }
 
     /**
-     * Helper: scope query to kegiatan belonging to this jurusan.
+     * Helper: scope query to kegiatan belonging to this UPA.
      */
     private function scopeUnit($query, $unitId)
     {
@@ -409,7 +409,7 @@ class JurusanPageController extends Controller
                     'jenis' => $cooperation->jenis ?: 'Kerjasama',
                     'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
                     'due' => optional($cooperation->end_date)->format('j/n/Y'),
-                    'detail_url' => route('jurusan.kerjasama.show', $cooperation->id),
+                    'detail_url' => route('upa.kerjasama.show', $cooperation->id),
                     'created_at_label' => $cooperation->created_at ? $cooperation->created_at->translatedFormat('d M Y') : '-',
                 ];
             }),
@@ -421,7 +421,7 @@ class JurusanPageController extends Controller
             ]);
         }
 
-        return view('auth.jurusan', compact(
+        return view('auth.upa', compact(
             'statusKerjasamaData',
             'growthData',
             'growthAverages',
@@ -523,7 +523,7 @@ class JurusanPageController extends Controller
             return $pusat;
         });
 
-        return view('auth.jurusan', compact('instansi', 'jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
+        return view('auth.upa', compact('instansi', 'jurusans', 'upas', 'pusats', 'mouCount', 'moaCount', 'iaCount'));
     }
 
     public function bentukKegiatan()
@@ -534,7 +534,7 @@ class JurusanPageController extends Controller
             ->orderBy('nama_kerjasama', 'asc')
             ->get();
 
-        return view('auth.jurusan', compact('bentukKegiatans'));
+        return view('auth.upa', compact('bentukKegiatans'));
     }
 
     public function statusKerjasamaReferensi()
@@ -585,7 +585,7 @@ class JurusanPageController extends Controller
             ],
         ]);
 
-        return view('auth.jurusan', ['referensiStatus' => $statusList]);
+        return view('auth.upa', ['referensiStatus' => $statusList]);
     }
 
     public function statusEvaluasiReferensi()
@@ -629,7 +629,7 @@ class JurusanPageController extends Controller
             ],
         ]);
 
-        return view('auth.jurusan', ['referensiStatusEvaluasi' => $statusList]);
+        return view('auth.upa', ['referensiStatusEvaluasi' => $statusList]);
     }
 
     public function kriteriaMitraReferensi()
@@ -640,7 +640,7 @@ class JurusanPageController extends Controller
             ->orderBy('nama', 'asc')
             ->get();
 
-        return view('auth.jurusan', compact('kriterias'));
+        return view('auth.upa', compact('kriterias'));
     }
 
     public function klasifikasiMitra()
@@ -682,7 +682,7 @@ class JurusanPageController extends Controller
             ->limit(5)
             ->get();
 
-        return view('auth.jurusan', compact(
+        return view('auth.upa', compact(
             'totalMitras',
             'classifications',
             'chartDataPayload',
@@ -737,7 +737,7 @@ class JurusanPageController extends Controller
             ->limit(5)
             ->get();
 
-        return view('auth.jurusan', compact(
+        return view('auth.upa', compact(
             'nasionalCount',
             'internasionalCount',
             'totalMitras',
@@ -757,7 +757,7 @@ class JurusanPageController extends Controller
         $kerjasamaUnit = $kerjasamaJurusan;
         $currentJurusan = Auth::user()->profile?->jurusan;
 
-        return view('auth.jurusan', [
+        return view('auth.upa', [
             'kerjasamaUnit' => $kerjasamaUnit,
             'kerjasamaJurusan' => $kerjasamaJurusan,
             'currentJurusan' => $currentJurusan,
@@ -795,13 +795,13 @@ class JurusanPageController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        return view('auth.jurusan', compact('mitras'));
+        return view('auth.upa', compact('mitras'));
     }
 
     public function mitraCreate()
     {
         $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.jurusan', compact('klasifikasi'));
+        return view('auth.upa', compact('klasifikasi'));
     }
 
     public function mitraStore(Request $request)
@@ -836,21 +836,21 @@ class JurusanPageController extends Controller
             ]);
         }
 
-        return redirect()->route('jurusan.mitra')->with('success', 'Mitra berhasil ditambahkan.');
+        return redirect()->route('upa.mitra')->with('success', 'Mitra berhasil ditambahkan.');
     }
 
     public function mitraShow($id)
     {
         $mitra = \App\Models\Mitra::with(['klasifikasi', 'cooperations'])->findOrFail($id);
 
-        return view('auth.jurusan', compact('mitra'));
+        return view('auth.upa', compact('mitra'));
     }
 
     public function mitraEdit($id)
     {
         $mitra = \App\Models\Mitra::with('klasifikasi')->findOrFail($id);
         $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.jurusan', compact('mitra', 'klasifikasi'));
+        return view('auth.upa', compact('mitra', 'klasifikasi'));
     }
 
     public function mitraUpdate(Request $request, $id)
@@ -886,7 +886,7 @@ class JurusanPageController extends Controller
             ]);
         }
 
-        return redirect()->route('jurusan.mitra')->with('success', 'Data mitra berhasil diperbarui.');
+        return redirect()->route('upa.mitra')->with('success', 'Data mitra berhasil diperbarui.');
     }
 
     public function mitraDestroy(Request $request, $id)
@@ -915,7 +915,7 @@ class JurusanPageController extends Controller
             ]);
         }
 
-        return redirect()->route('jurusan.mitra')->with('success', 'Mitra berhasil dihapus.');
+        return redirect()->route('upa.mitra')->with('success', 'Mitra berhasil dihapus.');
     }
 
     private function mitraPayload($mitra)
@@ -957,7 +957,7 @@ class JurusanPageController extends Controller
         // 4. List SUDAH DIEVALUASI / DISAHKAN
         $evaluasiList = (clone $baseQuery)->where('status_dokumen', 'Disahkan')->get();
 
-        return view('auth.jurusan', [
+        return view('auth.upa', [
             'view' => 'evaluasi_kinerja',
             'draftList' => $draftList,
             'revisiList' => $revisiList,
@@ -977,7 +977,7 @@ class JurusanPageController extends Controller
             ->where('dinilai_oleh', Auth::id())
             ->first();
 
-        return view('auth.jurusan', compact('kegiatan', 'existingEval'));
+        return view('auth.upa', compact('kegiatan', 'existingEval'));
     }
 
     // ─── Store Evaluasi (POST) ──────────────────────────────────
@@ -1028,7 +1028,7 @@ class JurusanPageController extends Controller
             );
         }
 
-        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
+        return redirect()->route('upa.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }
 
     // ─── Update Evaluasi (PUT) ──────────────────────────────────
@@ -1081,7 +1081,7 @@ class JurusanPageController extends Controller
             );
         }
 
-        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil diperbarui dan dikirim ke Pimpinan.');
+        return redirect()->route('upa.evaluasi')->with('success', 'Evaluasi berhasil diperbarui dan dikirim ke Pimpinan.');
     }
 
     // ─── Submit Evaluasi to Pimpinan (POST) ─────────────────────
@@ -1120,7 +1120,7 @@ class JurusanPageController extends Controller
             );
         }
 
-        return redirect()->route('jurusan.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
+        return redirect()->route('upa.evaluasi')->with('success', 'Evaluasi berhasil dikirim ke Pimpinan untuk divalidasi.');
     }
 
     // ─── Laporan Data ────────────────────────────────────────────
@@ -1128,7 +1128,7 @@ class JurusanPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
 
-        return view('auth.jurusan', [
+        return view('auth.upa', [
             'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
             'upas' => Upa::orderBy('nama_upa')->get(),
@@ -1171,8 +1171,8 @@ class JurusanPageController extends Controller
         $data = $this->buildLaporanQuery($request)
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('auth.layout.jurusan.laporan_pdf', compact('data'));
-        return $pdf->download('laporan_kerjasama_jurusan.pdf');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('auth.layout.upa.laporan_pdf', compact('data'));
+        return $pdf->download('laporan_kerjasama_upa.pdf');
     }
 
     public function laporanExcel(Request $request)
@@ -1180,7 +1180,7 @@ class JurusanPageController extends Controller
         $data = $this->buildLaporanQuery($request)
             ->get();
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.jurusan.laporan_excel'), 'laporan_kerjasama_jurusan.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.upa.laporan_excel'), 'laporan_kerjasama_upa.xlsx');
     }
 
     private function buildLaporanQuery(Request $request)
@@ -1291,7 +1291,7 @@ class JurusanPageController extends Controller
         ];
 
 
-        return view('auth.jurusan', compact(
+        return view('auth.upa', compact(
             'totalKerjasama',
             'statusBreakdown',
             'trenPerTahun',
@@ -1303,7 +1303,7 @@ class JurusanPageController extends Controller
     // ─── Form Laporan (PDF Upload) ──────────────────────────────
     public function formLaporan()
     {
-        return view('auth.jurusan');
+        return view('auth.upa');
     }
 
     public function previewTemplate()
@@ -1362,7 +1362,7 @@ class JurusanPageController extends Controller
             return back()->with('success', 'Dokumen laporan berhasil diupload.');
         }
 
-        return redirect()->route('jurusan.form')->with('success', 'Laporan berhasil diupload.');
+        return redirect()->route('upa.form')->with('success', 'Laporan berhasil diupload.');
     }
 
     public function formLaporanDestroy($id)

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Jurusan;
+namespace App\Http\Controllers\Pusat;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cooperation;
@@ -22,18 +22,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
-class KerjasamaJurusanController extends Controller
+class KerjasamaPusatController extends Controller
 {
     /**
-     * Helper: get jurusan ID from the logged-in user's profile.
+     * Helper: get pusat ID from the logged-in user's profile.
      */
     private function getUnitId(): int
     {
         $profile = CooperationAccess::profileForUser(Auth::user());
-        if (!$profile->jurusan_id) {
-            abort(403, 'Profil jurusan tidak ditemukan.');
+        if (!$profile->pusat_id) {
+            abort(403, 'Profil pusat tidak ditemukan.');
         }
-        return (int) $profile->jurusan_id;
+        return (int) $profile->pusat_id;
     }
 
     private function currentProfile(): Profile
@@ -63,7 +63,7 @@ class KerjasamaJurusanController extends Controller
         };
 
         if (!CooperationAccess::requestMatchesProfile($profile, $type, $ids)) {
-            abort(403, 'Anda hanya dapat mengelola data kerjasama milik jurusan Anda sendiri.');
+            abort(403, 'Anda hanya dapat mengelola data kerjasama milik pusat Anda sendiri.');
         }
     }
 
@@ -97,12 +97,12 @@ class KerjasamaJurusanController extends Controller
 
             if (!$this->canRequestExtension($perpanjanganAsal)) {
                 return redirect()
-                    ->route('jurusan.kerjasama.show', $perpanjanganAsal->id)
+                    ->route('pusat.kerjasama.show', $perpanjanganAsal->id)
                     ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
             }
         }
 
-        return view('auth.jurusan', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
+        return view('auth.pusat', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────
@@ -283,7 +283,7 @@ class KerjasamaJurusanController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');
+            return redirect()->route('pusat.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
@@ -311,7 +311,7 @@ class KerjasamaJurusanController extends Controller
             'pksNumbers',
         ])->whereKey($this->findOwnedCooperation($id)->id)->firstOrFail();
 
-        return view('auth.jurusan', compact('kegiatan'));
+        return view('auth.pusat', compact('kegiatan'));
     }
 
     // ─── EDIT PAGE ───────────────────────────────────────
@@ -339,7 +339,7 @@ class KerjasamaJurusanController extends Controller
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
 
-        return view('auth.jurusan', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
+        return view('auth.pusat', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
@@ -538,7 +538,7 @@ class KerjasamaJurusanController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
+            return redirect()->route('pusat.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
@@ -643,7 +643,7 @@ class KerjasamaJurusanController extends Controller
         $kegiatan = $this->findOwnedCooperation($id);
         $kegiatan->delete();
 
-        return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
+        return redirect()->route('pusat.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
     }
 
     public function storeTujuan(Request $request, $id)

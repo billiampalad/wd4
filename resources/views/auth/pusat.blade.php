@@ -81,7 +81,7 @@
                         'days_remaining' => $daysRemaining,
                         'remaining_label' => $remainingLabel,
                         'end_date_label' => $endDate->format('d M Y'),
-                        'link' => route('jurusan.kerjasama.show', $cooperation->id),
+                        'link' => route('pusat.kerjasama.show', $cooperation->id),
                     ];
                 })
                 ->values();
@@ -207,7 +207,7 @@
 
             @php
                 $isAnalitikActive = request()->routeIs(
-                    'jurusan.analitik.*',
+                    'pusat.analitik.*',
                 );
             @endphp
             <div id="analitikParent" class="sidebar-dropdown"
@@ -220,36 +220,36 @@
                 </div>
                 <div class="submenu {{ $isAnalitikActive ? 'open' : '' }}" id="analitikSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('jurusan.analitik.status-kerjasama') ? 'active' : '' }}"
-                            href="{{ route('jurusan.analitik.status-kerjasama') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'active' : '' }}"
+                            href="{{ route('pusat.analitik.status-kerjasama') }}">
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.analitik.klasifikasi-mitra') ? 'active' : '' }}"
-                            href="{{ route('jurusan.analitik.klasifikasi-mitra') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.analitik.klasifikasi-mitra') ? 'active' : '' }}"
+                            href="{{ route('pusat.analitik.klasifikasi-mitra') }}">
                             <span class="submenu-dot"></span><span>Klarifikasi Mitra</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.analitik.geo-mitra') ? 'active' : '' }}"
-                            href="{{ route('jurusan.analitik.geo-mitra') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.analitik.geo-mitra') ? 'active' : '' }}"
+                            href="{{ route('pusat.analitik.geo-mitra') }}">
                             <span class="submenu-dot"></span><span>Geo Mitra</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <a class="menu-item {{ request()->routeIs('jurusan.institusi') ? 'active' : '' }}"
-                href="{{ route('jurusan.institusi') }}">
+            <a class="menu-item {{ request()->routeIs('pusat.institusi') ? 'active' : '' }}"
+                href="{{ route('pusat.institusi') }}">
                 <div class="menu-icon"><i class="fas fa-university"></i></div>
                 <span>Institusi</span>
             </a>
 
             @php
                 $isDataKerjasamaActive = request()->routeIs(
-                    'jurusan.dkerjasama',
-                    'jurusan.kerjasama.*',
-                    'jurusan.mitra',
-                    'jurusan.mitra.*',
-                    'jurusan.form',
-                    'jurusan.form.*',
+                    'pusat.dkerjasama',
+                    'pusat.kerjasama.*',
+                    'pusat.mitra',
+                    'pusat.mitra.*',
+                    'pusat.form',
+                    'pusat.form.*',
                 );
             @endphp
             <div id="kerjasamaParent" class="sidebar-dropdown"
@@ -262,31 +262,31 @@
                 </div>
                 <div class="submenu {{ $isDataKerjasamaActive ? 'open' : '' }}" id="kerjasamaSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('jurusan.dkerjasama', 'jurusan.kerjasama.*') ? 'active' : '' }}"
-                            href="{{ route('jurusan.dkerjasama') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.dkerjasama', 'pusat.kerjasama.*') ? 'active' : '' }}"
+                            href="{{ route('pusat.dkerjasama') }}">
                             <span class="submenu-dot"></span><span>Repositori</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.mitra', 'jurusan.mitra.*') ? 'active' : '' }}"
-                            href="{{ route('jurusan.mitra') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.mitra', 'pusat.mitra.*') ? 'active' : '' }}"
+                            href="{{ route('pusat.mitra') }}">
                             <span class="submenu-dot"></span><span>Mitra</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.form', 'jurusan.form.*') ? 'active' : '' }}"
-                            href="{{ route('jurusan.form') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.form', 'pusat.form.*') ? 'active' : '' }}"
+                            href="{{ route('pusat.form') }}">
                             <span class="submenu-dot"></span><span>Form Laporan</span>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <a class="menu-item {{ request()->routeIs('jurusan.evaluasi', 'jurusan.evaluasi.*') ? 'active' : '' }}"
-                href="{{ route('jurusan.evaluasi') }}">
+            <a class="menu-item {{ request()->routeIs('pusat.evaluasi', 'pusat.evaluasi.*') ? 'active' : '' }}"
+                href="{{ route('pusat.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-check-double"></i></div>
                 <span>Evaluasi Kinerja</span>
             </a>
 
             @php
                 $isReferensiActive = request()->routeIs(
-                    'jurusan.referensi.*',
+                    'pusat.referensi.*',
                 );
             @endphp
             <div id="referensiParent" class="sidebar-dropdown"
@@ -299,23 +299,23 @@
                 </div>
                 <div class="submenu {{ $isReferensiActive ? 'open' : '' }}" id="referensiSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('jurusan.referensi.bentuk-kegiatan') ? 'active' : '' }}"
-                            href="{{ route('jurusan.referensi.bentuk-kegiatan') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.referensi.bentuk-kegiatan') ? 'active' : '' }}"
+                            href="{{ route('pusat.referensi.bentuk-kegiatan') }}">
                             <span class="submenu-dot"></span><span>Bentuk Kegiatan</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.referensi.status-kerjasama') ? 'active' : '' }}"
-                            href="{{ route('jurusan.referensi.status-kerjasama') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.referensi.status-kerjasama') ? 'active' : '' }}"
+                            href="{{ route('pusat.referensi.status-kerjasama') }}">
                             <span class="submenu-dot"></span><span>Status Kerjasama</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.referensi.status-evaluasi') ? 'active' : '' }}"
-                            href="{{ route('jurusan.referensi.status-evaluasi') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.referensi.status-evaluasi') ? 'active' : '' }}"
+                            href="{{ route('pusat.referensi.status-evaluasi') }}">
                             <span class="submenu-dot"></span><span>Status Evaluasi</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.referensi.kriteria-mitra') ? 'active' : '' }}"
-                            href="{{ route('jurusan.referensi.kriteria-mitra') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.referensi.kriteria-mitra') ? 'active' : '' }}"
+                            href="{{ route('pusat.referensi.kriteria-mitra') }}">
                             <span class="submenu-dot"></span><span>Kriteria Mitra</span>
                         </a>
-                        <!-- <a class="submenu-item {{ request()->routeIs('jurusan.referensi.sumber-dana') ? 'active' : '' }}"
+                        <!-- <a class="submenu-item {{ request()->routeIs('pusat.referensi.sumber-dana') ? 'active' : '' }}"
                             href="javascript:void(0)">
                             <span class="submenu-dot"></span><span>Sumber Dana</span>
                         </a> -->
@@ -332,55 +332,55 @@
         <!-- Main Content -->
         @yield('content')
         @if (!View::hasSection('content'))
-            @if (request()->routeIs('jurusan.kerjasama.create'))
-                @include('auth.layout.jurusan.create_kerjasama')
-            @elseif(request()->routeIs('jurusan.kerjasama.edit'))
-                @include('auth.layout.jurusan.edit_kerjasama')
-            @elseif(request()->routeIs('jurusan.kerjasama.show'))
-                @include('auth.layout.jurusan.detail_kerjasama')
-            @elseif(request()->routeIs('jurusan.dkerjasama'))
-                @include('auth.layout.jurusan.dkerjasama')
-            @elseif(request()->routeIs('jurusan.analitik.status-kerjasama'))
-                @include('auth.layout.jurusan.analitik.status_kerjasama')
-            @elseif(request()->routeIs('jurusan.analitik.klasifikasi-mitra'))
-                @include('auth.layout.jurusan.analitik.klarifikasi-mitra')
-            @elseif(request()->routeIs('jurusan.analitik.geo-mitra'))
-                @include('auth.layout.jurusan.analitik.geo-mitra')
-            @elseif(request()->routeIs('jurusan.mitra.create'))
-                @include('auth.layout.jurusan.mitra.create')
-            @elseif(request()->routeIs('jurusan.mitra.edit'))
-                @include('auth.layout.jurusan.mitra.edit')
-            @elseif(request()->routeIs('jurusan.mitra.show'))
-                @include('auth.layout.jurusan.mitra.detail')
-            @elseif(request()->routeIs('jurusan.form'))
-                @include('auth.layout.jurusan.form.index')
-            @elseif(request()->routeIs('jurusan.mitra'))
-                @include('auth.layout.jurusan.mitra.index')
+            @if (request()->routeIs('pusat.kerjasama.create'))
+                @include('auth.layout.pusat.create_kerjasama')
+            @elseif(request()->routeIs('pusat.kerjasama.edit'))
+                @include('auth.layout.pusat.edit_kerjasama')
+            @elseif(request()->routeIs('pusat.kerjasama.show'))
+                @include('auth.layout.pusat.detail_kerjasama')
+            @elseif(request()->routeIs('pusat.dkerjasama'))
+                @include('auth.layout.pusat.dkerjasama')
+            @elseif(request()->routeIs('pusat.analitik.status-kerjasama'))
+                @include('auth.layout.pusat.analitik.status_kerjasama')
+            @elseif(request()->routeIs('pusat.analitik.klasifikasi-mitra'))
+                @include('auth.layout.pusat.analitik.klarifikasi-mitra')
+            @elseif(request()->routeIs('pusat.analitik.geo-mitra'))
+                @include('auth.layout.pusat.analitik.geo-mitra')
+            @elseif(request()->routeIs('pusat.mitra.create'))
+                @include('auth.layout.pusat.mitra.create')
+            @elseif(request()->routeIs('pusat.mitra.edit'))
+                @include('auth.layout.pusat.mitra.edit')
+            @elseif(request()->routeIs('pusat.mitra.show'))
+                @include('auth.layout.pusat.mitra.detail')
+            @elseif(request()->routeIs('pusat.form'))
+                @include('auth.layout.pusat.form.index')
+            @elseif(request()->routeIs('pusat.mitra'))
+                @include('auth.layout.pusat.mitra.index')
 
                 {{-- menu institusi --}}
-            @elseif(request()->routeIs('jurusan.institusi'))
-                @include('auth.layout.jurusan.institusi')
+            @elseif(request()->routeIs('pusat.institusi'))
+                @include('auth.layout.pusat.institusi')
 
-            @elseif(request()->routeIs('jurusan.referensi.bentuk-kegiatan'))
-                @include('auth.layout.jurusan.referensi.bentuk-kegiatan')
+            @elseif(request()->routeIs('pusat.referensi.bentuk-kegiatan'))
+                @include('auth.layout.pusat.referensi.bentuk-kegiatan')
 
-            @elseif(request()->routeIs('jurusan.referensi.status-kerjasama'))
-                @include('auth.layout.jurusan.referensi.status-kerjasama')
+            @elseif(request()->routeIs('pusat.referensi.status-kerjasama'))
+                @include('auth.layout.pusat.referensi.status-kerjasama')
 
-            @elseif(request()->routeIs('jurusan.referensi.status-evaluasi'))
-                @include('auth.layout.jurusan.referensi.status-evaluasi')
+            @elseif(request()->routeIs('pusat.referensi.status-evaluasi'))
+                @include('auth.layout.pusat.referensi.status-evaluasi')
 
-            @elseif(request()->routeIs('jurusan.referensi.kriteria-mitra'))
-                @include('auth.layout.jurusan.referensi.kriteria-mitra')
+            @elseif(request()->routeIs('pusat.referensi.kriteria-mitra'))
+                @include('auth.layout.pusat.referensi.kriteria-mitra')
 
-            @elseif(request()->routeIs('jurusan.evaluasi.form', 'jurusan.evaluasi.form_unit'))
-                @include('auth.layout.jurusan.form_evaluasi')
-            @elseif(request()->routeIs('jurusan.evaluasi'))
-                @include('auth.layout.jurusan.evaluasi_kinerja')
-            @elseif(request()->routeIs('jurusan.laporan'))
-                @include('auth.layout.jurusan.laporan')
-            @elseif(request()->routeIs('jurusan.hasil_evaluasi'))
-                @include('auth.layout.jurusan.hasil_evaluasi')
+            @elseif(request()->routeIs('pusat.evaluasi.form', 'pusat.evaluasi.form_unit'))
+                @include('auth.layout.pusat.form_evaluasi')
+            @elseif(request()->routeIs('pusat.evaluasi'))
+                @include('auth.layout.pusat.evaluasi_kinerja')
+            @elseif(request()->routeIs('pusat.laporan'))
+                @include('auth.layout.pusat.laporan')
+            @elseif(request()->routeIs('pusat.hasil_evaluasi'))
+                @include('auth.layout.pusat.hasil_evaluasi')
             @else
                 @include('auth.layout.pusat.dashboard')
             @endif

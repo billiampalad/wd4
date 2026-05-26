@@ -6,7 +6,7 @@
             <div class="ud-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span>/</span>
-                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <a href="{{ route('pusat.dashboard') }}">Beranda</a>
                 <span>/</span>
                 <span>Status Kerjasama</span>
             </div>
@@ -194,7 +194,7 @@
                             this.loading = true;
                             this.error = '';
 
-                            const url = new URL('{{ route('jurusan.analitik.status-kerjasama') }}', window.location.origin);
+                            const url = new URL('{{ route('pusat.analitik.status-kerjasama') }}', window.location.origin);
                             url.searchParams.set('due_year', nextYear);
                             url.searchParams.set('partial', 'due_date');
 
