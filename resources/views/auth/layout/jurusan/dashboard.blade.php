@@ -1,18 +1,36 @@
 @php
-    $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
+    $dashboardProfile = \App\Models\Profile::where('user_id', auth()->id())->first();
+    $dashboardCooperationQuery = \App\Models\Cooperation::query();
 
-    $mitraNasional = \App\Models\Mitra::where('kategori', 'Nasional')->count() ?? 0;
-    $mitraInternasional = \App\Models\Mitra::where('kategori', 'Internasional')->count() ?? 0;
+    if ($dashboardProfile?->jurusan_id) {
+        $dashboardCooperationQuery->where('jurusan_id', $dashboardProfile->jurusan_id);
+    } else {
+        $dashboardCooperationQuery->whereRaw('1 = 0');
+    }
 
-    $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
-    $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
-    $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
+    $dashboardCooperationIds = (clone $dashboardCooperationQuery)->pluck('id');
+    $dashboardMitraIds = (clone $dashboardCooperationQuery)->whereNotNull('mitra_id')->distinct()->pluck('mitra_id');
+
+    $totalKerjasama = (clone $dashboardCooperationQuery)->count();
+    $totalPendapatan = \App\Models\DetailKegiatan::whereIn('cooperation_id', $dashboardCooperationIds)->sum('nilai_kontrak') ?? 0;
+
+    $mitraNasional = \App\Models\Mitra::whereIn('id', $dashboardMitraIds)
+        ->whereRaw('LOWER(kategori) = ?', ['nasional'])
+        ->count() ?? 0;
+    $mitraInternasional = \App\Models\Mitra::whereIn('id', $dashboardMitraIds)
+        ->whereRaw('LOWER(kategori) = ?', ['internasional'])
+        ->count() ?? 0;
+
+    $totalMoU = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%MoU%')->count() ?? 0;
+    $totalMoA = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%MoA%')->count() ?? 0;
+    $totalIA = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%IA%')->count() ?? 0;
 
     $jurusans = \App\Models\Jurusan::with('prodis')->get();
 
     // Count dari pivot table (kerjasama_jurusan)
     $jurusanCounts = \Illuminate\Support\Facades\DB::table('kerjasama_jurusan')
         ->select('jurusan_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->whereIn('cooperation_id', $dashboardCooperationIds)
         ->groupBy('jurusan_id')
         ->pluck('total', 'jurusan_id')
         ->toArray();
@@ -20,6 +38,7 @@
     // Count dari pivot table (kerjasama_prodi)
     $prodiCounts = \Illuminate\Support\Facades\DB::table('kerjasama_prodi')
         ->select('prodi_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        ->whereIn('cooperation_id', $dashboardCooperationIds)
         ->groupBy('prodi_id')
         ->pluck('total', 'prodi_id')
         ->toArray();
@@ -31,6 +50,7 @@
             \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT detail_kegiatans.cooperation_id) as total_kerjasama'),
         )
         ->whereNotNull('detail_kegiatans.jenis_kerjasama_id')
+        ->whereIn('detail_kegiatans.cooperation_id', $dashboardCooperationIds)
         ->groupBy('jenis_kerjasamas.id', 'jenis_kerjasamas.nama_kerjasama')
         ->having('total_kerjasama', '>', 0)
         ->orderByDesc('total_kerjasama')
@@ -65,6 +85,7 @@
 
     // 1. Mingguan (7 Hari Terakhir)
     $weeklyRaw = \App\Models\Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
+        ->whereIn('id', $dashboardCooperationIds)
         ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
         ->groupBy('date_label')
         ->pluck('total', 'date_label')
@@ -80,6 +101,7 @@
 
     // 2. Bulanan (12 Bulan di Tahun Ini)
     $monthlyRaw = \App\Models\Cooperation::selectRaw('MONTH(created_at) as month_label, count(*) as total')
+        ->whereIn('id', $dashboardCooperationIds)
         ->whereYear('created_at', $now->year)
         ->groupBy('month_label')
         ->pluck('total', 'month_label')
@@ -94,6 +116,7 @@
 
     // 3. Tahunan (5 Tahun Terakhir)
     $yearlyRaw = \App\Models\Cooperation::selectRaw('YEAR(created_at) as year_label, count(*) as total')
+        ->whereIn('id', $dashboardCooperationIds)
         ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
         ->groupBy('year_label')
         ->pluck('total', 'year_label')

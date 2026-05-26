@@ -386,9 +386,11 @@ class DashboardController
             'pksNumbers',
         ]);
 
-        $kerjasamaUnit = ($profileType === 'unit_kerja'
-            ? $kerjasamaQuery
-            : CooperationAccess::scopeForProfile($kerjasamaQuery, $profile))
+        $kerjasamaUnit = (match ($profileType) {
+            'upa' => $kerjasamaQuery->where('upa_id', $unitId),
+            'pusat' => $kerjasamaQuery->where('pusat_id', $unitId),
+            default => $kerjasamaQuery,
+        })
                 ->latest()
                 ->get();
 

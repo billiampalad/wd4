@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Cooperation;
 use App\Models\Notifikasi;
 use App\Models\Profile;
-use App\Support\CooperationAccess;
 use Illuminate\Support\Facades\DB;
 
 class DashboardJurusanController extends Controller
@@ -37,10 +36,8 @@ class DashboardJurusanController extends Controller
 
         $id_jurusan = $profile->jurusan_id;
 
-        $scopeJurusan = fn($query) => CooperationAccess::scopeForProfile($query, $profile);
-
         // 2. Hitung Total Kerjasama (Hanya milik jurusannya)
-        $baseQuery = $scopeJurusan(Cooperation::query());
+        $baseQuery = Cooperation::where('jurusan_id', $id_jurusan);
         $totalKerjasama = (clone $baseQuery)->count();
 
         // 3. Hitung yang Belum Dievaluasi (misal statusnya masih draft atau menunggu_evaluasi)
@@ -76,11 +73,7 @@ class DashboardJurusanController extends Controller
         // 7. Statistik Tambahan
         $mitraStats = DB::table('mitras')
             ->join('cooperations', 'mitras.id', '=', 'cooperations.mitra_id')
-            ->leftJoin('kerjasama_jurusan', 'cooperations.id', '=', 'kerjasama_jurusan.cooperation_id')
-            ->where(function ($query) use ($id_jurusan) {
-                $query->where('cooperations.jurusan_id', $id_jurusan)
-                    ->orWhere('kerjasama_jurusan.jurusan_id', $id_jurusan);
-            })
+            ->where('cooperations.jurusan_id', $id_jurusan)
             ->select('mitras.kategori', DB::raw('count(DISTINCT mitras.id) as total'))
             ->groupBy('mitras.kategori')
             ->pluck('total', 'kategori');
@@ -95,11 +88,7 @@ class DashboardJurusanController extends Controller
         $sebaranJenis = DB::table('detail_kegiatans')
             ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
             ->join('cooperations', 'detail_kegiatans.cooperation_id', '=', 'cooperations.id')
-            ->leftJoin('kerjasama_jurusan', 'cooperations.id', '=', 'kerjasama_jurusan.cooperation_id')
-            ->where(function ($query) use ($id_jurusan) {
-                $query->where('cooperations.jurusan_id', $id_jurusan)
-                    ->orWhere('kerjasama_jurusan.jurusan_id', $id_jurusan);
-            })
+            ->where('cooperations.jurusan_id', $id_jurusan)
             ->select('jenis_kerjasamas.nama_kerjasama', DB::raw('count(*) as total'))
             ->groupBy('jenis_kerjasamas.nama_kerjasama')
             ->get();
