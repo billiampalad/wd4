@@ -375,7 +375,7 @@ class DashboardController
         $today = now()->startOfDay();
         $deadlineLimit = now()->addDays(30)->endOfDay();
 
-        $kerjasamaUnit = CooperationAccess::scopeForProfile(Cooperation::with([
+        $kerjasamaQuery = Cooperation::with([
             'mitra',
             'pjInternal',
             'details',
@@ -384,9 +384,13 @@ class DashboardController
             'upas',
             'pusats',
             'pksNumbers',
-        ]), $profile)
-            ->latest()
-            ->get();
+        ]);
+
+        $kerjasamaUnit = ($profileType === 'unit_kerja'
+            ? $kerjasamaQuery
+            : CooperationAccess::scopeForProfile($kerjasamaQuery, $profile))
+                ->latest()
+                ->get();
 
         $cooperationIds = $kerjasamaUnit->pluck('id');
         $iaIds = $kerjasamaUnit
