@@ -6,6 +6,8 @@
         'pimpinan' => 'Pimpinan',
         'jurusan' => 'Jurusan',
         'unit_kerja' => 'Humas',
+        'upa' => 'Upa',
+        'pusat' => 'Pusat',
         'admin' => 'Admin',
     ];
 @endphp
@@ -64,7 +66,7 @@
                         </span>
                         <div>
                             <div class="ue-info-label">Jurusan</div>
-                            <div class="ue-info-val" id="previewJurusan">{{ $user->profile?->nama_jurusan ?: '—' }}</div>
+                            <div class="ue-info-val" id="previewJurusan">{{ $user->profile?->jurusan?->nama_jurusan ?: '—' }}</div>
                         </div>
                     </div>
                     <div class="ue-info-row" data-preview-field="unit">
@@ -73,7 +75,25 @@
                         </span>
                         <div>
                             <div class="ue-info-label">Unit Kerja</div>
-                            <div class="ue-info-val" id="previewUnit">{{ $user->profile?->nama_unit ?: '—' }}</div>
+                            <div class="ue-info-val" id="previewUnit">{{ $user->profile?->unitKerja?->nama_unit_pelaksana ?: '—' }}</div>
+                        </div>
+                    </div>
+                    <div class="ue-info-row" data-preview-field="upa">
+                        <span class="ue-info-icon" style="background:rgba(6,182,212,.1);color:#0891b2;">
+                            <i class="fas fa-building-columns"></i>
+                        </span>
+                        <div>
+                            <div class="ue-info-label">UPA</div>
+                            <div class="ue-info-val" id="previewUpa">{{ $user->profile?->upa?->nama_upa ?: '—' }}</div>
+                        </div>
+                    </div>
+                    <div class="ue-info-row" data-preview-field="pusat">
+                        <span class="ue-info-icon" style="background:rgba(168,85,247,.1);color:#9333ea;">
+                            <i class="fas fa-landmark"></i>
+                        </span>
+                        <div>
+                            <div class="ue-info-label">Pusat</div>
+                            <div class="ue-info-val" id="previewPusat">{{ $user->profile?->pusat?->nama_pusat ?: '—' }}</div>
                         </div>
                     </div>
                 </div>
@@ -374,6 +394,126 @@
                                         @foreach($unitKerjas as $unit)
                                             <option value="{{ $unit->id }}" {{ old('unit_kerja_id', $user->profile?->unit_kerja_id) == $unit->id ? 'selected' : '' }}>
                                                 {{ $unit->nama_unit_pelaksana }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button
+                                        type="button"
+                                        class="uc-select-trigger"
+                                        :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                        @click="toggle()"
+                                        :disabled="disabled"
+                                    >
+                                        <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                        <i class="fas fa-chevron-down uc-select-chevron"></i>
+                                    </button>
+                                    <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                        <template x-for="item in items" :key="item.value">
+                                            <button
+                                                type="button"
+                                                class="uc-select-option"
+                                                :class="{ 'is-selected': selectedValue === item.value }"
+                                                @click="choose(item)"
+                                            >
+                                                <span x-text="item.label"></span>
+                                                <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ue-form-group" data-profile-field="upa">
+                                <label class="ue-label" for="upa_id">
+                                    <i class="fas fa-building-columns ue-label-icon"></i>
+                                    Nama Upa
+                                </label>
+                                <div
+                                    class="uc-alpine-select"
+                                    x-data="adminUserSelect({
+                                        placeholder: '-- Pilih Upa --',
+                                        selectedValue: @js((string) old('upa_id', $user->profile?->upa_id)),
+                                        items: @js($upas->map(fn ($upa) => [
+                                            'value' => (string) $upa->id,
+                                            'label' => $upa->nama_upa,
+                                        ])->values())
+                                    })"
+                                    x-init="init()"
+                                    :class="{ 'is-open': open }"
+                                    @click.outside="open = false"
+                                >
+                                    <select
+                                        id="upa_id" name="upa_id"
+                                        class="uc-native-select"
+                                        x-model="selectedValue"
+                                        @change="syncFromNative(); updatePreview()"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <option value="">-- Pilih Upa --</option>
+                                        @foreach($upas as $upa)
+                                            <option value="{{ $upa->id }}" {{ old('upa_id', $user->profile?->upa_id) == $upa->id ? 'selected' : '' }}>
+                                                {{ $upa->nama_upa }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button
+                                        type="button"
+                                        class="uc-select-trigger"
+                                        :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                        @click="toggle()"
+                                        :disabled="disabled"
+                                    >
+                                        <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                        <i class="fas fa-chevron-down uc-select-chevron"></i>
+                                    </button>
+                                    <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                        <template x-for="item in items" :key="item.value">
+                                            <button
+                                                type="button"
+                                                class="uc-select-option"
+                                                :class="{ 'is-selected': selectedValue === item.value }"
+                                                @click="choose(item)"
+                                            >
+                                                <span x-text="item.label"></span>
+                                                <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ue-form-group" data-profile-field="pusat">
+                                <label class="ue-label" for="pusat_id">
+                                    <i class="fas fa-landmark ue-label-icon"></i>
+                                    Nama Pusat
+                                </label>
+                                <div
+                                    class="uc-alpine-select"
+                                    x-data="adminUserSelect({
+                                        placeholder: '-- Pilih Pusat --',
+                                        selectedValue: @js((string) old('pusat_id', $user->profile?->pusat_id)),
+                                        items: @js($pusats->map(fn ($pusat) => [
+                                            'value' => (string) $pusat->id,
+                                            'label' => $pusat->nama_pusat,
+                                        ])->values())
+                                    })"
+                                    x-init="init()"
+                                    :class="{ 'is-open': open }"
+                                    @click.outside="open = false"
+                                >
+                                    <select
+                                        id="pusat_id" name="pusat_id"
+                                        class="uc-native-select"
+                                        x-model="selectedValue"
+                                        @change="syncFromNative(); updatePreview()"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <option value="">-- Pilih Pusat --</option>
+                                        @foreach($pusats as $pusat)
+                                            <option value="{{ $pusat->id }}" {{ old('pusat_id', $user->profile?->pusat_id) == $pusat->id ? 'selected' : '' }}>
+                                                {{ $pusat->nama_pusat }}
                                             </option>
                                         @endforeach
                                     </select>

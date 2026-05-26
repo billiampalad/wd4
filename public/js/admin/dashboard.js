@@ -573,7 +573,9 @@ function updateProfileFields() {
         admin: ['jabatan'],
         jurusan: ['jabatan', 'jurusan'],
         unit_kerja: ['jabatan', 'unit'],
-    }[roleName] || ['jabatan', 'jurusan', 'unit'];
+        upa: ['jabatan', 'upa'],
+        pusat: ['jabatan', 'pusat'],
+    }[roleName] || ['jabatan', 'jurusan', 'unit', 'upa', 'pusat'];
 
     fields.forEach(field => {
         const isVisible = visibleFields.includes(field.dataset.profileField);
@@ -605,6 +607,8 @@ function updateProfileFields() {
             admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan dan Nama Unit tidak digunakan untuk role ini.',
             jurusan: 'Role jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Unit tidak digunakan untuk role ini.',
             unit_kerja: 'Role unit kerja dapat mengisi Jabatan dan Nama Unit. Nama Jurusan tidak digunakan untuk role ini.',
+            upa: 'Role upa dapat mengisi Jabatan dan Nama Upa. Nama Jurusan, Nama Unit, dan Nama Pusat tidak digunakan untuk role ini.',
+            pusat: 'Role pusat dapat mengisi Jabatan dan Nama Pusat. Nama Jurusan, Nama Unit, dan Nama Upa tidak digunakan untuk role ini.',
         };
 
         pointer.innerHTML = '<i class="fas fa-circle-info"></i><span>' +
@@ -652,6 +656,8 @@ function updatePreview() {
     const jabatan = jabatanInput && !jabatanInput.disabled ? jabatanInput.value.trim() : '';
     const jurusan = getSelectedOptionText('jurusan_id');
     const unit = getSelectedOptionText('unit_kerja_id');
+    const upa = getSelectedOptionText('upa_id');
+    const pusat = getSelectedOptionText('pusat_id');
     const roleText = roleEl ? (roleEl.options[roleEl.selectedIndex]?.text ?? '') : '';
 
     const previewAvatar = document.getElementById('previewAvatar');
@@ -669,6 +675,8 @@ function updatePreview() {
     if (document.getElementById('previewJabatan')) document.getElementById('previewJabatan').textContent = jabatan || '—';
     if (document.getElementById('previewJurusan')) document.getElementById('previewJurusan').textContent = jurusan || '—';
     if (document.getElementById('previewUnit')) document.getElementById('previewUnit').textContent = unit || '—';
+    if (document.getElementById('previewUpa')) document.getElementById('previewUpa').textContent = upa || '—';
+    if (document.getElementById('previewPusat')) document.getElementById('previewPusat').textContent = pusat || '—';
 
     const badge = document.getElementById('previewRole');
     if (badge) {

@@ -26,7 +26,7 @@
                         <th class="um-th">Nama Pengguna</th>
                         <th class="um-th">Jabatan</th>
                         <th class="um-th">Jurusan</th>
-                        <th class="um-th">Unit Kerja</th>
+                        <th class="um-th">Unit/UPA/Pusat</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,7 +48,12 @@
                             <span class="um-meta">{{ $profile->jurusan?->nama_jurusan ?? '-' }}</span>
                         </td>
                         <td class="um-td">
-                            <span class="um-meta">{{ $profile->unitKerja?->nama_unit_pelaksana ?? '-' }}</span>
+                            <span class="um-meta">
+                                {{ $profile->unitKerja?->nama_unit_pelaksana
+                                    ?? $profile->upa?->nama_upa
+                                    ?? $profile->pusat?->nama_pusat
+                                    ?? '-' }}
+                            </span>
                         </td>
                     </tr>
                     @empty

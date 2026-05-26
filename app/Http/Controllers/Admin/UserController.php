@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Jurusan;
+use App\Models\Pusat;
 use App\Models\UnitKerja;
+use App\Models\Upa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,7 +18,7 @@ class UserController
      */
     public function index()
     {
-        $users = User::with(['role', 'profile.jurusan', 'profile.unitKerja'])->latest()->get();
+        $users = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->latest()->get();
         return view('admin.layout.users', compact('users'));
     }
 
@@ -28,7 +30,9 @@ class UserController
         $roles = Role::all();
         $jurusans = Jurusan::all();
         $unitKerjas = UnitKerja::all();
-        return view('admin.users.create', compact('roles', 'jurusans', 'unitKerjas'));
+        $upas = Upa::orderBy('nama_upa')->get();
+        $pusats = Pusat::orderBy('nama_pusat')->get();
+        return view('admin.users.create', compact('roles', 'jurusans', 'unitKerjas', 'upas', 'pusats'));
     }
 
     /**
@@ -55,12 +59,14 @@ class UserController
      */
     public function edit(string $id)
     {
-        $user = User::with('profile')->findOrFail($id);
+        $user = User::with(['profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->findOrFail($id);
         $roles = Role::all();
         $jurusans = Jurusan::all();
         $unitKerjas = UnitKerja::all();
+        $upas = Upa::orderBy('nama_upa')->get();
+        $pusats = Pusat::orderBy('nama_pusat')->get();
 
-        return view('admin.users.edit', compact('user', 'roles', 'jurusans', 'unitKerjas'));
+        return view('admin.users.edit', compact('user', 'roles', 'jurusans', 'unitKerjas', 'upas', 'pusats'));
     }
 
     /**
@@ -104,6 +110,8 @@ class UserController
             'jabatan' => $request->jabatan,
             'jurusan_id' => $roleName === 'jurusan' ? $request->jurusan_id : null,
             'unit_kerja_id' => $roleName === 'unit_kerja' ? $request->unit_kerja_id : null,
+            'upa_id' => $roleName === 'upa' ? $request->upa_id : null,
+            'pusat_id' => $roleName === 'pusat' ? $request->pusat_id : null,
         ];
     }
 }

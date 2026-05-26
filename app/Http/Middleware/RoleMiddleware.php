@@ -14,11 +14,16 @@ class RoleMiddleware
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        if (Auth::user()->role->role_name !== $role) {
+        $roleName = Auth::user()->role->role_name;
+        $allowedRoles = $role === 'unit_kerja' ? ['unit_kerja', 'upa', 'pusat'] : [$role];
+
+        if (!in_array($roleName, $allowedRoles, true)) {
             $dashboardRoute = match (Auth::user()->role?->role_name) {
                 'pimpinan' => 'pimpinan.dashboard',
                 'jurusan' => 'jurusan.dashboard',
                 'unit_kerja' => 'unit.dashboard',
+                'upa' => 'unit.dashboard',
+                'pusat' => 'unit.dashboard',
                 'admin' => 'admin.dashboard',
                 default => null,
             };

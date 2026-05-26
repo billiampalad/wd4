@@ -28,7 +28,7 @@ class LoginController
                 return redirect('/jurusan');
             }
 
-            if ($user->role->role_name == 'unit_kerja') {
+            if (in_array($user->role->role_name, ['unit_kerja', 'upa', 'pusat'], true)) {
                 return redirect('/unit');
             }
 

@@ -521,7 +521,7 @@ class DashboardController
 
     public function profiles()
     {
-        $profiles = Profile::with(['user', 'jurusan', 'unitKerja'])->get();
+        $profiles = Profile::with(['user', 'jurusan', 'unitKerja', 'upa', 'pusat'])->get();
         return view('admin.layout.profiles', compact('profiles'));
     }
 
