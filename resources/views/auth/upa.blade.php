@@ -176,7 +176,7 @@
                     <div class="user-avatar" id="userAvatar">{{ auth()->user()->name }}</div>
                     <div class="user-info">
                         <div class="name" id="userName">{{ auth()->user()->profile?->jabatan ?? '-' }}</div>
-                        <div class="role">{{ auth()->user()->profile?->jurusan?->nama_jurusan ?? '-' }}
+                        <div class="role">{{ auth()->user()->profile?->upa?->nama_upa ?? '-' }}
                         </div>
                     </div>
                 </div>
@@ -199,8 +199,8 @@
 
             <div class="menu-section">KERJASAMA UNIT</div>
 
-            <a class="menu-item {{ request()->routeIs('jurusan.dashboard') ? 'active' : '' }}"
-                href="{{ route('jurusan.dashboard') }}">
+            <a class="menu-item {{ request()->routeIs('upa.dashboard') ? 'active' : '' }}"
+                href="{{ route('upa.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-home"></i></div>
                 <span>Beranda</span>
             </a>
@@ -382,7 +382,7 @@
             @elseif(request()->routeIs('jurusan.hasil_evaluasi'))
                 @include('auth.layout.jurusan.hasil_evaluasi')
             @else
-                @include('auth.layout.jurusan.dashboard')
+                @include('auth.layout.upa.dashboard')
             @endif
         @endif
 

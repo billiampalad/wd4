@@ -19,20 +19,29 @@ class LoginController
         if (Auth::attempt($credentials)) {
 
             $user = Auth::user();
+            $roleName = $this->normalizeRoleName($user->role?->role_name);
 
-            if ($user->role->role_name == 'pimpinan') {
+            if ($roleName == 'pimpinan') {
                 return redirect('/pimpinan');
             }
 
-            if ($user->role->role_name == 'jurusan') {
+            if ($roleName == 'jurusan') {
                 return redirect('/jurusan');
             }
 
-            if (in_array($user->role->role_name, ['unit_kerja', 'upa', 'pusat'], true)) {
+            if ($roleName == 'unit_kerja') {
                 return redirect('/unit');
             }
 
-            if ($user->role->role_name == 'admin') {
+            if ($roleName == 'upa') {
+                return redirect('/upa');
+            }
+
+            if ($roleName == 'pusat') {
+                return redirect('/pusat');
+            }
+
+            if ($roleName == 'admin') {
                 return redirect('/admin');
             }
         }
@@ -48,5 +57,10 @@ class LoginController
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    private function normalizeRoleName(?string $roleName): string
+    {
+        return strtolower(str_replace(' ', '_', trim((string) $roleName)));
     }
 }

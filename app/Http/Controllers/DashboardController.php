@@ -8,6 +8,7 @@ use App\Models\Cooperation;
 use App\Models\Evaluasi;
 use App\Models\Profile;
 use App\Models\DetailKegiatan;
+use App\Support\CooperationAccess;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -331,55 +332,50 @@ class DashboardController
 
     public function unit()
     {
-        $user = Auth::user();
-        $profile = Profile::where('user_id', $user->id)->with('unitKerja')->first();
+        return $this->unitDashboard('unit_kerja', 'auth.unit');
+    }
 
-        if (!$profile || !$profile->unit_kerja_id) {
-            return redirect()->route('login')->with('error', 'Profil unit kerja tidak ditemukan.');
+    public function upa()
+    {
+        return $this->unitDashboard('upa', 'auth.upa');
+    }
+
+    public function pusat()
+    {
+        return $this->unitDashboard('pusat', 'auth.pusat');
+    }
+
+    private function unitDashboard(string $profileType, string $view)
+    {
+        $user = Auth::user();
+        $profile = Profile::where('user_id', $user->id)->with(['unitKerja', 'upa', 'pusat'])->first();
+
+        $unitId = match ($profileType) {
+            'upa' => $profile?->upa_id,
+            'pusat' => $profile?->pusat_id,
+            default => $profile?->unit_kerja_id,
+        };
+
+        if (!$profile || !$unitId) {
+            $profileLabel = match ($profileType) {
+                'upa' => 'UPA',
+                'pusat' => 'pusat',
+                default => 'unit kerja',
+            };
+
+            return redirect()->route('login')->with('error', "Profil {$profileLabel} tidak ditemukan.");
         }
 
-        $unitId = $profile->unit_kerja_id;
-        $unitName = $profile->unitKerja?->nama_unit_pelaksana ?? 'Unit Kerja';
+        $unitName = match ($profileType) {
+            'upa' => $profile->upa?->nama_upa,
+            'pusat' => $profile->pusat?->nama_pusat,
+            default => $profile->unitKerja?->nama_unit_pelaksana,
+        } ?? 'Unit Kerja';
+
         $today = now()->startOfDay();
         $deadlineLimit = now()->addDays(30)->endOfDay();
 
-        $unitScopedExists = false;
-        if ($profile->jurusan_id) {
-            $unitScopedExists = true;
-        } elseif ($unitName) {
-            $unitScopedExists = Cooperation::where(function ($query) use ($unitName) {
-                $query->whereHas('jurusans', fn ($q) => $q->where('nama_jurusan', $unitName))
-                    ->orWhereHas('upas', fn ($q) => $q->where('nama_upa', $unitName))
-                    ->orWhereHas('pusats', fn ($q) => $q->where('nama_pusat', $unitName))
-                    ->orWhereHas('jurusan', fn ($q) => $q->where('nama_jurusan', $unitName))
-                    ->orWhereHas('upa', fn ($q) => $q->where('nama_upa', $unitName))
-                    ->orWhereHas('pusat', fn ($q) => $q->where('nama_pusat', $unitName));
-            })->exists();
-        }
-
-        $applyUnitScope = function ($query) use ($profile, $unitName, $unitScopedExists) {
-            if ($profile->jurusan_id) {
-                return $query->where(function ($q) use ($profile) {
-                    $q->where('jurusan_id', $profile->jurusan_id)
-                        ->orWhereHas('jurusans', fn ($sq) => $sq->where('jurusans.id', $profile->jurusan_id));
-                });
-            }
-
-            if ($unitScopedExists && $unitName) {
-                return $query->where(function ($q) use ($unitName) {
-                    $q->whereHas('jurusans', fn ($sq) => $sq->where('nama_jurusan', $unitName))
-                        ->orWhereHas('upas', fn ($sq) => $sq->where('nama_upa', $unitName))
-                        ->orWhereHas('pusats', fn ($sq) => $sq->where('nama_pusat', $unitName))
-                        ->orWhereHas('jurusan', fn ($sq) => $sq->where('nama_jurusan', $unitName))
-                        ->orWhereHas('upa', fn ($sq) => $sq->where('nama_upa', $unitName))
-                        ->orWhereHas('pusat', fn ($sq) => $sq->where('nama_pusat', $unitName));
-                });
-            }
-
-            return $query;
-        };
-
-        $kerjasamaUnit = $applyUnitScope(Cooperation::with([
+        $kerjasamaUnit = CooperationAccess::scopeForProfile(Cooperation::with([
             'mitra',
             'pjInternal',
             'details',
@@ -388,7 +384,7 @@ class DashboardController
             'upas',
             'pusats',
             'pksNumbers',
-        ]))
+        ]), $profile)
             ->latest()
             ->get();
 
@@ -432,7 +428,7 @@ class DashboardController
 
         $kerjasamaTable = $kerjasamaUnit->take(12)->values();
 
-        return view('auth.unit', compact(
+        return view($view, compact(
             'unitId',
             'unitName',
             'totalKerjasama',

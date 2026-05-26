@@ -262,6 +262,14 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::delete('/unit/form-laporan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanDestroy'])->name('unit.form.destroy');
 });
 
+Route::middleware(['auth', 'role:upa'])->group(function () {
+    Route::get('/upa', [DashboardController::class, 'upa'])->name('upa.dashboard');
+});
+
+Route::middleware(['auth', 'role:pusat'])->group(function () {
+    Route::get('/pusat', [DashboardController::class, 'pusat'])->name('pusat.dashboard');
+});
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN PANEL (WAJIB LOGIN)

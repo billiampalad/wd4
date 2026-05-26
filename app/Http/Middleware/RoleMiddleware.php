@@ -14,16 +14,16 @@ class RoleMiddleware
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $roleName = Auth::user()->role->role_name;
-        $allowedRoles = $role === 'unit_kerja' ? ['unit_kerja', 'upa', 'pusat'] : [$role];
+        $roleName = $this->normalizeRoleName(Auth::user()->role?->role_name);
+        $allowedRoles = [$this->normalizeRoleName($role)];
 
         if (!in_array($roleName, $allowedRoles, true)) {
-            $dashboardRoute = match (Auth::user()->role?->role_name) {
+            $dashboardRoute = match ($roleName) {
                 'pimpinan' => 'pimpinan.dashboard',
                 'jurusan' => 'jurusan.dashboard',
                 'unit_kerja' => 'unit.dashboard',
-                'upa' => 'unit.dashboard',
-                'pusat' => 'unit.dashboard',
+                'upa' => 'upa.dashboard',
+                'pusat' => 'pusat.dashboard',
                 'admin' => 'admin.dashboard',
                 default => null,
             };
@@ -36,5 +36,10 @@ class RoleMiddleware
         }
 
         return $next($request);
+    }
+
+    private function normalizeRoleName(?string $roleName): string
+    {
+        return strtolower(str_replace(' ', '_', trim((string) $roleName)));
     }
 }
