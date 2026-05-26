@@ -71,11 +71,13 @@ class KerjasamaPusatController extends Controller
 
     public function create(Request $request)
     {
+        $unitId = $this->getUnitId();
         $mitras = Mitra::orderBy('nama_mitra')->get();
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $prodis = Prodi::orderBy('nama_prodi')->get();
-        $upas = Upa::orderBy('nama_upa')->get();
-        $pusats = Pusat::orderBy('nama_pusat')->get();
+        $jurusans = collect();
+        $prodis = collect();
+        $upas = collect();
+        $pusats = Pusat::whereKey($unitId)->orderBy('nama_pusat')->get();
+        $allowedTipePelaksana = 'pusat';
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
         $perpanjanganAsal = null;
@@ -102,7 +104,7 @@ class KerjasamaPusatController extends Controller
             }
         }
 
-        return view('auth.pusat', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
+        return view('auth.pusat', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────

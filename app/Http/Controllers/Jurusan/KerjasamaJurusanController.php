@@ -71,11 +71,13 @@ class KerjasamaJurusanController extends Controller
 
     public function create(Request $request)
     {
+        $unitId = $this->getUnitId();
         $mitras = Mitra::orderBy('nama_mitra')->get();
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $prodis = Prodi::orderBy('nama_prodi')->get();
-        $upas = Upa::orderBy('nama_upa')->get();
-        $pusats = Pusat::orderBy('nama_pusat')->get();
+        $jurusans = Jurusan::whereKey($unitId)->orderBy('nama_jurusan')->get();
+        $prodis = Prodi::where('jurusan_id', $unitId)->orderBy('nama_prodi')->get();
+        $upas = collect();
+        $pusats = collect();
+        $allowedTipePelaksana = 'jurusan';
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
         $perpanjanganAsal = null;
@@ -102,7 +104,7 @@ class KerjasamaJurusanController extends Controller
             }
         }
 
-        return view('auth.jurusan', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
+        return view('auth.jurusan', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────
