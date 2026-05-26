@@ -127,8 +127,7 @@ class KerjasamaJurusanController extends Controller
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
             'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
-            // Tipe pelaksana hanya wajib jika jenis BUKAN MoU
-            'tipe_pelaksana' => 'required_if:jenis,MoA (Memorandum of Agreement),IA (Implementation Agreement)|nullable|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
 
             // Penggiat validation
             'penggiat_mitra_ids' => 'required|array|min:1',
@@ -136,7 +135,7 @@ class KerjasamaJurusanController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
@@ -373,13 +372,13 @@ class KerjasamaJurusanController extends Controller
             'end_date' => 'nullable|date',
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
-            'tipe_pelaksana' => 'required_if:jenis,MoA (Memorandum of Agreement),IA (Implementation Agreement)|nullable|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
             'penggiat_mitra_ids' => 'required|array|min:1',
             'penggiat' => 'required|array|min:1',
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',

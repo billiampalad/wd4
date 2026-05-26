@@ -733,7 +733,7 @@
                                             tipePelaksana: '{{ old('tipe_pelaksana', $perpanjanganAsal?->tipe_pelaksana ?? '') }}',
                                             pelaksanaOptions: {{ \Illuminate\Support\Js::from($pelaksanaOptions) }},
                                             init() {
-                                                if ((this.jenisDokumen.includes('MoA') || this.jenisDokumen.includes('IA')) && this.pelaksanaOptions.length === 1 && !this.tipePelaksana) {
+                                                if (this.pelaksanaOptions.length === 1 && !this.tipePelaksana) {
                                                     this.tipePelaksana = this.pelaksanaOptions[0].v;
                                                 }
                                                 this.ensureSinglePelaksanaSelected();
@@ -817,8 +817,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; if ((jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')) && pelaksanaOptions.length === 1 && !tipePelaksana) tipePelaksana = pelaksanaOptions[0].v; ensureSinglePelaksanaSelected()"
-                                            @reset-tipe-pelaksana.window="tipePelaksana = (jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')) && pelaksanaOptions.length === 1 ? pelaksanaOptions[0].v : ''; ensureSinglePelaksanaSelected()">
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; if (pelaksanaOptions.length === 1 && !tipePelaksana) tipePelaksana = pelaksanaOptions[0].v; ensureSinglePelaksanaSelected()"
+                                            @reset-tipe-pelaksana.window="tipePelaksana = pelaksanaOptions.length === 1 ? pelaksanaOptions[0].v : ''; ensureSinglePelaksanaSelected()">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -835,9 +835,8 @@
                                                 </div>
                                             </div>
 
-                                            {{-- Tipe Pelaksana (shown for MoA/IA) --}}
-                                            <div x-show="jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')"
-                                                x-collapse.duration.300ms>
+                                            {{-- Tipe Pelaksana --}}
+                                            <div>
                                                 {{-- Tipe Pelaksana Selector --}}
                                                 <div style="margin-top: 15px;" class="mc-group">
                                                     <label class="mc-label">Tipe Pelaksana <span
@@ -1174,7 +1173,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> {{-- End MoA/IA conditional wrapper --}}
+                                            </div>
                                         </div>
 
                                         {{-- Penandatangan (Collapsible) --}}
