@@ -934,8 +934,8 @@
                                                                         style="font-weight: 700; font-size: 13px; color: var(--text);"
                                                                         x-text="getJurusanName(jId)"></span>
                                                                     <span
-                                                                        style="font-size: 11px; color: var(--text-sub); display: block; margin-top: 1px;">Pilih
-                                                                        program studi pada jurusan ini</span>
+                                                                            style="font-size: 11px; color: var(--text-sub); display: block; margin-top: 1px;">Program
+                                                                        studi opsional</span>
                                                                 </div>
                                                                 <button type="button" @click="toggleJurusan(jId)"
                                                                     style="width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-sub); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
@@ -971,7 +971,8 @@
                                                                     <label class="mc-label" style="margin-bottom: 8px;">
                                                                         <i class="fas fa-graduation-cap"
                                                                             style="margin-right:5px; color:#059669;"></i>
-                                                                        Program Studi
+                                                                        Program Studi <span
+                                                                            style="font-size: 10px; color: var(--text-sub); font-weight: 500;">(Opsional)</span>
                                                                     </label>
 
                                                                     {{-- Selected Prodi Tags --}}
@@ -1010,7 +1011,7 @@
                                                                                     style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
                                                                                 <span
                                                                                     style="color: #9ca3af; font-size: 12px;">—
-                                                                                    Pilih Program Studi —</span>
+                                                                                Pilih Program Studi (Opsional) —</span>
                                                                             </div>
                                                                             <i class="fas fa-chevron-down"
                                                                                 style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
