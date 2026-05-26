@@ -4,6 +4,15 @@
         ->values()
         ->all();
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
+    $allowedTipePelaksana = $allowedTipePelaksana ?? null;
+    $allPelaksanaOptions = [
+        'jurusan' => ['v' => 'jurusan', 'icon' => 'fas fa-microchip', 'label' => 'Jurusan', 'color' => '#4f46e5'],
+        'upa' => ['v' => 'upa', 'icon' => 'fas fa-building-columns', 'label' => 'UPA', 'color' => '#0891b2'],
+        'pusat' => ['v' => 'pusat', 'icon' => 'fas fa-landmark', 'label' => 'Pusat', 'color' => '#7c3aed'],
+    ];
+    $pelaksanaOptions = $allowedTipePelaksana && isset($allPelaksanaOptions[$allowedTipePelaksana])
+        ? [$allPelaksanaOptions[$allowedTipePelaksana]]
+        : array_values($allPelaksanaOptions);
 @endphp
 
 <!-- Main Content -->
@@ -616,6 +625,24 @@
                                         <div x-data="{
                                             jenisDokumen: '{{ old('jenis_dokumen', $kegiatan->jenis) }}',
                                             tipePelaksana: '{{ old('tipe_pelaksana', $kegiatan->tipe_pelaksana ?? ($kegiatan->jurusans->count() > 0 ? 'jurusan' : ($kegiatan->upas->count() > 0 ? 'upa' : ($kegiatan->pusats->count() > 0 ? 'pusat' : '')))) }}',
+                                            pelaksanaOptions: {{ \Illuminate\Support\Js::from($pelaksanaOptions) }},
+                                            init() {
+                                                if (this.pelaksanaOptions.length === 1 && !this.tipePelaksana) {
+                                                    this.tipePelaksana = this.pelaksanaOptions[0].v;
+                                                }
+                                                this.ensureSinglePelaksanaSelected();
+                                            },
+                                            ensureSinglePelaksanaSelected() {
+                                                if (this.tipePelaksana === 'jurusan' && this.jurusanItems.length === 1 && this.selectedJurusans.length === 0) {
+                                                    this.selectedJurusans = [this.jurusanItems[0].id];
+                                                }
+                                                if (this.tipePelaksana === 'upa' && this.upaItems.length === 1 && this.selectedUpas.length === 0) {
+                                                    this.selectedUpas = [this.upaItems[0].id];
+                                                }
+                                                if (this.tipePelaksana === 'pusat' && this.pusatItems.length === 1 && this.selectedPusats.length === 0) {
+                                                    this.selectedPusats = [this.pusatItems[0].id];
+                                                }
+                                            },
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
@@ -684,8 +711,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value"
-                                            @reset-tipe-pelaksana.window="tipePelaksana = ''">
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; if (pelaksanaOptions.length === 1 && !tipePelaksana) tipePelaksana = pelaksanaOptions[0].v; ensureSinglePelaksanaSelected()"
+                                            @reset-tipe-pelaksana.window="tipePelaksana = pelaksanaOptions.length === 1 ? pelaksanaOptions[0].v : ''; ensureSinglePelaksanaSelected()">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -702,17 +729,15 @@
                                                 </div>
                                             </div>
 
-                                            {{-- Tipe Pelaksana (shown for MoA/IA) --}}
-                                            <div x-show="jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')"
-                                                x-collapse.duration.300ms>
+                                            {{-- Tipe Pelaksana --}}
+                                            <div>
                                                 {{-- Tipe Pelaksana Selector --}}
                                                 <div style="margin-top: 15px;" class="mc-group">
                                                     <label class="mc-label">Tipe Pelaksana <span
                                                             class="mc-req">*</span></label>
                                                     <div
-                                                        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                                        <template
-                                                            x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
+                                                        :style="`display: grid; grid-template-columns: repeat(${pelaksanaOptions.length}, 1fr); gap: 8px;`">
+                                                        <template x-for="opt in pelaksanaOptions" :key="opt.v">
                                                             <button type="button" @click="tipePelaksana = opt.v"
                                                                 :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`">
                                                                 <i :class="opt.icon" style="font-size: 13px;"></i>
@@ -1038,7 +1063,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> {{-- End MoA/IA conditional wrapper --}}
+                                            </div>
                                         </div>
 
                                         {{-- Penandatangan (Collapsible) --}}

@@ -319,6 +319,7 @@ class KerjasamaPusatController extends Controller
 
     public function edit($id)
     {
+        $unitId = $this->getUnitId();
         $kegiatan = Cooperation::with([
             'mitra',
             'penandatanganInternal',
@@ -333,14 +334,15 @@ class KerjasamaPusatController extends Controller
             'pksNumbers',
         ])->whereKey($this->findOwnedCooperation($id)->id)->firstOrFail();
         $mitras = Mitra::orderBy('nama_mitra')->get();
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        $prodis = Prodi::orderBy('nama_prodi')->get();
-        $upas = Upa::orderBy('nama_upa')->get();
-        $pusats = Pusat::orderBy('nama_pusat')->get();
+        $jurusans = collect();
+        $prodis = collect();
+        $upas = collect();
+        $pusats = Pusat::whereKey($unitId)->orderBy('nama_pusat')->get();
+        $allowedTipePelaksana = 'pusat';
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
 
-        return view('auth.pusat', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
+        return view('auth.pusat', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
