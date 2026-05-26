@@ -7,7 +7,7 @@
     
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
-    <title>Jurusan | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
+    <title>Upa | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
