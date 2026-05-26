@@ -645,11 +645,18 @@ class PusatPageController extends Controller
 
     public function klasifikasiMitra()
     {
-        $this->resolveUnitId();
+        $unitId = $this->resolveUnitId();
 
-        $totalMitras = \App\Models\Mitra::count();
+        $mitraIds = Cooperation::where('pusat_id', $unitId)
+            ->whereNotNull('mitra_id')
+            ->distinct()
+            ->pluck('mitra_id');
 
-        $classifications = \App\Models\Klasifikasi::withCount('mitras')
+        $totalMitras = $mitraIds->count();
+
+        $classifications = \App\Models\Klasifikasi::withCount([
+                'mitras as mitras_count' => fn ($query) => $query->whereIn('id', $mitraIds),
+            ])
             ->orderBy('mitras_count', 'desc')
             ->get();
 
@@ -677,7 +684,10 @@ class PusatPageController extends Controller
         $mostFrequentName = $mostFrequent && $mostFrequent->mitras_count > 0 ? $mostFrequent->nama : '-';
         $mostFrequentCount = $mostFrequent ? $mostFrequent->mitras_count : 0;
 
-        $topMitras = \App\Models\Mitra::withCount('cooperations')
+        $topMitras = \App\Models\Mitra::whereIn('id', $mitraIds)
+            ->withCount([
+                'cooperations as cooperations_count' => fn ($query) => $query->where('pusat_id', $unitId),
+            ])
             ->orderBy('cooperations_count', 'desc')
             ->limit(5)
             ->get();
