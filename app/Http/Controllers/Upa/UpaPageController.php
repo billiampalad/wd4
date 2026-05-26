@@ -704,13 +704,19 @@ class UpaPageController extends Controller
 
     public function geoMitra()
     {
-        $this->resolveUnitId();
+        $unitId = $this->resolveUnitId();
 
-        $nasionalCount = \App\Models\Mitra::where('kategori', 'nasional')->count();
-        $internasionalCount = \App\Models\Mitra::where('kategori', 'internasional')->count();
+        $mitraIds = Cooperation::where('upa_id', $unitId)
+            ->whereNotNull('mitra_id')
+            ->distinct()
+            ->pluck('mitra_id');
+
+        $nasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->where('kategori', 'nasional')->count();
+        $internasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->where('kategori', 'internasional')->count();
         $totalMitras = $nasionalCount + $internasionalCount;
 
-        $totalCountries = \App\Models\Mitra::whereNotNull('negara')
+        $totalCountries = \App\Models\Mitra::whereIn('id', $mitraIds)
+            ->whereNotNull('negara')
             ->where('negara', '<>', '')
             ->distinct('negara')
             ->count('negara');
@@ -719,7 +725,8 @@ class UpaPageController extends Controller
             $totalCountries = 1;
         }
 
-        $rawCountries = \App\Models\Mitra::select(
+        $rawCountries = \App\Models\Mitra::whereIn('id', $mitraIds)
+            ->select(
                 DB::raw("COALESCE(NULLIF(TRIM(negara), ''), 'Indonesia') as country_name"),
                 DB::raw("COUNT(*) as mitras_count"),
                 DB::raw("SUM(CASE WHEN kategori = 'nasional' THEN 1 ELSE 0 END) as nasional_count"),
@@ -742,7 +749,8 @@ class UpaPageController extends Controller
             'colors' => ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81', '#1e1b4b', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc']
         ];
 
-        $latestInternational = \App\Models\Mitra::where('kategori', 'internasional')
+        $latestInternational = \App\Models\Mitra::whereIn('id', $mitraIds)
+            ->where('kategori', 'internasional')
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
