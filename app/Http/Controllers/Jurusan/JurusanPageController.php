@@ -1144,8 +1144,6 @@ class JurusanPageController extends Controller
     // ─── Laporan Data ────────────────────────────────────────────
     public function laporan()
     {
-        $unitId = $this->resolveUnitId();
-
         return view('auth.jurusan', [
             'jenisDokumentasiOptions' => $this->jenisDokumentasiOptions(),
             'jurusans' => Jurusan::orderBy('nama_jurusan')->get(),
@@ -1156,7 +1154,7 @@ class JurusanPageController extends Controller
 
     public function laporanPreview(Request $request)
     {
-        $rows = $this->buildLaporanQuery($request)
+        $rows = $this->buildLaporanQuery($request, true)
             ->get()
             ->filter(fn($c) => !empty($c->title))
             ->values()
@@ -1186,7 +1184,7 @@ class JurusanPageController extends Controller
 
     public function laporanPdf(Request $request)
     {
-        $data = $this->buildLaporanQuery($request)
+        $data = $this->buildLaporanQuery($request, true)
             ->get();
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('auth.layout.jurusan.laporan_pdf', compact('data'));
@@ -1195,16 +1193,21 @@ class JurusanPageController extends Controller
 
     public function laporanExcel(Request $request)
     {
-        $data = $this->buildLaporanQuery($request)
+        $data = $this->buildLaporanQuery($request, true)
             ->get();
 
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.jurusan.laporan_excel'), 'laporan_kerjasama_jurusan.xlsx');
     }
 
-    private function buildLaporanQuery(Request $request)
+    private function buildLaporanQuery(Request $request, bool $global = false)
     {
-        $unitId = $this->resolveUnitId();
-        $query = $this->scopeUnit(Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']), $unitId)
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']);
+
+        if (!$global) {
+            $query = $this->scopeUnit($query, $this->resolveUnitId());
+        }
+
+        $query
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc');
 
