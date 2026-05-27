@@ -564,10 +564,8 @@ class KerjasamaPusatController extends Controller
 
         $cooperation = $this->findOwnedCooperation($id);
 
-        // Validasi kepemilikan data (Best Practice)
-        // Jika user adalah unit_kerja, pastikan data ini milik unitnya (jika relasi sudah benar)
-        // Untuk saat ini, kita cek apakah user memiliki unit_kerja_id atau jurusan_id
-        if (!$profile->unit_kerja_id && !$profile->jurusan_id) {
+        // Validasi profil pusat yang sedang login.
+        if (!$profile->pusat_id) {
             return back()->with('error', 'Anda tidak memiliki otoritas untuk mengirim data ini.');
         }
 
