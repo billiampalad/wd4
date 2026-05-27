@@ -1338,6 +1338,7 @@ class UnitPageController extends Controller
             'unit_kerja_id' => $unitId,
             'cooperation_id' => $request->cooperation_id,
             'uploaded_by' => Auth::id(),
+            'uploader_role' => 'unit_kerja',
             'file_path' => $path,
             'original_name' => $originalName, // Tetap simpan nama asli untuk tampilan
             'file_size' => $file->getSize(),

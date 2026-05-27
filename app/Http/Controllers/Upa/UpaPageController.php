@@ -1369,9 +1369,10 @@ class UpaPageController extends Controller
         $path = $file->storeAs('laporan_jurusan', $filename, 'public');
 
         \App\Models\LaporanFile::create([
-            'unit_kerja_id' => $unitId,
+            'upa_id' => $unitId,
             'cooperation_id' => $request->cooperation_id,
             'uploaded_by' => Auth::id(),
+            'uploader_role' => 'upa',
             'file_path' => $path,
             'original_name' => $originalName, // Tetap simpan nama asli untuk tampilan
             'file_size' => $file->getSize(),
