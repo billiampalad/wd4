@@ -284,6 +284,12 @@
                 <span>Evaluasi Kinerja</span>
             </a>
 
+            <a class="menu-item {{ request()->routeIs('jurusan.laporan', 'jurusan.laporan.*') ? 'active' : '' }}"
+                href="{{ route('jurusan.laporan') }}">
+                <div class="menu-icon"><i class="fas fa-file-lines"></i></div>
+                <span>Laporan Data</span>
+            </a>
+
             @php
                 $isReferensiActive = request()->routeIs(
                     'jurusan.referensi.*',

@@ -177,10 +177,10 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
     Route::delete('/jurusan/form-laporan/{id}', [JurusanPageController::class, 'formLaporanDestroy'])->name('jurusan.form.destroy');
 
     // ─── Laporan Data ────────────────────────────────────
-    Route::get('/jurusan/laporan', [App\Http\Controllers\Jurusan\LaporanJurusanController::class, 'index'])->name('jurusan.laporan');
-    Route::get('/jurusan/laporan/preview', [App\Http\Controllers\Jurusan\LaporanJurusanController::class, 'preview'])->name('jurusan.laporan.preview');
-    Route::get('/jurusan/laporan/excel', [App\Http\Controllers\Jurusan\LaporanJurusanController::class, 'exportExcel'])->name('jurusan.laporan.excel');
-    Route::get('/jurusan/laporan/pdf', [App\Http\Controllers\Jurusan\LaporanJurusanController::class, 'exportPdf'])->name('jurusan.laporan.pdf');
+    Route::get('/jurusan/laporan', [JurusanPageController::class, 'laporan'])->name('jurusan.laporan');
+    Route::get('/jurusan/laporan/preview', [JurusanPageController::class, 'laporanPreview'])->name('jurusan.laporan.preview');
+    Route::get('/jurusan/laporan/excel', [JurusanPageController::class, 'laporanExcel'])->name('jurusan.laporan.excel');
+    Route::get('/jurusan/laporan/pdf', [JurusanPageController::class, 'laporanPdf'])->name('jurusan.laporan.pdf');
 });
 
 Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
