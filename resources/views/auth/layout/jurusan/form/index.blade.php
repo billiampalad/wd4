@@ -1,27 +1,23 @@
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span>Kerjasama</span>
-                </a>
-                <span class="sep">/</span>
-                <span class="current">Form Laporan</span>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('jurusan.dkerjasama') }}">Kerjasama</a>
+                <span>/</span>
+                <span>Form Laporan</span>
             </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff;">
-                    <i class="fas fa-file-pdf"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Dokumentasi Kerjasama</span>
-                    <h2 id="pageTitle">Form Laporan</h2>
-                    <p id="pageDesc">
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-file-pdf"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Form Laporan</h2>
+                    <p class="ud-subtitle" id="pageDesc">
                         Upload dan kelola dokumen laporan kerjasama Anda.
                     </p>
                 </div>
