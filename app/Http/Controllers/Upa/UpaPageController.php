@@ -1205,7 +1205,8 @@ class UpaPageController extends Controller
     {
         $unitId = $this->resolveUnitId();
         $query = $this->scopeUnit(Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']), $unitId)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
 
         if ($request->filled('tanggal_awal')) {
             $query->where('start_date', '>=', $request->tanggal_awal);
