@@ -1,30 +1,24 @@
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page" data-mitra-index>
     {{-- ═══ HERO SECTION ═══ --}}
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('pusat.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('pusat.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Repositori</span>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('pusat.mitra') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Mitra</span>
-                </a>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('pusat.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('pusat.dkerjasama') }}">Repositori</a>
+                <span>/</span>
+                <span>Daftar Mitra</span>
             </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Repositori Unit</span>
-                    <h2 id="pageTitle">Daftar Mitra Kerjasama</h2>
-                    <p id="pageDesc">Kelola data instansi dan organisasi mitra unit pelaksana.</p>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-handshake"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Daftar Mitra Kerjasama</h2>
+                    <p class="ud-subtitle" id="pageDesc">Kelola data instansi dan organisasi mitra unit pelaksana.</p>
                 </div>
             </div>
         </div>
