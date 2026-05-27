@@ -14,32 +14,24 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 })->count();
 @endphp
 
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current" id="breadcrumbCurrent">Beranda</span>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Kerjasama</span>
-                </a>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('unit.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <span>Daftar Kerjasama</span>
             </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas fa-handshake-angle"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Repositori Unit</span>
-                    <h2 id="pageTitle">Data Kerjasama</h2>
-                    <p id="pageDesc">
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-handshake-angle"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Data Kerjasama</h2>
+                    <p class="ud-subtitle" id="pageDesc">
                         Pantau dokumen, mitra, masa berlaku, dan status kerjasama untuk
                         <strong>{{ $unitName }}</strong>.
                     </p>
