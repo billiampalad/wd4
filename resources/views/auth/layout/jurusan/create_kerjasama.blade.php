@@ -120,34 +120,26 @@
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
 @endphp
 
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('jurusan.dashboard') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Beranda</span>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('jurusan.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Kerjasama</span>
-                </a>
-                <span class="sep">/</span>
-                <span class="current">Tambah Data</span>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('jurusan.dkerjasama') }}">Daftar Kerjasama</a>
+                <span>/</span>
+                <span>Tambah Data</span>
             </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas {{ $isPerpanjangan ? 'fa-clock-rotate-left' : 'fa-plus-circle' }}"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Repositori Unit</span>
-                    <h2 id="pageTitle">{{ $isPerpanjangan ? 'Ajukan Perpanjangan Kerjasama' : 'Tambah Data Kerjasama' }}</h2>
-                    <p id="pageDesc">{{ $isPerpanjangan ? 'Lengkapi draft perpanjangan berdasarkan data kerja sama sebelumnya.' : 'Isi formulir untuk menambahkan kegiatan kerjasama baru.' }}</p>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas {{ $isPerpanjangan ? 'fa-clock-rotate-left' : 'fa-plus-circle' }}"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">{{ $isPerpanjangan ? 'Ajukan Perpanjangan Kerjasama' : 'Tambah Data Kerjasama' }}</h2>
+                    <p class="ud-subtitle" id="pageDesc">{{ $isPerpanjangan ? 'Lengkapi draft perpanjangan berdasarkan data kerja sama sebelumnya.' : 'Isi formulir untuk menambahkan kegiatan kerjasama baru.' }}</p>
                 </div>
             </div>
         </div>
