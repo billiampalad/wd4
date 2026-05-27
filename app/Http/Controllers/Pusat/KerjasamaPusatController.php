@@ -17,6 +17,7 @@ use App\Models\DetailKegiatan;
 use App\Models\Notifikasi;
 use App\Models\User;
 use App\Support\CooperationAccess;
+use App\Support\UnitKerjaNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -282,6 +283,8 @@ class KerjasamaPusatController extends Controller
                     }
                 }
             }
+
+            UnitKerjaNotifications::sendNewCooperation($cooperation, Auth::user(), 'pusat');
 
             DB::commit();
             return redirect()->route('pusat.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');

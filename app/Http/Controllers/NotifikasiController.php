@@ -58,6 +58,8 @@ class NotifikasiController extends Controller
         $notifikasis = $query->with([
             'sender.profile.jurusan',
             'sender.profile.unitKerja',
+            'sender.profile.upa',
+            'sender.profile.pusat',
             'cooperation.jurusans',
             'cooperation.upas',
             'cooperation.pusats',

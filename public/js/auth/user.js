@@ -1300,6 +1300,10 @@ function initNotifikasi() {
                     typeBadgeClass = 'pengajuan_mitra';
                     typeLabel = 'Pengajuan Mitra';
                     break;
+                case 'data_baru':
+                    typeBadgeClass = 'data_baru';
+                    typeLabel = 'Data Baru';
+                    break;
             }
 
             // Tentukan ikon & warna berdasarkan tipe notifikasi dan pengirim
@@ -1326,6 +1330,10 @@ function initNotifikasi() {
                 iconBg = 'rgba(14, 165, 233, 0.12)';
                 iconColor = '#0284c7';
                 senderName = 'Portal Publik';
+            } else if (typeKey === 'data_baru') {
+                icon = 'fa-file-circle-plus';
+                iconBg = 'rgba(16, 185, 129, 0.12)';
+                iconColor = '#059669';
             }
 
             if (item.sender && item.sender.profile) {
@@ -1345,6 +1353,20 @@ function initNotifikasi() {
                     }
                     const unit = profile.unit_kerja || profile.unitKerja;
                     senderName = unit ? unit.nama_unit_pelaksana : 'Unit Kerja';
+                } else if (profile.upa) {
+                    if (typeKey !== 'revisi' && typeKey !== 'disahkan' && typeKey !== 'sudah_revisi') {
+                        icon = 'fa-sitemap';
+                        iconBg = 'rgba(14, 165, 233, 0.12)';
+                        iconColor = '#0284c7';
+                    }
+                    senderName = profile.upa.nama_upa;
+                } else if (profile.pusat) {
+                    if (typeKey !== 'revisi' && typeKey !== 'disahkan' && typeKey !== 'sudah_revisi') {
+                        icon = 'fa-landmark';
+                        iconBg = 'rgba(99, 102, 241, 0.12)';
+                        iconColor = '#4f46e5';
+                    }
+                    senderName = profile.pusat.nama_pusat;
                 }
             }
 

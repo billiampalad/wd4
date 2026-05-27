@@ -39,10 +39,24 @@
     @endif
     @php
         $unitExpiryNotifications = collect();
+        $unitDataNotifications = collect();
         $notificationUser = auth()->user();
 
         if ($notificationUser) {
             $notificationUser->loadMissing('profile.unitKerja');
+            $unitDataNotifications = \App\Models\Notifikasi::with([
+                    'sender.profile.jurusan',
+                    'sender.profile.unitKerja',
+                    'sender.profile.upa',
+                    'sender.profile.pusat',
+                ])
+                ->where('user_id', $notificationUser->id)
+                ->where('is_read', 0)
+                ->where('type', 'data_baru')
+                ->latest()
+                ->take(10)
+                ->get();
+
             $notificationProfile = $notificationUser->profile;
             $notificationUnitName = $notificationProfile?->unitKerja?->nama_unit_pelaksana;
             $notificationToday = now()->startOfDay();
@@ -97,6 +111,8 @@
                 })
                 ->values();
         }
+
+        $unitNotificationCount = $unitExpiryNotifications->count() + $unitDataNotifications->count();
     @endphp
     <!-- navbar -->
     <nav>
@@ -133,8 +149,8 @@
                     <button class="icon-btn" id="notificationBtn" title="Notifications">
                         <i class="fas fa-bell" id="notificationIcon"></i>
                         <span class="notification-badge" id="notifBadge"
-                            style="{{ $unitExpiryNotifications->count() > 0 ? 'display: flex;' : 'display: none;' }}">
-                            {{ $unitExpiryNotifications->count() > 9 ? '9+' : $unitExpiryNotifications->count() }}
+                            style="{{ $unitNotificationCount > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $unitNotificationCount > 9 ? '9+' : $unitNotificationCount }}
                         </span>
                     </button>
 
@@ -145,7 +161,37 @@
                                 semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
-                            @forelse ($unitExpiryNotifications as $expiryNotification)
+                            @foreach ($unitDataNotifications as $dataNotification)
+                                @php
+                                    $senderProfile = $dataNotification->sender?->profile;
+                                    $senderName = $senderProfile?->jurusan?->nama_jurusan
+                                        ?? $senderProfile?->upa?->nama_upa
+                                        ?? $senderProfile?->pusat?->nama_pusat
+                                        ?? $senderProfile?->unitKerja?->nama_unit_pelaksana
+                                        ?? $dataNotification->sender?->name
+                                        ?? 'Sistem';
+                                @endphp
+                                <a href="{{ $dataNotification->link ?: '#' }}"
+                                    class="notification-item unread"
+                                    data-id="{{ $dataNotification->id }}">
+                                    <div class="notification-icon-wrapper"
+                                        style="background: rgba(16, 185, 129, 0.12); color: #059669;">
+                                        <i class="fas fa-file-circle-plus"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <span class="notification-sender">{{ $senderName }}</span>
+                                        <span class="notification-message">{{ $dataNotification->pesan }}</span>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">
+                                                {{ $dataNotification->created_at?->diffForHumans() }}
+                                            </span>
+                                            <span class="notification-badge-type badge-data_baru">Data Baru</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+
+                            @foreach ($unitExpiryNotifications as $expiryNotification)
                                 <a href="{{ $expiryNotification['link'] }}"
                                     class="notification-item unread notification-expiry-item"
                                     data-system-notification="true" data-system-id="{{ $expiryNotification['system_id'] }}">
@@ -167,12 +213,14 @@
                                         </div>
                                     </div>
                                 </a>
-                            @empty
+                            @endforeach
+
+                            @if ($unitNotificationCount === 0)
                                 <div class="notification-empty">
                                     <i class="fas fa-bell-slash"></i>
                                     <p>Tidak ada notifikasi baru</p>
                                 </div>
-                            @endforelse
+                            @endif
                         </div>
                         <div class="notification-footer">
                             <a href="#">Lihat Semua Notifikasi</a>

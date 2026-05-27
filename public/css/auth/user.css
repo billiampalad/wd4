@@ -1295,6 +1295,13 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     --notif-status-dot: #0ea5e9;
 }
 
+.badge-data_baru {
+    --notif-status-bg: rgba(16, 185, 129, 0.13);
+    --notif-status-border: rgba(16, 185, 129, 0.24);
+    --notif-status-text: #047857;
+    --notif-status-dot: #10b981;
+}
+
 .badge-selesai {
     --notif-status-bg: rgba(16, 185, 129, 0.13);
     --notif-status-border: rgba(16, 185, 129, 0.24);
@@ -1330,6 +1337,7 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
 }
 
 [data-theme="dark"] .badge-disahkan,
+[data-theme="dark"] .badge-data_baru,
 [data-theme="dark"] .badge-selesai {
     --notif-status-bg: rgba(16, 185, 129, 0.18);
     --notif-status-border: rgba(110, 231, 183, 0.25);
