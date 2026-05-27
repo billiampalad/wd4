@@ -15,34 +15,26 @@
         : array_values($allPelaksanaOptions);
 @endphp
 
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-home"></i>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('upa.dashboard') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Beranda</span>
-                </a>
-                <span class="sep">/</span>
-                <a href="{{ route('upa.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Kerjasama</span>
-                </a>
-                <span class="sep">/</span>
-                <span class="current">Edit Data</span>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('upa.dashboard') }}">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('upa.dkerjasama') }}">Daftar Kerjasama</a>
+                <span>/</span>
+                <span>Edit Data</span>
             </div>
-
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
-                    <i class="fas fa-edit"></i>
-                </div>
-                <div>
-                    <span class="dk-eyebrow">Repositori Unit</span>
-                    <h2 id="pageTitle">Edit Data Kerjasama</h2>
-                    <p id="pageDesc">Perbarui informasi kegiatan kerjasama.</p>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-edit"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Edit Data Kerjasama</h2>
+                    <p class="ud-subtitle" id="pageDesc">Perbarui informasi kegiatan kerjasama.</p>
                 </div>
             </div>
         </div>
