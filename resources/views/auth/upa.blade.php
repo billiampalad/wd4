@@ -41,7 +41,7 @@
         $notificationUser = auth()->user();
 
         if ($notificationUser) {
-            $notificationUser->loadMissing('profile.jurusan');
+            $notificationUser->loadMissing('profile.upa');
             $notificationProfile = $notificationUser->profile;
             $notificationToday = now()->startOfDay();
             $notificationLimit = $notificationToday->copy()->addMonthsNoOverflow(3)->endOfDay();
@@ -52,10 +52,10 @@
                 ->whereDate('end_date', '>=', $notificationToday->toDateString())
                 ->whereDate('end_date', '<=', $notificationLimit->toDateString());
 
-            if ($notificationProfile?->jurusan_id) {
+            if ($notificationProfile?->upa_id) {
                 $expiryQuery->where(function ($query) use ($notificationProfile) {
-                    $query->where('jurusan_id', $notificationProfile->jurusan_id)
-                        ->orWhereHas('jurusans', fn($subQuery) => $subQuery->where('jurusans.id', $notificationProfile->jurusan_id));
+                    $query->where('upa_id', $notificationProfile->upa_id)
+                        ->orWhereHas('upas', fn($subQuery) => $subQuery->where('upas.id', $notificationProfile->upa_id));
                 });
             } else {
                 $expiryQuery->whereRaw('1 = 0');
