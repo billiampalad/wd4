@@ -49,7 +49,7 @@
                 </button>
                 @if($laporanUnit->count() > 0)
                 <button class="eval-tab-btn" :class="activeTab === 'unit' ? 'active unit' : ''" @click="activeTab = 'unit'">
-                    <i class="fas fa-university"></i> Institusi
+                    <i class="fas fa-university"></i> Humas
                     <span class="eval-badge unit">{{ $laporanUnit->count() }}</span>
                 </button>
                 @endif
@@ -320,35 +320,33 @@
                                         @csrf
                                         <input type="hidden" name="status_validasi" x-model="status">
 
-                                        <!-- Star Rating (Hanya untuk Jurusan yang belum dinilai) -->
-                                        @if($keg->tipe_pelaksana === 'jurusan')
-                                            <div class="ev-form-group">
-                                                <label class="ev-label">Skor Kualitas (Wajib)</label>
-                                                <div class="ev-rating-list">
-                                                    @foreach([
-                                                        ['name' => 'sesuai_rencana', 'label' => 'Sesuai Rencana'],
-                                                        ['name' => 'kualitas', 'label' => 'Kualitas Pelaksanaan'],
-                                                        ['name' => 'keterlibatan', 'label' => 'Keterlibatan Mitra'],
-                                                        ['name' => 'efisiensi', 'label' => 'Efisiensi Anggaran'],
-                                                        ['name' => 'kepuasan', 'label' => 'Tingkat Kepuasan']
-                                                    ] as $c)
-                                                    <div class="ev-rating-row">
-                                                        <span class="ev-rating-label">{{ $c['label'] }}</span>
-                                                        <div class="ev-stars" x-data="{ rating: 0, hover: 0 }">
-                                                            <template x-for="i in 5">
-                                                                <i class="fas fa-star ev-star-btn" 
-                                                                   :class="(hover || rating) >= i ? 'active' : ''"
-                                                                   @mouseenter="hover = i" 
-                                                                   @mouseleave="hover = 0" 
-                                                                   @click="rating = i; $refs.input{{$c['name']}}_{{ $keg->id }}.value = i"></i>
-                                                            </template>
-                                                            <input type="hidden" name="{{ $c['name'] }}" x-ref="input{{$c['name']}}_{{ $keg->id }}" required>
-                                                        </div>
+                                        <!-- Star Rating -->
+                                        <div class="ev-form-group">
+                                            <label class="ev-label">Skor Kualitas (Wajib)</label>
+                                            <div class="ev-rating-list">
+                                                @foreach([
+                                                    ['name' => 'sesuai_rencana', 'label' => 'Sesuai Rencana'],
+                                                    ['name' => 'kualitas', 'label' => 'Kualitas Pelaksanaan'],
+                                                    ['name' => 'keterlibatan', 'label' => 'Keterlibatan Mitra'],
+                                                    ['name' => 'efisiensi', 'label' => 'Efisiensi Anggaran'],
+                                                    ['name' => 'kepuasan', 'label' => 'Tingkat Kepuasan']
+                                                ] as $c)
+                                                <div class="ev-rating-row">
+                                                    <span class="ev-rating-label">{{ $c['label'] }}</span>
+                                                    <div class="ev-stars" x-data="{ rating: 0, hover: 0 }">
+                                                        <template x-for="i in 5">
+                                                            <i class="fas fa-star ev-star-btn" 
+                                                               :class="(hover || rating) >= i ? 'active' : ''"
+                                                               @mouseenter="hover = i" 
+                                                               @mouseleave="hover = 0" 
+                                                               @click="rating = i; $refs.input{{$c['name']}}_{{ $keg->id }}.value = i"></i>
+                                                        </template>
+                                                        <input type="hidden" name="{{ $c['name'] }}" x-ref="input{{$c['name']}}_{{ $keg->id }}" required>
                                                     </div>
-                                                    @endforeach
                                                 </div>
+                                                @endforeach
                                             </div>
-                                        @endif
+                                        </div>
 
                                         <!-- Executive Comments -->
                                         <div class="ev-form-group" style="margin-bottom: 0;">

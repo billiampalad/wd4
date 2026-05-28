@@ -52,7 +52,6 @@ class EvaluasiPimpinanController extends Controller
         DB::beginTransaction();
         try {
             // 1. Simpan/Update Evaluasi pada tabel evaluasis.
-            $isJurusan = $kegiatan->tipe_pelaksana === 'jurusan';
             $evaluasiData = [
                 'dinilai_oleh' => Auth::id(),
                 'ringkasan' => $request->ringkasan,
@@ -61,7 +60,7 @@ class EvaluasiPimpinanController extends Controller
                 'status_validasi' => $request->status_validasi,
             ];
 
-            if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $isJurusan && $request->status_validasi === 'layak') {
+            if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $request->status_validasi === 'layak') {
                 $request->validate([
                     'sesuai_rencana' => 'required|integer|min:1|max:5',
                     'kualitas' => 'required|integer|min:1|max:5',
