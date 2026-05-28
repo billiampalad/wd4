@@ -13,6 +13,78 @@
     $pelaksanaOptions = $allowedTipePelaksana && isset($allPelaksanaOptions[$allowedTipePelaksana])
         ? [$allPelaksanaOptions[$allowedTipePelaksana]]
         : array_values($allPelaksanaOptions);
+    $initialSelectedJurusans = collect((array) old('pelaksana_jurusan_ids', $kegiatan->jurusans->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
+    $initialSelectedProdis = collect((array) old('pelaksana_prodi_ids', $kegiatan->prodis->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
+    $initialSelectedUpas = collect((array) old('pelaksana_upa_ids', $kegiatan->upas->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
+    $initialSelectedPusats = collect((array) old('pelaksana_pusat_ids', $kegiatan->pusats->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
+    $initialJenisIds = collect((array) old('id_jenis', $kegiatan->details->pluck('jenis_kerjasama_id')->all()))->map(fn ($id) => (int) $id)->values()->all();
+    $detailsByJenis = $kegiatan->details->keyBy('jenis_kerjasama_id');
+    $oldJenisDetail = old('jenis_detail', []);
+    $initialJenisDetail = [];
+    foreach ($initialJenisIds as $jenisId) {
+        $detail = $detailsByJenis->get($jenisId);
+        $oldDetail = $oldJenisDetail[$jenisId] ?? [];
+        $initialJenisDetail[$jenisId] = [
+            'nilai_kontrak' => array_key_exists('nilai_kontrak', $oldDetail) ? $oldDetail['nilai_kontrak'] : ($detail && $detail->nilai_kontrak ? 'Rp ' . number_format($detail->nilai_kontrak, 0, ',', '.') : ''),
+            'income' => array_key_exists('income', $oldDetail) ? $oldDetail['income'] : ($detail->income ?? ''),
+            'volume' => array_key_exists('volume', $oldDetail) ? $oldDetail['volume'] : ($detail->volume_luaran ?? ''),
+            'satuan_volume' => array_key_exists('satuan_volume', $oldDetail) ? $oldDetail['satuan_volume'] : ($detail->satuan_luaran ?? ''),
+            'keterangan' => array_key_exists('keterangan', $oldDetail) ? $oldDetail['keterangan'] : ($detail->keterangan ?? ''),
+            'tujuan' => array_key_exists('tujuan', $oldDetail) ? $oldDetail['tujuan'] : ($detail->tujuan ?? ''),
+            'sasaran_id' => array_key_exists('sasaran_id', $oldDetail) ? $oldDetail['sasaran_id'] : ($detail->sasaran_id ?? ''),
+            'indikator_kinerja' => array_key_exists('indikator_kinerja', $oldDetail) ? $oldDetail['indikator_kinerja'] : ($detail->indikator_kinerja ?? ''),
+            'output' => array_key_exists('output', $oldDetail) ? $oldDetail['output'] : ($detail->output ?? ''),
+            'outcome' => array_key_exists('outcome', $oldDetail) ? $oldDetail['outcome'] : ($detail->outcome ?? ''),
+        ];
+    }
+    $oldPenggiat = old('penggiat');
+    $oldPenggiatMitraIds = old('penggiat_mitra_ids');
+    if (is_array($oldPenggiat) || is_array($oldPenggiatMitraIds)) {
+        $oldPenggiat = is_array($oldPenggiat) ? $oldPenggiat : [];
+        $oldPenggiatMitraIds = is_array($oldPenggiatMitraIds) ? $oldPenggiatMitraIds : [];
+        $totalPenggiat = max(count($oldPenggiat), count($oldPenggiatMitraIds), 1);
+        $initialPenggiatList = collect(range(0, $totalPenggiat - 1))->map(function ($idx) use ($oldPenggiat, $oldPenggiatMitraIds) {
+            $data = $oldPenggiat[$idx] ?? [];
+            return [
+                'id' => $idx + 1,
+                'showPenandatangan' => filled($data['nama_penandatangan'] ?? null) || filled($data['jabatan_penandatangan'] ?? null),
+                'showPJ' => filled($data['nama_pj'] ?? null) || filled($data['jabatan_pj'] ?? null),
+                'mitraId' => (string) ($oldPenggiatMitraIds[$idx] ?? ''),
+                'mitraOpen' => false,
+                'nama_penandatangan' => $data['nama_penandatangan'] ?? '',
+                'jabatan_penandatangan' => $data['jabatan_penandatangan'] ?? '',
+                'nama_pj' => $data['nama_pj'] ?? '',
+                'jabatan_pj' => $data['jabatan_pj'] ?? '',
+            ];
+        })->all();
+    } elseif ($kegiatan->mitra_id) {
+        $initialPenggiatList = [[
+            'id' => 1,
+            'showPenandatangan' => (bool) $kegiatan->penandatanganMitra,
+            'showPJ' => (bool) $kegiatan->pjMitra,
+            'mitraId' => (string) $kegiatan->mitra_id,
+            'mitraOpen' => false,
+            'nama_penandatangan' => $kegiatan->penandatanganMitra?->nama ?? '',
+            'jabatan_penandatangan' => $kegiatan->penandatanganMitra?->jabatan ?? '',
+            'nama_pj' => $kegiatan->pjMitra?->nama ?? '',
+            'jabatan_pj' => $kegiatan->pjMitra?->jabatan ?? '',
+        ]];
+    } else {
+        $initialPenggiatList = [[
+            'id' => 1,
+            'showPenandatangan' => false,
+            'showPJ' => false,
+            'mitraId' => '',
+            'mitraOpen' => false,
+            'nama_penandatangan' => '',
+            'jabatan_penandatangan' => '',
+            'nama_pj' => '',
+            'jabatan_pj' => '',
+        ]];
+    }
+    $mitraOptions = $mitras->map(fn ($m) => ['id' => $m->id, 'nama' => $m->nama_mitra])->values()->all();
+    $jenisOptions = $jenisKerjasama->map(fn ($jenis) => ['id' => $jenis->id, 'label' => $jenis->nama_kerjasama])->values()->all();
+    $sasaranOptions = $sasarans->map(fn ($sasaran) => ['id' => $sasaran->id, 'deskripsi' => $sasaran->deskripsi])->values()->all();
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -526,23 +598,7 @@
                             showPihak2: true,
                             showPenandatangan1: {{ $kegiatan->penandatanganInternal ? 'true' : 'false' }},
                             showPJ1: {{ $kegiatan->pjInternal ? 'true' : 'false' }},
-                            penggiatList: [
-                                @if($kegiatan->mitra_id)
-                                    { 
-                                        id: Date.now(), 
-                                        showPenandatangan: {{ $kegiatan->penandatanganMitra ? 'true' : 'false' }}, 
-                                        showPJ: {{ $kegiatan->pjMitra ? 'true' : 'false' }}, 
-                                        mitraId: '{{ $kegiatan->mitra_id }}', 
-                                        mitraOpen: false,
-                                        nama_penandatangan: '{{ addslashes($kegiatan->penandatanganMitra?->nama ?? '') }}',
-                                        jabatan_penandatangan: '{{ addslashes($kegiatan->penandatanganMitra?->jabatan ?? '') }}',
-                                        nama_pj: '{{ addslashes($kegiatan->pjMitra?->nama ?? '') }}',
-                                        jabatan_pj: '{{ addslashes($kegiatan->pjMitra?->jabatan ?? '') }}'
-                                    }
-                                @else
-                                    { id: Date.now(), showPenandatangan: false, showPJ: false, mitraId: '', mitraOpen: false, nama_penandatangan: '', jabatan_penandatangan: '', nama_pj: '', jabatan_pj: '' }
-                                @endif
-                            ],
+                            penggiatList: @js($initialPenggiatList),
                             nextId() { return Date.now() + Math.random(); },
                             addPenggiat() {
                                 this.penggiatList.push({ 
@@ -560,11 +616,7 @@
                             removePenggiat(idx) {
                                 if (this.penggiatList.length > 1) this.penggiatList.splice(idx, 1);
                             },
-                            mitraItems: [
-                                @foreach($mitras as $m)
-                                    { id: {{ $m->id }}, nama: '{{ addslashes($m->nama_mitra) }}' },
-                                @endforeach
-                            ]
+                            mitraItems: @js($mitraOptions)
                         }"
                             @mitra-added.window="mitraItems.push($event.detail)">
                             <div @click="showPenggiat = !showPenggiat"
@@ -638,7 +690,7 @@
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
-                                            selectedJurusans: [{{ $kegiatan->jurusans->pluck('id')->join(',') }}],
+                                            selectedJurusans: @js($initialSelectedJurusans),
                                             jurusanItems: [
                                                 @foreach($jurusans ?? [] as $jur)
                                                     { id: {{ $jur->id }}, nama: '{{ addslashes($jur->nama_jurusan) }}' },
@@ -658,7 +710,7 @@
                                             getJurusanName(id) { return this.jurusanItems.find(j => j.id === id)?.nama ?? ''; },
 
                                             {{-- Prodi data (used by nested x-data scopes) --}}
-                                            selectedProdis: [{{ $kegiatan->prodis->pluck('id')->join(',') }}],
+                                            selectedProdis: @js($initialSelectedProdis),
                                             prodiItems: [
                                                 @foreach($prodis ?? [] as $p)
                                                     { id: {{ $p->id }}, jurusan_id: {{ $p->jurusan_id }}, nama: '{{ addslashes($p->nama_prodi) }}', jenjang: '{{ $p->jenjang }}' },
@@ -678,7 +730,7 @@
 
                                             {{-- UPA multi-select --}}
                                             upaOpen: false,
-                                            selectedUpas: [{{ $kegiatan->upas->pluck('id')->join(',') }}],
+                                            selectedUpas: @js($initialSelectedUpas),
                                             upaItems: [
                                                 @foreach($upas ?? [] as $u)
                                                     { id: {{ $u->id }}, nama: '{{ addslashes($u->nama_upa) }}' },
@@ -692,7 +744,7 @@
 
                                             {{-- Pusat multi-select --}}
                                             pusatOpen: false,
-                                            selectedPusats: [{{ $kegiatan->pusats->pluck('id')->join(',') }}],
+                                            selectedPusats: @js($initialSelectedPusats),
                                             pusatItems: [
                                                 @foreach($pusats ?? [] as $ps)
                                                     { id: {{ $ps->id }}, nama: '{{ addslashes($ps->nama_pusat) }}' },
@@ -1411,34 +1463,11 @@
                                 {{-- Jenis Kerjasama (Alpine Multi-Select with Dynamic Forms) --}}
                                 <div x-data="{ 
                                     open: false, 
-                                    selected: {{ json_encode(old('id_jenis', $kegiatan->details->pluck('jenis_kerjasama_id')->toArray())) }},
-                                    items: [
-                                        @foreach($jenisKerjasama as $jenis)
-                                            { id: {{ $jenis->id }}, label: '{{ $jenis->nama_kerjasama }}' },
-                                        @endforeach
-                                    ],
-                                    formData: {
-                                        @foreach($kegiatan->details as $detail)
-                                            {{ $detail->jenis_kerjasama_id }}: {
-                                                nilai_kontrak: 'Rp {{ number_format($detail->nilai_kontrak, 0, ",", ".") }}',
-                                                income: '{{ addslashes($detail->income) }}',
-                                                volume: '{{ $detail->volume_luaran }}',
-                                                satuan_volume: '{{ addslashes($detail->satuan_luaran) }}',
-                                                keterangan: '{{ addslashes($detail->keterangan) }}',
-                                                tujuan: '{{ addslashes($detail->tujuan) }}',
-                                                sasaran_id: '{{ $detail->sasaran_id }}',
-                                                indikator_kinerja: '{{ addslashes($detail->indikator_kinerja) }}',
-                                                output: '{{ addslashes($detail->output) }}',
-                                                outcome: '{{ addslashes($detail->outcome) }}'
-                                            },
-                                        @endforeach
-                                    },
+                                    selected: @js($initialJenisIds),
+                                    items: @js($jenisOptions),
+                                    formData: @js($initialJenisDetail),
                                     sasaranOpen: {},
-                                    sasaranOptions: [
-                                        @foreach($sasarans as $sas)
-                                            { id: {{ $sas->id }}, deskripsi: '{{ addslashes($sas->deskripsi) }}' },
-                                        @endforeach
-                                    ],
+                                    sasaranOptions: @js($sasaranOptions),
                                     toggle(id) {
                                         const idx = this.selected.indexOf(id);
                                         if (idx > -1) {
