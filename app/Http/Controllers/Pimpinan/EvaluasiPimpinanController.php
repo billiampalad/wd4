@@ -39,7 +39,7 @@ class EvaluasiPimpinanController extends Controller
      */
     public function evaluate(Request $request, $id)
     {
-        $kegiatan = Cooperation::with(['upas', 'pusats'])->findOrFail($id);
+        $kegiatan = Cooperation::with(['jurusans', 'upas', 'pusats'])->findOrFail($id);
 
         // Validasi Umum
         $request->validate([
@@ -112,6 +112,18 @@ class EvaluasiPimpinanController extends Controller
                 );
             }
 
+            foreach ($this->pelaksanaRecipients($kegiatan) as $recipient) {
+                Notifikasi::send(
+                    $recipient['user']->id,
+                    Auth::id(),
+                    $kegiatan->id,
+                    $statusDokumen === 'Disahkan' ? 'disahkan' : 'revisi',
+                    $statusDokumen === 'Disahkan' ? 'Dokumen Disahkan' : 'Dokumen Perlu Revisi',
+                    $pesan,
+                    route($recipient['route'] . '.kerjasama.show', $kegiatan->id)
+                );
+            }
+
             DB::commit();
             return redirect()->route('pimpinan.evaluasi')->with('success', 'Berhasil memproses evaluasi dokumen.');
 
@@ -159,5 +171,58 @@ class EvaluasiPimpinanController extends Controller
         }
 
         return $query->get();
+    }
+
+    private function pelaksanaRecipients(Cooperation $kegiatan)
+    {
+        $roleMap = [
+            'jurusan' => [
+                'relation' => 'jurusans',
+                'direct_key' => 'jurusan_id',
+                'profile_key' => 'jurusan_id',
+                'route' => 'jurusan',
+            ],
+            'upa' => [
+                'relation' => 'upas',
+                'direct_key' => 'upa_id',
+                'profile_key' => 'upa_id',
+                'route' => 'upa',
+            ],
+            'pusat' => [
+                'relation' => 'pusats',
+                'direct_key' => 'pusat_id',
+                'profile_key' => 'pusat_id',
+                'route' => 'pusat',
+            ],
+        ];
+
+        $type = $kegiatan->tipe_pelaksana;
+        if (!isset($roleMap[$type])) {
+            return collect();
+        }
+
+        $config = $roleMap[$type];
+        $ids = $kegiatan->{$config['relation']}
+            ->pluck('id')
+            ->push($kegiatan->{$config['direct_key']})
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return collect();
+        }
+
+        return User::whereHas('role', function ($q) use ($type) {
+                $q->where('role_name', $type);
+            })
+            ->whereHas('profile', function ($q) use ($config, $ids) {
+                $q->whereIn($config['profile_key'], $ids);
+            })
+            ->get()
+            ->map(fn ($user) => [
+                'user' => $user,
+                'route' => $config['route'],
+            ]);
     }
 }
