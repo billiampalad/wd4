@@ -322,6 +322,8 @@
                                 </div>
                             </div>
 
+                            @include('auth.layout.partials.evaluasi_pimpinan_nilai', ['evaluasi' => $evaluasi])
+
                             {{-- Penilai & Waktu --}}
                             <div
                                 style="display: flex; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border);">
