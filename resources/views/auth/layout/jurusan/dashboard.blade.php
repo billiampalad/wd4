@@ -236,6 +236,7 @@
             <table class="ud-table">
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th>Judul Kegiatan</th>
                         <th>Mitra</th>
                         <th>Status</th>
@@ -276,6 +277,9 @@
                         @endphp
                         <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
                             <td>
+                                <strong>{{ $loop->iteration }}</strong>
+                            </td>
+                            <td>
                                 <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
                                 <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
                                 <span class="ud-type-badge">{{ $jenisLabel }}</span>
@@ -314,13 +318,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="ud-empty">Belum ada data kerjasama untuk ditampilkan.</div>
                             </td>
                         </tr>
                     @endforelse
                     <tr id="unitDashNoResult" style="display:none;">
-                        <td colspan="5">
+                        <td colspan="6">
                             <div class="ud-empty">Tidak ada dokumen pada filter ini.</div>
                         </td>
                     </tr>

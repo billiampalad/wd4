@@ -104,7 +104,6 @@ class DashboardJurusanController extends Controller
         $kerjasamaTable = (clone $baseQuery)
             ->with(['mitra', 'pjInternal', 'pksNumbers'])
             ->latest()
-            ->take(10)
             ->get();
 
         $jenisCounts = collect([

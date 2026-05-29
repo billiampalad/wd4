@@ -432,9 +432,7 @@ class DashboardController
             'IA' => $kerjasamaUnit->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'ia'))->count(),
         ]);
 
-        $kerjasamaTable = $profileType === 'unit_kerja'
-            ? $kerjasamaUnit->values()
-            : $kerjasamaUnit->take(12)->values();
+        $kerjasamaTable = $kerjasamaUnit->values();
 
         return view($view, compact(
             'unitId',
