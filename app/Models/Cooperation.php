@@ -177,6 +177,69 @@ class Cooperation extends Model
         };
     }
 
+    public function getPelaksanaGroupsAttribute(): array
+    {
+        $groups = [];
+
+        $jurusanNames = $this->relationLoaded('jurusans')
+            ? $this->jurusans->pluck('nama_jurusan')->filter()->values()
+            : $this->jurusans()->pluck('nama_jurusan')->filter()->values();
+        if ($jurusanNames->isEmpty() && $this->jurusan?->nama_jurusan) {
+            $jurusanNames = collect([$this->jurusan->nama_jurusan]);
+        }
+        if ($jurusanNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'Jurusan',
+                'icon' => 'fa-microchip',
+                'class' => 'dk-entity-indigo',
+                'label_class' => 'indigo',
+                'names' => $jurusanNames->all(),
+            ];
+        }
+
+        $upaNames = $this->relationLoaded('upas')
+            ? $this->upas->pluck('nama_upa')->filter()->values()
+            : $this->upas()->pluck('nama_upa')->filter()->values();
+        if ($upaNames->isEmpty() && $this->upa?->nama_upa) {
+            $upaNames = collect([$this->upa->nama_upa]);
+        }
+        if ($upaNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'UPA',
+                'icon' => 'fa-building-columns',
+                'class' => 'dk-entity-cyan',
+                'label_class' => 'cyan',
+                'names' => $upaNames->all(),
+            ];
+        }
+
+        $pusatNames = $this->relationLoaded('pusats')
+            ? $this->pusats->pluck('nama_pusat')->filter()->values()
+            : $this->pusats()->pluck('nama_pusat')->filter()->values();
+        if ($pusatNames->isEmpty() && $this->pusat?->nama_pusat) {
+            $pusatNames = collect([$this->pusat->nama_pusat]);
+        }
+        if ($pusatNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'Pusat',
+                'icon' => 'fa-landmark',
+                'class' => 'dk-entity-violet',
+                'label_class' => 'violet',
+                'names' => $pusatNames->all(),
+            ];
+        }
+
+        return $groups;
+    }
+
+    public function getPelaksanaTypeLabelAttribute(): string
+    {
+        return collect($this->pelaksana_groups)
+            ->pluck('type')
+            ->filter()
+            ->implode(', ');
+    }
+
     public function getPelaksanaIconAttribute()
     {
         return match ($this->tipe_pelaksana) {

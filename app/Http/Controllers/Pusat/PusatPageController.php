@@ -1168,6 +1168,7 @@ class PusatPageController extends Controller
                     'pelaksana_name' => $c->pelaksana_name,
                     'pelaksana_icon' => $c->pelaksana_icon,
                     'pelaksana_class' => $c->pelaksana_class,
+                    'pelaksana_groups' => $c->pelaksana_groups,
                     'start_date'     => $c->start_date ? $c->start_date->toDateString() : null,
                     'end_date'       => $c->end_date   ? $c->end_date->toDateString()   : null,
                     // status: coba field status dulu, fallback ke status_dokumen
@@ -1201,7 +1202,7 @@ class PusatPageController extends Controller
 
     private function buildLaporanQuery(Request $request, bool $global = false)
     {
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers']);
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers']);
 
         if (!$global) {
             $query = $this->scopeUnit($query, $this->resolveUnitId());

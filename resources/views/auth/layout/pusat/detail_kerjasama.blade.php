@@ -28,27 +28,9 @@
         default => 'Belum Diatur',
     };
 
-    $pelaksanaIcon = 'fa-building';
-    $pelaksanaClass = 'dk-entity-indigo';
-    $pelaksanaName = '-';
-    $pelaksanaType = '';
-    if ($kegiatan->tipe_pelaksana === 'jurusan') {
-        $pelaksanaIcon = 'fa-microchip';
-        $pelaksanaClass = 'dk-entity-indigo';
-        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-        $pelaksanaType = 'Jurusan';
-    } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-        $pelaksanaIcon = 'fa-building-columns';
-        $pelaksanaClass = 'dk-entity-cyan';
-        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-        $pelaksanaType = 'UPA';
-    } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-        $pelaksanaIcon = 'fa-landmark';
-        $pelaksanaClass = 'dk-entity-violet';
-        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-        $pelaksanaType = 'Pusat';
-    }
-    $hasPelaksanaData = $pelaksanaType !== '' && $pelaksanaName !== '-';
+    $pelaksanaGroups = collect($kegiatan->pelaksana_groups);
+    $pelaksanaTypeLabel = $kegiatan->pelaksana_type_label;
+    $hasPelaksanaData = $pelaksanaGroups->isNotEmpty();
 
     $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
@@ -212,7 +194,7 @@
                 <div class="dk-stat-icon"><i class="fas fa-building-user"></i></div>
                 <div class="dk-stat-info">
                     <span class="dk-stat-label">Tipe Pelaksana</span>
-                    <strong>{{ $pelaksanaType ?: '-' }}</strong>
+                    <strong>{{ $pelaksanaTypeLabel ?: '-' }}</strong>
                 </div>
             </div>
         </div>
@@ -703,15 +685,18 @@
                             </div>
                         </div>
                         <div class="card-body dk-card-body" style="padding: 28px;">
-                            <div class="dk-entity-card">
-                                <span class="dk-entity-icon {{ $pelaksanaClass }}">
-                                    <i class="fas {{ $pelaksanaIcon }}"></i>
-                                </span>
-                                <div class="dk-entity-text">
-                                    <small
-                                        class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType }}</small>
-                                    <strong>{{ $pelaksanaName }}</strong>
-                                </div>
+                            <div style="display: grid; gap: 12px;">
+                                @foreach ($pelaksanaGroups as $group)
+                                    <div class="dk-entity-card">
+                                        <span class="dk-entity-icon {{ $group['class'] }}">
+                                            <i class="fas {{ $group['icon'] }}"></i>
+                                        </span>
+                                        <div class="dk-entity-text">
+                                            <small class="dk-entity-label {{ $group['label_class'] }}">{{ $group['type'] }}</small>
+                                            <strong>{{ implode(', ', $group['names']) }}</strong>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
 
                             @if ($kegiatan->prodis->count() > 0)
