@@ -727,8 +727,8 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="card-body dk-card-body" style="padding: 28px;">
-                            <div style="display: grid; gap: 12px;">
+                        <div class="card-body dk-card-body dk-detail-card-body">
+                            <div class="dk-entity-grid">
                                 @foreach ($pelaksanaGroups as $group)
                                     <div class="dk-entity-card">
                                         <span class="dk-entity-icon {{ $group['class'] }}">
@@ -770,7 +770,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="card-body dk-card-body" style="padding: 28px;">
+                    <div class="card-body dk-card-body dk-detail-card-body">
                         @if ($kegiatan->mitra)
                             <div class="dk-mitra-profile">
                                 <div class="dk-mitra-header">
@@ -778,15 +778,14 @@
                                         <i class="fas fa-building"></i>
                                     </div>
                                     <strong class="dk-mitra-name">{{ $kegiatan->mitra->nama_mitra }}</strong>
-                                    <span class="tag tag-blue"
-                                        style="font-size: 11px; padding: 4px 12px;">{{ ucfirst($kegiatan->mitra->kategori ?? 'Nasional') }}</span>
+                                    <span class="tag tag-blue dk-mitra-category">{{ ucfirst($kegiatan->mitra->kategori ?? 'Nasional') }}</span>
                                 </div>
 
                                 <div class="dk-mitra-info-list">
                                     <div class="dk-mitra-info-item">
                                         <small class="dk-mitra-info-label">Alamat Instansi</small>
                                         <div class="dk-mitra-info-value">
-                                            <i class="fas fa-map-location-dot" style="color: #ef4444;"></i>
+                                            <i class="fas fa-map-location-dot dk-mitra-map-icon"></i>
                                             <span>{{ $kegiatan->mitra->alamat ?: 'Alamat belum dilengkapi.' }}</span>
                                         </div>
                                     </div>
@@ -803,11 +802,9 @@
                                 </div>
                             </div>
                         @else
-                            <div
-                                style="text-align: center; color: var(--text-sub); font-size: 13px; padding: 40px 20px;">
-                                <i class="fas fa-building-slash"
-                                    style="font-size: 32px; opacity: 0.15; margin-bottom: 12px; display: block;"></i>
-                                <span style="font-weight: 600;">Data mitra tidak ditemukan.</span>
+                            <div class="dk-mitra-empty">
+                                <i class="fas fa-building-slash"></i>
+                                <span>Data mitra tidak ditemukan.</span>
                             </div>
                         @endif
                     </div>
