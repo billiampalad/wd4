@@ -1467,6 +1467,7 @@
                                     items: @js($jenisOptions),
                                     formData: @js($initialJenisDetail),
                                     sasaranOpen: {},
+                                    indikatorOpen: {},
                                     sasaranOptions: @js($sasaranOptions),
                                     indikatorOptions: @js($indikatorOptions),
                                     getIndikatorOptions(id) {
@@ -1478,10 +1479,12 @@
                                             this.selected.splice(idx, 1);
                                             delete this.formData[id];
                                             delete this.sasaranOpen[id];
+                                            delete this.indikatorOpen[id];
                                         } else {
                                             this.selected.push(id);
                                             this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                             this.sasaranOpen[id] = false;
+                                            this.indikatorOpen[id] = false;
                                         }
                                     },
                                     isSelected(id) { return this.selected.includes(id); },
@@ -1494,6 +1497,7 @@
                                             if (!this.formData[id]) {
                                                 this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                                 this.sasaranOpen[id] = false;
+                                                this.indikatorOpen[id] = false;
                                             }
                                         });
                                     }
@@ -1706,7 +1710,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 {{-- Row 5: Sasaran (Custom Dropdown) + Indikator Kinerja --}}
                                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                                                     {{-- Sasaran Dropdown --}}
@@ -1726,8 +1729,7 @@
                                                                     <i class="fas fa-crosshairs"
                                                                         style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
                                                                     <span x-show="!formData[id].sasaran_id"
-                                                                        style="color: #9ca3af; font-size: 12px;">— Pilih
-                                                                        Sasaran —</span>
+                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Sasaran --</span>
                                                                     <span x-show="formData[id].sasaran_id"
                                                                         style="font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                                                         x-text="sasaranOptions.find(o => o.id == formData[id].sasaran_id)?.deskripsi || ''"></span>
@@ -1741,7 +1743,7 @@
                                                                 <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].sasaran_id == opt.id}"
-                                                                        @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false"
+                                                                        @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false; indikatorOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px;">
                                                                         <span x-text="opt.deskripsi"></span>
                                                                     </div>
@@ -1753,18 +1755,46 @@
                                                     {{-- Indikator Kinerja --}}
                                                     <div class="mc-group">
                                                         <label class="mc-label">Indikator Kinerja</label>
-                                                        <div class="mc-input-wrap">
-                                                            <i class="fas fa-tachometer-alt mc-icon-left"></i>
-                                                            <select
+                                                        <div class="alpine-dropdown"
+                                                            @click.outside="indikatorOpen[id] = false"
+                                                            style="position: relative;">
+                                                            <input type="hidden"
                                                                 :name="'jenis_detail[' + id + '][indikator_id]'"
-                                                                x-model="formData[id].indikator_id"
-                                                                class="mc-input"
-                                                                :disabled="!formData[id].sasaran_id">
-                                                                <option value="" x-text="formData[id].sasaran_id ? '-- Pilih Indikator Kinerja --' : '-- Pilih Sasaran terlebih dahulu --'"></option>
+                                                                x-model="formData[id].indikator_id">
+                                                            <div class="ad-trigger no-icon"
+                                                                :class="{'active': indikatorOpen[id], 'disabled': !formData[id].sasaran_id}"
+                                                                @click="if (formData[id].sasaran_id) indikatorOpen[id] = !indikatorOpen[id]">
+                                                                <div
+                                                                    style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                                    <i class="fas fa-tachometer-alt"
+                                                                        style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
+                                                                    <span x-show="!formData[id].sasaran_id"
+                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Sasaran terlebih dahulu --</span>
+                                                                    <span x-show="formData[id].sasaran_id && !formData[id].indikator_id"
+                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Indikator Kinerja --</span>
+                                                                    <span x-show="formData[id].indikator_id"
+                                                                        style="font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                                        x-text="indikatorOptions.find(o => o.id == formData[id].indikator_id)?.nama_indikator || ''"></span>
+                                                                </div>
+                                                                <i class="fas fa-chevron-down"
+                                                                    style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;"
+                                                                    :style="indikatorOpen[id] ? 'transform: rotate(180deg)' : ''"></i>
+                                                            </div>
+                                                            <div class="ad-menu" x-show="indikatorOpen[id]" x-transition
+                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; max-height: 200px; overflow-y: auto;">
                                                                 <template x-for="opt in getIndikatorOptions(id)" :key="opt.id">
-                                                                    <option :value="opt.id" x-text="opt.nama_indikator"></option>
+                                                                    <div class="ad-item"
+                                                                        :class="{'selected': formData[id].indikator_id == opt.id}"
+                                                                        @click="formData[id].indikator_id = opt.id; indikatorOpen[id] = false"
+                                                                        style="font-size: 12px; padding: 8px 12px;">
+                                                                        <span x-text="opt.nama_indikator"></span>
+                                                                    </div>
                                                                 </template>
-                                                            </select>
+                                                                <div class="ad-item" x-show="formData[id].sasaran_id && getIndikatorOptions(id).length === 0"
+                                                                    style="font-size: 12px; padding: 8px 12px; color: #9ca3af; cursor: default;">
+                                                                    Tidak ada indikator
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
