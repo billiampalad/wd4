@@ -4118,6 +4118,10 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover {
 }
 
 /* ─── ALPINE CUSTOM UI ─── */
+html {
+    scrollbar-gutter: stable;
+}
+
 .alpine-dropdown {
     position: relative;
     width: 100%;
@@ -4201,6 +4205,36 @@ input[type="date"].mc-input::-webkit-calendar-picker-indicator:hover {
     background: var(--accent);
     color: #fff;
     font-weight: 600;
+}
+
+.sasaran-indikator-grid,
+.sasaran-indikator-grid .mc-group,
+.sasaran-indikator-grid .alpine-dropdown,
+.sasaran-indikator-grid .ad-trigger,
+.sasaran-indikator-grid .ad-menu,
+.sasaran-indikator-grid .ad-item {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.sasaran-indikator-grid .ad-trigger,
+.sasaran-indikator-grid .ad-menu {
+    width: 100%;
+    max-width: 100%;
+}
+
+.sasaran-indikator-grid .ad-menu {
+    overflow-x: hidden;
+}
+
+.sasaran-indikator-grid .ad-item > span,
+.sasaran-indikator-grid .ad-trigger span {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .alpine-datepicker {
