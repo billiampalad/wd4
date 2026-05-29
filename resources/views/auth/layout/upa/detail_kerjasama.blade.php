@@ -450,8 +450,17 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <span
-                                                    style="font-size: 13px; color: var(--text);">{{ $item->sasaran?->deskripsi ?? '-' }}</span>
+                                                <div style="font-size: 13px; color: var(--text); line-height: 1.45;">
+                                                    {{ $item->sasaran?->deskripsi ?? '-' }}
+                                                </div>
+                                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border);">
+                                                    <div style="font-size: 10px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px;">
+                                                        Indikator
+                                                    </div>
+                                                    <div style="font-size: 12px; color: var(--text); line-height: 1.45;">
+                                                        {{ $item->indikator?->nama_indikator ?? '-' }}
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td style="text-align: right;">
                                                 @if ($item->nilai_kontrak > 0)
