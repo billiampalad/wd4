@@ -859,7 +859,7 @@
 
 /* ─── DUAL CHART UI (JURUSAN & PRODI) ───────────────────────── */
 .ud-bento-full {
-    margin-bottom: 16px;
+    margin: 16px 0;
     animation: udFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
