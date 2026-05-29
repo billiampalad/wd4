@@ -501,7 +501,7 @@
         </article>
     </section>
 
-    <section class="ud-bento-full">
+    <section>
         <article class="ud-panel">
             <div class="ud-panel-head">
                 <div>
