@@ -12,6 +12,66 @@ $expiredCount = $kerjasamaList->filter(function ($item) {
 $status = strtolower($item->status ?? '');
 return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 })->count();
+
+$pelaksanaGroupsFor = function ($kegiatan) {
+    $groups = collect();
+
+    $jurusanNames = $kegiatan->relationLoaded('jurusans')
+        ? $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values()
+        : collect();
+    if ($jurusanNames->isEmpty() && $kegiatan->jurusan?->nama_jurusan) {
+        $jurusanNames = collect([$kegiatan->jurusan->nama_jurusan]);
+    }
+    if ($jurusanNames->isNotEmpty()) {
+        $groups->push([
+            'type' => 'Jurusan',
+            'icon' => 'fa-microchip',
+            'class' => 'dk-entity-indigo',
+            'names' => $jurusanNames,
+        ]);
+    }
+
+    $upaNames = $kegiatan->relationLoaded('upas')
+        ? $kegiatan->upas->pluck('nama_upa')->filter()->values()
+        : collect();
+    if ($upaNames->isEmpty() && $kegiatan->upa?->nama_upa) {
+        $upaNames = collect([$kegiatan->upa->nama_upa]);
+    }
+    if ($upaNames->isNotEmpty()) {
+        $groups->push([
+            'type' => 'UPA',
+            'icon' => 'fa-building-columns',
+            'class' => 'dk-entity-cyan',
+            'names' => $upaNames,
+        ]);
+    }
+
+    $pusatNames = $kegiatan->relationLoaded('pusats')
+        ? $kegiatan->pusats->pluck('nama_pusat')->filter()->values()
+        : collect();
+    if ($pusatNames->isEmpty() && $kegiatan->pusat?->nama_pusat) {
+        $pusatNames = collect([$kegiatan->pusat->nama_pusat]);
+    }
+    if ($pusatNames->isNotEmpty()) {
+        $groups->push([
+            'type' => 'Pusat',
+            'icon' => 'fa-landmark',
+            'class' => 'dk-entity-violet',
+            'names' => $pusatNames,
+        ]);
+    }
+
+    if ($groups->isEmpty()) {
+        $groups->push([
+            'type' => '',
+            'icon' => $kegiatan->pelaksana_icon ?? 'fa-building',
+            'class' => $kegiatan->pelaksana_class ?? 'dk-entity-indigo',
+            'names' => collect([$kegiatan->pelaksana_name ?: '-']),
+        ]);
+    }
+
+    return $groups;
+};
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -514,9 +574,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         default => 'Belum Diatur',
                         };
 
-                        $pelaksanaIcon = $kegiatan->pelaksana_icon;
-                        $pelaksanaClass = $kegiatan->pelaksana_class;
-                        $pelaksanaName = $kegiatan->pelaksana_name;
+                        $pelaksanaGroups = $pelaksanaGroupsFor($kegiatan);
 
                         $mulai = $kegiatan->start_date?->format('d M Y');
                         $selesai = $kegiatan->end_date?->format('d M Y');
@@ -536,11 +594,20 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                                 </div>
                             </td>
                             <td class="um-td" style="vertical-align: top; padding-top: 15px;">
-                                <div class="dk-entity" style="align-items: flex-start;">
-                                    <span class="dk-entity-icon {{ $pelaksanaClass }}" style="flex-shrink: 0;">
-                                        <i class="fas {{ $pelaksanaIcon }}"></i>
-                                    </span>
-                                    <span class="dk-entity-text" style="padding-top: 4px;">{{ $pelaksanaName }}</span>
+                                <div style="display: grid; gap: 8px;">
+                                    @foreach ($pelaksanaGroups as $group)
+                                        <div class="dk-entity" style="align-items: flex-start;">
+                                            <span class="dk-entity-icon {{ $group['class'] }}" style="flex-shrink: 0;">
+                                                <i class="fas {{ $group['icon'] }}"></i>
+                                            </span>
+                                            <span class="dk-entity-text" style="padding-top: 2px;">
+                                                @if ($group['type'])
+                                                    <small style="display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-sub); margin-bottom:2px;">{{ $group['type'] }}</small>
+                                                @endif
+                                                {{ $group['names']->implode(', ') }}
+                                            </span>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </td>
                             <td class="um-td" style="vertical-align: top; padding-top: 15px;">
@@ -652,6 +719,27 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
             return String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
         }
 
+        function buildPelaksanaHtml(item) {
+            var groups = Array.isArray(item.pelaksana_groups) ? item.pelaksana_groups : [];
+            if (groups.length === 0) {
+                groups = [{
+                    type: '',
+                    icon: item.pelaksana_icon || 'fa-building',
+                    class: item.pelaksana_class || 'dk-entity-indigo',
+                    names: [item.pelaksana_name || '-']
+                }];
+            }
+
+            return groups.map(function(group) {
+                var names = Array.isArray(group.names) && group.names.length > 0 ? group.names.join(', ') : '-';
+                var typeLabel = group.type
+                    ? '<small style="display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-sub); margin-bottom:2px;">' + escapeHtml(group.type) + '</small>'
+                    : '';
+
+                return '<div class="dk-entity" style="align-items: flex-start;"><span class="dk-entity-icon ' + escapeHtml(group.class || 'dk-entity-indigo') + '" style="flex-shrink: 0;"><i class="fas ' + escapeHtml(group.icon || 'fa-building') + '"></i></span><span class="dk-entity-text" style="padding-top: 2px;">' + typeLabel + escapeHtml(names) + '</span></div>';
+            }).join('');
+        }
+
         function setCount(total) {
             if (countLabel) countLabel.textContent = total + ' data ditemukan';
         }
@@ -678,21 +766,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
             var jenis = escapeHtml(item.jenis || '-');
             var mitraName = escapeHtml((item.mitra && item.mitra.nama_mitra) ? item.mitra.nama_mitra : '-');
 
-            var pelaksanaIcon = 'fa-building';
-            var pelaksanaClass = 'dk-entity-indigo';
-            var pelaksanaName = item.pelaksana_name || '-';
-            if (item.tipe_pelaksana === 'jurusan') {
-                pelaksanaIcon = 'fa-microchip';
-            } else if (item.tipe_pelaksana === 'upa') {
-                pelaksanaIcon = 'fa-building-columns';
-                pelaksanaClass = 'dk-entity-cyan';
-            } else if (item.tipe_pelaksana === 'pusat') {
-                pelaksanaIcon = 'fa-landmark';
-                pelaksanaClass = 'dk-entity-violet';
-            } else {
-                pelaksanaIcon = item.pelaksana_icon || pelaksanaIcon;
-                pelaksanaClass = item.pelaksana_class || pelaksanaClass;
-            }
+            var pelaksanaHtml = buildPelaksanaHtml(item);
 
             var status = (item.status || '').toLowerCase();
             var isExpired = ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'].indexOf(status) !== -1;
@@ -734,7 +808,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
             tr.innerHTML =
                 '<td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;"><span class="um-num dk-num">' + String(idx + 1).padStart(2, '0') + '</span></td>' +
                 '<td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;"><div class="dk-doc-cell" style="white-space: normal; word-break: break-word;"><span class="dk-doc-number">#' + docNumber + '</span><span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">' + title + '</span><span class="dk-doc-kind">' + jenis + '</span></div></td>' +
-                '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div class="dk-entity" style="align-items: flex-start;"><span class="dk-entity-icon ' + pelaksanaClass + '" style="flex-shrink: 0;"><i class="fas ' + pelaksanaIcon + '"></i></span><span class="dk-entity-text" style="padding-top: 4px;">' + escapeHtml(pelaksanaName) + '</span></div></td>' +
+                '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div style="display: grid; gap: 8px;">' + pelaksanaHtml + '</div></td>' +
                 '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div class="dk-entity" style="align-items: flex-start;"><span class="dk-entity-icon dk-entity-emerald" style="flex-shrink: 0;"><i class="fas fa-building"></i></span><span class="dk-entity-text" style="padding-top: 4px;">' + mitraName + '</span></div></td>' +
                 '<td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;"><div class="dk-date-range-compact"><span class="date-val">' + formatDate(item.start_date) + '</span><span class="date-sep">s/d</span><span class="date-val">' + formatDate(item.end_date) + '</span></div></td>' +
                 '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><span class="dk-status ' + statusClass + '"><i class="fas ' + statusIcon + '"></i> ' + statusLabel + '</span></td>' +

@@ -28,27 +28,52 @@
         default => 'Belum Diatur',
     };
 
-    $pelaksanaIcon = 'fa-building';
-    $pelaksanaClass = 'dk-entity-indigo';
-    $pelaksanaName = '-';
-    $pelaksanaType = '';
-    if ($kegiatan->tipe_pelaksana === 'jurusan') {
-        $pelaksanaIcon = 'fa-microchip';
-        $pelaksanaClass = 'dk-entity-indigo';
-        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-        $pelaksanaType = 'Jurusan';
-    } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-        $pelaksanaIcon = 'fa-building-columns';
-        $pelaksanaClass = 'dk-entity-cyan';
-        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-        $pelaksanaType = 'UPA';
-    } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-        $pelaksanaIcon = 'fa-landmark';
-        $pelaksanaClass = 'dk-entity-violet';
-        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-        $pelaksanaType = 'Pusat';
+    $pelaksanaGroups = collect();
+
+    $jurusanNames = $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values();
+    if ($jurusanNames->isEmpty() && $kegiatan->jurusan?->nama_jurusan) {
+        $jurusanNames = collect([$kegiatan->jurusan->nama_jurusan]);
     }
-    $hasPelaksanaData = $pelaksanaType !== '' && $pelaksanaName !== '-';
+    if ($jurusanNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'Jurusan',
+            'icon' => 'fa-microchip',
+            'class' => 'dk-entity-indigo',
+            'label_class' => 'indigo',
+            'names' => $jurusanNames,
+        ]);
+    }
+
+    $upaNames = $kegiatan->upas->pluck('nama_upa')->filter()->values();
+    if ($upaNames->isEmpty() && $kegiatan->upa?->nama_upa) {
+        $upaNames = collect([$kegiatan->upa->nama_upa]);
+    }
+    if ($upaNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'UPA',
+            'icon' => 'fa-building-columns',
+            'class' => 'dk-entity-cyan',
+            'label_class' => 'cyan',
+            'names' => $upaNames,
+        ]);
+    }
+
+    $pusatNames = $kegiatan->pusats->pluck('nama_pusat')->filter()->values();
+    if ($pusatNames->isEmpty() && $kegiatan->pusat?->nama_pusat) {
+        $pusatNames = collect([$kegiatan->pusat->nama_pusat]);
+    }
+    if ($pusatNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'Pusat',
+            'icon' => 'fa-landmark',
+            'class' => 'dk-entity-violet',
+            'label_class' => 'violet',
+            'names' => $pusatNames,
+        ]);
+    }
+
+    $hasPelaksanaData = $pelaksanaGroups->isNotEmpty();
+    $pelaksanaTypeLabel = $pelaksanaGroups->pluck('type')->filter()->implode(', ');
 
     $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
@@ -212,7 +237,7 @@
                 <div class="dk-stat-icon"><i class="fas fa-building-user"></i></div>
                 <div class="dk-stat-info">
                     <span class="dk-stat-label">Tipe Pelaksana</span>
-                    <strong>{{ $pelaksanaType ?: '-' }}</strong>
+                    <strong>{{ $pelaksanaTypeLabel ?: '-' }}</strong>
                 </div>
             </div>
         </div>
@@ -703,15 +728,18 @@
                             </div>
                         </div>
                         <div class="card-body dk-card-body" style="padding: 28px;">
-                            <div class="dk-entity-card">
-                                <span class="dk-entity-icon {{ $pelaksanaClass }}">
-                                    <i class="fas {{ $pelaksanaIcon }}"></i>
-                                </span>
-                                <div class="dk-entity-text">
-                                    <small
-                                        class="dk-entity-label {{ str_replace('dk-entity-', '', $pelaksanaClass) }}">{{ $pelaksanaType }}</small>
-                                    <strong>{{ $pelaksanaName }}</strong>
-                                </div>
+                            <div style="display: grid; gap: 12px;">
+                                @foreach ($pelaksanaGroups as $group)
+                                    <div class="dk-entity-card">
+                                        <span class="dk-entity-icon {{ $group['class'] }}">
+                                            <i class="fas {{ $group['icon'] }}"></i>
+                                        </span>
+                                        <div class="dk-entity-text">
+                                            <small class="dk-entity-label {{ $group['label_class'] }}">{{ $group['type'] }}</small>
+                                            <strong>{{ $group['names']->implode(', ') }}</strong>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
 
                             @if ($kegiatan->prodis->count() > 0)

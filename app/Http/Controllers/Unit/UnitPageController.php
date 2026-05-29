@@ -1143,6 +1143,7 @@ class UnitPageController extends Controller
                     'pelaksana_name' => $c->pelaksana_name,
                     'pelaksana_icon' => $c->pelaksana_icon,
                     'pelaksana_class' => $c->pelaksana_class,
+                    'pelaksana_groups' => $this->pelaksanaGroupsPayload($c),
                     'start_date'     => $c->start_date ? $c->start_date->toDateString() : null,
                     'end_date'       => $c->end_date   ? $c->end_date->toDateString()   : null,
                     // status: coba field status dulu, fallback ke status_dokumen
@@ -1177,7 +1178,7 @@ class UnitPageController extends Controller
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers'])
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc');
 
@@ -1349,6 +1350,61 @@ class UnitPageController extends Controller
         }
 
         return redirect()->route('unit.form')->with('success', 'Laporan berhasil diupload.');
+    }
+
+    private function pelaksanaGroupsPayload(Cooperation $cooperation): array
+    {
+        $groups = [];
+
+        $jurusanNames = $cooperation->jurusans->pluck('nama_jurusan')->filter()->values();
+        if ($jurusanNames->isEmpty() && $cooperation->jurusan?->nama_jurusan) {
+            $jurusanNames = collect([$cooperation->jurusan->nama_jurusan]);
+        }
+        if ($jurusanNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'Jurusan',
+                'icon' => 'fa-microchip',
+                'class' => 'dk-entity-indigo',
+                'names' => $jurusanNames->all(),
+            ];
+        }
+
+        $upaNames = $cooperation->upas->pluck('nama_upa')->filter()->values();
+        if ($upaNames->isEmpty() && $cooperation->upa?->nama_upa) {
+            $upaNames = collect([$cooperation->upa->nama_upa]);
+        }
+        if ($upaNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'UPA',
+                'icon' => 'fa-building-columns',
+                'class' => 'dk-entity-cyan',
+                'names' => $upaNames->all(),
+            ];
+        }
+
+        $pusatNames = $cooperation->pusats->pluck('nama_pusat')->filter()->values();
+        if ($pusatNames->isEmpty() && $cooperation->pusat?->nama_pusat) {
+            $pusatNames = collect([$cooperation->pusat->nama_pusat]);
+        }
+        if ($pusatNames->isNotEmpty()) {
+            $groups[] = [
+                'type' => 'Pusat',
+                'icon' => 'fa-landmark',
+                'class' => 'dk-entity-violet',
+                'names' => $pusatNames->all(),
+            ];
+        }
+
+        if (empty($groups)) {
+            $groups[] = [
+                'type' => '',
+                'icon' => $cooperation->pelaksana_icon,
+                'class' => $cooperation->pelaksana_class,
+                'names' => [$cooperation->pelaksana_name ?: '-'],
+            ];
+        }
+
+        return $groups;
     }
 
     public function formLaporanDestroy($id)
