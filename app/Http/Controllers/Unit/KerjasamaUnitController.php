@@ -77,8 +77,14 @@ class KerjasamaUnitController extends Controller
 
     public function store(Request $request)
     {
+        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'));
+        $tipePelaksana = $requiresPelaksana
+            ? $this->normalizedTipePelaksana($request->input('tipe_pelaksana', []))
+            : [];
+
         $request->merge([
             'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+            'tipe_pelaksana' => !empty($tipePelaksana) ? $tipePelaksana : null,
         ]);
 
         $request->validate([
@@ -94,7 +100,8 @@ class KerjasamaUnitController extends Controller
             'document_link' => 'nullable|string|max:255',
             'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
             // Tipe pelaksana hanya wajib jika jenis BUKAN MoU
-            'tipe_pelaksana' => 'required_if:jenis,MoA (Memorandum of Agreement),IA (Implementation Agreement)|nullable|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => [Rule::requiredIf($requiresPelaksana), 'nullable', 'array', 'min:1'],
+            'tipe_pelaksana.*' => ['string', Rule::in(['jurusan', 'upa', 'pusat'])],
 
             // Penggiat validation
             'penggiat_mitra_ids' => 'required|array|min:1',
@@ -102,7 +109,8 @@ class KerjasamaUnitController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.min' => 'Minimal pilih satu tipe pelaksana.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
@@ -184,6 +192,7 @@ class KerjasamaUnitController extends Controller
             }
 
             // 3. Create Cooperation
+            $primaryTipePelaksana = $tipePelaksana[0] ?? null;
             $cooperation = Cooperation::create([
                 'title' => $request->title,
                 'jenis' => $request->jenis,
@@ -201,25 +210,16 @@ class KerjasamaUnitController extends Controller
                 'pj_internal_id' => $pjInternal?->id,
                 'penandatangan_mitra_id' => $penandatanganMitra?->id,
                 'pj_mitra_id' => $pjMitra?->id,
-                'tipe_pelaksana' => $request->tipe_pelaksana,
-                'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
-                'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
-                'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
+                'tipe_pelaksana' => $primaryTipePelaksana,
+                'jurusan_id' => in_array('jurusan', $tipePelaksana, true) && $request->pelaksana_jurusan_ids ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => in_array('upa', $tipePelaksana, true) && $request->pelaksana_upa_ids ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => in_array('pusat', $tipePelaksana, true) && $request->pelaksana_pusat_ids ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
 
             // 4. Handle Pivot Tables
-            if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
-                $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
-                if ($request->pelaksana_prodi_ids) {
-                    $cooperation->prodis()->sync($request->pelaksana_prodi_ids);
-                }
-            } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
-                $cooperation->upas()->sync($request->pelaksana_upa_ids);
-            } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
-                $cooperation->pusats()->sync($request->pelaksana_pusat_ids);
-            }
+            $this->syncPelaksanaRelations($cooperation, $tipePelaksana, $request);
 
             // 5. Handle Detail Kegiatans (Optional fields)
             if ($request->id_jenis && is_array($request->id_jenis)) {
@@ -313,9 +313,14 @@ class KerjasamaUnitController extends Controller
     public function update(Request $request, $id)
     {
         $cooperation = Cooperation::findOrFail($id);
+        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'));
+        $tipePelaksana = $requiresPelaksana
+            ? $this->normalizedTipePelaksana($request->input('tipe_pelaksana', []))
+            : [];
 
         $request->merge([
             'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+            'tipe_pelaksana' => !empty($tipePelaksana) ? $tipePelaksana : null,
         ]);
 
         $request->validate([
@@ -335,13 +340,15 @@ class KerjasamaUnitController extends Controller
             'end_date' => 'nullable|date',
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
-            'tipe_pelaksana' => 'required_if:jenis,MoA (Memorandum of Agreement),IA (Implementation Agreement)|nullable|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => [Rule::requiredIf($requiresPelaksana), 'nullable', 'array', 'min:1'],
+            'tipe_pelaksana.*' => ['string', Rule::in(['jurusan', 'upa', 'pusat'])],
             'penggiat_mitra_ids' => 'required|array|min:1',
             'penggiat' => 'required|array|min:1',
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required_if' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.min' => 'Minimal pilih satu tipe pelaksana.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
@@ -361,6 +368,7 @@ class KerjasamaUnitController extends Controller
             ];
 
             $status = $statusMap[$request->status] ?? $cooperation->status;
+            $primaryTipePelaksana = $tipePelaksana[0] ?? null;
 
             // 1. Handle Internal Pejabats (Pihak 1)
             if ($request->nama_penandatangan) {
@@ -447,10 +455,10 @@ class KerjasamaUnitController extends Controller
                 'pj_internal_id' => $cooperation->pj_internal_id,
                 'penandatangan_mitra_id' => $cooperation->penandatangan_mitra_id,
                 'pj_mitra_id' => $cooperation->pj_mitra_id,
-                'tipe_pelaksana' => $request->tipe_pelaksana,
-                'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
-                'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
-                'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
+                'tipe_pelaksana' => $primaryTipePelaksana,
+                'jurusan_id' => in_array('jurusan', $tipePelaksana, true) && $request->pelaksana_jurusan_ids ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => in_array('upa', $tipePelaksana, true) && $request->pelaksana_upa_ids ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => in_array('pusat', $tipePelaksana, true) && $request->pelaksana_pusat_ids ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
@@ -462,16 +470,7 @@ class KerjasamaUnitController extends Controller
             $cooperation->pusats()->detach();
             $cooperation->prodis()->detach();
 
-            if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
-                $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
-                if ($request->pelaksana_prodi_ids) {
-                    $cooperation->prodis()->sync($request->pelaksana_prodi_ids);
-                }
-            } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
-                $cooperation->upas()->sync($request->pelaksana_upa_ids);
-            } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
-                $cooperation->pusats()->sync($request->pelaksana_pusat_ids);
-            }
+            $this->syncPelaksanaRelations($cooperation, $tipePelaksana, $request);
 
             // 5. Handle Detail Kegiatans
             $cooperation->details()->delete();
@@ -628,6 +627,39 @@ class KerjasamaUnitController extends Controller
         return $cooperation->status_dokumen === 'Disahkan'
             && !$isInExtension
             && ($isExpiredStatus || $isExpiredDate || $isNearExpiry);
+    }
+
+    private function requiresPelaksana(?string $jenis): bool
+    {
+        return in_array($jenis, [
+            'MoA (Memorandum of Agreement)',
+            'IA (Implementation Agreement)',
+        ], true);
+    }
+
+    private function normalizedTipePelaksana($types): array
+    {
+        return collect((array) $types)
+            ->filter(fn ($type) => in_array($type, ['jurusan', 'upa', 'pusat'], true))
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function syncPelaksanaRelations(Cooperation $cooperation, array $tipePelaksana, Request $request): void
+    {
+        if (in_array('jurusan', $tipePelaksana, true)) {
+            $cooperation->jurusans()->sync((array) $request->input('pelaksana_jurusan_ids', []));
+            $cooperation->prodis()->sync((array) $request->input('pelaksana_prodi_ids', []));
+        }
+
+        if (in_array('upa', $tipePelaksana, true)) {
+            $cooperation->upas()->sync((array) $request->input('pelaksana_upa_ids', []));
+        }
+
+        if (in_array('pusat', $tipePelaksana, true)) {
+            $cooperation->pusats()->sync((array) $request->input('pelaksana_pusat_ids', []));
+        }
     }
 
     private function syncPksNumbers(Cooperation $cooperation, array $numbers): void

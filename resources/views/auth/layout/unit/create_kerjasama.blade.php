@@ -6,17 +6,38 @@
         ->map(fn ($id) => (int) $id)
         ->values()
         ->all();
+    $normalizeTipePelaksana = fn ($value) => collect((array) $value)
+        ->filter(fn ($type) => in_array($type, ['jurusan', 'upa', 'pusat'], true))
+        ->unique()
+        ->values()
+        ->all();
 
     $prefillJenis = $perpanjanganAsal?->jenis ?? 'MoU (Memorandum of Understanding)';
     $prefillJurusanIds = $isPerpanjangan ? $perpanjanganAsal->jurusans->pluck('id')->values()->all() : [];
     $prefillProdiIds = $isPerpanjangan ? $perpanjanganAsal->prodis->pluck('id')->values()->all() : [];
     $prefillUpaIds = $isPerpanjangan ? $perpanjanganAsal->upas->pluck('id')->values()->all() : [];
     $prefillPusatIds = $isPerpanjangan ? $perpanjanganAsal->pusats->pluck('id')->values()->all() : [];
+    $prefillTipePelaksana = [];
+    if ($isPerpanjangan) {
+        if ($perpanjanganAsal->jurusans->isNotEmpty()) {
+            $prefillTipePelaksana[] = 'jurusan';
+        }
+        if ($perpanjanganAsal->upas->isNotEmpty()) {
+            $prefillTipePelaksana[] = 'upa';
+        }
+        if ($perpanjanganAsal->pusats->isNotEmpty()) {
+            $prefillTipePelaksana[] = 'pusat';
+        }
+        if (empty($prefillTipePelaksana) && $perpanjanganAsal->tipe_pelaksana) {
+            $prefillTipePelaksana[] = $perpanjanganAsal->tipe_pelaksana;
+        }
+    }
 
     $selectedJurusanIds = $normalizeIds(old('pelaksana_jurusan_ids', $prefillJurusanIds));
     $selectedProdiIds = $normalizeIds(old('pelaksana_prodi_ids', $prefillProdiIds));
     $selectedUpaIds = $normalizeIds(old('pelaksana_upa_ids', $prefillUpaIds));
     $selectedPusatIds = $normalizeIds(old('pelaksana_pusat_ids', $prefillPusatIds));
+    $selectedTipePelaksana = $normalizeTipePelaksana(old('tipe_pelaksana', $prefillTipePelaksana));
 
     $prefillDetailIds = $isPerpanjangan ? $perpanjanganAsal->details->pluck('jenis_kerjasama_id')->values()->all() : [];
     $selectedDetailIds = $normalizeIds(old('id_jenis', $prefillDetailIds));
@@ -713,7 +734,17 @@
                                         {{-- ══ Tipe Pelaksana Dropdown ══ --}}
                                         <div x-data="{
                                             jenisDokumen: '{{ old('jenis', $prefillJenis) }}',
-                                            tipePelaksana: '{{ old('tipe_pelaksana', $perpanjanganAsal?->tipe_pelaksana ?? '') }}',
+                                            tipePelaksana: @js($selectedTipePelaksana),
+                                            hasTipePelaksana(type) {
+                                                return this.tipePelaksana.includes(type);
+                                            },
+                                            toggleTipePelaksana(type) {
+                                                if (this.hasTipePelaksana(type)) {
+                                                    this.tipePelaksana = this.tipePelaksana.filter(item => item !== type);
+                                                } else {
+                                                    this.tipePelaksana.push(type);
+                                                }
+                                            },
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
@@ -783,7 +814,7 @@
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
                                         }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value"
-                                            @reset-tipe-pelaksana.window="tipePelaksana = ''">
+                                            @reset-tipe-pelaksana.window="tipePelaksana = []">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -811,22 +842,24 @@
                                                         style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
                                                         <template
                                                             x-for="opt in [{v:'jurusan', icon:'fas fa-microchip', label:'Jurusan', color:'#4f46e5'}, {v:'upa', icon:'fas fa-building-columns', label:'UPA', color:'#0891b2'}, {v:'pusat', icon:'fas fa-landmark', label:'Pusat', color:'#7c3aed'}]">
-                                                            <button type="button" @click="tipePelaksana = opt.v"
-                                                                :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${tipePelaksana === opt.v ? opt.color : 'var(--border)'}; background: ${tipePelaksana === opt.v ? opt.color + '12' : 'var(--surface)'}; color: ${tipePelaksana === opt.v ? opt.color : 'var(--text-sub)'};`"
+                                                            <button type="button" @click="toggleTipePelaksana(opt.v)"
+                                                                :style="`display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.25s ease; border: 2px solid ${hasTipePelaksana(opt.v) ? opt.color : 'var(--border)'}; background: ${hasTipePelaksana(opt.v) ? opt.color + '12' : 'var(--surface)'}; color: ${hasTipePelaksana(opt.v) ? opt.color : 'var(--text-sub)'};`"
                                                                 :class="{'is-invalid': @error('tipe_pelaksana') true @else false @enderror}">
                                                                 <i :class="opt.icon" style="font-size: 13px;"></i>
                                                                 <span x-text="opt.label"></span>
                                                             </button>
                                                         </template>
                                                     </div>
-                                                    <input type="hidden" name="tipe_pelaksana" :value="tipePelaksana">
+                                                    <template x-for="type in tipePelaksana" :key="'tipe-'+type">
+                                                        <input type="hidden" name="tipe_pelaksana[]" :value="type">
+                                                    </template>
                                                     @error('tipe_pelaksana')
                                                     <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                                     @enderror
                                                 </div>
 
                                                 {{-- ══ Jurusan Sub-form (Jenis Kerjasama Style) ══ --}}
-                                                <div x-show="tipePelaksana === 'jurusan'" x-collapse.duration.300ms
+                                                <div x-show="hasTipePelaksana('jurusan')" x-collapse.duration.300ms
                                                     style="margin-top: 12px;">
 
                                                     {{-- Jurusan Dropdown Selector --}}
@@ -1034,7 +1067,7 @@
                                                 </div>
 
                                                 {{-- ══ UPA Sub-form (Checkbox Style) ══ --}}
-                                                <div x-show="tipePelaksana === 'upa'" x-collapse.duration.300ms
+                                                <div x-show="hasTipePelaksana('upa')" x-collapse.duration.300ms
                                                     style="margin-top: 12px;">
                                                     <div class="mc-group">
                                                         <label class="mc-label"><i class="fas fa-building-columns"
@@ -1088,7 +1121,7 @@
                                                 </div>
 
                                                 {{-- ══ Pusat Sub-form (Checkbox Style) ══ --}}
-                                                <div x-show="tipePelaksana === 'pusat'" x-collapse.duration.300ms
+                                                <div x-show="hasTipePelaksana('pusat')" x-collapse.duration.300ms
                                                     style="margin-top: 12px;">
                                                     <div class="mc-group">
                                                         <label class="mc-label"><i class="fas fa-landmark"
