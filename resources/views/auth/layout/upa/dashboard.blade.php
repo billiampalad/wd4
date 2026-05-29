@@ -228,6 +228,120 @@
         @endforeach
     </section>
 
+    <section class="ud-panel ud-table-panel">
+        <div class="ud-table-head">
+            <div>
+                <h3 class="ud-panel-title">Data Teknis Kerjasama</h3>
+                <p class="ud-panel-desc">Filtered view, quick edit link dokumen, dan status operasional.</p>
+            </div>
+            <div class="ud-tabs" aria-label="Filter tipe dokumen">
+                @foreach (['Semua', 'MoU', 'MoA', 'IA'] as $filter)
+                    <button type="button" class="ud-tab {{ $loop->first ? 'is-active' : '' }}"
+                        data-filter-tab="{{ $filter === 'Semua' ? 'all' : $filter }}">
+                        {{ $filter }}
+                        <span>({{ $jenisCounts[$filter] ?? 0 }})</span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="ud-table-wrap">
+            <table class="ud-table">
+                <thead>
+                    <tr>
+                        <th>Judul Kegiatan</th>
+                        <th>Mitra</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Link Dokumen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($kerjasamaTable ?? [] as $item)
+                        @php
+                            $jenisLower = strtolower($item->jenis ?? '');
+                            $jenisShort = str_contains($jenisLower, 'mou')
+                                ? 'MoU'
+                                : (str_contains($jenisLower, 'moa')
+                                    ? 'MoA'
+                                    : (str_contains($jenisLower, 'ia')
+                                        ? 'IA'
+                                        : '-'));
+                            $jenisLabel = match($jenisShort) {
+                                'MoU' => 'Memorandum of Understanding (MoU)',
+                                'MoA' => 'Memorandum of Agreement (MoA)',
+                                'IA'  => 'Implementation Arrangement (IA)',
+                                default => $item->jenis ?? '-',
+                            };
+                            $statusRaw = strtolower(trim($item->status ?? ''));
+                            $statusMap = [
+                                'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
+                                'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
+                                'kadarluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'kedaluwarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'tidak aktif' => ['label' => 'Tidak Aktif', 'class' => 'is-inactive', 'icon' => 'fa-circle-xmark'],
+                                'proses' => ['label' => 'Proses', 'class' => 'is-pending', 'icon' => 'fa-spinner'],
+                            ];
+                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
+                            $deadlineLabel = $item->end_date ? $item->end_date->format('d M Y') : '-';
+                            $pjInternal = $item->pjInternal?->nama ?? '-';
+                        @endphp
+                        <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
+                            <td>
+                                <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
+                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
+                                <span class="ud-type-badge">{{ $jenisLabel }}</span>
+                            </td>
+                            <td>
+                                <span class="ud-mitra">
+                                    <i class="fas fa-building"></i>
+                                    {{ $item->mitra?->nama_mitra ?? '-' }}
+                                    <span class="ud-tooltip">PJ Internal: {{ $pjInternal }}</span>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="ud-status-badge {{ $statusInfo['class'] }}">
+                                    <i class="fas {{ $statusInfo['icon'] }}"></i>
+                                    {{ $statusInfo['label'] }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong>{{ $deadlineLabel }}</strong>
+                                <div class="ud-small">
+                                    {{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
+                            </td>
+                            <td>
+                                <div class="ud-link-editor" data-link-editor>
+                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
+                                        placeholder="Paste link Drive..." data-document-link-input>
+                                    <button class="ud-save-btn" type="button" data-save-document-link
+                                        data-update-url="{{ route('upa.kerjasama.document-link.update', $item->id) }}"
+                                        title="Simpan link">
+                                        <i class="fas fa-floppy-disk"></i>
+                                    </button>
+                                </div>
+                                <span class="ud-save-state"
+                                    data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5">
+                                <div class="ud-empty">Belum ada data kerjasama untuk ditampilkan.</div>
+                            </td>
+                        </tr>
+                    @endforelse
+                    <tr id="unitDashNoResult" style="display:none;">
+                        <td colspan="5">
+                            <div class="ud-empty">Tidak ada dokumen pada filter ini.</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
     <section class="ud-bento-full">
         <article class="ud-panel dashboard-cooperation-layout">
             <div class="ud-panel-head dashboard-cooperation-layout__header">
@@ -402,120 +516,6 @@
                 <canvas id="trendChart" data-trends="{{ json_encode($trendData) }}"></canvas>
             </div>
         </article>
-    </section>
-
-    <section class="ud-panel ud-table-panel">
-        <div class="ud-table-head">
-            <div>
-                <h3 class="ud-panel-title">Data Teknis Kerjasama</h3>
-                <p class="ud-panel-desc">Filtered view, quick edit link dokumen, dan status operasional.</p>
-            </div>
-            <div class="ud-tabs" aria-label="Filter tipe dokumen">
-                @foreach (['Semua', 'MoU', 'MoA', 'IA'] as $filter)
-                    <button type="button" class="ud-tab {{ $loop->first ? 'is-active' : '' }}"
-                        data-filter-tab="{{ $filter === 'Semua' ? 'all' : $filter }}">
-                        {{ $filter }}
-                        <span>({{ $jenisCounts[$filter] ?? 0 }})</span>
-                    </button>
-                @endforeach
-            </div>
-        </div>
-
-        <div class="ud-table-wrap">
-            <table class="ud-table">
-                <thead>
-                    <tr>
-                        <th>Judul Kegiatan</th>
-                        <th>Mitra</th>
-                        <th>Status</th>
-                        <th>Deadline</th>
-                        <th>Link Dokumen</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($kerjasamaTable ?? [] as $item)
-                        @php
-                            $jenisLower = strtolower($item->jenis ?? '');
-                            $jenisShort = str_contains($jenisLower, 'mou')
-                                ? 'MoU'
-                                : (str_contains($jenisLower, 'moa')
-                                    ? 'MoA'
-                                    : (str_contains($jenisLower, 'ia')
-                                        ? 'IA'
-                                        : '-'));
-                            $jenisLabel = match($jenisShort) {
-                                'MoU' => 'Memorandum of Understanding (MoU)',
-                                'MoA' => 'Memorandum of Agreement (MoA)',
-                                'IA'  => 'Implementation Arrangement (IA)',
-                                default => $item->jenis ?? '-',
-                            };
-                            $statusRaw = strtolower(trim($item->status ?? ''));
-                            $statusMap = [
-                                'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
-                                'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
-                                'kadarluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
-                                'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
-                                'kedaluwarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
-                                'tidak aktif' => ['label' => 'Tidak Aktif', 'class' => 'is-inactive', 'icon' => 'fa-circle-xmark'],
-                                'proses' => ['label' => 'Proses', 'class' => 'is-pending', 'icon' => 'fa-spinner'],
-                            ];
-                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
-                            $deadlineLabel = $item->end_date ? $item->end_date->format('d M Y') : '-';
-                            $pjInternal = $item->pjInternal?->nama ?? '-';
-                        @endphp
-                        <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
-                            <td>
-                                <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
-                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
-                                <span class="ud-type-badge">{{ $jenisLabel }}</span>
-                            </td>
-                            <td>
-                                <span class="ud-mitra">
-                                    <i class="fas fa-building"></i>
-                                    {{ $item->mitra?->nama_mitra ?? '-' }}
-                                    <span class="ud-tooltip">PJ Internal: {{ $pjInternal }}</span>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="ud-status-badge {{ $statusInfo['class'] }}">
-                                    <i class="fas {{ $statusInfo['icon'] }}"></i>
-                                    {{ $statusInfo['label'] }}
-                                </span>
-                            </td>
-                            <td>
-                                <strong>{{ $deadlineLabel }}</strong>
-                                <div class="ud-small">
-                                    {{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
-                            </td>
-                            <td>
-                                <div class="ud-link-editor" data-link-editor>
-                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
-                                        placeholder="Paste link Drive..." data-document-link-input>
-                                    <button class="ud-save-btn" type="button" data-save-document-link
-                                        data-update-url="{{ route('upa.kerjasama.document-link.update', $item->id) }}"
-                                        title="Simpan link">
-                                        <i class="fas fa-floppy-disk"></i>
-                                    </button>
-                                </div>
-                                <span class="ud-save-state"
-                                    data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5">
-                                <div class="ud-empty">Belum ada data kerjasama untuk ditampilkan.</div>
-                            </td>
-                        </tr>
-                    @endforelse
-                    <tr id="unitDashNoResult" style="display:none;">
-                        <td colspan="5">
-                            <div class="ud-empty">Tidak ada dokumen pada filter ini.</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </section>
 </main>
 
