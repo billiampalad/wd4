@@ -1820,13 +1820,13 @@
                                                                     :style="sasaranOpen[id] ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="sasaranOpen[id]" x-transition
-                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
+                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: auto; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
                                                                 <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].sasaran_id == opt.id}"
                                                                         @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false; indikatorOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px; min-width: 0;">
-                                                                        <span style="display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="opt.deskripsi"></span>
+                                                                        <span x-text="opt.deskripsi"></span>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -1862,13 +1862,13 @@
                                                                     :style="indikatorOpen[id] ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="indikatorOpen[id]" x-transition
-                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
+                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: auto; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
                                                                 <template x-for="opt in getIndikatorOptions(id)" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].indikator_id == opt.id}"
                                                                         @click="formData[id].indikator_id = opt.id; indikatorOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px; min-width: 0;">
-                                                                        <span style="display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="opt.nama_indikator"></span>
+                                                                        <span x-text="opt.nama_indikator"></span>
                                                                     </div>
                                                                 </template>
                                                                 <div class="ad-item" x-show="formData[id].sasaran_id && getIndikatorOptions(id).length === 0"

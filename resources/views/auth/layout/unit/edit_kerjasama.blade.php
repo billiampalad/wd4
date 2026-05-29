@@ -209,7 +209,7 @@
                                             <label class="mc-label">Status <span class="mc-req">*</span></label>
                                             <input type="hidden" name="status" :value="statusValue">
                                             <div class="alpine-dropdown" @click.outside="statusOpen = false"
-                                                style="position: relative;">
+                                                style="position: relative; width: 100%; min-width: 0;">
                                                 <div class="ad-trigger no-icon" :class="{'active': statusOpen}"
                                                     @click="statusOpen = !statusOpen" style="min-height: 42px;">
                                                     <div
@@ -480,7 +480,7 @@
                                     <div class="mc-grid-2" style="gap: 16px;">
                                         {{-- Left: Type Dropdown --}}
                                         <div class="alpine-dropdown" @click.outside="open = false"
-                                            style="position: relative;">
+                                            style="position: relative; width: 100%; min-width: 0;">
                                             <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
                                                 style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
                                                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -1726,17 +1726,17 @@
                                                     </div>
                                                 </div>
                                                 {{-- Row 5: Sasaran (Custom Dropdown) + Indikator Kinerja --}}
-                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                                <div class="sasaran-indikator-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start;">
                                                     {{-- Sasaran Dropdown --}}
-                                                    <div class="mc-group">
+                                                    <div class="mc-group" style="min-width: 0;">
                                                         <label class="mc-label">Sasaran</label>
                                                         <div class="alpine-dropdown"
                                                             @click.outside="sasaranOpen[id] = false"
-                                                            style="position: relative;">
+                                                            style="position: relative; width: 100%; min-width: 0;">
                                                             <input type="hidden"
                                                                 :name="'jenis_detail[' + id + '][sasaran_id]'"
                                                                 x-model="formData[id].sasaran_id">
-                                                            <div class="ad-trigger no-icon"
+                                                            <div class="ad-trigger no-icon" style="width: 100%; min-width: 0; box-sizing: border-box;"
                                                                 :class="{'active': sasaranOpen[id]}"
                                                                 @click="sasaranOpen[id] = !sasaranOpen[id]">
                                                                 <div
@@ -1744,7 +1744,7 @@
                                                                     <i class="fas fa-crosshairs"
                                                                         style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
                                                                     <span x-show="!formData[id].sasaran_id"
-                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Sasaran --</span>
+                                                                        style="color: #9ca3af; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-- Pilih Sasaran --</span>
                                                                     <span x-show="formData[id].sasaran_id"
                                                                         style="font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                                                         x-text="sasaranOptions.find(o => o.id == formData[id].sasaran_id)?.deskripsi || ''"></span>
@@ -1754,12 +1754,12 @@
                                                                     :style="sasaranOpen[id] ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="sasaranOpen[id]" x-transition
-                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; max-height: 200px; overflow-y: auto;">
+                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: auto; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
                                                                 <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].sasaran_id == opt.id}"
                                                                         @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false; indikatorOpen[id] = false"
-                                                                        style="font-size: 12px; padding: 8px 12px;">
+                                                                        style="font-size: 12px; padding: 8px 12px; min-width: 0;">
                                                                         <span x-text="opt.deskripsi"></span>
                                                                     </div>
                                                                 </template>
@@ -1768,15 +1768,15 @@
                                                     </div>
 
                                                     {{-- Indikator Kinerja --}}
-                                                    <div class="mc-group">
+                                                    <div class="mc-group" style="min-width: 0;">
                                                         <label class="mc-label">Indikator Kinerja</label>
                                                         <div class="alpine-dropdown"
                                                             @click.outside="indikatorOpen[id] = false"
-                                                            style="position: relative;">
+                                                            style="position: relative; width: 100%; min-width: 0;">
                                                             <input type="hidden"
                                                                 :name="'jenis_detail[' + id + '][indikator_id]'"
                                                                 x-model="formData[id].indikator_id">
-                                                            <div class="ad-trigger no-icon"
+                                                            <div class="ad-trigger no-icon" style="width: 100%; min-width: 0; box-sizing: border-box;"
                                                                 :class="{'active': indikatorOpen[id], 'disabled': !formData[id].sasaran_id}"
                                                                 @click="if (formData[id].sasaran_id) indikatorOpen[id] = !indikatorOpen[id]">
                                                                 <div
@@ -1784,9 +1784,9 @@
                                                                     <i class="fas fa-tachometer-alt"
                                                                         style="color: #9ca3af; font-size: 12px; flex-shrink: 0;"></i>
                                                                     <span x-show="!formData[id].sasaran_id"
-                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Sasaran terlebih dahulu --</span>
+                                                                        style="color: #9ca3af; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-- Pilih Sasaran terlebih dahulu --</span>
                                                                     <span x-show="formData[id].sasaran_id && !formData[id].indikator_id"
-                                                                        style="color: #9ca3af; font-size: 12px;">-- Pilih Indikator Kinerja --</span>
+                                                                        style="color: #9ca3af; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-- Pilih Indikator Kinerja --</span>
                                                                     <span x-show="formData[id].indikator_id"
                                                                         style="font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                                                                         x-text="indikatorOptions.find(o => o.id == formData[id].indikator_id)?.nama_indikator || ''"></span>
@@ -1796,12 +1796,12 @@
                                                                     :style="indikatorOpen[id] ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="indikatorOpen[id]" x-transition
-                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 120; max-height: 200px; overflow-y: auto;">
+                                                                style="position: absolute; top: calc(100% + 6px); left: 0; right: auto; z-index: 120; width: 100%; min-width: 0; box-sizing: border-box; max-height: 200px; overflow-y: auto; overflow-x: hidden;">
                                                                 <template x-for="opt in getIndikatorOptions(id)" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].indikator_id == opt.id}"
                                                                         @click="formData[id].indikator_id = opt.id; indikatorOpen[id] = false"
-                                                                        style="font-size: 12px; padding: 8px 12px;">
+                                                                        style="font-size: 12px; padding: 8px 12px; min-width: 0;">
                                                                         <span x-text="opt.nama_indikator"></span>
                                                                     </div>
                                                                 </template>

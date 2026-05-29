@@ -4122,6 +4122,11 @@ html {
     scrollbar-gutter: stable;
 }
 
+body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 .alpine-dropdown {
     position: relative;
     width: 100%;
@@ -4217,17 +4222,40 @@ html {
     box-sizing: border-box;
 }
 
-.sasaran-indikator-grid .ad-trigger,
-.sasaran-indikator-grid .ad-menu {
+.sasaran-indikator-grid {
     width: 100%;
     max-width: 100%;
 }
 
-.sasaran-indikator-grid .ad-menu {
-    overflow-x: hidden;
+.sasaran-indikator-grid .mc-group {
+    width: 100%;
+    max-width: 100%;
 }
 
-.sasaran-indikator-grid .ad-item > span,
+.sasaran-indikator-grid .ad-trigger,
+.sasaran-indikator-grid .ad-menu {
+    width: 100% !important;
+    inline-size: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+.sasaran-indikator-grid .ad-menu {
+    position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+    overflow-x: hidden;
+    max-height: 190px;
+    overscroll-behavior: contain;
+}
+
+.sasaran-indikator-grid .ad-item {
+    width: 100%;
+    max-width: 100%;
+    line-height: 1.35;
+}
+
 .sasaran-indikator-grid .ad-trigger span {
     display: block;
     max-width: 100%;
@@ -4235,6 +4263,18 @@ html {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.sasaran-indikator-grid .ad-item > span {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.35;
 }
 
 .alpine-datepicker {
