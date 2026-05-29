@@ -25,6 +25,19 @@
     $totalMoA = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%MoA%')->count() ?? 0;
     $totalIA = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%IA%')->count() ?? 0;
 
+    $chartDataPelaksana = \App\Models\Pusat::orderBy('nama_pusat')
+        ->get()
+        ->map(function ($pusat) {
+            return [
+                'name' => $pusat->nama_pusat,
+                'type' => 'Pusat',
+                'count' => \App\Models\Cooperation::where('pusat_id', $pusat->id)
+                    ->orWhereHas('pusats', fn($query) => $query->where('pusats.id', $pusat->id))
+                    ->count(),
+            ];
+        })
+        ->values();
+
     $jurusans = \App\Models\Jurusan::with('prodis')->get();
 
     // Count dari pivot table (kerjasama_jurusan)
@@ -293,46 +306,25 @@
         <article class="ud-panel">
             <div class="ud-panel-head">
                 <div>
-                    <h3 class="ud-panel-title">Distribusi Kerjasama Akademik</h3>
-                    <p class="ud-panel-desc">Tinjauan visual distribusi kerjasama berdasarkan Jurusan dan Program Studi
-                        (Prodi).</p>
+                    <h3 class="ud-panel-title">Distribusi Kerjasama Pusat</h3>
+                    <p class="ud-panel-desc">Tinjauan visual jumlah dokumen kerja sama pada setiap Pusat.</p>
                 </div>
-                <span class="ud-status-badge is-interactive"
-                    title="Klik pada batang grafik jurusan untuk memfilter prodi">
-                    <i class="fas fa-hand-pointer"></i> Interactive Filter
+                <span class="ud-status-badge is-interactive">
+                    <i class="fas fa-chart-column"></i> Pusat
                 </span>
             </div>
 
-            <div class="ud-dual-chart-container">
-                <div class="ud-chart-wrapper">
-                    <div class="ud-chart-header">
-                        <div class="ud-chart-icon" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);"><i
-                                class="fas fa-building-columns"></i></div>
-                        <div>
-                            <h4>Grafik Jurusan</h4>
-                            <span>Klik batang grafik untuk memfilter prodi.</span>
-                        </div>
-                    </div>
-                    <div class="ud-canvas-container">
-                        <canvas id="jurusanChart" data-jurusans="{{ json_encode($chartDataJurusan) }}"
-                            data-prodis="{{ json_encode($chartDataProdi) }}"></canvas>
+            <div class="ud-chart-wrapper">
+                <div class="ud-chart-header">
+                    <div class="ud-chart-icon" style="color: #7c3aed; background: rgba(124, 58, 237, 0.1);"><i
+                            class="fas fa-landmark"></i></div>
+                    <div>
+                        <h4>Grafik Pusat</h4>
+                        <span>Menampilkan total kerja sama pada setiap Pusat.</span>
                     </div>
                 </div>
-
-                <div class="ud-chart-divider"></div>
-
-                <div class="ud-chart-wrapper">
-                    <div class="ud-chart-header">
-                        <div class="ud-chart-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);"><i
-                                class="fas fa-graduation-cap"></i></div>
-                        <div>
-                            <h4>Grafik Program Studi</h4>
-                            <span id="prodiChartSubtitle">Menampilkan Semua Jurusan</span>
-                        </div>
-                    </div>
-                    <div class="ud-canvas-container">
-                        <canvas id="prodiChart"></canvas>
-                    </div>
+                <div class="ud-canvas-container" style="min-height: 360px;">
+                    <canvas id="upaPusatChart" data-items="{{ $chartDataPelaksana->toJson() }}"></canvas>
                 </div>
             </div>
         </article>

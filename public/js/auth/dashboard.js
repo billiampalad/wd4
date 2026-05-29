@@ -4,6 +4,7 @@ function initUnitDashboard() {
 
     initUnitChart();
     initJurusanProdiChart();
+    initUpaPusatChart();
     initTrendChart();
 
     const tabs = document.querySelectorAll('[data-filter-tab]');
@@ -295,6 +296,88 @@ function initJurusanProdiChart() {
 
     // Inisialisasi awal dengan semua prodi
     updateProdiChart(null, 'Semua');
+}
+
+function initUpaPusatChart() {
+    const canvas = document.getElementById('upaPusatChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if (window.upaPusatChartInstance) {
+        window.upaPusatChartInstance.destroy();
+    }
+
+    const items = JSON.parse(canvas.dataset.items || '[]');
+    const labels = items.map(item => item.name);
+    const data = items.map(item => Number(item.count || 0));
+    const types = items.map(item => item.type || '');
+    const colors = types.map(type => type === 'Pusat' ? '#7c3aed' : '#0891b2');
+    const softColors = types.map(type => type === 'Pusat' ? 'rgba(124, 58, 237, 0.18)' : 'rgba(8, 145, 178, 0.18)');
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#e2e8f0' : '#475569';
+    const gridColor = isDark ? 'rgba(148, 163, 184, 0.16)' : 'rgba(148, 163, 184, 0.22)';
+
+    window.upaPusatChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Jumlah Kerja Sama',
+                data,
+                backgroundColor: softColors,
+                borderColor: colors,
+                borderWidth: 2,
+                borderRadius: 8,
+                maxBarThickness: 34
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        color: textColor
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            weight: '650'
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#cbd5e1',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label(context) {
+                            const type = types[context.dataIndex] || 'Unit';
+                            return `${type}: ${context.parsed.x} Dokumen`;
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 function initTrendChart() {
