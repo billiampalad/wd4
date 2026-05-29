@@ -652,6 +652,11 @@
                                         <div class="dm-activity-target" style="font-size: 12px; color: var(--text-sub);"><i class="fas fa-bullseye"
                                                 style="color:#8b5cf6; margin-right:4px;"></i> Sasaran:
                                             {{ $det->sasaran->deskripsi ?? '-' }}</div>
+                                        <div class="dm-activity-target" style="font-size: 12px; color: var(--text-sub); margin-top: 6px; line-height: 1.45;">
+                                            <i class="fas fa-tachometer-alt" style="color:#0ea5e9; margin-right:4px;"></i>
+                                            Indikator:
+                                            <span style="color: var(--text);">{{ $det->indikator?->nama_indikator ?? '-' }}</span>
+                                        </div>
                                     </div>
                                     <div class="dm-activity-value" style="text-align: right;">
                                         <div
