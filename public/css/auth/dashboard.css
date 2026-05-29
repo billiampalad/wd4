@@ -464,6 +464,15 @@
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
+.unitdash > section:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.unitdash > section:last-of-type .ud-panel {
+    margin-bottom: 0;
+}
+
 .ud-panel-head {
     display: flex;
     align-items: flex-start;
