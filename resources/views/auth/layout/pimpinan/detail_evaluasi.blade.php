@@ -128,7 +128,7 @@
                             <div>
                                 <span class="ev-label" style="margin-bottom: 4px;">Indikator Kinerja</span>
                                 <p style="font-size: 14px; font-weight: 600; color: #334155; margin:0;">
-                                    {{ $detail->indikator_kinerja ?? '-' }}
+                                    {{ $detail->indikator?->nama_indikator ?? '-' }}
                                 </p>
                             </div>
                             <div>

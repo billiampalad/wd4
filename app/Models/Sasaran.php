@@ -10,4 +10,9 @@ class Sasaran extends Model
     protected $fillable = [
         'deskripsi',
     ];
+
+    public function indikators()
+    {
+        return $this->hasMany(Indikator::class);
+    }
 }

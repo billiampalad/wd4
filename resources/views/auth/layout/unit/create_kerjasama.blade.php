@@ -53,7 +53,7 @@
                 'keterangan' => $detail->keterangan ?? '',
                 'tujuan' => $detail->tujuan ?? '',
                 'sasaran_id' => $detail->sasaran_id ?? '',
-                'indikator_kinerja' => $detail->indikator_kinerja ?? '',
+                'indikator_id' => $detail->indikator_id ?? '',
                 'output' => $detail->output ?? '',
                 'outcome' => $detail->outcome ?? '',
             ];
@@ -71,7 +71,7 @@
                 'keterangan' => $detail['keterangan'] ?? '',
                 'tujuan' => $detail['tujuan'] ?? '',
                 'sasaran_id' => $detail['sasaran_id'] ?? '',
-                'indikator_kinerja' => $detail['indikator_kinerja'] ?? '',
+                'indikator_id' => $detail['indikator_id'] ?? '',
                 'output' => $detail['output'] ?? '',
                 'outcome' => $detail['outcome'] ?? '',
             ];
@@ -1546,6 +1546,14 @@
                                             { id: {{ $sas->id }}, deskripsi: '{{ addslashes($sas->deskripsi) }}' },
                                         @endforeach
                                     ],
+                                    indikatorOptions: [
+                                        @foreach($indikators as $indikator)
+                                            { id: {{ $indikator->id }}, sasaran_id: {{ $indikator->sasaran_id }}, nama_indikator: '{{ addslashes($indikator->nama_indikator) }}' },
+                                        @endforeach
+                                    ],
+                                    getIndikatorOptions(id) {
+                                        return this.indikatorOptions.filter(o => o.sasaran_id == this.formData[id].sasaran_id);
+                                    },
                                     toggle(id) {
                                         const idx = this.selected.indexOf(id);
                                         if (idx > -1) {
@@ -1554,7 +1562,7 @@
                                             delete this.sasaranOpen[id];
                                         } else {
                                             this.selected.push(id);
-                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
+                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                             this.sasaranOpen[id] = false;
                                         }
                                     },
@@ -1566,7 +1574,7 @@
                                     init() {
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
-                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
+                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                                 this.sasaranOpen[id] = false;
                                             }
                                         });
@@ -1814,7 +1822,7 @@
                                                                 <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].sasaran_id == opt.id}"
-                                                                        @click="formData[id].sasaran_id = opt.id; sasaranOpen[id] = false"
+                                                                        @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px;">
                                                                         <span x-text="opt.deskripsi"></span>
                                                                     </div>
@@ -1828,11 +1836,16 @@
                                                         <label class="mc-label">Indikator Kinerja</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-tachometer-alt mc-icon-left"></i>
-                                                            <input type="text"
-                                                                :name="'jenis_detail[' + id + '][indikator_kinerja]'"
-                                                                x-model="formData[id].indikator_kinerja"
-                                                                placeholder="Indikator pencapaian..."
-                                                                class="mc-input" />
+                                                            <select
+                                                                :name="'jenis_detail[' + id + '][indikator_id]'"
+                                                                x-model="formData[id].indikator_id"
+                                                                class="mc-input"
+                                                                :disabled="!formData[id].sasaran_id">
+                                                                <option value="" x-text="formData[id].sasaran_id ? '-- Pilih Indikator Kinerja --' : '-- Pilih Sasaran terlebih dahulu --'"></option>
+                                                                <template x-for="opt in getIndikatorOptions(id)" :key="opt.id">
+                                                                    <option :value="opt.id" x-text="opt.nama_indikator"></option>
+                                                                </template>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>

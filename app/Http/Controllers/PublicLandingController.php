@@ -144,12 +144,14 @@ class PublicLandingController extends Controller
                     })
                     ->orWhereHas('details', function (Builder $detailQuery) use ($search) {
                         $detailQuery->where('tujuan', 'like', "%{$search}%")
-                            ->orWhere('indikator_kinerja', 'like', "%{$search}%")
                             ->orWhere('keterangan', 'like', "%{$search}%")
                             ->orWhere('nilai_kontrak', 'like', "%{$search}%")
                             ->orWhere('income', 'like', "%{$search}%")
                             ->orWhere('volume_luaran', 'like', "%{$search}%")
                             ->orWhere('satuan_luaran', 'like', "%{$search}%")
+                            ->orWhereHas('indikator', function (Builder $indikatorQuery) use ($search) {
+                                $indikatorQuery->where('nama_indikator', 'like', "%{$search}%");
+                            })
                             ->orWhereHas('jenisKerjasama', function (Builder $jenisQuery) use ($search) {
                                 $jenisQuery->where('nama_kerjasama', 'like', "%{$search}%");
                             });

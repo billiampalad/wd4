@@ -131,7 +131,8 @@ class DashboardController
 
     public function pimpinanMonitoring()
     {
-        $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran', 'pjInternal', 'pksNumbers'])
+        $dataKerjasama = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusans', 'upas', 'pusats', 'details', 'details.sasaran',
+            'details.indikator', 'pjInternal', 'pksNumbers'])
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc')
             ->get();
@@ -274,6 +275,7 @@ class DashboardController
             'prodis',
             'details.jenisKerjasama',
             'details.sasaran',
+            'details.indikator',
             'penandatanganInternal',
             'pjInternal',
             'penandatanganMitra',
@@ -380,6 +382,7 @@ class DashboardController
             'pjInternal',
             'details',
             'details.sasaran',
+            'details.indikator',
             'jurusans',
             'upas',
             'pusats',

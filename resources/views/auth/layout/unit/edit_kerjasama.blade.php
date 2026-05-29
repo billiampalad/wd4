@@ -51,7 +51,7 @@
             'keterangan' => array_key_exists('keterangan', $oldDetail) ? $oldDetail['keterangan'] : ($detail->keterangan ?? ''),
             'tujuan' => array_key_exists('tujuan', $oldDetail) ? $oldDetail['tujuan'] : ($detail->tujuan ?? ''),
             'sasaran_id' => array_key_exists('sasaran_id', $oldDetail) ? $oldDetail['sasaran_id'] : ($detail->sasaran_id ?? ''),
-            'indikator_kinerja' => array_key_exists('indikator_kinerja', $oldDetail) ? $oldDetail['indikator_kinerja'] : ($detail->indikator_kinerja ?? ''),
+            'indikator_id' => array_key_exists('indikator_id', $oldDetail) ? $oldDetail['indikator_id'] : ($detail->indikator_id ?? ''),
             'output' => array_key_exists('output', $oldDetail) ? $oldDetail['output'] : ($detail->output ?? ''),
             'outcome' => array_key_exists('outcome', $oldDetail) ? $oldDetail['outcome'] : ($detail->outcome ?? ''),
         ];
@@ -104,6 +104,7 @@
     $mitraOptions = $mitras->map(fn ($m) => ['id' => $m->id, 'nama' => $m->nama_mitra])->values()->all();
     $jenisOptions = $jenisKerjasama->map(fn ($jenis) => ['id' => $jenis->id, 'label' => $jenis->nama_kerjasama])->values()->all();
     $sasaranOptions = $sasarans->map(fn ($sasaran) => ['id' => $sasaran->id, 'deskripsi' => $sasaran->deskripsi])->values()->all();
+    $indikatorOptions = $indikators->map(fn ($indikator) => ['id' => $indikator->id, 'sasaran_id' => $indikator->sasaran_id, 'nama_indikator' => $indikator->nama_indikator])->values()->all();
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -1482,6 +1483,10 @@
                                     formData: @js($initialJenisDetail),
                                     sasaranOpen: {},
                                     sasaranOptions: @js($sasaranOptions),
+                                    indikatorOptions: @js($indikatorOptions),
+                                    getIndikatorOptions(id) {
+                                        return this.indikatorOptions.filter(o => o.sasaran_id == this.formData[id].sasaran_id);
+                                    },
                                     toggle(id) {
                                         const idx = this.selected.indexOf(id);
                                         if (idx > -1) {
@@ -1490,7 +1495,7 @@
                                             delete this.sasaranOpen[id];
                                         } else {
                                             this.selected.push(id);
-                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
+                                            this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                             this.sasaranOpen[id] = false;
                                         }
                                     },
@@ -1502,7 +1507,7 @@
                                     init() {
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
-                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_kinerja: '', output: '', outcome: '' };
+                                                this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
                                                 this.sasaranOpen[id] = false;
                                             }
                                         });
@@ -1751,7 +1756,7 @@
                                                                 <template x-for="opt in sasaranOptions" :key="opt.id">
                                                                     <div class="ad-item"
                                                                         :class="{'selected': formData[id].sasaran_id == opt.id}"
-                                                                        @click="formData[id].sasaran_id = opt.id; sasaranOpen[id] = false"
+                                                                        @click="formData[id].sasaran_id = opt.id; formData[id].indikator_id = ''; sasaranOpen[id] = false"
                                                                         style="font-size: 12px; padding: 8px 12px;">
                                                                         <span x-text="opt.deskripsi"></span>
                                                                     </div>
@@ -1765,11 +1770,16 @@
                                                         <label class="mc-label">Indikator Kinerja</label>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-tachometer-alt mc-icon-left"></i>
-                                                            <input type="text"
-                                                                :name="'jenis_detail[' + id + '][indikator_kinerja]'"
-                                                                x-model="formData[id].indikator_kinerja"
-                                                                placeholder="Indikator pencapaian..."
-                                                                class="mc-input" />
+                                                            <select
+                                                                :name="'jenis_detail[' + id + '][indikator_id]'"
+                                                                x-model="formData[id].indikator_id"
+                                                                class="mc-input"
+                                                                :disabled="!formData[id].sasaran_id">
+                                                                <option value="" x-text="formData[id].sasaran_id ? '-- Pilih Indikator Kinerja --' : '-- Pilih Sasaran terlebih dahulu --'"></option>
+                                                                <template x-for="opt in getIndikatorOptions(id)" :key="opt.id">
+                                                                    <option :value="opt.id" x-text="opt.nama_indikator"></option>
+                                                                </template>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>

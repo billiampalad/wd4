@@ -13,15 +13,15 @@ class SasaranSeeder extends Seeder
     public function run(): void
     {
         $sasarans = [
-            'Meningkatnya Kualitas Lulusan Perguruan Tinggi',
-            'Meningkatnya Inovasi Perguruan Tinggi Dalam Rangka Meningkatkan Mutu Pendidikan',
-            'Meningkatnya Kualitas Dosen Pendidikan Tinggi',
-            'Meningkatkan Kualitas Kurikulum dan Pembelajaran',
-            'Meningkatnya Program Studi yang Berkualitas'
+            'Meningkatnya kualitas lulusan pendidikan tinggi',
+            'Meningkatnya inovasi perguruan tinggi dalam rangka meningkatkan mutu pendidikan',
+            'Meningkatnya kualitas dosen pendidikan tinggi',
+            'Meningkatnya kualitas kurikulum dan pembelajaran',
+            'Meningkatnya program studi yang berkualitas',
         ];
 
         foreach ($sasarans as $sasaran) {
-            \App\Models\Sasaran::create(['deskripsi' => $sasaran]);
+            \App\Models\Sasaran::firstOrCreate(['deskripsi' => $sasaran]);
         }
     }
 }

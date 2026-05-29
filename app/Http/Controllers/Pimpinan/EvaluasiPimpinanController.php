@@ -23,6 +23,7 @@ class EvaluasiPimpinanController extends Controller
             'mitra',
             'details.jenisKerjasama',
             'details.sasaran',
+            'details.indikator',
             'evaluasis.penilai',
             'laporanFiles',
             'pjInternal',

@@ -11,13 +11,13 @@ class DetailKegiatan extends Model
         'cooperation_id',
         'jenis_kerjasama_id',
         'sasaran_id',
+        'indikator_id',
         'nilai_kontrak',
         'income',
         'volume_luaran',
         'satuan_luaran',
         'keterangan',
         'tujuan',
-        'indikator_kinerja',
         'output',
         'outcome',
     ];
@@ -35,5 +35,10 @@ class DetailKegiatan extends Model
     public function sasaran()
     {
         return $this->belongsTo(Sasaran::class);
+    }
+
+    public function indikator()
+    {
+        return $this->belongsTo(Indikator::class);
     }
 }

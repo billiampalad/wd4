@@ -13,6 +13,7 @@ use App\Models\Pusat;
 use App\Models\JenisKerjasama;
 use App\Models\Pejabat;
 use App\Models\Sasaran;
+use App\Models\Indikator;
 use App\Models\DetailKegiatan;
 use App\Models\Notifikasi;
 use App\Models\User;
@@ -46,6 +47,7 @@ class KerjasamaUnitController extends Controller
         $pusats = Pusat::orderBy('nama_pusat')->get();
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
+        $indikators = Indikator::orderBy('nama_indikator')->get();
         $perpanjanganAsal = null;
 
         if ($request->filled('perpanjangan_dari')) {
@@ -59,7 +61,7 @@ class KerjasamaUnitController extends Controller
                 'prodis',
                 'upas',
                 'pusats',
-                'details',
+                'details.indikator',
                 'pksNumbers',
             ])->findOrFail((int) $request->query('perpanjangan_dari'));
 
@@ -70,7 +72,7 @@ class KerjasamaUnitController extends Controller
             }
         }
 
-        return view('auth.unit', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
+        return view('auth.unit', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'indikators', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────
@@ -240,7 +242,7 @@ class KerjasamaUnitController extends Controller
                             'satuan_luaran' => $detailData['satuan_volume'] ?: null,
                             'keterangan' => $detailData['keterangan'] ?: null,
                             'tujuan' => $detailData['tujuan'] ?: null,
-                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?: null,
+                            'indikator_id' => $detailData['indikator_id'] ?: null,
                             'output' => $detailData['output'] ?: null,
                             'outcome' => $detailData['outcome'] ?: null,
                         ]);
@@ -272,6 +274,7 @@ class KerjasamaUnitController extends Controller
             'pusats',
             'details.jenisKerjasama',
             'details.sasaran',
+            'details.indikator',
             'evaluasis.penilai',
             'laporanFiles',
             'pksNumbers',
@@ -294,7 +297,7 @@ class KerjasamaUnitController extends Controller
             'upas',
             'pusats',
             'prodis',
-            'details',
+            'details.indikator',
             'pksNumbers',
         ])->findOrFail($id);
         $mitras = Mitra::orderBy('nama_mitra')->get();
@@ -304,8 +307,9 @@ class KerjasamaUnitController extends Controller
         $pusats = Pusat::orderBy('nama_pusat')->get();
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
+        $indikators = Indikator::orderBy('nama_indikator')->get();
 
-        return view('auth.unit', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans'));
+        return view('auth.unit', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'jenisKerjasama', 'sasarans', 'indikators'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
@@ -492,7 +496,7 @@ class KerjasamaUnitController extends Controller
                             'satuan_luaran' => $detailData['satuan_volume'] ?? null,
                             'keterangan' => $detailData['keterangan'] ?? null,
                             'tujuan' => $detailData['tujuan'] ?? null,
-                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?? null,
+                            'indikator_id' => $detailData['indikator_id'] ?? null,
                             'output' => $detailData['output'] ?? null,
                             'outcome' => $detailData['outcome'] ?? null,
                         ]);

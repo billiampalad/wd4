@@ -13,6 +13,7 @@ use App\Models\Pusat;
 use App\Models\JenisKerjasama;
 use App\Models\Pejabat;
 use App\Models\Sasaran;
+use App\Models\Indikator;
 use App\Models\DetailKegiatan;
 use App\Models\Notifikasi;
 use App\Models\User;
@@ -81,6 +82,7 @@ class KerjasamaPusatController extends Controller
         $allowedTipePelaksana = 'pusat';
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
+        $indikators = Indikator::orderBy('nama_indikator')->get();
         $perpanjanganAsal = null;
 
         if ($request->filled('perpanjangan_dari')) {
@@ -94,7 +96,7 @@ class KerjasamaPusatController extends Controller
                 'prodis',
                 'upas',
                 'pusats',
-                'details',
+                'details.indikator',
                 'pksNumbers',
             ])->whereKey($this->findOwnedCooperation((int) $request->query('perpanjangan_dari'))->id)->firstOrFail();
 
@@ -105,7 +107,7 @@ class KerjasamaPusatController extends Controller
             }
         }
 
-        return view('auth.pusat', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans', 'perpanjanganAsal'));
+        return view('auth.pusat', compact('mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans', 'indikators', 'perpanjanganAsal'));
     }
 
     // ─── STORE ───────────────────────────────────────────
@@ -276,7 +278,7 @@ class KerjasamaPusatController extends Controller
                             'satuan_luaran' => $detailData['satuan_volume'] ?: null,
                             'keterangan' => $detailData['keterangan'] ?: null,
                             'tujuan' => $detailData['tujuan'] ?: null,
-                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?: null,
+                            'indikator_id' => $detailData['indikator_id'] ?: null,
                             'output' => $detailData['output'] ?: null,
                             'outcome' => $detailData['outcome'] ?: null,
                         ]);
@@ -310,6 +312,7 @@ class KerjasamaPusatController extends Controller
             'pusats',
             'details.jenisKerjasama',
             'details.sasaran',
+            'details.indikator',
             'evaluasis.penilai',
             'laporanFiles',
             'pksNumbers',
@@ -333,7 +336,7 @@ class KerjasamaPusatController extends Controller
             'upas',
             'pusats',
             'prodis',
-            'details',
+            'details.indikator',
             'pksNumbers',
         ])->whereKey($this->findOwnedCooperation($id)->id)->firstOrFail();
         $mitras = Mitra::orderBy('nama_mitra')->get();
@@ -344,8 +347,9 @@ class KerjasamaPusatController extends Controller
         $allowedTipePelaksana = 'pusat';
         $jenisKerjasama = JenisKerjasama::orderBy('nama_kerjasama')->get();
         $sasarans = Sasaran::orderBy('deskripsi')->get();
+        $indikators = Indikator::orderBy('nama_indikator')->get();
 
-        return view('auth.pusat', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans'));
+        return view('auth.pusat', compact('kegiatan', 'mitras', 'jurusans', 'prodis', 'upas', 'pusats', 'allowedTipePelaksana', 'jenisKerjasama', 'sasarans', 'indikators'));
     }
 
     // ─── UPDATE ──────────────────────────────────────────
@@ -535,7 +539,7 @@ class KerjasamaPusatController extends Controller
                             'satuan_luaran' => $detailData['satuan_volume'] ?? null,
                             'keterangan' => $detailData['keterangan'] ?? null,
                             'tujuan' => $detailData['tujuan'] ?? null,
-                            'indikator_kinerja' => $detailData['indikator_kinerja'] ?? null,
+                            'indikator_id' => $detailData['indikator_id'] ?? null,
                             'output' => $detailData['output'] ?? null,
                             'outcome' => $detailData['outcome'] ?? null,
                         ]);
