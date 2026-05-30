@@ -73,7 +73,7 @@
     }
 
     $hasPelaksanaData = $pelaksanaGroups->isNotEmpty();
-    $pelaksanaTypeLabel = $pelaksanaGroups->pluck('type')->filter()->implode(', ');
+    $pelaksanaTypeLabel = $pelaksanaGroups->pluck('type')->filter()->implode(', ') ?: 'Instansi';
 
     $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
@@ -236,8 +236,8 @@
             <div class="dk-stat-card dk-stat-danger">
                 <div class="dk-stat-icon"><i class="fas fa-building-user"></i></div>
                 <div class="dk-stat-info">
-                    <span class="dk-stat-label">Tipe Pelaksana</span>
-                    <strong>{{ $pelaksanaTypeLabel ?: '-' }}</strong>
+                    <span class="dk-stat-label">Unit Pelaksana</span>
+                    <strong>{{ $pelaksanaTypeLabel }}</strong>
                 </div>
             </div>
         </div>

@@ -33,29 +33,59 @@
         default => 'Belum Diatur',
     };
 
-    $pelaksanaGroups = collect([
-        'Jurusan' => $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values(),
-        'UPA' => $kegiatan->upas->pluck('nama_upa')->filter()->values(),
-        'Pusat' => $kegiatan->pusats->pluck('nama_pusat')->filter()->values(),
-    ])->filter(fn ($names) => $names->isNotEmpty());
+    $pelaksanaGroups = collect();
 
-    if ($pelaksanaGroups->isEmpty()) {
-        if ($kegiatan->tipe_pelaksana === 'jurusan' && $kegiatan->jurusan) {
-            $pelaksanaGroups = collect(['Jurusan' => collect([$kegiatan->jurusan->nama_jurusan])->filter()]);
-        } elseif ($kegiatan->tipe_pelaksana === 'upa' && $kegiatan->upa) {
-            $pelaksanaGroups = collect(['UPA' => collect([$kegiatan->upa->nama_upa])->filter()]);
-        } elseif ($kegiatan->tipe_pelaksana === 'pusat' && $kegiatan->pusat) {
-            $pelaksanaGroups = collect(['Pusat' => collect([$kegiatan->pusat->nama_pusat])->filter()]);
-        }
+    $jurusanNames = $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values();
+    if ($jurusanNames->isEmpty() && $kegiatan->jurusan?->nama_jurusan) {
+        $jurusanNames = collect([$kegiatan->jurusan->nama_jurusan]);
+    }
+    if ($jurusanNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'Jurusan',
+            'icon' => 'fa-microchip',
+            'class' => 'dk-entity-indigo',
+            'label_class' => 'indigo',
+            'names' => $jurusanNames,
+        ]);
     }
 
-    $pelaksanaName = $pelaksanaGroups->flatMap(fn ($names) => $names)->implode(', ') ?: '-';
-    $pelaksanaType = $pelaksanaGroups->keys()->implode(' / ') ?: '-';
+    $upaNames = $kegiatan->upas->pluck('nama_upa')->filter()->values();
+    if ($upaNames->isEmpty() && $kegiatan->upa?->nama_upa) {
+        $upaNames = collect([$kegiatan->upa->nama_upa]);
+    }
+    if ($upaNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'UPA',
+            'icon' => 'fa-building-columns',
+            'class' => 'dk-entity-cyan',
+            'label_class' => 'cyan',
+            'names' => $upaNames,
+        ]);
+    }
+
+    $pusatNames = $kegiatan->pusats->pluck('nama_pusat')->filter()->values();
+    if ($pusatNames->isEmpty() && $kegiatan->pusat?->nama_pusat) {
+        $pusatNames = collect([$kegiatan->pusat->nama_pusat]);
+    }
+    if ($pusatNames->isNotEmpty()) {
+        $pelaksanaGroups->push([
+            'type' => 'Pusat',
+            'icon' => 'fa-landmark',
+            'class' => 'dk-entity-violet',
+            'label_class' => 'violet',
+            'names' => $pusatNames,
+        ]);
+    }
+
+    $hasPelaksanaData = $pelaksanaGroups->isNotEmpty();
+    $pelaksanaName = $pelaksanaGroups->flatMap(fn ($group) => $group['names'])->implode(', ') ?: 'Instansi';
+    $pelaksanaType = $pelaksanaGroups->pluck('type')->filter()->implode(', ') ?: 'Instansi';
+    $primaryPelaksanaType = $pelaksanaGroups->first()['type'] ?? null;
     $pelaksanaIcon = match (true) {
         $pelaksanaGroups->count() > 1 => 'fa-users-gear',
-        $pelaksanaGroups->keys()->first() === 'Jurusan' => 'fa-microchip',
-        $pelaksanaGroups->keys()->first() === 'UPA' => 'fa-building-columns',
-        $pelaksanaGroups->keys()->first() === 'Pusat' => 'fa-landmark',
+        $primaryPelaksanaType === 'Jurusan' => 'fa-microchip',
+        $primaryPelaksanaType === 'UPA' => 'fa-building-columns',
+        $primaryPelaksanaType === 'Pusat' => 'fa-landmark',
         default => 'fa-building',
     };
 
@@ -584,8 +614,8 @@
             </div>
             <div>
                 <div style="font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px;">Unit Pelaksana</div>
-                <div style="font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.35; max-width: 220px;"
-                    title="{{ $pelaksanaName }}">{{ $pelaksanaName }}</div>
+                <div style="font-size: 16px; font-weight: 800; color: var(--text); line-height: 1.35; max-width: 220px;"
+                    title="{{ $pelaksanaName }}">{{ $pelaksanaType }}</div>
             </div>
         </div>
     </div>
@@ -633,6 +663,50 @@
                     </div>
                 </div>
             </div>
+
+            @if ($hasPelaksanaData)
+                {{-- Unit Pelaksana --}}
+                <div class="dm-card dk-card">
+                    <div class="card-header dk-card-header">
+                        <div class="dk-card-title">
+                            <span class="dk-title-icon"><i class="fas fa-users-gear"></i></span>
+                            <span>
+                                <strong>Unit Pelaksana</strong>
+                                <small>Instansi pengelola kegiatan</small>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body dk-card-body dk-detail-card-body">
+                        <div class="dk-entity-grid">
+                            @foreach ($pelaksanaGroups as $group)
+                                <div class="dk-entity-card">
+                                    <span class="dk-entity-icon {{ $group['class'] }}">
+                                        <i class="fas {{ $group['icon'] }}"></i>
+                                    </span>
+                                    <div class="dk-entity-text">
+                                        <small class="dk-entity-label {{ $group['label_class'] }}">{{ $group['type'] }}</small>
+                                        <strong>{{ $group['names']->implode(', ') }}</strong>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        @if ($kegiatan->prodis->count() > 0)
+                            <div class="dk-prodi-list">
+                                <label class="dk-prodi-label">Program Studi Terkait</label>
+                                <div class="dk-prodi-container">
+                                    @foreach ($kegiatan->prodis as $prodi)
+                                        <div class="dk-prodi-item">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <span>{{ $prodi->nama_prodi }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
 
             {{-- Detail Implementasi --}}
             <div class="dm-card">
