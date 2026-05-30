@@ -197,33 +197,32 @@ class EvaluasiPimpinanController extends Controller
             ],
         ];
 
-        $type = $kegiatan->tipe_pelaksana;
-        if (!isset($roleMap[$type])) {
-            return collect();
-        }
+        return collect($roleMap)
+            ->flatMap(function ($config, $type) use ($kegiatan) {
+                $ids = $kegiatan->{$config['relation']}
+                    ->pluck('id')
+                    ->push($kegiatan->{$config['direct_key']})
+                    ->filter()
+                    ->unique()
+                    ->values();
 
-        $config = $roleMap[$type];
-        $ids = $kegiatan->{$config['relation']}
-            ->pluck('id')
-            ->push($kegiatan->{$config['direct_key']})
-            ->filter()
-            ->unique()
+                if ($ids->isEmpty()) {
+                    return collect();
+                }
+
+                return User::whereHas('role', function ($q) use ($type) {
+                        $q->where('role_name', $type);
+                    })
+                    ->whereHas('profile', function ($q) use ($config, $ids) {
+                        $q->whereIn($config['profile_key'], $ids);
+                    })
+                    ->get()
+                    ->map(fn ($user) => [
+                        'user' => $user,
+                        'route' => $config['route'],
+                    ]);
+            })
+            ->unique(fn ($recipient) => $recipient['user']->id . ':' . $recipient['route'])
             ->values();
-
-        if ($ids->isEmpty()) {
-            return collect();
-        }
-
-        return User::whereHas('role', function ($q) use ($type) {
-                $q->where('role_name', $type);
-            })
-            ->whereHas('profile', function ($q) use ($config, $ids) {
-                $q->whereIn($config['profile_key'], $ids);
-            })
-            ->get()
-            ->map(fn ($user) => [
-                'user' => $user,
-                'route' => $config['route'],
-            ]);
     }
 }
