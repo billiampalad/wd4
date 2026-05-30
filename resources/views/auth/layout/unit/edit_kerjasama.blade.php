@@ -636,9 +636,37 @@
                             removePenggiat(idx) {
                                 if (this.penggiatList.length > 1) this.penggiatList.splice(idx, 1);
                             },
+                            activePenggiatIndex: null,
+                            openMitraPickerModal(idx) {
+                                this.activePenggiatIndex = idx;
+                                openMitraModal();
+                            },
+                            handleMitraAdded(mitra) {
+                                if (!mitra || !mitra.id) return;
+
+                                const normalized = {
+                                    id: Number(mitra.id),
+                                    nama: mitra.nama || mitra.nama_mitra || ''
+                                };
+
+                                const existingIndex = this.mitraItems.findIndex(item => Number(item.id) === normalized.id);
+                                if (existingIndex >= 0) {
+                                    this.mitraItems.splice(existingIndex, 1, normalized);
+                                } else {
+                                    this.mitraItems.push(normalized);
+                                }
+
+                                const targetIndex = this.activePenggiatIndex ?? Math.max(this.penggiatList.length - 1, 0);
+                                if (this.penggiatList[targetIndex]) {
+                                    this.penggiatList[targetIndex].mitraId = normalized.id;
+                                    this.penggiatList[targetIndex].mitraOpen = false;
+                                }
+
+                                this.activePenggiatIndex = null;
+                            },
                             mitraItems: @js($mitraOptions)
                         }"
-                            @mitra-added.window="mitraItems.push($event.detail)">
+                            @mitra-added.window="handleMitraAdded($event.detail)">
                             <div @click="showPenggiat = !showPenggiat"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(5,150,105,0.04));">
                                 <div
@@ -1320,8 +1348,8 @@
                                                             </div>
                                                         </div>
                                                         {{-- Add New Mitra Button --}}
-                                                        <button type="button" onclick="openMitraModal()"
-                                                            style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
+                                                        <button type="button" @click.stop="openMitraPickerModal(idx)"
+                                                            style="width: 40px; height: 40px; border-radius: 10px; border: none; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3); cursor: pointer;"
                                                             onmouseover="this.style.transform='scale(1.08)'"
                                                             onmouseout="this.style.transform='scale(1)'"
                                                             title="Tambah Mitra Baru">
