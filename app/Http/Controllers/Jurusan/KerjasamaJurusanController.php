@@ -131,6 +131,15 @@ class KerjasamaJurusanController extends Controller
             'document_link' => 'nullable|string|max:255',
             'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
             'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
+            'jenis_detail' => 'nullable|array',
+            'jenis_detail.*.nilai_kontrak' => 'nullable|string|max:255',
+            'jenis_detail.*.income' => 'nullable|string|max:255',
+            'jenis_detail.*.volume' => 'nullable|string|max:255',
+            'jenis_detail.*.satuan_volume' => 'nullable|string|max:255',
+            'jenis_detail.*.keterangan' => 'nullable|string|max:10000',
+            'jenis_detail.*.tujuan' => 'nullable|string|max:10000',
+            'jenis_detail.*.output' => 'nullable|string|max:10000',
+            'jenis_detail.*.outcome' => 'nullable|string|max:10000',
 
             // Penggiat validation
             'penggiat_mitra_ids' => 'required|array|min:1',
@@ -140,6 +149,8 @@ class KerjasamaJurusanController extends Controller
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
             'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
+            'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
+            'jenis_detail.*.satuan_volume.max' => 'Satuan luaran maksimal 255 karakter. Isi dengan satuan singkat seperti mahasiswa, orang, sertifikat, dokumen, atau kegiatan.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.distinct' => 'Nomor PKS tidak boleh duplikat dalam satu dokumen.',
@@ -292,7 +303,7 @@ class KerjasamaJurusanController extends Controller
             return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $this->formatExceptionMessage($e));
         }
     }
 
@@ -382,6 +393,15 @@ class KerjasamaJurusanController extends Controller
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
             'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
+            'jenis_detail' => 'nullable|array',
+            'jenis_detail.*.nilai_kontrak' => 'nullable|string|max:255',
+            'jenis_detail.*.income' => 'nullable|string|max:255',
+            'jenis_detail.*.volume' => 'nullable|string|max:255',
+            'jenis_detail.*.satuan_volume' => 'nullable|string|max:255',
+            'jenis_detail.*.keterangan' => 'nullable|string|max:10000',
+            'jenis_detail.*.tujuan' => 'nullable|string|max:10000',
+            'jenis_detail.*.output' => 'nullable|string|max:10000',
+            'jenis_detail.*.outcome' => 'nullable|string|max:10000',
             'penggiat_mitra_ids' => 'required|array|min:1',
             'penggiat' => 'required|array|min:1',
         ], [
@@ -389,6 +409,8 @@ class KerjasamaJurusanController extends Controller
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
             'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
+            'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
+            'jenis_detail.*.satuan_volume.max' => 'Satuan luaran maksimal 255 karakter. Isi dengan satuan singkat seperti mahasiswa, orang, sertifikat, dokumen, atau kegiatan.',
             'doc_number.unique' => 'Nomor dokumen sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.unique' => 'Nomor PKS sudah digunakan pada data kerjasama lain.',
             'pks_numbers.*.distinct' => 'Nomor PKS tidak boleh duplikat dalam satu dokumen.',
@@ -551,7 +573,7 @@ class KerjasamaJurusanController extends Controller
             return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $this->formatExceptionMessage($e));
         }
     }
 
@@ -616,7 +638,7 @@ class KerjasamaJurusanController extends Controller
             return back()->with('success', 'Berhasil! Data kerjasama telah dikirim ke Pimpinan untuk dievaluasi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal mengirim permintaan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengirim permintaan: ' . $this->formatExceptionMessage($e));
         }
     }
 
@@ -654,6 +676,21 @@ class KerjasamaJurusanController extends Controller
         $kegiatan->delete();
 
         return redirect()->route('jurusan.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
+    }
+
+    private function formatExceptionMessage(\Throwable $e): string
+    {
+        $message = $e->getMessage();
+
+        if (str_contains($message, 'Data too long for column')) {
+            return 'Ada isian yang melebihi batas panjang kolom database. Untuk Volume Luaran dan Satuan Luaran, gunakan teks singkat maksimal 255 karakter.';
+        }
+
+        if (str_contains($message, 'SQLSTATE')) {
+            return 'Terjadi kendala database saat memproses data. Periksa kembali format, panjang isian, dan relasi data yang dipilih.';
+        }
+
+        return $message;
     }
 
     public function storeTujuan(Request $request, $id)

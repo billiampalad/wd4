@@ -1,16 +1,32 @@
 function initDashboard() {
+    function swalAvailable() {
+        return typeof Swal !== 'undefined';
+    }
+
+    function normalizeMessage(message, fallback) {
+        const value = String(message || '').replace(/\s+/g, ' ').trim();
+        return value || fallback;
+    }
+
+    function removeLegacyFlashAlerts(type) {
+        const selector = type === 'success' ? '.dk-alert-success, .alert-success' : '.dk-alert-error, .alert-error';
+        document.querySelectorAll(selector).forEach(alert => alert.remove());
+    }
+
     function showFlashAlert(id, options) {
         const el = document.getElementById(id);
         if (!el || el.dataset.shown === '1') return;
 
-        const message = el.dataset.message;
-        if (!message || typeof Swal === 'undefined') return;
+        const message = normalizeMessage(el.dataset.message, options.fallbackText || 'Terjadi kesalahan.');
+        if (!message || !swalAvailable()) return;
 
         el.dataset.shown = '1';
+        removeLegacyFlashAlerts(options.icon);
         Swal.fire({
             icon: options.icon,
             title: options.title,
             text: message,
+            width: options.width || 560,
             confirmButtonColor: options.confirmButtonColor || '#7c3aed',
         }).then(() => {
             el.remove();
@@ -23,12 +39,14 @@ function initDashboard() {
     });
     showFlashAlert('swal-flash-error', {
         icon: 'error',
-        title: 'Gagal!',
+        title: 'Gagal Memproses Data',
+        fallbackText: 'Data belum berhasil diproses. Periksa kembali isian Anda.',
         confirmButtonColor: '#ef4444',
     });
     showFlashAlert('swal-flash-validation', {
         icon: 'warning',
-        title: 'Data Duplikat / Tidak Valid',
+        title: 'Data Tidak Valid',
+        fallbackText: 'Periksa kembali data yang wajib diisi atau format yang belum sesuai.',
         confirmButtonColor: '#f59e0b',
     });
 
@@ -521,34 +539,115 @@ function initDashboard() {
         };
     }
 
-    /* ─ Global Delete Confirm with SweetAlert ─ */
-    document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
-        const originalOnSubmit = form.getAttribute('onsubmit');
-        // Check if it's a delete confirmation
-        if (originalOnSubmit && originalOnSubmit.includes('confirm')) {
-            // Get the message from confirm('...')
-            const match = originalOnSubmit.match(/confirm\(['"](.+)['"]\)/);
-            const message = match ? match[1] : 'Yakin ingin melanjutkan?';
+    function getFormConfirmMessage(form) {
+        if (form.dataset.confirmMessage) return form.dataset.confirmMessage;
 
+        const originalOnSubmit = form.getAttribute('onsubmit');
+        if (!originalOnSubmit || !originalOnSubmit.includes('confirm')) {
+            return 'Yakin ingin melanjutkan proses ini?';
+        }
+
+        const match = originalOnSubmit.match(/confirm\((['"])(.*?)\1\)/);
+        return match ? match[2] : 'Yakin ingin melanjutkan proses ini?';
+    }
+
+    function getFormConfirmTitle(form) {
+        const method = (form.querySelector('input[name="_method"]')?.value || form.method || '').toUpperCase();
+        if (method === 'DELETE' || form.classList.contains('dk-delete-form') || form.hasAttribute('data-mitra-delete-form')) {
+            return 'Konfirmasi Hapus';
+        }
+
+        return 'Konfirmasi';
+    }
+
+    function markSubmitting(form) {
+        form.dataset.submitting = '1';
+        form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(button => {
+            button.disabled = true;
+        });
+    }
+
+    function bindFormConfirmation(form) {
+        if (!form || form.dataset.swalConfirmBound === '1' || form.hasAttribute('data-mitra-delete-form')) return;
+        form.dataset.swalConfirmBound = '1';
+
+        const originalOnSubmit = form.getAttribute('onsubmit');
+        if (originalOnSubmit && originalOnSubmit.includes('confirm')) {
             form.removeAttribute('onsubmit');
-            form.addEventListener('submit', function (e) {
+        }
+
+        form.addEventListener('submit', function (e) {
+            if (form.dataset.swalConfirmed === '1') {
+                markSubmitting(form);
+                return;
+            }
+
+            e.preventDefault();
+
+            if (!swalAvailable()) {
+                form.dataset.swalConfirmed = '1';
+                markSubmitting(form);
+                form.submit();
+                return;
+            }
+
+            const message = normalizeMessage(getFormConfirmMessage(form), 'Yakin ingin melanjutkan proses ini?');
+            Swal.fire({
+                title: getFormConfirmTitle(form),
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7c3aed',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.dataset.swalConfirmed = '1';
+                    markSubmitting(form);
+                    form.submit();
+                }
+            });
+        });
+    }
+
+    /* ─ Global form confirmation with SweetAlert ─ */
+    document.querySelectorAll('form[onsubmit*="confirm"], form[data-confirm-message]').forEach(bindFormConfirmation);
+
+    document.addEventListener('submit', function (event) {
+        const form = event.target.closest('form[onsubmit*="confirm"], form[data-confirm-message]');
+        if (!form || form.dataset.swalConfirmBound === '1' || form.hasAttribute('data-mitra-delete-form')) return;
+
+        bindFormConfirmation(form);
+        event.preventDefault();
+        form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    }, true);
+
+    /* ─ Prevent double submit on create/edit forms ─ */
+    document.querySelectorAll('form[method="POST"]:not([data-no-submit-lock])').forEach(form => {
+        if (form.dataset.submitLockBound === '1' || form.dataset.swalConfirmBound === '1') return;
+        form.dataset.submitLockBound = '1';
+
+        form.addEventListener('submit', function (e) {
+            if (form.dataset.submitting === '1') {
                 e.preventDefault();
+                return;
+            }
+
+            markSubmitting(form);
+
+            if (swalAvailable() && !form.closest('.swal2-container')) {
                 Swal.fire({
-                    title: 'Konfirmasi',
-                    text: message,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#7c3aed',
-                    cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Ya, Lanjutkan!',
-                    cancelButtonText: 'Batal',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
+                    title: 'Memproses Data',
+                    text: 'Mohon tunggu, data sedang disimpan.',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: function () {
+                        Swal.showLoading();
                     }
                 });
-            });
-        }
+            }
+        });
     });
 
     /* ─ Dashboard Charts ─ */
