@@ -6581,6 +6581,71 @@ body.sidebar-collapsed .dk-container {
     margin-top: 12px;
 }
 
+.ud-detail-topbar {
+    align-items: flex-start;
+}
+
+.ud-detail-topbar .ud-hero-copy {
+    width: 100%;
+}
+
+.ud-detail-title-row {
+    align-items: flex-start;
+}
+
+.ud-detail-title-row .ud-title-copy {
+    flex: 1 1 auto;
+}
+
+.ud-detail-title-row .ud-title {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.ud-detail-meta {
+    margin-top: 12px;
+    min-width: 0;
+}
+
+.ud-detail-actions {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.ud-detail-actions .dk-primary-btn {
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .ud-detail-title-row {
+        flex-wrap: wrap;
+    }
+
+    .ud-detail-actions {
+        width: 100%;
+        margin-left: 62px;
+    }
+}
+
+@media (max-width: 640px) {
+    .ud-detail-title-row {
+        flex-direction: column;
+    }
+
+    .ud-detail-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .ud-detail-actions .dk-primary-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 .dk-btn-full {
     width: 100%;
     min-height: 48px;

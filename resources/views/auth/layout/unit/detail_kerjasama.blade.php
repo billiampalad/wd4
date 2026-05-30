@@ -154,33 +154,29 @@
     }
 </style>
 
+<link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+
 <main id="mainContent" class="dk-page">
     {{-- ═══ HERO SECTION ═══ --}}
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('unit.dashboard') }}" class="breadcrumb-item">
-                    <i class="fas fa-home"></i>
-                </a>
-                <a href="{{ route('unit.dashboard') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Beranda</span>
-                </a>
+    <section class="ud-topbar ud-detail-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('unit.dashboard') }}">Beranda</a>
                 <span class="sep">/</span>
-                <a href="{{ route('unit.dkerjasama') }}" style="text-decoration: none; color: inherit;">
-                    <span class="current">Daftar Kerjasama</span>
-                </a>
+                <a href="{{ route('unit.dkerjasama') }}">Daftar Kerjasama</a>
                 <span class="sep">/</span>
-                <span class="current">Detail Dokumen</span>
+                <span>Detail Dokumen</span>
             </div>
 
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon">
+            <div class="ud-title-row ud-detail-title-row">
+                <span class="ud-title-icon">
                     <i class="fas fa-file-contract"></i>
-                </div>
-                <div class="dk-hero-info">
-                    <span class="dk-eyebrow">Repositori Unit Pelaksana</span>
-                    <h2 id="pageTitle">{{ $kegiatan->title }}</h2>
-                    <div class="dk-hero-meta">
+                </span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">{{ $kegiatan->title }}</h2>
+                    <div class="dk-hero-meta ud-detail-meta">
                         <span class="dk-status {{ $statusClass }}">
                             <i class="fas {{ $statusIcon }}"></i>
                             {{ $statusLabel }}
@@ -197,7 +193,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="dk-hero-action">
+                <div class="ud-detail-actions">
                     <a href="{{ route('unit.kerjasama.edit', $kegiatan->id) }}" class="dk-primary-btn">
                         <i class="fas fa-pen-to-square"></i>
                         <span>Edit Data</span>
@@ -208,7 +204,7 @@
     </section>
 
     {{-- ═══ STATS GRID ═══ --}}
-    <section class="dk-stats-grid-wrapper">
+    <section>
         <div class="dk-stats-grid">
             <div class="dk-stat-card dk-stat-total">
                 <div class="dk-stat-icon"><i class="fas fa-money-bill-wave"></i></div>
@@ -244,7 +240,7 @@
     </section>
 
     {{-- ═══ MAIN CONTENT ═══ --}}
-    <div class="dk-container">
+    <div>
         <div class="dk-grid-layout">
 
             {{-- Left Column --}}
