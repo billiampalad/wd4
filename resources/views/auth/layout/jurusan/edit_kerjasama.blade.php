@@ -1306,13 +1306,13 @@
                                                             </div>
                                                         </div>
                                                         {{-- Add New Mitra Button --}}
-                                                        <a href="{{ route('jurusan.mitra.create') }}"
+                                                        <button type="button" onclick="openMitraModal()"
                                                             style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; text-decoration: none; transition: all 0.2s; box-shadow: 0 2px 8px rgba(5,150,105,0.3);"
                                                             onmouseover="this.style.transform='scale(1.08)'"
                                                             onmouseout="this.style.transform='scale(1)'"
                                                             title="Tambah Mitra Baru">
                                                             <i class="fas fa-plus"></i>
-                                                        </a>
+                                                        </button>
                                                     </div>
                                                 </div>
 
@@ -1829,6 +1829,8 @@
         </div>
     </div>
 </main>
+
+@include('auth.layout.jurusan.mitra._modal_create')
 
 <script>
     function pksNumberFields(initialNumbers = ['']) {

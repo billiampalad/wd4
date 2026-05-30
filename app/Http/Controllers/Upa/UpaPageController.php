@@ -818,8 +818,7 @@ class UpaPageController extends Controller
 
     public function mitraCreate()
     {
-        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.upa', compact('klasifikasi'));
+        return redirect()->route('upa.mitra');
     }
 
     public function mitraStore(Request $request)

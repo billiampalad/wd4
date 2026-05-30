@@ -791,8 +791,7 @@ class UnitPageController extends Controller
 
     public function mitraCreate()
     {
-        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.unit', compact('klasifikasi'));
+        return redirect()->route('unit.mitra');
     }
 
     public function mitraStore(Request $request)

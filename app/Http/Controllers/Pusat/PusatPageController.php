@@ -818,8 +818,7 @@ class PusatPageController extends Controller
 
     public function mitraCreate()
     {
-        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.pusat', compact('klasifikasi'));
+        return redirect()->route('pusat.mitra');
     }
 
     public function mitraStore(Request $request)

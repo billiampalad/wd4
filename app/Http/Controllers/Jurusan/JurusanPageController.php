@@ -818,8 +818,7 @@ class JurusanPageController extends Controller
 
     public function mitraCreate()
     {
-        $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
-        return view('auth.jurusan', compact('klasifikasi'));
+        return redirect()->route('jurusan.mitra');
     }
 
     public function mitraStore(Request $request)
