@@ -7358,6 +7358,7 @@ body.sidebar-collapsed .dk-container {
     flex-direction: column;
     overflow: hidden;
     max-height: calc(100vh - 220px);
+    margin-right: 20px;
 }
 
 .ev-panel-header {
