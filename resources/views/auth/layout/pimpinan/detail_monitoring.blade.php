@@ -33,23 +33,31 @@
         default => 'Belum Diatur',
     };
 
-    $pelaksanaName = '-';
-    $pelaksanaType = '-';
-    $pelaksanaIcon = 'fa-building';
+    $pelaksanaGroups = collect([
+        'Jurusan' => $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values(),
+        'UPA' => $kegiatan->upas->pluck('nama_upa')->filter()->values(),
+        'Pusat' => $kegiatan->pusats->pluck('nama_pusat')->filter()->values(),
+    ])->filter(fn ($names) => $names->isNotEmpty());
 
-    if ($kegiatan->tipe_pelaksana === 'jurusan') {
-        $pelaksanaName = $kegiatan->jurusan?->nama_jurusan ?? '-';
-        $pelaksanaType = 'Jurusan';
-        $pelaksanaIcon = 'fa-microchip';
-    } elseif ($kegiatan->tipe_pelaksana === 'upa') {
-        $pelaksanaName = $kegiatan->upa?->nama_upa ?? '-';
-        $pelaksanaType = 'UPA';
-        $pelaksanaIcon = 'fa-building-columns';
-    } elseif ($kegiatan->tipe_pelaksana === 'pusat') {
-        $pelaksanaName = $kegiatan->pusat?->nama_pusat ?? '-';
-        $pelaksanaType = 'Pusat';
-        $pelaksanaIcon = 'fa-landmark';
+    if ($pelaksanaGroups->isEmpty()) {
+        if ($kegiatan->tipe_pelaksana === 'jurusan' && $kegiatan->jurusan) {
+            $pelaksanaGroups = collect(['Jurusan' => collect([$kegiatan->jurusan->nama_jurusan])->filter()]);
+        } elseif ($kegiatan->tipe_pelaksana === 'upa' && $kegiatan->upa) {
+            $pelaksanaGroups = collect(['UPA' => collect([$kegiatan->upa->nama_upa])->filter()]);
+        } elseif ($kegiatan->tipe_pelaksana === 'pusat' && $kegiatan->pusat) {
+            $pelaksanaGroups = collect(['Pusat' => collect([$kegiatan->pusat->nama_pusat])->filter()]);
+        }
     }
+
+    $pelaksanaName = $pelaksanaGroups->flatMap(fn ($names) => $names)->implode(', ') ?: '-';
+    $pelaksanaType = $pelaksanaGroups->keys()->implode(' / ') ?: '-';
+    $pelaksanaIcon = match (true) {
+        $pelaksanaGroups->count() > 1 => 'fa-users-gear',
+        $pelaksanaGroups->keys()->first() === 'Jurusan' => 'fa-microchip',
+        $pelaksanaGroups->keys()->first() === 'UPA' => 'fa-building-columns',
+        $pelaksanaGroups->keys()->first() === 'Pusat' => 'fa-landmark',
+        default => 'fa-building',
+    };
 
     $totalNilai = $kegiatan->details->sum('nilai_kontrak');
 
@@ -575,9 +583,8 @@
                 <i class="fas {{ $pelaksanaIcon }}"></i>
             </div>
             <div>
-                <div style="font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px;">Pelaksana
-                    ({{ $pelaksanaType }})</div>
-                <div style="font-size: 16px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;"
+                <div style="font-size: 12px; font-weight: 600; color: var(--text-sub); margin-bottom: 4px;">Unit Pelaksana</div>
+                <div style="font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.35; max-width: 220px;"
                     title="{{ $pelaksanaName }}">{{ $pelaksanaName }}</div>
             </div>
         </div>

@@ -134,9 +134,11 @@
                 <div x-show="!isLoading && activeTab === 'unit'" class="eval-list-container space-y-3" x-transition.opacity x-cloak>
                     @forelse($laporanUnit as $keg)
                         @php
-                            $namaUnit = '-';
-                            if ($keg->upas->count() > 0) $namaUnit = $keg->upas->first()->nama_upa;
-                            elseif ($keg->pusats->count() > 0) $namaUnit = $keg->pusats->first()->nama_pusat;
+                            $namaUnit = 'Humas';
+                            if ($keg->jurusans->count() > 0) $namaUnit = $keg->jurusans->pluck('nama_jurusan')->filter()->implode(', ');
+                            elseif ($keg->upas->count() > 0) $namaUnit = $keg->upas->pluck('nama_upa')->filter()->implode(', ');
+                            elseif ($keg->pusats->count() > 0) $namaUnit = $keg->pusats->pluck('nama_pusat')->filter()->implode(', ');
+                            elseif (!empty($keg->internal_instansi)) $namaUnit = $keg->internal_instansi;
                         @endphp
                         <div class="eval-list-item" :class="activeId === {{ $keg->id }} ? 'active unit' : ''" @click="openDetail({{ $keg->id }})">
                             <div class="eval-item-header unit">
