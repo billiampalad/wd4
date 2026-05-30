@@ -29,6 +29,12 @@
         <div class="eval-left-panel">
             <!-- Tabs -->
             <div class="eval-tabs">
+                <button class="eval-tab-btn" :class="activeTab === 'unit' ? 'active unit' : ''" @click="activeTab = 'unit'">
+                    <i class="fas fa-university"></i> Humas
+                    @if($laporanUnit->count() > 0)
+                        <span class="eval-badge unit">{{ $laporanUnit->count() }}</span>
+                    @endif
+                </button>
                 <button class="eval-tab-btn" :class="activeTab === 'jurusan' ? 'active jurusan' : ''" @click="activeTab = 'jurusan'">
                     <i class="fas fa-graduation-cap"></i> Jurusan
                     @if($laporanJurusan->count() > 0)
@@ -47,12 +53,6 @@
                         <span class="eval-badge pusat">{{ $laporanPusat->count() }}</span>
                     @endif
                 </button>
-                @if($laporanUnit->count() > 0)
-                <button class="eval-tab-btn" :class="activeTab === 'unit' ? 'active unit' : ''" @click="activeTab = 'unit'">
-                    <i class="fas fa-university"></i> Humas
-                    <span class="eval-badge unit">{{ $laporanUnit->count() }}</span>
-                </button>
-                @endif
             </div>
 
             <!-- List Content -->
