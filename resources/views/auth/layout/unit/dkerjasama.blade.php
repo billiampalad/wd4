@@ -541,7 +541,11 @@ $auditUserLabel = function ($user) {
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
-                            <th class="um-th dk-th-expand" aria-label="Detail"></th>
+                            <th class="um-th dk-th-expand" aria-label="Sort dan Row Expansion">
+                                <span class="dk-expand-head-icon" title="Sort Ascending/Descending">
+                                    <i class="fas fa-sort-amount-down"></i>
+                                </span>
+                            </th>
                             <th class="um-th um-th-num">#</th>
                             <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul Kerjasama</th>
                             <th class="um-th">Unit Pelaksana</th>

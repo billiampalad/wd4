@@ -5,6 +5,18 @@
     text-align: center;
 }
 
+.dk-expand-head-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent, #2563eb);
+    background: color-mix(in srgb, var(--accent, #2563eb) 10%, transparent);
+    font-size: 12px;
+}
+
 .dk-expand-toggle {
     width: 32px;
     height: 32px;
