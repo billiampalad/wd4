@@ -1177,15 +1177,32 @@ class UnitPageController extends Controller
 
     private function auditPayload(Cooperation $cooperation): array
     {
+        $hasUpdateAudit = $this->hasUpdateAudit($cooperation);
+
         return [
             'created_at' => $cooperation->created_at?->toIso8601String(),
-            'updated_at' => $cooperation->updated_at?->toIso8601String(),
+            'updated_at' => $hasUpdateAudit ? $cooperation->updated_at?->toIso8601String() : null,
+            'created_at_label' => $this->auditDateTimeLabel($cooperation->created_at),
+            'updated_at_label' => $hasUpdateAudit ? $this->auditDateTimeLabel($cooperation->updated_at) : null,
             'created_by' => $this->auditUserPayload($cooperation->createdBy),
-            'updated_by' => $this->auditUserPayload($cooperation->updatedBy),
+            'updated_by' => $hasUpdateAudit ? $this->auditUserPayload($cooperation->updatedBy) : null,
         ];
     }
 
-    private function auditUserPayload($user): ?array
+    private function auditDateTimeLabel($date): ?string
+    {
+        return $date?->copy()->timezone('Asia/Makassar')->format('d M Y, H:i:s');
+    }
+
+    private function hasUpdateAudit(Cooperation $cooperation): bool
+    {
+        return ! empty($cooperation->updated_by)
+            && $cooperation->created_at
+            && $cooperation->updated_at
+            && $cooperation->updated_at->gt($cooperation->created_at);
+    }
+
+    private function auditUserPayload($user = null): ?array
     {
         if (! $user) {
             return null;
@@ -1201,7 +1218,20 @@ class UnitPageController extends Controller
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers', 'createdBy.role', 'createdBy.profile', 'updatedBy.role', 'updatedBy.profile'])
+        $query = Cooperation::with([
+            'mitra',
+            'jurusan',
+            'upa',
+            'pusat',
+            'jurusans',
+            'upas',
+            'pusats',
+            'pksNumbers',
+            'createdBy.profile',
+            'createdBy.role',
+            'updatedBy.profile',
+            'updatedBy.role',
+        ])
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc');
 

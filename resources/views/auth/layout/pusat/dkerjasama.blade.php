@@ -13,7 +13,7 @@ $status = strtolower($item->status ?? '');
 return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 })->count();
 
-$auditUserLabel = function ($user) {
+$auditUserLabel = function ($user = null) {
     return [
         'name' => $user?->name ?: '-',
         'jabatan' => $user?->profile?->jabatan ?: '-',
@@ -461,9 +461,15 @@ $auditUserLabel = function ($user) {
                         $title = $kegiatan->title ?? '';
                         $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                         $createdUser = $auditUserLabel($kegiatan->createdBy);
-                        $updatedUser = $auditUserLabel($kegiatan->updatedBy);
-                        $createdAt = $kegiatan->created_at?->format('d M Y, H:i') ?? '-';
-                        $updatedAt = $kegiatan->updated_at?->format('d M Y, H:i') ?? '-';
+                        $hasUpdateAudit = ! empty($kegiatan->updated_by)
+                            && $kegiatan->created_at
+                            && $kegiatan->updated_at
+                            && $kegiatan->updated_at->gt($kegiatan->created_at);
+                        $updatedUser = $hasUpdateAudit
+                            ? $auditUserLabel($kegiatan->updatedBy)
+                            : ['name' => 'Belum diubah', 'jabatan' => '-', 'role' => '-'];
+                        $createdAt = $kegiatan->created_at?->copy()->timezone('Asia/Makassar')->format('d M Y, H:i:s') ?? '-';
+                        $updatedAt = $hasUpdateAudit ? ($kegiatan->updated_at?->copy()->timezone('Asia/Makassar')->format('d M Y, H:i:s') ?? '-') : '-';
                         @endphp
                         <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}">
                             <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
@@ -650,6 +656,7 @@ $auditUserLabel = function ($user) {
         function auditValue(item, type, field) {
             var audit = item.audit || {};
             var user = audit[type] || {};
+            if (!user[field] && type === 'updated_by' && field === 'name') return 'Belum diubah';
             if (field === 'role' && user[field]) return String(user[field]).charAt(0).toUpperCase() + String(user[field]).slice(1);
             return user[field] || '-';
         }
@@ -661,8 +668,8 @@ $auditUserLabel = function ($user) {
             detail.setAttribute('aria-hidden', 'true');
             detail.innerHTML =
                 '<td colspan="8" class="dk-detail-cell"><div class="dk-detail-content"><div class="dk-audit-grid">' +
-                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-created"><i class="fas fa-user-plus"></i></span><strong>Dibuat oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'created_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'created_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'created_by', 'role')) + '</span><span>' + formatDateTime(item.audit && item.audit.created_at) + '</span></div></section>' +
-                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-updated"><i class="fas fa-user-pen"></i></span><strong>Diubah oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'updated_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'updated_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'updated_by', 'role')) + '</span><span>' + formatDateTime(item.audit && item.audit.updated_at) + '</span></div></section>' +
+                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-created"><i class="fas fa-user-plus"></i></span><strong>Dibuat oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'created_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'created_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'created_by', 'role')) + '</span><span>' + escapeHtml((item.audit && item.audit.created_at_label) || formatDateTime(item.audit && item.audit.created_at)) + '</span></div></section>' +
+                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-updated"><i class="fas fa-user-pen"></i></span><strong>Diubah oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'updated_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'updated_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'updated_by', 'role')) + '</span><span>' + escapeHtml((item.audit && item.audit.updated_at_label) || formatDateTime(item.audit && item.audit.updated_at)) + '</span></div></section>' +
                 '</div></div></td>';
             return detail;
         }

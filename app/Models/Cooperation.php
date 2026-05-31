@@ -51,6 +51,16 @@ class Cooperation extends Model
         return $this->belongsTo(Mitra::class, 'mitra_id');
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function penandatanganInternal()
     {
         return $this->belongsTo(Pejabat::class, 'penandatangan_internal_id');
@@ -136,35 +146,9 @@ class Cooperation extends Model
         return $this->hasMany(self::class, 'perpanjangan_dari_id');
     }
 
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by');
-    }
-
     public function kesimpulans()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (self $cooperation) {
-            if (Auth::check()) {
-                $cooperation->created_by ??= Auth::id();
-                $cooperation->updated_by ??= Auth::id();
-            }
-        });
-
-        static::updating(function (self $cooperation) {
-            if (Auth::check()) {
-                $cooperation->updated_by = Auth::id();
-            }
-        });
     }
 
     public function getPksNumberAttribute($value)
@@ -287,4 +271,22 @@ class Cooperation extends Model
             default => 'dk-entity-indigo',
         };
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Cooperation $cooperation) {
+            if (! Auth::check()) {
+                return;
+            }
+
+            $cooperation->created_by ??= Auth::id();
+        });
+
+        static::updating(function (Cooperation $cooperation) {
+            if (Auth::check()) {
+                $cooperation->updated_by = Auth::id();
+            }
+        });
+    }
+
 }

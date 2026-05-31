@@ -7,17 +7,14 @@
 
         if (isOpen) {
             detailRow.classList.add('is-open');
+            detailRow.classList.add('is-settled');
             detailRow.setAttribute('aria-hidden', 'false');
-            content.style.maxHeight = content.scrollHeight + 'px';
             return;
         }
 
-        content.style.maxHeight = content.scrollHeight + 'px';
-        window.requestAnimationFrame(function () {
-            detailRow.classList.remove('is-open');
-            detailRow.setAttribute('aria-hidden', 'true');
-            content.style.maxHeight = '0px';
-        });
+        detailRow.classList.remove('is-settled');
+        detailRow.classList.remove('is-open');
+        detailRow.setAttribute('aria-hidden', 'true');
     }
 
     function closeOpenRows(scope) {
@@ -58,12 +55,6 @@
 
             event.preventDefault();
             toggleRow(button);
-        });
-
-        window.addEventListener('resize', function () {
-            document.querySelectorAll('.dk-row-detail.is-open .dk-detail-content').forEach(function (content) {
-                content.style.maxHeight = content.scrollHeight + 'px';
-            });
         });
 
         var previewBody = document.getElementById('previewBody');
