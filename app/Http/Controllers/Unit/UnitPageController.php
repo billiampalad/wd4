@@ -1151,6 +1151,7 @@ class UnitPageController extends Controller
                     'jurusan'=> $c->jurusan? ['nama_jurusan' => $c->jurusan->nama_jurusan]: null,
                     'upa'    => $c->upa    ? ['nama_upa'     => $c->upa->nama_upa]        : null,
                     'pusat'  => $c->pusat  ? ['nama_pusat'   => $c->pusat->nama_pusat]    : null,
+                    'audit'  => $this->auditPayload($c),
                 ];
             });
 
@@ -1174,10 +1175,33 @@ class UnitPageController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.unit.laporan_excel'), 'laporan_kerjasama_unit.xlsx');
     }
 
+    private function auditPayload(Cooperation $cooperation): array
+    {
+        return [
+            'created_at' => $cooperation->created_at?->toIso8601String(),
+            'updated_at' => $cooperation->updated_at?->toIso8601String(),
+            'created_by' => $this->auditUserPayload($cooperation->createdBy),
+            'updated_by' => $this->auditUserPayload($cooperation->updatedBy),
+        ];
+    }
+
+    private function auditUserPayload($user): ?array
+    {
+        if (! $user) {
+            return null;
+        }
+
+        return [
+            'name' => $user->name,
+            'jabatan' => $user->profile?->jabatan,
+            'role' => $user->role?->role_name,
+        ];
+    }
+
     private function buildLaporanQuery(Request $request)
     {
         $unitId = $this->resolveUnitId();
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers'])
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers', 'createdBy.role', 'createdBy.profile', 'updatedBy.role', 'updatedBy.profile'])
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc');
 

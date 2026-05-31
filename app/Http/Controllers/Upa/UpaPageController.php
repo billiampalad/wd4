@@ -1176,6 +1176,7 @@ class UpaPageController extends Controller
                     'jurusan'=> $c->jurusan? ['nama_jurusan' => $c->jurusan->nama_jurusan]: null,
                     'upa'    => $c->upa    ? ['nama_upa'     => $c->upa->nama_upa]        : null,
                     'pusat'  => $c->pusat  ? ['nama_pusat'   => $c->pusat->nama_pusat]    : null,
+                    'audit'  => $this->auditPayload($c),
                 ];
             });
 
@@ -1199,9 +1200,32 @@ class UpaPageController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanKerjasamaExport($data, 'auth.layout.upa.laporan_excel'), 'laporan_kerjasama_upa.xlsx');
     }
 
+    private function auditPayload(Cooperation $cooperation): array
+    {
+        return [
+            'created_at' => $cooperation->created_at?->toIso8601String(),
+            'updated_at' => $cooperation->updated_at?->toIso8601String(),
+            'created_by' => $this->auditUserPayload($cooperation->createdBy),
+            'updated_by' => $this->auditUserPayload($cooperation->updatedBy),
+        ];
+    }
+
+    private function auditUserPayload($user): ?array
+    {
+        if (! $user) {
+            return null;
+        }
+
+        return [
+            'name' => $user->name,
+            'jabatan' => $user->profile?->jabatan,
+            'role' => $user->role?->role_name,
+        ];
+    }
+
     private function buildLaporanQuery(Request $request, bool $global = false)
     {
-        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers']);
+        $query = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'jurusans', 'upas', 'pusats', 'pksNumbers', 'createdBy.role', 'createdBy.profile', 'updatedBy.role', 'updatedBy.profile']);
 
         if (!$global) {
             $query = $this->scopeUnit($query, $this->resolveUnitId());

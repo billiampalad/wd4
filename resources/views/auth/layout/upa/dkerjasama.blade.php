@@ -12,9 +12,18 @@ $expiredCount = $kerjasamaList->filter(function ($item) {
 $status = strtolower($item->status ?? '');
 return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 })->count();
+
+$auditUserLabel = function ($user) {
+    return [
+        'name' => $user?->name ?: '-',
+        'jabatan' => $user?->profile?->jabatan ?: '-',
+        'role' => $user?->role?->role_name ? ucfirst($user->role->role_name) : '-',
+    ];
+};
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
+<link rel="stylesheet" href="{{ asset('css/kerjasama/repositori.css') }}" data-turbo-track="reload">
 
 <!-- Main Content -->
 <main id="mainContent" class="dk-page">
@@ -389,6 +398,7 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
+                            <th class="um-th dk-th-expand" aria-label="Detail"></th>
                             <th class="um-th um-th-num">#</th>
                             <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul Kerjasama</th>
                             <th class="um-th">Unit Pelaksana</th>
@@ -446,8 +456,17 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         $docNumber = $kegiatan->doc_number ?? '';
                         $title = $kegiatan->title ?? '';
                         $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
+                        $createdUser = $auditUserLabel($kegiatan->createdBy);
+                        $updatedUser = $auditUserLabel($kegiatan->updatedBy);
+                        $createdAt = $kegiatan->created_at?->format('d M Y, H:i') ?? '-';
+                        $updatedAt = $kegiatan->updated_at?->format('d M Y, H:i') ?? '-';
                         @endphp
-                        <tr class="um-row dk-row">
+                        <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}">
+                            <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
+                                <button type="button" class="dk-expand-toggle" aria-expanded="false" aria-controls="dk-detail-{{ $kegiatan->id }}" title="Lihat metadata">
+                                    <i class="fas fa-angles-right"></i>
+                                </button>
+                            </td>
                             <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
                                 <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                             </td>
@@ -516,9 +535,41 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                                 </div>
                             </td>
                         </tr>
+                        <tr class="dk-row-detail" id="dk-detail-{{ $kegiatan->id }}" aria-hidden="true">
+                            <td colspan="8" class="dk-detail-cell">
+                                <div class="dk-detail-content">
+                                    <div class="dk-audit-grid">
+                                        <section class="dk-audit-card">
+                                            <div class="dk-audit-card-head">
+                                                <span class="dk-audit-icon dk-audit-created"><i class="fas fa-user-plus"></i></span>
+                                                <strong>Dibuat oleh</strong>
+                                            </div>
+                                            <div class="dk-audit-person">{{ $createdUser['name'] }}</div>
+                                            <div class="dk-audit-meta">
+                                                <span>{{ $createdUser['jabatan'] }}</span>
+                                                <span>{{ $createdUser['role'] }}</span>
+                                                <span>{{ $createdAt }}</span>
+                                            </div>
+                                        </section>
+                                        <section class="dk-audit-card">
+                                            <div class="dk-audit-card-head">
+                                                <span class="dk-audit-icon dk-audit-updated"><i class="fas fa-user-pen"></i></span>
+                                                <strong>Diubah oleh</strong>
+                                            </div>
+                                            <div class="dk-audit-person">{{ $updatedUser['name'] }}</div>
+                                            <div class="dk-audit-meta">
+                                                <span>{{ $updatedUser['jabatan'] }}</span>
+                                                <span>{{ $updatedUser['role'] }}</span>
+                                                <span>{{ $updatedAt }}</span>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                         @empty
                         <tr data-empty>
-                            <td colspan="7" class="um-empty">
+                            <td colspan="8" class="um-empty">
                                 <div class="um-empty-state dk-empty-state">
                                     <div class="um-empty-icon dk-empty-icon">
                                         <i class="fas fa-folder-open"></i>
@@ -584,6 +635,34 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
             return String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
         }
 
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '-';
+            var d = new Date(String(dateStr));
+            if (isNaN(d.getTime())) return escapeHtml(dateStr);
+            var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            return String(d.getDate()).padStart(2, '0') + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        }
+
+        function auditValue(item, type, field) {
+            var audit = item.audit || {};
+            var user = audit[type] || {};
+            if (field === 'role' && user[field]) return String(user[field]).charAt(0).toUpperCase() + String(user[field]).slice(1);
+            return user[field] || '-';
+        }
+
+        function buildDetailRow(item) {
+            var detail = document.createElement('tr');
+            detail.className = 'dk-row-detail';
+            detail.id = 'dk-detail-' + item.id;
+            detail.setAttribute('aria-hidden', 'true');
+            detail.innerHTML =
+                '<td colspan="8" class="dk-detail-cell"><div class="dk-detail-content"><div class="dk-audit-grid">' +
+                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-created"><i class="fas fa-user-plus"></i></span><strong>Dibuat oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'created_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'created_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'created_by', 'role')) + '</span><span>' + formatDateTime(item.audit && item.audit.created_at) + '</span></div></section>' +
+                '<section class="dk-audit-card"><div class="dk-audit-card-head"><span class="dk-audit-icon dk-audit-updated"><i class="fas fa-user-pen"></i></span><strong>Diubah oleh</strong></div><div class="dk-audit-person">' + escapeHtml(auditValue(item, 'updated_by', 'name')) + '</div><div class="dk-audit-meta"><span>' + escapeHtml(auditValue(item, 'updated_by', 'jabatan')) + '</span><span>' + escapeHtml(auditValue(item, 'updated_by', 'role')) + '</span><span>' + formatDateTime(item.audit && item.audit.updated_at) + '</span></div></section>' +
+                '</div></div></td>';
+            return detail;
+        }
+
         function buildPelaksanaHtml(item) {
             var groups = Array.isArray(item.pelaksana_groups) ? item.pelaksana_groups : [];
             if (groups.length === 0) {
@@ -611,18 +690,18 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 
         function showLoading() {
             previewBody.innerHTML =
-                '<tr><td colspan="7" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
+                '<tr><td colspan="8" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
         }
 
         function showEmpty() {
             setCount(0);
             previewBody.innerHTML =
-                '<tr data-empty><td colspan="7" class="um-empty"><div class="um-empty-state dk-empty-state"><div class="um-empty-icon dk-empty-icon"><i class="fas fa-folder-open"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
+                '<tr data-empty><td colspan="8" class="um-empty"><div class="um-empty-state dk-empty-state"><div class="um-empty-icon dk-empty-icon"><i class="fas fa-folder-open"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
         }
 
         function showError() {
             previewBody.innerHTML =
-                '<tr><td colspan="7" class="um-empty"><div class="um-empty-state dk-empty-state"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
+                '<tr><td colspan="8" class="um-empty"><div class="um-empty-state dk-empty-state"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
         }
 
         function buildRow(item, idx) {
@@ -670,7 +749,9 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 
             var tr = document.createElement('tr');
             tr.className = 'um-row dk-row';
+            tr.dataset.rowId = item.id;
             tr.innerHTML =
+                '<td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;"><button type="button" class="dk-expand-toggle" aria-expanded="false" aria-controls="dk-detail-' + item.id + '" title="Lihat metadata"><i class="fas fa-angles-right"></i></button></td>' +
                 '<td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;"><span class="um-num dk-num">' + String(idx + 1).padStart(2, '0') + '</span></td>' +
                 '<td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;"><div class="dk-doc-cell" style="white-space: normal; word-break: break-word;"><span class="dk-doc-number">#' + docNumber + '</span><span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">' + title + '</span><span class="dk-doc-kind">' + jenis + '</span></div></td>' +
                 '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><div style="display: grid; gap: 8px;">' + pelaksanaHtml + '</div></td>' +
@@ -678,7 +759,10 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                 '<td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;"><div class="dk-date-range-compact"><span class="date-val">' + formatDate(item.start_date) + '</span><span class="date-sep">s/d</span><span class="date-val">' + formatDate(item.end_date) + '</span></div></td>' +
                 '<td class="um-td" style="vertical-align: top; padding-top: 15px;"><span class="dk-status ' + statusClass + '"><i class="fas ' + statusIcon + '"></i> ' + statusLabel + '</span></td>' +
                 '<td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;"><div class="um-actions dk-actions-compact"><a href="' + showUrl + '" class="dk-action-btn view" title="Detail"><i class="fas fa-eye"></i></a><a href="' + editUrl + '" class="dk-action-btn edit" title="Edit"><i class="fas fa-pen-to-square"></i></a><form action="' + deleteUrl + '" method="POST" class="dk-delete-form" style="display: inline;" onsubmit="return confirm(&quot;Yakin ingin menghapus data kerjasama ini?&quot;)"><input type="hidden" name="_token" value="' + escapeHtml(csrfToken) + '"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="dk-action-btn delete" title="Hapus"><i class="fas fa-trash-can"></i></button></form></div></td>';
-            return tr;
+            var fragment = document.createDocumentFragment();
+            fragment.appendChild(tr);
+            fragment.appendChild(buildDetailRow(item));
+            return fragment;
         }
 
         function loadData() {
@@ -743,3 +827,4 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
     }
     })();
 </script>
+<script src="{{ asset('js/kerjasama/repositori.js') }}" data-turbo-track="reload"></script>

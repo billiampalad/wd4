@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Cooperation extends Model
 {
@@ -32,6 +33,8 @@ class Cooperation extends Model
         'pusat_id',
         'status_dokumen',
         'perpanjangan_dari_id',
+        'created_by',
+        'updated_by',
     ];
 
     public const DEFAULT_MOU_PELAKSANA = 'Politeknik Negeri Manado';
@@ -133,9 +136,35 @@ class Cooperation extends Model
         return $this->hasMany(self::class, 'perpanjangan_dari_id');
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function kesimpulans()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $cooperation) {
+            if (Auth::check()) {
+                $cooperation->created_by ??= Auth::id();
+                $cooperation->updated_by ??= Auth::id();
+            }
+        });
+
+        static::updating(function (self $cooperation) {
+            if (Auth::check()) {
+                $cooperation->updated_by = Auth::id();
+            }
+        });
     }
 
     public function getPksNumberAttribute($value)
