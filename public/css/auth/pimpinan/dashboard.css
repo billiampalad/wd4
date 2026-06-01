@@ -2,13 +2,20 @@
 
 /* Page Header */
 .pimpinan-page-header {
+    --pimpinan-header-bg: linear-gradient(135deg, var(--surface) 0%, rgba(255,255,255,0) 100%);
+    --pimpinan-header-glow: radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%);
+    --pimpinan-breadcrumb-bg: rgba(255, 255, 255, 0.72);
+    --pimpinan-breadcrumb-border: rgba(148, 163, 184, 0.22);
+    --pimpinan-breadcrumb-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    --pimpinan-breadcrumb-sep: rgba(100, 116, 139, 0.55);
     margin-bottom: 24px;
-    background: linear-gradient(135deg, var(--surface) 0%, rgba(255,255,255,0) 100%);
+    background: var(--pimpinan-header-bg);
     padding: 24px;
     border-radius: 16px;
     border: 1px solid var(--border);
     position: relative;
     overflow: hidden;
+    transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
 .pimpinan-header-bg {
@@ -17,26 +24,57 @@
     top: -50px;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0) 70%);
+    background: var(--pimpinan-header-glow);
     border-radius: 50%;
 }
 
 .pimpinan-header-content {
     position: relative;
     z-index: 1;
+    max-width: min(680px, calc(100% - 320px));
 }
 
 .pimpinan-breadcrumb {
-    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    max-width: 100%;
+    margin-bottom: 12px;
+    padding: 6px 10px;
+    border: 1px solid var(--pimpinan-breadcrumb-border);
+    border-radius: 999px;
+    background: var(--pimpinan-breadcrumb-bg);
+    color: var(--text-sub);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    box-shadow: var(--pimpinan-breadcrumb-shadow);
+    transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), color var(--transition);
 }
 
 .pimpinan-breadcrumb i {
+    flex: 0 0 auto;
     font-size: 11px;
+    color: var(--accent);
+}
+
+.pimpinan-breadcrumb .sep {
+    color: var(--pimpinan-breadcrumb-sep);
+}
+
+.pimpinan-breadcrumb .current {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
 }
 
 .pimpinan-page-title {
     font-size: 28px;
     font-weight: 800;
+    line-height: 1.15;
     background: linear-gradient(90deg, var(--text) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -46,7 +84,18 @@
 .pimpinan-page-desc {
     color: var(--text-sub);
     font-size: 14px;
-    margin-top: 4px;
+    line-height: 1.6;
+    margin: 8px 0 0;
+    max-width: 560px;
+}
+
+[data-theme="dark"] .pimpinan-page-header {
+    --pimpinan-header-bg: linear-gradient(135deg, rgba(24, 28, 39, 0.96) 0%, rgba(30, 35, 51, 0.42) 100%);
+    --pimpinan-header-glow: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(99, 102, 241, 0) 70%);
+    --pimpinan-breadcrumb-bg: rgba(30, 35, 51, 0.78);
+    --pimpinan-breadcrumb-border: rgba(148, 163, 184, 0.18);
+    --pimpinan-breadcrumb-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    --pimpinan-breadcrumb-sep: rgba(148, 163, 184, 0.52);
 }
 
 .pimpinan-header-actions {
@@ -676,6 +725,10 @@
         border-radius: 14px;
     }
 
+    .pimpinan-header-content {
+        max-width: 100%;
+    }
+
     .pimpinan-header-actions {
         position: relative;
         top: auto;
@@ -855,6 +908,10 @@
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
     .pimpinan-page-header {
         padding: 22px;
+    }
+
+    .pimpinan-header-content {
+        max-width: 100%;
     }
 
     .pimpinan-header-actions {
