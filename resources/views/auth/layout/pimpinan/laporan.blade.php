@@ -1,16 +1,23 @@
+<link rel="stylesheet" href="{{ asset('css/auth/pimpinan/monitoring.css') }}">
+
 <main id="mainContent">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-file-signature" style="font-size:11px;"></i>
-            <span class="sep">/</span>
-            <span class="current">Laporan Data</span>
+    <section class="pimpinan-page-header">
+        <div class="pimpinan-header-bg"></div>
+        <div class="pimpinan-header-content">
+            <div class="pimpinan-breadcrumb">
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link"><i class="fas fa-home"></i></a>
+                <span class="sep">/</span>
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link current">Beranda</a>
+                <span class="sep">/</span>
+                <span class="current">Laporan Data</span>
+            </div>
+            <h2 id="pageTitle" class="pimpinan-page-title">Laporan Data Kerjasama</h2>
+            <p id="pageDesc" class="pimpinan-page-desc">Saring dan unduh dokumen laporan kerjasama unit kerja secara kolektif.</p>
         </div>
-        <h2>Laporan Data Kerjasama</h2>
-        <p>Saring dan unduh dokumen laporan kerjasama unit kerja secara kolektif.</p>
-    </div>
+    </section>
 
     <!-- Filter Section -->
-    <div class="report-filter-container" x-data="{ showFilters: true }">
+    <div class="report-filter-container" style="margin-top: 24px;" x-data="{ showFilters: true }">
         <div class="rfc-header"
             style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
             @click="showFilters = !showFilters">
