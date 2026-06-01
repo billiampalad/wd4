@@ -242,7 +242,7 @@
             <a class="menu-item {{ request()->routeIs('pimpinan.dashboard') ? 'active' : '' }}"
                 href="{{ route('pimpinan.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <span>Dashboard Eksekutif</span>
+                <span>Beranda</span>
             </a>
 
             <a class="menu-item {{ request()->routeIs('pimpinan.monitoring', 'pimpinan.monitoring.*') || (isset($view) && $view === 'detail_monitoring') ? 'active' : '' }}"
@@ -254,7 +254,7 @@
             <a class="menu-item {{ request()->routeIs('pimpinan.evaluasi*') ? 'active' : '' }}"
                 href="{{ route('pimpinan.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
-                <span>Evaluasi Data Kerjasama</span>
+                <span>Evaluasi Kerjasama</span>
             </a>
             <a class="menu-item {{ request()->routeIs('pimpinan.pengajuan_mitra*') ? 'active' : '' }}"
                 href="{{ route('pimpinan.pengajuan_mitra') }}">

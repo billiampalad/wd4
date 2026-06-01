@@ -11,7 +11,7 @@
             <div class="pimpinan-breadcrumb">
                 <i class="fas fa-home"></i>
                 <span class="sep">/</span>
-                <span class="current" id="breadcrumbCurrent">Executive Overview</span>
+                <span class="current" id="breadcrumbCurrent">Beranda</span>
             </div>
             <h2 id="pageTitle" class="pimpinan-page-title">Sistem Informasi Kerjasama (Executive)</h2>
             <p id="pageDesc" class="pimpinan-page-desc">Gambaran besar aktivitas kerjasama Politeknik Negeri Manado Tahun {{ now()->year }}</p>

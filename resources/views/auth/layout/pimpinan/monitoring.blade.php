@@ -23,22 +23,19 @@
 
 <main id="mainContent" class="dk-page">
 
-    {{-- ═══ HERO ═══ --}}
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
+    {{-- ═══ Page Header ═══ --}}
+    <section class="pimpinan-page-header">
+        <div class="pimpinan-header-bg"></div>
+        <div class="pimpinan-header-content">
+            <div class="pimpinan-breadcrumb">
                 <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link"><i class="fas fa-home"></i></a>
                 <span class="sep">/</span>
-                <span class="current">Monitoring & Mitigasi Risiko</span>
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link current">Beranda</a>
+                <span class="sep">/</span>
+                <span class="current">Monitoring</span>
             </div>
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon"><i class="fas fa-shield-halved"></i></div>
-                <div>
-                    <span class="dk-eyebrow">Pusat Kendali Pimpinan</span>
-                    <h2 id="pageTitle">Monitoring & Early Warning</h2>
-                    <p id="pageDesc">Pengambilan keputusan berbasis data: performa instansi, peringatan dini, dan mitigasi risiko.</p>
-                </div>
-            </div>
+            <h2 id="pageTitle" class="pimpinan-page-title">Monitoring & Early Warning</h2>
+            <p id="pageDesc" class="pimpinan-page-desc">Pengambilan keputusan berbasis data: performa instansi, peringatan dini, dan mitigasi risiko.</p>
         </div>
     </section>
 
