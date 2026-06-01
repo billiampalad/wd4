@@ -1,23 +1,18 @@
+<link rel="stylesheet" href="{{ asset('css/auth/pimpinan/monitoring.css') }}">
+
 <main id="mainContent" class="submission-dashboard">
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('pimpinan.dashboard') }}"
-                    style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px">
-                    <i class="fas fa-home"></i>
-                </a>
+    <section class="pimpinan-page-header">
+        <div class="pimpinan-header-bg"></div>
+        <div class="pimpinan-header-content">
+            <div class="pimpinan-breadcrumb">
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link"><i class="fas fa-home"></i></a>
+                <span class="sep">/</span>
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link current">Beranda</a>
                 <span class="sep">/</span>
                 <span class="current">Pengajuan Mitra</span>
             </div>
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon"><i class="fas fa-handshake-angle"></i></div>
-                <div>
-                    <span class="dk-eyebrow">Inbox Pengajuan Publik</span>
-                    <h2>Validasi Pengajuan Kerja Sama Mitra</h2>
-                    <p>Tinjau data mitra dari landing page, lalu setujui agar masuk ke master mitra atau tolak
-                        dengan catatan yang jelas.</p>
-                </div>
-            </div>
+            <h2 id="pageTitle" class="pimpinan-page-title">Validasi Pengajuan Kerja Sama Mitra</h2>
+            <p id="pageDesc" class="pimpinan-page-desc">Tinjau data mitra dari landing page, lalu setujui agar masuk ke master mitra atau tolak dengan catatan yang jelas.</p>
         </div>
     </section>
 
