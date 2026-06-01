@@ -1236,17 +1236,27 @@ class JurusanPageController extends Controller
         return [
             'name' => $user->name,
             'jabatan' => $user->profile?->jabatan,
-            'role' => $this->auditRoleLabel($user->role?->role_name),
+            'role' => $this->auditRoleLabel($user),
         ];
     }
 
-    private function auditRoleLabel(?string $roleName): ?string
+    private function auditRoleLabel($user): ?string
     {
+        $roleName = $user?->role?->role_name;
+
         if (! $roleName) {
             return null;
         }
 
-        return strtolower($roleName) === 'unit_kerja' ? 'Humas' : ucfirst($roleName);
+        $profile = $user?->profile;
+
+        return match (strtolower($roleName)) {
+            'unit_kerja' => 'Humas',
+            'jurusan' => $profile?->jurusan?->nama_jurusan ? 'Jurusan - ' . $profile->jurusan->nama_jurusan : 'Jurusan',
+            'pusat' => $profile?->pusat?->nama_pusat ? 'Pusat - ' . $profile->pusat->nama_pusat : 'Pusat',
+            'upa' => $profile?->upa?->nama_upa ? 'UPA - ' . $profile->upa->nama_upa : 'UPA',
+            default => ucfirst($roleName),
+        };
     }
 
     private function buildLaporanQuery(Request $request, bool $global = false)
@@ -1260,9 +1270,15 @@ class JurusanPageController extends Controller
             'upas',
             'pusats',
             'pksNumbers',
-            'createdBy.profile',
+            'createdBy.profile.jurusan',
+            'createdBy.profile.unitKerja',
+            'createdBy.profile.upa',
+            'createdBy.profile.pusat',
             'createdBy.role',
-            'updatedBy.profile',
+            'updatedBy.profile.jurusan',
+            'updatedBy.profile.unitKerja',
+            'updatedBy.profile.upa',
+            'updatedBy.profile.pusat',
             'updatedBy.role',
         ]);
 

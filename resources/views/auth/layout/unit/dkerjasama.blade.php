@@ -75,11 +75,24 @@ $pelaksanaGroupsFor = function ($kegiatan) {
 
 $auditUserLabel = function ($user = null) {
     $roleName = $user?->role?->role_name;
+    $roleLabel = match (strtolower($roleName ?? '')) {
+        'unit_kerja' => 'Humas',
+        'jurusan' => $user?->profile?->jurusan?->nama_jurusan
+            ? 'Jurusan - ' . $user->profile->jurusan->nama_jurusan
+            : 'Jurusan',
+        'pusat' => $user?->profile?->pusat?->nama_pusat
+            ? 'Pusat - ' . $user->profile->pusat->nama_pusat
+            : 'Pusat',
+        'upa' => $user?->profile?->upa?->nama_upa
+            ? 'UPA - ' . $user->profile->upa->nama_upa
+            : 'UPA',
+        default => $roleName ? ucfirst($roleName) : '-',
+    };
 
     return [
         'name' => $user?->name ?: '-',
         'jabatan' => $user?->profile?->jabatan ?: '-',
-        'role' => $roleName ? (strtolower($roleName) === 'unit_kerja' ? 'Humas' : ucfirst($roleName)) : '-',
+        'role' => $roleLabel,
     ];
 };
 @endphp
