@@ -1,24 +1,21 @@
+<link rel="stylesheet" href="{{ asset('css/auth/pimpinan/monitoring.css') }}">
+
 <main id="mainContent" class="eval-master-detail" x-data="evalDashboard()">
     <!-- Confetti Script -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <section class="dk-hero">
-        <div class="dk-hero-content">
-            <div class="breadcrumb dk-breadcrumb">
-                <a href="{{ route('pimpinan.dashboard') }}"
-                    style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:8px"><i
-                        class="fas fa-home"></i></a>
+    <section class="pimpinan-page-header">
+        <div class="pimpinan-header-bg"></div>
+        <div class="pimpinan-header-content">
+            <div class="pimpinan-breadcrumb">
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link"><i class="fas fa-home"></i></a>
                 <span class="sep">/</span>
-                <span class="current">Evaluasi Validasi</span>
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link current">Beranda</a>
+                <span class="sep">/</span>
+                <span class="current">Evaluasi</span>
             </div>
-            <div class="dk-hero-main">
-                <div class="dk-hero-icon"><i class="fas fa-file-signature"></i></div>
-                <div>
-                    <span class="dk-eyebrow">Validasi Kerjasama Strategis</span>
-                    <h2 id="pageTitle">Evaluasi Dokumen</h2>
-                    <p id="pageDesc">Pilih antrean dokumen untuk meninjau keselarasan dan memberikan validasi secara cepat.</p>
-                </div>
-            </div>
+            <h2 id="pageTitle" class="pimpinan-page-title">Evaluasi Dokumen</h2>
+            <p id="pageDesc" class="pimpinan-page-desc">Pilih antrean dokumen untuk meninjau keselarasan dan memberikan validasi secara cepat.</p>
         </div>
     </section>
 
