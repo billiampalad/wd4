@@ -14,10 +14,12 @@ return in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
 })->count();
 
 $auditUserLabel = function ($user = null) {
+    $roleName = $user?->role?->role_name;
+
     return [
         'name' => $user?->name ?: '-',
         'jabatan' => $user?->profile?->jabatan ?: '-',
-        'role' => $user?->role?->role_name ? ucfirst($user->role->role_name) : '-',
+        'role' => $roleName ? (strtolower($roleName) === 'unit_kerja' ? 'Humas' : ucfirst($roleName)) : '-',
     ];
 };
 @endphp
@@ -658,6 +660,7 @@ $auditUserLabel = function ($user = null) {
             var audit = item.audit || {};
             var user = audit[type] || {};
             if (!user[field] && type === 'updated_by' && field === 'name') return 'Belum diubah';
+            if (field === 'role' && String(user[field] || '').toLowerCase() === 'unit_kerja') return 'Humas';
             if (field === 'role' && user[field]) {
                 return String(user[field]).charAt(0).toUpperCase() + String(user[field]).slice(1);
             }

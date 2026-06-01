@@ -1236,8 +1236,17 @@ class JurusanPageController extends Controller
         return [
             'name' => $user->name,
             'jabatan' => $user->profile?->jabatan,
-            'role' => $user->role?->role_name,
+            'role' => $this->auditRoleLabel($user->role?->role_name),
         ];
+    }
+
+    private function auditRoleLabel(?string $roleName): ?string
+    {
+        if (! $roleName) {
+            return null;
+        }
+
+        return strtolower($roleName) === 'unit_kerja' ? 'Humas' : ucfirst($roleName);
     }
 
     private function buildLaporanQuery(Request $request, bool $global = false)
