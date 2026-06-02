@@ -55,12 +55,44 @@
                         <i class="fas fa-search"></i>
                         <input id="submissionSearch" type="search" placeholder="Cari mitra, kode, atau negara">
                     </label>
-                    <select id="submissionCategoryFilter" class="submission-filter" aria-label="Filter kategori">
-                        <option value="all">Semua kategori</option>
+                    <div class="submission-filter-dropdown" x-data="{
+                        open: false,
+                        selectedValue: 'all',
+                        selectedLabel: 'Semua kategori',
+                        select(value, label) {
+                            this.selectedValue = value;
+                            this.selectedLabel = label;
+                            this.open = false;
+                            this.$refs.filterValue.value = value;
+                            this.$refs.filterValue.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }" @click.outside="open = false">
+                        <input id="submissionCategoryFilter" x-ref="filterValue" type="hidden" value="all">
+                        <button type="button" class="submission-filter-trigger" @click="open = !open"
+                            :aria-expanded="open.toString()" aria-haspopup="listbox" aria-label="Filter kategori">
+                            <span class="submission-filter-icon"><i class="fas fa-filter"></i></span>
+                            <span class="submission-filter-label" x-text="selectedLabel"></span>
+                            <i class="fas fa-chevron-down submission-filter-chevron" :class="{ 'is-open': open }"></i>
+                        </button>
+                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak role="listbox">
+                            <button type="button" class="submission-filter-option"
+                                :class="{ 'is-selected': selectedValue === 'all' }"
+                                :aria-selected="(selectedValue === 'all').toString()"
+                                @click="select('all', 'Semua kategori')" role="option">
+                                <span>Semua kategori</span>
+                                <i class="fas fa-check" x-show="selectedValue === 'all'"></i>
+                            </button>
                         @foreach ($pendingSubmissions->pluck('kategori')->filter()->unique()->sort() as $kategori)
-                            <option value="{{ strtolower($kategori) }}">{{ ucfirst($kategori) }}</option>
+                            <button type="button" class="submission-filter-option"
+                                :class="{ 'is-selected': selectedValue === @js(strtolower($kategori)) }"
+                                :aria-selected="(selectedValue === @js(strtolower($kategori))).toString()"
+                                @click="select(@js(strtolower($kategori)), @js(ucfirst($kategori)))" role="option">
+                                <span>{{ ucfirst($kategori) }}</span>
+                                <i class="fas fa-check" x-show="selectedValue === @js(strtolower($kategori))"></i>
+                            </button>
                         @endforeach
-                    </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
