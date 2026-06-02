@@ -166,7 +166,7 @@
         </div>
 
         <div class="card-body dk-card-body" style="padding: 0;">
-            <form action="{{ route('upa.kerjasama.store') }}" method="POST">
+            <form action="{{ route('upa.kerjasama.store') }}" method="POST" data-kerjasama-create-form>
                 @csrf
                 <input type="hidden" name="input_type" :value="inputType">
                 @if($isPerpanjangan)
