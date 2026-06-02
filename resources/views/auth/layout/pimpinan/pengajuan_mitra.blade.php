@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/auth/pimpinan/monitoring.css') }}">
+<link rel="stylesheet" href="{{ asset('css/auth/pimpinan/pmitra.css') }}">
 
 <main id="mainContent" class="submission-dashboard">
     <section class="pimpinan-page-header">
@@ -16,23 +16,27 @@
         </div>
     </section>
 
-    <section class="submission-stats">
-        <article class="dk-stat-card">
+    <section class="submission-stats" aria-label="Ringkasan pengajuan mitra">
+        <article class="dk-stat-card total">
+            <div class="dk-stat-icon"><i class="fas fa-inbox"></i></div>
             <span>Total Pengajuan</span>
             <strong>{{ number_format($submissionStats['total'] ?? 0, 0, ',', '.') }}</strong>
             <small>Seluruh pengajuan publik yang sudah masuk.</small>
         </article>
-        <article class="dk-stat-card">
+        <article class="dk-stat-card pending">
+            <div class="dk-stat-icon"><i class="fas fa-hourglass-half"></i></div>
             <span>Menunggu Review</span>
             <strong>{{ number_format($submissionStats['pending'] ?? 0, 0, ',', '.') }}</strong>
             <small>Antrean yang masih membutuhkan keputusan pimpinan.</small>
         </article>
-        <article class="dk-stat-card">
+        <article class="dk-stat-card approved">
+            <div class="dk-stat-icon"><i class="fas fa-circle-check"></i></div>
             <span>Disetujui</span>
             <strong>{{ number_format($submissionStats['approved'] ?? 0, 0, ',', '.') }}</strong>
             <small>Pengajuan yang sudah masuk ke data master mitra.</small>
         </article>
-        <article class="dk-stat-card">
+        <article class="dk-stat-card rejected">
+            <div class="dk-stat-icon"><i class="fas fa-circle-xmark"></i></div>
             <span>Ditolak</span>
             <strong>{{ number_format($submissionStats['rejected'] ?? 0, 0, ',', '.') }}</strong>
             <small>Pengajuan yang belum dapat ditindaklanjuti.</small>
@@ -46,6 +50,18 @@
                     <span>Antrean Validasi</span>
                     <small>{{ $pendingSubmissions->count() }} pengajuan aktif</small>
                 </div>
+                <div class="submission-tools">
+                    <label class="submission-search" for="submissionSearch">
+                        <i class="fas fa-search"></i>
+                        <input id="submissionSearch" type="search" placeholder="Cari mitra, kode, atau negara">
+                    </label>
+                    <select id="submissionCategoryFilter" class="submission-filter" aria-label="Filter kategori">
+                        <option value="all">Semua kategori</option>
+                        @foreach ($pendingSubmissions->pluck('kategori')->filter()->unique()->sort() as $kategori)
+                            <option value="{{ strtolower($kategori) }}">{{ ucfirst($kategori) }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             @forelse ($pendingSubmissions as $submission)
@@ -58,7 +74,10 @@
                     };
                 @endphp
 
-                <article class="submission-card">
+                <article class="submission-card"
+                    data-submission-card
+                    data-category="{{ strtolower($submission->kategori) }}"
+                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '')) }}">
                     <div class="submission-card-head">
                         <div class="submission-card-title">
                             <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
@@ -148,9 +167,12 @@
                     <form action="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}" method="POST"
                         class="submission-form">
                         @csrf
-                        <label for="catatan-{{ $submission->id }}">Catatan Pimpinan</label>
+                        <div class="submission-form-head">
+                            <label for="catatan-{{ $submission->id }}">Catatan Pimpinan</label>
+                            <span class="submission-counter" data-note-counter>0 karakter</span>
+                        </div>
                         <textarea id="catatan-{{ $submission->id }}" name="catatan_pimpinan" class="submission-textarea"
-                            placeholder="Tambahkan catatan validasi. Wajib diisi jika pengajuan ditolak."></textarea>
+                            rows="4" placeholder="Tambahkan catatan validasi. Wajib diisi jika pengajuan ditolak."></textarea>
 
                         <div class="submission-actions">
                             <button type="submit" name="keputusan" value="ditolak" class="ev-btn-reject">
@@ -172,6 +194,12 @@
                     <p>Tidak ada pengajuan mitra yang sedang menunggu validasi.</p>
                 </div>
             @endforelse
+            <div class="dk-empty-state submission-filter-empty" hidden>
+                <div class="dk-empty-icon">
+                    <i class="fas fa-magnifying-glass"></i>
+                </div>
+                <p>Tidak ada pengajuan yang cocok dengan pencarian atau filter.</p>
+            </div>
         </div>
 
         <div class="dk-card submission-section">
@@ -200,7 +228,7 @@
                             };
                         @endphp
 
-                        <article class="submission-history-item">
+                        <article class="submission-history-item {{ $statusClass }}">
                             <div class="submission-history-head">
                                 <div>
                                     <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
@@ -233,3 +261,5 @@
         </div>
     </section>
 </main>
+
+<script src="{{ asset('js/auth/pimpinan/pmitra.js') }}"></script>
