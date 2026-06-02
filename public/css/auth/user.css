@@ -5204,6 +5204,17 @@ body {
     background: rgba(239, 68, 68, 0.02) !important;
 }
 
+.adp-input.is-invalid {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.02) !important;
+}
+
+.mc-group button.is-invalid {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+    color: #ef4444 !important;
+}
+
 .mc-error {
     color: #ef4444;
     font-size: 11px;

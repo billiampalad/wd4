@@ -621,6 +621,48 @@ function initDashboard() {
         return Array.from(form.querySelectorAll(selector)).some(field => String(field.value || '').trim() !== '');
     }
 
+    function findKerjasamaGroupByLabel(form, labelText) {
+        return Array.from(form.querySelectorAll('.mc-group')).find(group => {
+            const label = group.querySelector('.mc-label');
+            return label && label.textContent.replace(/\s+/g, ' ').trim().includes(labelText);
+        });
+    }
+
+    function clearKerjasamaRequiredErrors(form) {
+        form.querySelectorAll('.js-required-error').forEach(error => error.remove());
+        form.querySelectorAll('.js-required-invalid').forEach(field => {
+            field.classList.remove('is-invalid', 'js-required-invalid');
+        });
+    }
+
+    function markKerjasamaRequiredError(check) {
+        const group = check.group || check.target?.closest?.('.mc-group') || check.target;
+        const targets = [];
+
+        if (check.target && check.target.classList) {
+            targets.push(check.target);
+        }
+
+        if (group && group.querySelectorAll) {
+            targets.push(...group.querySelectorAll('.mc-input, .adp-input, .ad-trigger'));
+
+            if (!targets.length) {
+                targets.push(...group.querySelectorAll('button[type="button"]'));
+            }
+        }
+
+        targets.forEach(target => {
+            target.classList.add('is-invalid', 'js-required-invalid');
+        });
+
+        if (group && group.insertAdjacentHTML && !group.querySelector('.js-required-error')) {
+            group.insertAdjacentHTML(
+                'beforeend',
+                `<span class="mc-error js-required-error"><i class="fas fa-circle-exclamation"></i> ${check.message}</span>`
+            );
+        }
+    }
+
     function showRequiredKerjasamaAlert(message, target) {
         if (target && typeof target.focus === 'function') {
             setTimeout(() => target.focus({ preventScroll: false }), 80);
@@ -644,14 +686,32 @@ function initDashboard() {
         if (!form.matches('[data-kerjasama-create-form]')) return;
 
         form.dataset.kerjasamaRequiredBound = '1';
+        form.addEventListener('input', () => clearKerjasamaRequiredErrors(form));
+        form.addEventListener('change', () => clearKerjasamaRequiredErrors(form));
+        form.addEventListener('click', event => {
+            if (event.target.closest('.ad-item, .ad-trigger, button[type="button"]')) {
+                setTimeout(() => clearKerjasamaRequiredErrors(form), 0);
+            }
+        });
+
         form.addEventListener('submit', function (event) {
+            clearKerjasamaRequiredErrors(form);
+
             const jenis = getTrimmedFieldValue(form, 'input[name="jenis"]');
             const inputType = getTrimmedFieldValue(form, 'input[name="input_type"]');
+            const dokumenGroup = findKerjasamaGroupByLabel(form, 'Dokumen Kerjasama');
+            const startDateGroup = findKerjasamaGroupByLabel(form, 'Tanggal Mulai');
+            const endDateGroup = findKerjasamaGroupByLabel(form, 'Tanggal Selesai');
+            const statusGroup = findKerjasamaGroupByLabel(form, 'Status');
+            const tipePelaksanaGroup = findKerjasamaGroupByLabel(form, 'Tipe Pelaksana');
+            const namaMitraGroup = findKerjasamaGroupByLabel(form, 'Nama Mitra');
+            const ruangLingkupGroup = findKerjasamaGroupByLabel(form, 'Bentuk Kegiatan Kerjasama');
             const checks = [
                 {
                     invalid: !jenis,
                     message: 'Dokumen Kerjasama wajib dipilih.',
-                    target: form.querySelector('input[name="jenis"]')?.closest('.mc-group')?.querySelector('.ad-trigger')
+                    group: dokumenGroup,
+                    target: dokumenGroup?.querySelector('.ad-trigger')
                 },
                 {
                     invalid: !getTrimmedFieldValue(form, 'input[name="doc_number"]'),
@@ -661,11 +721,13 @@ function initDashboard() {
                 {
                     invalid: !getTrimmedFieldValue(form, 'input[name="start_date"]'),
                     message: 'Tanggal Mulai pada Periode Kerjasama wajib diisi.',
+                    group: startDateGroup,
                     target: form.querySelector('input[name="start_date"]')
                 },
                 {
                     invalid: !getTrimmedFieldValue(form, 'input[name="end_date"]'),
                     message: 'Tanggal Selesai pada Periode Kerjasama wajib diisi.',
+                    group: endDateGroup,
                     target: form.querySelector('input[name="end_date"]')
                 },
                 {
@@ -676,22 +738,26 @@ function initDashboard() {
                 {
                     invalid: inputType === 'arsip' && !getTrimmedFieldValue(form, 'input[name="status"]'),
                     message: 'Status Kerjasama wajib dipilih.',
-                    target: form.querySelector('input[name="status"]')?.closest('.mc-group')?.querySelector('.ad-trigger')
+                    group: statusGroup,
+                    target: statusGroup?.querySelector('.ad-trigger')
                 },
                 {
                     invalid: (jenis.includes('MoA') || jenis.includes('IA')) && !hasFilledField(form, 'input[name="tipe_pelaksana[]"]'),
                     message: 'Tipe Pelaksana wajib dipilih.',
-                    target: form.querySelector('input[name="tipe_pelaksana[]"]')?.closest('.mc-group') || form.querySelector('[x-show*="jenisDokumen"]')
+                    group: tipePelaksanaGroup,
+                    target: tipePelaksanaGroup
                 },
                 {
                     invalid: !hasFilledField(form, 'input[name="penggiat_mitra_ids[]"]'),
                     message: 'Nama Mitra wajib dipilih.',
-                    target: form.querySelector('input[name="penggiat_mitra_ids[]"]')?.closest('.mc-group')?.querySelector('.ad-trigger')
+                    group: namaMitraGroup,
+                    target: namaMitraGroup?.querySelector('.ad-trigger')
                 },
                 {
                     invalid: !hasFilledField(form, 'input[name="id_jenis[]"]'),
                     message: 'Bentuk Kegiatan Kerjasama (Ruang Lingkup) wajib dipilih.',
-                    target: form.querySelector('input[name="id_jenis[]"]')?.closest('.mc-group') || form.querySelector('[x-data*="selected"]')
+                    group: ruangLingkupGroup,
+                    target: ruangLingkupGroup?.querySelector('.ad-trigger') || ruangLingkupGroup
                 }
             ];
             const failed = checks.find(check => check.invalid);
@@ -701,6 +767,7 @@ function initDashboard() {
             event.preventDefault();
             event.stopImmediatePropagation();
             form.dataset.submitting = '0';
+            markKerjasamaRequiredError(failed);
             showRequiredKerjasamaAlert(failed.message, failed.target);
         }, true);
     }
