@@ -47,7 +47,6 @@
     width: fit-content;
     max-width: 100%;
     min-height: 30px;
-    margin-bottom: 12px;
     padding: 6px 10px;
     border: 1px solid var(--pimpinan-breadcrumb-border);
     border-radius: 999px;
@@ -109,7 +108,6 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
-    margin-bottom: 22px;
 }
 
 .dk-stat-card {
@@ -801,7 +799,6 @@
 
     .pimpinan-page-header {
         padding: 18px;
-        margin-bottom: 18px;
     }
 
     .pimpinan-header-content {

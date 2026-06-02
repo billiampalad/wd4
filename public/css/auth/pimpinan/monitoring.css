@@ -45,7 +45,6 @@
     width: fit-content;
     max-width: 100%;
     min-height: 30px;
-    margin-bottom: 12px;
     padding: 6px 10px;
     border: 1px solid var(--pimpinan-breadcrumb-border);
     border-radius: 999px;
@@ -1044,7 +1043,6 @@
 
     .pimpinan-page-header {
         padding: 18px;
-        margin-bottom: 18px;
     }
 
     .pimpinan-header-content {
