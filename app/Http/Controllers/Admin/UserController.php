@@ -10,6 +10,7 @@ use App\Models\UnitKerja;
 use App\Models\Upa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController
 {
@@ -40,13 +41,23 @@ class UserController
      */
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nik' => ['required', 'string', 'max:255', 'unique:users,nik'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'role_id' => ['required', 'exists:roles,id'],
+        ]);
+
         $profileData = $this->profileDataForRole($request);
 
         $user = User::create([
-            'nik' => $request->nik,
-            'name' => $request->name,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id
+            'nik' => $validated['nik'],
+            'name' => $validated['name'],
+            'email' => $validated['email'] ?? null,
+            'email_verified_at' => filled($validated['email'] ?? null) ? now() : null,
+            'password' => Hash::make($validated['password']),
+            'role_id' => $validated['role_id'],
         ]);
 
         $user->profile()->create($profileData);
@@ -75,11 +86,29 @@ class UserController
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'nik' => ['required', 'string', 'max:255', Rule::unique('users', 'nik')->ignore($user->id)],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'password' => ['nullable', 'string', 'min:8'],
+            'role_id' => ['required', 'exists:roles,id'],
+        ]);
+
         $profileData = $this->profileDataForRole($request);
 
-        $userData = $request->only('name', 'nik', 'role_id');
+        $newEmail = $validated['email'] ?? null;
+        $emailChanged = $newEmail !== $user->email;
+        $userData = [
+            'name' => $validated['name'],
+            'nik' => $validated['nik'],
+            'email' => $newEmail,
+            'role_id' => $validated['role_id'],
+        ];
+        if ($emailChanged) {
+            $userData['email_verified_at'] = filled($newEmail) ? now() : null;
+        }
         if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->password);
+            $userData['password'] = Hash::make($validated['password']);
         }
 
         $user->update($userData);

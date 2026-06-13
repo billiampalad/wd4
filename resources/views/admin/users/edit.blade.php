@@ -173,6 +173,24 @@
                                 <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
+
+                            <div class="ue-form-group">
+                                <label class="ue-label" for="email">
+                                    <i class="fas fa-envelope ue-label-icon"></i>
+                                    Email
+                                    <span class="ue-optional">(untuk pemulihan akun)</span>
+                                </label>
+                                <input
+                                    type="email" id="email" name="email"
+                                    class="ue-input @error('email') ue-input-error @enderror"
+                                    value="{{ old('email', $user->email) }}"
+                                    placeholder="nama@institusi.ac.id"
+                                    autocomplete="email"
+                                />
+                                @error('email')
+                                <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Section 02: Akun --}}

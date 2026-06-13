@@ -60,6 +60,19 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::middleware('guest')->group(function () {
+    Route::get('/lupa-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'request'])
+        ->name('password.request');
+    Route::post('/lupa-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'email'])
+        ->middleware('throttle:5,1')
+        ->name('password.email');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])
+        ->name('password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'update'])
+        ->middleware('throttle:5,1')
+        ->name('password.update');
+});
+
 /*
 |--------------------------------------------------------------------------
 | LOGIN ADMIN

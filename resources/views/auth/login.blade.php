@@ -51,6 +51,12 @@
             <form method="POST" action="/login">
                 @csrf
 
+                @if (session('status'))
+                    <div class="auth-alert auth-alert-success" role="status">
+                        {{ session('status') }}
+                    </div>
+                @endif
+
                 <div class="form-group">
                     <label>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
@@ -103,21 +109,6 @@
                     </div>
                 </div>
 
-                <div class="forgot-password-wrap">
-                    <a href="#" class="forgot-password-link">
-                        <span class="forgot-password-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="7.5" cy="15.5" r="5.5" />
-                                <path d="m21 2-9.6 9.6" />
-                                <path d="m15.5 7.5 2 2L21 6" />
-                            </svg>
-                        </span>
-                        <span>Lupa kata sandi?</span>
-                    </a>
-                </div>
-
                 <button type="submit" class="btn-submit">
                     <div class="btn-inner">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
@@ -130,6 +121,21 @@
                         Masuk Sekarang
                     </div>
                 </button>
+
+                <div class="forgot-password-wrap">
+                    <a href="{{ route('password.request') }}" class="forgot-password-link">
+                        <span class="forgot-password-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="7.5" cy="15.5" r="5.5" />
+                                <path d="m21 2-9.6 9.6" />
+                                <path d="m15.5 7.5 2 2L21 6" />
+                            </svg>
+                        </span>
+                        <span>Lupa kata sandi?</span>
+                    </a>
+                </div>
 
                 <!-- <div class="divider">
                     <div class="divider-line"></div>

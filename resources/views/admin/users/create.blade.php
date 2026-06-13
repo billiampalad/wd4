@@ -147,6 +147,24 @@
                                 <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
+
+                            <div class="uc-form-group">
+                                <label class="uc-label" for="email">
+                                    <i class="fas fa-envelope uc-label-icon"></i>
+                                    Email
+                                    <span class="uc-optional">(untuk pemulihan akun)</span>
+                                </label>
+                                <input
+                                    type="email" id="email" name="email"
+                                    class="uc-input @error('email') uc-input-error @enderror"
+                                    placeholder="nama@institusi.ac.id"
+                                    value="{{ old('email') }}"
+                                    autocomplete="email"
+                                />
+                                @error('email')
+                                <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Section: Akun --}}
