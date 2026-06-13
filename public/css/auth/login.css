@@ -296,6 +296,8 @@ label svg {
 input[type="text"],
 input[type="email"],
 input[type="password"] {
+    position: relative;
+    z-index: 1;
     width: 100%;
     padding: 14px 16px 14px 46px;
     border-radius: 14px;
@@ -321,6 +323,7 @@ input:focus {
 
 .input-prefix {
     position: absolute;
+    z-index: 2;
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
@@ -335,6 +338,7 @@ input:focus {
 
 .eye-btn {
     position: absolute;
+    z-index: 2;
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
