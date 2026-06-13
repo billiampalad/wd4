@@ -38,6 +38,7 @@
                         <th class="um-th um-th-num">#</th>
                         <th class="um-th">NIK</th>
                         <th class="um-th">Nama</th>
+                        <th class="um-th">Email</th>
                         <th class="um-th">Password</th>
                         <th class="um-th">Role</th>
                         <th class="um-th">Jabatan</th>
@@ -64,6 +65,9 @@
                                 <div class="avatar um-avatar um-avatar-color-{{ ($i % 6) }}">{{ strtoupper(substr($user->name ?? '??', 0, 2)) }}</div>
                                 <span class="um-name">{{ $user->name ?? '-' }}</span>
                             </div>
+                        </td>
+                        <td class="um-td">
+                            <span class="um-meta">{{ $user->email ?? '-' }}</span>
                         </td>
                         <td class="um-td">
                             <div class="um-pass-wrap">
@@ -119,7 +123,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="13" class="um-empty">
+                        <td colspan="14" class="um-empty">
                             <div class="um-empty-state">
                                 <div class="um-empty-icon">
                                     <i class="fas fa-users-slash"></i>
