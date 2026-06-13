@@ -404,6 +404,56 @@ input:focus {
     gap: 8px;
 }
 
+.forgot-password-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    animation: fadeUp 0.55s ease both 0.42s;
+}
+
+.forgot-password-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.24s ease, background-color 0.24s ease, transform 0.24s ease;
+}
+
+.forgot-password-icon {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(19, 85, 237, 0.14);
+    border-radius: 10px;
+    color: var(--blue);
+    background: rgba(19, 85, 237, 0.07);
+    transition: color 0.24s ease, background-color 0.24s ease, border-color 0.24s ease;
+}
+
+.forgot-password-link:hover {
+    color: var(--blue);
+    background: rgba(19, 85, 237, 0.06);
+    transform: translateY(-1px);
+}
+
+.forgot-password-link:hover .forgot-password-icon {
+    color: #ffffff;
+    background: var(--blue);
+    border-color: var(--blue);
+}
+
+.forgot-password-link:focus-visible {
+    outline: 3px solid rgba(19, 85, 237, 0.2);
+    outline-offset: 3px;
+}
+
 @keyframes floatBar {
     from {
         transform: translate3d(-3vw, -1.5vh, 0) rotate(-31deg);

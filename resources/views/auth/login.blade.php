@@ -45,7 +45,7 @@
                         style="border-radius: 50%; object-fit: cover;">
                 </div>
                 <h1 class="card-title">Masuk ke Akun</h1>
-                <p class="card-subtitle">Masukkan NIP dan kata sandi Anda<br>untuk melanjutkan</p>
+                <p class="card-subtitle">Masukkan NIP dan kata sandi Anda untuk melanjutkan</p>
             </div>
 
             <form method="POST" action="/login">
@@ -101,6 +101,21 @@
                             </svg>
                         </button>
                     </div>
+                </div>
+
+                <div class="forgot-password-wrap">
+                    <a href="#" class="forgot-password-link">
+                        <span class="forgot-password-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="7.5" cy="15.5" r="5.5" />
+                                <path d="m21 2-9.6 9.6" />
+                                <path d="m15.5 7.5 2 2L21 6" />
+                            </svg>
+                        </span>
+                        <span>Lupa kata sandi?</span>
+                    </a>
                 </div>
 
                 <button type="submit" class="btn-submit">
