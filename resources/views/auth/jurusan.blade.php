@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="light"
+    class="{{ request()->routeIs('jurusan.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -25,7 +26,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body>
+<body class="{{ request()->routeIs('jurusan.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }}">
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
