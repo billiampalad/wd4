@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }}">
+    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -25,7 +25,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }}">
+<body
+    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }}">
     @if(session('success'))
     <script>
         Swal.fire({

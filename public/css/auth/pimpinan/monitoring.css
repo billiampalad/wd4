@@ -1362,3 +1362,50 @@
         margin-bottom: 28px;
     }
 }
+html.pimpinan-monitoring-page,
+body.pimpinan-monitoring-page {
+    --pimpinan-monitoring-scrollbar-thumb: #2563eb;
+    --pimpinan-monitoring-scrollbar-thumb-hover: #1d4ed8;
+    --pimpinan-monitoring-scrollbar-track: rgba(37, 99, 235, .16);
+}
+
+html.pimpinan-monitoring-page,
+body.pimpinan-monitoring-page,
+body.pimpinan-monitoring-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pimpinan-monitoring-scrollbar-thumb) var(--pimpinan-monitoring-scrollbar-track) !important;
+}
+
+html.pimpinan-monitoring-page::-webkit-scrollbar,
+body.pimpinan-monitoring-page::-webkit-scrollbar,
+body.pimpinan-monitoring-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html.pimpinan-monitoring-page::-webkit-scrollbar-track,
+body.pimpinan-monitoring-page::-webkit-scrollbar-track,
+body.pimpinan-monitoring-page *::-webkit-scrollbar-track {
+    background: var(--pimpinan-monitoring-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.pimpinan-monitoring-page::-webkit-scrollbar-thumb,
+body.pimpinan-monitoring-page::-webkit-scrollbar-thumb,
+body.pimpinan-monitoring-page *::-webkit-scrollbar-thumb {
+    background-color: var(--pimpinan-monitoring-scrollbar-thumb) !important;
+    border: 2px solid var(--pimpinan-monitoring-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.pimpinan-monitoring-page::-webkit-scrollbar-thumb:hover,
+body.pimpinan-monitoring-page::-webkit-scrollbar-thumb:hover,
+body.pimpinan-monitoring-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pimpinan-monitoring-scrollbar-thumb-hover) !important;
+}
+
+html.pimpinan-monitoring-page::-webkit-scrollbar-corner,
+body.pimpinan-monitoring-page::-webkit-scrollbar-corner,
+body.pimpinan-monitoring-page *::-webkit-scrollbar-corner {
+    background: var(--pimpinan-monitoring-scrollbar-track) !important;
+}
