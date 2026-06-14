@@ -1,3 +1,51 @@
+html.evaluasi-kinerja-page,
+body.evaluasi-kinerja-page {
+    --evaluasi-scrollbar-thumb: #2563eb;
+    --evaluasi-scrollbar-thumb-hover: #1d4ed8;
+    --evaluasi-scrollbar-track: rgba(37, 99, 235, .16);
+}
+
+html.evaluasi-kinerja-page,
+body.evaluasi-kinerja-page,
+body.evaluasi-kinerja-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--evaluasi-scrollbar-thumb) var(--evaluasi-scrollbar-track) !important;
+}
+
+html.evaluasi-kinerja-page::-webkit-scrollbar,
+body.evaluasi-kinerja-page::-webkit-scrollbar,
+body.evaluasi-kinerja-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html.evaluasi-kinerja-page::-webkit-scrollbar-track,
+body.evaluasi-kinerja-page::-webkit-scrollbar-track,
+body.evaluasi-kinerja-page *::-webkit-scrollbar-track {
+    background: var(--evaluasi-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.evaluasi-kinerja-page::-webkit-scrollbar-thumb,
+body.evaluasi-kinerja-page::-webkit-scrollbar-thumb,
+body.evaluasi-kinerja-page *::-webkit-scrollbar-thumb {
+    background-color: var(--evaluasi-scrollbar-thumb) !important;
+    border: 2px solid var(--evaluasi-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.evaluasi-kinerja-page::-webkit-scrollbar-thumb:hover,
+body.evaluasi-kinerja-page::-webkit-scrollbar-thumb:hover,
+body.evaluasi-kinerja-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--evaluasi-scrollbar-thumb-hover) !important;
+}
+
+html.evaluasi-kinerja-page::-webkit-scrollbar-corner,
+body.evaluasi-kinerja-page::-webkit-scrollbar-corner,
+body.evaluasi-kinerja-page *::-webkit-scrollbar-corner {
+    background: var(--evaluasi-scrollbar-track) !important;
+}
+
 .ud-topbar {
     grid-column: 1 / -1;
     display: flex;
