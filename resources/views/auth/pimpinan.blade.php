@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }}">
+    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }} {{ request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view === 'detail_monitoring') ? 'pimpinan-detail-monitoring-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -26,7 +26,7 @@
 </head>
 
 <body
-    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }}">
+    class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }} {{ request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view === 'detail_monitoring') ? 'pimpinan-detail-monitoring-page' : '' }}">
     @if(session('success'))
     <script>
         Swal.fire({

@@ -9459,3 +9459,51 @@ body.laporan-page::-webkit-scrollbar-corner,
 body.laporan-page *::-webkit-scrollbar-corner {
     background: var(--laporan-scrollbar-track) !important;
 }
+
+html.pimpinan-detail-monitoring-page,
+body.pimpinan-detail-monitoring-page {
+    --detail-monitoring-scrollbar-thumb: #2563eb;
+    --detail-monitoring-scrollbar-thumb-hover: #1d4ed8;
+    --detail-monitoring-scrollbar-track: rgba(37, 99, 235, .16);
+}
+
+html.pimpinan-detail-monitoring-page,
+body.pimpinan-detail-monitoring-page,
+body.pimpinan-detail-monitoring-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--detail-monitoring-scrollbar-thumb) var(--detail-monitoring-scrollbar-track) !important;
+}
+
+html.pimpinan-detail-monitoring-page::-webkit-scrollbar,
+body.pimpinan-detail-monitoring-page::-webkit-scrollbar,
+body.pimpinan-detail-monitoring-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html.pimpinan-detail-monitoring-page::-webkit-scrollbar-track,
+body.pimpinan-detail-monitoring-page::-webkit-scrollbar-track,
+body.pimpinan-detail-monitoring-page *::-webkit-scrollbar-track {
+    background: var(--detail-monitoring-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.pimpinan-detail-monitoring-page::-webkit-scrollbar-thumb,
+body.pimpinan-detail-monitoring-page::-webkit-scrollbar-thumb,
+body.pimpinan-detail-monitoring-page *::-webkit-scrollbar-thumb {
+    background-color: var(--detail-monitoring-scrollbar-thumb) !important;
+    border: 2px solid var(--detail-monitoring-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.pimpinan-detail-monitoring-page::-webkit-scrollbar-thumb:hover,
+body.pimpinan-detail-monitoring-page::-webkit-scrollbar-thumb:hover,
+body.pimpinan-detail-monitoring-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--detail-monitoring-scrollbar-thumb-hover) !important;
+}
+
+html.pimpinan-detail-monitoring-page::-webkit-scrollbar-corner,
+body.pimpinan-detail-monitoring-page::-webkit-scrollbar-corner,
+body.pimpinan-detail-monitoring-page *::-webkit-scrollbar-corner {
+    background: var(--detail-monitoring-scrollbar-track) !important;
+}
