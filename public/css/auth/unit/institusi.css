@@ -1,6 +1,8 @@
 /* Header */
 html.institusi-page,
 body.institusi-page,
+html.bentuk-kegiatan-page,
+body.bentuk-kegiatan-page,
 .sk-page {
     --institusi-scrollbar-thumb: #2563eb;
     --institusi-scrollbar-thumb-hover: #1d4ed8;
@@ -33,6 +35,9 @@ body.institusi-page,
 html.institusi-page,
 body.institusi-page,
 body.institusi-page *,
+html.bentuk-kegiatan-page,
+body.bentuk-kegiatan-page,
+body.bentuk-kegiatan-page *,
 .sk-page,
 .sk-page * {
     scrollbar-width: thin;
@@ -42,6 +47,9 @@ body.institusi-page *,
 html.institusi-page::-webkit-scrollbar,
 body.institusi-page::-webkit-scrollbar,
 body.institusi-page *::-webkit-scrollbar,
+html.bentuk-kegiatan-page::-webkit-scrollbar,
+body.bentuk-kegiatan-page::-webkit-scrollbar,
+body.bentuk-kegiatan-page *::-webkit-scrollbar,
 .sk-page::-webkit-scrollbar,
 .sk-page *::-webkit-scrollbar {
     width: 10px;
@@ -51,6 +59,9 @@ body.institusi-page *::-webkit-scrollbar,
 html.institusi-page::-webkit-scrollbar-track,
 body.institusi-page::-webkit-scrollbar-track,
 body.institusi-page *::-webkit-scrollbar-track,
+html.bentuk-kegiatan-page::-webkit-scrollbar-track,
+body.bentuk-kegiatan-page::-webkit-scrollbar-track,
+body.bentuk-kegiatan-page *::-webkit-scrollbar-track,
 .sk-page::-webkit-scrollbar-track,
 .sk-page *::-webkit-scrollbar-track {
     background: var(--institusi-scrollbar-track) !important;
@@ -60,6 +71,9 @@ body.institusi-page *::-webkit-scrollbar-track,
 html.institusi-page::-webkit-scrollbar-thumb,
 body.institusi-page::-webkit-scrollbar-thumb,
 body.institusi-page *::-webkit-scrollbar-thumb,
+html.bentuk-kegiatan-page::-webkit-scrollbar-thumb,
+body.bentuk-kegiatan-page::-webkit-scrollbar-thumb,
+body.bentuk-kegiatan-page *::-webkit-scrollbar-thumb,
 .sk-page::-webkit-scrollbar-thumb,
 .sk-page *::-webkit-scrollbar-thumb {
     background-color: var(--institusi-scrollbar-thumb) !important;
@@ -70,6 +84,9 @@ body.institusi-page *::-webkit-scrollbar-thumb,
 html.institusi-page::-webkit-scrollbar-thumb:hover,
 body.institusi-page::-webkit-scrollbar-thumb:hover,
 body.institusi-page *::-webkit-scrollbar-thumb:hover,
+html.bentuk-kegiatan-page::-webkit-scrollbar-thumb:hover,
+body.bentuk-kegiatan-page::-webkit-scrollbar-thumb:hover,
+body.bentuk-kegiatan-page *::-webkit-scrollbar-thumb:hover,
 .sk-page::-webkit-scrollbar-thumb:hover,
 .sk-page *::-webkit-scrollbar-thumb:hover {
     background-color: var(--institusi-scrollbar-thumb-hover) !important;
@@ -78,6 +95,9 @@ body.institusi-page *::-webkit-scrollbar-thumb:hover,
 html.institusi-page::-webkit-scrollbar-corner,
 body.institusi-page::-webkit-scrollbar-corner,
 body.institusi-page *::-webkit-scrollbar-corner,
+html.bentuk-kegiatan-page::-webkit-scrollbar-corner,
+body.bentuk-kegiatan-page::-webkit-scrollbar-corner,
+body.bentuk-kegiatan-page *::-webkit-scrollbar-corner,
 .sk-page::-webkit-scrollbar-corner,
 .sk-page *::-webkit-scrollbar-corner {
     background: var(--institusi-scrollbar-track) !important;
