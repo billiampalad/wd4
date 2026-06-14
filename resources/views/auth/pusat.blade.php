@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('pusat.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('pusat.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('pusat.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('pusat.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }} {{ request()->routeIs('pusat.laporan') ? 'laporan-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -27,7 +27,7 @@
 </head>
 
 <body
-    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('pusat.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('pusat.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('pusat.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('pusat.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }} {{ request()->routeIs('pusat.laporan') ? 'laporan-page' : '' }}">
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>

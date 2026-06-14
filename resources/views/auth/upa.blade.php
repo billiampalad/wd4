@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('upa.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('upa.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('upa.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('upa.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('upa.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('upa.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('upa.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('upa.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }} {{ request()->routeIs('upa.laporan') ? 'laporan-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -27,7 +27,7 @@
 </head>
 
 <body
-    class="{{ request()->routeIs('upa.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('upa.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('upa.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('upa.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('upa.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('upa.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('upa.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('upa.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }} {{ request()->routeIs('upa.laporan') ? 'laporan-page' : '' }}">
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>

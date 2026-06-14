@@ -9412,3 +9412,50 @@ nav {
         max-height: 200px;
     }
 }
+html.laporan-page,
+body.laporan-page {
+    --laporan-scrollbar-thumb: #2563eb;
+    --laporan-scrollbar-thumb-hover: #1d4ed8;
+    --laporan-scrollbar-track: rgba(37, 99, 235, .16);
+}
+
+html.laporan-page,
+body.laporan-page,
+body.laporan-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--laporan-scrollbar-thumb) var(--laporan-scrollbar-track) !important;
+}
+
+html.laporan-page::-webkit-scrollbar,
+body.laporan-page::-webkit-scrollbar,
+body.laporan-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html.laporan-page::-webkit-scrollbar-track,
+body.laporan-page::-webkit-scrollbar-track,
+body.laporan-page *::-webkit-scrollbar-track {
+    background: var(--laporan-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.laporan-page::-webkit-scrollbar-thumb,
+body.laporan-page::-webkit-scrollbar-thumb,
+body.laporan-page *::-webkit-scrollbar-thumb {
+    background-color: var(--laporan-scrollbar-thumb) !important;
+    border: 2px solid var(--laporan-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.laporan-page::-webkit-scrollbar-thumb:hover,
+body.laporan-page::-webkit-scrollbar-thumb:hover,
+body.laporan-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--laporan-scrollbar-thumb-hover) !important;
+}
+
+html.laporan-page::-webkit-scrollbar-corner,
+body.laporan-page::-webkit-scrollbar-corner,
+body.laporan-page *::-webkit-scrollbar-corner {
+    background: var(--laporan-scrollbar-track) !important;
+}
