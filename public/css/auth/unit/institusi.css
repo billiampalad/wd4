@@ -1,4 +1,12 @@
 /* Header */
+html.institusi-page,
+body.institusi-page,
+.sk-page {
+    --institusi-scrollbar-thumb: #2563eb;
+    --institusi-scrollbar-thumb-hover: #1d4ed8;
+    --institusi-scrollbar-track: rgba(37, 99, 235, .16);
+}
+
 .sk-page {
     --ud-bg: var(--bg);
     --ud-card: var(--surface);
@@ -20,6 +28,59 @@
 
 .sk-page * {
     letter-spacing: 0;
+}
+
+html.institusi-page,
+body.institusi-page,
+body.institusi-page *,
+.sk-page,
+.sk-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--institusi-scrollbar-thumb) var(--institusi-scrollbar-track) !important;
+}
+
+html.institusi-page::-webkit-scrollbar,
+body.institusi-page::-webkit-scrollbar,
+body.institusi-page *::-webkit-scrollbar,
+.sk-page::-webkit-scrollbar,
+.sk-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html.institusi-page::-webkit-scrollbar-track,
+body.institusi-page::-webkit-scrollbar-track,
+body.institusi-page *::-webkit-scrollbar-track,
+.sk-page::-webkit-scrollbar-track,
+.sk-page *::-webkit-scrollbar-track {
+    background: var(--institusi-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.institusi-page::-webkit-scrollbar-thumb,
+body.institusi-page::-webkit-scrollbar-thumb,
+body.institusi-page *::-webkit-scrollbar-thumb,
+.sk-page::-webkit-scrollbar-thumb,
+.sk-page *::-webkit-scrollbar-thumb {
+    background-color: var(--institusi-scrollbar-thumb) !important;
+    border: 2px solid var(--institusi-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.institusi-page::-webkit-scrollbar-thumb:hover,
+body.institusi-page::-webkit-scrollbar-thumb:hover,
+body.institusi-page *::-webkit-scrollbar-thumb:hover,
+.sk-page::-webkit-scrollbar-thumb:hover,
+.sk-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--institusi-scrollbar-thumb-hover) !important;
+}
+
+html.institusi-page::-webkit-scrollbar-corner,
+body.institusi-page::-webkit-scrollbar-corner,
+body.institusi-page *::-webkit-scrollbar-corner,
+.sk-page::-webkit-scrollbar-corner,
+.sk-page *::-webkit-scrollbar-corner {
+    background: var(--institusi-scrollbar-track) !important;
 }
 
 .ud-topbar {

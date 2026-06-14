@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }}">
+    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -26,7 +26,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
-<body class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }}">
+<body
+    class="{{ request()->routeIs('pusat.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('pusat.institusi') ? 'institusi-page' : '' }}">
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
