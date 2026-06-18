@@ -170,13 +170,13 @@
                 </p>
                 <div class="hero-cta">
                     <a href="#data-kerjasama" class="btn-primary">Telusuri Data Kerjasama</a>
-                    <a href="{{ route('pengajuan.kerjasama.create') }}" class="btn-ghost">
+                    {{-- <a href="{{ route('pengajuan.kerjasama.create') }}" class="btn-ghost">
                         Ajukan kerja sama
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </a>
+                    </a> --}}
                 </div>
             </div>
 
@@ -803,12 +803,14 @@
                                 @foreach ($attentionPanel['items'] as $item)
                                     <article class="attention-item tone-{{ $item['tone'] }}">
                                         <div class="attention-copy">
-                                            <h5 class="attention-title">{{ $item['title'] }}</h5>
+                                            <h5 class="attention-title" title="{{ $item['title'] }}">{{ $item['title'] }}</h5>
                                             <p class="attention-subtitle">{{ $item['partner'] }}</p>
                                         </div>
                                         <div class="attention-meta">
                                             <span class="attention-date">{{ $item['meta_label'] }}</span>
-                                            <span class="attention-badge">{{ $item['supporting_label'] }}</span>
+                                            <span class="attention-badge">
+                                                {{ \Illuminate\Support\Str::ucfirst(\Illuminate\Support\Str::lower(str_replace(['_', '-'], ' ', $item['supporting_label']))) }}
+                                            </span>
                                         </div>
                                     </article>
                                 @endforeach
@@ -916,7 +918,7 @@
                             $status === 'proses' => 'badge-process',
                             default => 'badge-inactive',
                         };
-                        $statusLabel = ucwords($item->status ?? 'Draft');
+                        $statusLabel = ucfirst($status !== '' ? $status : 'draft');
 
                         $mitraNames = $item->mitra ? $item->mitra->nama_mitra : 'Mitra belum ditentukan';
                         $mitraInit = strtoupper(substr($mitraNames, 0, 2));

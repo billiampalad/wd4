@@ -247,12 +247,14 @@
                         @foreach ($attentionPanel['items'] as $item)
                             <article class="attention-item tone-{{ $item['tone'] }}">
                                 <div class="attention-copy">
-                                    <h5 class="attention-title">{{ $item['title'] }}</h5>
+                                    <h5 class="attention-title" title="{{ $item['title'] }}">{{ $item['title'] }}</h5>
                                     <p class="attention-subtitle">{{ $item['partner'] }}</p>
                                 </div>
                                 <div class="attention-meta">
                                     <span class="attention-date">{{ $item['meta_label'] }}</span>
-                                    <span class="attention-badge">{{ $item['supporting_label'] }}</span>
+                                    <span class="attention-badge">
+                                        {{ \Illuminate\Support\Str::ucfirst(\Illuminate\Support\Str::lower(str_replace(['_', '-'], ' ', $item['supporting_label']))) }}
+                                    </span>
                                 </div>
                             </article>
                         @endforeach

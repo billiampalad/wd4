@@ -2009,55 +2009,116 @@ html[data-theme='dark'] .geo-tooltip-meta {
 
 .attention-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 0.95rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1rem;
+    align-items: stretch;
 }
 
 .attention-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.8rem;
+    --attention-accent: var(--tone-solid, #378add);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 1rem;
     min-width: 0;
-    padding: 1rem 1.05rem;
+    min-height: 190px;
+    height: 100%;
+    padding: 1.15rem 1.15rem 1.05rem;
     border: 1px solid var(--border);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.52);
+    border-radius: 20px;
+    background:
+        linear-gradient(145deg, color-mix(in srgb, var(--attention-accent) 8%, transparent), transparent 48%),
+        rgba(255, 255, 255, 0.62);
+    box-shadow: 0 10px 26px rgba(15, 40, 68, 0.06);
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.attention-item::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: -1;
+    width: 4px;
+    background: linear-gradient(180deg, var(--attention-accent), transparent 92%);
+}
+
+.attention-item::after {
+    content: "";
+    position: absolute;
+    top: -3rem;
+    right: -3rem;
+    z-index: -1;
+    width: 7rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--attention-accent) 10%, transparent);
+    filter: blur(2px);
+}
+
+.attention-item:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--attention-accent) 32%, var(--border));
+    box-shadow: 0 16px 34px rgba(15, 40, 68, 0.11);
 }
 
 .attention-copy {
     min-width: 0;
     display: grid;
-    gap: 0.2rem;
+    align-content: start;
+    gap: 0.45rem;
 }
 
 .attention-title {
-    font-size: 0.88rem;
-    line-height: 1.45;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    min-height: calc(1.42em * 3);
+    font-size: 0.93rem;
+    font-weight: 800;
+    line-height: 1.42;
     color: var(--ink);
+    text-wrap: pretty;
 }
 
 .attention-subtitle {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     font-size: 0.78rem;
-    line-height: 1.5;
+    font-weight: 600;
+    line-height: 1.45;
     color: var(--ink-muted);
 }
 
 .attention-meta {
-    flex-shrink: 0;
-    display: grid;
-    justify-items: end;
-    gap: 0.35rem;
+    min-width: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.7rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid color-mix(in srgb, var(--attention-accent) 16%, var(--border));
 }
 
 .attention-date {
+    min-width: 0;
     font-size: 0.76rem;
     font-weight: 700;
     color: var(--ink-faint);
-    text-align: right;
+    text-align: left;
 }
 
 .attention-badge {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2075,12 +2136,24 @@ html[data-theme='dark'] .geo-tooltip-meta {
     background: linear-gradient(135deg, #c33636, #e35b5b);
 }
 
+.attention-item.tone-danger {
+    --attention-accent: #d94848;
+}
+
 .attention-item.tone-warning .attention-badge {
     background: linear-gradient(135deg, #ca7d12, #e4a039);
 }
 
+.attention-item.tone-warning {
+    --attention-accent: #d78a1f;
+}
+
 .attention-item.tone-info .attention-badge {
     background: linear-gradient(135deg, #256ad4, #4e9eff);
+}
+
+.attention-item.tone-info {
+    --attention-accent: #378add;
 }
 
 .cards-grid {
@@ -2186,7 +2259,7 @@ html[data-theme='dark'] .geo-tooltip-meta {
     min-height: 1.85rem;
     font-size: 0.68rem;
     font-weight: 800;
-    text-transform: uppercase;
+    text-transform: none;
     letter-spacing: 0.07em;
     line-height: 1;
     white-space: nowrap;
@@ -3071,7 +3144,15 @@ html[data-theme='dark'] .analytics-kicker {
 html[data-theme='dark'] .analytics-empty,
 html[data-theme='dark'] .attention-item {
     border-color: rgba(148, 163, 184, 0.16);
-    background: rgba(255, 255, 255, 0.04);
+    background:
+        linear-gradient(145deg, color-mix(in srgb, var(--attention-accent) 12%, transparent), transparent 48%),
+        rgba(255, 255, 255, 0.04);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme='dark'] .attention-item:hover {
+    border-color: color-mix(in srgb, var(--attention-accent) 42%, rgba(148, 163, 184, 0.16));
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
 }
 
 html[data-theme='dark'] .analytics-canvas-wrap {
@@ -3498,9 +3579,12 @@ html[data-theme='dark'] .attention-date {
         grid-template-columns: 1fr;
     }
 
-    .analytics-card-head,
-    .attention-item {
+    .analytics-card-head {
         flex-direction: column;
+    }
+
+    .attention-item {
+        min-height: 176px;
     }
 
     .analytics-context,
@@ -3512,6 +3596,10 @@ html[data-theme='dark'] .attention-date {
     .analytics-legend-grid,
     .attention-list {
         grid-template-columns: 1fr;
+    }
+
+    .attention-meta {
+        flex-wrap: wrap;
     }
 
     .analytics-canvas-wrap-donut {
