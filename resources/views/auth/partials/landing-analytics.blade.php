@@ -180,15 +180,87 @@
                         </div>
 
                         <div class="geo-metric-controls" aria-label="Pengaturan visualisasi peta">
-                            <label class="geo-metric">
+                            <div class="geo-metric" x-data="{
+                                open: false,
+                                selected: 'cooperations_total',
+                                options: [
+                                    { value: 'cooperations_total', label: 'Jumlah kerja sama', icon: 'layers' },
+                                    { value: 'cooperations_active', label: 'Kerja sama aktif', icon: 'pulse' },
+                                    { value: 'mitras_unique', label: 'Mitra unik', icon: 'users' },
+                                    { value: 'cooperations_expiring_90', label: 'Akan berakhir (90 hari)', icon: 'clock' }
+                                ],
+                                get current() {
+                                    return this.options.find(option => option.value === this.selected) || this.options[0];
+                                },
+                                choose(option) {
+                                    this.selected = option.value;
+                                    this.open = false;
+                                    this.$nextTick(() => {
+                                        this.$refs.nativeMetric.value = option.value;
+                                        this.$refs.nativeMetric.dispatchEvent(new Event('change', { bubbles: true }));
+                                        this.$refs.trigger.focus();
+                                    });
+                                },
+                                syncFromNative() {
+                                    this.selected = this.$refs.nativeMetric.value || 'cooperations_total';
+                                }
+                            }" x-init="syncFromNative()" @click.outside="open = false" @keydown.escape.window="open = false">
                                 <span class="geo-metric-label">Metrik</span>
-                                <select class="geo-metric-select" data-geo-metric>
+                                <select class="geo-metric-native" data-geo-metric x-ref="nativeMetric"
+                                    @change="syncFromNative()" tabindex="-1" aria-hidden="true">
                                     <option value="cooperations_total">Jumlah kerja sama</option>
                                     <option value="cooperations_active">Kerja sama aktif</option>
                                     <option value="mitras_unique">Mitra unik</option>
                                     <option value="cooperations_expiring_90">Akan berakhir (90 hari)</option>
                                 </select>
-                            </label>
+
+                                <button type="button" class="geo-metric-trigger" x-ref="trigger"
+                                    :class="{ 'is-open': open }" @click="open = !open"
+                                    @keydown.arrow-down.prevent="open = true"
+                                    :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                    <span class="geo-metric-trigger-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M4 19V9M10 19V5M16 19v-7M22 19V3" />
+                                        </svg>
+                                    </span>
+                                    <span class="geo-metric-trigger-copy">
+                                        <small>Visualisasi berdasarkan</small>
+                                        <strong x-text="current.label"></strong>
+                                    </span>
+                                    <svg class="geo-metric-chevron" :class="{ 'is-rotated': open }"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                                        aria-hidden="true">
+                                        <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                </button>
+
+                                <div class="geo-metric-menu" x-show="open" x-transition.origin.top x-cloak
+                                    role="listbox" aria-label="Pilih metrik peta">
+                                    <template x-for="option in options" :key="option.value">
+                                        <button type="button" class="geo-metric-option"
+                                            :class="{ 'is-selected': selected === option.value }"
+                                            @click="choose(option)" role="option"
+                                            :aria-selected="(selected === option.value).toString()">
+                                            <span class="geo-metric-option-dot" aria-hidden="true"></span>
+                                            <span class="geo-metric-option-copy">
+                                                <strong x-text="option.label"></strong>
+                                                <small x-text="option.value === 'cooperations_total'
+                                                    ? 'Total seluruh portofolio kerja sama'
+                                                    : option.value === 'cooperations_active'
+                                                        ? 'Kerja sama yang masih berjalan'
+                                                        : option.value === 'mitras_unique'
+                                                            ? 'Jumlah mitra berbeda di setiap wilayah'
+                                                            : 'Berakhir dalam 90 hari mendatang'"></small>
+                                            </span>
+                                            <svg class="geo-metric-check" x-show="selected === option.value"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                aria-hidden="true">
+                                                <path d="m5 12 4 4L19 6" />
+                                            </svg>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
 
                             <div class="geo-scale" role="group" aria-label="Skala nilai peta">
                                 <button type="button" class="geo-scale-btn is-active" data-geo-scale="absolute"
