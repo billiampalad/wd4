@@ -636,7 +636,8 @@
 
                                 <div style="margin-bottom: 24px;">
                                     <div class="dk-upload-zone-wrapper">
-                                        <input type="file" name="file_laporan" id="file_laporan" accept=".pdf"
+                                        <input type="file" name="file_laporan" id="file_laporan"
+                                            accept="application/pdf,.pdf"
                                             required class="dk-upload-input"
                                             @change="fileName = $event.target.files[0].name">
 
@@ -666,6 +667,12 @@
                                             </template>
                                         </div>
                                     </div>
+                                    @error('file_laporan')
+                                        <p style="margin: 10px 0 0; color: #dc2626; font-size: 12px; font-weight: 600;">
+                                            <i class="fas fa-circle-exclamation" style="margin-right: 5px;"></i>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
                                 </div>
 
                                 <button type="submit" class="dk-btn-submit" :disabled="!fileName">

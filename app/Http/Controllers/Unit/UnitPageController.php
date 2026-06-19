@@ -1388,8 +1388,14 @@ class UnitPageController extends Controller
     public function formLaporanStore(Request $request)
     {
         $request->validate([
-            'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:5120', // Menaikkan limit ke 5MB
+            'file_laporan' => 'required|file|mimes:pdf|mimetypes:application/pdf|max:5120',
             'cooperation_id' => 'nullable|exists:cooperations,id',
+        ], [
+            'file_laporan.required' => 'Dokumen PDF wajib dipilih.',
+            'file_laporan.file' => 'Berkas yang dipilih tidak valid.',
+            'file_laporan.mimes' => 'Dokumen hanya boleh menggunakan format PDF.',
+            'file_laporan.mimetypes' => 'Dokumen hanya boleh menggunakan format PDF.',
+            'file_laporan.max' => 'Ukuran dokumen PDF maksimal 5 MB.',
         ]);
 
         $unitId = $this->resolveUnitId();
@@ -1398,7 +1404,7 @@ class UnitPageController extends Controller
         // Dapatkan nama asli dan ekstensi
         $originalName = $file->getClientOriginalName();
         $nameOnly = pathinfo($originalName, PATHINFO_FILENAME);
-        $extension = $file->getClientOriginalExtension();
+        $extension = 'pdf';
 
         // Bersihkan nama file dari karakter aneh agar aman di filesystem
         $cleanName = Str::slug($nameOnly) . '.' . $extension;
