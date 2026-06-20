@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light"
-    class="{{ request()->routeIs('unit.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('unit.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('unit.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('unit.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('*.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('*.analitik.klasifikasi-mitra') ? 'klasifikasi-mitra-page' : '' }} {{ request()->routeIs('*.analitik.geo-mitra') ? 'geo-mitra-page' : '' }} {{ request()->routeIs('*.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('*.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('*.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -28,7 +28,7 @@
 </head>
 
 <body
-    class="{{ request()->routeIs('unit.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('unit.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('unit.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('unit.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
+    class="{{ request()->routeIs('*.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('*.analitik.klasifikasi-mitra') ? 'klasifikasi-mitra-page' : '' }} {{ request()->routeIs('*.analitik.geo-mitra') ? 'geo-mitra-page' : '' }} {{ request()->routeIs('*.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('*.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('*.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }}">
     {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
     @if (session('success'))
         <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
