@@ -616,12 +616,26 @@ function initDueDateContributionGraph() {
 }
 
 function initStatusKerjasamaPage() {
+    const page = document.getElementById('mainContent');
+    if (!page || !document.getElementById('statusKerjasamaData')) return;
+
+    if (page.dataset.statusInitialized === 'true') return;
+    page.dataset.statusInitialized = 'true';
+
     createStatusKerjasamaCharts();
     initDueDateContributionGraph();
 }
 
-document.addEventListener('DOMContentLoaded', initStatusKerjasamaPage);
-document.addEventListener('turbo:load', initStatusKerjasamaPage);
+if (!window.statusKerjasamaEventsRegistered) {
+    document.addEventListener('DOMContentLoaded', initStatusKerjasamaPage);
+    document.addEventListener('turbo:load', initStatusKerjasamaPage);
+    window.statusKerjasamaEventsRegistered = true;
+}
+
+// Immediate run in case page is loaded dynamically or already parsed
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initStatusKerjasamaPage();
+}
 
 if (!window.statusKerjasamaThemeObserver) {
     window.statusKerjasamaThemeObserver = new MutationObserver(function (mutations) {

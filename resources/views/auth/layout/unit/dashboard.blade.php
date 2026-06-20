@@ -508,5 +508,4 @@
     </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ asset('js/auth/dashboard.js') }}" data-turbo-track="reload"></script>

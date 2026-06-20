@@ -486,6 +486,12 @@
 
     function initGeoMitraPage() {
         console.log("geo_mitra.js: Page init triggered.");
+        const page = document.getElementById('mainContent');
+        if (!page || !document.getElementById('geoKategoriChartData')) return;
+
+        if (page.dataset.geoInitialized === 'true') return;
+        page.dataset.geoInitialized = 'true';
+
         if (typeof Chart === 'undefined') {
             let attempts = 0;
             const interval = setInterval(() => {
@@ -505,8 +511,11 @@
     }
 
     // Bind event listeners
-    document.addEventListener('DOMContentLoaded', initGeoMitraPage);
-    document.addEventListener('turbo:load', initGeoMitraPage);
+    if (!window.geoMitraEventsRegistered) {
+        document.addEventListener('DOMContentLoaded', initGeoMitraPage);
+        document.addEventListener('turbo:load', initGeoMitraPage);
+        window.geoMitraEventsRegistered = true;
+    }
 
     // Immediate run in case page is loaded dynamically or already parsed
     if (document.readyState === 'complete' || document.readyState === 'interactive') {

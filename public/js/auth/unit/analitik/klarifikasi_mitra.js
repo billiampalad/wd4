@@ -151,14 +151,28 @@ function createKlasifikasiMitraChart() {
 }
 
 function initKlasifikasiMitraPage() {
+    const page = document.getElementById('mainContent');
+    if (!page || !document.getElementById('klasifikasiMitraChartData')) return;
+
+    if (page.dataset.klasifikasiInitialized === 'true') return;
+    page.dataset.klasifikasiInitialized = 'true';
+
     createKlasifikasiMitraChart();
     resizeKlasifikasiMitraChart();
 }
 
-document.addEventListener('DOMContentLoaded', initKlasifikasiMitraPage);
-document.addEventListener('turbo:load', initKlasifikasiMitraPage);
-window.addEventListener('resize', resizeKlasifikasiMitraChart);
-window.addEventListener('orientationchange', resizeKlasifikasiMitraChart);
+if (!window.klasifikasiMitraEventsRegistered) {
+    document.addEventListener('DOMContentLoaded', initKlasifikasiMitraPage);
+    document.addEventListener('turbo:load', initKlasifikasiMitraPage);
+    window.addEventListener('resize', resizeKlasifikasiMitraChart);
+    window.addEventListener('orientationchange', resizeKlasifikasiMitraChart);
+    window.klasifikasiMitraEventsRegistered = true;
+}
+
+// Immediate run in case page is loaded dynamically or already parsed
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initKlasifikasiMitraPage();
+}
 
 if (!window.klasifikasiMitraThemeObserver) {
     window.klasifikasiMitraThemeObserver = new MutationObserver(function (mutations) {

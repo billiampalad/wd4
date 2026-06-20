@@ -498,9 +498,7 @@ function initTrendChart() {
     });
 }
 
-// Inisialisasi untuk Unit Dashboard
-document.addEventListener('DOMContentLoaded', initUnitDashboard);
-document.addEventListener('turbo:load', initUnitDashboard);
+// Inisialisasi untuk Unit Dashboard akan dipanggil via runAllDashboardInitializations
 (() => {
     const scrollableClass = 'dashboard-scrollbar-target';
     const overflowPattern = /(auto|scroll|overlay)/;
@@ -537,7 +535,7 @@ document.addEventListener('turbo:load', initUnitDashboard);
         subtree: true,
     });
 })();
-document.addEventListener('DOMContentLoaded', () => {
+function initCooperationChart() {
     const chart = document.querySelector('[data-cooperation-chart]');
 
     if (!chart) {
@@ -764,4 +762,34 @@ document.addEventListener('DOMContentLoaded', () => {
             characterData: true,
         });
     }
-});
+}
+
+// Inisialisasi terpadu untuk semua komponen dashboard
+function runAllDashboardInitializations() {
+    const mainContent = document.getElementById('mainContent');
+    if (!mainContent || !mainContent.classList.contains('unitdash')) return;
+
+    // Cegah eksekusi ganda pada instansi halaman yang sama
+    if (mainContent.dataset.dashboardInitialized === 'true') {
+        return;
+    }
+    mainContent.dataset.dashboardInitialized = 'true';
+
+    initUnitDashboard();
+    initCooperationChart();
+}
+
+// Daftarkan event listener tepat satu kali
+if (!window.dashboardEventsRegistered) {
+    document.addEventListener('turbo:load', runAllDashboardInitializations);
+    if (!window.Turbo) {
+        document.addEventListener('DOMContentLoaded', runAllDashboardInitializations);
+    }
+    window.dashboardEventsRegistered = true;
+}
+
+// Jalankan langsung jika script dievaluasi setelah DOM selesai dimuat (navigasi Turbo)
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    runAllDashboardInitializations();
+}
+
