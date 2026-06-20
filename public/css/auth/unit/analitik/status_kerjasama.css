@@ -1294,15 +1294,16 @@ button.sk-due-cell:focus-visible {
     transition: all 0.2s;
 }
 
-.sk-due-ellipsis {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    height: 36px;
-    color: var(--text-sub);
-    font-weight: 600;
-    font-size: 13px;
+.sk-due-pages button.sk-due-ellipsis,
+.sk-due-pages button.sk-due-ellipsis:disabled,
+.sk-due-pages button.sk-due-ellipsis:hover {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-sub) !important;
+    cursor: default !important;
+    opacity: 1 !important;
+    min-width: unset !important;
+    padding: 0 4px !important;
 }
 
 .sk-due-pages button.is-active {

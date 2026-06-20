@@ -405,13 +405,11 @@
                                 <button type="button" :disabled="currentPage === 1"
                                     @click="goToPage(currentPage - 1)">Previous</button>
                                 <template x-for="(page, idx) in pagesToShow" :key="idx">
-                                    <template x-if="page === '...'">
-                                        <span class="sk-due-ellipsis">...</span>
-                                    </template>
-                                    <template x-if="page !== '...'">
-                                        <button type="button" :class="{ 'is-active': page === currentPage }"
-                                            @click="goToPage(page)" x-text="page"></button>
-                                    </template>
+                                    <button type="button" 
+                                        :class="{ 'is-active': page === currentPage, 'sk-due-ellipsis': page === '...' }"
+                                        :disabled="page === '...'"
+                                        @click="page !== '...' ? goToPage(page) : null" 
+                                        x-text="page"></button>
                                 </template>
                                 <button type="button" :disabled="currentPage === pageCount || pageCount === 0"
                                     @click="goToPage(currentPage + 1)">Next</button>
