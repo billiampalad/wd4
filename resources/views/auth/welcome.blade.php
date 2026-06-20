@@ -547,23 +547,60 @@
                                     placeholder="{{ $searchPlaceholder }}" value="{{ request('search') }}">
                             </div>
 
-                            <label class="sort-wrap filter-sort">
+                            @php
+                                $sortOptions = $selectedDataScope === 'mitra'
+                                    ? [
+                                        'latest' => 'Terbaru',
+                                        'oldest' => 'Terlama',
+                                        'title' => 'Nama A-Z',
+                                        'title_desc' => 'Nama Z-A',
+                                        'most_cooperations' => 'Kerjasama Terbanyak',
+                                    ]
+                                    : [
+                                        'latest' => 'Terbaru',
+                                        'oldest' => 'Terlama',
+                                        'title' => 'A-Z',
+                                        'ending_soon' => 'Segera Berakhir',
+                                    ];
+                            @endphp
+
+                            <div class="sort-wrap filter-sort">
                                 <span class="sort-label">Urutkan</span>
-                                <select name="sort" class="sort-select">
-                                    @if ($selectedDataScope === 'mitra')
-                                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
-                                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
-                                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>Nama A-Z</option>
-                                        <option value="title_desc" {{ $selectedSort === 'title_desc' ? 'selected' : '' }}>Nama Z-A</option>
-                                        <option value="most_cooperations" {{ $selectedSort === 'most_cooperations' ? 'selected' : '' }}>Kerjasama Terbanyak</option>
-                                    @else
-                                        <option value="latest" {{ $selectedSort === 'latest' ? 'selected' : '' }}>Terbaru</option>
-                                        <option value="oldest" {{ $selectedSort === 'oldest' ? 'selected' : '' }}>Terlama</option>
-                                        <option value="title" {{ $selectedSort === 'title' ? 'selected' : '' }}>A-Z</option>
-                                        <option value="ending_soon" {{ $selectedSort === 'ending_soon' ? 'selected' : '' }}>Segera Berakhir</option>
-                                    @endif
-                                </select>
-                            </label>
+                                <div class="sort-dropdown"
+                                    x-data="{ open: false, value: @js($selectedSort), label: @js($sortOptions[$selectedSort] ?? reset($sortOptions)) }"
+                                    @click.outside="open = false" @keydown.escape.window="open = false">
+                                    <input type="hidden" name="sort" :value="value">
+                                    <button type="button" class="sort-trigger" x-ref="trigger" @click="open = !open"
+                                        @keydown.arrow-down.prevent="open = true; $nextTick(() => $refs.menu.querySelector('[aria-selected=true]')?.focus())"
+                                        :aria-expanded="open" aria-haspopup="listbox">
+                                        <span x-text="label"></span>
+                                        <svg class="sort-chevron" :class="{ 'is-open': open }" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </button>
+                                    <div class="sort-menu" x-ref="menu" x-show="open" x-cloak x-transition.origin.top
+                                        role="listbox" aria-label="Pilihan urutan">
+                                        @foreach ($sortOptions as $optionValue => $optionLabel)
+                                            <button type="button" class="sort-option"
+                                                :class="{ 'is-selected': value === @js($optionValue) }"
+                                                :aria-selected="value === @js($optionValue)"
+                                                @click="value = @js($optionValue); label = @js($optionLabel); open = false; $refs.trigger.focus()"
+                                                @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()"
+                                                @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()"
+                                                @keydown.home.prevent="$el.parentElement.firstElementChild?.focus()"
+                                                @keydown.end.prevent="$el.parentElement.lastElementChild?.focus()"
+                                                @keydown.escape.prevent="open = false; $refs.trigger.focus()" role="option">
+                                                <span>{{ $optionLabel }}</span>
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                                    <path d="m5 12 4 4L19 6" />
+                                                </svg>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="filter-buttons">
                                 <button type="submit" class="btn-search">Cari</button>
