@@ -1294,6 +1294,17 @@ button.sk-due-cell:focus-visible {
     transition: all 0.2s;
 }
 
+.sk-due-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    color: var(--text-sub);
+    font-weight: 600;
+    font-size: 13px;
+}
+
 .sk-due-pages button.is-active {
     background: #2563eb;
     border-color: #2563eb;

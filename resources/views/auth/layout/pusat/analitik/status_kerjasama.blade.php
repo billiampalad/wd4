@@ -158,6 +158,40 @@
                         get pageCount() {
                             return Math.max(1, Math.ceil(this.filteredRows.length / this.itemsPerPage));
                         },
+                        get pagesToShow() {
+                            const range = 1;
+                            const pages = [];
+                            const total = this.pageCount;
+                            const current = this.currentPage;
+
+                            if (total <= 5) {
+                                for (let i = 1; i <= total; i++) {
+                                    pages.push(i);
+                                }
+                                return pages;
+                            }
+
+                            pages.push(1);
+
+                            const start = Math.max(2, current - range);
+                            const end = Math.min(total - 1, current + range);
+
+                            if (start > 2) {
+                                pages.push('...');
+                            }
+
+                            for (let i = start; i <= end; i++) {
+                                pages.push(i);
+                            }
+
+                            if (end < total - 1) {
+                                pages.push('...');
+                            }
+
+                            pages.push(total);
+
+                            return pages;
+                        },
                         get paginatedRows() {
                             const start = (this.currentPage - 1) * this.itemsPerPage;
                             const end = start + this.itemsPerPage;
@@ -370,9 +404,14 @@
                             <div class="sk-due-pages" aria-label="Pagination due date">
                                 <button type="button" :disabled="currentPage === 1"
                                     @click="goToPage(currentPage - 1)">Previous</button>
-                                <template x-for="page in pageCount" :key="page">
-                                    <button type="button" :class="{ 'is-active': page === currentPage }"
-                                        @click="goToPage(page)" x-text="page"></button>
+                                <template x-for="(page, idx) in pagesToShow" :key="idx">
+                                    <template x-if="page === '...'">
+                                        <span class="sk-due-ellipsis">...</span>
+                                    </template>
+                                    <template x-if="page !== '...'">
+                                        <button type="button" :class="{ 'is-active': page === currentPage }"
+                                            @click="goToPage(page)" x-text="page"></button>
+                                    </template>
                                 </template>
                                 <button type="button" :disabled="currentPage === pageCount || pageCount === 0"
                                     @click="goToPage(currentPage + 1)">Next</button>
