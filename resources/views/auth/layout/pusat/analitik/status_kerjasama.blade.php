@@ -159,37 +159,19 @@
                             return Math.max(1, Math.ceil(this.filteredRows.length / this.itemsPerPage));
                         },
                         get pagesToShow() {
-                            const range = 1;
-                            const pages = [];
-                            const total = this.pageCount;
                             const current = this.currentPage;
+                            const total = this.pageCount;
+                            const pages = [];
 
-                            if (total <= 5) {
-                                for (let i = 1; i <= total; i++) {
-                                    pages.push(i);
+                            if (current === total) {
+                                pages.push(total);
+                            } else if (current < total) {
+                                pages.push(current);
+                                if (current + 1 < total) {
+                                    pages.push('...');
                                 }
-                                return pages;
+                                pages.push(total);
                             }
-
-                            pages.push(1);
-
-                            const start = Math.max(2, current - range);
-                            const end = Math.min(total - 1, current + range);
-
-                            if (start > 2) {
-                                pages.push('...');
-                            }
-
-                            for (let i = start; i <= end; i++) {
-                                pages.push(i);
-                            }
-
-                            if (end < total - 1) {
-                                pages.push('...');
-                            }
-
-                            pages.push(total);
-
                             return pages;
                         },
                         get paginatedRows() {
