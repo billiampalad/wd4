@@ -5,10 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Cooperation extends Model
 {
     use HasFactory;
+
+    private const PEJABAT_FOREIGN_KEYS = [
+        'penandatangan_internal_id',
+        'pj_internal_id',
+        'penandatangan_mitra_id',
+        'pj_mitra_id',
+    ];
 
     protected $table = 'cooperations';
 
@@ -149,6 +157,44 @@ class Cooperation extends Model
     public function kesimpulans()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
+    public function deleteWithUnusedPejabats(): bool
+    {
+        return DB::transaction(function () {
+            $pejabatIds = collect(self::PEJABAT_FOREIGN_KEYS)
+                ->map(fn (string $column) => $this->getAttribute($column))
+                ->filter()
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+                ->values();
+
+            $deleted = (bool) $this->delete();
+
+            if (! $deleted) {
+                return false;
+            }
+
+            $pejabatIds->each(function (int $pejabatId) {
+                $isStillUsed = self::query()
+                    ->where(function ($query) use ($pejabatId) {
+                        foreach (self::PEJABAT_FOREIGN_KEYS as $index => $column) {
+                            if ($index === 0) {
+                                $query->where($column, $pejabatId);
+                            } else {
+                                $query->orWhere($column, $pejabatId);
+                            }
+                        }
+                    })
+                    ->exists();
+
+                if (! $isStillUsed) {
+                    Pejabat::query()->whereKey($pejabatId)->delete();
+                }
+            });
+
+            return true;
+        });
     }
 
     public function getPksNumberAttribute($value)

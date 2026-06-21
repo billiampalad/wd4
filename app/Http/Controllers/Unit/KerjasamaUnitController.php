@@ -630,7 +630,18 @@ class KerjasamaUnitController extends Controller
     public function destroy($id)
     {
         $kegiatan = Cooperation::findOrFail($id);
-        $kegiatan->delete();
+
+        try {
+            $deleted = $kegiatan->deleteWithUnusedPejabats();
+
+            if (! $deleted) {
+                return back()->with('error', 'Data kerjasama gagal dihapus. Tidak ada perubahan yang disimpan.');
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'Data kerjasama gagal dihapus. Tidak ada perubahan yang disimpan.');
+        }
 
         return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil dihapus.');
     }
