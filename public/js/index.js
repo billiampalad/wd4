@@ -42,6 +42,7 @@ document.addEventListener('keydown', function (e) {
 
     let pendingNavTarget = null;
     let navScrollTimer = null;
+    let navScrollFrame = null;
 
     function setActiveNav(id) {
         navLinks.forEach(function (link) {
@@ -120,6 +121,48 @@ document.addEventListener('keydown', function (e) {
         }, 180);
     }
 
+    function syncActiveNavFromScroll() {
+        if (pendingNavTarget) {
+            return;
+        }
+
+        const scrollPosition = window.pageYOffset;
+        const activationLine = scrollPosition + getNavHeight() + (window.innerHeight * 0.28);
+        const documentBottom = scrollPosition + window.innerHeight;
+        const pageHeight = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight
+        );
+        let activeSection = sections[0];
+
+        if (documentBottom >= pageHeight - 2) {
+            activeSection = sections[sections.length - 1];
+        } else {
+            sections.forEach(function (section) {
+                const sectionTop = section.getBoundingClientRect().top + scrollPosition;
+
+                if (sectionTop <= activationLine) {
+                    activeSection = section;
+                }
+            });
+        }
+
+        if (activeSection) {
+            setActiveNav(activeSection.id);
+        }
+    }
+
+    function requestNavSync() {
+        if (navScrollFrame !== null) {
+            return;
+        }
+
+        navScrollFrame = window.requestAnimationFrame(function () {
+            navScrollFrame = null;
+            syncActiveNavFromScroll();
+        });
+    }
+
     navLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
             const targetId = link.getAttribute('href').slice(1);
@@ -144,12 +187,17 @@ document.addEventListener('keydown', function (e) {
             pendingNavTarget = null;
             window.clearTimeout(navScrollTimer);
         }
+
+        requestNavSync();
     });
 
     window.addEventListener('scroll', function () {
         if (pendingNavTarget) {
             lockActiveNav(pendingNavTarget);
+            return;
         }
+
+        requestNavSync();
     }, { passive: true });
 
     window.addEventListener('keydown', function (event) {
@@ -162,31 +210,8 @@ document.addEventListener('keydown', function (e) {
         if (window.innerWidth > 900) {
             closeMobileMenu();
         }
-    });
 
-    const observer = new IntersectionObserver(function (entries) {
-        if (pendingNavTarget) {
-            return;
-        }
-
-        const visibleEntry = entries
-            .filter(function (entry) {
-                return entry.isIntersecting;
-            })
-            .sort(function (a, b) {
-                return b.intersectionRatio - a.intersectionRatio;
-            })[0];
-
-        if (visibleEntry) {
-            setActiveNav(visibleEntry.target.id);
-        }
-    }, {
-        rootMargin: '-38% 0px -48% 0px',
-        threshold: [0.08, 0.18, 0.32, 0.5],
-    });
-
-    sections.forEach(function (section) {
-        observer.observe(section);
+        requestNavSync();
     });
 
     if (window.location.hash) {
@@ -195,6 +220,8 @@ document.addEventListener('keydown', function (e) {
         if (initialSection) {
             setActiveNav(initialSection.id);
         }
+    } else {
+        syncActiveNavFromScroll();
     }
 })();
 
