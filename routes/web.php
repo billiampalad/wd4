@@ -89,6 +89,9 @@ Route::post('/admin/login', [AdminAuthController::class, 'login']);
 */
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/session/heartbeat', [LoginController::class, 'heartbeat'])
+    ->middleware('auth')
+    ->name('session.heartbeat');
 
 /*
 |--------------------------------------------------------------------------

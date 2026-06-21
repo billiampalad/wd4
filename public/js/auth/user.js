@@ -1,3 +1,117 @@
+(() => {
+    if (window.__wd4IdleSessionInitialized) return;
+    window.__wd4IdleSessionInitialized = true;
+
+    const idleLimit = 120 * 60 * 1000;
+    const heartbeatInterval = 5 * 60 * 1000;
+    const activityStorageKey = 'wd4:last-authenticated-activity';
+    const activityEvents = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+    let lastActivity = Number(localStorage.getItem(activityStorageKey)) || Date.now();
+    let lastHeartbeat = 0;
+    let activityWriteTimer = null;
+    let isExpiring = false;
+
+    const isAuthenticatedPage = () => Boolean(
+        document.querySelector('meta[name="csrf-token"]') &&
+        document.getElementById('logout-form')
+    );
+
+    const redirectToLogin = () => {
+        if (isExpiring) return;
+        isExpiring = true;
+
+        const logoutForm = document.getElementById('logout-form');
+        if (logoutForm) {
+            logoutForm.requestSubmit();
+            return;
+        }
+
+        window.location.assign('/login');
+    };
+
+    const sendHeartbeat = async () => {
+        if (!isAuthenticatedPage() || document.hidden || isExpiring) return;
+
+        const now = Date.now();
+        if (now - lastHeartbeat < heartbeatInterval) return;
+        lastHeartbeat = now;
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            const response = await fetch('/session/heartbeat', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': token,
+                },
+                credentials: 'same-origin',
+            });
+
+            if (response.status === 401 || response.status === 419 || response.redirected) {
+                redirectToLogin();
+            }
+        } catch (error) {
+            // Gangguan jaringan sementara tidak langsung mengeluarkan pengguna.
+        }
+    };
+
+    const recordActivity = () => {
+        if (!isAuthenticatedPage() || isExpiring) return;
+
+        lastActivity = Date.now();
+        if (activityWriteTimer) return;
+
+        activityWriteTimer = window.setTimeout(() => {
+            localStorage.setItem(activityStorageKey, String(lastActivity));
+            activityWriteTimer = null;
+        }, 1000);
+
+        sendHeartbeat();
+    };
+
+    const checkIdleSession = () => {
+        if (!isAuthenticatedPage() || isExpiring) return;
+
+        const sharedActivity = Number(localStorage.getItem(activityStorageKey)) || lastActivity;
+        lastActivity = Math.max(lastActivity, sharedActivity);
+
+        if (Date.now() - lastActivity >= idleLimit) {
+            redirectToLogin();
+        }
+    };
+
+    const initializeIdleSession = () => {
+        if (!isAuthenticatedPage()) return;
+
+        lastActivity = Date.now();
+        localStorage.setItem(activityStorageKey, String(lastActivity));
+
+        activityEvents.forEach((eventName) => {
+            document.addEventListener(eventName, recordActivity, { passive: true });
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                checkIdleSession();
+                recordActivity();
+            }
+        });
+
+        sendHeartbeat();
+        window.setInterval(checkIdleSession, 30 * 1000);
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeIdleSession, { once: true });
+    } else {
+        initializeIdleSession();
+    }
+})();
 function initDashboard() {
     function swalAvailable() {
         return typeof Swal !== 'undefined';

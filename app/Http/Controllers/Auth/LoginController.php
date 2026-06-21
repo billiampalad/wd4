@@ -59,6 +59,11 @@ class LoginController
         return redirect('/login');
     }
 
+    public function heartbeat()
+    {
+        return response()->noContent();
+    }
+
     private function normalizeRoleName(?string $roleName): string
     {
         return strtolower(str_replace(' ', '_', trim((string) $roleName)));
