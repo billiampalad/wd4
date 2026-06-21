@@ -900,11 +900,15 @@ function initDashboard() {
     }, true);
 
     /* ─ Prevent double submit on create/edit forms ─ */
-    document.querySelectorAll('form[method="POST"]:not([data-no-submit-lock])').forEach(form => {
+    document.querySelectorAll('form[method="POST"]:not([data-no-submit-lock]):not([data-mitra-delete-form])').forEach(form => {
         if (form.dataset.submitLockBound === '1' || form.dataset.swalConfirmBound === '1') return;
         form.dataset.submitLockBound = '1';
 
         form.addEventListener('submit', function (e) {
+            if (form.hasAttribute('data-mitra-delete-form')) {
+                return;
+            }
+
             if (form.dataset.submitting === '1') {
                 e.preventDefault();
                 return;
