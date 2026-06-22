@@ -917,15 +917,7 @@ function initDashboard() {
             markSubmitting(form);
 
             if (swalAvailable() && !form.closest('.swal2-container')) {
-                Swal.fire({
-                    title: 'Memproses Data',
-                    text: 'Mohon tunggu, data sedang disimpan.',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    didOpen: function () {
-                        Swal.showLoading();
-                    }
-                });
+                AppLoading.swal('Memproses Data', 'Mohon tunggu, data sedang disimpan.');
             }
         });
     });
@@ -1108,8 +1100,7 @@ function initLaporan() {
     }
 
     function showLoading() {
-        previewBody.innerHTML =
-            '<tr><td colspan="7" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
+        previewBody.innerHTML = AppLoading.tableRow(7, 'Memuat data kerjasama...');
     }
 
     function showEmpty() {
@@ -1195,8 +1186,7 @@ function initLaporan() {
 
     function loadData() {
         showLoading();
-        btnTampilkan.disabled = true;
-        btnTampilkan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+        AppLoading.setButton(btnTampilkan, 'Memuat...');
 
         const query = getFilterParams();
         const url = previewUrl + (query ? '?' + query : '');
@@ -1230,8 +1220,7 @@ function initLaporan() {
                 showError();
             })
             .finally(function() {
-                btnTampilkan.disabled = false;
-                btnTampilkan.innerHTML = '<i class="fas fa-search"></i> Tampilkan';
+                AppLoading.resetButton(btnTampilkan);
             });
     }
 

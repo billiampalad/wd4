@@ -397,6 +397,7 @@
         <div id="sidebarOverlay"></div>
     </div>
 
+    @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}" data-turbo-track="reload"></script>

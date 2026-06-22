@@ -54,12 +54,7 @@
 
             <!-- List Content -->
             <div class="eval-list ev-scroll">
-                <!-- Skeleton for List -->
-                <div x-show="isLoading" class="ev-skeleton-list" x-cloak>
-                    <div class="ev-skeleton-item"></div>
-                    <div class="ev-skeleton-item"></div>
-                    <div class="ev-skeleton-item"></div>
-                </div>
+                <div x-show="isLoading" class="app-loading-panel" x-cloak><x-loading text="Memuat daftar evaluasi..." :size="48" /></div>
 
                 <!-- Tab: Jurusan -->
                 <div x-show="!isLoading && activeTab === 'jurusan'" class="eval-list-container space-y-3" x-transition.opacity x-cloak>
@@ -160,16 +155,7 @@
 
         <!-- RIGHT PANEL: Detail View -->
         <div class="eval-right-panel">
-            <!-- Skeleton Loading for Detail -->
-            <div x-show="isDetailLoading" class="ev-skeleton-detail" x-cloak>
-                <div class="ev-skeleton-col-main">
-                    <div class="ev-skeleton-box" style="height: 200px;"></div>
-                    <div class="ev-skeleton-box" style="height: 150px;"></div>
-                </div>
-                <div class="ev-skeleton-col-side">
-                    <div class="ev-skeleton-box" style="height: 400px;"></div>
-                </div>
-            </div>
+            <div x-show="isDetailLoading" class="app-loading-panel" x-cloak><x-loading text="Memuat detail evaluasi..." :size="52" /></div>
 
             <!-- Empty State Detail -->
             <div x-show="!activeId && !isDetailLoading" class="eval-empty-state" style="position: absolute; inset: 0;" x-cloak>

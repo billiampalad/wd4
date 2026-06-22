@@ -172,7 +172,7 @@
                             <span class="mitra-create-btn-content"><i class="fas fa-save"></i> Simpan Mitra</span>
                         </template>
                         <template x-if="submitting">
-                            <span class="mitra-create-btn-content"><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
+                            <span class="mitra-create-btn-content"><x-loading class="is-inline" text="Menyimpan..." :size="18" /></span>
                         </template>
                     </button>
                 </div>

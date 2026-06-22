@@ -1,85 +1,131 @@
-.container {
+.app-loading-spinner {
     --uib-size: 50px;
     --uib-speed: 1.5s;
     --uib-color-blue: #3498db;
     --uib-color-green: #2ecc71;
     --uib-color-red: #e74c3c;
-    height: var(--uib-size);
     width: var(--uib-size);
-    transform-origin: center;
-    animation: rotate var(--uib-speed) linear infinite;
-    filter: drop-shadow(0 0 3px rgba(52, 152, 219, 0.28));
-    will-change: transform;
+    height: var(--uib-size);
+    flex: 0 0 var(--uib-size);
     overflow: visible;
+    transform-origin: center;
+    animation: app-loading-rotate var(--uib-speed) linear infinite;
+    filter: drop-shadow(0 0 3px rgba(52, 152, 219, 0.28));
 }
 
-.car {
+.app-loading-spinner .car {
     fill: none;
     stroke: var(--uib-color-blue);
     stroke-dasharray: 1, 150;
-    stroke-dashoffset: 0;
     stroke-linecap: round;
     stroke-width: 6px;
-    will-change: stroke-dasharray, stroke-dashoffset, stroke;
-    animation:
-        stretch var(--uib-speed) ease-in-out infinite,
-        change-color calc(var(--uib-speed) * 3) linear infinite;
+    animation: app-loading-stretch var(--uib-speed) ease-in-out infinite,
+        app-loading-color calc(var(--uib-speed) * 3) linear infinite;
 }
 
-.track {
+.app-loading-spinner .track {
     fill: none;
     stroke: var(--uib-color-blue);
     stroke-width: 6px;
     opacity: 0.15;
-    animation: change-color calc(var(--uib-speed) * 3) linear infinite;
+    animation: app-loading-color calc(var(--uib-speed) * 3) linear infinite;
 }
 
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+.app-loading-indicator {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-sub, #64748b);
+    text-align: center;
 }
 
-@keyframes stretch {
-    0% {
-        stroke-dasharray: 1, 150;
-        stroke-dashoffset: 0;
-    }
-
-    50% {
-        stroke-dasharray: 90, 150;
-        stroke-dashoffset: -35;
-    }
-
-    100% {
-        stroke-dasharray: 90, 150;
-        stroke-dashoffset: -124;
-    }
+.app-loading-indicator.is-inline {
+    flex-direction: row;
+    gap: 8px;
 }
 
-@keyframes change-color {
-    0%,
-    100% {
-        stroke: var(--uib-color-blue);
-    }
+.app-loading-text {
+    font-size: 13px;
+    line-height: 1.4;
+}
 
-    33.333% {
-        stroke: var(--uib-color-green);
-    }
+.app-loading-cell {
+    height: 120px;
+    padding: 24px;
+    text-align: center;
+}
 
-    66.666% {
-        stroke: var(--uib-color-red);
-    }
+.app-loading-panel {
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-loading-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.app-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(248, 250, 252, 0.82);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.app-loading-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.app-loading-overlay .app-loading-indicator {
+    min-width: 180px;
+    padding: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+}
+
+.swal2-html-container .app-loading-indicator {
+    margin: 6px auto 2px;
+}
+
+@keyframes app-loading-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes app-loading-stretch {
+    0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+    50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+    100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+}
+
+@keyframes app-loading-color {
+    0%, 100% { stroke: var(--uib-color-blue); }
+    33.333% { stroke: var(--uib-color-green); }
+    66.666% { stroke: var(--uib-color-red); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .container,
-    .car,
-    .track {
+    .app-loading-spinner,
+    .app-loading-spinner .car,
+    .app-loading-spinner .track {
         animation-duration: calc(var(--uib-speed) * 2);
     }
 }

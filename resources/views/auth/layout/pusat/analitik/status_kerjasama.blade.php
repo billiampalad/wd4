@@ -327,8 +327,7 @@
                                 </div>
                             </div>
                             <div class="sk-due-loading" x-show="loading" x-cloak>
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Memuat data tahun <span x-text="selected"></span>...</span>
+                                <x-loading class="is-inline" text="" :size="24" /><span>Memuat data tahun <span x-text="selected"></span>...</span>
                             </div>
                             <div class="sk-due-error" x-show="error" x-cloak x-text="error"></div>
                         </div>

@@ -562,7 +562,7 @@
                 confirmButtonColor: '#4f46e5', cancelButtonColor: '#6b7280', reverseButtons: true,
             }).then(function (result) {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: 'Mengirim...', text: 'Sedang mengirim evaluasi ke Pimpinan', allowOutsideClick: false, showConfirmButton: false, didOpen: function() { Swal.showLoading(); } });
+                    AppLoading.swal('Mengirim...', 'Sedang mengirim evaluasi ke Pimpinan');
                     document.getElementById('formEvaluasi').removeAttribute('onsubmit');
                     document.getElementById('formEvaluasi').submit();
                 }

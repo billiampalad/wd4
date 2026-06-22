@@ -61,11 +61,9 @@ function initUnitDashboard() {
             const editor = button.closest('[data-link-editor]');
             const input = editor.querySelector('[data-document-link-input]');
             const state = editor.parentElement.querySelector('[data-save-state]');
-            const icon = button.querySelector('i');
             const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-            button.disabled = true;
-            icon.className = 'fas fa-spinner fa-spin';
+            AppLoading.setButton(button, 'Menyimpan...');
             state.textContent = 'Menyimpan...';
 
             try {
@@ -95,8 +93,7 @@ function initUnitDashboard() {
                 state.textContent = error.message;
                 state.style.color = 'var(--danger)';
             } finally {
-                button.disabled = false;
-                icon.className = 'fas fa-floppy-disk';
+                AppLoading.resetButton(button);
             }
         });
     });

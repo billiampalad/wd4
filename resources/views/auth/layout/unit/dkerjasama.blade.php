@@ -851,8 +851,7 @@ $auditUserLabel = function ($user = null) {
         }
 
         function showLoading() {
-            previewBody.innerHTML =
-                '<tr><td colspan="8" style="text-align:center; padding: 40px 0;"><i class="fas fa-spinner fa-spin" style="font-size: 20px; color: var(--accent); opacity: 0.6;"></i><p style="margin-top: 10px; font-size: 12px; color: var(--text-sub);">Memuat data kerjasama...</p></td></tr>';
+            previewBody.innerHTML = AppLoading.tableRow(8, 'Memuat data kerjasama...');
         }
 
         function showEmpty() {
@@ -929,8 +928,7 @@ $auditUserLabel = function ($user = null) {
 
         function loadData() {
             showLoading();
-            btnTampilkan.disabled = true;
-            btnTampilkan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
+            AppLoading.setButton(btnTampilkan, 'Memuat...');
 
             var query = getFormParams();
             var url = form.dataset.previewUrl + (query ? '?' + query : '');
@@ -961,8 +959,7 @@ $auditUserLabel = function ($user = null) {
                     showError();
                 })
                 .finally(function() {
-                    btnTampilkan.disabled = false;
-                    btnTampilkan.innerHTML = '<i class="fas fa-search"></i> Tampilkan';
+                    AppLoading.resetButton(btnTampilkan);
                 });
         }
 

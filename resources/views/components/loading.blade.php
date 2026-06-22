@@ -3,18 +3,10 @@
     'size' => 50,
 ])
 
-@once
-    <link rel="stylesheet" href="{{ asset('css/loading.css') }}">
-@endonce
 
-<div
-    {{ $attributes }}
-    role="status"
-    aria-live="polite"
-    style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #64748b; text-align: center;"
->
+<div {{ $attributes->class(['app-loading-indicator']) }} role="status" aria-live="polite">
     <svg
-        class="container"
+        class="app-loading-spinner"
         style="--uib-size: {{ (int) $size }}px;"
         viewBox="0 0 50 50"
         aria-hidden="true"
@@ -24,6 +16,6 @@
     </svg>
 
     @if ($text)
-        <span style="font-size: 13px; line-height: 1.4;">{{ $text }}</span>
+        <span class="app-loading-text">{{ $text }}</span>
     @endif
 </div>

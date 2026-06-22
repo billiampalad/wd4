@@ -298,6 +298,7 @@
         <div id="sidebarOverlay"></div>
     </div>
 
+    @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
 </body>
 

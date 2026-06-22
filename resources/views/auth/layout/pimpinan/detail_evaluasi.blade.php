@@ -11,17 +11,7 @@
         <p class="ev-page-desc">Tinjau keselarasan, rincian, dan capaian kerjasama sebelum pengesahan.</p>
     </div>
 
-    {{-- Skeleton Loading --}}
-    <div x-show="isLoading" class="ev-skeleton-detail"
-        style="position: relative; inset: auto; background: transparent; padding: 0; margin-top: 24px;" x-cloak>
-        <div class="ev-skeleton-col-main">
-            <div class="ev-skeleton-box" style="height: 200px;"></div>
-            <div class="ev-skeleton-box" style="height: 150px;"></div>
-        </div>
-        <div class="ev-skeleton-col-side">
-            <div class="ev-skeleton-box" style="height: 400px;"></div>
-        </div>
-    </div>
+    <div x-show="isLoading" class="app-loading-panel" style="margin-top: 24px;" x-cloak><x-loading text="Memuat detail evaluasi..." :size="52" /></div>
 
     {{-- Main Content --}}
     <div x-show="!isLoading" style="margin-top: 24px;" x-cloak>

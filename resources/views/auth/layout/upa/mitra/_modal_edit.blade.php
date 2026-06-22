@@ -173,7 +173,7 @@
                             <span class="mitra-edit-btn-content"><i class="fas fa-save"></i> Perbarui Mitra</span>
                         </template>
                         <template x-if="submitting">
-                            <span class="mitra-edit-btn-content"><i class="fas fa-spinner fa-spin"></i> Menyimpan...</span>
+                            <span class="mitra-edit-btn-content"><x-loading class="is-inline" text="Menyimpan..." :size="18" /></span>
                         </template>
                     </button>
                 </div>

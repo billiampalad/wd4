@@ -178,6 +178,7 @@
         <div id="sidebarOverlay"></div>
     </div>
 
+    @include('partials.loading-system')
     <script src="{{ asset('js/admin/dashboard.js') }}" data-turbo-track="reload"></script>
     @yield('scripts')
 </body>
