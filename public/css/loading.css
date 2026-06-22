@@ -101,6 +101,14 @@
     box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
 }
 
+[data-theme="dark"] .app-loading-overlay {
+    background: rgba(2, 6, 23, 0.82);
+}
+
+[data-theme="dark"] .app-loading-overlay .app-loading-indicator {
+    background: var(--surface, #111827);
+}
+
 .swal2-html-container .app-loading-indicator {
     margin: 6px auto 2px;
 }
