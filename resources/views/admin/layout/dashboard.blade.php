@@ -98,7 +98,7 @@
             </div>
             <div>
                 <div class="stat-value">{{ $totalUnitKerja}}</div>
-                <div class="stat-label">Total Unit Kerja</div>
+                <div class="stat-label">Total Humas</div>
             </div>
         </div>
 
