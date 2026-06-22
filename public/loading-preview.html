@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pratinjau Loading WD4</title>
+    <link rel="stylesheet" href="css/loading.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #172033;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            width: min(920px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 48px 0;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            letter-spacing: 0;
+        }
+
+        .subtitle {
+            margin: 0 0 32px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        section {
+            padding: 24px 0;
+            border-top: 1px solid #dbe3ee;
+        }
+
+        section:last-child {
+            border-bottom: 1px solid #dbe3ee;
+        }
+
+        h2 {
+            margin: 0 0 20px;
+            font-size: 17px;
+            letter-spacing: 0;
+        }
+
+        .sizes {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .demo-area {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dbe3ee;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .loader {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .loader span {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .loader-small .container {
+            --uib-size: 24px;
+        }
+
+        .loader-medium .container {
+            --uib-size: 50px;
+        }
+
+        .loader-large .container {
+            --uib-size: 72px;
+        }
+
+        .table-preview {
+            overflow: hidden;
+            border: 1px solid #dbe3ee;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            padding: 14px 18px;
+            background: #eef3f8;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .table-loading {
+            min-height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        button {
+            min-width: 150px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            border: 0;
+            border-radius: 6px;
+            background: #2563eb;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        button .container {
+            --uib-size: 20px;
+            --uib-color-blue: #fff;
+            --uib-color-green: #fff;
+            --uib-color-red: #fff;
+        }
+
+        @media (max-width: 680px) {
+            main {
+                padding: 28px 0;
+            }
+
+            .sizes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Pratinjau Loading WD4</h1>
+        <p class="subtitle">Demo ini hanya menampilkan animasi dari <strong>loading.css</strong> dan belum diterapkan ke halaman sistem.</p>
+
+        <section>
+            <h2>Variasi ukuran</h2>
+            <div class="sizes">
+                <div class="demo-area">
+                    <div class="loader loader-small" role="status">
+                        <svg class="container" viewBox="0 0 50 50" aria-hidden="true">
+                            <circle class="track" cx="25" cy="25" r="20"></circle>
+                            <circle class="car" cx="25" cy="25" r="20"></circle>
+                        </svg>
+                        <span>Memuat...</span>
+                    </div>
+                </div>
+
+                <div class="demo-area">
+                    <div class="loader loader-medium" role="status">
+                        <svg class="container" viewBox="0 0 50 50" aria-hidden="true">
+                            <circle class="track" cx="25" cy="25" r="20"></circle>
+                            <circle class="car" cx="25" cy="25" r="20"></circle>
+                        </svg>
+                        <span>Memuat data...</span>
+                    </div>
+                </div>
+
+                <div class="demo-area">
+                    <div class="loader loader-large" role="status">
+                        <svg class="container" viewBox="0 0 50 50" aria-hidden="true">
+                            <circle class="track" cx="25" cy="25" r="20"></circle>
+                            <circle class="car" cx="25" cy="25" r="20"></circle>
+                        </svg>
+                        <span>Mohon tunggu...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Contoh pada tabel</h2>
+            <div class="table-preview">
+                <div class="table-header">
+                    <span>Nama kerja sama</span>
+                    <span>Mitra</span>
+                    <span>Status</span>
+                </div>
+                <div class="table-loading">
+                    <div class="loader loader-medium" role="status">
+                        <svg class="container" viewBox="0 0 50 50" aria-hidden="true">
+                            <circle class="track" cx="25" cy="25" r="20"></circle>
+                            <circle class="car" cx="25" cy="25" r="20"></circle>
+                        </svg>
+                        <span>Memuat data kerja sama...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Contoh pada tombol</h2>
+            <div class="button-row">
+                <button type="button" disabled>
+                    <svg class="container" viewBox="0 0 50 50" aria-hidden="true">
+                        <circle class="track" cx="25" cy="25" r="20"></circle>
+                        <circle class="car" cx="25" cy="25" r="20"></circle>
+                    </svg>
+                    <span>Menyimpan...</span>
+                </button>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

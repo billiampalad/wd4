@@ -7,9 +7,8 @@
     height: var(--uib-size);
     width: var(--uib-size);
     transform-origin: center;
-    animation:
-        rotate var(--uib-speed) linear infinite,
-        change-shadow calc(var(--uib-speed) * 3) ease-in-out infinite;
+    animation: rotate var(--uib-speed) linear infinite;
+    filter: drop-shadow(0 0 3px rgba(52, 152, 219, 0.28));
     will-change: transform;
     overflow: visible;
 }
@@ -17,15 +16,14 @@
 .car {
     fill: none;
     stroke: var(--uib-color-blue);
-    stroke-dasharray: 1, 200;
+    stroke-dasharray: 1, 150;
     stroke-dashoffset: 0;
     stroke-linecap: round;
     stroke-width: 6px;
     will-change: stroke-dasharray, stroke-dashoffset, stroke;
-    transition: stroke 0.5s ease;
     animation:
-        stretch calc(var(--uib-speed) * 0.75) ease-in-out infinite,
-        change-color calc(var(--uib-speed) * 3) ease-in-out infinite;
+        stretch var(--uib-speed) ease-in-out infinite,
+        change-color calc(var(--uib-speed) * 3) linear infinite;
 }
 
 .track {
@@ -33,11 +31,14 @@
     stroke: var(--uib-color-blue);
     stroke-width: 6px;
     opacity: 0.15;
-    transition: stroke 0.5s ease;
-    animation: change-color calc(var(--uib-speed) * 3) ease-in-out infinite;
+    animation: change-color calc(var(--uib-speed) * 3) linear infinite;
 }
 
 @keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
     100% {
         transform: rotate(360deg);
     }
@@ -45,48 +46,40 @@
 
 @keyframes stretch {
     0% {
-        stroke-dasharray: 0, 150;
+        stroke-dasharray: 1, 150;
         stroke-dashoffset: 0;
     }
 
     50% {
-        stroke-dasharray: 75, 150;
-        stroke-dashoffset: -25;
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
     }
 
     100% {
-        stroke-dashoffset: -100;
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
     }
 }
 
 @keyframes change-color {
-
     0%,
     100% {
         stroke: var(--uib-color-blue);
     }
 
-    33% {
+    33.333% {
         stroke: var(--uib-color-green);
     }
 
-    66% {
+    66.666% {
         stroke: var(--uib-color-red);
     }
 }
 
-@keyframes change-shadow {
-
-    0%,
-    100% {
-        filter: drop-shadow(0 0 4px var(--uib-color-blue));
-    }
-
-    33% {
-        filter: drop-shadow(0 0 4px var(--uib-color-green));
-    }
-
-    66% {
-        filter: drop-shadow(0 0 4px var(--uib-color-red));
+@media (prefers-reduced-motion: reduce) {
+    .container,
+    .car,
+    .track {
+        animation-duration: calc(var(--uib-speed) * 2);
     }
 }
