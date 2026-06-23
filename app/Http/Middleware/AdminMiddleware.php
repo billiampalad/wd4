@@ -14,7 +14,7 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        if (Auth::user()->role->role_name === 'admin') {
+        if (strtolower(trim((string) Auth::user()->role?->role_name)) === 'admin') {
             return $next($request);
         }
 
