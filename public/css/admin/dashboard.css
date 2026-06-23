@@ -2944,6 +2944,16 @@ main {
     font-weight: 700;
 }
 
+.admin-dashboard .ud-breadcrumb-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+.admin-dashboard .ud-breadcrumb-link:hover {
+    color: var(--accent);
+}
+
 .admin-dashboard .ud-title-row {
     display: flex;
     align-items: center;
