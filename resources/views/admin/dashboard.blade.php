@@ -77,7 +77,7 @@
             </a>
 
             @php
-                $isUserManagementActive = request()->routeIs('users', 'users.*', 'roles', 'roles.*', 'profiles', 'profiles.*');
+                $isUserManagementActive = request()->routeIs('users', 'users.*', 'roles', 'roles.*', 'profiles', 'profiles.*', 'admin.profiles');
             @endphp
             <div id="dataMasterParent" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div id="dataMasterBtn" class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
@@ -93,7 +93,7 @@
                         <a class="submenu-item {{ request()->routeIs('roles', 'roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
                             <span class="submenu-dot"></span><span>Roles</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*') ? 'active' : '' }}" href="{{ route('profiles') }}">
+                        <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*', 'admin.profiles') ? 'active' : '' }}" href="{{ route('admin.profiles') }}">
                             <span class="submenu-dot"></span><span>Profiles</span>
                         </a>
                     </div>
