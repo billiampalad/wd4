@@ -263,8 +263,8 @@
                     </div>
                     <div class="progress-row">
                         <div class="progress-label">
-                            <span><i class="fas fa-graduation-cap" style="margin-right:6px; color:#0ea5e9;"></i>Jurusan</span>
-                            <span>{{ $totalJurusan ?? 12 }} user</span>
+                            <span><i class="fas fa-graduation-cap" style="margin-right:6px; color:#0ea5e9;"></i>Unit Kerja</span>
+                            <span>{{ $totalUnitKerjaGabungan ?? 12 }} user</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill sky" @style(['width'=> ($jurusanPct ?? 35) . '%'])></div>
@@ -272,7 +272,7 @@
                     </div>
                     <div class="progress-row">
                         <div class="progress-label">
-                            <span><i class="fas fa-briefcase" style="margin-right:6px; color:#f59e0b;"></i>Unit Kerja</span>
+                            <span><i class="fas fa-briefcase" style="margin-right:6px; color:#f59e0b;"></i>Humas</span>
                             <span>{{ $totalUnitKerja ?? 7 }} user</span>
                         </div>
                         <div class="progress-bar">
