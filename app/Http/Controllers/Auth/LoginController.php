@@ -66,6 +66,8 @@ class LoginController
 
     private function normalizeRoleName(?string $roleName): string
     {
-        return strtolower(str_replace(' ', '_', trim((string) $roleName)));
+        $normalizedRole = strtolower(str_replace([' ', '-'], '_', trim((string) $roleName)));
+
+        return $normalizedRole === 'humas' ? 'unit_kerja' : $normalizedRole;
     }
 }
