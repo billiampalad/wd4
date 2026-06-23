@@ -11,18 +11,29 @@
         'admin' => 'Admin',
     ];
 @endphp
-<main class="main-content">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-users"></i>
-            <span class="sep">/</span>
-            <a href="{{ route('users.index') }}" style="color: inherit; text-decoration: none;">User Management</a>
-            <span class="sep">/</span>
-            <span class="current">Edit Pengguna</span>
+<main class="main-content admin-dashboard">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('users.index') }}" class="ud-breadcrumb-link">Pengguna</a>
+                <span>/</span>
+                <span>Edit Pengguna</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-user-pen"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Edit Pengguna</h2>
+                    <p class="ud-subtitle" id="pageDesc">
+                        Ubah data pengguna yang sudah ada di sistem.
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Edit Pengguna</h2>
-        <p id="pageDesc">Ubah data pengguna yang sudah ada di sistem.</p>
-    </div>
+    </section>
 
     <div class="ue-layout">
 

@@ -1,18 +1,27 @@
 @extends('admin.dashboard')
 
 @section('content')
-<main class="main-content">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-microchip"></i>
-            <span class="sep">/</span>
-            <span style="color: inherit; text-decoration: none;">Master Data</span>
-            <span class="sep">/</span>
-            <span class="current">Jurusan</span>
+<main class="main-content admin-dashboard">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
+                <span>/</span>
+                <span>Jurusan</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-graduation-cap"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Jurusan</h2>
+                    <p class="ud-subtitle" id="pageDesc">
+                        Tambah, edit, dan hapus data Jurusan.
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Jurusan</h2>
-        <p id="pageDesc">Tambah, edit, dan hapus data Jurusan.</p>
-    </div>
+    </section>
 
     @if(session('success'))
         <div class="alert alert-success">

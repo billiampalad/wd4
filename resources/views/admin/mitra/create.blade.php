@@ -1,18 +1,29 @@
 @extends('admin.dashboard')
 
 @section('content')
-<main class="main-content">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-handshake"></i>
-            <span class="sep">/</span>
-            <a href="{{ route('mitra.index') }}" style="color: inherit; text-decoration: none;">Master Data</a>
-            <span class="sep">/</span>
-            <span class="current">Tambah Mitra</span>
+<main class="main-content admin-dashboard">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
+                <span>/</span>
+                <a href="{{ route('mitra.index') }}" class="ud-breadcrumb-link">Mitra</a>
+                <span>/</span>
+                <span>Tambah Mitra</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-handshake-simple"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Tambah Mitra Baru</h2>
+                    <p class="ud-subtitle" id="pageDesc">
+                        Isi formulir untuk menambahkan mitra kerjasama baru.
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Tambah Mitra Baru</h2>
-        <p id="pageDesc">Isi formulir untuk menambahkan mitra kerjasama baru.</p>
-    </div>
+    </section>
 
     <div class="uc-layout">
         <div class="uc-form-col" style="flex: 1;">

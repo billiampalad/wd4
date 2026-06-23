@@ -13,18 +13,27 @@
 @endsection
 
 @section('content')
-<main class="main-content">
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-microchip"></i>
-            <span class="sep">/</span>
-            <span style="color: inherit; text-decoration: none;">Master Data</span>
-            <span class="sep">/</span>
-            <span class="current">Klasifikasi Mitra</span>
+<main class="main-content admin-dashboard">
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
+                <span>/</span>
+                <span>Klasifikasi Mitra</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-layer-group"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Klasifikasi Mitra</h2>
+                    <p class="ud-subtitle" id="pageDesc">
+                        Kelola data klasifikasi mitra.
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Klasifikasi Mitra</h2>
-        <p id="pageDesc">Kelola data klasifikasi mitra.</p>
-    </div>
+    </section>
 
     @if(session('success'))
     <div class="alert alert-success">
