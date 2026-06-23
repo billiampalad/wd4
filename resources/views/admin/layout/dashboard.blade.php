@@ -150,13 +150,28 @@
                                 </div>
                             </td>
                             <td>
-                                @if($user->role?->role_name === 'Pimpinan')
-                                <span class="tag tag-blue"><i class="fas fa-circle" style="font-size:6px;"></i> Pimpinan</span>
-                                @elseif($user->role?->role_name === 'Jurusan')
-                                <span class="tag tag-green"><i class="fas fa-circle" style="font-size:6px;"></i> Jurusan</span>
-                                @else
-                                <span class="tag tag-orange"><i class="fas fa-circle" style="font-size:6px;"></i> {{ $user->role?->role_name ?? 'Unit Kerja' }}</span>
-                                @endif
+                                @php
+                                    $roleName = strtolower($user->role?->role_name ?? '');
+                                    $roleLabels = [
+                                        'pusat' => 'Pusat',
+                                        'upa' => 'UPA',
+                                        'jurusan' => 'Jurusan',
+                                        'unit_kerja' => 'Humas',
+                                        'pimpinan' => 'Pimpinan',
+                                    ];
+                                    $roleTagClasses = [
+                                        'pimpinan' => 'tag-blue',
+                                        'pusat' => 'tag-orange',
+                                        'upa' => 'tag-orange',
+                                        'jurusan' => 'tag-orange',
+                                        'unit_kerja' => 'tag-green',
+                                    ];
+                                    $roleLabel = $roleLabels[$roleName] ?? \Illuminate\Support\Str::headline($roleName ?: 'unit_kerja');
+                                    $roleTagClass = $roleTagClasses[$roleName] ?? 'tag-orange';
+                                @endphp
+                                <span class="tag {{ $roleTagClass }}">
+                                    <i class="fas fa-circle" style="font-size:6px;"></i> {{ $roleLabel }}
+                                </span>
                             </td>
                             <td><span style="font-size:12px; color:var(--text-sub);">{{ \Carbon\Carbon::parse($user->created_at)->format('d-m-Y') }}</span></td>
                         </tr>
