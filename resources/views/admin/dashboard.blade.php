@@ -121,13 +121,13 @@
             <div class="submenu-parent" style="display:flex; flex-direction:column; align-items:stretch;">
                 <div data-submenu-toggle="unitOrganizationSub" class="menu-item {{ $isUnitOrganizationActive ? 'active submenu-open' : '' }}" style="margin:0; cursor:pointer;">
                     <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
-                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Unit &amp; Organisasi</span>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Unit Pelaksana</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
                 <div class="submenu {{ $isUnitOrganizationActive ? 'open' : '' }}" id="unitOrganizationSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('upelaksana.*') ? 'active' : '' }}" href="{{ route('upelaksana.index') }}">
-                            <span class="submenu-dot"></span><span>Unit Pelaksana</span>
+                            <span class="submenu-dot"></span><span>Humas</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">
                             <span class="submenu-dot"></span><span>Jurusan</span>
@@ -136,7 +136,7 @@
                             <span class="submenu-dot"></span><span>Program Studi</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}" href="{{ route('upa.index') }}">
-                            <span class="submenu-dot"></span><span>UPA</span>
+                            <span class="submenu-dot"></span><span>Upa</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}" href="{{ route('pusat.index') }}">
                             <span class="submenu-dot"></span><span>Pusat</span>
