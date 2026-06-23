@@ -1,17 +1,34 @@
 @extends('admin.dashboard')
 
 @section('content')
-<main>
+<main class="admin-dashboard">
     <!-- Page Header -->
-    <div class="page-header">
-        <div class="breadcrumb">
-            <i class="fas fa-home" style="font-size:11px;"></i>
-            <span class="sep">/</span>
-            <span class="current" id="breadcrumbCurrent">Dashboard</span>
+    <section class="ud-topbar">
+        <div class="ud-hero-copy">
+            <div class="ud-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>/</span>
+                <span id="breadcrumbCurrent">Dashboard</span>
+            </div>
+            <div class="ud-title-row">
+                <span class="ud-title-icon"><i class="fas fa-user-shield"></i></span>
+                <div class="ud-title-copy">
+                    <h2 class="ud-title" id="pageTitle">Dashboard Admin</h2>
+                    <p class="ud-subtitle" id="pageDesc">
+                        Sistem Informasi Manajemen Kerjasama Polimdo &amp; DUDIKA
+                    </p>
+                </div>
+            </div>
         </div>
-        <h2 id="pageTitle">Dashboard Admin</h2>
-        <p id="pageDesc">Sistem Informasi Manajemen Kerjasama Polimdo &amp; DUDIKA</p>
-    </div>
+        <a href="{{ route('users.index') }}" class="ud-create-menu">
+            <span class="ud-create-icon"><i class="fas fa-users-gear"></i></span>
+            <span class="ud-create-copy">
+                <strong>Kelola Pengguna</strong>
+                <small>Tambah, ubah, atau hapus akun pengguna</small>
+            </span>
+            <span class="ud-create-arrow"><i class="fas fa-arrow-right"></i></span>
+        </a>
+    </section>
 
     <!-- Profil Admin yang Sedang Login -->
     <div class="card" style="margin-bottom:24px;">
