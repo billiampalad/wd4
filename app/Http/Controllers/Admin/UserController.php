@@ -133,7 +133,8 @@ class UserController
     private function profileDataForRole(Request $request): array
     {
         $roleName = Role::whereKey($request->role_id)->value('role_name');
-        $roleName = strtolower(str_replace(' ', '_', (string) $roleName));
+        $roleName = strtolower(str_replace([' ', '-'], '_', trim((string) $roleName)));
+        $roleName = $roleName === 'humas' ? 'unit_kerja' : $roleName;
 
         return [
             'jabatan' => $request->jabatan,

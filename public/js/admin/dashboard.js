@@ -555,10 +555,12 @@ function getSelectedRoleName() {
     if (!roleEl || !roleEl.value) return '';
 
     const selected = roleEl.options[roleEl.selectedIndex];
-    return (selected?.dataset.roleName || selected?.text || '')
+    const roleName = (selected?.dataset.roleName || selected?.text || '')
         .trim()
         .toLowerCase()
-        .replace(/\s+/g, '_');
+        .replace(/[\s-]+/g, '_');
+
+    return roleName === 'humas' ? 'unit_kerja' : roleName;
 }
 
 function updateProfileFields() {
