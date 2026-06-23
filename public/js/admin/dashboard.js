@@ -59,17 +59,17 @@ function initDashboard() {
         };
     }
 
-    /* ─ Data Master Submenu ─ */
-    const dmBtn2 = document.getElementById('dataMasterBtn');
-    const dmSub = document.getElementById('dataMasterSub');
+    /* Sidebar Submenus */
+    document.querySelectorAll('[data-submenu-toggle]').forEach(toggle => {
+        const submenu = document.getElementById(toggle.dataset.submenuToggle);
+        if (!submenu) return;
 
-    if (dmBtn2 && dmSub) {
-        dmBtn2.onclick = (e) => {
-            e.preventDefault();
-            dmBtn2.classList.toggle('submenu-open');
-            dmSub.classList.toggle('open');
+        toggle.onclick = (event) => {
+            event.preventDefault();
+            toggle.classList.toggle('submenu-open');
+            submenu.classList.toggle('open');
         };
-    }
+    });
 
     /* ─ Global search: filter tabel Data Kerjasama & Laporan ─ */
     const searchInput = document.getElementById('navSearchInput');

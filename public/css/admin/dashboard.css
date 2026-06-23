@@ -383,7 +383,7 @@ body.sidebar-collapsed .menu-item span {
 }
 
 /* Submenu Flyout saat Collapsed */
-body.sidebar-collapsed #dataMasterParent {
+body.sidebar-collapsed .submenu-parent {
     position: relative;
 }
 
@@ -404,7 +404,7 @@ body.sidebar-collapsed .submenu {
     pointer-events: none;
 }
 
-body.sidebar-collapsed #dataMasterParent:hover .submenu {
+body.sidebar-collapsed .submenu-parent:hover .submenu {
     opacity: 1;
     visibility: visible;
     transform: translateX(0);
@@ -413,7 +413,7 @@ body.sidebar-collapsed #dataMasterParent:hover .submenu {
 }
 
 /* Delay sedikit saat mouse leave agar tidak langsung hilang */
-body.sidebar-collapsed #dataMasterParent .submenu {
+body.sidebar-collapsed .submenu-parent .submenu {
     transition-delay: 0.1s;
 }
 
@@ -665,7 +665,7 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
 }
 
 .submenu.open {
-    max-height: 200px;
+    max-height: 280px;
 }
 
 .submenu-item {

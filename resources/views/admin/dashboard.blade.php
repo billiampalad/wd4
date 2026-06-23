@@ -79,8 +79,8 @@
             @php
                 $isUserManagementActive = request()->routeIs('users', 'users.*', 'roles', 'roles.*', 'profiles', 'profiles.*', 'admin.profiles');
             @endphp
-            <div id="dataMasterParent" style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="dataMasterBtn" class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
+            <div id="dataMasterParent" class="submenu-parent" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div id="dataMasterBtn" data-submenu-toggle="dataMasterSub" class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-users"></i></div>
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">User Management</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
@@ -109,29 +109,44 @@
                 <div class="menu-icon"><i class="fas fa-tags"></i></div>
                 <span>Jenis Kerjasama</span>
             </a>
-            <a class="menu-item {{ request()->routeIs('upelaksana.*') ? 'active' : '' }}" href="{{ route('upelaksana.index') }}">
-                <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
-                <span>Unit Pelaksana</span>
-            </a>
-            <a class="menu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">
-                <div class="menu-icon"><i class="fas fa-microchip"></i></div>
-                <span>Jurusan</span>
-            </a>
-            <a class="menu-item {{ request()->routeIs('prodi.*') ? 'active' : '' }}" href="{{ route('prodi.index') }}">
-                <div class="menu-icon"><i class="fas fa-graduation-cap"></i></div>
-                <span>Program Studi</span>
-            </a>
+            @php
+                $isUnitOrganizationActive = request()->routeIs(
+                    'upelaksana.*',
+                    'jurusan.*',
+                    'prodi.*',
+                    'upa.*',
+                    'pusat.*'
+                );
+            @endphp
+            <div class="submenu-parent" style="display:flex; flex-direction:column; align-items:stretch;">
+                <div data-submenu-toggle="unitOrganizationSub" class="menu-item {{ $isUnitOrganizationActive ? 'active submenu-open' : '' }}" style="margin:0; cursor:pointer;">
+                    <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Unit &amp; Organisasi</span>
+                    <i class="fas fa-chevron-down menu-chevron"></i>
+                </div>
+                <div class="submenu {{ $isUnitOrganizationActive ? 'open' : '' }}" id="unitOrganizationSub">
+                    <div class="submenu-inner">
+                        <a class="submenu-item {{ request()->routeIs('upelaksana.*') ? 'active' : '' }}" href="{{ route('upelaksana.index') }}">
+                            <span class="submenu-dot"></span><span>Unit Pelaksana</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">
+                            <span class="submenu-dot"></span><span>Jurusan</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('prodi.*') ? 'active' : '' }}" href="{{ route('prodi.index') }}">
+                            <span class="submenu-dot"></span><span>Program Studi</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}" href="{{ route('upa.index') }}">
+                            <span class="submenu-dot"></span><span>UPA</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}" href="{{ route('pusat.index') }}">
+                            <span class="submenu-dot"></span><span>Pusat</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
             <a class="menu-item {{ request()->routeIs('klasifikasi.*') ? 'active' : '' }}" href="{{ route('klasifikasi.index') }}">
                 <div class="menu-icon"><i class="fas fa-microchip"></i></div>
                 <span>Klasifikasi Mitra</span>
-            </a>
-            <a class="menu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}" href="{{ route('upa.index') }}">
-                <div class="menu-icon"><i class="fas fa-building-columns"></i></div>
-                <span>UPA</span>
-            </a>
-            <a class="menu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}" href="{{ route('pusat.index') }}">
-                <div class="menu-icon"><i class="fas fa-landmark"></i></div>
-                <span>Pusat</span>
             </a>
             <!-- <div class="menu-section">KERJASAMA</div>
             <a class="menu-item" href="#" data-page="data_kerjasama">
