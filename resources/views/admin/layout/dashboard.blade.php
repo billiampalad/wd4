@@ -326,7 +326,7 @@
                             <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:11px; margin-left:auto;"></i>
                         </div>
                     </a>
-                    <a href="#" style="text-decoration:none;">
+                    <a href="{{ route('roles.index') }}" style="text-decoration:none;">
                         <div class="activity-item" style="cursor:pointer; border-radius:10px; padding:10px 12px; transition:background .15s;" onmouseover="this.style.background='rgba(14,165,233,.06)'" onmouseout="this.style.background='transparent'">
                             <div class="activity-dot" style="background:rgba(14,165,233,.12); color:#0ea5e9;">
                                 <i class="fas fa-shield-alt"></i>
@@ -338,7 +338,7 @@
                             <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:11px; margin-left:auto;"></i>
                         </div>
                     </a>
-                    <a href="#" style="text-decoration:none;">
+                    <a href="{{ route('admin.profiles') }}" style="text-decoration:none;">
                         <div class="activity-item" style="cursor:pointer; border-radius:10px; padding:10px 12px; transition:background .15s;" onmouseover="this.style.background='rgba(16,185,129,.06)'" onmouseout="this.style.background='transparent'">
                             <div class="activity-dot" style="background:rgba(16,185,129,.12); color:#10b981;">
                                 <i class="fas fa-id-card"></i>
