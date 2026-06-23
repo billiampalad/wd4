@@ -25,6 +25,9 @@
     --shadow: 0 2px 16px rgba(79, 70, 229, .08);
     --shadow-lg: 0 8px 40px rgba(79, 70, 229, .14);
     --transition: .22s cubic-bezier(.4, 0, .2, 1);
+    --admin-scrollbar-thumb: #2563eb;
+    --admin-scrollbar-thumb-hover: #1d4ed8;
+    --admin-scrollbar-track: rgba(37, 99, 235, 0.16);
 }
 
 [data-theme="dark"] {
@@ -48,18 +51,45 @@ body {
 }
 
 /* ─── SCROLLBAR ─────────────────────────────────────── */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+html.admin-dashboard-page,
+body.admin-dashboard-page,
+body.admin-dashboard-page * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--admin-scrollbar-thumb) var(--admin-scrollbar-track) !important;
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+html.admin-dashboard-page::-webkit-scrollbar,
+body.admin-dashboard-page::-webkit-scrollbar,
+body.admin-dashboard-page *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 99px;
+html.admin-dashboard-page::-webkit-scrollbar-track,
+body.admin-dashboard-page::-webkit-scrollbar-track,
+body.admin-dashboard-page *::-webkit-scrollbar-track {
+    background: var(--admin-scrollbar-track) !important;
+    border-radius: 999px;
+}
+
+html.admin-dashboard-page::-webkit-scrollbar-thumb,
+body.admin-dashboard-page::-webkit-scrollbar-thumb,
+body.admin-dashboard-page *::-webkit-scrollbar-thumb {
+    background-color: var(--admin-scrollbar-thumb) !important;
+    border: 2px solid var(--admin-scrollbar-track) !important;
+    border-radius: 999px !important;
+}
+
+html.admin-dashboard-page::-webkit-scrollbar-thumb:hover,
+body.admin-dashboard-page::-webkit-scrollbar-thumb:hover,
+body.admin-dashboard-page *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--admin-scrollbar-thumb-hover) !important;
+}
+
+html.admin-dashboard-page::-webkit-scrollbar-corner,
+body.admin-dashboard-page::-webkit-scrollbar-corner,
+body.admin-dashboard-page *::-webkit-scrollbar-corner {
+    background: var(--admin-scrollbar-track) !important;
 }
 
 /* ─── TOPNAV ─────────────────────────────────────────── */

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id" data-theme="light" class="admin-dashboard-page">
 
 <head>
     <meta charset="UTF-8" />
@@ -21,7 +21,7 @@
     @yield('styles')
 </head>
 
-<body>
+<body class="admin-dashboard-page">
     <!-- navbar -->
     <nav id="navbar">
         <div class="nav-inner">
