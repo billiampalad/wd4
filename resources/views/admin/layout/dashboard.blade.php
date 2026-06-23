@@ -84,8 +84,8 @@
                 <span class="stat-badge badge-up"><i class="fas fa-arrow-up" style="font-size:8px;"></i> 5%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalJurusan}}</div>
-                <div class="stat-label">Total Jurusan</div>
+                <div class="stat-value">{{ $totalUnitKerjaGabungan }}</div>
+                <div class="stat-label">Total Unit Kerja</div>
             </div>
         </div>
 

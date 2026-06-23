@@ -564,6 +564,10 @@ class DashboardController
         $totalPimpinan  = User::whereHas('role', fn($q) => $q->where('role_name', 'pimpinan'))->count();
         $totalJurusan   = User::whereHas('role', fn($q) => $q->where('role_name', 'jurusan'))->count();
         $totalUnitKerja = User::whereHas('role', fn($q) => $q->where('role_name', 'unit_kerja'))->count();
+        $totalUnitKerjaGabungan = User::whereHas(
+            'role',
+            fn($q) => $q->whereIn('role_name', ['jurusan', 'pusat', 'upa'])
+        )->count();
         $totalAdmin     = User::whereHas('role', fn($q) => $q->where('role_name', 'admin'))->count();
 
         // Persentase untuk progress bar role
@@ -583,6 +587,7 @@ class DashboardController
             'totalPimpinan',
             'totalJurusan',
             'totalUnitKerja',
+            'totalUnitKerjaGabungan',
             'totalAdmin',
             'pimpinanPct',
             'jurusanPct',
