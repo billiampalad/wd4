@@ -3216,3 +3216,441 @@ main {
         padding: 12px;
     }
 }
+
+/* Mitra create/edit page: modal-style form fields */
+.mitra-form-page .mitra-page-card {
+    overflow: visible;
+    border-radius: 20px;
+}
+
+.mitra-form-page .mitra-page-form-header {
+    border-radius: 20px 20px 0 0;
+}
+
+.mitra-form-page .mitra-page-form-content {
+    padding: 24px 28px;
+}
+
+.mitra-form-page .mitra-page-form-footer {
+    border-radius: 0 0 20px 20px;
+}
+
+.mitra-form-page .mc-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.mitra-form-page .mc-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    position: relative;
+}
+
+.mitra-form-page .mc-label {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mitra-form-page .mc-req {
+    color: #ef4444;
+    font-weight: 800;
+}
+
+.mitra-form-page .mc-input-wrap,
+.mitra-form-page .alpine-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.mitra-form-page .mc-input-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.mitra-form-page .mc-icon-left {
+    position: absolute;
+    left: 14px;
+    z-index: 2;
+    color: #9ca3af;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.mitra-form-page .mc-input,
+.mitra-form-page .ad-trigger {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    transition: all .2s ease;
+}
+
+.mitra-form-page .mc-input {
+    padding: 8px 14px 8px 38px;
+}
+
+.mitra-form-page .mc-input.no-icon,
+.mitra-form-page .ad-trigger.no-icon {
+    padding-left: 14px;
+}
+
+.mitra-form-page .ad-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px 8px 38px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.mitra-form-page .mc-input:focus,
+.mitra-form-page .ad-trigger.active {
+    outline: none;
+    border-color: #4f46e5;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, .1);
+}
+
+.mitra-form-page .ad-trigger:hover {
+    border-color: #4f46e5;
+}
+
+.mitra-form-page .ad-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    left: 0;
+    z-index: 10001;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 6px;
+    border: 1px solid #e4e7f0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--shadow-lg);
+}
+
+.mitra-form-page .ad-item {
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .15s ease;
+}
+
+.mitra-form-page .ad-item:hover {
+    background: rgba(79, 70, 229, .06);
+    color: #4f46e5;
+}
+
+.mitra-form-page .ad-item.selected {
+    background: #4f46e5;
+    color: #fff;
+    font-weight: 700;
+}
+
+.mitra-form-page .mitra-create-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(79, 70, 229, .06), rgba(124, 58, 237, .04));
+}
+
+.mitra-form-page .mitra-create-header-icon,
+.mitra-form-page .mitra-create-field-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mitra-form-page .mitra-create-header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    font-size: 20px;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, .3);
+}
+
+.mitra-form-page .mitra-create-title {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.mitra-form-page .mitra-create-subtitle {
+    margin: 4px 0 0;
+    color: var(--text-sub);
+    font-size: 13px;
+}
+
+.mitra-form-page .mitra-create-section,
+.mitra-form-page .mitra-create-row {
+    margin-bottom: 18px;
+}
+
+.mitra-form-page .mitra-create-trigger-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.mitra-form-page .mitra-create-trigger-content.is-compact {
+    gap: 10px;
+}
+
+.mitra-form-page .mitra-create-field-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: rgba(79, 70, 229, .1);
+    color: var(--accent);
+    font-size: 12px;
+}
+
+.mitra-form-page .mitra-create-placeholder {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.mitra-form-page .mitra-create-selected {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.mitra-form-page .mitra-create-selected.is-normal {
+    font-weight: 500;
+}
+
+.mitra-form-page .mitra-create-chevron {
+    flex-shrink: 0;
+    color: #9ca3af;
+    font-size: 11px;
+    transition: transform .3s ease;
+}
+
+.mitra-form-page .mitra-create-chevron.is-small {
+    font-size: 10px;
+}
+
+.mitra-form-page .mitra-create-chevron.is-open {
+    transform: rotate(180deg);
+}
+
+.mitra-form-page .mitra-create-menu.is-scrollable {
+    display: flex;
+    flex-direction: column;
+    max-height: 240px;
+}
+
+.mitra-form-page .mitra-create-search-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.mitra-form-page .mitra-create-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface2);
+}
+
+.mitra-form-page .mitra-create-search i,
+.mitra-form-page .mitra-create-muted-icon {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.mitra-form-page .mitra-create-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+}
+
+.mitra-form-page .mitra-create-menu-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.mitra-form-page .mitra-create-menu-list.is-country {
+    max-height: 180px;
+}
+
+.mitra-form-page .mitra-create-check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mitra-form-page .mitra-create-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    transition: all .2s ease;
+}
+
+.mitra-form-page .mitra-create-check.is-selected {
+    border-color: var(--accent);
+    background: var(--accent);
+}
+
+.mitra-form-page .mitra-create-check i {
+    color: #fff;
+    font-size: 9px;
+}
+
+.mitra-form-page .mitra-create-item-text {
+    font-size: 13px;
+}
+
+.mitra-form-page .mitra-create-empty {
+    padding: 12px 16px;
+    color: #9ca3af;
+    text-align: center;
+    font-size: 12px;
+}
+
+.mitra-form-page .mitra-create-error {
+    display: block;
+    margin-top: 4px;
+    color: #ef4444;
+    font-size: 11px;
+}
+
+.mitra-form-page .mitra-create-label-icon {
+    margin-right: 6px;
+    color: var(--accent);
+}
+
+.mitra-form-page .mitra-create-textarea-icon {
+    top: 14px;
+}
+
+.mitra-form-page .mitra-create-textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.mitra-form-page .mitra-create-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+}
+
+.mitra-form-page .mitra-create-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.mitra-form-page .mitra-create-btn-secondary {
+    padding: 10px 22px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+.mitra-form-page .mitra-create-btn-secondary:hover {
+    background: var(--surface2);
+}
+
+.mitra-form-page .mitra-create-btn-primary {
+    padding: 10px 24px;
+    border: 0;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, .35);
+}
+
+.mitra-form-page .mitra-create-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, .45);
+}
+
+.mitra-form-page .mitra-create-btn-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+[data-theme="dark"] .mitra-form-page .mc-input,
+[data-theme="dark"] .mitra-form-page .ad-trigger {
+    border-color: #2a2f45;
+    background: #1e2333;
+}
+
+[data-theme="dark"] .mitra-form-page .mc-input:focus,
+[data-theme="dark"] .mitra-form-page .ad-trigger.active {
+    background: #181c27;
+}
+
+[data-theme="dark"] .mitra-form-page .ad-menu {
+    border-color: var(--border);
+    background: var(--surface);
+}
+
+@media (max-width: 768px) {
+    .mitra-form-page .mc-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .mitra-form-page .mitra-page-form-header,
+    .mitra-form-page .mitra-page-form-content,
+    .mitra-form-page .mitra-page-form-footer {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .mitra-form-page .mitra-create-footer {
+        flex-direction: column-reverse;
+    }
+
+    .mitra-form-page .mitra-create-btn {
+        width: 100%;
+    }
+}
