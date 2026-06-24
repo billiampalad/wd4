@@ -1,7 +1,7 @@
 @extends('admin.dashboard')
 
 @section('content')
-<main class="main-content admin-dashboard">
+<main class="main-content admin-dashboard mitra-form-page">
     <section class="ud-topbar">
         <div class="ud-hero-copy">
             <div class="ud-breadcrumb">
@@ -25,8 +25,8 @@
         </div>
     </section>
 
-    <div class="uc-layout">
-        <div class="uc-form-col" style="flex: 1;">
+    <div class="uc-layout mitra-form-layout">
+        <div class="uc-form-col">
             <div class="card uc-form-card">
                 <div class="card-header uc-form-header">
                     <div class="card-title"><i class="fas fa-plus-circle"></i> Formulir Mitra Baru</div>
@@ -40,7 +40,7 @@
                             <span>Informasi Mitra</span>
                         </div>
 
-                        <div class="uc-grid-2">
+                        <div class="uc-grid-2 mitra-form-grid">
                             <div class="uc-form-group">
                                 <label class="uc-label" for="nama_mitra">
                                     <i class="fas fa-handshake uc-label-icon"></i>
@@ -74,9 +74,7 @@
                                 <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div class="uc-grid-2" style="margin-top: 15px;">
                             <div class="uc-form-group">
                                 <label class="uc-label" for="kategori">
                                     <i class="fas fa-tags uc-label-icon"></i>
