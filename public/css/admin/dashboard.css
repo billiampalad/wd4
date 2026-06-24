@@ -3654,3 +3654,90 @@ main {
         width: 100%;
     }
 }
+
+/* Jurusan create/edit: tidy form layout */
+.jurusan-form-page .jurusan-form-layout {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.jurusan-form-page .uc-form-col,
+.jurusan-form-page .jurusan-form-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.jurusan-form-page .jurusan-form-card {
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.jurusan-form-page .jurusan-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 24px 16px;
+}
+
+.jurusan-form-page .jurusan-form-body {
+    padding: 24px 24px 8px;
+}
+
+.jurusan-form-page .jurusan-form-grid {
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.jurusan-form-page .jurusan-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 24px 22px;
+}
+
+.jurusan-form-page .jurusan-edit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(79, 70, 229, .18);
+    border-radius: 999px;
+    background: rgba(79, 70, 229, .08);
+    color: var(--accent, #4f46e5);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.jurusan-form-page .jurusan-edit-badge i {
+    font-size: 7px;
+}
+
+@media (max-width: 680px) {
+    .jurusan-form-page .jurusan-form-layout {
+        max-width: 100%;
+    }
+
+    .jurusan-form-page .jurusan-form-header,
+    .jurusan-form-page .jurusan-form-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .jurusan-form-page .jurusan-form-header,
+    .jurusan-form-page .jurusan-form-body,
+    .jurusan-form-page .jurusan-form-footer {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .jurusan-form-page .uc-btn-cancel,
+    .jurusan-form-page .uc-btn-submit {
+        justify-content: center;
+        width: 100%;
+    }
+}
