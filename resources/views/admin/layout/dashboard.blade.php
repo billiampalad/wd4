@@ -42,24 +42,24 @@
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); gap:8px 28px; flex:1;">
                 <div>
                     <div style="font-size:11px; color:var(--text-sub); margin-bottom:2px;">Nama</div>
-                    <div style="font-weight:600; font-size:13px;">{{ auth()->user()?->name ?? 'Admin Pimpinan' }}</div>
+                    <div style="font-weight:600; font-size:13px;">{{ auth()->user()?->name ?? '-' }}</div>
                 </div>
                 <div>
                     <div style="font-size:11px; color:var(--text-sub); margin-bottom:2px;">NIK</div>
-                    <div style="font-weight:600; font-size:13px; font-family:'DM Mono',monospace;">{{ auth()->user()?->nik ?? '123456' }}</div>
+                    <div style="font-weight:600; font-size:13px; font-family:'DM Mono',monospace;">{{ auth()->user()?->nik ?? '-' }}</div>
                 </div>
                 <div>
                     <div style="font-size:11px; color:var(--text-sub); margin-bottom:2px;">Role</div>
                     <div>
                         <span class="tag tag-green">
                             <i class="fas fa-circle" style="font-size:6px;"></i>
-                            {{ auth()->user()?->role?->role_name ?? 'Admin' }}
+                            {{ auth()->user()?->role?->role_name ?? '-' }}
                         </span>
                     </div>
                 </div>
                 <div>
                     <div style="font-size:11px; color:var(--text-sub); margin-bottom:2px;">Jabatan / Unit Kerja</div>
-                    <div style="font-weight:600; font-size:13px;">{{ auth()->user()?->profile?->jabatan ?? 'Direktur' }}</div>
+                    <div style="font-weight:600; font-size:13px;">{{ auth()->user()?->profile?->jabatan ?? '-' }}</div>
                 </div>
             </div>
         </div>
@@ -72,11 +72,11 @@
                 <div class="stat-icon" style="background:rgba(79,70,229,.12); color:var(--accent);">
                     <i class="fas fa-users"></i>
                 </div>
-                <span class="stat-badge badge-up"><i class="fas fa-arrow-up" style="font-size:8px;"></i> 12%</span>
+                <span class="stat-badge badge-up"><i class="fas fa-database" style="font-size:8px;"></i> {{ $totalUsersPct }}%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalUsers}}</div>
                 <div class="stat-label">Total Users</div>
+                <div class="stat-value">{{ number_format($totalUsers) }}</div>
             </div>
         </div>
 
@@ -85,11 +85,11 @@
                 <div class="stat-icon" style="background:rgba(14,165,233,.12); color:#0ea5e9;">
                     <i class="fas fa-user-tie"></i>
                 </div>
-                <span class="stat-badge badge-up"><i class="fas fa-arrow-up" style="font-size:8px;"></i> 8%</span>
+                <span class="stat-badge badge-up"><i class="fas fa-database" style="font-size:8px;"></i> {{ $pimpinanPct }}%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalPimpinan}}</div>
                 <div class="stat-label">Total Pimpinan</div>
+                <div class="stat-value">{{ number_format($totalPimpinan) }}</div>
             </div>
         </div>
 
@@ -98,11 +98,11 @@
                 <div class="stat-icon" style="background:rgba(16,185,129,.12); color:#10b981;">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
-                <span class="stat-badge badge-up"><i class="fas fa-arrow-up" style="font-size:8px;"></i> 5%</span>
+                <span class="stat-badge badge-up"><i class="fas fa-database" style="font-size:8px;"></i> {{ $unitKerjaGabunganPct }}%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalUnitKerjaGabungan }}</div>
                 <div class="stat-label">Total Unit Kerja</div>
+                <div class="stat-value">{{ number_format($totalUnitKerjaGabungan) }}</div>
             </div>
         </div>
 
@@ -111,11 +111,11 @@
                 <div class="stat-icon" style="background:rgba(245,158,11,.12); color:#f59e0b;">
                     <i class="fas fa-briefcase"></i>
                 </div>
-                <span class="stat-badge badge-down"><i class="fas fa-arrow-down" style="font-size:8px;"></i> 3%</span>
+                <span class="stat-badge badge-up"><i class="fas fa-database" style="font-size:8px;"></i> {{ $unitPct }}%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalUnitKerja}}</div>
                 <div class="stat-label">Total Humas</div>
+                <div class="stat-value">{{ number_format($totalUnitKerja) }}</div>
             </div>
         </div>
 
@@ -124,11 +124,11 @@
                 <div class="stat-icon" style="background:#EED9B9; color:#D53E0F;">
                     <i class="fas fa-user-shield"></i>
                 </div>
-                <span class="stat-badge badge-down"><i class="fas fa-arrow-down" style="font-size:8px;"></i> 3%</span>
+                <span class="stat-badge badge-up"><i class="fas fa-database" style="font-size:8px;"></i> {{ $adminPct }}%</span>
             </div>
             <div>
-                <div class="stat-value">{{ $totalAdmin}}</div>
                 <div class="stat-label">Total Admin</div>
+                <div class="stat-value">{{ number_format($totalAdmin) }}</div>
             </div>
         </div>
     </div>
@@ -154,7 +154,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($userTerbaru ?? [] as $i => $user)
+                        @forelse($userTerbaru as $i => $user)
                         <tr>
                             <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">{{ str_pad($i+1, 3, '0', STR_PAD_LEFT) }}</span></td>
                             <td><span style="font-family:'DM Mono',monospace; font-size:12px;">{{ $user->nik }}</span></td>
@@ -193,66 +193,11 @@
                             <td><span style="font-size:12px; color:var(--text-sub);">{{ \Carbon\Carbon::parse($user->created_at)->format('d-m-Y') }}</span></td>
                         </tr>
                         @empty
-                        {{-- Data statis fallback jika $userTerbaru kosong --}}
                         <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">001</span></td>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:12px;">123456</span></td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <div class="avatar" style="width:28px; height:28px; font-size:10px; background:#4f46e5; flex-shrink:0;">AP</div>
-                                    <span style="font-weight:600; font-size:13px;">Admin Pimpinan</span>
-                                </div>
+                            <td colspan="5" style="text-align:center; padding:28px 16px; color:var(--text-sub);">
+                                <i class="fas fa-users-slash" style="display:block; margin-bottom:8px; font-size:20px;"></i>
+                                Belum ada data user pada database.
                             </td>
-                            <td><span class="tag tag-blue"><i class="fas fa-circle" style="font-size:6px;"></i> Pimpinan</span></td>
-                            <td><span style="font-size:12px; color:var(--text-sub);">05-03-2026</span></td>
-                        </tr>
-                        <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">002</span></td>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:12px;">222222</span></td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <div class="avatar" style="width:28px; height:28px; font-size:10px; background:#0ea5e9; flex-shrink:0;">AJ</div>
-                                    <span style="font-weight:600; font-size:13px;">Admin Jurusan</span>
-                                </div>
-                            </td>
-                            <td><span class="tag tag-green"><i class="fas fa-circle" style="font-size:6px;"></i> Jurusan</span></td>
-                            <td><span style="font-size:12px; color:var(--text-sub);">04-03-2026</span></td>
-                        </tr>
-                        <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">003</span></td>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:12px;">333333</span></td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <div class="avatar" style="width:28px; height:28px; font-size:10px; background:#10b981; flex-shrink:0;">AU</div>
-                                    <span style="font-weight:600; font-size:13px;">Admin Unit Kerja</span>
-                                </div>
-                            </td>
-                            <td><span class="tag tag-orange"><i class="fas fa-circle" style="font-size:6px;"></i> Unit Kerja</span></td>
-                            <td><span style="font-size:12px; color:var(--text-sub);">03-03-2026</span></td>
-                        </tr>
-                        <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">004</span></td>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:12px;">444444</span></td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <div class="avatar" style="width:28px; height:28px; font-size:10px; background:#7c3aed; flex-shrink:0;">BJ</div>
-                                    <span style="font-weight:600; font-size:13px;">Budi Jurusan</span>
-                                </div>
-                            </td>
-                            <td><span class="tag tag-green"><i class="fas fa-circle" style="font-size:6px;"></i> Jurusan</span></td>
-                            <td><span style="font-size:12px; color:var(--text-sub);">02-03-2026</span></td>
-                        </tr>
-                        <tr>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:11px; color:var(--text-sub);">005</span></td>
-                            <td><span style="font-family:'DM Mono',monospace; font-size:12px;">555555</span></td>
-                            <td>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <div class="avatar" style="width:28px; height:28px; font-size:10px; background:#ef4444; flex-shrink:0;">CP</div>
-                                    <span style="font-weight:600; font-size:13px;">Citra Pimpinan</span>
-                                </div>
-                            </td>
-                            <td><span class="tag tag-blue"><i class="fas fa-circle" style="font-size:6px;"></i> Pimpinan</span></td>
-                            <td><span style="font-size:12px; color:var(--text-sub);">01-03-2026</span></td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -272,37 +217,37 @@
                     <div class="progress-row">
                         <div class="progress-label">
                             <span><i class="fas fa-user-tie" style="margin-right:6px; color:#4f46e5;"></i>Pimpinan</span>
-                            <span>{{ $totalPimpinan ?? 54 }} user</span>
+                            <span>{{ number_format($totalPimpinan) }} user</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" @style(['width'=> ($pimpinanPct ?? 42) . '%'])></div>
+                            <div class="progress-fill" @style(['width'=> $pimpinanPct . '%'])></div>
                         </div>
                     </div>
                     <div class="progress-row">
                         <div class="progress-label">
                             <span><i class="fas fa-graduation-cap" style="margin-right:6px; color:#0ea5e9;"></i>Unit Kerja</span>
-                            <span>{{ $totalUnitKerjaGabungan ?? 12 }} user</span>
+                            <span>{{ number_format($totalUnitKerjaGabungan) }} user</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill sky" @style(['width'=> ($jurusanPct ?? 35) . '%'])></div>
+                            <div class="progress-fill sky" @style(['width'=> $unitKerjaGabunganPct . '%'])></div>
                         </div>
                     </div>
                     <div class="progress-row">
                         <div class="progress-label">
                             <span><i class="fas fa-briefcase" style="margin-right:6px; color:#f59e0b;"></i>Humas</span>
-                            <span>{{ $totalUnitKerja ?? 7 }} user</span>
+                            <span>{{ number_format($totalUnitKerja) }} user</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill amber" @style(['width'=> ($unitPct ?? 23) . '%'])></div>
+                            <div class="progress-fill amber" @style(['width'=> $unitPct . '%'])></div>
                         </div>
                     </div>
                     <div class="progress-row">
                         <div class="progress-label">
                             <span><i class="fas fa-user-shield" style="margin-right:6px; color:#D53E0F;"></i>Admin</span>
-                            <span>{{ $totalAdmin }} user</span>
+                            <span>{{ number_format($totalAdmin) }} user</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill amber" @style(['width'=> ($adminPct ?? 23) . '%'])></div>
+                            <div class="progress-fill amber" @style(['width'=> $adminPct . '%'])></div>
                         </div>
                     </div>
                 </div>

@@ -560,21 +560,25 @@ class DashboardController
     {
         $totalUsers = User::count();
 
-        // Menggunakan whereHas untuk keamanan jika ID role berubah
-        $totalPimpinan  = User::whereHas('role', fn($q) => $q->where('role_name', 'pimpinan'))->count();
-        $totalJurusan   = User::whereHas('role', fn($q) => $q->where('role_name', 'jurusan'))->count();
-        $totalUnitKerja = User::whereHas('role', fn($q) => $q->where('role_name', 'unit_kerja'))->count();
-        $totalUnitKerjaGabungan = User::whereHas(
-            'role',
-            fn($q) => $q->whereIn('role_name', ['jurusan', 'pusat', 'upa'])
-        )->count();
-        $totalAdmin     = User::whereHas('role', fn($q) => $q->where('role_name', 'admin'))->count();
+        $countUsersByRoles = fn(array $roles) => User::whereHas('role', function ($query) use ($roles) {
+            $query->whereIn(DB::raw('LOWER(role_name)'), $roles);
+        })->count();
 
-        // Persentase untuk progress bar role
-        $pimpinanPct = $totalUsers > 0 ? round($totalPimpinan / $totalUsers * 100) : 0;
-        $jurusanPct  = $totalUsers > 0 ? round($totalJurusan  / $totalUsers * 100) : 0;
-        $unitPct     = $totalUsers > 0 ? round($totalUnitKerja / $totalUsers * 100) : 0;
-        $adminPct    = $totalUsers > 0 ? round($totalAdmin / $totalUsers * 100) : 0;
+        $totalPimpinan = $countUsersByRoles(['pimpinan']);
+        $totalJurusan = $countUsersByRoles(['jurusan']);
+        $totalUnitKerja = $countUsersByRoles(['unit_kerja', 'humas', 'unit-kerja']);
+        $totalUnitKerjaGabungan = $countUsersByRoles(['jurusan', 'pusat', 'upa']);
+        $totalAdmin = $countUsersByRoles(['admin']);
+
+        $percentageOfUsers = fn(int $total) => $totalUsers > 0 ? round($total / $totalUsers * 100) : 0;
+
+        // Persentase untuk card statistik dan progress bar role
+        $totalUsersPct = $totalUsers > 0 ? 100 : 0;
+        $pimpinanPct = $percentageOfUsers($totalPimpinan);
+        $unitKerjaGabunganPct = $percentageOfUsers($totalUnitKerjaGabungan);
+        $jurusanPct = $unitKerjaGabunganPct;
+        $unitPct = $percentageOfUsers($totalUnitKerja);
+        $adminPct = $percentageOfUsers($totalAdmin);
 
         // 5 user terbaru
         $userTerbaru = User::with(['role', 'profile'])
@@ -589,7 +593,9 @@ class DashboardController
             'totalUnitKerja',
             'totalUnitKerjaGabungan',
             'totalAdmin',
+            'totalUsersPct',
             'pimpinanPct',
+            'unitKerjaGabunganPct',
             'jurusanPct',
             'unitPct',
             'adminPct',
