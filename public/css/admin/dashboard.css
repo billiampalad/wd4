@@ -3741,3 +3741,116 @@ main {
         width: 100%;
     }
 }
+
+/* Prodi create/edit: tidy form layout */
+.prodi-form-page .prodi-form-layout {
+    display: block;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.prodi-form-page .uc-form-col,
+.prodi-form-page .prodi-form-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.prodi-form-page .prodi-form-card {
+    overflow: visible;
+    border-radius: 18px;
+}
+
+.prodi-form-page .prodi-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 24px 16px;
+}
+
+.prodi-form-page .prodi-form-body {
+    overflow: visible;
+    padding: 24px 24px 8px;
+}
+
+.prodi-form-page .prodi-field-full {
+    margin-bottom: 18px;
+}
+
+.prodi-form-page .prodi-form-grid {
+    overflow: visible;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.prodi-form-page .prodi-field-jenjang {
+    max-width: 260px;
+}
+
+.prodi-form-page .uc-alpine-select.is-open {
+    z-index: 3000;
+}
+
+.prodi-form-page .uc-select-menu {
+    z-index: 3001;
+}
+.prodi-form-page .prodi-field-jenjang .uc-select-menu {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
+
+.prodi-form-page .prodi-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 24px 22px;
+}
+
+.prodi-form-page .prodi-edit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(79, 70, 229, .18);
+    border-radius: 999px;
+    background: rgba(79, 70, 229, .08);
+    color: var(--accent, #4f46e5);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.prodi-form-page .prodi-edit-badge i {
+    font-size: 7px;
+}
+
+@media (max-width: 680px) {
+    .prodi-form-page .prodi-form-layout {
+        max-width: 100%;
+    }
+
+    .prodi-form-page .prodi-form-header,
+    .prodi-form-page .prodi-form-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .prodi-form-page .prodi-form-header,
+    .prodi-form-page .prodi-form-body,
+    .prodi-form-page .prodi-form-footer {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .prodi-form-page .prodi-field-jenjang {
+        max-width: none;
+    }
+
+    .prodi-form-page .uc-btn-cancel,
+    .prodi-form-page .uc-btn-submit {
+        justify-content: center;
+        width: 100%;
+    }
+}
