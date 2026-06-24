@@ -38,7 +38,7 @@
             @method('PUT')
 
             <div class="card-body ue-body">
-                <div class="ue-section-label">
+                <div class="ue-section-label">  
                     <span class="ue-section-num">01</span>
                     <span>Informasi Unit</span> 
                 </div>
@@ -46,7 +46,7 @@
                 <div class="ue-form-group">
                     <label class="ue-label" for="nama_unit_pelaksana">
                         <i class="fas fa-tag ue-label-icon"></i>
-                        Nama Unit Pelaksana
+                        Nama Humas
                         <span class="ue-required">*</span>
                     </label>
                     <input
@@ -73,4 +73,4 @@
         </form>
     </div>
 </main>
-@endsection
+@endsection 

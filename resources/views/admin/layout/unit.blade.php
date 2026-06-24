@@ -9,14 +9,14 @@
                 <span>/</span>
                 <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
                 <span>/</span>
-                <span>Unit Pelaksana</span>
+                <span>Humas</span>
             </div>
             <div class="ud-title-row">
                 <span class="ud-title-icon"><i class="fas fa-sitemap"></i></span>
                 <div class="ud-title-copy">
-                    <h2 class="ud-title" id="pageTitle">Unit Pelaksana</h2>
+                    <h2 class="ud-title" id="pageTitle">Humas</h2>
                     <p class="ud-subtitle" id="pageDesc">
-                        Tambah, edit, dan hapus data unit pelaksana.
+                        Tambah, edit, dan hapus data humas.
                     </p>
                 </div>
             </div>
@@ -31,9 +31,9 @@
 
     <div class="card um-card">
         <div class="card-header um-header">
-            <div class="card-title"><i class="fas fa-sitemap"></i> Daftar Unit Pelaksana</div>
+            <div class="card-title"><i class="fas fa-sitemap"></i> Daftar Humas</div>
             <a href="{{ route('upelaksana.create') }}" class="um-btn-add">
-                <i class="fas fa-plus"></i> Tambah Unit
+                <i class="fas fa-plus"></i> Tambah Humas
             </a>
         </div>
 

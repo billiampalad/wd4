@@ -9,14 +9,14 @@
                 <span>/</span>
                 <a href="{{ route('admin.dashboard') }}" class="ud-breadcrumb-link">Beranda</a>
                 <span>/</span>
-                <a href="{{ route('upelaksana.index') }}" class="ud-breadcrumb-link">Unit Pelaksana</a>
+                <a href="{{ route('upelaksana.index') }}" class="ud-breadcrumb-link">Humas</a>
                 <span>/</span>
-                <span>Tambah Unit</span>
+                <span>Tambah Humas</span>
             </div>
             <div class="ud-title-row">
                 <span class="ud-title-icon"><i class="fas fa-circle-plus"></i></span>
                 <div class="ud-title-copy">
-                    <h2 class="ud-title" id="pageTitle">Tambah Unit Pelaksana</h2>
+                    <h2 class="ud-title" id="pageTitle">Tambah Humas</h2>
                     <p class="ud-subtitle" id="pageDesc">
                         Isi formulir untuk menambahkan unit pelaksana baru.
                     </p>
@@ -27,7 +27,7 @@
 
     <div class="card uc-form-card" style="max-width: 600px; margin: 0 auto;">
         <div class="card-header uc-form-header">
-            <div class="card-title"><i class="fas fa-plus-circle"></i> Formulir Unit Pelaksana Baru</div>
+            <div class="card-title"><i class="fas fa-plus-circle"></i> Formulir Humas Baru</div>
         </div>
 
         <form action="{{ route('upelaksana.store') }}" method="POST">
