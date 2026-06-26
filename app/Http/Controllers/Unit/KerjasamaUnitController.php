@@ -79,13 +79,14 @@ class KerjasamaUnitController extends Controller
 
     public function store(Request $request)
     {
-        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'));
+        $pksNumbers = $this->normalizedPksNumbers($request->input('pks_numbers', []));
+        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'), $pksNumbers->isNotEmpty());
         $tipePelaksana = $requiresPelaksana
             ? $this->normalizedTipePelaksana($request->input('tipe_pelaksana', []))
             : [];
 
         $request->merge([
-            'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+            'pks_numbers' => $pksNumbers->all(),
             'tipe_pelaksana' => !empty($tipePelaksana) ? $tipePelaksana : null,
         ]);
 
@@ -110,7 +111,7 @@ class KerjasamaUnitController extends Controller
             'jenis_detail.*.tujuan' => 'nullable|string|max:10000',
             'jenis_detail.*.output' => 'nullable|string|max:10000',
             'jenis_detail.*.outcome' => 'nullable|string|max:10000',
-            // Tipe pelaksana hanya wajib jika jenis BUKAN MoU
+            // Tipe pelaksana wajib untuk MoA/IA, atau MoU yang memakai Nomor PKS
             'tipe_pelaksana' => [Rule::requiredIf($requiresPelaksana), 'nullable', 'array', 'min:1'],
             'tipe_pelaksana.*' => ['string', Rule::in(['jurusan', 'upa', 'pusat'])],
 
@@ -120,7 +121,7 @@ class KerjasamaUnitController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA, IA, atau MoU yang memiliki Nomor PKS.',
             'tipe_pelaksana.min' => 'Minimal pilih satu tipe pelaksana.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
@@ -328,13 +329,14 @@ class KerjasamaUnitController extends Controller
     public function update(Request $request, $id)
     {
         $cooperation = Cooperation::findOrFail($id);
-        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'));
+        $pksNumbers = $this->normalizedPksNumbers($request->input('pks_numbers', []));
+        $requiresPelaksana = $this->requiresPelaksana($request->input('jenis'), $pksNumbers->isNotEmpty());
         $tipePelaksana = $requiresPelaksana
             ? $this->normalizedTipePelaksana($request->input('tipe_pelaksana', []))
             : [];
 
         $request->merge([
-            'pks_numbers' => $this->normalizedPksNumbers($request->input('pks_numbers', []))->all(),
+            'pks_numbers' => $pksNumbers->all(),
             'tipe_pelaksana' => !empty($tipePelaksana) ? $tipePelaksana : null,
         ]);
 
@@ -371,7 +373,7 @@ class KerjasamaUnitController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA, IA, atau MoU yang memiliki Nomor PKS.',
             'tipe_pelaksana.min' => 'Minimal pilih satu tipe pelaksana.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
@@ -681,12 +683,12 @@ class KerjasamaUnitController extends Controller
             && ($isExpiredStatus || $isExpiredDate || $isNearExpiry);
     }
 
-    private function requiresPelaksana(?string $jenis): bool
+    private function requiresPelaksana(?string $jenis, bool $hasPksNumbers = false): bool
     {
         return in_array($jenis, [
             'MoA (Memorandum of Agreement)',
             'IA (Implementation Agreement)',
-        ], true);
+        ], true) || ($jenis === 'MoU (Memorandum of Understanding)' && $hasPksNumbers);
     }
 
     private function normalizedTipePelaksana($types): array

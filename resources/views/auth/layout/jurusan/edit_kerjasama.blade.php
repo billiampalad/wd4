@@ -13,6 +13,7 @@
     $pelaksanaOptions = $allowedTipePelaksana && isset($allPelaksanaOptions[$allowedTipePelaksana])
         ? [$allPelaksanaOptions[$allowedTipePelaksana]]
         : array_values($allPelaksanaOptions);
+    $initialTipePelaksana = old('tipe_pelaksana', $kegiatan->tipe_pelaksana ?? ($kegiatan->jurusans->count() > 0 ? 'jurusan' : ($kegiatan->upas->count() > 0 ? 'upa' : ($kegiatan->pusats->count() > 0 ? 'pusat' : ''))));
     $initialSelectedJurusans = collect((array) old('pelaksana_jurusan_ids', $kegiatan->jurusans->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
     $initialSelectedProdis = collect((array) old('pelaksana_prodi_ids', $kegiatan->prodis->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
     $initialSelectedUpas = collect((array) old('pelaksana_upa_ids', $kegiatan->upas->pluck('id')->all()))->map(fn ($id) => (int) $id)->values()->all();
@@ -697,13 +698,28 @@
                                         style="padding: 0 20px 20px 20px;">
                                         <div x-data="{
                                             jenisDokumen: '{{ old('jenis_dokumen', $kegiatan->jenis) }}',
-                                            tipePelaksana: '{{ old('tipe_pelaksana', $kegiatan->tipe_pelaksana ?? ($kegiatan->jurusans->count() > 0 ? 'jurusan' : ($kegiatan->upas->count() > 0 ? 'upa' : ($kegiatan->pusats->count() > 0 ? 'pusat' : '')))) }}',
+                                            tipePelaksana: @js($initialTipePelaksana),
                                             pelaksanaOptions: {{ \Illuminate\Support\Js::from($pelaksanaOptions) }},
+                                            initializingPelaksana: true,
                                             init() {
-                                                if (this.pelaksanaOptions.length === 1 && !this.tipePelaksana) {
-                                                    this.tipePelaksana = this.pelaksanaOptions[0].v;
+                                                this.syncPelaksanaVisibility();
+                                            },
+                                            shouldRequirePelaksana() {
+                                                return this.jenisDokumen.includes('MoA') || this.jenisDokumen.includes('IA');
+                                            },
+                                            shouldShowPelaksana() {
+                                                return this.shouldRequirePelaksana() || !!this.tipePelaksana;
+                                            },
+                                            syncPelaksanaVisibility() {
+                                                if (this.shouldRequirePelaksana()) {
+                                                    if (this.pelaksanaOptions.length === 1 && !this.tipePelaksana) {
+                                                        this.tipePelaksana = this.pelaksanaOptions[0].v;
+                                                    }
+                                                    this.ensureSinglePelaksanaSelected();
+                                                } else if (!this.initializingPelaksana) {
+                                                    this.tipePelaksana = '';
                                                 }
-                                                this.ensureSinglePelaksanaSelected();
+                                                this.initializingPelaksana = false;
                                             },
                                             ensureSinglePelaksanaSelected() {
                                                 if (this.tipePelaksana === 'jurusan' && this.jurusanItems.length === 1 && this.selectedJurusans.length === 0) {
@@ -784,8 +800,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; if (pelaksanaOptions.length === 1 && !tipePelaksana) tipePelaksana = pelaksanaOptions[0].v; ensureSinglePelaksanaSelected()"
-                                            @reset-tipe-pelaksana.window="tipePelaksana = pelaksanaOptions.length === 1 ? pelaksanaOptions[0].v : ''; ensureSinglePelaksanaSelected()">
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; syncPelaksanaVisibility()"
+                                            @reset-tipe-pelaksana.window="tipePelaksana = ''; syncPelaksanaVisibility()">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
                                                 <div class="mc-group">
@@ -803,7 +819,7 @@
                                             </div>
 
                                             {{-- Tipe Pelaksana --}}
-                                            <div>
+                                            <div x-show="shouldShowPelaksana()" x-collapse.duration.300ms>
                                                 {{-- Tipe Pelaksana Selector --}}
                                                 <div style="margin-top: 15px;" class="mc-group">
                                                     <label class="mc-label">Tipe Pelaksana <span

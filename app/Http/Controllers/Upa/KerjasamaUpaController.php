@@ -57,6 +57,10 @@ class KerjasamaUpaController extends Controller
     {
         $profile = $this->currentProfile();
         $type = $request->input('tipe_pelaksana');
+
+        if (blank($type)) {
+            return;
+        }
         $ids = match ($type) {
             'jurusan' => (array) $request->input('pelaksana_jurusan_ids', []),
             'upa' => (array) $request->input('pelaksana_upa_ids', []),
@@ -67,6 +71,14 @@ class KerjasamaUpaController extends Controller
         if (!CooperationAccess::requestMatchesProfile($profile, $type, $ids)) {
             abort(403, 'Anda hanya dapat mengelola data kerjasama milik UPA Anda sendiri.');
         }
+    }
+
+    private function requiresPelaksana(?string $jenis): bool
+    {
+        return in_array($jenis, [
+            'MoA (Memorandum of Agreement)',
+            'IA (Implementation Agreement)',
+        ], true);
     }
 
     // ─── CREATE PAGE ─────────────────────────────────────
@@ -130,7 +142,7 @@ class KerjasamaUpaController extends Controller
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
             'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
-            'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => [Rule::requiredIf($this->requiresPelaksana($request->input('jenis'))), 'nullable', 'string', Rule::in(['jurusan', 'upa', 'pusat'])],
             'jenis_detail' => 'nullable|array',
             'jenis_detail.*.nilai_kontrak' => 'nullable|string|max:255',
             'jenis_detail.*.income' => 'nullable|string|max:255',
@@ -147,7 +159,7 @@ class KerjasamaUpaController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
             'jenis_detail.*.satuan_volume.max' => 'Satuan luaran maksimal 255 karakter. Isi dengan satuan singkat seperti mahasiswa, orang, sertifikat, dokumen, atau kegiatan.',
@@ -392,7 +404,7 @@ class KerjasamaUpaController extends Controller
             'end_date' => 'nullable|date',
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
-            'tipe_pelaksana' => 'required|string|in:jurusan,upa,pusat',
+            'tipe_pelaksana' => [Rule::requiredIf($this->requiresPelaksana($request->input('jenis'))), 'nullable', 'string', Rule::in(['jurusan', 'upa', 'pusat'])],
             'jenis_detail' => 'nullable|array',
             'jenis_detail.*.nilai_kontrak' => 'nullable|string|max:255',
             'jenis_detail.*.income' => 'nullable|string|max:255',
@@ -407,7 +419,7 @@ class KerjasamaUpaController extends Controller
         ], [
             'title.required' => 'Judul kerjasama wajib diisi.',
             'jenis.required' => 'Jenis dokumen wajib dipilih.',
-            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih.',
+            'tipe_pelaksana.required' => 'Tipe pelaksana wajib dipilih untuk dokumen MoA atau IA.',
             'penggiat_mitra_ids.required' => 'Minimal pilih satu instansi mitra.',
             'jenis_detail.*.volume.max' => 'Volume luaran maksimal 255 karakter.',
             'jenis_detail.*.satuan_volume.max' => 'Satuan luaran maksimal 255 karakter. Isi dengan satuan singkat seperti mahasiswa, orang, sertifikat, dokumen, atau kegiatan.',

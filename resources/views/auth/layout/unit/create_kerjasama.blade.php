@@ -130,6 +130,7 @@
         ->values()
         ->all();
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
+    $hasPksNumberInputs = collect($pksNumberInputs)->contains(fn ($number) => trim((string) $number) !== '');
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -487,10 +488,7 @@
                             selectType(id) {
                                                 this.selected = id;
                                                 this.$dispatch('jenis-dokumen-changed', { value: id });
-                                                // Reset tipe pelaksana jika pindah ke MoU
-                                                if (id.includes('MoU')) {
-                                                    window.dispatchEvent(new CustomEvent('reset-tipe-pelaksana'));
-                                                }
+
                                             }
                         }" x-init="$dispatch('jenis-dokumen-changed', { value: selected })">
                                     <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
@@ -559,25 +557,29 @@
                                     </div>
 
                                     {{-- Nomor PKS --}}
-                                    <div style="margin-top: 12px;" x-data="pksNumberFields(@js($pksNumberInputs))">
+                                    <div style="margin-top: 12px;" x-data="pksNumberFields(@js($pksNumberInputs), @js($errors->has('pks_numbers.*')))" x-init="notify()">
                                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px;">
-                                            <label class="mc-label" style="margin: 0;">Nomor PKS</label>
+                                            <label class="mc-label" style="margin: 0;" x-show="visible" x-cloak>Nomor PKS</label>
                                             <button type="button" class="rfc-btn rfc-btn-primary" @click="add()"
                                                 style="padding: 8px 12px; font-size: 12px;">
-                                                <i class="fas fa-plus"></i> Tambah PKS
+                                                <i class="fas fa-plus"></i> <span x-text="visible ? 'Tambah Nomor' : 'Tambah PKS'"></span>
                                             </button>
                                         </div>
-                                        <template x-for="(number, index) in numbers" :key="index">
-                                            <div class="mc-input-wrap" style="margin-top: 8px;">
+                                        <template x-if="visible">
+                                            <div>
+                                                <template x-for="(number, index) in numbers" :key="index">
+                                                    <div class="mc-input-wrap" style="margin-top: 8px;">
                                                 <i class="fas fa-file-contract mc-icon-left"></i>
-                                                <input type="text" name="pks_numbers[]" x-model="numbers[index]"
+                                                <input type="text" name="pks_numbers[]" x-model="numbers[index]" @input.debounce.150ms="notify()"
                                                     placeholder="Masukkan nomor PKS..." class="mc-input @if($errors->has('pks_numbers.*')) is-invalid @endif"
                                                     style="height: 48px; padding-right: 48px;" />
-                                                <button type="button" @click="remove(index)" x-show="numbers.length > 1"
+                                                <button type="button" @click="remove(index)"
                                                     title="Hapus nomor PKS"
                                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 0; border-radius: 8px; background: rgba(239,68,68,.1); color: #ef4444; cursor: pointer;">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </template>
                                         @if($errors->has('pks_numbers.*'))
@@ -735,6 +737,15 @@
                                         <div x-data="{
                                             jenisDokumen: '{{ old('jenis', $prefillJenis) }}',
                                             tipePelaksana: @js($selectedTipePelaksana),
+                                            hasPksNumbers: @js($hasPksNumberInputs),
+                                            shouldShowPelaksana() {
+                                                return this.jenisDokumen.includes('MoA') || this.jenisDokumen.includes('IA') || (this.jenisDokumen.includes('MoU') && this.hasPksNumbers);
+                                            },
+                                            syncPelaksanaVisibility() {
+                                                if (!this.shouldShowPelaksana()) {
+                                                    this.tipePelaksana = [];
+                                                }
+                                            },
                                             hasTipePelaksana(type) {
                                                 return this.tipePelaksana.includes(type);
                                             },
@@ -813,7 +824,8 @@
                                                 else { this.selectedPusats.push(id); }
                                             },
                                             getPusatName(id) { return this.pusatItems.find(p => p.id === id)?.nama ?? ''; },
-                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value"
+                                        }" @jenis-dokumen-changed.window="jenisDokumen = $event.detail.value; syncPelaksanaVisibility()"
+                                            @pks-numbers-changed.window="hasPksNumbers = $event.detail.hasNumbers; syncPelaksanaVisibility()"
                                             @reset-tipe-pelaksana.window="tipePelaksana = []">
                                             {{-- Nama Instansi (Always shown) --}}
                                             <div>
@@ -832,7 +844,7 @@
                                             </div>
 
                                             {{-- Tipe Pelaksana (shown for MoA/IA) --}}
-                                            <div x-show="jenisDokumen.includes('MoA') || jenisDokumen.includes('IA')"
+                                            <div x-show="shouldShowPelaksana()"
                                                 x-collapse.duration.300ms>
                                                 {{-- Tipe Pelaksana Selector --}}
                                                 <div style="margin-top: 15px;" class="mc-group">
@@ -1909,16 +1921,39 @@
 @include('auth.layout.unit.mitra._modal_create')
 
 <script>
-    function pksNumberFields(initialNumbers = ['']) {
+    function pksNumberFields(initialNumbers = [''], forceVisible = false) {
+        const filledNumbers = initialNumbers.filter(number => String(number ?? '').trim() !== '');
+
         return {
-            numbers: initialNumbers.length ? initialNumbers : [''],
+            numbers: filledNumbers.length ? filledNumbers : [''],
+            visible: forceVisible || filledNumbers.length > 0,
+            get hasNumbers() {
+                return this.visible && this.numbers.some(number => String(number ?? '').trim() !== '');
+            },
             add() {
-                this.numbers.push('');
+                if (!this.visible) {
+                    this.visible = true;
+                    if (!this.numbers.length) {
+                        this.numbers = [''];
+                    }
+                } else {
+                    this.numbers.push('');
+                }
+                this.notify();
             },
             remove(index) {
                 if (this.numbers.length > 1) {
                     this.numbers.splice(index, 1);
+                } else {
+                    this.numbers = [''];
+                    this.visible = false;
                 }
+                this.notify();
+            },
+            notify() {
+                window.dispatchEvent(new CustomEvent('pks-numbers-changed', {
+                    detail: { hasNumbers: this.hasNumbers }
+                }));
             }
         };
     }
