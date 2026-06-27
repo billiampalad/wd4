@@ -171,13 +171,13 @@
                 </p>
                 <div class="hero-cta">
                     <a href="#data-kerjasama" class="btn-primary">Telusuri Data Kerjasama</a>
-                    {{-- <a href="{{ route('pengajuan.kerjasama.create') }}" class="btn-ghost">
+                    <a href="javascript:void(0)" onclick="openSubmissionChoiceModal()" class="btn-ghost">
                         Ajukan kerja sama
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
-                    </a> --}}
+                    </a>
                 </div>
             </div>
 
@@ -1100,6 +1100,237 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
     <script src="{{ asset('js/index.js') }}" data-turbo-track="reload"></script>
+
+    <!-- ═══ CHOICE MODAL ════════════════════════════════════════ -->
+    <div class="modal-overlay" id="submissionChoiceModal" onclick="closeSubmissionChoiceModal(event)">
+        <div class="choice-modal-box" onclick="event.stopPropagation()">
+            <div class="choice-modal-head">
+                <div>
+                    <span class="choice-kicker">Layanan Kemitraan</span>
+                    <h2 class="choice-title">Bagaimana kami dapat membantu Anda?</h2>
+                    <p class="choice-subtitle">Pilih opsi di bawah untuk mengajukan kerja sama baru atau memperpanjang kerja sama yang sudah ada.</p>
+                </div>
+                <button class="modal-close" onclick="closeSubmissionChoiceModal(null)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="choice-cards-container">
+                <!-- Card 1: Pengajuan Baru -->
+                <a href="{{ route('pengajuan.kerjasama.create') }}" class="choice-card">
+                    <div class="choice-icon-wrap new-partner">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="16" y1="11" x2="22" y2="11" />
+                        </svg>
+                    </div>
+                    <div class="choice-card-content">
+                        <h3>Ajukan Kerja Sama Baru</h3>
+                        <p>Pilih ini jika instansi/perusahaan Anda belum terdaftar sebagai mitra resmi Politeknik Negeri Manado.</p>
+                        <span class="choice-action-btn">Mulai Pengajuan <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Card 2: Perpanjangan -->
+                <a href="{{ route('pengajuan.perpanjangan.create') }}" class="choice-card">
+                    <div class="choice-icon-wrap renewal-partner">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                        </svg>
+                    </div>
+                    <div class="choice-card-content">
+                        <h3>Perpanjang Kerja Sama</h3>
+                        <p>Pilih ini jika instansi/perusahaan Anda sudah terdaftar dan ingin memperbarui MoU atau PKS yang ada.</p>
+                        <span class="choice-action-btn">Ajukan Perpanjangan <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .choice-modal-box {
+            background: var(--surface);
+            border-radius: 20px;
+            width: min(720px, calc(100% - 32px));
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: choiceModalShow 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            color: var(--ink);
+        }
+
+        [data-theme="dark"] .choice-modal-box {
+            background: #151c2c;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .choice-kicker {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent, #d4a938);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .choice-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.75rem;
+            line-height: 1.25;
+            margin-bottom: 0.5rem;
+            color: var(--ink);
+        }
+
+        .choice-subtitle {
+            font-size: 0.9rem;
+            color: var(--ink-faint);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+
+        .choice-cards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .choice-cards-container {
+                grid-template-columns: 1fr;
+            }
+            .choice-modal-box {
+                padding: 1.75rem;
+            }
+        }
+
+        .choice-card {
+            display: flex;
+            flex-direction: column;
+            padding: 1.75rem;
+            border-radius: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="light"] .choice-card {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] .choice-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary, #0f3f7f);
+            background: rgba(15, 63, 127, 0.04);
+        }
+
+        .choice-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .choice-card:hover .choice-icon-wrap {
+            transform: scale(1.1);
+        }
+
+        .new-partner {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .renewal-partner {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .choice-card-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s ease;
+            color: var(--ink);
+        }
+
+        .choice-card:hover h3 {
+            color: var(--primary, #0f3f7f);
+        }
+
+        .choice-card-content p {
+            font-size: 0.85rem;
+            color: var(--ink-faint);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .choice-action-btn {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary, #0f3f7f);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.2s ease;
+        }
+
+        .choice-card:hover .choice-action-btn {
+            gap: 0.75rem;
+        }
+
+        @keyframes choiceModalShow {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <script>
+        function openSubmissionChoiceModal() {
+            const modal = document.getElementById('submissionChoiceModal');
+            if (modal) {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSubmissionChoiceModal(event) {
+            if (!event || event.target.id === 'submissionChoiceModal') {
+                const modal = document.getElementById('submissionChoiceModal');
+                if (modal) {
+                    modal.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -38,6 +38,8 @@ use App\Http\Controllers\Pusat\KerjasamaPusatController;
 Route::get('/', [PublicLandingController::class, 'index']);
 Route::get('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'create'])->name('pengajuan.kerjasama.create');
 Route::post('/pengajuan-kerjasama', [PublicPengajuanKerjasamaController::class, 'store'])->name('pengajuan.kerjasama.store');
+Route::get('/perpanjangan-kerjasama', [PublicPengajuanKerjasamaController::class, 'createPerpanjangan'])->name('pengajuan.perpanjangan.create');
+Route::post('/perpanjangan-kerjasama', [PublicPengajuanKerjasamaController::class, 'storePerpanjangan'])->name('pengajuan.perpanjangan.store');
 
 /*
 |--------------------------------------------------------------------------

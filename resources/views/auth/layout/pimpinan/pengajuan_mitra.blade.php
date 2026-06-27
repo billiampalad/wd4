@@ -113,6 +113,11 @@
                     <div class="submission-card-head">
                         <div class="submission-card-title">
                             <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
+                            @if ($submission->mitra_id)
+                                <span class="submission-status" style="background: rgba(245, 158, 11, 0.12); color: #d97706; border-color: rgba(245, 158, 11, 0.3); font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; margin-left: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; border: 1px solid; vertical-align: middle;">
+                                    <i class="fas fa-sync" style="font-size: 0.65rem;"></i> Perpanjangan
+                                </span>
+                            @endif
                             <h3>{{ $submission->judul_pengajuan }}</h3>
                             <p class="submission-card-subtitle">
                                 {{ $submission->nama_mitra }} &middot; {{ ucfirst($submission->kategori) }}
@@ -264,6 +269,11 @@
                             <div class="submission-history-head">
                                 <div>
                                     <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
+                                    @if ($submission->mitra_id)
+                                        <span class="submission-status" style="background: rgba(245, 158, 11, 0.12); color: #d97706; border-color: rgba(245, 158, 11, 0.3); font-size: 0.72rem; padding: 2px 8px; border-radius: 99px; margin-left: 6px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; border: 1px solid; vertical-align: middle;">
+                                            <i class="fas fa-sync" style="font-size: 0.65rem;"></i> Perpanjangan
+                                        </span>
+                                    @endif
                                     <h3>{{ $submission->nama_mitra }}</h3>
                                     <p class="submission-history-meta">
                                         {{ $submission->judul_pengajuan }}
