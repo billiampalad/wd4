@@ -1166,6 +1166,15 @@
             color: var(--ink);
         }
 
+        .choice-modal-head {
+            padding-right: 2.5rem;
+        }
+
+        .choice-modal-head .modal-close {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+        }
         [data-theme="dark"] .choice-modal-box {
             background: #151c2c;
             border-color: rgba(255, 255, 255, 0.1);
@@ -1208,6 +1217,10 @@
             }
             .choice-modal-box {
                 padding: 1.75rem;
+            }
+            .choice-modal-head .modal-close {
+                top: 1rem;
+                right: 1rem;
             }
         }
 
