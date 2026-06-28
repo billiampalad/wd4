@@ -11,13 +11,14 @@
     --partner-success-bg: rgba(16, 185, 129, 0.12);
     --partner-danger: #b91c1c;
     --partner-danger-bg: rgba(239, 68, 68, 0.12);
-    --partner-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+    --partner-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+    --partner-shadow-soft: 0 14px 30px rgba(15, 23, 42, 0.08);
 }
 
 .partner-submission-body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
     color: var(--partner-text);
     background:
         radial-gradient(circle at top left, rgba(212, 169, 56, 0.18), transparent 28%),
@@ -46,7 +47,7 @@
     font-weight: 700;
     color: var(--partner-text);
     text-decoration: none;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
 }
 
 .partner-brand img {
@@ -100,7 +101,7 @@
 .partner-form-card {
     background: var(--partner-surface);
     border: 1px solid var(--partner-border);
-    border-radius: 28px;
+    border-radius: 20px;
     box-shadow: var(--partner-shadow);
     backdrop-filter: blur(18px);
 }
@@ -129,27 +130,36 @@
     border-radius: 999px;
     background: var(--partner-primary-soft);
     color: var(--partner-primary);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
-.partner-submission-hero h1,
-.partner-form-head h2 {
+.partner-submission-hero h3 {
     margin: 18px 0 12px;
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 3vw, 3rem);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
+    font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
+    font-size: clamp(1.4rem, 2vw, 2rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: 0;
+}
+
+.partner-form-head h2 {
+    margin: 14px 0 8px;
+    font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
+    font-size: clamp(1.3rem, 1.65vw, 1.7rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0;
 }
 
 .partner-submission-hero p,
 .partner-section-head p,
 .partner-form-head p {
     color: var(--partner-subtle);
-    font-size: 15px;
-    line-height: 1.75;
+    font-size: clamp(0.94rem, 1vw, 1rem);
+    line-height: 1.7;
 }
 
 .partner-hero-points {
@@ -164,7 +174,7 @@
     gap: 14px;
     align-items: center;
     padding: 14px 16px;
-    border-radius: 18px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.82);
     border: 1px solid rgba(15, 63, 127, 0.08);
 }
@@ -185,11 +195,11 @@
 }
 
 .partner-alert {
-    border-radius: 18px;
+    border-radius: 12px;
     padding: 14px 18px;
     margin-bottom: 18px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 0.92rem;
+    font-weight: 600;
 }
 
 .partner-alert-success {
@@ -245,8 +255,9 @@
 }
 
 .partner-field label {
-    font-size: 13px;
+    font-size: 0.88rem;
     font-weight: 700;
+    line-height: 1.35;
 }
 
 .partner-field input,
@@ -254,13 +265,22 @@
 .partner-field textarea {
     width: 100%;
     border: 1px solid rgba(15, 23, 42, 0.1);
-    border-radius: 16px;
+    border-radius: 10px;
     padding: 14px 16px;
     font: inherit;
+    font-size: 0.95rem;
+    line-height: 1.45;
     color: var(--partner-text);
     background: #fff;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.partner-field input:hover,
+.partner-field select:hover,
+.partner-field textarea:hover {
+    border-color: rgba(15, 63, 127, 0.24);
+    background: #fbfdff;
 }
 
 .partner-field textarea {
@@ -271,8 +291,8 @@
 .partner-field input:focus,
 .partner-field select:focus,
 .partner-field textarea:focus {
-    border-color: rgba(15, 63, 127, 0.35);
-    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.1);
+    border-color: rgba(15, 63, 127, 0.45);
+    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.1), var(--partner-shadow-soft);
 }
 
 .partner-required {
@@ -298,9 +318,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 999px;
+    border-radius: 10px;
     padding: 14px 22px;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 800;
     text-decoration: none;
     border: none;
     cursor: pointer;
@@ -347,32 +368,51 @@
     .partner-form-card,
     .partner-submission-hero {
         padding: 22px 18px;
-        border-radius: 22px;
+        border-radius: 16px;
     }
 
     .partner-point {
         grid-template-columns: 1fr;
     }
+
+    .partner-submission-hero h1 {
+        font-size: clamp(1.75rem, 8vw, 2.2rem);
+    }
+
+    .partner-form-head h2 {
+        font-size: clamp(1.18rem, 5vw, 1.4rem);
+    }
+
+    .partner-field input,
+    .partner-field select,
+    .partner-field textarea,
+    .partner-primary-button,
+    .partner-secondary-button {
+        font-size: 0.93rem;
+    }
 }
 
 /* ═══ INTERACTIVE WIZARD FORM STYLES ═════════════════════ */
-
 .partner-wizard-container {
     margin-bottom: 2rem;
+    padding: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.07);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(248, 251, 255, 0.74));
 }
 
 .partner-stepper-wrap {
     position: relative;
-    padding: 10px 0 25px;
-    margin-bottom: 1.5rem;
+    padding: 8px 0 0;
+    margin-bottom: 0;
 }
 
 .partner-stepper-track {
     position: absolute;
-    top: 28px;
+    top: 27px;
     left: 8%;
     right: 8%;
-    height: 4px;
+    height: 6px;
     background: rgba(15, 23, 42, 0.08);
     z-index: 1;
     border-radius: 99px;
@@ -406,9 +446,9 @@
 }
 
 .partner-step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     background: #fff;
     border: 2px solid rgba(15, 23, 42, 0.08);
     display: flex;
@@ -418,24 +458,24 @@
     font-size: 0.95rem;
     color: var(--partner-subtle);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .partner-step-label {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--partner-subtle);
     margin-top: 10px;
     transition: color 0.3s ease;
-    max-width: 110px;
+    max-width: 118px;
+    line-height: 1.35;
 }
 
-/* Active Step Status */
 .partner-step-item.is-active .partner-step-circle {
     border-color: var(--partner-primary);
     background: var(--partner-primary);
     color: #fff;
-    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.15), 0 8px 20px rgba(15, 63, 127, 0.25);
+    box-shadow: 0 0 0 5px rgba(15, 63, 127, 0.13), 0 12px 24px rgba(15, 63, 127, 0.24);
 }
 
 .partner-step-item.is-active .partner-step-label {
@@ -443,7 +483,6 @@
     font-weight: 700;
 }
 
-/* Completed Step Status */
 .partner-step-item.is-completed .partner-step-circle {
     border-color: var(--partner-success);
     background: var(--partner-success);
@@ -460,25 +499,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
-    padding: 0 4px;
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(15, 63, 127, 0.06);
 }
 
 .partner-wizard-meta-label {
-    font-size: 0.82rem;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 800;
     color: var(--partner-subtle);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
 }
 
 .partner-wizard-meta-percentage {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: var(--partner-primary);
 }
 
-/* Step Form Card & Content */
 .form-step {
     display: none;
 }
@@ -493,28 +533,33 @@
         opacity: 0;
         transform: translateY(15px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* Enhancing inputs */
+.partner-form-section.is-flat {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
 .partner-fields input,
 .partner-fields select,
 .partner-fields textarea {
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .partner-fields input:focus,
 .partner-fields select:focus,
 .partner-fields textarea:focus {
-    border-color: var(--partner-primary);
-    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.08);
+    border-color: rgba(15, 63, 127, 0.45);
+    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.1), var(--partner-shadow-soft);
     outline: none;
 }
 
-/* Review Step Styles */
 .partner-review-container {
     display: flex;
     flex-direction: column;
@@ -522,15 +567,16 @@
 }
 
 .partner-review-card {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.72);
     border: 1px solid rgba(15, 23, 42, 0.06);
     border-radius: 12px;
     padding: 1.25rem;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
 }
 
 .partner-review-card-title {
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
     color: var(--partner-primary);
     margin-bottom: 10px;
     display: flex;
@@ -552,17 +598,17 @@
 }
 
 .partner-review-label {
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.76rem;
+    font-weight: 700;
     color: var(--partner-subtle);
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
     margin-bottom: 2px;
 }
 
 .partner-review-value {
-    font-size: 0.88rem;
-    font-weight: 600;
+    font-size: 0.94rem;
+    font-weight: 650;
     color: var(--partner-text);
     word-break: break-word;
 }
@@ -571,7 +617,6 @@
     grid-column: 1 / -1;
 }
 
-/* Error indicator on inputs */
 .partner-field.has-error input,
 .partner-field.has-error select,
 .partner-field.has-error textarea {
@@ -583,7 +628,14 @@
     color: var(--partner-danger) !important;
 }
 
-/* Step Action Buttons placement */
+.partner-field.has-error::after,
+.partner-declaration.has-error::after {
+    content: "Kolom ini wajib dilengkapi dengan format yang benar.";
+    color: var(--partner-danger);
+    font-size: 12px;
+    font-weight: 600;
+}
+
 .partner-form-actions {
     display: flex;
     justify-content: space-between;
@@ -593,7 +645,6 @@
     padding-top: 1.5rem;
 }
 
-/* Declaration check design */
 .partner-declaration {
     display: flex;
     align-items: flex-start;
@@ -605,28 +656,358 @@
     margin-bottom: 1.5rem;
 }
 
+.partner-declaration.has-error {
+    border-color: rgba(239, 68, 68, 0.35);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08);
+}
+
 .partner-declaration input {
     margin-top: 3px;
     cursor: pointer;
 }
 
 .partner-declaration label {
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.92rem;
+    font-weight: 600;
     color: var(--partner-primary);
     cursor: pointer;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 @media (max-width: 600px) {
+    .partner-wizard-container {
+        padding: 14px;
+    }
+
     .partner-stepper-track {
-        display: none;
+        left: 24px;
+        right: 24px;
+        display: block;
+        height: 4px;
     }
+
     .partner-step-label {
-        display: none;
+        font-size: 0.72rem;
+        max-width: 70px;
     }
+
     .partner-stepper-steps {
         justify-content: space-around;
     }
+
+    .partner-step-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+
+    .partner-wizard-meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --partner-bg: #07111f;
+    --partner-surface: rgba(15, 23, 42, 0.88);
+    --partner-border: rgba(148, 163, 184, 0.18);
+    --partner-text: #e5eefb;
+    --partner-subtle: #a8b7cc;
+    --partner-primary: #7db7ff;
+    --partner-primary-soft: rgba(59, 130, 246, 0.16);
+    --partner-accent: #f2c94c;
+    --partner-success: #7ee0b5;
+    --partner-success-bg: rgba(16, 185, 129, 0.16);
+    --partner-danger: #fca5a5;
+    --partner-danger-bg: rgba(248, 113, 113, 0.15);
+    --partner-shadow: 0 24px 58px rgba(2, 6, 23, 0.52);
+    --partner-shadow-soft: 0 18px 34px rgba(2, 6, 23, 0.34);
 }
 
+html[data-theme="dark"] .partner-submission-body {
+    background:
+        radial-gradient(circle at top left, rgba(242, 201, 76, 0.11), transparent 30%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 26%),
+        linear-gradient(180deg, #07111f 0%, #0b1220 54%, #111827 100%);
+}
+
+html[data-theme="dark"] .partner-brand,
+html[data-theme="dark"] .partner-submission-hero h1,
+html[data-theme="dark"] .partner-form-head h2,
+html[data-theme="dark"] .partner-field label,
+html[data-theme="dark"] .partner-review-value {
+    color: var(--partner-text);
+}
+
+html[data-theme="dark"] .partner-submission-hero p,
+html[data-theme="dark"] .partner-section-head p,
+html[data-theme="dark"] .partner-form-head p,
+html[data-theme="dark"] .partner-point span,
+html[data-theme="dark"] .partner-review-label,
+html[data-theme="dark"] .partner-wizard-meta-label,
+html[data-theme="dark"] .partner-step-label {
+    color: var(--partner-subtle);
+}
+
+html[data-theme="dark"] .partner-submission-hero,
+html[data-theme="dark"] .partner-form-card,
+html[data-theme="dark"] .partner-wizard-container,
+html[data-theme="dark"] .partner-point,
+html[data-theme="dark"] .partner-review-card {
+    background: var(--partner-surface);
+    border-color: var(--partner-border);
+    box-shadow: var(--partner-shadow);
+}
+
+html[data-theme="dark"] .partner-wizard-container {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(8, 17, 29, 0.82));
+}
+
+html[data-theme="dark"] .partner-nav-link,
+html[data-theme="dark"] .partner-secondary-button {
+    color: var(--partner-primary);
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(125, 183, 255, 0.24);
+}
+
+html[data-theme="dark"] .partner-nav-link:hover,
+html[data-theme="dark"] .partner-secondary-button:hover {
+    background: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 14px 28px rgba(2, 6, 23, 0.28);
+}
+
+html[data-theme="dark"] .partner-nav-button,
+html[data-theme="dark"] .partner-primary-button,
+html[data-theme="dark"] .partner-point strong,
+html[data-theme="dark"] .partner-step-item.is-active .partner-step-circle {
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .partner-kicker,
+html[data-theme="dark"] .partner-wizard-meta,
+html[data-theme="dark"] .partner-declaration {
+    background: rgba(59, 130, 246, 0.14);
+    border-color: rgba(125, 183, 255, 0.2);
+    color: var(--partner-primary);
+}
+
+html[data-theme="dark"] .partner-declaration label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--partner-primary);
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+html[data-theme="dark"] .partner-stepper-track {
+    background: rgba(148, 163, 184, 0.18);
+}
+
+html[data-theme="dark"] .partner-stepper-track-fill {
+    background: linear-gradient(90deg, #38bdf8, var(--partner-accent));
+}
+
+html[data-theme="dark"] .partner-step-circle {
+    background: #111827;
+    border-color: rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.32);
+}
+
+html[data-theme="dark"] .partner-step-item.is-active .partner-step-label,
+html[data-theme="dark"] .partner-wizard-meta-percentage,
+html[data-theme="dark"] .partner-review-card-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--partner-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
+    padding-bottom: 8px;
+}
+
+html[data-theme="dark"] .partner-step-item.is-completed .partner-step-circle {
+    background: #10b981;
+    border-color: #34d399;
+    color: #052e21;
+}
+
+html[data-theme="dark"] .partner-step-item.is-completed .partner-step-label {
+    color: var(--partner-success);
+}
+
+html[data-theme="dark"] .partner-field input,
+html[data-theme="dark"] .partner-field select,
+html[data-theme="dark"] .partner-field textarea {
+    color: var(--partner-text);
+    background: rgba(2, 6, 23, 0.52);
+    border-color: rgba(148, 163, 184, 0.24);
+}
+
+html[data-theme="dark"] .partner-field input:hover,
+html[data-theme="dark"] .partner-field select:hover,
+html[data-theme="dark"] .partner-field textarea:hover {
+    background: rgba(15, 23, 42, 0.72);
+    border-color: rgba(125, 183, 255, 0.42);
+}
+
+html[data-theme="dark"] .partner-field input:focus,
+html[data-theme="dark"] .partner-field select:focus,
+html[data-theme="dark"] .partner-field textarea:focus {
+    border-color: rgba(125, 183, 255, 0.72);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.16), var(--partner-shadow-soft);
+}
+
+html[data-theme="dark"] .partner-field input::placeholder,
+html[data-theme="dark"] .partner-field textarea::placeholder {
+    color: #7f93ad;
+}
+
+html[data-theme="dark"] .partner-field select option {
+    color: #e5eefb;
+    background: #0f172a;
+}
+
+html[data-theme="dark"] .partner-form-head,
+html[data-theme="dark"] .partner-review-card-title,
+html[data-theme="dark"] .partner-form-actions {
+    border-color: rgba(148, 163, 184, 0.16);
+}
+
+html[data-theme="dark"] .partner-alert-success {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(52, 211, 153, 0.24);
+    color: #a7f3d0;
+}
+
+html[data-theme="dark"] .partner-alert-error {
+    background: rgba(248, 113, 113, 0.14);
+    border-color: rgba(252, 165, 165, 0.22);
+    color: #fecaca;
+}
+
+html[data-theme="dark"] .partner-field.has-error input,
+html[data-theme="dark"] .partner-field.has-error select,
+html[data-theme="dark"] .partner-field.has-error textarea,
+html[data-theme="dark"] .partner-declaration.has-error {
+    border-color: rgba(248, 113, 113, 0.72) !important;
+    box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.14) !important;
+}
+
+html[data-theme="dark"] .partner-required,
+html[data-theme="dark"] .partner-error,
+html[data-theme="dark"] .partner-field.has-error label,
+html[data-theme="dark"] .partner-field.has-error::after,
+html[data-theme="dark"] .partner-declaration.has-error::after {
+    color: var(--partner-danger) !important;
+}
+
+html[data-theme="dark"] .theme-toggle {
+    background: rgba(15, 23, 42, 0.9);
+    border-color: rgba(148, 163, 184, 0.22);
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .theme-toggle:hover {
+    color: #f8fafc;
+    border-color: rgba(125, 183, 255, 0.35);
+}
+
+html[data-theme="dark"] .theme-toggle-orb {
+    background: linear-gradient(135deg, #f59e0b, #facc15);
+    color: #172033;
+}
+/* Compact typography for public wizard pages */
+.partner-submission-body {
+    font-size: 80%;
+}
+
+.partner-kicker {
+    font-size: 0.61rem;
+}
+
+.partner-submission-hero h1 {
+    font-size: clamp(1.6rem, 2.56vw, 2.28rem);
+}
+
+.partner-form-head h2 {
+    font-size: clamp(1.04rem, 1.32vw, 1.36rem);
+}
+
+.partner-submission-hero p,
+.partner-section-head p,
+.partner-form-head p {
+    font-size: clamp(0.75rem, 0.8vw, 0.8rem);
+}
+
+.partner-section-head h3 {
+    font-size: 1rem;
+}
+
+.partner-alert,
+.partner-field input,
+.partner-field select,
+.partner-field textarea,
+.partner-primary-button,
+.partner-secondary-button,
+.partner-review-value,
+.partner-declaration label {
+    font-size: 0.76rem;
+}
+
+.partner-field label,
+.partner-wizard-meta-label,
+.partner-wizard-meta-percentage,
+.partner-step-label,
+.partner-review-card-title {
+    font-size: 0.72rem;
+}
+
+.partner-review-label {
+    font-size: 0.61rem;
+}
+
+.partner-error,
+.partner-field.has-error::after,
+.partner-declaration.has-error::after {
+    font-size: 0.6rem;
+}
+
+@media (max-width: 720px) {
+    .partner-submission-hero h1 {
+        font-size: clamp(1.4rem, 6.4vw, 1.76rem);
+    }
+
+    .partner-form-head h2 {
+        font-size: clamp(0.94rem, 4vw, 1.12rem);
+    }
+
+    .partner-primary-button,
+    .partner-secondary-button {
+        font-size: 0.74rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .partner-step-label {
+        font-size: 0.58rem;
+    }
+
+    .partner-step-circle {
+        font-size: 0.64rem;
+    }
+}
+html[data-theme="dark"] .partner-declaration label,
+html[data-theme="dark"] .partner-review-card-title {
+    font-size: 0.76rem;
+}
+
+html[data-theme="dark"] .partner-field label,
+html[data-theme="dark"] .partner-review-value {
+    font-size: inherit;
+}

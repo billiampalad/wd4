@@ -9,13 +9,24 @@
     <title>Ajukan Perpanjangan Kerja Sama | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/public-submission.css') }}" data-turbo-track="reload">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <!-- Theme Sync Script (Prevents FOUC) -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('welcome-theme');
+            if (saved) {
+                document.documentElement.setAttribute('data-theme', saved);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
 </head>
 
 <body class="partner-submission-body">
@@ -26,35 +37,59 @@
                 <span>POLIMDO &amp; DUDIKA</span>
             </a>
             <div class="partner-nav-actions">
-                <a href="{{ url('/') }}" class="partner-nav-link">Kembali ke Landing Page</a>
+                <a href="{{ url('/') }}" class="partner-nav-link">
+                    <i class="fas fa-arrow-left" style="margin-right:4px;font-size:0.75rem;"></i> Kembali
+                </a>
+                <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
+                    aria-label="Ubah ke mode gelap">
+                    <span class="theme-toggle-orb" aria-hidden="true">
+                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
+                        </svg>
+                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="4" />
+                            <path d="M12 2v2" />
+                            <path d="M12 20v2" />
+                            <path d="m4.93 4.93 1.41 1.41" />
+                            <path d="m17.66 17.66 1.41 1.41" />
+                            <path d="M2 12h2" />
+                            <path d="M20 12h2" />
+                            <path d="m6.34 17.66-1.41 1.41" />
+                            <path d="m19.07 4.93-1.41 1.41" />
+                        </svg>
+                    </span>
+                    <span class="theme-toggle-text" data-theme-toggle-label>Mode Gelap</span>
+                </button>
                 <a href="{{ route('login') }}" class="partner-nav-button">Login Pengelola</a>
             </div>
         </header>
 
         <main class="partner-submission-main">
             <section class="partner-submission-hero">
-                <span class="partner-kicker">Formulir Perpanjangan Publik</span>
-                <h1>Perpanjang masa kerja sama mitra Politeknik Negeri Manado.</h1>
+                <span class="partner-kicker">Perpanjangan Kerja Sama</span>
+                <h1>Perpanjang kerja sama aktif dengan proses yang lebih jelas.</h1>
                 <p>
-                    Lengkapi permohonan perpanjangan kerjasama secara bertahap melalui sistem wizard form. Pilih nama mitra yang sudah terdaftar untuk memulai.
+                    Pilih mitra terdaftar, perbarui kontak penghubung, lalu jelaskan rencana lanjutan kerja sama dalam beberapa langkah sederhana.
                 </p>
 
                 <div class="partner-hero-points">
                     <div class="partner-point">
                         <strong>1.</strong>
-                        <span>Pilih nama instansi/mitra Anda yang terdaftar</span>
+                        <span>Pilih mitra terdaftar</span>
                     </div>
                     <div class="partner-point">
                         <strong>2.</strong>
-                        <span>Lengkapi kontak PIC aktif terbaru</span>
+                        <span>Perbarui kontak aktif</span>
                     </div>
                     <div class="partner-point">
                         <strong>3.</strong>
-                        <span>Tulis rencana / tujuan perpanjangan kerja sama</span>
+                        <span>Jelaskan tujuan perpanjangan</span>
                     </div>
                     <div class="partner-point">
                         <strong>4.</strong>
-                        <span>Tinjau rangkuman permohonan perpanjangan</span>
+                        <span>Periksa ringkasan sebelum dikirim</span>
                     </div>
                 </div>
             </section>
@@ -87,27 +122,27 @@
                         <div class="partner-stepper-steps">
                             <div class="partner-step-item is-active" data-step-target="1">
                                 <div class="partner-step-circle">1</div>
-                                <span class="partner-step-label">Identitas Mitra</span>
+                                <span class="partner-step-label">Mitra</span>
                             </div>
                             <div class="partner-step-item" data-step-target="2">
                                 <div class="partner-step-circle">2</div>
-                                <span class="partner-step-label">Kontak PIC</span>
+                                <span class="partner-step-label">Kontak</span>
                             </div>
                             <div class="partner-step-item" data-step-target="3">
                                 <div class="partner-step-circle">3</div>
-                                <span class="partner-step-label">Rencana Baru</span>
+                                <span class="partner-step-label">Rencana</span>
                             </div>
                             <div class="partner-step-item" data-step-target="4">
                                 <div class="partner-step-circle">4</div>
-                                <span class="partner-step-label">Review</span>
+                                <span class="partner-step-label">Tinjau</span>
                             </div>
                             <div class="partner-step-item" data-step-target="5">
                                 <div class="partner-step-circle">5</div>
-                                <span class="partner-step-label">Konfirmasi</span>
+                                <span class="partner-step-label">Kirim</span>
                             </div>
                         </div>
                         <div class="partner-wizard-meta">
-                            <span class="partner-wizard-meta-label" id="wizardStepLabel">Langkah 1: Identitas Mitra</span>
+                            <span class="partner-wizard-meta-label" id="wizardStepLabel">Langkah 1: Mitra terdaftar</span>
                             <span class="partner-wizard-meta-percentage" id="wizardPercentage">0%</span>
                         </div>
                     </div>
@@ -122,18 +157,18 @@
                         <div class="partner-form-head">
                             <div>
                                 <span class="partner-kicker">Langkah 1 dari 5</span>
-                                <h2>Identitas Mitra Terdaftar</h2>
+                                <h2>Mitra Terdaftar</h2>
                             </div>
-                            <p>Kolom dengan tanda <span class="partner-required">*</span> wajib diisi.</p>
+                            <p>Pilih lembaga yang akan diperpanjang masa kerja samanya. Kolom bertanda <span class="partner-required">*</span> wajib diisi.</p>
                         </div>
 
                         <div class="partner-form-grid">
-                            <div class="partner-form-section" style="border: none; padding: 0; margin: 0;">
+                            <div class="partner-form-section is-flat">
                                 <div class="partner-fields">
                                     <div class="partner-field partner-field-full">
-                                        <label for="mitra_id">Cari &amp; Pilih Mitra <span class="partner-required">*</span></label>
-                                        <select id="mitra_id" name="mitra_id" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--partner-border); background: #fff; font-family: inherit; font-size: 0.9rem; color: var(--partner-text); cursor: pointer; outline: none; transition: border-color 0.2s ease;">
-                                            <option value="">-- Pilih Instansi / Perusahaan Anda --</option>
+                                        <label for="mitra_id">Mitra yang Mengajukan Perpanjangan <span class="partner-required">*</span></label>
+                                        <select id="mitra_id" name="mitra_id" required>
+                                            <option value="">-- Pilih mitra terdaftar --</option>
                                             @foreach ($mitras as $mitra)
                                                 <option value="{{ $mitra->id }}"
                                                     {{ (string) old('mitra_id') === (string) $mitra->id ? 'selected' : '' }}>
@@ -150,30 +185,30 @@
                         </div>
                     </div>
 
-                    <!-- ═══ STEP 2: Kontak PIC Terkini ═══ -->
+                    <!-- ═══ STEP 2: Kontak Terkini ═══ -->
                     <div class="form-step" data-step="2">
                         <div class="partner-form-head">
                             <div>
                                 <span class="partner-kicker">Langkah 2 dari 5</span>
-                                <h2>Kontak Person (PIC) Terkini</h2>
+                                <h2>Kontak Terbaru</h2>
                             </div>
-                            <p>Isi informasi PIC instansi Anda untuk keperluan korespondensi.</p>
+                            <p>Masukkan kontak aktif untuk kebutuhan klarifikasi selama peninjauan.</p>
                         </div>
 
                         <div class="partner-form-grid">
-                            <div class="partner-form-section" style="border: none; padding: 0; margin: 0;">
+                            <div class="partner-form-section is-flat">
                                 <div class="partner-fields">
                                     <div class="partner-field">
-                                        <label for="nama_pengaju">Nama Lengkap PIC <span class="partner-required">*</span></label>
+                                        <label for="nama_pengaju">Nama Penghubung <span class="partner-required">*</span></label>
                                         <input id="nama_pengaju" type="text" name="nama_pengaju" value="{{ old('nama_pengaju') }}"
-                                            placeholder="Nama lengkap PIC" required>
+                                            placeholder="Nama lengkap penghubung" required>
                                         @error('nama_pengaju')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="jabatan_pengaju">Jabatan PIC</label>
+                                        <label for="jabatan_pengaju">Jabatan / Unit</label>
                                         <input id="jabatan_pengaju" type="text" name="jabatan_pengaju"
                                             value="{{ old('jabatan_pengaju') }}" placeholder="Contoh: Staf Hubungan Industri">
                                         @error('jabatan_pengaju')
@@ -182,7 +217,7 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="email_pengaju">Email PIC <span class="partner-required">*</span></label>
+                                        <label for="email_pengaju">Email Penghubung <span class="partner-required">*</span></label>
                                         <input id="email_pengaju" type="email" name="email_pengaju"
                                             value="{{ old('email_pengaju') }}" placeholder="pic@perusahaan.com" required>
                                         @error('email_pengaju')
@@ -191,7 +226,7 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="telepon_pengaju">Telepon / WA PIC <span class="partner-required">*</span></label>
+                                        <label for="telepon_pengaju">WhatsApp / Telepon <span class="partner-required">*</span></label>
                                         <input id="telepon_pengaju" type="text" name="telepon_pengaju"
                                             value="{{ old('telepon_pengaju') }}" placeholder="Contoh: 08xxxxxxxxxx" required>
                                         @error('telepon_pengaju')
@@ -208,37 +243,37 @@
                         <div class="partner-form-head">
                             <div>
                                 <span class="partner-kicker">Langkah 3 dari 5</span>
-                                <h2>Rencana Perpanjangan Kerja Sama</h2>
+                                <h2>Rencana Lanjutan</h2>
                             </div>
-                            <p>Rincian tema kegiatan dan rencana kolaborasi baru yang disesuaikan.</p>
+                            <p>Tuliskan tujuan, manfaat, dan pembaruan ruang lingkup untuk periode kerja sama berikutnya.</p>
                         </div>
 
                         <div class="partner-form-grid">
-                            <div class="partner-form-section" style="border: none; padding: 0; margin: 0;">
+                            <div class="partner-form-section is-flat">
                                 <div class="partner-fields">
                                     <div class="partner-field partner-field-full">
-                                        <label for="judul_pengajuan">Judul / Tema Perpanjangan <span class="partner-required">*</span></label>
+                                        <label for="judul_pengajuan">Judul Rencana Perpanjangan <span class="partner-required">*</span></label>
                                         <input id="judul_pengajuan" type="text" name="judul_pengajuan"
                                             value="{{ old('judul_pengajuan') }}"
-                                            placeholder="Contoh: Perpanjangan MoU kegiatan magang mahasiswa dan penyelarasan kurikulum" required>
+                                            placeholder="Contoh: Lanjutan Program Magang Mahasiswa dan Penyelarasan Kurikulum" required>
                                         @error('judul_pengajuan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field partner-field-full">
-                                        <label for="tujuan_pengajuan">Tujuan &amp; Harapan Perpanjangan <span class="partner-required">*</span></label>
+                                        <label for="tujuan_pengajuan">Tujuan Perpanjangan <span class="partner-required">*</span></label>
                                         <textarea id="tujuan_pengajuan" name="tujuan_pengajuan" rows="4"
-                                            placeholder="Deskripsikan secara ringkas tujuan memperpanjang hubungan kerja sama ini" required>{{ old('tujuan_pengajuan') }}</textarea>
+                                            placeholder="Jelaskan alasan perpanjangan, manfaat, dan target kegiatan berikutnya" required>{{ old('tujuan_pengajuan') }}</textarea>
                                         @error('tujuan_pengajuan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field partner-field-full">
-                                        <label for="ruang_lingkup">Ruang Lingkup Kegiatan Baru (Bila Ada)</label>
+                                        <label for="ruang_lingkup">Ruang Lingkup Lanjutan (Opsional)</label>
                                         <textarea id="ruang_lingkup" name="ruang_lingkup" rows="4"
-                                            placeholder="Sebutkan cakupan kerja sama (misal: beasiswa, riset bersama, sertifikasi kompetensi)">{{ old('ruang_lingkup') }}</textarea>
+                                            placeholder="Contoh: magang, riset bersama, beasiswa, sertifikasi, atau kuliah tamu">{{ old('ruang_lingkup') }}</textarea>
                                         @error('ruang_lingkup')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -248,14 +283,14 @@
                         </div>
                     </div>
 
-                    <!-- ═══ STEP 4: Review Data ═══ -->
+                    <!-- ═══ STEP 4: Tinjau Data ═══ -->
                     <div class="form-step" data-step="4">
                         <div class="partner-form-head">
                             <div>
                                 <span class="partner-kicker">Langkah 4 dari 5</span>
-                                <h2>Review Hasil Pengisian</h2>
+                                <h2>Tinjau Perpanjangan</h2>
                             </div>
-                            <p>Periksa rangkuman permohonan perpanjangan kerjasama Anda sebelum dikirim.</p>
+                            <p>Periksa ringkasan mitra, kontak, dan rencana lanjutan sebelum konfirmasi.</p>
                         </div>
 
                         <div class="partner-review-container">
@@ -272,26 +307,26 @@
                                 </div>
                             </div>
 
-                            <!-- Card 2: Kontak PIC -->
+                            <!-- Card 2: Kontak -->
                             <div class="partner-review-card">
                                 <div class="partner-review-card-title">
-                                    <i class="fas fa-address-card"></i> Kontak PIC Terkini
+                                    <i class="fas fa-address-card"></i> Kontak Terkini
                                 </div>
                                 <div class="partner-review-grid">
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Nama Lengkap PIC</span>
+                                        <span class="partner-review-label">Nama Penghubung</span>
                                         <span class="partner-review-value" id="rev_nama_pengaju">-</span>
                                     </div>
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Jabatan PIC</span>
+                                        <span class="partner-review-label">Jabatan / Unit</span>
                                         <span class="partner-review-value" id="rev_jabatan_pengaju">-</span>
                                     </div>
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Email PIC</span>
+                                        <span class="partner-review-label">Email Penghubung</span>
                                         <span class="partner-review-value" id="rev_email_pengaju">-</span>
                                     </div>
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Telepon/WA PIC</span>
+                                        <span class="partner-review-label">WhatsApp / Telepon</span>
                                         <span class="partner-review-value" id="rev_telepon_pengaju">-</span>
                                     </div>
                                 </div>
@@ -304,15 +339,15 @@
                                 </div>
                                 <div class="partner-review-grid">
                                     <div class="partner-review-item partner-review-value-full">
-                                        <span class="partner-review-label">Judul/Tema Perpanjangan</span>
+                                        <span class="partner-review-label">Judul Perpanjangan</span>
                                         <span class="partner-review-value" id="rev_judul_pengajuan">-</span>
                                     </div>
                                     <div class="partner-review-item partner-review-value-full">
-                                        <span class="partner-review-label">Tujuan &amp; Harapan</span>
+                                        <span class="partner-review-label">Tujuan Lanjutan</span>
                                         <span class="partner-review-value" id="rev_tujuan_pengajuan">-</span>
                                     </div>
                                     <div class="partner-review-item partner-review-value-full">
-                                        <span class="partner-review-label">Ruang Lingkup Baru</span>
+                                        <span class="partner-review-label">Ruang Lingkup</span>
                                         <span class="partner-review-value" id="rev_ruang_lingkup">-</span>
                                     </div>
                                 </div>
@@ -325,25 +360,25 @@
                         <div class="partner-form-head">
                             <div>
                                 <span class="partner-kicker">Langkah 5 dari 5</span>
-                                <h2>Konfirmasi &amp; Pengiriman</h2>
+                                <h2>Konfirmasi Akhir</h2>
                             </div>
-                            <p>Konfirmasi akhir persetujuan perpanjangan kerjasama resmi.</p>
+                            <p>Setujui pernyataan data sebelum permohonan dikirim untuk ditinjau.</p>
                         </div>
 
                         <div class="partner-form-grid">
-                            <div class="partner-form-section" style="border: none; padding: 0; margin: 0;">
+                            <div class="partner-form-section is-flat">
                                 <div class="partner-declaration">
                                     <input type="checkbox" id="declaration_agree" name="declaration_agree" required>
                                     <label for="declaration_agree">
-                                        Saya menyatakan dengan sesungguhnya bahwa semua data permohonan perpanjangan kerjasama yang telah saya isikan adalah benar dan sesuai kesepakatan lembaga yang saya wakili.
+                                        Saya menyatakan bahwa seluruh data perpanjangan yang diisi benar, mutakhir, dan dapat dipertanggungjawabkan oleh lembaga yang saya wakili.
                                     </label>
                                 </div>
 
                                 <div class="partner-fields">
                                     <div class="partner-field partner-field-full">
-                                        <label for="pesan_tambahan">Catatan / Pesan Tambahan untuk Petugas Penilai (Opsional)</label>
+                                        <label for="pesan_tambahan">Catatan Tambahan (Opsional)</label>
                                         <textarea id="pesan_tambahan" name="pesan_tambahan" rows="4"
-                                            placeholder="Tambahkan pesan khusus untuk tim admin jika terdapat dokumen rujukan kerjasama sebelumnya yang ingin disampaikan.">{{ old('pesan_tambahan') }}</textarea>
+                                            placeholder="Tambahkan catatan singkat terkait kerja sama sebelumnya bila diperlukan.">{{ old('pesan_tambahan') }}</textarea>
                                         @error('pesan_tambahan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -363,7 +398,7 @@
                             Selanjutnya <i class="fas fa-arrow-right"></i>
                         </button>
                         <button type="submit" class="partner-primary-button" id="submitBtn" style="display: none;">
-                            <i class="fas fa-paper-plane"></i> Kirim Permohonan Perpanjangan
+                            <i class="fas fa-paper-plane"></i> Kirim Data
                         </button>
                     </div>
                 </form>
@@ -389,11 +424,11 @@
         const submitBtn = document.getElementById('submitBtn');
 
         const stepLabels = [
-            "Langkah 1: Identitas Mitra",
-            "Langkah 2: Kontak PIC",
-            "Langkah 3: Rencana Baru",
-            "Langkah 4: Review Data",
-            "Langkah 5: Konfirmasi"
+            "Langkah 1: Mitra terdaftar",
+            "Langkah 2: Kontak aktif",
+            "Langkah 3: Rencana lanjut",
+            "Langkah 4: Tinjau data",
+            "Langkah 5: Kirim data"
         ];
 
         // Realtime Input Cleanup on Error Class
@@ -436,39 +471,27 @@
 
             const requiredFields = activeStepEl.querySelectorAll('[required]');
             let isValid = true;
+            let firstInvalid = null;
 
             requiredFields.forEach(field => {
-                const parent = field.closest('.partner-field') || field.parentElement;
-                
-                if (field.type === 'checkbox') {
-                    if (!field.checked) {
-                        isValid = false;
-                        parent.classList.add('has-error');
-                    } else {
-                        parent.classList.remove('has-error');
-                    }
-                } else {
-                    if (field.value.trim() === '') {
-                        isValid = false;
-                        if (parent.classList.contains('partner-field')) {
-                            parent.classList.add('has-error');
-                        }
-                    } else {
-                        if (parent.classList.contains('partner-field')) {
-                            parent.classList.remove('has-error');
-                        }
-                    }
+                const parent = field.closest('.partner-field') || field.closest('.partner-declaration') || field.parentElement;
+                const invalid = field.type === 'checkbox' ? !field.checked : !field.checkValidity();
+
+                parent.classList.toggle('has-error', invalid);
+
+                if (invalid) {
+                    isValid = false;
+                    firstInvalid = firstInvalid || field;
                 }
             });
 
-            if (!isValid) {
-                const firstInvalid = activeStepEl.querySelector('.has-error input, .has-error select, .has-error textarea');
-                if (firstInvalid) firstInvalid.focus();
+            if (!isValid && firstInvalid) {
+                firstInvalid.focus({ preventScroll: true });
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
             return isValid;
         }
-
         function syncReviewData() {
             // Helper to clean values
             const getVal = (id) => {
@@ -551,15 +574,53 @@
         // Initialize progress width and UI states
         updateWizardUI();
 
-        // Standard Submit check on Step 5
+        // Submit validation on Step 5
         form.addEventListener('submit', function(e) {
-            const agreeCheck = document.getElementById('declaration_agree');
-            if (agreeCheck && !agreeCheck.checked) {
+            if (currentStep !== totalSteps || !validateCurrentStep()) {
                 e.preventDefault();
-                alert("Anda harus menyetujui pernyataan keabsahan data sebelum mengirim pengajuan.");
-                agreeCheck.focus();
+                return;
             }
         });
+
+        // ── Theme Toggle Logic ──
+        (function() {
+            const themeToggle = document.querySelector('[data-theme-toggle]');
+            const themeLabel = themeToggle ? themeToggle.querySelector('[data-theme-toggle-label]') : null;
+            const storageKey = 'welcome-theme';
+
+            function applyTheme(theme) {
+                const isDark = theme === 'dark';
+                document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+
+                if (themeToggle) {
+                    themeToggle.setAttribute('aria-pressed', String(isDark));
+                    themeToggle.setAttribute('aria-label', isDark ? 'Ubah ke mode terang' : 'Ubah ke mode gelap');
+                }
+                if (themeLabel) {
+                    themeLabel.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+                }
+            }
+
+            function getInitialTheme() {
+                const dt = document.documentElement.dataset.theme;
+                if (dt === 'dark' || dt === 'light') return dt;
+                try {
+                    const saved = localStorage.getItem(storageKey);
+                    if (saved === 'dark' || saved === 'light') return saved;
+                } catch (e) {}
+                return 'light';
+            }
+
+            applyTheme(getInitialTheme());
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+                    try { localStorage.setItem(storageKey, nextTheme); } catch (e) {}
+                    applyTheme(nextTheme);
+                });
+            }
+        })();
     </script>
 </body>
 
