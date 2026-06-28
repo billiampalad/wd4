@@ -354,3 +354,279 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ═══ INTERACTIVE WIZARD FORM STYLES ═════════════════════ */
+
+.partner-wizard-container {
+    margin-bottom: 2rem;
+}
+
+.partner-stepper-wrap {
+    position: relative;
+    padding: 10px 0 25px;
+    margin-bottom: 1.5rem;
+}
+
+.partner-stepper-track {
+    position: absolute;
+    top: 28px;
+    left: 8%;
+    right: 8%;
+    height: 4px;
+    background: rgba(15, 23, 42, 0.08);
+    z-index: 1;
+    border-radius: 99px;
+}
+
+.partner-stepper-track-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--partner-primary), var(--partner-accent));
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 99px;
+}
+
+.partner-stepper-steps {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    z-index: 2;
+}
+
+.partner-step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+    cursor: default;
+}
+
+.partner-step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--partner-subtle);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.partner-step-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--partner-subtle);
+    margin-top: 10px;
+    transition: color 0.3s ease;
+    max-width: 110px;
+}
+
+/* Active Step Status */
+.partner-step-item.is-active .partner-step-circle {
+    border-color: var(--partner-primary);
+    background: var(--partner-primary);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.15), 0 8px 20px rgba(15, 63, 127, 0.25);
+}
+
+.partner-step-item.is-active .partner-step-label {
+    color: var(--partner-primary);
+    font-weight: 700;
+}
+
+/* Completed Step Status */
+.partner-step-item.is-completed .partner-step-circle {
+    border-color: var(--partner-success);
+    background: var(--partner-success);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+}
+
+.partner-step-item.is-completed .partner-step-label {
+    color: var(--partner-success);
+    font-weight: 700;
+}
+
+.partner-wizard-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 0 4px;
+}
+
+.partner-wizard-meta-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--partner-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.partner-wizard-meta-percentage {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--partner-primary);
+}
+
+/* Step Form Card & Content */
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+    animation: stepSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stepSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhancing inputs */
+.partner-fields input,
+.partner-fields select,
+.partner-fields textarea {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.partner-fields input:focus,
+.partner-fields select:focus,
+.partner-fields textarea:focus {
+    border-color: var(--partner-primary);
+    box-shadow: 0 0 0 4px rgba(15, 63, 127, 0.08);
+    outline: none;
+}
+
+/* Review Step Styles */
+.partner-review-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.partner-review-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.partner-review-card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--partner-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
+    padding-bottom: 8px;
+}
+
+.partner-review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.partner-review-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.partner-review-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--partner-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+}
+
+.partner-review-value {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--partner-text);
+    word-break: break-word;
+}
+
+.partner-review-value-full {
+    grid-column: 1 / -1;
+}
+
+/* Error indicator on inputs */
+.partner-field.has-error input,
+.partner-field.has-error select,
+.partner-field.has-error textarea {
+    border-color: var(--partner-danger) !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.08) !important;
+}
+
+.partner-field.has-error label {
+    color: var(--partner-danger) !important;
+}
+
+/* Step Action Buttons placement */
+.partner-form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 2rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.05);
+    padding-top: 1.5rem;
+}
+
+/* Declaration check design */
+.partner-declaration {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--partner-primary-soft);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 63, 127, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.partner-declaration input {
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+.partner-declaration label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--partner-primary);
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+    .partner-stepper-track {
+        display: none;
+    }
+    .partner-step-label {
+        display: none;
+    }
+    .partner-stepper-steps {
+        justify-content: space-around;
+    }
+}
+
