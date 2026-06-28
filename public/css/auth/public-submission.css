@@ -1011,3 +1011,21 @@ html[data-theme="dark"] .partner-field label,
 html[data-theme="dark"] .partner-review-value {
     font-size: inherit;
 }
+.partner-hero-title-compact {
+    margin: 14px 0 10px;
+    font-size: clamp(0.75rem, 1vw, 0.95rem);
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0;
+    color: var(--partner-text);
+}
+
+@media (max-width: 720px) {
+    .partner-hero-title-compact {
+        font-size: clamp(0.8rem, 3.8vw, 1rem);
+    }
+}
+
+html[data-theme="dark"] .partner-hero-title-compact {
+    color: var(--partner-text);
+}

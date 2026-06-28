@@ -159,7 +159,7 @@
                                 <span class="partner-kicker">Langkah 1 dari 5</span>
                                 <h2>Mitra Terdaftar</h2>
                             </div>
-                            <p>Pilih lembaga yang akan diperpanjang masa kerja samanya. Kolom bertanda <span class="partner-required">*</span> wajib diisi.</p>
+                            <p>Kolom bertanda <span class="partner-required">*</span> wajib diisi.</p>
                         </div>
 
                         <div class="partner-form-grid">

@@ -69,7 +69,7 @@
         <main class="partner-submission-main">
             <section class="partner-submission-hero">
                 <span class="partner-kicker">Pengajuan Mitra Baru</span>
-                <h3>Ajukan kemitraan baru dengan alur yang lebih terarah</h3>
+                <h3 class="partner-hero-title-compact">Ajukan kemitraan baru dengan alur yang lebih terarah</h3>
                 <p>
                     Isi data mitra, kontak penghubung, dan rencana kolaborasi secara bertahap. Informasi yang lengkap membantu proses peninjauan berjalan lebih cepat.
                 </p>
