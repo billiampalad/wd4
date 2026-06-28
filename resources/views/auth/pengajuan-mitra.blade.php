@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth/public-submission.css') }}" data-turbo-track="reload">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Theme Sync Script (Prevents FOUC) -->
     <script>
         (function() {
@@ -176,15 +177,34 @@
 
                                     <div class="partner-field">
                                         <label for="id_klasifikasi">Klasifikasi Lembaga</label>
-                                        <select id="id_klasifikasi" name="id_klasifikasi">
-                                            <option value="">Pilih klasifikasi</option>
-                                            @foreach ($klasifikasis as $klasifikasi)
-                                                <option value="{{ $klasifikasi->id }}"
-                                                    {{ (string) old('id_klasifikasi') === (string) $klasifikasi->id ? 'selected' : '' }}>
-                                                    {{ $klasifikasi->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih klasifikasi')" x-init="init($refs.native)" @click.outside="close()">
+                                            <select x-ref="native" id="id_klasifikasi" name="id_klasifikasi" class="partner-native-select">
+                                                <option value="">Pilih klasifikasi</option>
+                                                @foreach ($klasifikasis as $klasifikasi)
+                                                    <option value="{{ $klasifikasi->id }}"
+                                                        {{ (string) old('id_klasifikasi') === (string) $klasifikasi->id ? 'selected' : '' }}>
+                                                        {{ $klasifikasi->nama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle(); $nextTick(() => $refs.search && $refs.search.focus())" :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                                <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
+                                                <span class="partner-select-icon"><i class="fas fa-chevron-down"></i></span>
+                                            </button>
+                                            <div class="partner-select-panel" x-show="open" x-transition.origin.top style="display: none;" role="listbox">
+                                                <div class="partner-select-search" x-show="options.length > 6">
+                                                    <i class="fas fa-magnifying-glass"></i>
+                                                    <input x-ref="search" type="text" x-model="query" placeholder="Cari klasifikasi..." @keydown.stop>
+                                                </div>
+                                                <template x-for="option in filteredOptions()" :key="`${option.value}-${option.label}`">
+                                                    <button type="button" class="partner-select-option" :class="{ 'is-selected': option.value === value, 'is-placeholder': option.placeholder }" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
+                                                        <span x-text="option.label"></span>
+                                                        <i class="fas fa-check" x-show="option.value === value"></i>
+                                                    </button>
+                                                </template>
+                                                <div class="partner-select-empty" x-show="filteredOptions().length === 0">Data tidak ditemukan</div>
+                                            </div>
+                                        </div>
                                         @error('id_klasifikasi')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -192,10 +212,24 @@
 
                                     <div class="partner-field">
                                         <label for="kategori">Kategori Wilayah <span class="partner-required">*</span></label>
-                                        <select id="kategori" name="kategori" required>
-                                            <option value="nasional" {{ old('kategori', 'nasional') === 'nasional' ? 'selected' : '' }}>Nasional</option>
-                                            <option value="internasional" {{ old('kategori') === 'internasional' ? 'selected' : '' }}>Internasional</option>
-                                        </select>
+                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih kategori wilayah')" x-init="init($refs.native)" @click.outside="close()">
+                                            <select x-ref="native" id="kategori" name="kategori" class="partner-native-select" required>
+                                                <option value="nasional" {{ old('kategori', 'nasional') === 'nasional' ? 'selected' : '' }}>Nasional</option>
+                                                <option value="internasional" {{ old('kategori') === 'internasional' ? 'selected' : '' }}>Internasional</option>
+                                            </select>
+                                            <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle()" :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                                <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
+                                                <span class="partner-select-icon"><i class="fas fa-chevron-down"></i></span>
+                                            </button>
+                                            <div class="partner-select-panel" x-show="open" x-transition.origin.top style="display: none;" role="listbox">
+                                                <template x-for="option in filteredOptions()" :key="`${option.value}-${option.label}`">
+                                                    <button type="button" class="partner-select-option" :class="{ 'is-selected': option.value === value }" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
+                                                        <span x-text="option.label"></span>
+                                                        <i class="fas fa-check" x-show="option.value === value"></i>
+                                                    </button>
+                                                </template>
+                                            </div>
+                                        </div>
                                         @error('kategori')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -487,6 +521,58 @@
 
     <!-- Wizard Javascript Logic -->
     <script>
+        function partnerSelect(defaultPlaceholder = 'Pilih data') {
+            return {
+                open: false,
+                query: '',
+                value: '',
+                selectedLabel: '',
+                placeholder: defaultPlaceholder,
+                options: [],
+                native: null,
+                init(nativeSelect) {
+                    this.native = nativeSelect;
+                    this.options = Array.from(nativeSelect.options).map(option => ({
+                        value: option.value,
+                        label: option.text.trim(),
+                        disabled: option.disabled,
+                        placeholder: option.value === ''
+                    }));
+                    this.syncFromNative();
+                    nativeSelect.addEventListener('change', () => this.syncFromNative());
+                },
+                syncFromNative() {
+                    this.value = this.native ? this.native.value : '';
+                    const selected = this.options.find(option => option.value === this.value);
+                    if (selected?.placeholder) {
+                        this.placeholder = selected.label || this.placeholder;
+                        this.selectedLabel = '';
+                        return;
+                    }
+                    this.selectedLabel = selected?.label || '';
+                },
+                filteredOptions() {
+                    const keyword = this.query.trim().toLowerCase();
+                    return this.options.filter(option => !keyword || option.label.toLowerCase().includes(keyword));
+                },
+                choose(option) {
+                    if (option.disabled || !this.native) return;
+                    this.native.value = option.value;
+                    this.native.dispatchEvent(new Event('change', { bubbles: true }));
+                    this.syncFromNative();
+                    this.close();
+                },
+                toggle() {
+                    this.open = !this.open;
+                    if (!this.open) this.query = '';
+                },
+                close() {
+                    this.open = false;
+                    this.query = '';
+                }
+            };
+        }
+
         let currentStep = 1;
         const totalSteps = 5;
 
@@ -563,8 +649,12 @@
             });
 
             if (!isValid && firstInvalid) {
-                firstInvalid.focus({ preventScroll: true });
-                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const focusTarget = firstInvalid.classList.contains('partner-native-select')
+                    ? firstInvalid.closest('.partner-alpine-select')?.querySelector('.partner-select-trigger') || firstInvalid
+                    : firstInvalid;
+
+                focusTarget.focus({ preventScroll: true });
+                focusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
             return isValid;
