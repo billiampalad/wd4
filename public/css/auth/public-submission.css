@@ -377,6 +377,8 @@ html[data-theme="dark"] {
 .partner-form-card {
     padding: 24px;
     color: var(--partner-text);
+    overflow: visible;
+    isolation: isolate;
 }
 
 .partner-form-card > * {
@@ -646,6 +648,11 @@ html[data-theme="dark"] {
 .partner-alpine-select {
     position: relative;
     width: 100%;
+    z-index: 5;
+}
+
+.partner-alpine-select:focus-within {
+    z-index: 80;
 }
 
 .partner-native-select {
@@ -727,7 +734,7 @@ html[data-theme="dark"] {
 
 .partner-select-panel {
     position: absolute;
-    z-index: 50;
+    z-index: 90;
     inset-inline: 0;
     top: calc(100% + 8px);
     max-height: min(280px, 52vh);
