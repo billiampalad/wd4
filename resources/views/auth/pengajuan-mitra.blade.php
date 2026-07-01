@@ -1,3 +1,28 @@
+@php
+    $countryOptions = [
+        'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria',
+        'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan',
+        'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia',
+        'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica',
+        'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'DR Congo', 'East Timor',
+        'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland',
+        'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea',
+        'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq',
+        'Ireland', 'Israel', 'Italy', 'Ivory Coast', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati',
+        'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein',
+        'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania',
+        'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar',
+        'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia',
+        'Norway', 'Oman', 'Pakistan', 'Palau', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines',
+        'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines',
+        'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore',
+        'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan',
+        'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Togo', 'Tonga',
+        'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates',
+        'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+    ];
+    $selectedCountry = old('negara', old('kategori', 'nasional') === 'internasional' ? '' : 'Indonesia');
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 
@@ -212,7 +237,12 @@
 
                                     <div class="partner-field">
                                         <label for="kategori">Kategori Wilayah <span class="partner-required">*</span></label>
-                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih kategori wilayah')" x-init="init($refs.native)" @click.outside="close()">
+                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih kategori wilayah', (value) => {
+                                                const negaraSelect = document.getElementById('negara');
+                                                if (!negaraSelect) return;
+                                                negaraSelect.value = value === 'nasional' ? 'Indonesia' : '';
+                                                negaraSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                                            })" x-init="init($refs.native)" @click.outside="close()">
                                             <select x-ref="native" id="kategori" name="kategori" class="partner-native-select" required>
                                                 <option value="nasional" {{ old('kategori', 'nasional') === 'nasional' ? 'selected' : '' }}>Nasional</option>
                                                 <option value="internasional" {{ old('kategori') === 'internasional' ? 'selected' : '' }}>Internasional</option>
@@ -237,8 +267,31 @@
 
                                     <div class="partner-field">
                                         <label for="negara">Negara <span class="partner-required">*</span></label>
-                                        <input id="negara" type="text" name="negara" value="{{ old('negara', 'Indonesia') }}"
-                                            placeholder="Contoh: Indonesia" required>
+                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih Negara')" x-init="init($refs.native)" @click.outside="close()">
+                                            <select x-ref="native" id="negara" name="negara" class="partner-native-select" required>
+                                                <option value="">Pilih Negara</option>
+                                                @foreach ($countryOptions as $country)
+                                                    <option value="{{ $country }}" {{ $selectedCountry === $country ? 'selected' : '' }}>{{ $country }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle(); $nextTick(() => $refs.search && $refs.search.focus())" :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                                <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
+                                                <span class="partner-select-icon"><i class="fas fa-chevron-down"></i></span>
+                                            </button>
+                                            <div class="partner-select-panel" x-show="open" x-transition.origin.top style="display: none;" role="listbox">
+                                                <div class="partner-select-search" x-show="options.length > 6">
+                                                    <i class="fas fa-magnifying-glass"></i>
+                                                    <input x-ref="search" type="text" x-model="query" placeholder="Cari negara..." @keydown.stop>
+                                                </div>
+                                                <template x-for="option in filteredOptions()" :key="`${option.value}-${option.label}`">
+                                                    <button type="button" class="partner-select-option" :class="{ 'is-selected': option.value === value, 'is-placeholder': option.placeholder }" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
+                                                        <span x-text="option.label"></span>
+                                                        <i class="fas fa-check" x-show="option.value === value"></i>
+                                                    </button>
+                                                </template>
+                                                <div class="partner-select-empty" x-show="filteredOptions().length === 0">Negara tidak ditemukan</div>
+                                            </div>
+                                        </div>
                                         @error('negara')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -546,7 +599,7 @@
 
     <!-- Wizard Javascript Logic -->
     <script>
-        function partnerSelect(defaultPlaceholder = 'Pilih data') {
+        function partnerSelect(defaultPlaceholder = 'Pilih data', onChoose = null) {
             return {
                 open: false,
                 query: '',
@@ -555,6 +608,7 @@
                 placeholder: defaultPlaceholder,
                 options: [],
                 native: null,
+                onChoose,
                 init(nativeSelect) {
                     this.native = nativeSelect;
                     this.options = Array.from(nativeSelect.options).map(option => ({
@@ -564,7 +618,10 @@
                         placeholder: option.value === ''
                     }));
                     this.syncFromNative();
-                    nativeSelect.addEventListener('change', () => this.syncFromNative());
+                    nativeSelect.addEventListener('change', () => {
+                        this.syncFromNative();
+                        if (typeof this.onChoose === 'function') this.onChoose(this.value, this.selectedLabel);
+                    });
                 },
                 syncFromNative() {
                     this.value = this.native ? this.native.value : '';
