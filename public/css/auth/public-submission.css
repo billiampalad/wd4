@@ -1186,3 +1186,21 @@ html[data-theme="dark"] {
 .alpine-dropdown .ad-item.selected {
     background: var(--partner-primary-soft) !important;
 }
+
+.alpine-dropdown .ad-trigger.is-invalid {
+    border-color: var(--partner-danger) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-danger) 14%, transparent) !important;
+}
+
+.alpine-datepicker .adp-input-wrap input:focus,
+.alpine-dropdown .ad-trigger:focus,
+.alpine-dropdown .ad-trigger.active {
+    border-color: var(--partner-primary);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-primary-2) 14%, transparent), var(--partner-shadow-soft);
+}
+
+.alpine-datepicker .adp-input-wrap input:invalid,
+.alpine-datepicker .adp-input-wrap input:focus:invalid {
+    border-color: var(--partner-danger) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-danger) 14%, transparent) !important;
+}

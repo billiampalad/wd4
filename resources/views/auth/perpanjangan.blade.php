@@ -274,11 +274,13 @@
                                             </div>
 
                                             {{-- Right: Number Input --}}
-                                            <div style="position: relative;">
-                                                <i class="fas fa-hashtag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
-                                                <input type="text" name="doc_number" value="{{ old('doc_number') }}"
-                                                    placeholder="Masukkan nomor dokumen..."
-                                                    style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                            <div class="partner-field" style="display: grid; gap: 8px;">
+                                                <div style="position: relative;">
+                                                    <i class="fas fa-hashtag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                    <input type="text" name="doc_number" value="{{ old('doc_number') }}"
+                                                        placeholder="Masukkan nomor dokumen..." required
+                                                        style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                </div>
                                             </div>
                                         </div>
                                         @error('jenis')
