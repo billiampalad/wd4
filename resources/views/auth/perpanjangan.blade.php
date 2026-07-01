@@ -379,51 +379,53 @@
                             <div class="partner-form-section is-flat">
                                 <div class="partner-fields">
                                     {{-- Periode Kerjasama --}}
-                                    <div style="margin-bottom: 20px;">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
-                                            <div
-                                                style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #4f46e5, #7c3aed);">
+                                    <div class="periode-kerjasama-section">
+                                        <div class="periode-section-header">
+                                            <div class="periode-header-accent"></div>
+                                            <div class="periode-header-content">
+                                                <span class="periode-header-title">Periode Kerjasama</span>
+                                                <span class="periode-header-subtitle">Tentukan rentang waktu kerjasama</span>
                                             </div>
-                                            <span
-                                                style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Periode
-                                                Kerjasama</span>
                                         </div>
-                                        <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                                        <div class="periode-date-row">
                                             {{-- Periode Mulai --}}
-                                            <div class="partner-field partner-field-full" x-data="datepicker('{{ old('start_date') }}')">
-                                                <label for="start_date">Tanggal Mulai <span class="partner-required">*</span></label>
+                                            <div class="partner-field periode-date-col" x-data="datepicker('{{ old('start_date') }}')">
+                                                <label for="start_date">
+                                                    <i class="fas fa-play-circle" style="color: var(--partner-primary-2); margin-right: 4px; font-size: 11px;"></i>
+                                                    Tanggal Mulai <span class="partner-required">*</span>
+                                                </label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap" style="position: relative;">
-                                                        <i class="fas fa-calendar-day" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                        <i class="fas fa-calendar-day" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--partner-subtle); z-index: 2; pointer-events: none;"></i>
                                                         <input type="text" name="start_date" x-model="formattedDate"
                                                             readonly @click="show = !show" placeholder="Pilih Tanggal"
-                                                            style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                            class="adp-input" style="padding-left: 38px;">
                                                     </div>
-                                                    <div class="adp-calendar" x-show="show" x-transition style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 8px; z-index: 100;">
-                                                        <div class="adp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                                    <div class="adp-calendar" x-show="show" x-transition>
+                                                        <div class="adp-header">
                                                             <div style="display: flex; gap: 4px;">
                                                                 <span class="adp-month" @click="toggleMonthPicker()"
-                                                                    x-text="monthNames[month]" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                    x-text="monthNames[month]"></span>
                                                                 <span class="adp-month" @click="toggleYearPicker()"
-                                                                    x-text="year" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                    x-text="year"></span>
                                                             </div>
-                                                            <div class="adp-nav" style="display: flex; gap: 4px;">
-                                                                <div class="adp-nav-btn" @click="prevMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                            <div class="adp-nav">
+                                                                <div class="adp-nav-btn" @click="prevMonth()"><i
                                                                         class="fas fa-chevron-left"></i></div>
-                                                                <div class="adp-nav-btn" @click="nextMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                <div class="adp-nav-btn" @click="nextMonth()"><i
                                                                         class="fas fa-chevron-right"></i></div>
                                                             </div>
                                                         </div>
                                                         <div class="adp-month-picker" x-show="showMonthPicker"
-                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            x-transition>
                                                             <template x-for="(mName, index) in monthNames">
                                                                 <div class="adp-picker-item"
                                                                     :class="{'selected': month === index}"
-                                                                    @click="selectMonth(index)" x-text="mName" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectMonth(index)" x-text="mName"></div>
                                                             </template>
                                                         </div>
                                                         <div class="adp-year-picker" x-show="showYearPicker"
-                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            x-transition>
                                                             <div style="grid-column: span 4; padding: 4px;">
                                                                 <input type="text" x-model="yearSearch"
                                                                     placeholder="Cari tahun..."
@@ -433,61 +435,71 @@
                                                             <template x-for="y in filteredYears">
                                                                 <div class="adp-picker-item"
                                                                     :class="{'selected': year === y}"
-                                                                    @click="selectYear(y)" x-text="y" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectYear(y)" x-text="y"></div>
                                                             </template>
                                                         </div>
-                                                        <div class="adp-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+                                                        <div class="adp-grid">
                                                             <template x-for="day in dayNames">
-                                                                <div class="adp-day-name" x-text="day" style="text-align: center; font-size: 11px; color: #9ca3af; font-weight: 600; padding: 6px;"></div>
+                                                                <div class="adp-day-name" x-text="day"></div>
                                                             </template>
                                                             <template x-for="blankday in blanks">
-                                                                <div class="adp-day empty" style="padding: 8px; text-align: center; border-radius: 6px; color: transparent;"></div>
+                                                                <div class="adp-day empty"></div>
                                                             </template>
                                                             <template x-for="date in days">
                                                                 <div class="adp-day"
                                                                     :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                                                    @click="selectDate(date)" x-text="date" style="padding: 8px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectDate(date)" x-text="date"></div>
                                                             </template>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
+                                            {{-- Separator Arrow --}}
+                                            <div class="periode-separator">
+                                                <div class="periode-separator-icon">
+                                                    <i class="fas fa-arrow-right"></i>
+                                                </div>
+                                            </div>
+
                                             {{-- Periode Selesai --}}
-                                            <div class="partner-field partner-field-full" x-data="datepicker('{{ old('end_date') }}')">
-                                                <label for="end_date">Tanggal Selesai <span class="partner-required">*</span></label>
+                                            <div class="partner-field periode-date-col" x-data="datepicker('{{ old('end_date') }}')">
+                                                <label for="end_date">
+                                                    <i class="fas fa-flag-checkered" style="color: var(--partner-accent); margin-right: 4px; font-size: 11px;"></i>
+                                                    Tanggal Selesai <span class="partner-required">*</span>
+                                                </label>
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap" style="position: relative;">
-                                                        <i class="fas fa-calendar-check" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                        <i class="fas fa-calendar-check" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--partner-subtle); z-index: 2; pointer-events: none;"></i>
                                                         <input type="text" name="end_date" x-model="formattedDate"
                                                             readonly @click="show = !show" placeholder="Pilih Tanggal"
-                                                            style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                            class="adp-input" style="padding-left: 38px;">
                                                     </div>
-                                                    <div class="adp-calendar" x-show="show" x-transition style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 8px; z-index: 100;">
-                                                        <div class="adp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                                    <div class="adp-calendar" x-show="show" x-transition>
+                                                        <div class="adp-header">
                                                             <div style="display: flex; gap: 4px;">
                                                                 <span class="adp-month" @click="toggleMonthPicker()"
-                                                                    x-text="monthNames[month]" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                    x-text="monthNames[month]"></span>
                                                                 <span class="adp-month" @click="toggleYearPicker()"
-                                                                    x-text="year" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                    x-text="year"></span>
                                                             </div>
-                                                            <div class="adp-nav" style="display: flex; gap: 4px;">
-                                                                <div class="adp-nav-btn" @click="prevMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                            <div class="adp-nav">
+                                                                <div class="adp-nav-btn" @click="prevMonth()"><i
                                                                         class="fas fa-chevron-left"></i></div>
-                                                                <div class="adp-nav-btn" @click="nextMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                <div class="adp-nav-btn" @click="nextMonth()"><i
                                                                         class="fas fa-chevron-right"></i></div>
                                                             </div>
                                                         </div>
                                                         <div class="adp-month-picker" x-show="showMonthPicker"
-                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            x-transition>
                                                             <template x-for="(mName, index) in monthNames">
                                                                 <div class="adp-picker-item"
                                                                     :class="{'selected': month === index}"
-                                                                    @click="selectMonth(index)" x-text="mName" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectMonth(index)" x-text="mName"></div>
                                                             </template>
                                                         </div>
                                                         <div class="adp-year-picker" x-show="showYearPicker"
-                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            x-transition>
                                                             <div style="grid-column: span 4; padding: 4px;">
                                                                 <input type="text" x-model="yearSearch"
                                                                     placeholder="Cari tahun..."
@@ -497,20 +509,20 @@
                                                             <template x-for="y in filteredYears">
                                                                 <div class="adp-picker-item"
                                                                     :class="{'selected': year === y}"
-                                                                    @click="selectYear(y)" x-text="y" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectYear(y)" x-text="y"></div>
                                                             </template>
                                                         </div>
-                                                        <div class="adp-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+                                                        <div class="adp-grid">
                                                             <template x-for="day in dayNames">
-                                                                <div class="adp-day-name" x-text="day" style="text-align: center; font-size: 11px; color: #9ca3af; font-weight: 600; padding: 6px;"></div>
+                                                                <div class="adp-day-name" x-text="day"></div>
                                                             </template>
                                                             <template x-for="blankday in blanks">
-                                                                <div class="adp-day empty" style="padding: 8px; text-align: center; border-radius: 6px; color: transparent;"></div>
+                                                                <div class="adp-day empty"></div>
                                                             </template>
                                                             <template x-for="date in days">
                                                                 <div class="adp-day"
                                                                     :class="{'today': isToday(date), 'selected': isSelected(date)}"
-                                                                    @click="selectDate(date)" x-text="date" style="padding: 8px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 13px;"></div>
+                                                                    @click="selectDate(date)" x-text="date"></div>
                                                             </template>
                                                         </div>
                                                     </div>

@@ -1187,20 +1187,303 @@ html[data-theme="dark"] {
     background: var(--partner-primary-soft) !important;
 }
 
-.alpine-dropdown .ad-trigger.is-invalid {
-    border-color: var(--partner-danger) !important;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-danger) 14%, transparent) !important;
+/* =====================================================
+   DATEPICKER LAYOUT — Periode Kerjasama
+   ===================================================== */
+
+/* Section Container */
+.periode-kerjasama-section {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+    padding: 20px;
+    border: 1px solid var(--partner-border);
+    border-radius: 14px;
+    background:
+        linear-gradient(135deg,
+            color-mix(in srgb, var(--partner-primary) 3%, var(--partner-shell)),
+            color-mix(in srgb, var(--partner-accent) 3%, var(--partner-shell)));
+    box-shadow: var(--partner-shadow-soft);
+    position: relative;
+    overflow: visible;
 }
 
-.alpine-datepicker .adp-input-wrap input:focus,
-.alpine-dropdown .ad-trigger:focus,
-.alpine-dropdown .ad-trigger.active {
+/* Section Header */
+.periode-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--partner-border);
+}
+
+.periode-header-accent {
+    width: 4px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--partner-primary-2), var(--partner-primary), var(--partner-accent));
+    box-shadow: 0 0 12px color-mix(in srgb, var(--partner-primary-2) 30%, transparent);
+}
+
+.periode-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.periode-header-title {
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: var(--partner-text);
+    letter-spacing: -0.01em;
+}
+
+.periode-header-subtitle {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--partner-subtle);
+}
+
+/* Date Row — Side by Side Layout */
+.periode-date-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.periode-date-col {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+}
+
+/* Separator Arrow */
+.periode-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 30px;
+    flex-shrink: 0;
+}
+
+.periode-separator-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--partner-primary), var(--partner-primary-2));
+    color: var(--partner-on-primary);
+    font-size: 11px;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--partner-primary) 24%, transparent);
+}
+
+/* Responsive: Stack on small screens */
+@media (max-width: 640px) {
+    .periode-date-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .periode-separator {
+        padding-top: 0;
+        transform: rotate(90deg);
+    }
+
+    .periode-date-col {
+        width: 100%;
+    }
+}
+
+/* =====================================================
+   ALPINE DATEPICKER COMPONENT (Match user.css)
+   ===================================================== */
+.alpine-datepicker {
+    position: relative;
+    width: 100%;
+}
+
+.adp-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.adp-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 8px 14px 8px 38px;
+    font-size: 13px;
+    color: var(--partner-text);
+    background: var(--partner-field-bg) !important;
+    border: 1px solid var(--partner-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--partner-surface-strong) 42%, transparent);
+}
+
+.adp-input:hover {
+    border-color: var(--partner-border-strong);
+    background: var(--partner-field-bg-hover) !important;
+}
+
+.adp-input:focus {
     border-color: var(--partner-primary);
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-primary-2) 14%, transparent), var(--partner-shadow-soft);
 }
 
-.alpine-datepicker .adp-input-wrap input:invalid,
-.alpine-datepicker .adp-input-wrap input:focus:invalid {
-    border-color: var(--partner-danger) !important;
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--partner-danger) 14%, transparent) !important;
+.adp-calendar {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: var(--partner-surface-strong);
+    border: 1px solid var(--partner-border);
+    border-radius: 14px;
+    box-shadow: var(--partner-shadow);
+    z-index: 100;
+    width: 280px;
+    padding: 16px;
+}
+
+.adp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.adp-month {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--partner-text);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+.adp-month:hover {
+    background: var(--partner-surface-soft);
+    color: var(--partner-primary);
+}
+
+.adp-nav {
+    display: flex;
+    gap: 4px;
+}
+
+.adp-nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--partner-subtle);
+    transition: 0.2s;
+    border: 1px solid var(--partner-border);
+}
+
+.adp-nav-btn:hover {
+    background: var(--partner-surface-soft);
+    color: var(--partner-primary);
+}
+
+.adp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.adp-day-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: center;
+    padding: 6px 0;
+    text-transform: uppercase;
+}
+
+.adp-day {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+    color: var(--partner-text);
+}
+
+.adp-day:hover:not(.empty) {
+    background: var(--partner-primary-soft);
+    color: var(--partner-primary);
+}
+
+.adp-day.today {
+    border: 1.5px solid var(--partner-primary-2);
+    color: var(--partner-primary-2);
+    font-weight: 700;
+}
+
+.adp-day.selected {
+    background: var(--partner-primary) !important;
+    color: #fff !important;
+    font-weight: 700;
+}
+
+.adp-day.empty {
+    cursor: default;
+}
+
+/* Datepicker Month & Year Picker */
+.adp-month-picker,
+.adp-year-picker {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: var(--partner-surface-strong);
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid var(--partner-border);
+}
+
+.adp-picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    color: var(--partner-text);
+}
+
+.adp-picker-item:hover {
+    background: var(--partner-surface-soft);
+    color: var(--partner-primary);
+}
+
+.adp-picker-item.selected {
+    background: var(--partner-primary);
+    color: #fff;
+    font-weight: 700;
+}
+
+.adp-year-picker {
+    grid-template-columns: repeat(4, 1fr);
 }
