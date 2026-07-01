@@ -105,11 +105,11 @@ class AdminAuthController
 
     private function throttleKey(Request $request): string
     {
-        return 'admin-login-attempts|' . strtolower((string) $request->input('nik')) . '|' . $request->ip();
+        return 'admin-login-attempts|' . $request->ip();
     }
 
     private function lockoutKey(Request $request): string
     {
-        return 'admin-login-lockout|' . strtolower((string) $request->input('nik')) . '|' . $request->ip();
+        return 'admin-login-lockout|' . $request->ip();
     }
 }

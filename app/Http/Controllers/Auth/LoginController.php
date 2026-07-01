@@ -136,11 +136,11 @@ class LoginController
 
     private function throttleKey(Request $request): string
     {
-        return 'login-attempts|' . strtolower((string) $request->input('nik')) . '|' . $request->ip();
+        return 'login-attempts|' . $request->ip();
     }
 
     private function lockoutKey(Request $request): string
     {
-        return 'login-lockout|' . strtolower((string) $request->input('nik')) . '|' . $request->ip();
+        return 'login-lockout|' . $request->ip();
     }
 }
