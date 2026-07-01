@@ -31,9 +31,9 @@ class PublicPengajuanKerjasamaController extends Controller
 
         $validated = $request->validate([
             'nama_mitra' => ['required', 'string', 'max:255'],
-            'id_klasifikasi' => ['nullable', 'exists:klasifikasi,id'],
+            'id_klasifikasi' => ['required', 'exists:klasifikasi,id'],
             'kategori' => ['required', Rule::in(['nasional', 'internasional'])],
-            'negara' => ['nullable', 'string', 'max:255'],
+            'negara' => ['required', 'string', 'max:255'],
             'alamat' => ['required', 'string', 'max:1000'],
             'telp' => ['required', 'string', 'max:30'],
             'website' => ['nullable', 'url', 'max:255'],

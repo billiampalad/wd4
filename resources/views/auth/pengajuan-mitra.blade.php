@@ -176,9 +176,9 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="id_klasifikasi">Klasifikasi Lembaga</label>
+                                        <label for="id_klasifikasi">Klasifikasi Lembaga <span class="partner-required">*</span></label>
                                         <div class="partner-alpine-select" x-data="partnerSelect('Pilih klasifikasi')" x-init="init($refs.native)" @click.outside="close()">
-                                            <select x-ref="native" id="id_klasifikasi" name="id_klasifikasi" class="partner-native-select">
+                                            <select x-ref="native" id="id_klasifikasi" name="id_klasifikasi" class="partner-native-select" required>
                                                 <option value="">Pilih klasifikasi</option>
                                                 @foreach ($klasifikasis as $klasifikasi)
                                                     <option value="{{ $klasifikasi->id }}"
@@ -236,18 +236,18 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="negara">Negara</label>
+                                        <label for="negara">Negara <span class="partner-required">*</span></label>
                                         <input id="negara" type="text" name="negara" value="{{ old('negara', 'Indonesia') }}"
-                                            placeholder="Contoh: Indonesia">
+                                            placeholder="Contoh: Indonesia" required>
                                         @error('negara')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="telp">Nomor Telepon Kantor <span class="partner-required">*</span></label>
+                                        <label for="telp">Nomor HP/WA <span class="partner-required">*</span></label>
                                         <input id="telp" type="text" name="telp" value="{{ old('telp') }}"
-                                            placeholder="Contoh: 0431-888888" required>
+                                            placeholder="Masukkan nomor HP/WA yang aktif" required>
                                         @error('telp')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
