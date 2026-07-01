@@ -109,7 +109,7 @@
                 <article class="submission-card"
                     data-submission-card
                     data-category="{{ strtolower($submission->kategori) }}"
-                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '')) }}">
+                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->jabatan_penandatangan ?? '') . ' ' . ($submission->nama_penanggung_jawab ?? '') . ' ' . ($submission->jabatan_penanggung_jawab ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telepon ?? '')) }}">
                     <div class="submission-card-head">
                         <div class="submission-card-title">
                             <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
