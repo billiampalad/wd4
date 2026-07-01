@@ -51,9 +51,20 @@
             <form method="POST" action="/login">
                 @csrf
 
-                @if (session('status'))
+                @if (session('status') || session('success'))
                     <div class="auth-alert auth-alert-success" role="status">
-                        {{ session('status') }}
+                        {{ session('status') ?? session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="auth-alert auth-alert-danger" role="alert">
+                        {{ session('error') }}
+                        @if (session('lockout_seconds'))
+                            <span class="auth-lockout">
+                                Coba lagi dalam <strong>{{ session('lockout_seconds') }}</strong> detik.
+                            </span>
+                        @endif
                     </div>
                 @endif
 
@@ -75,7 +86,7 @@
                             <circle cx="12" cy="7" r="4" />
                         </svg>
                         <input type="text" name="nik" placeholder="Masukkan NIP Anda" autocomplete="off"
-                            required>
+                            value="{{ old('nik') }}" required>
                     </div>
                 </div>
 

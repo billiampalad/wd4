@@ -22,6 +22,32 @@
 </head>
 
 <body class="admin-dashboard-page">
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: @json(session('success')),
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: @json(session('error')),
+                    showConfirmButton: true
+                });
+            });
+        </script>
+    @endif
     <!-- navbar -->
     <nav id="navbar">
         <div class="nav-inner">

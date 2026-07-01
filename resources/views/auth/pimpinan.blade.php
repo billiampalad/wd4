@@ -258,11 +258,11 @@
                 <div class="menu-icon"><i class="fas fa-file-signature"></i></div>
                 <span>Evaluasi Kerjasama</span>
             </a>
-            {{-- <a class="menu-item {{ request()->routeIs('pimpinan.pengajuan_mitra*') ? 'active' : '' }}"
+            <a class="menu-item {{ request()->routeIs('pimpinan.pengajuan_mitra*') ? 'active' : '' }}"
                 href="{{ route('pimpinan.pengajuan_mitra') }}">
                 <div class="menu-icon"><i class="fas fa-handshake-angle"></i></div>
                 <span>Pengajuan Mitra</span>
-            </a> --}}
+            </a>
             <a class="menu-item {{ request()->routeIs('pimpinan.laporan') ? 'active' : '' }}"
                 href="{{ route('pimpinan.laporan') }}">
                 <div class="menu-icon"><i class="fas fa-chart-simple"></i></div>

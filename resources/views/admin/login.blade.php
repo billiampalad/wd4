@@ -51,6 +51,23 @@
         <form method="POST" action="/admin/login">
             @csrf
 
+            @if (session('success'))
+                <div class="alert-success" role="status">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert-danger" role="alert">
+                    {{ session('error') }}
+                    @if (session('lockout_seconds'))
+                        <span class="login-lockout">
+                            Coba lagi dalam <strong>{{ session('lockout_seconds') }}</strong> detik.
+                        </span>
+                    @endif
+                </div>
+            @endif
+
             <div class="form-group">
                 <label for="nik">NIK Administrator</label>
                 <div class="input-wrap">
@@ -58,7 +75,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
-                    <input type="text" id="nik" name="nik" placeholder="Masukkan NIK Anda" autocomplete="off" required>
+                    <input type="text" id="nik" name="nik" placeholder="Masukkan NIK Anda" autocomplete="off" value="{{ old('nik') }}" required>
                 </div>
             </div>
 

@@ -789,3 +789,14 @@ input:focus~.input-icon,
     font-weight: 600;
     color: var(--text);
 }
+
+.login-lockout {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.alert-danger {
+    flex-wrap: wrap;
+}
