@@ -350,17 +350,17 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="jabatan_penandatangan">Jabatan Penandatangan</label>
+                                        <label for="jabatan_penandatangan">Jabatan Penandatangan <span class="partner-required">*</span></label>
                                         <input id="jabatan_penandatangan" type="text" name="jabatan_penandatangan"
-                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian">
+                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian" required>
                                         @error('jabatan_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="partner-field">
-                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab <span class="partner-required">*</span></label>
+                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab</label>
                                         <input id="nama_penanggung_jawab" type="text" name="nama_penanggung_jawab"
-                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab" required>
+                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab">
                                         @error('nama_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
