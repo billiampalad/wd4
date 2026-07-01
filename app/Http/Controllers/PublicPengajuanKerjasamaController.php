@@ -118,12 +118,16 @@ class PublicPengajuanKerjasamaController extends Controller
     {
         $validated = $request->validate([
             'mitra_id' => ['required', 'exists:mitra,id'],
+            'jenis' => ['required', 'string', 'max:255'],
+            'doc_number' => ['required', 'string', 'max:255'],
             'nama_penandatangan' => ['required', 'string', 'max:255'],
             'jabatan_penandatangan' => ['required', 'string', 'max:255'],
             'nama_penanggung_jawab' => ['nullable', 'string', 'max:255'],
             'jabatan_penanggung_jawab' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'telepon' => ['required', 'string', 'max:30'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'judul_pengajuan' => ['required', 'string', 'max:255'],
             'tujuan_pengajuan' => ['required', 'string'],
             'ruang_lingkup' => ['required', 'string'],

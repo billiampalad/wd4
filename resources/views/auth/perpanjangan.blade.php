@@ -178,7 +178,7 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle(); $nextTick(() => $refs.search && $refs.search.focus())" :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                            <button type="button" class="partner-select-trigger" :class="{'is-open': open, 'is-placeholder': !value}" @click="toggle(); $nextTick(() => $refs.search && $refs.search.focus())" :aria-expanded="open.toString()" aria-haspopup="listbox">
                                                 <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
                                                 <span class="partner-select-icon"><i class="fas fa-chevron-down"></i></span>
                                             </button>
@@ -188,7 +188,7 @@
                                                     <input x-ref="search" type="text" x-model="query" placeholder="Cari nama mitra..." @keydown.stop>
                                                 </div>
                                                 <template x-for="option in filteredOptions()" :key="`${option.value}-${option.label}`">
-                                                    <button type="button" class="partner-select-option" :class="{ 'is-selected': option.value === value, 'is-placeholder': option.placeholder }" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
+                                                    <button type="button" class="partner-select-option" :class="{'is-selected': option.value === value, 'is-placeholder': option.placeholder}" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
                                                         <span x-text="option.label"></span>
                                                         <i class="fas fa-check" x-show="option.value === value"></i>
                                                     </button>
@@ -197,6 +197,94 @@
                                             </div>
                                         </div>
                                         @error('mitra_id')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    {{-- Dokumen Kerjasama --}}
+                                    <div class="partner-field partner-field-full" x-data="{ 
+                                            open: false, 
+                                            selected: '{{ old('jenis') }}',
+                                            items: [
+                                                { id: 'MoU (Memorandum of Understanding)', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
+                                                { id: 'MoA (Memorandum of Agreement)', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
+                                                { id: 'IA (Implementation Agreement)', label: 'Implementation Agreement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
+                                            ],
+                                            get selectedItem() {
+                                                return this.items.find(i => i.id === this.selected);
+                                            },
+                                            selectType(id) {
+                                                this.selected = id;
+                                            }
+                                        }">
+                                        <label>Dokumen Kerjasama <span class="partner-required">*</span></label>
+                                        <input type="hidden" name="jenis" :value="selected">
+
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                            {{-- Left: Type Dropdown --}}
+                                            <div class="alpine-dropdown" @click.outside="open = false"
+                                                style="position: relative; width: 100%; min-width: 0;">
+                                                <div class="ad-trigger" :class="{'active': open, 'is-invalid': @error('jenis') true @else false @enderror}" @click="open = !open"
+                                                    style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                                        <div
+                                                            :style="'width: 32px; height: 32px; border-radius: 8px; background:' + (selectedItem ? selectedItem.color : '#4f46e5') + '20; color:' + (selectedItem ? selectedItem.color : '#4f46e5') + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
+                                                            <i class="fas" :class="selectedItem ? selectedItem.icon : 'fa-file-signature'"></i>
+                                                        </div>
+                                                        <div
+                                                            style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                            <span x-text="selectedItem ? selectedItem.short : 'Pilih jenis'"
+                                                                style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                            <span x-text="selectedItem ? selectedItem.label : ''"
+                                                                style="font-size: 11px; color: var(--text-sub);"></span>
+                                                        </div>
+                                                    </div>
+                                                    <i class="fas fa-chevron-down"
+                                                        style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
+                                                        :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                                                </div>
+
+                                                <div class="ad-menu" x-show="open"
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                                    x-transition:enter-end="opacity-100 transform scale-100"
+                                                    style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                                    <template x-for="item in items" :key="item.id">
+                                                        <div @click="selectType(item.id); open = false" class="ad-item"
+                                                            :class="{'selected': selected === item.id}"
+                                                            style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
+                                                            onmouseover="this.style.background='var(--surface2)'"
+                                                            onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                            <div
+                                                                :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
+                                                                <i class="fas" :class="item.icon"></i>
+                                                            </div>
+                                                            <div
+                                                                style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                                <span x-text="item.short"
+                                                                    style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                                <span x-text="item.label"
+                                                                    style="font-size: 11px; color: var(--text-sub);"></span>
+                                                            </div>
+                                                            <i class="fas fa-check" x-show="selected === item.id"
+                                                                style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            {{-- Right: Number Input --}}
+                                            <div style="position: relative;">
+                                                <i class="fas fa-hashtag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                <input type="text" name="doc_number" value="{{ old('doc_number') }}"
+                                                    placeholder="Masukkan nomor dokumen..."
+                                                    style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                            </div>
+                                        </div>
+                                        @error('jenis')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                        @error('doc_number')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
@@ -288,6 +376,147 @@
                         <div class="partner-form-grid">
                             <div class="partner-form-section is-flat">
                                 <div class="partner-fields">
+                                    {{-- Periode Kerjasama --}}
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                                            <div
+                                                style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #4f46e5, #7c3aed);">
+                                            </div>
+                                            <span
+                                                style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Periode
+                                                Kerjasama</span>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+                                            {{-- Periode Mulai --}}
+                                            <div class="partner-field partner-field-full" x-data="datepicker('{{ old('start_date') }}')">
+                                                <label for="start_date">Tanggal Mulai <span class="partner-required">*</span></label>
+                                                <div class="alpine-datepicker" @click.outside="show = false">
+                                                    <div class="adp-input-wrap" style="position: relative;">
+                                                        <i class="fas fa-calendar-day" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                        <input type="text" name="start_date" x-model="formattedDate"
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                            style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                    </div>
+                                                    <div class="adp-calendar" x-show="show" x-transition style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 8px; z-index: 100;">
+                                                        <div class="adp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                                            <div style="display: flex; gap: 4px;">
+                                                                <span class="adp-month" @click="toggleMonthPicker()"
+                                                                    x-text="monthNames[month]" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                <span class="adp-month" @click="toggleYearPicker()"
+                                                                    x-text="year" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                            </div>
+                                                            <div class="adp-nav" style="display: flex; gap: 4px;">
+                                                                <div class="adp-nav-btn" @click="prevMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                        class="fas fa-chevron-left"></i></div>
+                                                                <div class="adp-nav-btn" @click="nextMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                        class="fas fa-chevron-right"></i></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="adp-month-picker" x-show="showMonthPicker"
+                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            <template x-for="(mName, index) in monthNames">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': month === index}"
+                                                                    @click="selectMonth(index)" x-text="mName" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-year-picker" x-show="showYearPicker"
+                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            <div style="grid-column: span 4; padding: 4px;">
+                                                                <input type="text" x-model="yearSearch"
+                                                                    placeholder="Cari tahun..."
+                                                                    style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                                                    @click.stop>
+                                                            </div>
+                                                            <template x-for="y in filteredYears">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': year === y}"
+                                                                    @click="selectYear(y)" x-text="y" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+                                                            <template x-for="day in dayNames">
+                                                                <div class="adp-day-name" x-text="day" style="text-align: center; font-size: 11px; color: #9ca3af; font-weight: 600; padding: 6px;"></div>
+                                                            </template>
+                                                            <template x-for="blankday in blanks">
+                                                                <div class="adp-day empty" style="padding: 8px; text-align: center; border-radius: 6px; color: transparent;"></div>
+                                                            </template>
+                                                            <template x-for="date in days">
+                                                                <div class="adp-day"
+                                                                    :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                                                    @click="selectDate(date)" x-text="date" style="padding: 8px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Periode Selesai --}}
+                                            <div class="partner-field partner-field-full" x-data="datepicker('{{ old('end_date') }}')">
+                                                <label for="end_date">Tanggal Selesai <span class="partner-required">*</span></label>
+                                                <div class="alpine-datepicker" @click.outside="show = false">
+                                                    <div class="adp-input-wrap" style="position: relative;">
+                                                        <i class="fas fa-calendar-check" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
+                                                        <input type="text" name="end_date" x-model="formattedDate"
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                            style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                    </div>
+                                                    <div class="adp-calendar" x-show="show" x-transition style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 8px; z-index: 100;">
+                                                        <div class="adp-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                                            <div style="display: flex; gap: 4px;">
+                                                                <span class="adp-month" @click="toggleMonthPicker()"
+                                                                    x-text="monthNames[month]" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                                <span class="adp-month" @click="toggleYearPicker()"
+                                                                    x-text="year" style="cursor: pointer; font-weight: 600; font-size: 14px;"></span>
+                                                            </div>
+                                                            <div class="adp-nav" style="display: flex; gap: 4px;">
+                                                                <div class="adp-nav-btn" @click="prevMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                        class="fas fa-chevron-left"></i></div>
+                                                                <div class="adp-nav-btn" @click="nextMonth()" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border);"><i
+                                                                        class="fas fa-chevron-right"></i></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="adp-month-picker" x-show="showMonthPicker"
+                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            <template x-for="(mName, index) in monthNames">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': month === index}"
+                                                                    @click="selectMonth(index)" x-text="mName" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-year-picker" x-show="showYearPicker"
+                                                            x-transition style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+                                                            <div style="grid-column: span 4; padding: 4px;">
+                                                                <input type="text" x-model="yearSearch"
+                                                                    placeholder="Cari tahun..."
+                                                                    style="width: 100%; padding: 6px; font-size: 11px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface2); color: var(--text);"
+                                                                    @click.stop>
+                                                            </div>
+                                                            <template x-for="y in filteredYears">
+                                                                <div class="adp-picker-item"
+                                                                    :class="{'selected': year === y}"
+                                                                    @click="selectYear(y)" x-text="y" style="padding: 8px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                        <div class="adp-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+                                                            <template x-for="day in dayNames">
+                                                                <div class="adp-day-name" x-text="day" style="text-align: center; font-size: 11px; color: #9ca3af; font-weight: 600; padding: 6px;"></div>
+                                                            </template>
+                                                            <template x-for="blankday in blanks">
+                                                                <div class="adp-day empty" style="padding: 8px; text-align: center; border-radius: 6px; color: transparent;"></div>
+                                                            </template>
+                                                            <template x-for="date in days">
+                                                                <div class="adp-day"
+                                                                    :class="{'today': isToday(date), 'selected': isSelected(date)}"
+                                                                    @click="selectDate(date)" x-text="date" style="padding: 8px; text-align: center; border-radius: 6px; cursor: pointer; font-size: 13px;"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="partner-field partner-field-full">
                                         <label for="judul_pengajuan">Judul Rencana Perpanjangan <span class="partner-required">*</span></label>
                                         <input id="judul_pengajuan" type="text" name="judul_pengajuan"
@@ -357,15 +586,23 @@
                         </div>
 
                         <div class="partner-review-container">
-                            <!-- Card 1: Profil Mitra -->
+                            <!-- Card 1: Profil Mitra & Dokumen -->
                             <div class="partner-review-card">
                                 <div class="partner-review-card-title">
-                                    <i class="fas fa-building"></i> Identitas Mitra
+                                    <i class="fas fa-building"></i> Identitas Mitra & Dokumen
                                 </div>
                                 <div class="partner-review-grid">
                                     <div class="partner-review-item partner-review-value-full">
                                         <span class="partner-review-label">Mitra Terdaftar</span>
                                         <span class="partner-review-value" id="rev_mitra_id">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Jenis Dokumen</span>
+                                        <span class="partner-review-value" id="rev_jenis">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Nomor Dokumen</span>
+                                        <span class="partner-review-value" id="rev_doc_number">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -409,6 +646,14 @@
                                     <i class="fas fa-handshake"></i> Rencana Perpanjangan
                                 </div>
                                 <div class="partner-review-grid">
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Tanggal Mulai</span>
+                                        <span class="partner-review-value" id="rev_start_date">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Tanggal Selesai</span>
+                                        <span class="partner-review-value" id="rev_end_date">-</span>
+                                    </div>
                                     <div class="partner-review-item partner-review-value-full">
                                         <span class="partner-review-label">Judul Perpanjangan</span>
                                         <span class="partner-review-value" id="rev_judul_pengajuan">-</span>
@@ -531,6 +776,128 @@
             };
         }
 
+        function datepicker(initialDate = '') {
+            return {
+                show: false,
+                showMonthPicker: false,
+                showYearPicker: false,
+                formattedDate: '',
+                year: '',
+                month: '',
+                date: '',
+                dayNames: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+                monthNames: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+                days: [],
+                blanks: [],
+                years: [],
+                yearSearch: '',
+
+                init() {
+                    let today = initialDate ? new Date(initialDate) : new Date();
+                    this.year = today.getFullYear();
+                    this.month = today.getMonth();
+                    this.date = today.getDate();
+                    if (initialDate) {
+                        this.formattedDate = this.formatDate(today);
+                    }
+                    this.getDays();
+                    this.generateYears();
+                },
+
+                get filteredYears() {
+                    if (!this.yearSearch) return this.years;
+                    return this.years.filter(y => y.toString().includes(this.yearSearch));
+                },
+
+                generateYears() {
+                    const currentYear = new Date().getFullYear();
+                    this.years = [];
+                    for (let i = currentYear - 50; i <= currentYear + 10; i++) {
+                        this.years.push(i);
+                    }
+                },
+
+                isToday(date) {
+                    const today = new Date();
+                    const d = new Date(this.year, this.month, date);
+                    return today.toDateString() === d.toDateString();
+                },
+
+                isSelected(date) {
+                    if (!this.formattedDate) return false;
+                    const selected = new Date(this.formattedDate);
+                    const d = new Date(this.year, this.month, date);
+                    return selected.toDateString() === d.toDateString();
+                },
+
+                formatDate(date) {
+                    let d = date.getDate();
+                    let m = date.getMonth() + 1;
+                    let y = date.getFullYear();
+                    return `${y}-${m < 10 ? '0' + m : m}-${d < 10 ? '0' + d : d}`;
+                },
+
+                selectDate(date) {
+                    let selectedDate = new Date(this.year, this.month, date);
+                    this.formattedDate = this.formatDate(selectedDate);
+                    this.show = false;
+                },
+
+                getDays() {
+                    let daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
+                    let dayOfWeek = new Date(this.year, this.month).getDay();
+                    let blankdaysArray = [];
+                    for (let i = 1; i <= dayOfWeek; i++) { blankdaysArray.push(i); }
+                    let daysArray = [];
+                    for (let i = 1; i <= daysInMonth; i++) { daysArray.push(i); }
+                    this.blanks = blankdaysArray;
+                    this.days = daysArray;
+                },
+
+                nextMonth() {
+                    if (this.month == 11) {
+                        this.month = 0;
+                        this.year++;
+                    } else {
+                        this.month++;
+                    }
+                    this.getDays();
+                },
+
+                prevMonth() {
+                    if (this.month == 0) {
+                        this.month = 11;
+                        this.year--;
+                    } else {
+                        this.month--;
+                    }
+                    this.getDays();
+                },
+
+                toggleMonthPicker() {
+                    this.showMonthPicker = !this.showMonthPicker;
+                    this.showYearPicker = false;
+                },
+
+                toggleYearPicker() {
+                    this.showYearPicker = !this.showYearPicker;
+                    this.showMonthPicker = false;
+                },
+
+                selectMonth(m) {
+                    this.month = m;
+                    this.getDays();
+                    this.showMonthPicker = false;
+                },
+
+                selectYear(y) {
+                    this.year = parseInt(y);
+                    this.getDays();
+                    this.showYearPicker = false;
+                }
+            }
+        }
+
         let currentStep = 1;
         const totalSteps = 5;
 
@@ -634,8 +1001,15 @@
                 return '-';
             };
 
+            const getHiddenVal = (name) => {
+                const el = document.querySelector(`input[name="${name}"]`);
+                return el ? el.value.trim() || '-' : '-';
+            };
+
             // Mapping inputs to labels
             document.getElementById('rev_mitra_id').innerText = getSelectText('mitra_id');
+            document.getElementById('rev_jenis').innerText = getHiddenVal('jenis');
+            document.getElementById('rev_doc_number').innerText = getVal('doc_number');
 
             document.getElementById('rev_nama_penandatangan').innerText = getVal('nama_penandatangan');
             document.getElementById('rev_jabatan_penandatangan').innerText = getVal('jabatan_penandatangan');
@@ -644,9 +1018,11 @@
             document.getElementById('rev_email').innerText = getVal('email');
             document.getElementById('rev_telepon').innerText = getVal('telepon');
 
+            document.getElementById('rev_start_date').innerText = getVal('start_date');
+            document.getElementById('rev_end_date').innerText = getVal('end_date');
             document.getElementById('rev_judul_pengajuan').innerText = getVal('judul_pengajuan');
             document.getElementById('rev_tujuan_pengajuan').innerText = getVal('tujuan_pengajuan');
-            document.getElementById('rev_ruang_lingkup').innerText = getVal('ruang_lingkup');
+            document.getElementById('rev_ruang_lingkup').innerText = getSelectText('ruang_lingkup');
         }
 
         function updateWizardUI() {

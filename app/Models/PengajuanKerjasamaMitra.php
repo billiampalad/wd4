@@ -41,6 +41,10 @@ class PengajuanKerjasamaMitra extends Model
         'reviewed_at',
         'submitted_at',
         'mitra_id',
+        'jenis',
+        'doc_number',
+        'start_date',
+        'end_date',
     ];
 
     protected $appends = [
