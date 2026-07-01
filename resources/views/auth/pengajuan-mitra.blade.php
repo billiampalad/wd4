@@ -274,7 +274,7 @@
                         </div>
                     </div>
 
-                    <!-- ═══ STEP 2: Kontak Pengaju ═══ -->
+                    <!-- ═══ STEP 2: Data Penandatangan ═══ -->
                     <div class="form-step" data-step="2">
                         <div class="partner-form-head">
                             <div>
@@ -288,37 +288,54 @@
                             <div class="partner-form-section">
                                 <div class="partner-fields">
                                     <div class="partner-field">
-                                        <label for="nama_pengaju">Nama Penghubung <span class="partner-required">*</span></label>
-                                        <input id="nama_pengaju" type="text" name="nama_pengaju" value="{{ old('nama_pengaju') }}"
-                                            placeholder="Nama lengkap penghubung" required>
-                                        @error('nama_pengaju')
+                                        <label for="nama_penandatangan">Nama Penandatangan <span class="partner-required">*</span></label>
+                                        <input id="nama_penandatangan" type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                            placeholder="Nama lengkap penandatangan" required>
+                                        @error('nama_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="jabatan_pengaju">Jabatan / Unit</label>
-                                        <input id="jabatan_pengaju" type="text" name="jabatan_pengaju"
-                                            value="{{ old('jabatan_pengaju') }}" placeholder="Contoh: Manajer Kerja Sama">
-                                        @error('jabatan_pengaju')
+                                        <label for="jabatan_penandatangan">Jabatan Penandatangan</label>
+                                        <input id="jabatan_penandatangan" type="text" name="jabatan_penandatangan"
+                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian">
+                                        @error('jabatan_penandatangan')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                    <div class="partner-field">
+                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab <span class="partner-required">*</span></label>
+                                        <input id="nama_penanggung_jawab" type="text" name="nama_penanggung_jawab"
+                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab" required>
+                                        @error('nama_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="email_pengaju">Email Penghubung <span class="partner-required">*</span></label>
-                                        <input id="email_pengaju" type="email" name="email_pengaju"
-                                            value="{{ old('email_pengaju') }}" placeholder="email.pic@perusahaan.com" required>
-                                        @error('email_pengaju')
+                                        <label for="jabatan_penanggung_jawab">Jabatan Penanggung Jawab</label>
+                                        <input id="jabatan_penanggung_jawab" type="text" name="jabatan_penanggung_jawab"
+                                            value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Contoh: Koordinator Kerja Sama">
+                                        @error('jabatan_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="telepon_pengaju">WhatsApp / Telepon <span class="partner-required">*</span></label>
-                                        <input id="telepon_pengaju" type="text" name="telepon_pengaju"
-                                            value="{{ old('telepon_pengaju') }}" placeholder="Contoh: 08xxxxxxxxxx" required>
-                                        @error('telepon_pengaju')
+                                        <label for="email">Email <span class="partner-required">*</span></label>
+                                        <input id="email" type="email" name="email"
+                                            value="{{ old('email') }}" placeholder="email.pic@perusahaan.com" required>
+                                        @error('email')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="partner-field">
+                                        <label for="telepon">WhatsApp / Telepon <span class="partner-required">*</span></label>
+                                        <input id="telepon" type="text" name="telepon"
+                                            value="{{ old('telepon') }}" placeholder="Contoh: 08xxxxxxxxxx" required>
+                                        @error('telepon')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
@@ -423,24 +440,32 @@
                             <!-- Card 2: Kontak -->
                             <div class="partner-review-card">
                                 <div class="partner-review-card-title">
-                                    <i class="fas fa-address-card"></i> Kontak Pengaju
+                                    <i class="fas fa-address-card"></i> Data Penandatangan
                                 </div>
                                 <div class="partner-review-grid">
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Nama Penghubung</span>
-                                        <span class="partner-review-value" id="rev_nama_pengaju">-</span>
+                                        <span class="partner-review-label">Nama Penandatangan</span>
+                                        <span class="partner-review-value" id="rev_nama_penandatangan">-</span>
                                     </div>
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Jabatan / Unit</span>
-                                        <span class="partner-review-value" id="rev_jabatan_pengaju">-</span>
+                                        <span class="partner-review-label">Jabatan Penandatangan</span>
+                                        <span class="partner-review-value" id="rev_jabatan_penandatangan">-</span>
                                     </div>
                                     <div class="partner-review-item">
-                                        <span class="partner-review-label">Email Penghubung</span>
-                                        <span class="partner-review-value" id="rev_email_pengaju">-</span>
+                                        <span class="partner-review-label">Nama Penanggung Jawab</span>
+                                        <span class="partner-review-value" id="rev_nama_penanggung_jawab">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Jabatan Penanggung Jawab</span>
+                                        <span class="partner-review-value" id="rev_jabatan_penanggung_jawab">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Email</span>
+                                        <span class="partner-review-value" id="rev_email">-</span>
                                     </div>
                                     <div class="partner-review-item">
                                         <span class="partner-review-label">WhatsApp / Telepon</span>
-                                        <span class="partner-review-value" id="rev_telepon_pengaju">-</span>
+                                        <span class="partner-review-value" id="rev_telepon">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -681,10 +706,12 @@
             document.getElementById('rev_website').innerText = getVal('website');
             document.getElementById('rev_alamat').innerText = getVal('alamat');
 
-            document.getElementById('rev_nama_pengaju').innerText = getVal('nama_pengaju');
-            document.getElementById('rev_jabatan_pengaju').innerText = getVal('jabatan_pengaju');
-            document.getElementById('rev_email_pengaju').innerText = getVal('email_pengaju');
-            document.getElementById('rev_telepon_pengaju').innerText = getVal('telepon_pengaju');
+            document.getElementById('rev_nama_penandatangan').innerText = getVal('nama_penandatangan');
+            document.getElementById('rev_jabatan_penandatangan').innerText = getVal('jabatan_penandatangan');
+            document.getElementById('rev_nama_penanggung_jawab').innerText = getVal('nama_penanggung_jawab');
+            document.getElementById('rev_jabatan_penanggung_jawab').innerText = getVal('jabatan_penanggung_jawab');
+            document.getElementById('rev_email').innerText = getVal('email');
+            document.getElementById('rev_telepon').innerText = getVal('telepon');
 
             document.getElementById('rev_judul_pengajuan').innerText = getVal('judul_pengajuan');
             document.getElementById('rev_tujuan_pengajuan').innerText = getVal('tujuan_pengajuan');

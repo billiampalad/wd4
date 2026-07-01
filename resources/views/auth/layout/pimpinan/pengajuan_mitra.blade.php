@@ -164,18 +164,27 @@
                             </span>
                         </div>
                         <div class="submission-detail">
-                            <span class="submission-detail-label">PIC Pengaju</span>
+                            <span class="submission-detail-label">Penandatangan</span>
                             <span class="submission-detail-value">
-                                {{ $submission->nama_pengaju }}
-                                @if ($submission->jabatan_pengaju)
-                                    <br>{{ $submission->jabatan_pengaju }}
+                                {{ $submission->nama_penandatangan }}
+                                @if ($submission->jabatan_penandatangan)
+                                    <br>{{ $submission->jabatan_penandatangan }}
                                 @endif
                             </span>
                         </div>
                         <div class="submission-detail">
-                            <span class="submission-detail-label">Kontak Pengaju</span>
+                            <span class="submission-detail-label">Penanggung Jawab</span>
                             <span class="submission-detail-value">
-                                {{ $submission->email_pengaju }}<br>{{ $submission->telepon_pengaju }}
+                                {{ $submission->nama_penanggung_jawab ?: '-' }}
+                                @if ($submission->jabatan_penanggung_jawab)
+                                    <br>{{ $submission->jabatan_penanggung_jawab }}
+                                @endif
+                            </span>
+                        </div>
+                        <div class="submission-detail">
+                            <span class="submission-detail-label">Kontak</span>
+                            <span class="submission-detail-value">
+                                {{ $submission->email }}<br>{{ $submission->telepon }}
                             </span>
                         </div>
                     </div>
