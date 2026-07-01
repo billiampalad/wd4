@@ -228,17 +228,17 @@
                                     </div>
 
                                     <div class="partner-field">
-                                        <label for="jabatan_penandatangan">Jabatan Penandatangan</label>
+                                        <label for="jabatan_penandatangan">Jabatan Penandatangan <span class="partner-required">*</span></label>
                                         <input id="jabatan_penandatangan" type="text" name="jabatan_penandatangan"
-                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian">
+                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian" required>
                                         @error('jabatan_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
                                     <div class="partner-field">
-                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab <span class="partner-required">*</span></label>
+                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab</label>
                                         <input id="nama_penanggung_jawab" type="text" name="nama_penanggung_jawab"
-                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab" required>
+                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab">
                                         @error('nama_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -308,9 +308,9 @@
                                     </div>
 
                                     <div class="partner-field partner-field-full">
-                                        <label for="ruang_lingkup">Ruang Lingkup Lanjutan (Opsional)</label>
+                                        <label for="ruang_lingkup">Ruang Lingkup Lanjutan <span class="partner-required">*</span></label>
                                         <div class="partner-alpine-select" x-data="partnerSelect('Pilih ruang lingkup kegiatan')" x-init="init($refs.native)" @click.outside="close()">
-                                            <select x-ref="native" id="ruang_lingkup" name="ruang_lingkup" class="partner-native-select">
+                                            <select x-ref="native" id="ruang_lingkup" name="ruang_lingkup" class="partner-native-select" required>
                                                 <option value="">Pilih ruang lingkup kegiatan</option>
                                                 @foreach ($jenisKerjasamas as $jenis)
                                                     <option value="{{ $jenis->nama_kerjasama }}"

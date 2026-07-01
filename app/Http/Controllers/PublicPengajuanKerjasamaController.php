@@ -117,7 +117,7 @@ class PublicPengajuanKerjasamaController extends Controller
     public function storePerpanjangan(Request $request)
     {
         $validated = $request->validate([
-            'mitra_id' => ['required', 'exists:mitras,id'],
+            'mitra_id' => ['required', 'exists:mitra,id'],
             'nama_penandatangan' => ['required', 'string', 'max:255'],
             'jabatan_penandatangan' => ['required', 'string', 'max:255'],
             'nama_penanggung_jawab' => ['nullable', 'string', 'max:255'],
@@ -126,7 +126,7 @@ class PublicPengajuanKerjasamaController extends Controller
             'telepon' => ['required', 'string', 'max:30'],
             'judul_pengajuan' => ['required', 'string', 'max:255'],
             'tujuan_pengajuan' => ['required', 'string'],
-            'ruang_lingkup' => ['nullable', 'string'],
+            'ruang_lingkup' => ['required', 'string'],
             'pesan_tambahan' => ['nullable', 'string'],
         ]);
 
