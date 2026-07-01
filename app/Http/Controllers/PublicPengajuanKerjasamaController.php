@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Klasifikasi;
+use App\Models\JenisKerjasama;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
 use App\Models\PengajuanKerjasamaMitra;
@@ -16,8 +17,9 @@ class PublicPengajuanKerjasamaController extends Controller
     public function create()
     {
         $klasifikasis = Klasifikasi::orderBy('nama')->get();
+        $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
-        return view('auth.pengajuan-mitra', compact('klasifikasis'));
+        return view('auth.pengajuan-mitra', compact('klasifikasis', 'jenisKerjasamas'));
     }
 
     public function store(Request $request)
@@ -45,7 +47,7 @@ class PublicPengajuanKerjasamaController extends Controller
             'telepon' => ['required', 'string', 'max:30'],
             'judul_pengajuan' => ['required', 'string', 'max:255'],
             'tujuan_pengajuan' => ['required', 'string'],
-            'ruang_lingkup' => ['nullable', 'string'],
+            'ruang_lingkup' => ['required', 'string'],
             'pesan_tambahan' => ['nullable', 'string'],
         ], [
             'website.url' => 'Website harus berupa URL yang valid, misalnya https://contoh.com.',
@@ -107,8 +109,9 @@ class PublicPengajuanKerjasamaController extends Controller
     public function createPerpanjangan()
     {
         $mitras = Mitra::orderBy('nama_mitra')->get();
+        $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
-        return view('auth.perpanjangan', compact('mitras'));
+        return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas'));
     }
 
     public function storePerpanjangan(Request $request)

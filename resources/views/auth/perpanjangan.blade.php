@@ -309,8 +309,34 @@
 
                                     <div class="partner-field partner-field-full">
                                         <label for="ruang_lingkup">Ruang Lingkup Lanjutan (Opsional)</label>
-                                        <textarea id="ruang_lingkup" name="ruang_lingkup" rows="4"
-                                            placeholder="Contoh: magang, riset bersama, beasiswa, sertifikasi, atau kuliah tamu">{{ old('ruang_lingkup') }}</textarea>
+                                        <div class="partner-alpine-select" x-data="partnerSelect('Pilih ruang lingkup kegiatan')" x-init="init($refs.native)" @click.outside="close()">
+                                            <select x-ref="native" id="ruang_lingkup" name="ruang_lingkup" class="partner-native-select">
+                                                <option value="">Pilih ruang lingkup kegiatan</option>
+                                                @foreach ($jenisKerjasamas as $jenis)
+                                                    <option value="{{ $jenis->nama_kerjasama }}"
+                                                        {{ old('ruang_lingkup') === $jenis->nama_kerjasama ? 'selected' : '' }}>
+                                                        {{ $jenis->nama_kerjasama }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle(); $nextTick(() => $refs.search && $refs.search.focus())" :aria-expanded="open.toString()" aria-haspopup="listbox">
+                                                <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
+                                                <span class="partner-select-icon"><i class="fas fa-chevron-down"></i></span>
+                                            </button>
+                                            <div class="partner-select-panel" x-show="open" x-transition.origin.top style="display: none;" role="listbox">
+                                                <div class="partner-select-search" x-show="options.length > 6">
+                                                    <i class="fas fa-magnifying-glass"></i>
+                                                    <input x-ref="search" type="text" x-model="query" placeholder="Cari ruang lingkup..." @keydown.stop>
+                                                </div>
+                                                <template x-for="option in filteredOptions()" :key="`${option.value}-${option.label}`">
+                                                    <button type="button" class="partner-select-option" :class="{ 'is-selected': option.value === value, 'is-placeholder': option.placeholder }" @click="choose(option)" role="option" :aria-selected="(option.value === value).toString()">
+                                                        <span x-text="option.label"></span>
+                                                        <i class="fas fa-check" x-show="option.value === value"></i>
+                                                    </button>
+                                                </template>
+                                                <div class="partner-select-empty" x-show="filteredOptions().length === 0">Data tidak ditemukan</div>
+                                            </div>
+                                        </div>
                                         @error('ruang_lingkup')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
