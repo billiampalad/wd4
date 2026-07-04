@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
 use App\Models\PengajuanKerjasamaMitra;
+use App\Support\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class PengajuanKerjasamaMitraController extends Controller
@@ -65,6 +67,10 @@ class PengajuanKerjasamaMitraController extends Controller
                 'string',
                 'max:2000',
             ],
+            'send_email' => ['nullable'],
+            'send_whatsapp' => ['nullable'],
+            'custom_message_email' => ['nullable', 'string', 'max:5000'],
+            'custom_message_whatsapp' => ['nullable', 'string', 'max:5000'],
         ]);
 
         DB::beginTransaction();
@@ -113,15 +119,46 @@ class PengajuanKerjasamaMitraController extends Controller
 
             DB::commit();
 
+            // --- Kirim notifikasi ke mitra setelah DB commit berhasil ---
+            $sendEmail = $request->boolean('send_email');
+            $sendWhatsApp = $request->boolean('send_whatsapp');
+
+            if ($sendEmail) {
+                $emailMessage = $validated['custom_message_email']
+                    ?? NotificationService::generateDefaultMessage($submission, 'email');
+                NotificationService::sendEmail($submission, $emailMessage);
+            }
+
+            if ($sendWhatsApp) {
+                $waMessage = $validated['custom_message_whatsapp']
+                    ?? NotificationService::generateDefaultMessage($submission, 'whatsapp');
+                NotificationService::sendWhatsApp($submission, $waMessage);
+            }
+
             $message = $validated['keputusan'] === PengajuanKerjasamaMitra::STATUS_DISETUJUI
                 ? 'Pengajuan mitra berhasil disetujui dan dicatat ke master mitra.'
                 : 'Pengajuan mitra berhasil ditolak.';
+
+            // Tambahkan info notifikasi ke flash message
+            $notifInfo = [];
+            if ($sendEmail) $notifInfo[] = 'Email';
+            if ($sendWhatsApp) $notifInfo[] = 'WhatsApp';
+
+            if (count($notifInfo) > 0) {
+                $message .= ' Notifikasi dikirim via ' . implode(' & ', $notifInfo) . '.';
+            }
 
             return redirect()->route('pimpinan.pengajuan_mitra')->with('success', $message);
         } catch (\Exception $exception) {
             DB::rollBack();
 
+            Log::error('PengajuanMitra review error: ' . $exception->getMessage(), [
+                'submission_id' => $id,
+                'trace' => $exception->getTraceAsString(),
+            ]);
+
             return back()->with('error', 'Gagal memproses pengajuan mitra: ' . $exception->getMessage());
         }
     }
 }
+

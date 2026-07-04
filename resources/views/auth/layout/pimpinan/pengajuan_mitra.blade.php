@@ -109,6 +109,11 @@
                 <article class="submission-card"
                     data-submission-card
                     data-category="{{ strtolower($submission->kategori) }}"
+                    data-mitra-name="{{ $submission->nama_mitra }}"
+                    data-mitra-email="{{ $submission->email }}"
+                    data-mitra-phone="{{ $submission->telepon }}"
+                    data-submission-code="{{ $submission->kode_pengajuan }}"
+                    data-submission-title="{{ $submission->judul_pengajuan }}"
                     data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->jabatan_penandatangan ?? '') . ' ' . ($submission->nama_penanggung_jawab ?? '') . ' ' . ($submission->jabatan_penanggung_jawab ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telepon ?? '')) }}">
                     <div class="submission-card-head">
                         <div class="submission-card-title">
@@ -311,6 +316,89 @@
             @endif
         </div>
     </section>
+
+    {{-- Modal Konfirmasi Notifikasi --}}
+    <div id="notifConfirmModal" class="notif-modal-overlay" hidden>
+        <div class="notif-modal" role="dialog" aria-modal="true" aria-labelledby="notifModalTitle">
+            <div class="notif-modal-header" id="notifModalHeader">
+                <div class="notif-modal-icon" id="notifModalIcon">
+                    <i class="fas fa-circle-check"></i>
+                </div>
+                <h3 id="notifModalTitle">Konfirmasi Keputusan</h3>
+                <p id="notifModalSubtitle" class="notif-modal-subtitle"></p>
+            </div>
+
+            <div class="notif-modal-body">
+                {{-- Info penerima --}}
+                <div class="notif-recipient-info">
+                    <div class="notif-recipient-row">
+                        <i class="fas fa-building"></i>
+                        <span id="notifMitraName">—</span>
+                    </div>
+                    <div class="notif-recipient-row">
+                        <i class="fas fa-envelope"></i>
+                        <span id="notifMitraEmail">—</span>
+                    </div>
+                    <div class="notif-recipient-row">
+                        <i class="fab fa-whatsapp"></i>
+                        <span id="notifMitraPhone">—</span>
+                    </div>
+                </div>
+
+                {{-- Channel toggles --}}
+                <div class="notif-channels">
+                    <span class="notif-channels-label">Kirim notifikasi via:</span>
+                    <div class="notif-channel-toggles">
+                        <label class="notif-toggle" for="notifToggleEmail">
+                            <input type="checkbox" id="notifToggleEmail" checked>
+                            <span class="notif-toggle-track">
+                                <span class="notif-toggle-thumb"></span>
+                            </span>
+                            <span class="notif-toggle-label"><i class="fas fa-envelope"></i> Email</span>
+                        </label>
+                        <label class="notif-toggle" for="notifToggleWa">
+                            <input type="checkbox" id="notifToggleWa" checked>
+                            <span class="notif-toggle-track">
+                                <span class="notif-toggle-thumb"></span>
+                            </span>
+                            <span class="notif-toggle-label"><i class="fab fa-whatsapp"></i> WhatsApp</span>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Tab switch email / whatsapp --}}
+                <div class="notif-preview-tabs">
+                    <button type="button" class="notif-tab active" data-notif-tab="email">
+                        <i class="fas fa-envelope"></i> Preview Email
+                    </button>
+                    <button type="button" class="notif-tab" data-notif-tab="whatsapp">
+                        <i class="fab fa-whatsapp"></i> Preview WhatsApp
+                    </button>
+                </div>
+
+                <div class="notif-preview-area" id="notifPreviewEmail">
+                    <label for="notifMessageEmail" class="notif-preview-label">Isi pesan email (dapat diedit):</label>
+                    <textarea id="notifMessageEmail" class="notif-preview-textarea" rows="6"></textarea>
+                </div>
+
+                <div class="notif-preview-area" id="notifPreviewWa" hidden>
+                    <label for="notifMessageWa" class="notif-preview-label">Isi pesan WhatsApp (dapat diedit):</label>
+                    <textarea id="notifMessageWa" class="notif-preview-textarea" rows="6"></textarea>
+                </div>
+            </div>
+
+            <div class="notif-modal-footer">
+                <button type="button" class="notif-btn-cancel" id="notifBtnCancel">
+                    <i class="fas fa-xmark"></i> Batal
+                </button>
+                <button type="button" class="notif-btn-confirm" id="notifBtnConfirm">
+                    <i class="fas fa-paper-plane"></i>
+                    <span id="notifBtnConfirmText">Konfirmasi & Kirim</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </main>
+
 
 <script src="{{ asset('js/auth/pimpinan/pmitra.js') }}"></script>
