@@ -139,6 +139,12 @@ class PublicPengajuanKerjasamaController extends Controller
 
             // Ruang lingkup
             $ruangLingkup = $latestSubmission->ruang_lingkup ?? '';
+            if (empty($ruangLingkup) && $latestCoop) {
+                $firstDetail = $latestCoop->details()->with('jenisKerjasama')->first();
+                if ($firstDetail && $firstDetail->jenisKerjasama) {
+                    $ruangLingkup = $firstDetail->jenisKerjasama->nama_kerjasama;
+                }
+            }
 
             // Doc number
             $docNumber = $latestCoop->doc_number ?? $latestSubmission->doc_number ?? '';

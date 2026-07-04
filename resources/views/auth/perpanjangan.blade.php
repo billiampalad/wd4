@@ -616,7 +616,7 @@
                                     </div>
 
                                     <div class="partner-field partner-field-full">
-                                        <label for="ruang_lingkup">Ruang Lingkup Lanjutan <span class="partner-required">*</span></label>
+                                        <label for="ruang_lingkup">Ruang Lingkup<span class="partner-required">*</span></label>
                                         <div class="partner-alpine-select" x-data="partnerSelect('Pilih ruang lingkup kegiatan')" x-init="init($refs.native)" @click.outside="close()">
                                             <select x-ref="native" id="ruang_lingkup" name="ruang_lingkup" class="partner-native-select" required>
                                                 <option value="">Pilih ruang lingkup kegiatan</option>
@@ -1050,13 +1050,27 @@
                         }
                     }
 
-                    // Auto-select Ruang Lingkup if matching option exists
+                    // Auto-select Ruang Lingkup if matching option exists (Smart Matching)
                     const ruangLingkupSelect = document.getElementById('ruang_lingkup');
                     if (ruangLingkupSelect && data.ruang_lingkup) {
-                        const optionExists = Array.from(ruangLingkupSelect.options).some(opt => opt.value === data.ruang_lingkup);
-                        if (optionExists) {
-                            ruangLingkupSelect.value = data.ruang_lingkup;
+                        const targetVal = data.ruang_lingkup.trim().toLowerCase();
+                        const matchingOption = Array.from(ruangLingkupSelect.options).find(opt => {
+                            const optVal = opt.value.trim().toLowerCase();
+                            return optVal && (optVal === targetVal || optVal.includes(targetVal) || targetVal.includes(optVal));
+                        });
+
+                        if (matchingOption) {
+                            ruangLingkupSelect.value = matchingOption.value;
                             ruangLingkupSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+                            // Sync Alpine.js component UI state if present
+                            const alpineWrapper = ruangLingkupSelect.closest('.partner-alpine-select');
+                            if (alpineWrapper && alpineWrapper._x_dataStack) {
+                                const alpineData = alpineWrapper._x_dataStack[0];
+                                if (alpineData && typeof alpineData.syncFromNative === 'function') {
+                                    alpineData.syncFromNative();
+                                }
+                            }
                             filledStep3 = true;
                         }
                     }
