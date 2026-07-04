@@ -437,6 +437,11 @@
 
                         <div class="partner-form-grid">
                             <div class="partner-form-section is-flat">
+                                <div id="autofillNoticeStep3" style="display: none; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; color: #059669; font-size: 12px; font-weight: 600; margin-bottom: 16px;">
+                                    <i class="fas fa-magic"></i>
+                                    <span>Judul dan ruang lingkup rencana perpanjangan telah diisi otomatis berdasarkan data kerja sama sebelumnya.</span>
+                                </div>
+
                                 <div class="partner-fields">
                                     {{-- Periode Kerjasama --}}
                                     <div class="periode-kerjasama-section">
@@ -1005,41 +1010,62 @@
             });
         });
 
-        // ── Auto-fill Mitra Contact Info ──
+        // ── Auto-fill Mitra Contact Info & Plan ──
         const mitraContactMap = @json($mitraContactMap ?? []);
         const mitraSelect = document.getElementById('mitra_id');
         if (mitraSelect) {
             mitraSelect.addEventListener('change', function() {
                 const autofillNotice = document.getElementById('autofillNotice');
+                const autofillNoticeStep3 = document.getElementById('autofillNoticeStep3');
                 const mitraId = this.value;
 
                 if (mitraId && mitraContactMap[mitraId]) {
-                    const contact = mitraContactMap[mitraId];
+                    const data = mitraContactMap[mitraId];
 
-                    // Only fill fields that are currently empty (don't overwrite user edits)
                     const fields = {
-                        'nama_penandatangan': contact.nama_penandatangan,
-                        'jabatan_penandatangan': contact.jabatan_penandatangan,
-                        'nama_penanggung_jawab': contact.nama_penanggung_jawab,
-                        'jabatan_penanggung_jawab': contact.jabatan_penanggung_jawab,
+                        'doc_number': data.doc_number,
+                        'nama_penandatangan': data.nama_penandatangan,
+                        'jabatan_penandatangan': data.jabatan_penandatangan,
+                        'nama_penanggung_jawab': data.nama_penanggung_jawab,
+                        'jabatan_penanggung_jawab': data.jabatan_penanggung_jawab,
+                        'judul_pengajuan': data.judul_pengajuan,
                     };
 
-                    let filled = false;
+                    let filledStep2 = false;
+                    let filledStep3 = false;
+
                     for (const [fieldId, value] of Object.entries(fields)) {
                         const el = document.getElementById(fieldId);
-                        if (el && !el.value.trim() && value) {
+                        if (el && value) {
                             el.value = value;
-                            // Trigger input event for error cleanup
                             el.dispatchEvent(new Event('input', { bubbles: true }));
-                            filled = true;
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+
+                            if (['nama_penandatangan', 'jabatan_penandatangan', 'nama_penanggung_jawab', 'jabatan_penanggung_jawab'].includes(fieldId)) {
+                                filledStep2 = true;
+                            }
+                            if (fieldId === 'judul_pengajuan') {
+                                filledStep3 = true;
+                            }
                         }
                     }
 
-                    if (autofillNotice && filled) {
-                        autofillNotice.style.display = 'flex';
+                    // Auto-select Ruang Lingkup if matching option exists
+                    const ruangLingkupSelect = document.getElementById('ruang_lingkup');
+                    if (ruangLingkupSelect && data.ruang_lingkup) {
+                        const optionExists = Array.from(ruangLingkupSelect.options).some(opt => opt.value === data.ruang_lingkup);
+                        if (optionExists) {
+                            ruangLingkupSelect.value = data.ruang_lingkup;
+                            ruangLingkupSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                            filledStep3 = true;
+                        }
                     }
+
+                    if (autofillNotice && filledStep2) autofillNotice.style.display = 'flex';
+                    if (autofillNoticeStep3 && filledStep3) autofillNoticeStep3.style.display = 'flex';
                 } else {
                     if (autofillNotice) autofillNotice.style.display = 'none';
+                    if (autofillNoticeStep3) autofillNoticeStep3.style.display = 'none';
                 }
             });
         }

@@ -111,7 +111,7 @@ class PublicPengajuanKerjasamaController extends Controller
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
-        // Build contact map from latest cooperation per mitra
+        // Build contact and plan map from latest cooperation & submission per mitra
         $mitraContactMap = [];
         foreach ($mitras as $mitra) {
             $latestCoop = Cooperation::where('mitra_id', $mitra->id)
@@ -119,14 +119,39 @@ class PublicPengajuanKerjasamaController extends Controller
                 ->latest('id')
                 ->first();
 
-            if ($latestCoop) {
-                $mitraContactMap[$mitra->id] = [
-                    'nama_penandatangan'       => $latestCoop->penandatanganMitra->nama ?? '',
-                    'jabatan_penandatangan'    => $latestCoop->penandatanganMitra->jabatan ?? '',
-                    'nama_penanggung_jawab'    => $latestCoop->pjMitra->nama ?? '',
-                    'jabatan_penanggung_jawab' => $latestCoop->pjMitra->jabatan ?? '',
-                ];
+            $latestSubmission = PengajuanKerjasamaMitra::where('mitra_id', $mitra->id)
+                ->latest('id')
+                ->first();
+
+            // Default title
+            $title = '';
+            if ($latestSubmission && ! empty($latestSubmission->judul_pengajuan)) {
+                $title = str_starts_with(strtolower($latestSubmission->judul_pengajuan), 'perpanjangan')
+                    ? $latestSubmission->judul_pengajuan
+                    : 'Perpanjangan ' . $latestSubmission->judul_pengajuan;
+            } elseif ($latestCoop && ! empty($latestCoop->title)) {
+                $title = str_starts_with(strtolower($latestCoop->title), 'perpanjangan')
+                    ? $latestCoop->title
+                    : 'Perpanjangan ' . $latestCoop->title;
+            } else {
+                $title = 'Perpanjangan Kerja Sama - ' . $mitra->nama_mitra;
             }
+
+            // Ruang lingkup
+            $ruangLingkup = $latestSubmission->ruang_lingkup ?? '';
+
+            // Doc number
+            $docNumber = $latestCoop->doc_number ?? $latestSubmission->doc_number ?? '';
+
+            $mitraContactMap[$mitra->id] = [
+                'doc_number'               => $docNumber,
+                'nama_penandatangan'       => $latestCoop->penandatanganMitra->nama ?? $latestSubmission->nama_penandatangan ?? '',
+                'jabatan_penandatangan'    => $latestCoop->penandatanganMitra->jabatan ?? $latestSubmission->jabatan_penandatangan ?? '',
+                'nama_penanggung_jawab'    => $latestCoop->pjMitra->nama ?? $latestSubmission->nama_penanggung_jawab ?? '',
+                'jabatan_penanggung_jawab' => $latestCoop->pjMitra->jabatan ?? $latestSubmission->jabatan_penanggung_jawab ?? '',
+                'judul_pengajuan'          => $title,
+                'ruang_lingkup'            => $ruangLingkup,
+            ];
         }
 
         return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas', 'mitraContactMap'));
