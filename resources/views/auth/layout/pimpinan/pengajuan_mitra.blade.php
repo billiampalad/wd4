@@ -275,7 +275,10 @@
                                     data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
                                     data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
                                     data-catatan-pimpinan="{{ $submission->catatan_pimpinan ?: '' }}"
-                                    data-status-label="{{ $submission->status_label }}" data-status-class="{{ $statusClass }}">
+                                    data-status="{{ $submission->status }}"
+                                    data-status-label="{{ $submission->status_label }}"
+                                    data-status-class="{{ $statusClass }}"
+                                    data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}">
                                     <td class="um-td um-td-num">
                                         <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     </td>
@@ -302,10 +305,16 @@
                                         </small>
                                     </td>
                                     <td class="um-td um-td-aksi text-center">
-                                        <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
-                                            title="Lihat Detail History">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <div class="sub-action-group">
+                                            <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
+                                                title="Lihat Detail History">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="sub-action-btn btn-send-notif" data-action="send-notif-history"
+                                                title="Kirim Notifikasi Email &amp; WhatsApp">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

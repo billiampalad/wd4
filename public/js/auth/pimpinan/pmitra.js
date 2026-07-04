@@ -238,17 +238,24 @@
             pendingNote = note;
             const ds = row.dataset;
             const isApproved = decision === 'disetujui';
+            const isHistory = row.classList.contains('submission-history-row');
 
             notifHeader.className = 'notif-modal-header ' + (isApproved ? 'is-approved' : 'is-rejected');
             notifIcon.innerHTML = isApproved
                 ? '<i class="fas fa-circle-check"></i>'
                 : '<i class="fas fa-circle-xmark"></i>';
-            notifTitle.textContent = isApproved
-                ? `Setujui Pengajuan dari ${ds.mitraName}?`
-                : `Tolak Pengajuan dari ${ds.mitraName}?`;
-            notifSubtitle.textContent = isApproved
-                ? 'Data mitra akan disimpan ke master mitra dan notifikasi terkirim.'
-                : 'Pengajuan akan ditolak dan mitra akan diberitahu.';
+
+            if (isHistory) {
+                notifTitle.textContent = `Kirim Notifikasi ke ${ds.mitraName}`;
+                notifSubtitle.textContent = `Kirim notifikasi status (${isApproved ? 'Disetujui' : 'Ditolak'}) via Email atau WhatsApp.`;
+            } else {
+                notifTitle.textContent = isApproved
+                    ? `Setujui Pengajuan dari ${ds.mitraName}?`
+                    : `Tolak Pengajuan dari ${ds.mitraName}?`;
+                notifSubtitle.textContent = isApproved
+                    ? 'Data mitra akan disimpan ke master mitra dan notifikasi terkirim.'
+                    : 'Pengajuan akan ditolak dan mitra akan diberitahu.';
+            }
 
             notifMitraName.textContent = ds.mitraName || '—';
             notifMitraEmail.textContent = ds.mitraEmail || 'Tidak tersedia';
@@ -279,9 +286,13 @@
             previewWa.hidden = true;
 
             btnConfirmNotif.className = 'notif-btn-confirm ' + (isApproved ? 'is-approved' : 'is-rejected');
-            btnConfirmText.textContent = isApproved
-                ? 'Setujui & Kirim Notifikasi'
-                : 'Tolak & Kirim Notifikasi';
+            if (isHistory) {
+                btnConfirmText.textContent = 'Kirim Notifikasi';
+            } else {
+                btnConfirmText.textContent = isApproved
+                    ? 'Setujui & Kirim Notifikasi'
+                    : 'Tolak & Kirim Notifikasi';
+            }
 
             notifModal.hidden = false;
             requestAnimationFrame(() => notifModal.classList.add('is-visible'));
@@ -342,6 +353,14 @@
 
             if (action === 'detail' || action === 'detail-history') {
                 if (row) openDetailModal(row);
+                return;
+            }
+
+            if (action === 'send-notif-history') {
+                if (!row) return;
+                const decision = row.dataset.status || (row.dataset.statusClass === 'approved' ? 'disetujui' : 'ditolak');
+                const note = row.dataset.catatanPimpinan || '';
+                openNotifModal(row, decision, note);
                 return;
             }
 

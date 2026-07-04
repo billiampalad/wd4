@@ -51,23 +51,30 @@ class NotificationService
             return;
         }
 
-        // Normalisasi nomor (hapus spasi/dash, pastikan format internasional)
-        $phone = preg_replace('/[\s\-\(\)]/', '', $phone);
+        // Normalisasi nomor telepon ke angka murni format 628xxx
+        $phone = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($phone, '08')) {
+            $phone = '62' . substr($phone, 1);
+        } elseif (str_starts_with($phone, '0')) {
             $phone = '62' . substr($phone, 1);
         }
 
         try {
-            $response = Http::withToken($token)
-                ->post('https://api.fonnte.com/send', [
-                    'target'  => $phone,
-                    'message' => $customMessage,
-                ]);
+            // Fonnte API membutuhkan header 'Authorization: <token>' tanpa prefix 'Bearer'
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+            ])->post('https://api.fonnte.com/send', [
+                'target'  => $phone,
+                'message' => $customMessage,
+            ]);
 
-            if ($response->successful()) {
+            $result = $response->json();
+
+            if ($response->successful() && is_array($result) && isset($result['status']) && $result['status'] === true) {
                 Log::info("NotificationService: WhatsApp berhasil dikirim ke {$phone} untuk pengajuan #{$submission->id}");
             } else {
-                Log::error("NotificationService: WhatsApp gagal — Response: {$response->body()}");
+                $reason = is_array($result) && isset($result['reason']) ? $result['reason'] : $response->body();
+                Log::error("NotificationService: WhatsApp gagal dikirim ke {$phone} — Alasan Fonnte: {$reason}");
             }
         } catch (\Exception $e) {
             Log::error("NotificationService: Gagal mengirim WhatsApp ke {$phone} — {$e->getMessage()}");

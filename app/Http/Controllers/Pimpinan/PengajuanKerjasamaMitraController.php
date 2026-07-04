@@ -58,6 +58,36 @@ class PengajuanKerjasamaMitraController extends Controller
         $submission = PengajuanKerjasamaMitra::findOrFail($id);
 
         if ($submission->status !== PengajuanKerjasamaMitra::STATUS_DIAJUKAN) {
+            $sendEmail = $request->boolean('send_email');
+            $sendWhatsApp = $request->boolean('send_whatsapp');
+
+            if ($sendEmail || $sendWhatsApp) {
+                $validated = $request->validate([
+                    'send_email' => ['nullable'],
+                    'send_whatsapp' => ['nullable'],
+                    'custom_message_email' => ['nullable', 'string', 'max:5000'],
+                    'custom_message_whatsapp' => ['nullable', 'string', 'max:5000'],
+                ]);
+
+                $notifInfo = [];
+                if ($sendEmail) {
+                    $emailMessage = $validated['custom_message_email']
+                        ?? NotificationService::generateDefaultMessage($submission, 'email');
+                    NotificationService::sendEmail($submission, $emailMessage);
+                    $notifInfo[] = 'Email';
+                }
+
+                if ($sendWhatsApp) {
+                    $waMessage = $validated['custom_message_whatsapp']
+                        ?? NotificationService::generateDefaultMessage($submission, 'whatsapp');
+                    NotificationService::sendWhatsApp($submission, $waMessage);
+                    $notifInfo[] = 'WhatsApp';
+                }
+
+                $resendMsg = 'Notifikasi berhasil dikirim ulang ke mitra via ' . implode(' & ', $notifInfo) . '.';
+                return redirect()->route('pimpinan.pengajuan_mitra')->with('success', $resendMsg);
+            }
+
             return back()->with('error', 'Pengajuan ini sudah diproses sebelumnya.');
         }
 
