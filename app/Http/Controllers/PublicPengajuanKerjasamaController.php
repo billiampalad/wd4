@@ -180,7 +180,12 @@ class PublicPengajuanKerjasamaController extends Controller
             'tujuan_pengajuan' => ['required', 'string'],
             'ruang_lingkup' => ['required', 'string'],
             'pesan_tambahan' => ['nullable', 'string'],
+            'file_surat' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
         ]);
+
+        if ($request->hasFile('file_surat')) {
+            $validated['file_surat'] = $request->file('file_surat')->store('surat_permohonan', 'public');
+        }
 
         $mitra = Mitra::findOrFail($validated['mitra_id']);
 

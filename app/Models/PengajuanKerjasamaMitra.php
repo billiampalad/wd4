@@ -44,6 +44,7 @@ class PengajuanKerjasamaMitra extends Model
         'doc_number',
         'start_date',
         'end_date',
+        'file_surat',
     ];
 
     protected $appends = [

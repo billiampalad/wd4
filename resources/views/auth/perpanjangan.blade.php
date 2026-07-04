@@ -168,7 +168,7 @@
                 </div>
 
                 <!-- Form Wizard -->
-                <form action="{{ route('pengajuan.perpanjangan.store') }}" method="POST" id="wizardForm">
+                <form action="{{ route('pengajuan.perpanjangan.store') }}" method="POST" id="wizardForm" enctype="multipart/form-data">
                     @csrf
 
                     <!-- ═══ STEP 1: Identitas Mitra Terdaftar ═══ -->
@@ -878,6 +878,107 @@
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
+
+                                    {{-- Upload Surat Permohonan Perpanjangan --}}
+                                    <div class="partner-field partner-field-full" x-data="fileUploadHandler()" style="margin-top: 10px;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="file_surat" style="margin: 0; font-size: 12px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 4px;">
+                                                <span>Surat Permohonan Perpanjangan</span>
+                                                <span class="partner-required">*</span>
+                                            </label>
+
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Upload Surat Permohonan"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Dokumen Lampiran</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Unggah surat permohonan perpanjangan resmi dari instansi/lembaga Anda (format PDF, DOC, atau DOCX).
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Modern Drag & Drop Zone --}}
+                                        <div class="partner-upload-box" 
+                                            :style="'position: relative; border: 2px dashed ' + (isDragging ? 'var(--accent, #4f46e5)' : 'var(--border, #cbd5e1)') + '; border-radius: 16px; padding: ' + (hasFile ? '14px 16px' : '26px 20px') + '; text-align: center; background: ' + (isDragging ? 'rgba(79, 70, 229, 0.04)' : 'var(--surface2, #f8fafc)') + '; cursor: pointer; transition: all 0.25s ease; width: 100%; min-height: 100px; display: flex; align-items: center; justify-content: center;'"
+                                            @dragover.prevent="isDragging = true"
+                                            @dragleave.prevent="isDragging = false"
+                                            @drop.prevent="handleDrop($event)"
+                                            @click="$refs.fileInput.click()">
+
+                                            <input type="file" x-ref="fileInput" id="file_surat" name="file_surat" accept=".pdf,.doc,.docx" required style="display: none;" @change="handleFileSelect($event)">
+
+                                            {{-- State 1: Default / Dragging Dropzone --}}
+                                            <template x-if="!hasFile">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;">
+                                                    <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(79, 70, 229, 0.1); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.3s;" :style="isDragging ? 'transform: scale(1.1); background: var(--accent, #4f46e5); color: #ffffff;' : ''">
+                                                        <i class="fas" :class="isDragging ? 'fa-file-circle-check' : 'fa-cloud-arrow-up'"></i>
+                                                    </div>
+                                                    <div>
+                                                        <span style="font-size: 13px; font-weight: 700; color: var(--text); display: block; margin-bottom: 3px;">
+                                                            Tarik & lepas berkas di sini, atau <span style="color: var(--accent, #4f46e5); text-decoration: underline; text-underline-offset: 3px;">Pilih Berkas</span>
+                                                        </span>
+                                                        <span style="font-size: 11px; color: var(--text-sub); font-weight: 500;">
+                                                            Format: <strong style="color: var(--text);">PDF, DOC, DOCX</strong> &middot; Maksimal <strong>5MB</strong>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            {{-- State 2: Selected File Preview Card --}}
+                                            <template x-if="hasFile">
+                                                <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);" @click.stop>
+                                                    <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                                                        <div :style="'width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; background: ' + (fileExt === 'pdf' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(59, 130, 246, 0.12)') + '; color: ' + (fileExt === 'pdf' ? '#ef4444' : '#3b82f6') + ';'">
+                                                            <i class="fas" :class="fileExt === 'pdf' ? 'fa-file-pdf' : 'fa-file-word'"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; text-align: left; min-width: 0;">
+                                                            <span x-text="fileName" style="font-size: 12.5px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px;"></span>
+                                                            <div style="display: flex; align-items: center; gap: 8px; margin-top: 1px;">
+                                                                <span x-text="fileSize" style="font-size: 10.5px; color: var(--text-sub); font-weight: 500;"></span>
+                                                                <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: #059669; background: rgba(16, 185, 129, 0.12); padding: 1px 7px; border-radius: 99px;">
+                                                                    <i class="fas fa-check-circle" style="font-size: 8.5px;"></i> Berkas Siap
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="button" @click="resetFile()" title="Hapus Berkas" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.color='#ef4444';">
+                                                        <i class="fas fa-trash-can" style="font-size: 11px;"></i>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        @error('file_surat')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -969,6 +1070,10 @@
                                     <div class="partner-review-item partner-review-value-full">
                                         <span class="partner-review-label">Ruang Lingkup</span>
                                         <span class="partner-review-value" id="rev_ruang_lingkup">-</span>
+                                    </div>
+                                    <div class="partner-review-item partner-review-value-full">
+                                        <span class="partner-review-label">Surat Permohonan</span>
+                                        <span class="partner-review-value" id="rev_file_surat">Tidak ada berkas diunggah</span>
                                     </div>
                                 </div>
                             </div>
@@ -1450,6 +1555,100 @@
             document.getElementById('rev_judul_pengajuan').innerText = getVal('judul_pengajuan');
             document.getElementById('rev_tujuan_pengajuan').innerText = getVal('tujuan_pengajuan');
             document.getElementById('rev_ruang_lingkup').innerText = getSelectText('ruang_lingkup');
+
+            const fileInput = document.getElementById('file_surat');
+            const revFile = document.getElementById('rev_file_surat');
+            if (revFile) {
+                revFile.innerText = (fileInput && fileInput.files && fileInput.files[0]) 
+                    ? fileInput.files[0].name 
+                    : 'Tidak ada berkas diunggah';
+            }
+        }
+
+        function fileUploadHandler() {
+            return {
+                showInfo: false,
+                isDragging: false,
+                hasFile: false,
+                fileName: '',
+                fileSize: '',
+                fileExt: '',
+                handleFileSelect(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.processFile(file);
+                    }
+                },
+                handleDrop(event) {
+                    this.isDragging = false;
+                    const file = event.dataTransfer.files[0];
+                    if (file) {
+                        if (this.$refs.fileInput) {
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            this.$refs.fileInput.files = dataTransfer.files;
+                        }
+                        this.processFile(file);
+                    }
+                },
+                processFile(file) {
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    if (!['pdf', 'doc', 'docx'].includes(ext)) {
+                        const isDark = document.documentElement.dataset.theme === 'dark';
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Format Tidak Didukung',
+                                text: 'Harap unggah berkas dengan format PDF, DOC, atau DOCX.',
+                                confirmButtonColor: '#4f46e5',
+                                background: isDark ? '#1e293b' : '#ffffff',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                            });
+                        } else {
+                            alert('Format berkas tidak didukung! Harap unggah berkas PDF, DOC, atau DOCX.');
+                        }
+                        this.resetFile();
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        const isDark = document.documentElement.dataset.theme === 'dark';
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Ukuran Berkas Terlalu Besar',
+                                text: 'Ukuran berkas maksimal adalah 5MB.',
+                                confirmButtonColor: '#4f46e5',
+                                background: isDark ? '#1e293b' : '#ffffff',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                            });
+                        } else {
+                            alert('Ukuran berkas terlalu besar! Maksimal 5MB.');
+                        }
+                        this.resetFile();
+                        return;
+                    }
+
+                    this.fileName = file.name;
+                    this.fileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+                    this.fileExt = ext;
+                    this.hasFile = true;
+
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                },
+                resetFile() {
+                    this.hasFile = false;
+                    this.fileName = '';
+                    this.fileSize = '';
+                    this.fileExt = '';
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                        this.$refs.fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            };
         }
 
         function updateWizardUI() {
