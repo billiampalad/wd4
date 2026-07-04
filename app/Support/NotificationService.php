@@ -65,20 +65,28 @@ class NotificationService
         }
 
         try {
-            // Fonnte API membutuhkan header 'Authorization: <token>' tanpa prefix 'Bearer'
+            // Fonnte API membutuhkan header 'Authorization: <token>' dan payload format x-www-form-urlencoded (asForm)
             $response = Http::withHeaders([
                 'Authorization' => $token,
-            ])->post('https://api.fonnte.com/send', [
-                'target'  => $phone,
-                'message' => $customMessage,
-            ]);
+            ])->asForm()
+              ->withOptions([
+                  'connect_timeout' => 15,
+                  'timeout' => 30,
+                  'curl' => [
+                      CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                      CURLOPT_SSL_VERIFYPEER => false,
+                  ],
+              ])->post('https://api.fonnte.com/send', [
+                  'target'  => $phone,
+                  'message' => $customMessage,
+              ]);
 
             $result = $response->json();
 
             if ($response->successful() && is_array($result) && isset($result['status']) && $result['status'] === true) {
                 Log::info("NotificationService: WhatsApp berhasil dikirim ke {$phone} untuk pengajuan #{$submission->id}");
             } else {
-                $reason = is_array($result) && isset($result['reason']) ? $result['reason'] : $response->body();
+                $reason = is_array($result) && isset($result['reason']) ? $result['reason'] : ($result['detail'] ?? $response->body());
                 Log::error("NotificationService: WhatsApp gagal dikirim ke {$phone} — Alasan Fonnte: {$reason}");
             }
         } catch (\Exception $e) {
@@ -96,32 +104,38 @@ class NotificationService
         $catatan = $submission->catatan_pimpinan;
 
         if ($channel === 'whatsapp') {
+            $systemUrl = 'https://kerjasamapolimdo.org/';
             return $isApproved
                 ? "Halo *{$submission->nama_mitra}*,\n\n"
                   . "Kami dari *{$namaInstitusi}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *{$submission->kode_pengajuan}* — _{$submission->judul_pengajuan}_ telah *DISETUJUI*. ✅\n\n"
                   . ($catatan ? "Catatan: _{$catatan}_\n\n" : '')
                   . "Terima kasih atas minat dan kepercayaan Anda. Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\n"
+                  . "Informasi selengkapnya dapat diakses melalui portal resmi kami:\n{$systemUrl}\n\n"
                   . "Salam hangat,\n{$namaInstitusi}"
 
                 : "Halo *{$submission->nama_mitra}*,\n\n"
                   . "Kami dari *{$namaInstitusi}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *{$submission->kode_pengajuan}* — _{$submission->judul_pengajuan}_ saat ini *belum dapat kami setujui*. ❌\n\n"
                   . ($catatan ? "Catatan dari pimpinan: _{$catatan}_\n\n" : '')
                   . "Kami tetap menghargai minat Anda. Jangan ragu untuk mengajukan kembali di kemudian hari.\n\n"
+                  . "Informasi selengkapnya dapat diakses melalui portal resmi kami:\n{$systemUrl}\n\n"
                   . "Salam hangat,\n{$namaInstitusi}";
         }
 
         // Email: plain-text version (HTML dihandle oleh Mailable template)
+        $systemUrl = 'https://kerjasamapolimdo.org/';
         return $isApproved
             ? "Yth. {$submission->nama_mitra},\n\n"
               . "Dengan hormat, kami dari {$namaInstitusi} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode {$submission->kode_pengajuan} — \"{$submission->judul_pengajuan}\" telah DISETUJUI.\n\n"
               . ($catatan ? "Catatan: {$catatan}\n\n" : '')
               . "Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\n"
+              . "Informasi selengkapnya dapat diakses melalui portal resmi kami:\n{$systemUrl}\n\n"
               . "Hormat kami,\n{$namaInstitusi}"
 
             : "Yth. {$submission->nama_mitra},\n\n"
               . "Dengan hormat, kami dari {$namaInstitusi} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode {$submission->kode_pengajuan} — \"{$submission->judul_pengajuan}\" saat ini belum dapat kami setujui.\n\n"
               . ($catatan ? "Catatan dari pimpinan: {$catatan}\n\n" : '')
               . "Kami tetap menghargai minat Anda dan berharap dapat bekerja sama di kesempatan mendatang.\n\n"
+              . "Informasi selengkapnya dapat diakses melalui portal resmi kami:\n{$systemUrl}\n\n"
               . "Hormat kami,\n{$namaInstitusi}";
     }
 }

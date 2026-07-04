@@ -318,7 +318,7 @@
                                     <div class="partner-field">
                                         <label for="telp">Nomor HP/WA <span class="partner-required">*</span></label>
                                         <input id="telp" type="text" name="telp" value="{{ old('telp') }}"
-                                            placeholder="Masukkan nomor HP/WA yang aktif" required>
+                                            placeholder="Contoh: 081234567896" required>
                                         @error('telp')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror

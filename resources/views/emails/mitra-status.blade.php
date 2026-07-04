@@ -89,12 +89,21 @@
                                     <p style="margin:0; color:#334155; font-size:14px; line-height:1.7;">{{ $submission->catatan_pimpinan }}</p>
                                 </div>
                             @endif
+                            {{-- Button Link --}}
+                            <div style="text-align:center; margin:28px 0 12px;">
+                                <a href="https://kerjasamapolimdo.org/" target="_blank" style="display:inline-block; padding:12px 28px; background:linear-gradient(135deg,#0284c7,#0369a1); color:#ffffff; text-decoration:none; font-size:14px; font-weight:700; border-radius:999px; box-shadow:0 4px 14px rgba(2,132,199,0.3);">
+                                    Kunjungi Portal Resmi Kerjasama
+                                </a>
+                            </div>
                         </td>
                     </tr>
 
                     {{-- Footer --}}
                     <tr>
                         <td style="padding:20px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; text-align:center;">
+                            <p style="margin:0 0 6px; color:#475569; font-size:12px; font-weight:600;">
+                                Portal Resmi: <a href="https://kerjasamapolimdo.org/" target="_blank" style="color:#0284c7; text-decoration:none;">https://kerjasamapolimdo.org/</a>
+                            </p>
                             <p style="margin:0; color:#94a3b8; font-size:12px; line-height:1.6;">
                                 Email ini dikirim secara otomatis oleh sistem {{ config('app.name', 'Institusi Kami') }}.<br>
                                 Mohon jangan membalas email ini.
