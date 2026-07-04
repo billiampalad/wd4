@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Klasifikasi;
+use App\Models\Cooperation;
 use App\Models\JenisKerjasama;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
@@ -110,7 +111,25 @@ class PublicPengajuanKerjasamaController extends Controller
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
-        return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas'));
+        // Build contact map from latest cooperation per mitra
+        $mitraContactMap = [];
+        foreach ($mitras as $mitra) {
+            $latestCoop = Cooperation::where('mitra_id', $mitra->id)
+                ->with(['penandatanganMitra', 'pjMitra'])
+                ->latest('id')
+                ->first();
+
+            if ($latestCoop) {
+                $mitraContactMap[$mitra->id] = [
+                    'nama_penandatangan'       => $latestCoop->penandatanganMitra->nama ?? '',
+                    'jabatan_penandatangan'    => $latestCoop->penandatanganMitra->jabatan ?? '',
+                    'nama_penanggung_jawab'    => $latestCoop->pjMitra->nama ?? '',
+                    'jabatan_penanggung_jawab' => $latestCoop->pjMitra->jabatan ?? '',
+                ];
+            }
+        }
+
+        return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas', 'mitraContactMap'));
     }
 
     public function storePerpanjangan(Request $request)

@@ -1006,12 +1006,38 @@
         });
 
         // ── Auto-fill Mitra Contact Info ──
+        const mitraContactMap = @json($mitraContactMap ?? []);
         const mitraSelect = document.getElementById('mitra_id');
         if (mitraSelect) {
             mitraSelect.addEventListener('change', function() {
                 const autofillNotice = document.getElementById('autofillNotice');
-                if (this.value) {
-                    if (autofillNotice) autofillNotice.style.display = 'flex';
+                const mitraId = this.value;
+
+                if (mitraId && mitraContactMap[mitraId]) {
+                    const contact = mitraContactMap[mitraId];
+
+                    // Only fill fields that are currently empty (don't overwrite user edits)
+                    const fields = {
+                        'nama_penandatangan': contact.nama_penandatangan,
+                        'jabatan_penandatangan': contact.jabatan_penandatangan,
+                        'nama_penanggung_jawab': contact.nama_penanggung_jawab,
+                        'jabatan_penanggung_jawab': contact.jabatan_penanggung_jawab,
+                    };
+
+                    let filled = false;
+                    for (const [fieldId, value] of Object.entries(fields)) {
+                        const el = document.getElementById(fieldId);
+                        if (el && !el.value.trim() && value) {
+                            el.value = value;
+                            // Trigger input event for error cleanup
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            filled = true;
+                        }
+                    }
+
+                    if (autofillNotice && filled) {
+                        autofillNotice.style.display = 'flex';
+                    }
                 } else {
                     if (autofillNotice) autofillNotice.style.display = 'none';
                 }
