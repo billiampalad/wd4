@@ -452,22 +452,113 @@ Flowchart:
 
 ---
 
-# 14. Alur Proses Perpanjangan Kerja Sama
+# 14. Alur Proses Perpanjangan Kerja Sama (Dual-Pathway Integration)
 
-## 14.1 Deskripsi Singkat Fitur
+## 14.1 Deskripsi Singkat Fitur & Dual-Pathway Entry Points
 
-Fitur **Perpanjangan Kerja Sama** memungkinkan mitra yang sudah terdaftar dalam sistem (Master Mitra) untuk mengajukan perpanjangan dokumen kerja sama (MoU, MoA, atau IA) secara mandiri melalui halaman publik, tanpa perlu login. Proses pengajuan menggunakan wizard multi-step (5 langkah) yang memandu pengguna mulai dari pemilihan mitra, pengisian kontak, penyusunan rencana lanjutan, peninjauan data, hingga konfirmasi dan pengiriman.
+Fitur **Perpanjangan Kerja Sama** dirancang dengan dua pintu masuk utama (*Dual-Pathway Entry Points*) yang saling terintegrasi dan saling melengkapi untuk memastikan fleksibilitas alur kerja antara pihak eksternal (Mitra) dan pihak internal (Unit Kerja / Admin Repositori):
 
-Setelah data dikirim, sistem secara otomatis membuat record pengajuan dengan status **"Diajukan"** dan mengirimkan notifikasi kepada semua user dengan role **Pimpinan** untuk proses validasi dan persetujuan.
+1. **Jalur Eksternal / Public Submission (Oleh Mitra / Umum)**:
+   - Akses publik tanpa perlu login melalui `/perpanjangan-kerjasama` (Form Wizard 5 Step).
+   - Mitra terdaftar memilih dokumen yang akan diperpanjang, memperbarui kontak, menyusun rencana lanjutan (periode mulai–selesai baru, judul, tujuan, ruang lingkup), dan mengunggah **Surat Permohonan Perpanjangan** (format PDF, DOC, atau DOCX max 5MB).
+   - Menghasilkan record pengajuan berstatus **`Diajukan`** di tabel `pengajuan_kerjasama_mitras`.
+   - Mengirim notifikasi otomatis ke **Pimpinan** untuk proses validasi. Setelah **Disetujui** Pimpinan, sistem secara otomatis memberi notifikasi ke **Unit Kerja** dan memperbarui status dokumen kerja sama terkait di Repositori dari **`Kadaluarsa` / `Aktif`** menjadi **`Dalam Perpanjangan`**.
 
-**Perbedaan utama dengan Pengajuan Mitra Baru:**
-- Perpanjangan **memilih mitra yang sudah terdaftar** (bukan input data baru).
-- Data identitas mitra (nama, klasifikasi, kategori, negara, alamat, telp, website) **diisi otomatis dari Master Mitra**.
-- Diperlukan data tambahan: **jenis dokumen kerjasama**, **nomor dokumen**, dan **periode kerjasama** (tanggal mulai & selesai).
+2. **Jalur Internal / Direct Repository Extension (Oleh Unit Kerja)**:
+   - Akses internal berdasar role dari menu **Repositori Kerja Sama** -> Halaman **Detail Data Kerja Sama**.
+   - Ketika dokumen kerja sama sudah berstatus **`Kadaluarsa`** (atau H-30 menjelang kadaluarsa), role Unit Kerja / Admin Internal dapat langsung mengeklik tombol **"Perpanjang Kerja Sama"**.
+   - Sistem akan langsung mengubah status dokumen di Repositori menjadi **`Dalam Perpanjangan`** dan membuka form draf dokumen perpanjangan baru.
 
 ---
 
-## 14.2 Diagram Alur Proses (End-to-End User Flow)
+## 14.2 Matriks Perubahan Status & Notifikasi (Lifecycle State Machine)
+
+| Status Pengajuan (Publik) | Status Repositori (Internal) | Pemicu (Trigger Event) | Aktor Utama | Dampak & Notifikasi Sistem |
+|---------------------------|------------------------------|------------------------|-------------|----------------------------|
+| - | **`Kadaluarsa`** | Masa berlaku dokumen habis (`end_date` terlewati) | System Cron / Auto-check | Dokumen ditandai Kadaluarsa. Notifikasi peringatan terkirim ke Unit Kerja & Mitra. |
+| **`Diajukan`** | **`Kadaluarsa`** | Mitra mengisi Form Perpanjangan Publik (Step 1-5) | Mitra (Publik) | Record `pengajuan_kerjasama_mitras` dibuat. Notifikasi terkirim ke **Pimpinan**. |
+| **`Disetujui`** | **`Dalam Perpanjangan`** | Pimpinan menyetujui pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `disetujui`. Status dokumen di Repositori otomatis berubah menjadi `Dalam Perpanjangan`. Notifikasi terkirim ke **Unit Kerja**. |
+| **`Ditolak`** | **`Kadaluarsa`** | Pimpinan menolak pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `ditolak`. Status di Repositori tetap `Kadaluarsa`. Email penolakan terkirim ke Mitra. |
+| - | **`Dalam Perpanjangan`** | Unit Kerja mengeklik "Perpanjang Kerja Sama" langsung di Repositori | Unit Kerja | Status di Repositori berubah langsung dari `Kadaluarsa` menjadi `Dalam Perpanjangan`. Form draf perpanjangan terbuka. |
+| - | **`Aktif`** | Berkas PKS/MoU perpanjangan baru selesai ditandatangan & diunggah | Unit Kerja / Admin | Dokumen perpanjangan baru diterbitkan. Status dokumen baru di Repositori menjadi `Aktif`. |
+
+---
+
+## 14.3 Diagram Flowchart Interkoneksi Perpanjangan (Dual-Pathway Flowchart)
+
+```
+                       ┌────────────────────────────────────────────────────────┐
+                       │           DOKUMEN KERJA SAMA DI REPOSITORI             │
+                       │                 Status: "Kadaluarsa"                    │
+                       └───────────────────────────┬────────────────────────────┘
+                                                   │
+                ┌──────────────────────────────────┴──────────────────────────────────┐
+                │                                                                     │
+                ▼ (Pintu 1: Pengajuan Publik Mitra)                                   ▼ (Pintu 2: Inisiasi Repositori Internal)
+  ┌───────────────────────────┐                                         ┌───────────────────────────┐
+  │   Form Wizard Publik 5-Step  │                                         │   Halaman Detail Repositori│
+  │   /perpanjangan-kerjasama   │                                         │   (Role: Unit Kerja/Admin)│
+  └─────────────┬─────────────┘                                         └─────────────┬─────────────┘
+                │                                                                     │
+                ▼                                                                     ▼
+  ┌───────────────────────────┐                                         ┌───────────────────────────┐
+  │ Pilih Mitra & Upload      │                                         │ Klik "Perpanjang          │
+  │ Surat Permohonan (.pdf)   │                                         │ Kerja Sama"               │
+  └─────────────┬─────────────┘                                         └─────────────┬─────────────┘
+                │                                                                     │
+                ▼                                                                     │
+  ┌───────────────────────────┐                                                       │
+  │ Status Pengajuan:         │                                                       │
+  │ "Diajukan"                │                                                       │
+  └─────────────┬─────────────┘                                                       │
+                │                                                                     │
+                ▼                                                                     │
+  ┌───────────────────────────┐                                                       │
+  │ Notifikasi ke PIMPINAN    │                                                       │
+  └─────────────┬─────────────┘                                                       │
+                │                                                                     │
+                ▼                                                                     │
+        /───────────────\                                                             │
+       < Validasi Pimpinan >                                                          │
+        \───────────────/                                                             │
+          │           │                                                               │
+   [Setuju]           [Tolak]                                                         │
+      │               │                                                               │
+      ▼               ▼                                                               │
+┌─────────────┐ ┌─────────────┐                                                       │
+│ Status:     │ │ Status:     │                                                       │
+│ "Disetujui" │ │ "Ditolak"   │                                                       │
+└──────┬──────┘ └─────────────┘                                                       │
+       │                                                                              │
+       ▼                                                                              │
+┌─────────────────────────────┐                                                       │
+│ Notifikasi ke UNIT KERJA    │                                                       │
+└──────┬──────────────────────┘                                                       │
+       │                                                                              │
+       └──────────────────────────────────┬───────────────────────────────────────────┘
+                                          │
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ STATUS DOKUMEN REPOSITORI BERUBAH:  │
+                       │       "Dalam Perpanjangan"          │
+                       └──────────────────┬──────────────────┘
+                                          │
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ Pemrosesan Draf & Unggah Berkas Baru│
+                       │        (Unit Kerja / Admin)         │
+                       └──────────────────┬──────────────────┘
+                                          │
+                                          ▼
+                       ┌─────────────────────────────────────┐
+                       │ STATUS DOKUMEN BARU DI REPOSITORI:  │
+                       │              "Aktif"                │
+                       └─────────────────────────────────────┘
+```
+
+---
+
+## 14.4 Diagram Alur Proses Detail (End-to-End User Flow)
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
@@ -505,7 +596,7 @@ Setelah data dikirim, sistem secara otomatis membuat record pengajuan dengan sta
 ║  │   ║  STEP 1: Mitra Terdaftar             ║     │           ║
 ║  │   ║  • Pilih Mitra (dropdown search)     ║     │           ║
 ║  │   ║  • Pilih Jenis Dokumen (MoU/MoA/IA)  ║     │           ║
-║  │   ║  • Nomor Dokumen                      ║     │           ║
+║  │   ║  • Nomor Dokumen Lama                ║     │           ║
 ║  │   ╚═══════════════════╤══════════════════╝     │           ║
 ║  │                       │ [Validasi → Selanjutnya]│          ║
 ║  │   ╔═══════════════════╧══════════════════╗     │           ║
@@ -514,15 +605,15 @@ Setelah data dikirim, sistem secara otomatis membuat record pengajuan dengan sta
 ║  │   ║  • Jabatan Penandatangan *           ║     │           ║
 ║  │   ║  • Nama Penanggung Jawab             ║     │           ║
 ║  │   ║  • Jabatan Penanggung Jawab          ║     │           ║
-║  │   ║  • Email *                            ║     │           ║
 ║  │   ╚═══════════════════╤══════════════════╝     │           ║
 ║  │                       │ [Validasi → Selanjutnya]│          ║
 ║  │   ╔═══════════════════╧══════════════════╗     │           ║
 ║  │   ║  STEP 3: Rencana Lanjutan            ║     │           ║
-║  │   ║  • Periode Kerjasama (Mulai–Selesai) ║     │           ║
+║  │   ║  • Periode Kerjasama (Mulai–Selesai)*║     │           ║
 ║  │   ║  • Judul Rencana Perpanjangan *      ║     │           ║
 ║  │   ║  • Tujuan Perpanjangan *             ║     │           ║
 ║  │   ║  • Ruang Lingkup Lanjutan *          ║     │           ║
+║  │   ║  • Upload Surat Permohonan (.pdf)*   ║     │           ║
 ║  │   ╚═══════════════════╤══════════════════╝     │           ║
 ║  │                       │ [Validasi + syncReview] │           ║
 ║  │   ╔═══════════════════╧══════════════════╗     │           ║
@@ -550,44 +641,27 @@ Setelah data dikirim, sistem secara otomatis membuat record pengajuan dengan sta
 ║                 ::storePerpanjangan()                         ║
 ║                                                              ║
 ║  2. Validasi Server (Laravel Validation):                    ║
-║     ├── mitra_id     → required, exists:mitra,id             ║
+║     ├── mitra_id     → required, exists:mitras,id            ║
 ║     ├── jenis        → required, string, max:255             ║
 ║     ├── doc_number   → required, string, max:255             ║
 ║     ├── nama_penandatangan → required, string, max:255       ║
 ║     ├── jabatan_penandatangan → required, string, max:255    ║
 ║     ├── nama_penanggung_jawab → nullable, string, max:255    ║
 ║     ├── jabatan_penanggung_jawab → nullable, string, max:255 ║
-║     ├── email        → required, email, max:255              ║
+║     ├── email        → nullable, email, max:255              ║
 ║     ├── start_date   → required, date                        ║
 ║     ├── end_date     → required, date, after_or_equal:start  ║
 ║     ├── judul_pengajuan → required, string, max:255          ║
 ║     ├── tujuan_pengajuan → required, string                  ║
 ║     ├── ruang_lingkup → required, string                     ║
+║     ├── file_surat   → required, file, mimes:pdf,doc,docx    ║
 ║     └── pesan_tambahan → nullable, string                    ║
 ║                                                              ║
-║  3. Jika GAGAL validasi:                                     ║
-║     → Redirect back + withInput + error messages             ║
-║     → Form menampilkan pesan error per field                 ║
-║                                                              ║
-║  4. Jika LOLOS validasi:                                     ║
-║     a. Ambil data mitra dari Master Mitra (Mitra::find)      ║
+║  3. Jika LOLOS validasi:                                     ║
+║     a. Simpan file_surat ke storage/app/public/surat_permohonan║
 ║     b. Generate kode pengajuan (PGM-YYYYMMDD-XXXX)          ║
-║     c. Buat record PengajuanKerjasamaMitra:                  ║
-║        ├── Data mitra (nama, klasifikasi, kategori, dst)     ║
-║        │   diisi otomatis dari Master Mitra                  ║
-║        ├── Data kontak & rencana dari input form             ║
-║        ├── status = "diajukan"                               ║
-║        └── submitted_at = now()                              ║
-║     d. Kirim Notifikasi ke SEMUA Pimpinan:                   ║
-║        ├── Judul: "Pengajuan Perpanjangan Mitra"             ║
-║        ├── Pesan: kode + nama mitra                          ║
-║        └── Link: route pimpinan.pengajuan_mitra              ║
-║                                                              ║
-║  5. DB::commit() → Redirect dengan flash 'success'          ║
-║                                                              ║
-║  6. Jika EXCEPTION:                                          ║
-║     → DB::rollBack()                                         ║
-║     → Redirect back + error message                          ║
+║     c. Insert ke tabel pengajuan_kerjasama_mitras (status="diajukan")
+║     d. Kirim Notifikasi ke SEMUA Pimpinan                    ║
 ║                                                              ║
 ╚══════════════════════════╪═══════════════════════════════════╝
                            │
@@ -607,90 +681,60 @@ Setelah data dikirim, sistem secara otomatis membuat record pengajuan dengan sta
                            │
                            ▼
 ╔══════════════════════════════════════════════════════════════╗
-║              PROSES VALIDASI PIMPINAN                        ║
+║       PROSES VALIDASI PIMPINAN & INTEGRASI REPOSITORI        ║
 ║              (route: pimpinan.pengajuan_mitra)                ║
 ║                                                              ║
 ║  Pimpinan menerima notifikasi dalam sistem                   ║
 ║     │                                                        ║
 ║     ▼                                                        ║
-║  Pimpinan membuka halaman daftar pengajuan                   ║
-║     │                                                        ║
-║     ▼                                                        ║
 ║  Pimpinan meninjau detail pengajuan perpanjangan             ║
 ║     │                                                        ║
 ║     ├── DISETUJUI                                            ║
-║     │   ├── Status → "disetujui"                             ║
-║     │   ├── Email persetujuan dikirim                        ║
-║     │   └── Proses administrasi lanjutan dimulai             ║
+║     │   ├── Status Pengajuan → "disetujui"                   ║
+║     │   ├── Notifikasi terkirim ke UNIT KERJA                ║
+║     │   └── Status Dokumen di Repositori otomatis berubah     ║
+║     │       menjadi "Dalam Perpanjangan"                     ║
 ║     │                                                        ║
 ║     └── DITOLAK                                              ║
-║         ├── Status → "ditolak"                               ║
-║         ├── Email penolakan dikirim                          ║
-║         └── Pengajuan diarsipkan                             ║
+║         ├── Status Pengajuan → "ditolak"                     ║
+║         ├── Email penolakan dikirim ke Mitra                 ║
+║         └── Status Dokumen di Repositori tetap "Kadaluarsa"  ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## 14.3 Langkah-Langkah Detail (Numbered Flow Steps)
+## 14.5 Langkah-Langkah Detail (Numbered Flow Steps)
 
-### Fase A — Inisiasi oleh User (Halaman Publik)
-
-| No | Langkah | Aktor | Detail |
-|----|---------|-------|--------|
-| 1 | Buka halaman Welcome | User | Mengakses URL root (`/`) aplikasi |
-| 2 | Tekan tombol "Ajukan Kerja Sama" | User | Muncul modal pilihan dengan 2 opsi |
-| 3 | Pilih "Perpanjang Kerja Sama" | User | Redirect ke `/perpanjangan-kerjasama` |
-| 4 | Halaman wizard dimuat | System | Controller `createPerpanjangan()` mengambil data `Mitra` dan `JenisKerjasama`, render view `auth.perpanjangan` |
-
-### Fase B — Pengisian Form Wizard (5 Langkah)
+### Fase A — Inisiasi Pengajuan Perpanjangan (Pintu 1: Publik vs Pintu 2: Repositori)
 
 | No | Langkah | Aktor | Detail |
 |----|---------|-------|--------|
-| 5 | **Step 1:** Pilih Mitra Terdaftar | User | Dropdown searchable dari tabel `mitra`. Pilih jenis dokumen (MoU/MoA/IA) dan masukkan nomor dokumen |
-| 6 | Validasi Step 1 (client-side) | System | Cek field required: `mitra_id`, `jenis`, `doc_number`. Jika kosong → highlight error, scroll ke field pertama yang invalid |
-| 7 | **Step 2:** Isi Kontak Terbaru | User | Input: nama & jabatan penandatangan (wajib), nama & jabatan penanggung jawab (opsional), email (wajib) |
-| 8 | Validasi Step 2 (client-side) | System | Cek field required. Email harus format valid |
-| 9 | **Step 3:** Rencana Lanjutan | User | Pilih periode (tanggal mulai & selesai via datepicker), judul rencana, tujuan perpanjangan, ruang lingkup (dropdown dari `jenis_kerjasama`) |
-| 10 | Validasi Step 3 (client-side) | System | Cek semua field required terisi |
-| 11 | Sinkronisasi data review | System | Fungsi `syncReviewData()` mengisi Step 4 dengan data dari Step 1–3 |
-| 12 | **Step 4:** Tinjau Data | User | Memeriksa 3 review card: Identitas Mitra & Dokumen, Kontak Terkini, Rencana Perpanjangan |
-| 13 | **Step 5:** Konfirmasi Akhir | User | Centang checkbox pernyataan kebenaran data (wajib), isi catatan tambahan (opsional) |
-| 14 | Tekan tombol "Kirim Data" | User | Trigger form submit |
+| 1a | **Jalur Publik (Pintu 1):** Akses `/perpanjangan-kerjasama` | Mitra / Publik | Buka form wizard publik 5 step tanpa login |
+| 1b | **Jalur Repositori (Pintu 2):** Klik "Perpanjang Kerja Sama" | Unit Kerja / Admin | Buka menu Repositori Kerja Sama -> Detail Dokumen berstatus `Kadaluarsa` -> Klik tombol "Perpanjang Kerja Sama" |
+| 2 | Sistem Menyiapkan Data | System | Controller `createPerpanjangan()` memuat data `Mitra`, `JenisKerjasama`, dan memetakan dokumen kerja sama sebelumnya |
 
-### Fase C — Proses Server
+### Fase B — Pengisian Form Wizard Publik (5 Langkah)
 
 | No | Langkah | Aktor | Detail |
 |----|---------|-------|--------|
-| 15 | Validasi server-side | System | Laravel validation rules pada 14 field. Jika gagal → redirect back dengan error |
-| 16 | Ambil data mitra | System | `Mitra::findOrFail($validated['mitra_id'])` — mengisi data identitas dari Master Mitra |
-| 17 | Generate kode pengajuan | System | Format: `PGM-YYYYMMDD-XXXX` (auto-increment per hari, pastikan unik) |
-| 18 | Simpan ke database | System | Insert ke tabel `pengajuan_kerjasama_mitras` dengan status `"diajukan"` |
-| 19 | Kirim notifikasi | System | Notifikasi dikirim ke semua user ber-role `pimpinan` melalui model `Notifikasi::send()` |
-| 20 | Commit transaksi | System | `DB::commit()` — jika exception → `DB::rollBack()` + redirect error |
+| 3 | **Step 1:** Pilih Mitra Terdaftar | User | Dropdown searchable dari Master Mitra. Pilih jenis dokumen (MoU/MoA/IA) dan isi nomor dokumen lama |
+| 4 | **Step 2:** Isi Kontak Terbaru | User | Input nama & jabatan penandatangan (wajib), serta nama & jabatan penanggung jawab (opsional) |
+| 5 | **Step 3:** Rencana & Unggah Surat | User | Isi tanggal mulai & selesai, judul, tujuan, ruang lingkup, serta **unggah Surat Permohonan Perpanjangan** (.pdf/.doc/.docx max 5MB) |
+| 6 | **Step 4:** Tinjau Data | User | Memeriksa 3 card ringkasan: Identitas Mitra, Kontak Terkini, & Rencana Perpanjangan |
+| 7 | **Step 5:** Konfirmasi & Kirim | User | Centang persetujuan kebenaran data (wajib) -> Klik "Kirim Data" |
 
-### Fase D — Konfirmasi ke User
-
-| No | Langkah | Aktor | Detail |
-|----|---------|-------|--------|
-| 21 | Redirect dengan flash success | System | Pesan: "Pengajuan perpanjangan berhasil dikirim dengan kode {kode}" |
-| 22 | Tampilkan SweetAlert2 | System | Popup konfirmasi sukses + badge status "Dalam Proses Validasi Pimpinan" |
-
-### Fase E — Validasi Pimpinan
+### Fase C — Pemrosesan Server, Validasi Pimpinan, & Update Repositori
 
 | No | Langkah | Aktor | Detail |
 |----|---------|-------|--------|
-| 23 | Terima notifikasi | Pimpinan | Notifikasi muncul di dashboard pimpinan dengan link ke halaman review |
-| 24 | Tinjau pengajuan | Pimpinan | Akses via `GET /pimpinan/pengajuan-mitra` |
-| 25 | Berikan keputusan | Pimpinan | `POST /pimpinan/pengajuan-mitra/{id}/review` — Disetujui atau Ditolak |
-
-### Fase F — Tindak Lanjut Keputusan
-
-| No | Langkah | Aktor | Detail |
-|----|---------|-------|--------|
-| 26a | **Jika Disetujui** | System | Status → `"disetujui"`, proses administrasi selanjutnya (Tahap 3–6 PRD yang sudah ada) |
-| 26b | **Jika Ditolak** | System | Status → `"ditolak"`, email penolakan terkirim, data diarsipkan |
+| 8 | Validasi & Simpan Server | System | Simpan berkas permohonan ke storage `surat_permohonan`, generate kode `PGM-YYYYMMDD-XXXX`, insert ke `pengajuan_kerjasama_mitras` status `"diajukan"` |
+| 9 | Notifikasi ke Pimpinan | System | Memicu `Notifikasi::send()` ke semua user ber-role `pimpinan` |
+| 10 | Validasi Pimpinan | Pimpinan | Pimpinan meninjau berkas & detail perpanjangan di `/pimpinan/pengajuan-mitra` |
+| 11a| **Persetujuan (Disetujui)** | Pimpinan | Status pengajuan = `"disetujui"`. Notifikasi dikirim ke **Unit Kerja**. **Status dokumen di Repositori otomatis berubah dari `Kadaluarsa` menjadi `Dalam Perpanjangan`** |
+| 11b| **Penolakan (Ditolak)** | Pimpinan | Status pengajuan = `"ditolak"`. Status dokumen di Repositori tetap `"Kadaluarsa"`. Email penolakan terkirim ke Mitra |
+| 12 | Penyelesaian Dokumen Baru | Unit Kerja | Unit Kerja memproses berkas PKS/MoU perpanjangan baru. Setelah ditandatangani & diunggah, dokumen baru terbit dengan status **`Aktif`** |
 
 ---
 

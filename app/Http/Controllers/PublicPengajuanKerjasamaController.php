@@ -166,14 +166,14 @@ class PublicPengajuanKerjasamaController extends Controller
     public function storePerpanjangan(Request $request)
     {
         $validated = $request->validate([
-            'mitra_id' => ['required', 'exists:mitra,id'],
+            'mitra_id' => ['required', 'exists:mitras,id'],
             'jenis' => ['required', 'string', 'max:255'],
             'doc_number' => ['required', 'string', 'max:255'],
             'nama_penandatangan' => ['required', 'string', 'max:255'],
             'jabatan_penandatangan' => ['required', 'string', 'max:255'],
             'nama_penanggung_jawab' => ['nullable', 'string', 'max:255'],
             'jabatan_penanggung_jawab' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'judul_pengajuan' => ['required', 'string', 'max:255'],
@@ -193,6 +193,7 @@ class PublicPengajuanKerjasamaController extends Controller
 
         try {
             $submission = PengajuanKerjasamaMitra::create(array_merge($validated, [
+                'email' => $validated['email'] ?? '-',
                 'nama_mitra' => $mitra->nama_mitra,
                 'id_klasifikasi' => $mitra->id_klasifikasi,
                 'kategori' => $mitra->kategori ?: 'nasional',

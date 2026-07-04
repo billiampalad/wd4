@@ -122,13 +122,27 @@
 
                 @if (session('error'))
                     <div class="partner-alert partner-alert-error">
-                        {{ session('error') }}
+                        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
                     </div>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const isDark = document.documentElement.dataset.theme === 'dark';
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Pengajuan Gagal',
+                                text: "{{ session('error') }}",
+                                background: isDark ? '#1e293b' : '#ffffff',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                                confirmButtonColor: '#ef4444',
+                            });
+                        });
+                    </script>
                 @endif
 
                 @if ($errors->any())
                     <div class="partner-alert partner-alert-error">
-                        Mohon periksa kembali formulir. Masih ada data yang perlu diperbaiki di beberapa langkah.
+                        <i class="fas fa-exclamation-triangle"></i> Mohon periksa kembali formulir. Masih ada data yang perlu diperbaiki di beberapa langkah.
                     </div>
                 @endif
 
