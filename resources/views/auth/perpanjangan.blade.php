@@ -615,8 +615,8 @@
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap" style="position: relative;">
                                                         <i class="fas fa-calendar-day" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--partner-subtle); z-index: 2; pointer-events: none;"></i>
-                                                        <input type="text" name="start_date" x-model="formattedDate"
-                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                        <input type="text" id="start_date" name="start_date" x-model="formattedDate" required
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal Mulai"
                                                             class="adp-input" style="padding-left: 38px;">
                                                     </div>
                                                     <div class="adp-calendar" x-show="show" x-transition>
@@ -689,8 +689,8 @@
                                                 <div class="alpine-datepicker" @click.outside="show = false">
                                                     <div class="adp-input-wrap" style="position: relative;">
                                                         <i class="fas fa-calendar-check" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--partner-subtle); z-index: 2; pointer-events: none;"></i>
-                                                        <input type="text" name="end_date" x-model="formattedDate"
-                                                            readonly @click="show = !show" placeholder="Pilih Tanggal"
+                                                        <input type="text" id="end_date" name="end_date" x-model="formattedDate" required
+                                                            readonly @click="show = !show" placeholder="Pilih Tanggal Selesai"
                                                             class="adp-input" style="padding-left: 38px;">
                                                     </div>
                                                     <div class="adp-calendar" x-show="show" x-transition>
@@ -1038,10 +1038,6 @@
                                         <span class="partner-review-label">Jabatan Penanggung Jawab</span>
                                         <span class="partner-review-value" id="rev_jabatan_penanggung_jawab">-</span>
                                     </div>
-                                    <div class="partner-review-item">
-                                        <span class="partner-review-label">Email</span>
-                                        <span class="partner-review-value" id="rev_email">-</span>
-                                    </div>
                                 </div>
                             </div>
 
@@ -1250,6 +1246,16 @@
                     let selectedDate = new Date(this.year, this.month, date);
                     this.formattedDate = this.formatDate(selectedDate);
                     this.show = false;
+                    this.$nextTick(() => {
+                        if (this.$el) {
+                            const input = this.$el.querySelector('input');
+                            if (input) {
+                                input.closest('.partner-field')?.classList.remove('has-error');
+                                input.dispatchEvent(new Event('input', { bubbles: true }));
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+                    });
                 },
 
                 getDays() {
@@ -1499,7 +1505,9 @@
                 const parent = field.closest('.partner-field') || field.closest('.partner-declaration') || field.parentElement;
                 const invalid = field.type === 'checkbox' ? !field.checked : !field.checkValidity();
 
-                parent.classList.toggle('has-error', invalid);
+                if (parent) {
+                    parent.classList.toggle('has-error', invalid);
+                }
 
                 if (invalid) {
                     isValid = false;
@@ -1508,12 +1516,24 @@
             });
 
             if (!isValid && firstInvalid) {
-                const focusTarget = firstInvalid.classList.contains('partner-native-select')
-                    ? firstInvalid.closest('.partner-alpine-select')?.querySelector('.partner-select-trigger') || firstInvalid
-                    : firstInvalid;
+                let focusTarget = firstInvalid;
 
-                focusTarget.focus({ preventScroll: true });
-                focusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (firstInvalid.classList.contains('partner-native-select')) {
+                    focusTarget = firstInvalid.closest('.partner-alpine-select')?.querySelector('.partner-select-trigger') || firstInvalid;
+                } else if (firstInvalid.id === 'file_surat' || firstInvalid.name === 'file_surat') {
+                    focusTarget = firstInvalid.closest('.partner-field')?.querySelector('.partner-upload-box') || firstInvalid;
+                } else if (firstInvalid.name === 'start_date' || firstInvalid.name === 'end_date') {
+                    focusTarget = firstInvalid.closest('.alpine-datepicker')?.querySelector('input') || firstInvalid;
+                }
+
+                if (focusTarget) {
+                    if (typeof focusTarget.focus === 'function') {
+                        try { focusTarget.focus({ preventScroll: true }); } catch(e) {}
+                    }
+                    if (typeof focusTarget.scrollIntoView === 'function') {
+                        focusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             }
 
             return isValid;
@@ -1539,22 +1559,26 @@
                 return el ? el.value.trim() || '-' : '-';
             };
 
-            // Mapping inputs to labels
-            document.getElementById('rev_mitra_id').innerText = getSelectText('mitra_id');
-            document.getElementById('rev_jenis').innerText = getHiddenVal('jenis');
-            document.getElementById('rev_doc_number').innerText = getVal('doc_number');
+            const setRevText = (targetId, value) => {
+                const el = document.getElementById(targetId);
+                if (el) el.innerText = value;
+            };
 
-            document.getElementById('rev_nama_penandatangan').innerText = getVal('nama_penandatangan');
-            document.getElementById('rev_jabatan_penandatangan').innerText = getVal('jabatan_penandatangan');
-            document.getElementById('rev_nama_penanggung_jawab').innerText = getVal('nama_penanggung_jawab');
-            document.getElementById('rev_jabatan_penanggung_jawab').innerText = getVal('jabatan_penanggung_jawab');
-            document.getElementById('rev_email').innerText = getVal('email');
+            // Mapping inputs to labels safely
+            setRevText('rev_mitra_id', getSelectText('mitra_id'));
+            setRevText('rev_jenis', getHiddenVal('jenis'));
+            setRevText('rev_doc_number', getVal('doc_number'));
 
-            document.getElementById('rev_start_date').innerText = getVal('start_date');
-            document.getElementById('rev_end_date').innerText = getVal('end_date');
-            document.getElementById('rev_judul_pengajuan').innerText = getVal('judul_pengajuan');
-            document.getElementById('rev_tujuan_pengajuan').innerText = getVal('tujuan_pengajuan');
-            document.getElementById('rev_ruang_lingkup').innerText = getSelectText('ruang_lingkup');
+            setRevText('rev_nama_penandatangan', getVal('nama_penandatangan'));
+            setRevText('rev_jabatan_penandatangan', getVal('jabatan_penandatangan'));
+            setRevText('rev_nama_penanggung_jawab', getVal('nama_penanggung_jawab'));
+            setRevText('rev_jabatan_penanggung_jawab', getVal('jabatan_penanggung_jawab'));
+
+            setRevText('rev_start_date', getVal('start_date'));
+            setRevText('rev_end_date', getVal('end_date'));
+            setRevText('rev_judul_pengajuan', getVal('judul_pengajuan'));
+            setRevText('rev_tujuan_pengajuan', getVal('tujuan_pengajuan'));
+            setRevText('rev_ruang_lingkup', getSelectText('ruang_lingkup'));
 
             const fileInput = document.getElementById('file_surat');
             const revFile = document.getElementById('rev_file_surat');
