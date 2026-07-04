@@ -71,6 +71,11 @@ class PengajuanKerjasamaMitra extends Model
         return $this->belongsTo(Mitra::class, 'mitra_id');
     }
 
+    public function cooperation()
+    {
+        return $this->hasOne(Cooperation::class, 'pengajuan_kerjasama_mitra_id');
+    }
+
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {

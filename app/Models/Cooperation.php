@@ -41,6 +41,7 @@ class Cooperation extends Model
         'pusat_id',
         'status_dokumen',
         'perpanjangan_dari_id',
+        'pengajuan_kerjasama_mitra_id',
         'created_by',
         'updated_by',
     ];
@@ -152,6 +153,11 @@ class Cooperation extends Model
     public function perpanjangans()
     {
         return $this->hasMany(self::class, 'perpanjangan_dari_id');
+    }
+
+    public function pengajuanMitra()
+    {
+        return $this->belongsTo(PengajuanKerjasamaMitra::class, 'pengajuan_kerjasama_mitra_id');
     }
 
     public function kesimpulans()

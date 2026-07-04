@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Pimpinan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cooperation;
+use App\Models\DetailKegiatan;
+use App\Models\JenisKerjasama;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
+use App\Models\Pejabat;
 use App\Models\PengajuanKerjasamaMitra;
+use App\Models\User;
 use App\Support\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +84,7 @@ class PengajuanKerjasamaMitraController extends Controller
             $mitraId = $submission->mitra_id;
 
             if ($validated['keputusan'] === PengajuanKerjasamaMitra::STATUS_DISETUJUI) {
+                // 1. Simpan / update data Mitra
                 $mitra = Mitra::whereRaw('LOWER(nama_mitra) = ?', [strtolower($submission->nama_mitra)])
                     ->first();
 
@@ -103,6 +109,77 @@ class PengajuanKerjasamaMitraController extends Controller
                 }
 
                 $mitraId = $mitra->id;
+
+                // 2. Buat record Pejabat penandatangan & penanggung jawab mitra
+                $penandatanganMitra = Pejabat::create([
+                    'nama' => $submission->nama_penandatangan,
+                    'jabatan' => $submission->jabatan_penandatangan,
+                ]);
+
+                $pjMitra = null;
+                if ($submission->nama_penanggung_jawab) {
+                    $pjMitra = Pejabat::create([
+                        'nama' => $submission->nama_penanggung_jawab,
+                        'jabatan' => $submission->jabatan_penanggung_jawab,
+                    ]);
+                }
+
+                // 3. Buat record Cooperation (Status: proses, Status Dokumen: Draft)
+                $cooperation = Cooperation::create([
+                    'jenis' => $submission->jenis ?? 'MoU (Memorandum of Understanding)',
+                    'doc_number' => $submission->doc_number,
+                    'title' => $submission->judul_pengajuan,
+                    'description' => $submission->tujuan_pengajuan,
+                    'start_date' => $submission->start_date,
+                    'end_date' => $submission->end_date,
+                    'status' => 'proses',
+                    'status_dokumen' => 'Draft',
+                    'mitra_id' => $mitra->id,
+                    'penandatangan_mitra_id' => $penandatanganMitra->id,
+                    'pj_mitra_id' => $pjMitra?->id,
+                    'pengajuan_kerjasama_mitra_id' => $submission->id,
+                    'created_by' => Auth::id(),
+                ]);
+
+                // 4. Cari JenisKerjasama berdasarkan ruang_lingkup pengajuan
+                $jenisKerjasamaId = 1;
+                if ($submission->ruang_lingkup) {
+                    $jenisKerjasamaMatch = JenisKerjasama::whereRaw('LOWER(nama_kerjasama) = ?', [strtolower(trim($submission->ruang_lingkup))])->first();
+                    if ($jenisKerjasamaMatch) {
+                        $jenisKerjasamaId = $jenisKerjasamaMatch->id;
+                    } else {
+                        $jenisKerjasamaId = JenisKerjasama::first()?->id ?? 1;
+                    }
+                }
+
+                // 5. Simpan detail_kegiatans (ruang_lingkup disimpan terpisah di tabel detail_kegiatans)
+                DetailKegiatan::create([
+                    'cooperation_id' => $cooperation->id,
+                    'jenis_kerjasama_id' => $jenisKerjasamaId,
+                    'tujuan' => $submission->tujuan_pengajuan,
+                    'keterangan' => $submission->ruang_lingkup,
+                    'nilai_kontrak' => 0,
+                ]);
+
+                // 6. Kirim notifikasi ke Humas / Unit Kerja
+                $senderId = Auth::id() ?: 1;
+                $linkRepositori = route('unit.dkerjasama');
+                $judulNotif = 'Pengajuan Kerja Sama Baru Disahkan';
+                $pesanNotif = "Pimpinan menyetujui pengajuan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi data & dokumen kerjasama.";
+
+                User::whereHas('role', fn ($query) => $query->where('role_name', 'unit_kerja'))
+                    ->get()
+                    ->each(function (User $unitUser) use ($senderId, $cooperation, $judulNotif, $pesanNotif, $linkRepositori) {
+                        Notifikasi::send(
+                            $unitUser->id,
+                            $senderId,
+                            $cooperation->id,
+                            'data_baru',
+                            $judulNotif,
+                            $pesanNotif,
+                            $linkRepositori
+                        );
+                    });
             }
 
             $submission->update([
