@@ -56,7 +56,6 @@
         const detailMitraName = document.getElementById('subdetailMitraName');
         const detailKlasifikasi = document.getElementById('subdetailKlasifikasi');
         const detailNegara = document.getElementById('subdetailNegara');
-        const detailTelpMitra = document.getElementById('subdetailTelpMitra');
         const detailAlamat = document.getElementById('subdetailAlamat');
         const detailWebsite = document.getElementById('subdetailWebsite');
         const detailPenandatangan = document.getElementById('subdetailPenandatangan');
@@ -100,7 +99,6 @@
             detailMitraName.textContent = ds.mitraName || '—';
             detailKlasifikasi.textContent = `${ds.klasifikasi || 'Umum'} (${ds.kategori || 'Nasional'})`;
             detailNegara.textContent = ds.negara || '—';
-            detailTelpMitra.textContent = ds.telpMitra || '—';
             detailAlamat.textContent = ds.alamat || '—';
 
             if (ds.website) {

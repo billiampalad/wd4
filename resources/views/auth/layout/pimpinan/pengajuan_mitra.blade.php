@@ -136,7 +136,7 @@
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
                                     data-kategori="{{ ucfirst($submission->kategori) }}"
                                     data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
-                                    data-telp-mitra="{{ $submission->telp }}" data-website="{{ $websiteUrl }}"
+                                    data-website="{{ $websiteUrl }}"
                                     data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
                                     data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
                                     data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
@@ -266,7 +266,7 @@
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"
                                     data-kategori="{{ ucfirst($submission->kategori) }}"
                                     data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
-                                    data-telp-mitra="{{ $submission->telp }}" data-website="{{ $submission->website }}"
+                                    data-website="{{ $submission->website }}"
                                     data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
                                     data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
                                     data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
@@ -354,10 +354,6 @@
                     <div class="subdetail-box">
                         <span class="subdetail-label"><i class="fas fa-globe"></i> Negara</span>
                         <span id="subdetailNegara" class="subdetail-value">—</span>
-                    </div>
-                    <div class="subdetail-box">
-                        <span class="subdetail-label"><i class="fas fa-phone"></i> Telp Lembaga</span>
-                        <span id="subdetailTelpMitra" class="subdetail-value">—</span>
                     </div>
                     <div class="subdetail-box subdetail-box-full">
                         <span class="subdetail-label"><i class="fas fa-map-marker-alt"></i> Alamat Mitra</span>
