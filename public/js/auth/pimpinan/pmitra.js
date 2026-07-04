@@ -4,32 +4,35 @@
         if (!root || root.dataset.pmitraReady === 'true') return;
         root.dataset.pmitraReady = 'true';
 
-        const cards = Array.from(document.querySelectorAll('[data-submission-card]'));
+        const rows = Array.from(document.querySelectorAll('[data-submission-row]'));
         const searchInput = document.getElementById('submissionSearch');
         const categoryFilter = document.getElementById('submissionCategoryFilter');
         const emptyState = document.querySelector('.submission-filter-empty');
 
         /* ============================
-         * Search & Filter
+         * Search & Filter for Table Rows
          * ============================ */
         const applyFilter = () => {
             const query = (searchInput?.value || '').trim().toLowerCase();
             const category = (categoryFilter?.value || 'all').toLowerCase();
             let visibleCount = 0;
 
-            cards.forEach((card) => {
-                const haystack = card.dataset.search || '';
-                const cardCategory = card.dataset.category || '';
+            rows.forEach((row) => {
+                // Only filter active pending rows in the first table
+                if (!row.classList.contains('submission-row')) return;
+
+                const haystack = row.dataset.search || '';
+                const cardCategory = row.dataset.category || '';
                 const matchesQuery = !query || haystack.includes(query);
                 const matchesCategory = category === 'all' || cardCategory === category;
                 const isVisible = matchesQuery && matchesCategory;
 
-                card.hidden = !isVisible;
+                row.hidden = !isVisible;
                 if (isVisible) visibleCount += 1;
             });
 
             if (emptyState) {
-                emptyState.hidden = visibleCount > 0 || cards.length === 0;
+                emptyState.hidden = visibleCount > 0 || rows.filter((r) => r.classList.contains('submission-row')).length === 0;
             }
         };
 
@@ -38,71 +41,182 @@
         applyFilter();
 
         /* ============================
-         * Notification Modal Elements
+         * Hidden Form & App Config
          * ============================ */
-        const modal = document.getElementById('notifConfirmModal');
-        const modalHeader = document.getElementById('notifModalHeader');
-        const modalIcon = document.getElementById('notifModalIcon');
-        const modalTitle = document.getElementById('notifModalTitle');
-        const modalSubtitle = document.getElementById('notifModalSubtitle');
-        const mitraNameEl = document.getElementById('notifMitraName');
-        const mitraEmailEl = document.getElementById('notifMitraEmail');
-        const mitraPhoneEl = document.getElementById('notifMitraPhone');
+        const hiddenForm = document.getElementById('submissionHiddenForm');
+        const hiddenKeputusan = document.getElementById('hiddenKeputusan');
+        const hiddenCatatanPimpinan = document.getElementById('hiddenCatatanPimpinan');
+        const hiddenSendEmail = document.getElementById('hiddenSendEmail');
+        const hiddenSendWa = document.getElementById('hiddenSendWa');
+        const hiddenCustomEmail = document.getElementById('hiddenCustomEmail');
+        const hiddenCustomWa = document.getElementById('hiddenCustomWa');
+        const appName = document.querySelector('meta[name="app-name"]')?.content || 'Institusi Kami';
+
+        /* ============================
+         * MODAL 1: SUBMISSION DETAIL
+         * ============================ */
+        const detailModal = document.getElementById('submissionDetailModal');
+        const detailCode = document.getElementById('subdetailCode');
+        const detailStatusBadge = document.getElementById('subdetailStatusBadge');
+        const detailTitle = document.getElementById('subdetailTitle');
+        const detailMitraName = document.getElementById('subdetailMitraName');
+        const detailKlasifikasi = document.getElementById('subdetailKlasifikasi');
+        const detailNegara = document.getElementById('subdetailNegara');
+        const detailTelpMitra = document.getElementById('subdetailTelpMitra');
+        const detailAlamat = document.getElementById('subdetailAlamat');
+        const detailWebsite = document.getElementById('subdetailWebsite');
+        const detailPenandatangan = document.getElementById('subdetailPenandatangan');
+        const detailPj = document.getElementById('subdetailPj');
+        const detailKontak = document.getElementById('subdetailKontak');
+        const detailTujuan = document.getElementById('subdetailTujuan');
+        const detailRuangLingkup = document.getElementById('subdetailRuangLingkup');
+        const detailPesanWrapper = document.getElementById('subdetailPesanWrapper');
+        const detailPesanTambahan = document.getElementById('subdetailPesanTambahan');
+        const detailHistoryNoteWrapper = document.getElementById('subdetailHistoryNoteWrapper');
+        const detailHistoryNote = document.getElementById('subdetailHistoryNote');
+        const detailFormBlock = document.getElementById('subdetailFormBlock');
+        const detailCatatanTextarea = document.getElementById('subdetailCatatanTextarea');
+        const detailCounter = document.getElementById('subdetailCounter');
+        const detailActiveActions = document.getElementById('subdetailActiveActions');
+        const detailBtnClose = document.getElementById('subdetailBtnClose');
+        const detailBtnCancel = document.getElementById('subdetailBtnCancel');
+        const detailBtnApprove = document.getElementById('subdetailBtnApprove');
+        const detailBtnReject = document.getElementById('subdetailBtnReject');
+
+        let activeRow = null;
+
+        // Counter textarea di Modal Detail
+        const updateDetailCounter = () => {
+            if (!detailCounter || !detailCatatanTextarea) return;
+            const len = detailCatatanTextarea.value.trim().length;
+            detailCounter.textContent = `${len} karakter`;
+        };
+        detailCatatanTextarea?.addEventListener('input', () => {
+            detailCatatanTextarea.classList.remove('is-required');
+            updateDetailCounter();
+        });
+
+        function openDetailModal(row) {
+            activeRow = row;
+            const ds = row.dataset;
+            const isHistory = row.classList.contains('submission-history-row');
+
+            detailCode.textContent = ds.submissionCode || '—';
+            detailTitle.textContent = ds.submissionTitle || '—';
+            detailMitraName.textContent = ds.mitraName || '—';
+            detailKlasifikasi.textContent = `${ds.klasifikasi || 'Umum'} (${ds.kategori || 'Nasional'})`;
+            detailNegara.textContent = ds.negara || '—';
+            detailTelpMitra.textContent = ds.telpMitra || '—';
+            detailAlamat.textContent = ds.alamat || '—';
+
+            if (ds.website) {
+                detailWebsite.innerHTML = `<a href="${ds.website}" target="_blank" rel="noreferrer">${ds.website}</a>`;
+            } else {
+                detailWebsite.textContent = 'Belum ada website';
+            }
+
+            detailPenandatangan.innerHTML = `${ds.penandatanganNama || '—'}<br><small class="text-sub">${ds.penandatanganJabatan || '-'}</small>`;
+            detailPj.innerHTML = `${ds.pjNama || '—'}<br><small class="text-sub">${ds.pjJabatan || '-'}</small>`;
+            detailKontak.innerHTML = `<i class="fas fa-envelope"></i> ${ds.mitraEmail || '—'}<br><i class="fab fa-whatsapp"></i> ${ds.mitraPhone || '—'}`;
+            detailTujuan.textContent = ds.tujuan || '—';
+            detailRuangLingkup.textContent = ds.ruangLingkup || '—';
+
+            if (ds.pesanTambahan) {
+                detailPesanWrapper.hidden = false;
+                detailPesanTambahan.textContent = ds.pesanTambahan;
+            } else {
+                detailPesanWrapper.hidden = true;
+            }
+
+            if (isHistory) {
+                detailStatusBadge.className = `submission-status ${ds.statusClass || 'pending'}`;
+                detailStatusBadge.textContent = ds.statusLabel || 'Proses';
+                detailFormBlock.hidden = true;
+                detailActiveActions.hidden = true;
+
+                if (ds.catatanPimpinan) {
+                    detailHistoryNoteWrapper.hidden = false;
+                    detailHistoryNote.textContent = ds.catatanPimpinan;
+                } else {
+                    detailHistoryNoteWrapper.hidden = true;
+                }
+            } else {
+                detailStatusBadge.className = 'submission-status pending';
+                detailStatusBadge.textContent = 'Menunggu Review';
+                detailFormBlock.hidden = false;
+                detailActiveActions.hidden = false;
+                detailHistoryNoteWrapper.hidden = true;
+                if (detailCatatanTextarea) detailCatatanTextarea.value = '';
+                updateDetailCounter();
+            }
+
+            detailModal.hidden = false;
+            requestAnimationFrame(() => detailModal.classList.add('is-visible'));
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDetailModal() {
+            detailModal.classList.remove('is-visible');
+            setTimeout(() => {
+                detailModal.hidden = true;
+            }, 260);
+            document.body.style.overflow = '';
+        }
+
+        detailBtnClose?.addEventListener('click', closeDetailModal);
+        detailBtnCancel?.addEventListener('click', closeDetailModal);
+        detailModal?.addEventListener('click', (e) => {
+            if (e.target === detailModal) closeDetailModal();
+        });
+
+        /* ============================
+         * MODAL 2: NOTIFICATION CONFIRM
+         * ============================ */
+        const notifModal = document.getElementById('notifConfirmModal');
+        const notifHeader = document.getElementById('notifModalHeader');
+        const notifIcon = document.getElementById('notifModalIcon');
+        const notifTitle = document.getElementById('notifModalTitle');
+        const notifSubtitle = document.getElementById('notifModalSubtitle');
+        const notifMitraName = document.getElementById('notifMitraName');
+        const notifMitraEmail = document.getElementById('notifMitraEmail');
+        const notifMitraPhone = document.getElementById('notifMitraPhone');
         const toggleEmail = document.getElementById('notifToggleEmail');
         const toggleWa = document.getElementById('notifToggleWa');
         const previewEmail = document.getElementById('notifPreviewEmail');
         const previewWa = document.getElementById('notifPreviewWa');
         const messageEmail = document.getElementById('notifMessageEmail');
         const messageWa = document.getElementById('notifMessageWa');
-        const btnCancel = document.getElementById('notifBtnCancel');
-        const btnConfirm = document.getElementById('notifBtnConfirm');
+        const btnCancelNotif = document.getElementById('notifBtnCancel');
+        const btnConfirmNotif = document.getElementById('notifBtnConfirm');
         const btnConfirmText = document.getElementById('notifBtnConfirmText');
         const tabs = document.querySelectorAll('[data-notif-tab]');
 
-        // Track the currently pending form + decision
-        let pendingForm = null;
+        let pendingRow = null;
         let pendingDecision = null;
-        let pendingButtonName = null;
+        let pendingNote = '';
 
-        const appName = document.querySelector('meta[name="app-name"]')?.content || 'Institusi Kami';
-
-        /* ============================
-         * Template generators
-         * ============================ */
-        function generateEmailTemplate(card, decision, note) {
-            const name = card.dataset.mitraName || '—';
-            const code = card.dataset.submissionCode || '—';
-            const title = card.dataset.submissionTitle || '—';
+        function generateEmailTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
-
             if (isApproved) {
-                return `Yth. ${name},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${code} — "${title}" telah DISETUJUI.\n\n${note ? `Catatan: ${note}\n\n` : ''}Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nHormat kami,\n${appName}`;
+                return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" telah DISETUJUI.\n\n${note ? `Catatan: ${note}\n\n` : ''}Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nHormat kami,\n${appName}`;
             }
-            return `Yth. ${name},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${code} — "${title}" saat ini belum dapat kami setujui.\n\n${note ? `Catatan dari pimpinan: ${note}\n\n` : ''}Kami tetap menghargai minat Anda dan berharap dapat bekerja sama di kesempatan mendatang.\n\nHormat kami,\n${appName}`;
+            return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" saat ini belum dapat kami setujui.\n\n${note ? `Catatan dari pimpinan: ${note}\n\n` : ''}Kami tetap menghargai minat Anda dan berharap dapat bekerja sama di kesempatan mendatang.\n\nHormat kami,\n${appName}`;
         }
 
-        function generateWaTemplate(card, decision, note) {
-            const name = card.dataset.mitraName || '—';
-            const code = card.dataset.submissionCode || '—';
-            const title = card.dataset.submissionTitle || '—';
+        function generateWaTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
-
             if (isApproved) {
-                return `Halo *${name}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${code}* — _${title}_ telah *DISETUJUI*. ✅\n\n${note ? `Catatan: _${note}_\n\n` : ''}Terima kasih atas minat dan kepercayaan Anda. Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nSalam hangat,\n${appName}`;
+                return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ telah *DISETUJUI*. ✅\n\n${note ? `Catatan: _${note}_\n\n` : ''}Terima kasih atas minat dan kepercayaan Anda. Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nSalam hangat,\n${appName}`;
             }
-            return `Halo *${name}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${code}* — _${title}_ saat ini *belum dapat kami setujui*. ❌\n\n${note ? `Catatan dari pimpinan: _${note}_\n\n` : ''}Kami tetap menghargai minat Anda. Jangan ragu untuk mengajukan kembali di kemudian hari.\n\nSalam hangat,\n${appName}`;
+            return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ saat ini *belum dapat kami setujui*. ❌\n\n${note ? `Catatan dari pimpinan: _${note}_\n\n` : ''}Kami tetap menghargai minat Anda. Jangan ragu untuk mengajukan kembali di kemudian hari.\n\nSalam hangat,\n${appName}`;
         }
 
-        /* ============================
-         * Tab switching
-         * ============================ */
+        // Tab Switcher
         tabs.forEach((tab) => {
             tab.addEventListener('click', () => {
                 tabs.forEach((t) => t.classList.remove('active'));
                 tab.classList.add('active');
-
-                const target = tab.dataset.notifTab;
-                if (target === 'email') {
+                if (tab.dataset.notifTab === 'email') {
                     previewEmail.hidden = false;
                     previewWa.hidden = true;
                 } else {
@@ -112,38 +226,29 @@
             });
         });
 
-        /* ============================
-         * Modal open / close
-         * ============================ */
-        function openModal(form, card, decision, buttonName, note) {
-            pendingForm = form;
+        function openNotifModal(row, decision, note) {
+            pendingRow = row;
             pendingDecision = decision;
-            pendingButtonName = buttonName;
-
+            pendingNote = note;
+            const ds = row.dataset;
             const isApproved = decision === 'disetujui';
-            const mitraName = card.dataset.mitraName || '—';
-            const mitraEmail = card.dataset.mitraEmail || '—';
-            const mitraPhone = card.dataset.mitraPhone || '—';
 
-            // Update header
-            modalHeader.className = 'notif-modal-header ' + (isApproved ? 'is-approved' : 'is-rejected');
-            modalIcon.innerHTML = isApproved
+            notifHeader.className = 'notif-modal-header ' + (isApproved ? 'is-approved' : 'is-rejected');
+            notifIcon.innerHTML = isApproved
                 ? '<i class="fas fa-circle-check"></i>'
                 : '<i class="fas fa-circle-xmark"></i>';
-            modalTitle.textContent = isApproved
-                ? `Setujui Pengajuan dari ${mitraName}?`
-                : `Tolak Pengajuan dari ${mitraName}?`;
-            modalSubtitle.textContent = isApproved
-                ? 'Data mitra akan disimpan ke master mitra dan notifikasi dikirim.'
+            notifTitle.textContent = isApproved
+                ? `Setujui Pengajuan dari ${ds.mitraName}?`
+                : `Tolak Pengajuan dari ${ds.mitraName}?`;
+            notifSubtitle.textContent = isApproved
+                ? 'Data mitra akan disimpan ke master mitra dan notifikasi terkirim.'
                 : 'Pengajuan akan ditolak dan mitra akan diberitahu.';
 
-            // Update recipient info
-            mitraNameEl.textContent = mitraName;
-            mitraEmailEl.textContent = mitraEmail || 'Tidak tersedia';
-            mitraPhoneEl.textContent = mitraPhone || 'Tidak tersedia';
+            notifMitraName.textContent = ds.mitraName || '—';
+            notifMitraEmail.textContent = ds.mitraEmail || 'Tidak tersedia';
+            notifMitraPhone.textContent = ds.mitraPhone || 'Tidak tersedia';
 
-            // Enable/disable toggles based on availability
-            if (!mitraEmail) {
+            if (!ds.mitraEmail) {
                 toggleEmail.checked = false;
                 toggleEmail.disabled = true;
             } else {
@@ -151,7 +256,7 @@
                 toggleEmail.disabled = false;
             }
 
-            if (!mitraPhone) {
+            if (!ds.mitraPhone) {
                 toggleWa.checked = false;
                 toggleWa.disabled = true;
             } else {
@@ -159,143 +264,136 @@
                 toggleWa.disabled = false;
             }
 
-            // Generate preview messages
-            messageEmail.value = generateEmailTemplate(card, decision, note);
-            messageWa.value = generateWaTemplate(card, decision, note);
+            messageEmail.value = generateEmailTemplate(ds, decision, note);
+            messageWa.value = generateWaTemplate(ds, decision, note);
 
-            // Reset tabs to email
             tabs.forEach((t) => t.classList.remove('active'));
             tabs[0]?.classList.add('active');
             previewEmail.hidden = false;
             previewWa.hidden = true;
 
-            // Update confirm button style
-            btnConfirm.className = 'notif-btn-confirm ' + (isApproved ? 'is-approved' : 'is-rejected');
+            btnConfirmNotif.className = 'notif-btn-confirm ' + (isApproved ? 'is-approved' : 'is-rejected');
             btnConfirmText.textContent = isApproved
                 ? 'Setujui & Kirim Notifikasi'
                 : 'Tolak & Kirim Notifikasi';
 
-            // Show modal
-            modal.hidden = false;
-            requestAnimationFrame(() => {
-                modal.classList.add('is-visible');
-            });
-
-            // Trap focus
-            btnCancel.focus();
+            notifModal.hidden = false;
+            requestAnimationFrame(() => notifModal.classList.add('is-visible'));
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() {
-            modal.classList.remove('is-visible');
+        function closeNotifModal() {
+            notifModal.classList.remove('is-visible');
             setTimeout(() => {
-                modal.hidden = true;
-            }, 280);
-            pendingForm = null;
+                notifModal.hidden = true;
+            }, 260);
+            pendingRow = null;
             pendingDecision = null;
-            pendingButtonName = null;
+            pendingNote = '';
             document.body.style.overflow = '';
         }
 
-        btnCancel?.addEventListener('click', closeModal);
-
-        // Close on overlay click
-        modal?.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+        btnCancelNotif?.addEventListener('click', closeNotifModal);
+        notifModal?.addEventListener('click', (e) => {
+            if (e.target === notifModal) closeNotifModal();
         });
 
-        // Close on Escape
+        // ESC listener for both modals
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal?.hidden) closeModal();
+            if (e.key === 'Escape') {
+                if (!notifModal?.hidden) closeNotifModal();
+                else if (!detailModal?.hidden) closeDetailModal();
+            }
         });
 
-        /* ============================
-         * Confirm action
-         * ============================ */
-        btnConfirm?.addEventListener('click', () => {
-            if (!pendingForm) return;
+        // Submit Action via Hidden Form
+        btnConfirmNotif?.addEventListener('click', () => {
+            if (!pendingRow || !hiddenForm) return;
 
-            // Inject hidden inputs for notification preferences
-            const injectHidden = (name, value) => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = value;
-                pendingForm.appendChild(input);
-            };
+            hiddenForm.action = pendingRow.dataset.reviewUrl;
+            hiddenKeputusan.value = pendingDecision;
+            hiddenCatatanPimpinan.value = pendingNote;
+            hiddenSendEmail.value = toggleEmail.checked ? '1' : '0';
+            hiddenSendWa.value = toggleWa.checked ? '1' : '0';
+            hiddenCustomEmail.value = toggleEmail.checked ? messageEmail.value : '';
+            hiddenCustomWa.value = toggleWa.checked ? messageWa.value : '';
 
-            // Inject the decision button value
-            injectHidden(pendingButtonName, pendingDecision);
-
-            // Notification toggles
-            injectHidden('send_email', toggleEmail.checked ? '1' : '0');
-            injectHidden('send_whatsapp', toggleWa.checked ? '1' : '0');
-
-            // Custom messages
-            if (toggleEmail.checked) {
-                injectHidden('custom_message_email', messageEmail.value);
-            }
-            if (toggleWa.checked) {
-                injectHidden('custom_message_whatsapp', messageWa.value);
-            }
-
-            // Disable confirm button to prevent double submit
-            btnConfirm.disabled = true;
+            btnConfirmNotif.disabled = true;
             btnConfirmText.textContent = 'Memproses...';
 
-            pendingForm.submit();
+            hiddenForm.submit();
         });
 
         /* ============================
-         * Intercept submission buttons
+         * Row Event Delegation
          * ============================ */
-        document.querySelectorAll('.submission-form').forEach((form) => {
-            const textarea = form.querySelector('.submission-textarea');
-            const counter = form.querySelector('[data-note-counter]');
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
 
-            const updateCounter = () => {
-                if (!counter || !textarea) return;
-                const length = textarea.value.trim().length;
-                counter.textContent = `${length} karakter`;
-            };
+            const action = btn.dataset.action;
+            const row = btn.closest('[data-submission-row]');
 
-            textarea?.addEventListener('input', () => {
-                textarea.classList.remove('is-required');
-                updateCounter();
-            });
-            updateCounter();
+            if (action === 'detail' || action === 'detail-history') {
+                if (row) openDetailModal(row);
+                return;
+            }
 
-            form.querySelectorAll('button[type="submit"][name="keputusan"]').forEach((button) => {
-                button.addEventListener('click', (event) => {
-                    event.preventDefault();
+            if (action === 'approve' || action === 'reject') {
+                if (!row) return;
+                const decision = action === 'approve' ? 'disetujui' : 'ditolak';
 
-                    const decision = button.value;
-                    const note = textarea?.value.trim() || '';
+                // Prompt note validation if rejecting from table directly
+                if (decision === 'ditolak') {
+                    // Open detail modal first or prompt for note
+                    openDetailModal(row);
+                    detailCatatanTextarea?.focus();
+                    detailCatatanTextarea?.classList.add('is-required');
 
-                    // Validate: catatan wajib jika ditolak
-                    if (decision === 'ditolak' && note.length === 0) {
-                        textarea?.classList.add('is-required');
-                        textarea?.focus();
-
-                        if (window.Swal) {
-                            window.Swal.fire({
-                                icon: 'warning',
-                                title: 'Catatan wajib diisi',
-                                text: 'Tambahkan alasan penolakan agar mitra memahami hasil validasi.',
-                                confirmButtonText: 'Baik'
-                            });
-                        }
-                        return;
+                    if (window.Swal) {
+                        window.Swal.fire({
+                            icon: 'warning',
+                            title: 'Catatan wajib diisi',
+                            text: 'Tambahkan alasan penolakan pada kolom catatan di detail modal.',
+                            confirmButtonText: 'Baik'
+                        });
                     }
+                    return;
+                }
 
-                    // Find the parent submission card
-                    const card = form.closest('[data-submission-card]');
-                    if (!card) return;
+                openNotifModal(row, decision, '');
+            }
+        });
 
-                    // Open the confirmation modal
-                    openModal(form, card, decision, button.name, note);
-                });
-            });
+        // Action Buttons inside Detail Modal
+        detailBtnApprove?.addEventListener('click', () => {
+            if (!activeRow) return;
+            const note = detailCatatanTextarea?.value.trim() || '';
+            closeDetailModal();
+            openNotifModal(activeRow, 'disetujui', note);
+        });
+
+        detailBtnReject?.addEventListener('click', () => {
+            if (!activeRow) return;
+            const note = detailCatatanTextarea?.value.trim() || '';
+
+            if (note.length === 0) {
+                detailCatatanTextarea?.classList.add('is-required');
+                detailCatatanTextarea?.focus();
+
+                if (window.Swal) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Catatan wajib diisi',
+                        text: 'Tambahkan alasan penolakan agar mitra memahami hasil validasi.',
+                        confirmButtonText: 'Baik'
+                    });
+                }
+                return;
+            }
+
+            closeDetailModal();
+            openNotifModal(activeRow, 'ditolak', note);
         });
     };
 

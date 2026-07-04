@@ -879,6 +879,411 @@
 }
 
 /* ==========================================================================
+   Submission Data Table & Actions
+   ========================================================================== */
+
+.submission-data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.submission-data-table th {
+    white-space: nowrap;
+}
+
+.submission-row[hidden] {
+    display: none !important;
+}
+
+.sub-code-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+}
+
+.sub-badge-perpanjangan {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sub-mitra-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sub-mitra-name {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.sub-mitra-meta {
+    font-size: 11.5px;
+    color: var(--text-sub);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sub-title-cell {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.45;
+    max-width: 320px;
+}
+
+.sub-klas-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+}
+
+.sub-chip-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(14, 165, 233, 0.1);
+    color: #0284c7;
+    font-size: 11.5px;
+    font-weight: 750;
+}
+
+.sub-contact-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.sub-contact-cell small {
+    font-size: 11.5px;
+    color: var(--text-sub);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.sub-date-cell {
+    font-size: 12px;
+    color: var(--text-sub);
+    white-space: nowrap;
+    font-weight: 650;
+}
+
+/* Action buttons in row */
+.sub-action-group {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.sub-action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-sub);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.sub-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.sub-action-btn.btn-detail:hover {
+    background: rgba(14, 165, 233, 0.12);
+    color: #0284c7;
+    border-color: rgba(14, 165, 233, 0.3);
+}
+
+.sub-action-btn.btn-approve:hover {
+    background: rgba(16, 185, 129, 0.14);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.sub-action-btn.btn-reject:hover {
+    background: rgba(239, 68, 68, 0.14);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ==========================================================================
+   Submission Detail Modal
+   ========================================================================== */
+
+.subdetail-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+}
+
+.subdetail-modal-overlay[hidden] {
+    display: none;
+}
+
+.subdetail-modal-overlay.is-visible {
+    opacity: 1;
+}
+
+.subdetail-modal {
+    width: min(680px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.2);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.subdetail-modal-overlay.is-visible .subdetail-modal {
+    transform: translateY(0) scale(1);
+}
+
+.subdetail-modal-header {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    background: var(--surface2);
+}
+
+.subdetail-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.subdetail-title-group h3 {
+    margin: 4px 0 0;
+    font-size: 18px;
+    font-weight: 850;
+    color: var(--text);
+    line-height: 1.35;
+}
+
+.subdetail-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 0;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.subdetail-modal-close:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.subdetail-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    overflow-y: auto;
+}
+
+.subdetail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.subdetail-box {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.subdetail-box-full {
+    grid-column: 1 / -1;
+}
+
+.subdetail-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.subdetail-label i {
+    color: #0ea5e9;
+    font-size: 11px;
+}
+
+.subdetail-value {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.subdetail-value a {
+    color: #0284c7;
+    text-decoration: none;
+    font-weight: 750;
+}
+
+.subdetail-value a:hover {
+    text-decoration: underline;
+}
+
+.subdetail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface2);
+}
+
+.subdetail-text-content {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text);
+    white-space: pre-line;
+}
+
+.subdetail-note-box {
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(14, 165, 233, 0.25);
+    background: rgba(14, 165, 233, 0.06);
+    color: var(--text);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+.subdetail-note-box.is-history {
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.subdetail-note-box strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+}
+
+.subdetail-form-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+}
+
+.subdetail-modal-footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--surface2);
+}
+
+.subdetail-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .sub-chip-badge {
+    background: rgba(14, 165, 233, 0.15);
+    color: #7dd3fc;
+}
+
+[data-theme="dark"] .sub-action-btn.btn-detail:hover {
+    background: rgba(14, 165, 233, 0.2);
+    color: #7dd3fc;
+}
+
+[data-theme="dark"] .subdetail-box {
+    background: var(--surface2);
+}
+
+@media (max-width: 680px) {
+    .subdetail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .subdetail-modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .subdetail-footer-actions {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+
+    .subdetail-footer-actions button {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================================
    Notification Confirmation Modal
    ========================================================================== */
 
