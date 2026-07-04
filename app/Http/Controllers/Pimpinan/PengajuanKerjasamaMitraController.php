@@ -35,8 +35,8 @@ class PengajuanKerjasamaMitraController extends Controller
             ])
             ->orderByDesc('reviewed_at')
             ->orderByDesc('id')
-            ->limit(20)
-            ->get();
+            ->paginate(10, ['*'], 'history_page')
+            ->withQueryString();
 
         $submissionStats = [
             'total' => PengajuanKerjasamaMitra::count(),

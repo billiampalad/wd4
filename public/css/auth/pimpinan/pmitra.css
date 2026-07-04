@@ -1745,3 +1745,71 @@
 .swal2-container {
     z-index: 99999 !important;
 }
+
+/* Pagination Styling */
+.dk-pagination-footer {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+    background: var(--surface2);
+}
+
+.dk-pagination-info {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-weight: 500;
+}
+
+.dk-pagination-info strong {
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.dk-pagination-links .pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    margin: 0;
+    gap: 4px;
+}
+
+.dk-pagination-links .page-item .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all var(--transition);
+}
+
+.dk-pagination-links .page-item:hover:not(.disabled) .page-link {
+    background: var(--primary-bg);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.dk-pagination-links .page-item.active .page-link {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.dk-pagination-links .page-item.disabled .page-link {
+    color: var(--text-sub);
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: transparent;
+}

@@ -280,7 +280,7 @@
                                     data-status-class="{{ $statusClass }}"
                                     data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}">
                                     <td class="um-td um-td-num">
-                                        <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="um-num dk-num">{{ str_pad(($reviewedSubmissions->currentPage() - 1) * $reviewedSubmissions->perPage() + $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     </td>
                                     <td class="um-td">
                                         <div class="sub-code-cell">
@@ -321,6 +321,17 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if ($reviewedSubmissions->hasPages())
+                    <div class="dk-pagination-footer">
+                        <div class="dk-pagination-info">
+                            Menampilkan <strong>{{ $reviewedSubmissions->firstItem() ?? 0 }}</strong> - <strong>{{ $reviewedSubmissions->lastItem() ?? 0 }}</strong> dari <strong>{{ $reviewedSubmissions->total() }}</strong> riwayat pengajuan
+                        </div>
+                        <div class="dk-pagination-links">
+                            {{ $reviewedSubmissions->links('pagination::bootstrap-4') }}
+                        </div>
+                    </div>
+                @endif
             @endif
         </div>
     </section>
