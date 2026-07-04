@@ -130,7 +130,7 @@
                                 <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
                                     data-category="{{ strtolower($submission->kategori) }}"
                                     data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
-                                    data-mitra-phone="{{ $submission->telepon }}"
+                                    data-mitra-phone="{{ $submission->telp }}"
                                     data-submission-code="{{ $submission->kode_pengajuan }}"
                                     data-submission-title="{{ $submission->judul_pengajuan }}"
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
@@ -145,7 +145,7 @@
                                     data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
                                     data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
                                     data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}"
-                                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telepon ?? '')) }}">
+                                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telp ?? '')) }}">
                                     <td class="um-td um-td-num">
                                         <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     </td>
@@ -179,7 +179,7 @@
                                     <td class="um-td">
                                         <div class="sub-contact-cell">
                                             <small><i class="fas fa-envelope"></i> {{ $submission->email }}</small>
-                                            <small><i class="fab fa-whatsapp"></i> {{ $submission->telepon }}</small>
+                                            <small><i class="fab fa-whatsapp"></i> {{ $submission->telp }}</small>
                                         </div>
                                     </td>
                                     <td class="um-td">
@@ -260,7 +260,7 @@
                                 <tr class="um-row dk-row submission-history-row" data-submission-row
                                     data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
                                     data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
-                                    data-mitra-phone="{{ $submission->telepon }}"
+                                    data-mitra-phone="{{ $submission->telp }}"
                                     data-submission-code="{{ $submission->kode_pengajuan }}"
                                     data-submission-title="{{ $submission->judul_pengajuan }}"
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"

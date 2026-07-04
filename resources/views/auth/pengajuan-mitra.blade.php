@@ -401,15 +401,6 @@
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
-
-                                    <div class="partner-field">
-                                        <label for="telepon">WhatsApp / Telepon <span class="partner-required">*</span></label>
-                                        <input id="telepon" type="text" name="telepon"
-                                            value="{{ old('telepon') }}" placeholder="Contoh: 08xxxxxxxxxx" required>
-                                        @error('telepon')
-                                            <small class="partner-error">{{ $message }}</small>
-                                        @enderror
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -559,10 +550,6 @@
                                     <div class="partner-review-item">
                                         <span class="partner-review-label">Email</span>
                                         <span class="partner-review-value" id="rev_email">-</span>
-                                    </div>
-                                    <div class="partner-review-item">
-                                        <span class="partner-review-label">WhatsApp / Telepon</span>
-                                        <span class="partner-review-value" id="rev_telepon">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -812,7 +799,6 @@
             document.getElementById('rev_nama_penanggung_jawab').innerText = getVal('nama_penanggung_jawab');
             document.getElementById('rev_jabatan_penanggung_jawab').innerText = getVal('jabatan_penanggung_jawab');
             document.getElementById('rev_email').innerText = getVal('email');
-            document.getElementById('rev_telepon').innerText = getVal('telepon');
 
             document.getElementById('rev_judul_pengajuan').innerText = getVal('judul_pengajuan');
             document.getElementById('rev_tujuan_pengajuan').innerText = getVal('tujuan_pengajuan');

@@ -38,7 +38,7 @@ class NotificationService
      */
     public static function sendWhatsApp(PengajuanKerjasamaMitra $submission, string $customMessage): void
     {
-        $phone = $submission->telepon;
+        $phone = $submission->telp;
         $token = config('services.fonnte.token');
 
         if (! $phone) {

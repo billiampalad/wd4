@@ -30,7 +30,6 @@ class PengajuanKerjasamaMitra extends Model
         'nama_penanggung_jawab',
         'jabatan_penanggung_jawab',
         'email',
-        'telepon',
         'judul_pengajuan',
         'tujuan_pengajuan',
         'ruang_lingkup',
