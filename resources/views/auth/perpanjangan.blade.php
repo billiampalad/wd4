@@ -386,8 +386,46 @@
                                 </div>
 
                                 <div class="partner-fields">
-                                    <div class="partner-field">
-                                        <label for="nama_penandatangan">Nama Penandatangan <span class="partner-required">*</span></label>
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="nama_penandatangan" style="margin: 0;">Nama Penandatangan <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Nama Penandatangan"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <input id="nama_penandatangan" type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
                                             placeholder="Nama lengkap penandatangan" required>
                                         @error('nama_penandatangan')
@@ -395,16 +433,93 @@
                                         @enderror
                                     </div>
 
-                                    <div class="partner-field">
-                                        <label for="jabatan_penandatangan">Jabatan Penandatangan <span class="partner-required">*</span></label>
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="jabatan_penandatangan" style="margin: 0;">Jabatan Penandatangan <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Jabatan Penandatangan"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <input id="jabatan_penandatangan" type="text" name="jabatan_penandatangan"
                                             value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian" required>
                                         @error('jabatan_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
-                                    <div class="partner-field">
-                                        <label for="nama_penanggung_jawab">Nama Penanggung Jawab</label>
+
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="nama_penanggung_jawab" style="margin: 0;">Nama Penanggung Jawab</label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Nama Penanggung Jawab"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <input id="nama_penanggung_jawab" type="text" name="nama_penanggung_jawab"
                                             value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab">
                                         @error('nama_penanggung_jawab')
@@ -412,8 +527,46 @@
                                         @enderror
                                     </div>
 
-                                    <div class="partner-field">
-                                        <label for="jabatan_penanggung_jawab">Jabatan Penanggung Jawab</label>
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="jabatan_penanggung_jawab" style="margin: 0;">Jabatan Penanggung Jawab</label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Jabatan Penanggung Jawab"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <input id="jabatan_penanggung_jawab" type="text" name="jabatan_penanggung_jawab"
                                             value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Contoh: Koordinator Kerja Sama">
                                         @error('jabatan_penanggung_jawab')
@@ -596,8 +749,46 @@
                                         </div>
                                     </div>
 
-                                    <div class="partner-field partner-field-full">
-                                        <label for="judul_pengajuan">Judul Rencana Perpanjangan <span class="partner-required">*</span></label>
+                                    <div class="partner-field partner-field-full" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="judul_pengajuan" style="margin: 0;">Judul Rencana Perpanjangan <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Judul Rencana Perpanjangan"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <input id="judul_pengajuan" type="text" name="judul_pengajuan"
                                             value="{{ old('judul_pengajuan') }}"
                                             placeholder="Contoh: Lanjutan Program Magang Mahasiswa dan Penyelarasan Kurikulum" required>
@@ -615,8 +806,46 @@
                                         @enderror
                                     </div>
 
-                                    <div class="partner-field partner-field-full">
-                                        <label for="ruang_lingkup">Ruang Lingkup<span class="partner-required">*</span></label>
+                                    <div class="partner-field partner-field-full" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="ruang_lingkup" style="margin: 0;">Ruang Lingkup <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Ruang Lingkup"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 250px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Form</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Data/teks pada form ini bisa di ubah.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="partner-alpine-select" x-data="partnerSelect('Pilih ruang lingkup kegiatan')" x-init="init($refs.native)" @click.outside="close()">
                                             <select x-ref="native" id="ruang_lingkup" name="ruang_lingkup" class="partner-native-select" required>
                                                 <option value="">Pilih ruang lingkup kegiatan</option>
