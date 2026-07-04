@@ -235,69 +235,124 @@
                                                 this.selected = id;
                                             }
                                         }">
-                                        <label>Dokumen Kerjasama <span class="partner-required">*</span></label>
                                         <input type="hidden" name="jenis" :value="selected">
 
                                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                                             {{-- Left: Type Dropdown --}}
-                                            <div class="alpine-dropdown" @click.outside="open = false"
-                                                style="position: relative; width: 100%; min-width: 0;">
-                                                <div class="ad-trigger" :class="{'active': open, 'is-invalid': @error('jenis') true @else false @enderror}" @click="open = !open"
-                                                    style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.3s;">
-                                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                                        <div
-                                                            :style="'width: 32px; height: 32px; border-radius: 8px; background:' + (selectedItem ? selectedItem.color : '#4f46e5') + '20; color:' + (selectedItem ? selectedItem.color : '#4f46e5') + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
-                                                            <i class="fas" :class="selectedItem ? selectedItem.icon : 'fa-file-signature'"></i>
-                                                        </div>
-                                                        <div
-                                                            style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                            <span x-text="selectedItem ? selectedItem.short : 'Pilih jenis'"
-                                                                style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                            <span x-text="selectedItem ? selectedItem.label : ''"
-                                                                style="font-size: 11px; color: var(--text-sub);"></span>
-                                                        </div>
-                                                    </div>
-                                                    <i class="fas fa-chevron-down"
-                                                        style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
-                                                        :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                                <div style="display: flex; align-items: center; height: 22px;">
+                                                    <label style="font-size: 12px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 4px; margin: 0;">
+                                                        <span>Jenis Dokumen</span>
+                                                        <span class="partner-required">*</span>
+                                                    </label>
                                                 </div>
-
-                                                <div class="ad-menu" x-show="open"
-                                                    x-transition:enter="transition ease-out duration-200"
-                                                    x-transition:enter-start="opacity-0 transform scale-95"
-                                                    x-transition:enter-end="opacity-100 transform scale-100"
-                                                    style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
-                                                    <template x-for="item in items" :key="item.id">
-                                                        <div @click="selectType(item.id); open = false" class="ad-item"
-                                                            :class="{'selected': selected === item.id}"
-                                                            style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
-                                                            onmouseover="this.style.background='var(--surface2)'"
-                                                            onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                <div class="alpine-dropdown" @click.outside="open = false"
+                                                    style="position: relative; width: 100%; min-width: 0;">
+                                                    <div class="ad-trigger" :class="{'active': open, 'is-invalid': @error('jenis') true @else false @enderror}" @click="open = !open"
+                                                        style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; cursor: pointer;">
+                                                        <div style="display: flex; align-items: center; gap: 12px;">
                                                             <div
-                                                                :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
-                                                                <i class="fas" :class="item.icon"></i>
+                                                                :style="'width: 32px; height: 32px; border-radius: 8px; background:' + (selectedItem ? selectedItem.color : '#4f46e5') + '20; color:' + (selectedItem ? selectedItem.color : '#4f46e5') + '; display: flex; align-items: center; justify-content: center; font-size: 14px;'">
+                                                                <i class="fas" :class="selectedItem ? selectedItem.icon : 'fa-file-signature'"></i>
                                                             </div>
                                                             <div
                                                                 style="display: flex; flex-direction: column; line-height: 1.2;">
-                                                                <span x-text="item.short"
+                                                                <span x-text="selectedItem ? selectedItem.short : 'Pilih jenis'"
                                                                     style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
-                                                                <span x-text="item.label"
+                                                                <span x-text="selectedItem ? selectedItem.label : ''"
                                                                     style="font-size: 11px; color: var(--text-sub);"></span>
                                                             </div>
-                                                            <i class="fas fa-check" x-show="selected === item.id"
-                                                                style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
                                                         </div>
-                                                    </template>
+                                                        <i class="fas fa-chevron-down"
+                                                            style="font-size: 11px; color: #9ca3af; transition: 0.3s;"
+                                                            :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                                                    </div>
+
+                                                    <div class="ad-menu" x-show="open"
+                                                        x-transition:enter="transition ease-out duration-200"
+                                                        x-transition:enter-start="opacity-0 transform scale-95"
+                                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                                        style="position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); z-index: 50; padding: 6px; display: flex; flex-direction: column; gap: 4px;">
+                                                        <template x-for="item in items" :key="item.id">
+                                                            <div @click="selectType(item.id); open = false" class="ad-item"
+                                                                :class="{'selected': selected === item.id}"
+                                                                style="padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;"
+                                                                onmouseover="this.style.background='var(--surface2)'"
+                                                                onmouseout="if(!this.classList.contains('selected')) this.style.background='transparent'">
+                                                                <div
+                                                                    :style="'width: 30px; height: 30px; border-radius: 8px; background:' + item.color + '20; color:' + item.color + '; display: flex; align-items: center; justify-content: center; font-size: 13px;'">
+                                                                    <i class="fas" :class="item.icon"></i>
+                                                                </div>
+                                                                <div
+                                                                    style="display: flex; flex-direction: column; line-height: 1.2;">
+                                                                    <span x-text="item.short"
+                                                                        style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                                    <span x-text="item.label"
+                                                                        style="font-size: 11px; color: var(--text-sub);"></span>
+                                                                </div>
+                                                                <i class="fas fa-check" x-show="selected === item.id"
+                                                                    style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
+                                                            </div>
+                                                        </template>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             {{-- Right: Number Input --}}
-                                            <div class="partner-field" style="display: grid; gap: 8px;">
+                                            <div class="partner-field" x-data="{ showInfo: false }" style="display: flex; flex-direction: column; gap: 6px;">
+                                                <div style="display: flex; align-items: center; justify-content: space-between; height: 22px;">
+                                                    <label for="doc_number" style="font-size: 12px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 4px; margin: 0;">
+                                                        <span>Nomor Dokumen Lama</span>
+                                                        <span class="partner-required">*</span>
+                                                    </label>
+                                                    
+                                                    {{-- Interactive Info Icon & Popover Tooltip --}}
+                                                    <div style="position: relative;">
+                                                        <button type="button" 
+                                                            @mouseenter="showInfo = true" 
+                                                            @mouseleave="showInfo = false"
+                                                            @click="showInfo = !showInfo"
+                                                            aria-label="Informasi Nomor Dokumen"
+                                                            style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                            onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                            onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                            <i class="fas fa-info"></i>
+                                                        </button>
+
+                                                        {{-- Floating Premium Tooltip Card --}}
+                                                        <div x-show="showInfo" 
+                                                            x-transition:enter="transition ease-out duration-200"
+                                                            x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                            x-transition:leave="transition ease-in duration-150"
+                                                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                            x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                            style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 270px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                            x-cloak>
+                                                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                                <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                                    <i class="fas fa-info-circle"></i>
+                                                                </div>
+                                                                <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                                    <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Petunjuk Pengisian</span>
+                                                                    <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                        Masukkan nomor dokumen MoU/MoU/IA sebelumnya yang ingin diperpanjang.
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            {{-- Arrow pointer --}}
+                                                            <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {{-- Input Wrapper --}}
                                                 <div style="position: relative;">
-                                                    <i class="fas fa-hashtag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10;"></i>
-                                                    <input type="text" name="doc_number" value="{{ old('doc_number') }}"
-                                                        placeholder="Masukkan nomor dokumen..." required
-                                                        style="width: 100%; padding-left: 44px; height: 48px; border-radius: 10px;">
+                                                    <i class="fas fa-hashtag" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 10; font-size: 13px;"></i>
+                                                    <input type="text" id="doc_number" name="doc_number" value="{{ old('doc_number') }}"
+                                                        placeholder="Contoh: 123/POLIMDO/MoU/2021" required
+                                                        style="padding-left: 44px; height: 48px;"
+                                                        :class="{'is-invalid': @error('doc_number') true @else false @enderror}">
                                                 </div>
                                             </div>
                                         </div>
@@ -325,6 +380,11 @@
 
                         <div class="partner-form-grid">
                             <div class="partner-form-section is-flat">
+                                <div id="autofillNotice" style="display: none; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; color: #059669; font-size: 12px; font-weight: 600; margin-bottom: 16px;">
+                                    <i class="fas fa-magic"></i>
+                                    <span>Data mitra terdeteksi dari Master Mitra. Kontak telah diperbarui secara otomatis.</span>
+                                </div>
+
                                 <div class="partner-fields">
                                     <div class="partner-field">
                                         <label for="nama_penandatangan">Nama Penandatangan <span class="partner-required">*</span></label>
@@ -360,16 +420,6 @@
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
-
-                                    <div class="partner-field">
-                                        <label for="email">Email <span class="partner-required">*</span></label>
-                                        <input id="email" type="email" name="email"
-                                            value="{{ old('email') }}" placeholder="pic@perusahaan.com" required>
-                                        @error('email')
-                                            <small class="partner-error">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -955,6 +1005,39 @@
             });
         });
 
+        // ── Auto-fill Mitra Contact Info ──
+        const mitraSelect = document.getElementById('mitra_id');
+        if (mitraSelect) {
+            mitraSelect.addEventListener('change', function() {
+                const autofillNotice = document.getElementById('autofillNotice');
+                if (this.value) {
+                    if (autofillNotice) autofillNotice.style.display = 'flex';
+                } else {
+                    if (autofillNotice) autofillNotice.style.display = 'none';
+                }
+            });
+        }
+
+        // ── Stepper Interactive Click Navigation ──
+        stepperItems.forEach(item => {
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', function() {
+                const targetNum = parseInt(this.getAttribute('data-step-target'));
+                if (targetNum < currentStep) {
+                    currentStep = targetNum;
+                    updateWizardUI();
+                } else if (targetNum > currentStep) {
+                    // Try navigating forward step-by-step with validation
+                    while (currentStep < targetNum) {
+                        if (!validateCurrentStep()) break;
+                        currentStep++;
+                    }
+                    if (currentStep === 4) syncReviewData();
+                    updateWizardUI();
+                }
+            });
+        });
+
         function navigateStep(direction) {
             if (direction === 1 && !validateCurrentStep()) {
                 return; // block if active step invalid
@@ -978,6 +1061,35 @@
         function validateCurrentStep() {
             const activeStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
             if (!activeStepEl) return true;
+
+            // Step 3 Specific: Date Range Validation
+            if (currentStep === 3) {
+                const startDateEl = document.querySelector('input[name="start_date"]');
+                const endDateEl = document.querySelector('input[name="end_date"]');
+
+                if (startDateEl && endDateEl && startDateEl.value && endDateEl.value) {
+                    const start = new Date(startDateEl.value);
+                    const end = new Date(endDateEl.value);
+
+                    if (end < start) {
+                        const isDark = document.documentElement.dataset.theme === 'dark';
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Tanggal Tidak Valid',
+                                text: 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.',
+                                confirmButtonColor: '#f59e0b',
+                                background: isDark ? '#1e293b' : '#ffffff',
+                                color: isDark ? '#f8fafc' : '#0f172a',
+                            });
+                        } else {
+                            alert('Tanggal selesai tidak boleh lebih awal dari tanggal mulai.');
+                        }
+                        endDateEl.closest('.partner-field')?.classList.add('has-error');
+                        return false;
+                    }
+                }
+            }
 
             const requiredFields = activeStepEl.querySelectorAll('[required]');
             let isValid = true;
@@ -1006,6 +1118,7 @@
 
             return isValid;
         }
+
         function syncReviewData() {
             // Helper to clean values
             const getVal = (id) => {
@@ -1098,11 +1211,45 @@
         // Initialize progress width and UI states
         updateWizardUI();
 
-        // Submit validation on Step 5
+        // ── Submit Confirmation with SweetAlert2 & Loading State ──
         form.addEventListener('submit', function(e) {
             if (currentStep !== totalSteps || !validateCurrentStep()) {
                 e.preventDefault();
                 return;
+            }
+
+            if (!form.dataset.confirmed) {
+                e.preventDefault();
+                const isDark = document.documentElement.dataset.theme === 'dark';
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'question',
+                        title: 'Kirim Pengajuan Perpanjangan?',
+                        text: 'Pastikan seluruh data perpanjangan dan rencana kerja sama sudah benar.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Kirim Sekarang',
+                        cancelButtonText: 'Batal / Periksa Lagi',
+                        confirmButtonColor: '#4f46e5',
+                        cancelButtonColor: '#64748b',
+                        background: isDark ? '#1e293b' : '#ffffff',
+                        color: isDark ? '#f8fafc' : '#0f172a',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.dataset.confirmed = 'true';
+                            submitBtn.disabled = true;
+                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                            form.submit();
+                        }
+                    });
+                } else {
+                    if (confirm('Kirim pengajuan perpanjangan? Pastikan seluruh data sudah benar.')) {
+                        form.dataset.confirmed = 'true';
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+                        form.submit();
+                    }
+                }
             }
         });
 
