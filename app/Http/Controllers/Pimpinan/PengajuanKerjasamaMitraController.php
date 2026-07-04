@@ -152,12 +152,12 @@ class PengajuanKerjasamaMitraController extends Controller
                     }
                 }
 
-                // 5. Simpan detail_kegiatans (ruang_lingkup disimpan terpisah di tabel detail_kegiatans)
+                // 5. Simpan detail_kegiatans (keterangan diset null karena ruang_lingkup sudah terwakili oleh jenis_kerjasamas)
                 DetailKegiatan::create([
                     'cooperation_id' => $cooperation->id,
                     'jenis_kerjasama_id' => $jenisKerjasamaId,
                     'tujuan' => $submission->tujuan_pengajuan,
-                    'keterangan' => $submission->ruang_lingkup,
+                    'keterangan' => null,
                     'nilai_kontrak' => 0,
                 ]);
 
@@ -167,7 +167,7 @@ class PengajuanKerjasamaMitraController extends Controller
                 $judulNotif = 'Pengajuan Kerja Sama Baru Disahkan';
                 $pesanNotif = "Pimpinan menyetujui pengajuan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi data & dokumen kerjasama.";
 
-                User::whereHas('role', fn ($query) => $query->where('role_name', 'unit_kerja'))
+                User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(role_name))'), ['unit_kerja', 'unit', 'humas']))
                     ->get()
                     ->each(function (User $unitUser) use ($senderId, $cooperation, $judulNotif, $pesanNotif, $linkRepositori) {
                         Notifikasi::send(

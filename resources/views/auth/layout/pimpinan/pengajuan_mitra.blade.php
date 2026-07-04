@@ -12,7 +12,8 @@
                 <span class="current">Pengajuan Mitra</span>
             </div>
             <h2 id="pageTitle" class="pimpinan-page-title">Validasi Pengajuan Kerja Sama Mitra</h2>
-            <p id="pageDesc" class="pimpinan-page-desc">Tinjau data mitra dari landing page, lalu setujui agar masuk ke master mitra atau tolak dengan catatan yang jelas.</p>
+            <p id="pageDesc" class="pimpinan-page-desc">Tinjau data mitra dari landing page, lalu setujui agar masuk ke
+                master mitra atau tolak dengan catatan yang jelas.</p>
         </div>
     </section>
 
@@ -52,10 +53,6 @@
                     <small>{{ $pendingSubmissions->count() }} pengajuan aktif</small>
                 </div>
                 <div class="submission-tools">
-                    <label class="submission-search" for="submissionSearch">
-                        <i class="fas fa-search"></i>
-                        <input id="submissionSearch" type="search" placeholder="Cari mitra, kode, atau negara">
-                    </label>
                     <div class="submission-filter-dropdown" x-data="{
                         open: false,
                         selectedValue: 'all',
@@ -75,7 +72,8 @@
                             <span class="submission-filter-label" x-text="selectedLabel"></span>
                             <i class="fas fa-chevron-down submission-filter-chevron" :class="{ 'is-open': open }"></i>
                         </button>
-                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak role="listbox">
+                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak
+                            role="listbox">
                             <button type="button" class="submission-filter-option"
                                 :class="{ 'is-selected': selectedValue === 'all' }"
                                 :aria-selected="(selectedValue === 'all').toString()"
@@ -83,15 +81,15 @@
                                 <span>Semua kategori</span>
                                 <i class="fas fa-check" x-show="selectedValue === 'all'"></i>
                             </button>
-                        @foreach ($pendingSubmissions->pluck('kategori')->filter()->unique()->sort() as $kategori)
-                            <button type="button" class="submission-filter-option"
-                                :class="{ 'is-selected': selectedValue === @js(strtolower($kategori)) }"
-                                :aria-selected="(selectedValue === @js(strtolower($kategori))).toString()"
-                                @click="select(@js(strtolower($kategori)), @js(ucfirst($kategori)))" role="option">
-                                <span>{{ ucfirst($kategori) }}</span>
-                                <i class="fas fa-check" x-show="selectedValue === @js(strtolower($kategori))"></i>
-                            </button>
-                        @endforeach
+                            @foreach ($pendingSubmissions->pluck('kategori')->filter()->unique()->sort() as $kategori)
+                                <button type="button" class="submission-filter-option"
+                                    :class="{ 'is-selected': selectedValue === @js(strtolower($kategori)) }"
+                                    :aria-selected="(selectedValue === @js(strtolower($kategori))).toString()"
+                                    @click="select(@js(strtolower($kategori)), @js(ucfirst($kategori)))" role="option">
+                                    <span>{{ ucfirst($kategori) }}</span>
+                                    <i class="fas fa-check" x-show="selectedValue === @js(strtolower($kategori))"></i>
+                                </button>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -129,21 +127,16 @@
                                         default => 'pending',
                                     };
                                 @endphp
-                                <tr class="um-row dk-row submission-row"
-                                    data-submission-row
-                                    data-id="{{ $submission->id }}"
+                                <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
                                     data-category="{{ strtolower($submission->kategori) }}"
-                                    data-mitra-name="{{ $submission->nama_mitra }}"
-                                    data-mitra-email="{{ $submission->email }}"
+                                    data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
                                     data-mitra-phone="{{ $submission->telepon }}"
                                     data-submission-code="{{ $submission->kode_pengajuan }}"
                                     data-submission-title="{{ $submission->judul_pengajuan }}"
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
                                     data-kategori="{{ ucfirst($submission->kategori) }}"
-                                    data-negara="{{ $submission->negara ?: '-' }}"
-                                    data-alamat="{{ $submission->alamat }}"
-                                    data-telp-mitra="{{ $submission->telp }}"
-                                    data-website="{{ $websiteUrl }}"
+                                    data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                    data-telp-mitra="{{ $submission->telp }}" data-website="{{ $websiteUrl }}"
                                     data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
                                     data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
                                     data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
@@ -169,11 +162,13 @@
                                     <td class="um-td">
                                         <div class="sub-mitra-cell">
                                             <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
-                                            <small class="sub-mitra-meta"><i class="fas fa-globe"></i> {{ $submission->negara ?: '-' }}</small>
+                                            <small class="sub-mitra-meta"><i class="fas fa-globe"></i>
+                                                {{ $submission->negara ?: '-' }}</small>
                                         </div>
                                     </td>
                                     <td class="um-td">
-                                        <span class="sub-title-cell" title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        <span class="sub-title-cell"
+                                            title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
                                     </td>
                                     <td class="um-td">
                                         <div class="sub-klas-cell">
@@ -194,13 +189,16 @@
                                     </td>
                                     <td class="um-td um-td-aksi text-center">
                                         <div class="sub-action-group">
-                                            <button type="button" class="sub-action-btn btn-detail" data-action="detail" title="Lihat Detail Pengajuan">
+                                            <button type="button" class="sub-action-btn btn-detail" data-action="detail"
+                                                title="Lihat Detail Pengajuan">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button type="button" class="sub-action-btn btn-approve" data-action="approve" title="Setujui Pengajuan">
+                                            <button type="button" class="sub-action-btn btn-approve" data-action="approve"
+                                                title="Setujui Pengajuan">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                            <button type="button" class="sub-action-btn btn-reject" data-action="reject" title="Tolak Pengajuan">
+                                            <button type="button" class="sub-action-btn btn-reject" data-action="reject"
+                                                title="Tolak Pengajuan">
                                                 <i class="fas fa-ban"></i>
                                             </button>
                                         </div>
@@ -224,8 +222,8 @@
         <div class="dk-card submission-section">
             <div class="dk-card-header">
                 <div class="dk-card-title">
-                    <span>Riwayat Review Terbaru</span>
-                    <small>20 keputusan terakhir untuk pengajuan publik.</small>
+                    <span>Riwayat Pengajuan Kerjasama</span>
+                    <small>Data Pengajuan Kerjasama Baru</small>
                 </div>
             </div>
 
@@ -259,21 +257,16 @@
                                         default => 'pending',
                                     };
                                 @endphp
-                                <tr class="um-row dk-row submission-history-row"
-                                    data-submission-row
-                                    data-id="{{ $submission->id }}"
-                                    data-category="{{ strtolower($submission->kategori) }}"
-                                    data-mitra-name="{{ $submission->nama_mitra }}"
-                                    data-mitra-email="{{ $submission->email }}"
+                                <tr class="um-row dk-row submission-history-row" data-submission-row
+                                    data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
+                                    data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
                                     data-mitra-phone="{{ $submission->telepon }}"
                                     data-submission-code="{{ $submission->kode_pengajuan }}"
                                     data-submission-title="{{ $submission->judul_pengajuan }}"
                                     data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"
                                     data-kategori="{{ ucfirst($submission->kategori) }}"
-                                    data-negara="{{ $submission->negara ?: '-' }}"
-                                    data-alamat="{{ $submission->alamat }}"
-                                    data-telp-mitra="{{ $submission->telp }}"
-                                    data-website="{{ $submission->website }}"
+                                    data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                    data-telp-mitra="{{ $submission->telp }}" data-website="{{ $submission->website }}"
                                     data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
                                     data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
                                     data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
@@ -282,22 +275,23 @@
                                     data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
                                     data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
                                     data-catatan-pimpinan="{{ $submission->catatan_pimpinan ?: '' }}"
-                                    data-status-label="{{ $submission->status_label }}"
-                                    data-status-class="{{ $statusClass }}">
+                                    data-status-label="{{ $submission->status_label }}" data-status-class="{{ $statusClass }}">
                                     <td class="um-td um-td-num">
                                         <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                     </td>
                                     <td class="um-td">
                                         <div class="sub-code-cell">
                                             <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
-                                            <span class="submission-status {{ $statusClass }}">{{ $submission->status_label }}</span>
+                                            <span
+                                                class="submission-status {{ $statusClass }}">{{ $submission->status_label }}</span>
                                         </div>
                                     </td>
                                     <td class="um-td">
                                         <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
                                     </td>
                                     <td class="um-td">
-                                        <span class="sub-title-cell" title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        <span class="sub-title-cell"
+                                            title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
                                     </td>
                                     <td class="um-td">
                                         <small class="text-sub">{{ $submission->reviewer?->name ?? 'Pimpinan' }}</small>
@@ -308,7 +302,8 @@
                                         </small>
                                     </td>
                                     <td class="um-td um-td-aksi text-center">
-                                        <button type="button" class="sub-action-btn btn-detail" data-action="detail-history" title="Lihat Detail History">
+                                        <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
+                                            title="Lihat Detail History">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
@@ -343,7 +338,8 @@
                         <strong id="subdetailMitraName" class="subdetail-value">—</strong>
                     </div>
                     <div class="subdetail-box">
-                        <span class="subdetail-label"><i class="fas fa-layer-group"></i> Klasifikasi &amp; Kategori</span>
+                        <span class="subdetail-label"><i class="fas fa-layer-group"></i> Klasifikasi &amp;
+                            Kategori</span>
                         <span id="subdetailKlasifikasi" class="subdetail-value">—</span>
                     </div>
                     <div class="subdetail-box">
@@ -375,7 +371,8 @@
                         <span id="subdetailPj" class="subdetail-value">—</span>
                     </div>
                     <div class="subdetail-box subdetail-box-full">
-                        <span class="subdetail-label"><i class="fas fa-address-book"></i> Kontak Pengaju (Email / WA)</span>
+                        <span class="subdetail-label"><i class="fas fa-address-book"></i> Kontak Pengaju (Email /
+                            WA)</span>
                         <span id="subdetailKontak" class="subdetail-value">—</span>
                     </div>
                 </div>

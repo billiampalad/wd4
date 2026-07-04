@@ -103,10 +103,13 @@
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
+                            const isDark = document.documentElement.dataset.theme === 'dark';
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Pengajuan Perpanjangan Berhasil Dikirim!',
-                                html: '<div style="font-size: 14.5px; color: #475569; line-height: 1.65; margin-bottom: 16px;">{{ session('success') }}</div><div style="display:inline-flex; align-items:center; gap:8px; padding: 8px 18px; border-radius: 99px; background: rgba(245, 158, 11, 0.12); color: #d97706; font-weight: 750; font-size: 13px; border: 1px solid rgba(245, 158, 11, 0.3);"><i class="fas fa-hourglass-half"></i> Status: Dalam Proses Validasi Pimpinan</div>',
+                                html: `<div style="font-size: 14.5px; color: ${isDark ? '#cbd5e1' : '#475569'}; line-height: 1.65; margin-bottom: 16px;">{{ session('success') }}</div><div style="display:inline-flex; align-items:center; gap:8px; padding: 8px 18px; border-radius: 99px; background: rgba(245, 158, 11, 0.12); color: #d97706; font-weight: 750; font-size: 13px; border: 1px solid rgba(245, 158, 11, 0.3);"><i class="fas fa-hourglass-half"></i> Status: Dalam Proses Validasi Pimpinan</div>`,
+                                background: isDark ? '#1e293b' : '#ffffff',
+                                color: isDark ? '#f8fafc' : '#0f172a',
                                 confirmButtonText: 'Saya Mengerti',
                                 confirmButtonColor: '#10b981',
                                 customClass: {

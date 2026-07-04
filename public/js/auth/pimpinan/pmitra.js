@@ -5,15 +5,13 @@
         root.dataset.pmitraReady = 'true';
 
         const rows = Array.from(document.querySelectorAll('[data-submission-row]'));
-        const searchInput = document.getElementById('submissionSearch');
         const categoryFilter = document.getElementById('submissionCategoryFilter');
         const emptyState = document.querySelector('.submission-filter-empty');
 
         /* ============================
-         * Search & Filter for Table Rows
+         * Category Filter for Table Rows
          * ============================ */
         const applyFilter = () => {
-            const query = (searchInput?.value || '').trim().toLowerCase();
             const category = (categoryFilter?.value || 'all').toLowerCase();
             let visibleCount = 0;
 
@@ -21,14 +19,11 @@
                 // Only filter active pending rows in the first table
                 if (!row.classList.contains('submission-row')) return;
 
-                const haystack = row.dataset.search || '';
-                const cardCategory = row.dataset.category || '';
-                const matchesQuery = !query || haystack.includes(query);
+                const cardCategory = (row.dataset.category || '').toLowerCase();
                 const matchesCategory = category === 'all' || cardCategory === category;
-                const isVisible = matchesQuery && matchesCategory;
 
-                row.hidden = !isVisible;
-                if (isVisible) visibleCount += 1;
+                row.hidden = !matchesCategory;
+                if (matchesCategory) visibleCount += 1;
             });
 
             if (emptyState) {
@@ -36,7 +31,6 @@
             }
         };
 
-        searchInput?.addEventListener('input', applyFilter);
         categoryFilter?.addEventListener('change', applyFilter);
         applyFilter();
 
@@ -131,8 +125,14 @@
             if (isHistory) {
                 detailStatusBadge.className = `submission-status ${ds.statusClass || 'pending'}`;
                 detailStatusBadge.textContent = ds.statusLabel || 'Proses';
-                detailFormBlock.hidden = true;
-                detailActiveActions.hidden = true;
+                if (detailFormBlock) {
+                    detailFormBlock.hidden = true;
+                    detailFormBlock.style.display = 'none';
+                }
+                if (detailActiveActions) {
+                    detailActiveActions.hidden = true;
+                    detailActiveActions.style.display = 'none';
+                }
 
                 if (ds.catatanPimpinan) {
                     detailHistoryNoteWrapper.hidden = false;
@@ -143,8 +143,14 @@
             } else {
                 detailStatusBadge.className = 'submission-status pending';
                 detailStatusBadge.textContent = 'Menunggu Review';
-                detailFormBlock.hidden = false;
-                detailActiveActions.hidden = false;
+                if (detailFormBlock) {
+                    detailFormBlock.hidden = false;
+                    detailFormBlock.style.display = 'flex';
+                }
+                if (detailActiveActions) {
+                    detailActiveActions.hidden = false;
+                    detailActiveActions.style.display = 'flex';
+                }
                 detailHistoryNoteWrapper.hidden = true;
                 if (detailCatatanTextarea) detailCatatanTextarea.value = '';
                 updateDetailCounter();
