@@ -71,15 +71,17 @@ class PengajuanKerjasamaMitraController extends Controller
 
                 $notifInfo = [];
                 if ($sendEmail) {
-                    $emailMessage = $validated['custom_message_email']
-                        ?? NotificationService::generateDefaultMessage($submission, 'email');
+                    $emailMessage = !empty($validated['custom_message_email'])
+                        ? $validated['custom_message_email']
+                        : NotificationService::generateDefaultMessage($submission, 'email');
                     NotificationService::sendEmail($submission, $emailMessage);
                     $notifInfo[] = 'Email';
                 }
 
                 if ($sendWhatsApp) {
-                    $waMessage = $validated['custom_message_whatsapp']
-                        ?? NotificationService::generateDefaultMessage($submission, 'whatsapp');
+                    $waMessage = !empty($validated['custom_message_whatsapp'])
+                        ? $validated['custom_message_whatsapp']
+                        : NotificationService::generateDefaultMessage($submission, 'whatsapp');
                     NotificationService::sendWhatsApp($submission, $waMessage);
                     $notifInfo[] = 'WhatsApp';
                 }
@@ -231,14 +233,16 @@ class PengajuanKerjasamaMitraController extends Controller
             $sendWhatsApp = $request->boolean('send_whatsapp');
 
             if ($sendEmail) {
-                $emailMessage = $validated['custom_message_email']
-                    ?? NotificationService::generateDefaultMessage($submission, 'email');
+                $emailMessage = !empty($validated['custom_message_email'])
+                    ? $validated['custom_message_email']
+                    : NotificationService::generateDefaultMessage($submission, 'email');
                 NotificationService::sendEmail($submission, $emailMessage);
             }
 
             if ($sendWhatsApp) {
-                $waMessage = $validated['custom_message_whatsapp']
-                    ?? NotificationService::generateDefaultMessage($submission, 'whatsapp');
+                $waMessage = !empty($validated['custom_message_whatsapp'])
+                    ? $validated['custom_message_whatsapp']
+                    : NotificationService::generateDefaultMessage($submission, 'whatsapp');
                 NotificationService::sendWhatsApp($submission, $waMessage);
             }
 

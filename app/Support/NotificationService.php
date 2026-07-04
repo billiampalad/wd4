@@ -59,6 +59,11 @@ class NotificationService
             $phone = '62' . substr($phone, 1);
         }
 
+        if (strlen($phone) < 8) {
+            Log::warning("NotificationService: Nomor telepon '{$submission->telp}' tidak valid (kurang dari 8 digit) untuk pengajuan #{$submission->id}");
+            return;
+        }
+
         try {
             // Fonnte API membutuhkan header 'Authorization: <token>' tanpa prefix 'Bearer'
             $response = Http::withHeaders([
