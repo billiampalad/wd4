@@ -296,6 +296,7 @@
         });
 
         function openNotifModal(row, decision, note) {
+            if (!row) return;
             pendingRow = row;
             pendingDecision = decision;
             pendingNote = note;
@@ -456,13 +457,15 @@
         // Action Buttons inside Detail Modal
         detailBtnApprove?.addEventListener('click', () => {
             if (!activeRow) return;
+            const targetRow = activeRow;
             const note = detailCatatanTextarea?.value.trim() || '';
             closeDetailModal();
-            openNotifModal(activeRow, 'disetujui', note);
+            openNotifModal(targetRow, 'disetujui', note);
         });
 
         detailBtnReject?.addEventListener('click', () => {
             if (!activeRow) return;
+            const targetRow = activeRow;
             const note = detailCatatanTextarea?.value.trim() || '';
 
             if (note.length === 0) {
@@ -481,7 +484,7 @@
             }
 
             closeDetailModal();
-            openNotifModal(activeRow, 'ditolak', note);
+            openNotifModal(targetRow, 'ditolak', note);
         });
     };
 
