@@ -9449,25 +9449,444 @@ nav {
 /* ==========================================================================
    PERPANJANGAN KERJA SAMA - UNIT / HUMAS DASHBOARD & MODAL STYLES
    ========================================================================== */
-.btn-proses-perpanjangan:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+
+/* ── Stats grid (3 columns for perpanjangan) ─────────────────── */
+.pp-stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
-.btn-proses-perpanjangan:active {
+/* ── Table row cells ─────────────────────────────────────────── */
+.pp-mitra-cell {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 200px;
+}
+
+.pp-mitra-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.pp-mitra-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pp-mitra-judul {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.pp-jenis-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pp-doc-number {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pp-doc-number i {
+    font-size: 9px;
+    opacity: .6;
+}
+
+.pp-periode-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pp-date-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+}
+
+.pp-date-icon-start {
+    color: var(--accent, #4f46e5);
+    font-size: 11px;
+    width: 14px;
+    text-align: center;
+}
+
+.pp-date-icon-end {
+    color: #10b981;
+    font-size: 11px;
+    width: 14px;
+    text-align: center;
+}
+
+/* ── Filter ──────────────────────────────────────────────────── */
+.pp-filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.pp-filter-label i {
+    font-size: 11px;
+    color: var(--accent, #4f46e5);
+}
+
+.pp-filter-select {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    outline: 0;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.pp-filter-select:focus {
+    border-color: rgba(79, 70, 229, .45);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, .08);
+}
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.pp-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.pp-modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+    animation: ppModalIn .22s cubic-bezier(.16, 1, .3, 1);
+}
+
+.pp-modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2, rgba(248, 250, 252, .5));
+    border-radius: 18px 18px 0 0;
+}
+
+.pp-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pp-modal-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent, #4f46e5), #0ea5e9);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 14px -4px rgba(79, 70, 229, .45);
+}
+
+.pp-modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.25;
+}
+
+.pp-modal-subtitle {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 2px 0 0;
+    font-weight: 600;
+}
+
+.pp-modal-close {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .15s;
+}
+
+.pp-modal-close:hover {
+    background: var(--surface2);
+    color: var(--text);
+}
+
+.pp-modal-body {
+    padding: 22px;
+    display: grid;
+    gap: 18px;
+}
+
+.pp-modal-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    background: var(--surface2, rgba(248, 250, 252, .5));
+    border-radius: 0 0 18px 18px;
+}
+
+/* ── Summary card inside modal ───────────────────────────────── */
+.pp-summary-card {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--surface2, rgba(241, 245, 249, .5));
+    border: 1px solid var(--border);
+    display: grid;
+    gap: 6px;
+}
+
+.pp-summary-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.pp-surat-link {
+    display: none;
+    font-size: 11px;
+    color: var(--accent, #4f46e5);
+    font-weight: 700;
+    text-decoration: none;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(79, 70, 229, .08);
+    transition: all .15s;
+}
+
+.pp-surat-link:hover {
+    background: rgba(79, 70, 229, .15);
+}
+
+.pp-summary-title {
+    font-size: 14px;
+    font-weight: 750;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.pp-summary-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 0;
+    line-height: 1.55;
+}
+
+/* ── Form elements ───────────────────────────────────────────── */
+.pp-form-grid {
+    display: grid;
+    gap: 14px;
+}
+
+.pp-form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.pp-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.pp-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.pp-label-hint {
+    font-weight: 500;
+    color: var(--text-sub);
+}
+
+.pp-required {
+    color: #ef4444;
+}
+
+.pp-input {
+    width: 100%;
+    padding: 9px 13px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    outline: 0;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.pp-input:focus {
+    border-color: rgba(79, 70, 229, .5);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, .08);
+}
+
+.pp-input-file {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+.pp-textarea {
+    resize: vertical;
+    min-height: 48px;
+}
+
+/* ── Modal buttons ───────────────────────────────────────────── */
+.pp-btn {
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .15s ease;
+    border: none;
+}
+
+.pp-btn-cancel {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.pp-btn-cancel:hover {
+    background: var(--surface2);
+}
+
+.pp-btn-draft {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.pp-btn-draft:hover {
+    background: #e2e8f0;
+}
+
+.pp-btn-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, .3);
+}
+
+.pp-btn-submit:hover {
+    box-shadow: 0 6px 16px rgba(16, 185, 129, .45);
+    transform: translateY(-1px);
+}
+
+.pp-btn-submit:active {
     transform: translateY(0);
 }
 
-.dk-stat-card.dk-stat-warning {
-    border-left: 4px solid #f59e0b;
+/* ── Animation ───────────────────────────────────────────────── */
+@keyframes ppModalIn {
+    from { opacity: 0; transform: translateY(16px) scale(.98); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
-.dk-stat-card.dk-stat-active {
-    border-left: 4px solid #10b981;
+/* ── Dark mode overrides ─────────────────────────────────────── */
+[data-theme="dark"] .pp-modal-content {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .65);
 }
 
-.dk-stat-card.dk-stat-total {
-    border-left: 4px solid #3b82f6;
+[data-theme="dark"] .pp-btn-draft {
+    background: rgba(255, 255, 255, .06);
+    color: var(--text);
+    border-color: var(--border);
 }
 
+[data-theme="dark"] .pp-summary-card {
+    background: rgba(255, 255, 255, .04);
+}
 
+[data-theme="dark"] .pp-filter-select {
+    background: var(--surface);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .pp-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .pp-form-row-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-modal-content {
+        max-width: 100%;
+        border-radius: 14px;
+    }
+
+    .pp-modal-header {
+        border-radius: 14px 14px 0 0;
+    }
+
+    .pp-modal-footer {
+        border-radius: 0 0 14px 14px;
+        flex-wrap: wrap;
+    }
+}
