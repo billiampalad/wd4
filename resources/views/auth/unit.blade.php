@@ -54,7 +54,7 @@
                 ])
                 ->where('user_id', $notificationUser->id)
                 ->where('is_read', 0)
-                ->where('type', 'data_baru')
+                ->whereIn('type', ['data_baru', 'pengajuan_perpanjangan', 'perpanjangan', 'info'])
                 ->latest()
                 ->take(10)
                 ->get();
@@ -172,13 +172,14 @@
                                         ?? $senderProfile?->unitKerja?->nama_unit_pelaksana
                                         ?? $dataNotification->sender?->name
                                         ?? 'Sistem';
+                                    $isNotifPerpanjangan = in_array($dataNotification->type, ['pengajuan_perpanjangan', 'perpanjangan'], true);
                                 @endphp
                                 <a href="{{ $dataNotification->link ?: '#' }}"
                                     class="notification-item unread"
                                     data-id="{{ $dataNotification->id }}">
                                     <div class="notification-icon-wrapper"
-                                        style="background: rgba(16, 185, 129, 0.12); color: #059669;">
-                                        <i class="fas fa-file-circle-plus"></i>
+                                        style="background: {{ $isNotifPerpanjangan ? 'rgba(37, 99, 235, 0.12)' : 'rgba(16, 185, 129, 0.12)' }}; color: {{ $isNotifPerpanjangan ? '#2563eb' : '#059669' }};">
+                                        <i class="fas {{ $isNotifPerpanjangan ? 'fa-clock-rotate-left' : 'fa-file-circle-plus' }}"></i>
                                     </div>
                                     <div class="notification-content">
                                         <span class="notification-sender">{{ $senderName }}</span>
@@ -187,7 +188,9 @@
                                             <span class="notification-time">
                                                 {{ $dataNotification->created_at?->diffForHumans() }}
                                             </span>
-                                            <span class="notification-badge-type badge-data_baru">Data Baru</span>
+                                            <span class="notification-badge-type {{ $isNotifPerpanjangan ? 'badge-perpanjangan' : 'badge-data_baru' }}" style="{{ $isNotifPerpanjangan ? 'background:rgba(37,99,235,0.12); color:#2563eb;' : '' }}">
+                                                {{ $isNotifPerpanjangan ? 'Perpanjangan' : 'Data Baru' }}
+                                            </span>
                                         </div>
                                     </div>
                                 </a>

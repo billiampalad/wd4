@@ -70,15 +70,49 @@
             </div>
 
             <div class="dk-card-tools">
-                <form method="GET" action="{{ route('unit.pengajuan_perpanjangan') }}" id="filterFormPerpanjangan" style="display:flex; align-items:center; gap:8px;">
-                    <label for="statusProgresFilter" style="font-size:12px; font-weight:700; color:var(--text-sub); display:flex; align-items:center; gap:6px;">
-                        <i class="fas fa-filter" style="color:var(--accent, #4f46e5);"></i> Filter Status:
-                    </label>
-                    <select name="status_progres" id="statusProgresFilter" class="dk-select" onchange="this.form.submit()" style="padding:7px 12px; border-radius:10px; border:1px solid var(--border); font-size:12px; font-weight:700; background:var(--surface); color:var(--text); cursor:pointer; outline:none;">
-                        <option value="" {{ request('status_progres') == '' ? 'selected' : '' }}>Semua Status</option>
-                        <option value="menunggu" {{ request('status_progres') == 'menunggu' ? 'selected' : '' }}>🟡 Menunggu Draf</option>
-                        <option value="selesai" {{ request('status_progres') == 'selesai' ? 'selected' : '' }}>🟢 Selesai & Aktif</option>
-                    </select>
+                <form method="GET" action="{{ route('unit.pengajuan_perpanjangan') }}" id="filterFormPerpanjangan">
+                    <div class="submission-filter-dropdown" x-data="{
+                        open: false,
+                        selectedValue: '{{ request('status_progres', '') }}',
+                        selectedLabel: '{{ request('status_progres') == 'menunggu' ? 'Menunggu Draf' : (request('status_progres') == 'selesai' ? 'Selesai & Aktif' : 'Semua Status') }}',
+                        select(val, label) {
+                            this.selectedValue = val;
+                            this.selectedLabel = label;
+                            this.open = false;
+                            this.$refs.statusInput.value = val;
+                            this.$refs.statusInput.form.submit();
+                        }
+                    }" @click.outside="open = false">
+                        <input type="hidden" name="status_progres" x-ref="statusInput" value="{{ request('status_progres', '') }}">
+                        <button type="button" class="submission-filter-trigger" @click="open = !open" :aria-expanded="open.toString()" aria-haspopup="listbox" aria-label="Filter status progres">
+                            <span class="submission-filter-icon"><i class="fas fa-filter"></i></span>
+                            <span class="submission-filter-label" x-text="selectedLabel"></span>
+                            <i class="fas fa-chevron-down submission-filter-chevron" :class="{ 'is-open': open }"></i>
+                        </button>
+                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak role="listbox">
+                            <button type="button" class="submission-filter-option"
+                                :class="{ 'is-selected': selectedValue === '' }"
+                                :aria-selected="(selectedValue === '').toString()"
+                                @click="select('', 'Semua Status')" role="option">
+                                <span>Semua Status</span>
+                                <i class="fas fa-check" x-show="selectedValue === ''"></i>
+                            </button>
+                            <button type="button" class="submission-filter-option"
+                                :class="{ 'is-selected': selectedValue === 'menunggu' }"
+                                :aria-selected="(selectedValue === 'menunggu').toString()"
+                                @click="select('menunggu', 'Menunggu Draf')" role="option">
+                                <span>🟡 Menunggu Draf</span>
+                                <i class="fas fa-check" x-show="selectedValue === 'menunggu'"></i>
+                            </button>
+                            <button type="button" class="submission-filter-option"
+                                :class="{ 'is-selected': selectedValue === 'selesai' }"
+                                :aria-selected="(selectedValue === 'selesai').toString()"
+                                @click="select('selesai', 'Selesai & Aktif')" role="option">
+                                <span>🟢 Selesai & Aktif</span>
+                                <i class="fas fa-check" x-show="selectedValue === 'selesai'"></i>
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

@@ -1618,13 +1618,7 @@ class UnitPageController extends Controller
                 ]);
             }
 
-            // Jika status menjadi aktif, update status dokumen lama milik mitra ini jika ada
-            if ($targetStatus === 'aktif' && $mitra) {
-                Cooperation::where('mitra_id', $mitra->id)
-                    ->where('id', '!=', $cooperation->id)
-                    ->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['aktif', 'proses', 'kadaluarsa', 'kadarluarsa'])
-                    ->update(['status' => 'dalam perpanjangan']);
-            }
+
 
             DB::commit();
 
