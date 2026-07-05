@@ -83,17 +83,20 @@
                             this.$refs.statusInput.form.submit();
                         }
                     }" @click.outside="open = false">
-                        <input type="hidden" name="status_progres" x-ref="statusInput" value="{{ request('status_progres', '') }}">
-                        <button type="button" class="submission-filter-trigger" @click="open = !open" :aria-expanded="open.toString()" aria-haspopup="listbox" aria-label="Filter status progres">
+                        <input type="hidden" name="status_progres" x-ref="statusInput"
+                            value="{{ request('status_progres', '') }}">
+                        <button type="button" class="submission-filter-trigger" @click="open = !open"
+                            :aria-expanded="open.toString()" aria-haspopup="listbox" aria-label="Filter status progres">
                             <span class="submission-filter-icon"><i class="fas fa-filter"></i></span>
                             <span class="submission-filter-label" x-text="selectedLabel"></span>
                             <i class="fas fa-chevron-down submission-filter-chevron" :class="{ 'is-open': open }"></i>
                         </button>
-                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak role="listbox">
+                        <div class="submission-filter-menu" x-show="open" x-transition.origin.top.right x-cloak
+                            role="listbox">
                             <button type="button" class="submission-filter-option"
                                 :class="{ 'is-selected': selectedValue === '' }"
-                                :aria-selected="(selectedValue === '').toString()"
-                                @click="select('', 'Semua Status')" role="option">
+                                :aria-selected="(selectedValue === '').toString()" @click="select('', 'Semua Status')"
+                                role="option">
                                 <span>Semua Status</span>
                                 <i class="fas fa-check" x-show="selectedValue === ''"></i>
                             </button>
@@ -123,7 +126,8 @@
                     <thead>
                         <tr>
                             <th class="um-th um-th-num">#</th>
-                            <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul & Mitra Pengajuan</th>
+                            <th class="um-th dk-th-title" style="width: 450px; min-width: 400px;">Judul & Mitra
+                                Pengajuan</th>
                             <th class="um-th">Jenis & Dokumen</th>
                             <th class="um-th" style="white-space: nowrap;">Masa Berlaku Usulan</th>
                             <th class="um-th">Status</th>
@@ -140,26 +144,34 @@
                                 <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
                                     <span class="um-num dk-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
-                                <td class="um-td dk-title-cell" style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;">
+                                <td class="um-td dk-title-cell"
+                                    style="width: 450px; min-width: 400px; vertical-align: top; padding-top: 15px;">
                                     <div class="dk-doc-cell" style="white-space: normal; word-break: break-word;">
                                         <span class="dk-doc-number">#{{ $item->kode_pengajuan }}</span>
-                                        <span class="dk-doc-title" style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $item->judul_pengajuan }}</span>
-                                        <span class="dk-doc-kind" style="margin-top: 4px; display: inline-flex; align-items: center; gap: 6px;">
-                                            <i class="fas fa-building" style="color: var(--accent, #4f46e5);"></i> {{ $item->nama_mitra }}
+                                        <span class="dk-doc-title"
+                                            style="font-weight: 700; line-height: 1.5; display: block; overflow-wrap: break-word;">{{ $item->judul_pengajuan }}</span>
+                                        <span class="dk-doc-kind"
+                                            style="margin-top: 4px; display: inline-flex; align-items: center; gap: 6px;">
+                                            <i class="fas fa-building" style="color: var(--accent, #4f46e5);"></i>
+                                            {{ $item->nama_mitra }}
                                         </span>
                                     </div>
                                 </td>
                                 <td class="um-td" style="vertical-align: top; padding-top: 15px;">
                                     <div class="dk-doc-cell">
-                                        <span class="dk-doc-kind" style="font-weight: 700;">{{ $item->jenis ?? 'MoU' }}</span>
-                                        <span class="dk-doc-number" style="margin-top: 4px;">#{{ $coop?->doc_number ?? ($item->doc_number ?: '-') }}</span>
+                                        <span class="dk-doc-kind"
+                                            style="font-weight: 700;">{{ $item->jenis ?? 'MoU' }}</span>
+                                        <span class="dk-doc-number"
+                                            style="margin-top: 4px;">#{{ $coop?->doc_number ?? ($item->doc_number ?: '-') }}</span>
                                     </div>
                                 </td>
                                 <td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;">
                                     <div class="dk-date-range-compact">
-                                        <span class="date-val">{{ $item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('d M Y') : '-' }}</span>
+                                        <span
+                                            class="date-val">{{ $item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('d M Y') : '-' }}</span>
                                         <span class="date-sep">s/d</span>
-                                        <span class="date-val">{{ $item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('d M Y') : '-' }}</span>
+                                        <span
+                                            class="date-val">{{ $item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('d M Y') : '-' }}</span>
                                     </div>
                                 </td>
                                 <td class="um-td" style="vertical-align: top; padding-top: 15px;">
@@ -178,11 +190,9 @@
                                 <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
                                     <div class="um-actions dk-actions-compact">
                                         <button type="button" class="dk-action-btn edit btn-proses-perpanjangan"
-                                            data-id="{{ $item->id }}"
-                                            data-mitra="{{ $item->nama_mitra }}"
+                                            data-id="{{ $item->id }}" data-mitra="{{ $item->nama_mitra }}"
                                             data-kode="{{ $item->kode_pengajuan }}"
-                                            data-judul="{{ $item->judul_pengajuan }}"
-                                            data-jenis="{{ $item->jenis }}"
+                                            data-judul="{{ $item->judul_pengajuan }}" data-jenis="{{ $item->jenis }}"
                                             data-docnumber="{{ $coop?->doc_number ?? $item->doc_number }}"
                                             data-startdate="{{ $coop?->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('Y-m-d') : ($item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('Y-m-d') : '') }}"
                                             data-enddate="{{ $coop?->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('Y-m-d') : ($item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('Y-m-d') : '') }}"
@@ -204,7 +214,8 @@
                                             <i class="fas fa-folder-open"></i>
                                         </div>
                                         <p class="um-empty-title">Belum ada pengajuan perpanjangan</p>
-                                        <p class="um-empty-sub">Pengajuan perpanjangan yang disetujui Pimpinan akan otomatis muncul di sini.</p>
+                                        <p class="um-empty-sub">Pengajuan perpanjangan yang disetujui Pimpinan akan otomatis
+                                            muncul di sini.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -226,7 +237,8 @@
                 </div>
                 <div>
                     <h3 class="pp-modal-title">Proses Berkas Perpanjangan</h3>
-                    <p class="pp-modal-subtitle" id="modalSubtitleMitra">Lengkapi nomor dokumen baru & sahkan perpanjangan</p>
+                    <p class="pp-modal-subtitle" id="modalSubtitleMitra">Lengkapi nomor dokumen baru & sahkan
+                        perpanjangan</p>
                 </div>
             </div>
             <button type="button" class="pp-modal-close" onclick="closeProsesModal()">
@@ -257,7 +269,8 @@
                         <label class="pp-label">
                             Nomor Dokumen Perpanjangan Baru <span class="pp-required">*</span>
                         </label>
-                        <input type="text" name="doc_number" id="inputDocNumber" required placeholder="Contoh: 045/PKS/POLIMDO/2026" class="pp-input">
+                        <input type="text" name="doc_number" id="inputDocNumber" required
+                            placeholder="Contoh: 045/PKS/POLIMDO/2026" class="pp-input">
                     </div>
 
                     <div class="pp-form-row-2">
@@ -286,7 +299,8 @@
                         <label class="pp-label">
                             Catatan Tambahan <small class="pp-label-hint">(Opsional)</small>
                         </label>
-                        <textarea name="pesan_tambahan" rows="2" placeholder="Catatan mengenai berkas perpanjangan..." class="pp-input pp-textarea"></textarea>
+                        <textarea name="pesan_tambahan" rows="2" placeholder="Catatan mengenai berkas perpanjangan..."
+                            class="pp-input pp-textarea"></textarea>
                     </div>
                 </div>
             </div>

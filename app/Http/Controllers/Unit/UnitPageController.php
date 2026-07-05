@@ -1532,7 +1532,7 @@ class UnitPageController extends Controller
             } elseif ($progresFilter === 'selesai') {
                 $query->whereHas('cooperation', function ($sq) {
                     $sq->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['aktif'])
-                      ->orWhereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['aktif', 'selesai']);
+                      ->orWhereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['aktif', 'selesai', 'disahkan']);
                 });
             }
         }
@@ -1545,7 +1545,7 @@ class UnitPageController extends Controller
                 return !$item->cooperation || in_array(strtolower($item->cooperation->status_dokumen ?? ''), ['draft', ''], true) || strtolower($item->cooperation->status ?? '') === 'proses';
             })->count(),
             'selesai' => $submissions->filter(function ($item) {
-                return strtolower($item->cooperation?->status ?? '') === 'aktif' || strtolower($item->cooperation?->status_dokumen ?? '') === 'aktif';
+                return strtolower($item->cooperation?->status ?? '') === 'aktif' || in_array(strtolower($item->cooperation?->status_dokumen ?? ''), ['aktif', 'disahkan', 'selesai'], true);
             })->count(),
         ];
 
@@ -1592,9 +1592,23 @@ class UnitPageController extends Controller
 
             $cooperation = $submission->cooperation;
             $targetStatus = $validated['status_aksi'] === 'aktif' ? 'aktif' : 'proses';
-            $targetStatusDok = $validated['status_aksi'] === 'aktif' ? 'Aktif' : 'Draft';
+            $targetStatusDok = $validated['status_aksi'] === 'aktif' ? 'Disahkan' : 'Draft';
 
             if (!$cooperation) {
+                // Buat Pejabat penandatangan & penanggung jawab mitra
+                $penandatanganMitra = Pejabat::create([
+                    'nama' => $submission->nama_penandatangan ?: 'Mitra',
+                    'jabatan' => $submission->jabatan_penandatangan ?: '-',
+                ]);
+
+                $pjMitra = null;
+                if ($submission->nama_penanggung_jawab) {
+                    $pjMitra = Pejabat::create([
+                        'nama' => $submission->nama_penanggung_jawab,
+                        'jabatan' => $submission->jabatan_penanggung_jawab ?: '-',
+                    ]);
+                }
+
                 $cooperation = Cooperation::create([
                     'jenis' => $submission->jenis ?? 'MoU (Memorandum of Understanding)',
                     'doc_number' => $validated['doc_number'],
@@ -1605,20 +1619,44 @@ class UnitPageController extends Controller
                     'status' => $targetStatus,
                     'status_dokumen' => $targetStatusDok,
                     'mitra_id' => $mitra?->id,
+                    'penandatangan_mitra_id' => $penandatanganMitra->id,
+                    'pj_mitra_id' => $pjMitra?->id,
+                    'document_link' => $uploadedFilePath,
                     'pengajuan_kerjasama_mitra_id' => $submission->id,
                     'created_by' => Auth::id(),
                 ]);
             } else {
-                $cooperation->update([
+                $updateData = [
                     'doc_number' => $validated['doc_number'],
                     'start_date' => $validated['start_date'],
                     'end_date' => $validated['end_date'],
                     'status' => $targetStatus,
                     'status_dokumen' => $targetStatusDok,
-                ]);
+                ];
+                if ($uploadedFilePath) {
+                    $updateData['document_link'] = $uploadedFilePath;
+                }
+                $cooperation->update($updateData);
             }
 
+            // Hubungkan dengan JenisKerjasama dan DetailKegiatan
+            $jenisKerjasamaId = 1;
+            if ($submission->ruang_lingkup) {
+                $jenisKerjasamaMatch = JenisKerjasama::whereRaw('LOWER(nama_kerjasama) = ?', [strtolower(trim($submission->ruang_lingkup))])->first();
+                if ($jenisKerjasamaMatch) {
+                    $jenisKerjasamaId = $jenisKerjasamaMatch->id;
+                }
+            }
 
+            \App\Models\DetailKegiatan::firstOrCreate(
+                ['cooperation_id' => $cooperation->id],
+                [
+                    'jenis_kerjasama_id' => $jenisKerjasamaId,
+                    'tujuan' => $submission->tujuan_pengajuan,
+                    'keterangan' => $validated['pesan_tambahan'] ?? null,
+                    'nilai_kontrak' => 0,
+                ]
+            );
 
             DB::commit();
 
