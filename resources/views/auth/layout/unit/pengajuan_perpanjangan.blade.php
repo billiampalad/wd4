@@ -189,20 +189,25 @@
                                 </td>
                                 <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
                                     <div class="um-actions dk-actions-compact">
-                                        <button type="button" class="dk-action-btn edit btn-proses-perpanjangan"
-                                            data-id="{{ $item->id }}" data-mitra="{{ $item->nama_mitra }}"
-                                            data-kode="{{ $item->kode_pengajuan }}"
-                                            data-judul="{{ $item->judul_pengajuan }}" data-jenis="{{ $item->jenis }}"
-                                            data-docnumber="{{ $coop?->doc_number ?? $item->doc_number }}"
-                                            data-startdate="{{ $coop?->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('Y-m-d') : ($item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('Y-m-d') : '') }}"
-                                            data-enddate="{{ $coop?->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('Y-m-d') : ($item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('Y-m-d') : '') }}"
-                                            data-tujuan="{{ $item->tujuan_pengajuan }}"
-                                            data-filesurat="{{ $item->file_surat ? asset('storage/' . $item->file_surat) : '' }}"
-                                            title="{{ $isAktif ? 'Edit Data' : 'Proses Draf' }}"
-                                            style="width: auto; padding: 6px 12px; height: auto; border-radius: 8px; font-weight: 700; gap: 6px; font-size: 12px;">
-                                            <i class="fas {{ $isAktif ? 'fa-pen-to-square' : 'fa-file-pen' }}"></i>
-                                            <span>{{ $isAktif ? 'Edit' : 'Proses' }}</span>
-                                        </button>
+                                        @if ($isAktif)
+                                            <a href="{{ route('unit.kerjasama.edit', $coop->id) }}" class="dk-action-btn edit"
+                                                title="Edit Data"
+                                                style="width: auto; padding: 6px 12px; height: auto; border-radius: 8px; font-weight: 700; gap: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center;">
+                                                <i class="fas fa-pen-to-square"></i>
+                                                <span>Edit</span>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('unit.kerjasama.create', [
+                                                    'perpanjangan_dari' => $item->old_cooperation?->id,
+                                                    'pengajuan_mitra_id' => $item->id
+                                                ]) }}" 
+                                                class="dk-action-btn edit"
+                                                title="Proses Perpanjangan"
+                                                style="width: auto; padding: 6px 12px; height: auto; border-radius: 8px; font-weight: 700; gap: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center;">
+                                                <i class="fas fa-file-pen"></i>
+                                                <span>Proses</span>
+                                            </a>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -226,96 +231,3 @@
         </div>
     </div>
 </main>
-
-{{-- MODAL PROSES PERPANJANGAN --}}
-<div id="modalProsesPerpanjangan" class="modal-backdrop pp-modal-backdrop">
-    <div class="pp-modal-content">
-        <div class="pp-modal-header">
-            <div class="pp-modal-header-left">
-                <div class="pp-modal-icon">
-                    <i class="fas fa-file-pen"></i>
-                </div>
-                <div>
-                    <h3 class="pp-modal-title">Proses Berkas Perpanjangan</h3>
-                    <p class="pp-modal-subtitle" id="modalSubtitleMitra">Lengkapi nomor dokumen baru & sahkan
-                        perpanjangan</p>
-                </div>
-            </div>
-            <button type="button" class="pp-modal-close" onclick="closeProsesModal()">
-                <i class="fas fa-xmark"></i>
-            </button>
-        </div>
-
-        <form id="formProsesPerpanjangan" method="POST" action="" enctype="multipart/form-data">
-            @csrf
-            <input type="hidden" name="status_aksi" id="inputStatusAksi" value="aktif">
-
-            <div class="pp-modal-body">
-                {{-- Ringkasan Pengajuan --}}
-                <div class="pp-summary-card">
-                    <div class="pp-summary-top">
-                        <span id="modalKodeSubmission" class="submission-card-code"></span>
-                        <a id="modalFileSuratLink" href="#" target="_blank" class="pp-surat-link">
-                            <i class="fas fa-file-pdf"></i> Lihat Surat
-                        </a>
-                    </div>
-                    <h4 id="modalJudulPengajuan" class="pp-summary-title"></h4>
-                    <p id="modalTujuanPengajuan" class="pp-summary-desc"></p>
-                </div>
-
-                {{-- Form Inputs --}}
-                <div class="pp-form-grid">
-                    <div class="pp-form-group">
-                        <label class="pp-label">
-                            Nomor Dokumen Perpanjangan Baru <span class="pp-required">*</span>
-                        </label>
-                        <input type="text" name="doc_number" id="inputDocNumber" required
-                            placeholder="Contoh: 045/PKS/POLIMDO/2026" class="pp-input">
-                    </div>
-
-                    <div class="pp-form-row-2">
-                        <div class="pp-form-group">
-                            <label class="pp-label">
-                                Tanggal Mulai <span class="pp-required">*</span>
-                            </label>
-                            <input type="date" name="start_date" id="inputStartDate" required class="pp-input">
-                        </div>
-                        <div class="pp-form-group">
-                            <label class="pp-label">
-                                Tanggal Selesai <span class="pp-required">*</span>
-                            </label>
-                            <input type="date" name="end_date" id="inputEndDate" required class="pp-input">
-                        </div>
-                    </div>
-
-                    <div class="pp-form-group">
-                        <label class="pp-label">
-                            Unggah Dokumen Baru <small class="pp-label-hint">(.pdf, maks 10MB)</small>
-                        </label>
-                        <input type="file" name="file_dokumen" accept=".pdf,.doc,.docx" class="pp-input pp-input-file">
-                    </div>
-
-                    <div class="pp-form-group">
-                        <label class="pp-label">
-                            Catatan Tambahan <small class="pp-label-hint">(Opsional)</small>
-                        </label>
-                        <textarea name="pesan_tambahan" rows="2" placeholder="Catatan mengenai berkas perpanjangan..."
-                            class="pp-input pp-textarea"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pp-modal-footer">
-                <button type="button" class="pp-btn pp-btn-cancel" onclick="closeProsesModal()">
-                    Batal
-                </button>
-                <button type="button" class="pp-btn pp-btn-draft" onclick="submitPerpanjanganForm('draf')">
-                    <i class="fas fa-save"></i> Simpan Draf
-                </button>
-                <button type="button" class="pp-btn pp-btn-submit" onclick="submitPerpanjanganForm('aktif')">
-                    <i class="fas fa-check-circle"></i> Sahkan & Aktifkan
-                </button>
-            </div>
-        </form>
-    </div>
-</div>

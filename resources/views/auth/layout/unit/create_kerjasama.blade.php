@@ -182,8 +182,11 @@
             <form action="{{ route('unit.kerjasama.store') }}" method="POST" data-kerjasama-create-form>
                 @csrf
                 <input type="hidden" name="input_type" :value="inputType">
-                @if($isPerpanjangan)
+                 @if($isPerpanjangan)
                 <input type="hidden" name="perpanjangan_dari_id" value="{{ $perpanjanganAsal->id }}">
+                @endif
+                @if(isset($pengajuanMitraId) && $pengajuanMitraId)
+                <input type="hidden" name="pengajuan_kerjasama_mitra_id" value="{{ $pengajuanMitraId }}">
                 @endif
                 {{-- ═══ TWO-COLUMN TOP LAYOUT: Masa Berlaku (Left) + Form Utama (Right) ═══ --}}
                 <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 24px;">

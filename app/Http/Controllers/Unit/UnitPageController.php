@@ -1539,6 +1539,28 @@ class UnitPageController extends Controller
 
         $submissions = $query->latest('reviewed_at')->get();
 
+        foreach ($submissions as $item) {
+            $oldCoop = null;
+            if ($item->doc_number) {
+                $oldCoop = Cooperation::where('doc_number', $item->doc_number)->first();
+            }
+            if (!$oldCoop && $item->mitra_id) {
+                $oldCoop = Cooperation::where('mitra_id', $item->mitra_id)
+                    ->where('id', '!=', $item->cooperation?->id ?? 0)
+                    ->where('jenis', $item->jenis)
+                    ->first();
+            }
+            if (!$oldCoop && $item->nama_mitra) {
+                $oldCoop = Cooperation::whereHas('mitra', function($q) use ($item) {
+                        $q->whereRaw('LOWER(nama_mitra) = ?', [strtolower(trim($item->nama_mitra))]);
+                    })
+                    ->where('id', '!=', $item->cooperation?->id ?? 0)
+                    ->where('jenis', $item->jenis)
+                    ->first();
+            }
+            $item->old_cooperation = $oldCoop;
+        }
+
         $stats = [
             'total' => $submissions->count(),
             'menunggu' => $submissions->filter(function ($item) {
