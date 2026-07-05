@@ -452,22 +452,30 @@ Flowchart:
 
 ---
 
-# 14. Alur Proses Perpanjangan Kerja Sama (Dual-Pathway Integration)
+# 14. Alur Proses Perpanjangan Kerja Sama (Dual-Pathway Integration & Unified Merging)
 
 ## 14.1 Deskripsi Singkat Fitur & Dual-Pathway Entry Points
 
-Fitur **Perpanjangan Kerja Sama** dirancang dengan dua pintu masuk utama (*Dual-Pathway Entry Points*) yang saling terintegrasi dan saling melengkapi untuk memastikan fleksibilitas alur kerja antara pihak eksternal (Mitra) dan pihak internal (Unit Kerja / Admin Repositori):
+Fitur **Perpanjangan Kerja Sama** dirancang dengan dua pintu masuk utama (*Dual-Pathway Entry Points*) yang saling terintegrasi dan bekerja sama secara dinamis melalui mekanisme **Penggabungan Berkas & Sinergi Interkoneksi (Unified Approval & Merging)** untuk memastikan kelancaran alur kerja antara pihak eksternal (Mitra) dan pihak internal (Pimpinan & Humas/Unit Kerja):
 
-1. **Jalur Eksternal / Public Submission (Oleh Mitra / Umum)**:
-   - Akses publik tanpa perlu login melalui `/perpanjangan-kerjasama` (Form Wizard 5 Step).
-   - Mitra terdaftar memilih dokumen yang akan diperpanjang, memperbarui kontak, menyusun rencana lanjutan (periode mulai–selesai baru, judul, tujuan, ruang lingkup), dan mengunggah **Surat Permohonan Perpanjangan** (format PDF, DOC, atau DOCX max 5MB).
-   - Menghasilkan record pengajuan berstatus **`Diajukan`** di tabel `pengajuan_kerjasama_mitras`.
-   - Mengirim notifikasi otomatis ke **Pimpinan** untuk proses validasi. Setelah **Disetujui** Pimpinan, sistem secara otomatis memberi notifikasi ke **Unit Kerja** dan memperbarui status dokumen kerja sama terkait di Repositori dari **`Kadaluarsa` / `Aktif`** menjadi **`Dalam Perpanjangan`**.
+1. **Penggabungan Berkas & Sinergi Interkoneksi (Unified Approval & Merging)**:
+   - **Pintu 1 (Jalur Publik / Inisiasi Mitra)**: Mitra mengajukan perpanjangan via Form Wizard 5-Step dan mengunggah **Surat Permohonan Perpanjangan** (`file_surat`). Pengajuan masuk ke Pimpinan untuk **Validasi & Persetujuan**.
+     - **Jika Ditolak Pimpinan:** Sistem mengirimkan notifikasi penolakan beserta catatan Pimpinan secara otomatis ke Mitra via **Email & WhatsApp**.
+     - **Jika Disetujui Pimpinan:** 
+       - Sistem mengirim notifikasi persetujuan otomatis ke Mitra via **Email & WhatsApp**.
+       - Status dokumen lama di Repositori otomatis berubah menjadi **`Dalam Perpanjangan`**.
+       - Pengajuan diteruskan ke Humas/Unit Kerja melalui Notifikasi dan tampil di menu khusus **`Pengajuan Perpanjangan`**.
+   - **Pintu 2 (Pemrosesan Draf / Handoff ke Repositori)**: Humas mengklik pengajuan dari menu `Pengajuan Perpanjangan` dan langsung diarahkan ke **Tampilan Detail Draf Perpanjangan (Pintu 2)**.
+     - **Auto-Populate Data:** Seluruh data dari dokumen lama & pengajuan mitra otomatis terisi. Humas **hanya perlu mengisi Nomor Dokumen Baru (`doc_number`)**.
+     - **Preservasi Histori Database:** Data dokumen lama **TIDAK DITIMPA/DIHAPUS**. Saat disahkan, sistem otomatis membuat **RECORD KERJASAMA BARU** di tabel `cooperations` dengan relasi `perpanjangan_dari_id` menunjuk ke ID kerjasama lama, lalu status dokumen baru berubah menjadi **`Aktif`**.
 
-2. **Jalur Internal / Direct Repository Extension (Oleh Unit Kerja)**:
-   - Akses internal berdasar role dari menu **Repositori Kerja Sama** -> Halaman **Detail Data Kerja Sama**.
-   - Ketika dokumen kerja sama sudah berstatus **`Kadaluarsa`** (atau H-30 menjelang kadaluarsa), role Unit Kerja / Admin Internal dapat langsung mengeklik tombol **"Perpanjang Kerja Sama"**.
-   - Sistem akan langsung mengubah status dokumen di Repositori menjadi **`Dalam Perpanjangan`** dan membuka form draf dokumen perpanjangan baru.
+2. **Menu Baru Humas: `Pengajuan Perpanjangan` (Sidebar Navigation)**:
+   - Ditempatkan di Sidebar Humas under grup menu **Kelola Kerja Sama** ➔ Sub-menu **`Pengajuan Perpanjangan`**.
+   - Menampilkan khusus daftar pengajuan perpanjangan yang **telah disetujui Pimpinan**.
+   - Dilengkapi **3 Indikator Status Progres Internal**:
+     - 🟡 **`Menunggu Draf`** *(Pengajuan baru disetujui Pimpinan, draf belum diproses)*
+     - 🔵 **`Penyusunan Berkas`** *(Humas sedang membuka/menyusun draf di Pintu 2)*
+     - 🟢 **`Selesai & Aktif`** *(Dokumen perpanjangan baru selesai diunggah & diterbitkan)*
 
 ---
 
@@ -476,84 +484,80 @@ Fitur **Perpanjangan Kerja Sama** dirancang dengan dua pintu masuk utama (*Dual-
 | Status Pengajuan (Publik) | Status Repositori (Internal) | Pemicu (Trigger Event) | Aktor Utama | Dampak & Notifikasi Sistem |
 |---------------------------|------------------------------|------------------------|-------------|----------------------------|
 | - | **`Kadaluarsa`** | Masa berlaku dokumen habis (`end_date` terlewati) | System Cron / Auto-check | Dokumen ditandai Kadaluarsa. Notifikasi peringatan terkirim ke Unit Kerja & Mitra. |
-| **`Diajukan`** | **`Kadaluarsa`** | Mitra mengisi Form Perpanjangan Publik (Step 1-5) | Mitra (Publik) | Record `pengajuan_kerjasama_mitras` dibuat. Notifikasi terkirim ke **Pimpinan**. |
-| **`Disetujui`** | **`Dalam Perpanjangan`** | Pimpinan menyetujui pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `disetujui`. Status dokumen di Repositori otomatis berubah menjadi `Dalam Perpanjangan`. Notifikasi terkirim ke **Unit Kerja**. |
-| **`Ditolak`** | **`Kadaluarsa`** | Pimpinan menolak pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `ditolak`. Status di Repositori tetap `Kadaluarsa`. Email penolakan terkirim ke Mitra. |
-| - | **`Dalam Perpanjangan`** | Unit Kerja mengeklik "Perpanjang Kerja Sama" langsung di Repositori | Unit Kerja | Status di Repositori berubah langsung dari `Kadaluarsa` menjadi `Dalam Perpanjangan`. Form draf perpanjangan terbuka. |
-| - | **`Aktif`** | Berkas PKS/MoU perpanjangan baru selesai ditandatangan & diunggah | Unit Kerja / Admin | Dokumen perpanjangan baru diterbitkan. Status dokumen baru di Repositori menjadi `Aktif`. |
+| **`Diajukan`** | **`Kadaluarsa` / `Aktif`** | Mitra mengisi Form Perpanjangan Publik (Step 1-5) | Mitra (Publik) | Record `pengajuan_kerjasama_mitras` dibuat. Notifikasi terkirim ke **Pimpinan**. |
+| **`Disetujui`** | **`Dalam Perpanjangan`** | Pimpinan menyetujui pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `disetujui`. Status dokumen lama di Repositori otomatis menjadi `Dalam Perpanjangan`. **Notifikasi WA & Email terkirim ke Mitra**. Notifikasi terkirim ke **Humas**. |
+| **`Ditolak`** | **`Kadaluarsa` / `Aktif`** | Pimpinan menolak pengajuan perpanjangan mitra | Pimpinan | Status pengajuan = `ditolak`. Status di Repositori tidak berubah. **Notifikasi WA & Email penolakan terkirim ke Mitra** beserta catatan Pimpinan. |
+| - | **`Dalam Perpanjangan`** | Humas mengklik pengajuan dari menu `Pengajuan Perpanjangan` & mengedit draf di Pintu 2 | Humas | Mengarahkan ke Detail Pintu 2. Auto-fill data lama & pengajuan. Humas menginput `doc_number` baru. |
+| - | **`Aktif`** | Berkas PKS/MoU perpanjangan baru disahkan & diunggah | Humas / Admin | **Record baru dibuat di `cooperations`** (`perpanjangan_dari_id` = ID lama). Status dokumen baru = `Aktif`. Record lama tetap tersimpan sebagai histori. |
 
 ---
 
-## 14.3 Diagram Flowchart Interkoneksi Perpanjangan (Dual-Pathway Flowchart)
+## 14.3 Diagram Flowchart Interkoneksi Perpanjangan (End-to-End Pathway)
 
 ```
-                       ┌────────────────────────────────────────────────────────┐
-                       │           DOKUMEN KERJA SAMA DI REPOSITORI             │
-                       │                 Status: "Kadaluarsa"                    │
-                       └───────────────────────────┬────────────────────────────┘
-                                                   │
-                ┌──────────────────────────────────┴──────────────────────────────────┐
-                │                                                                     │
-                ▼ (Pintu 1: Pengajuan Publik Mitra)                                   ▼ (Pintu 2: Inisiasi Repositori Internal)
-  ┌───────────────────────────┐                                         ┌───────────────────────────┐
-  │   Form Wizard Publik 5-Step  │                                         │   Halaman Detail Repositori│
-  │   /perpanjangan-kerjasama   │                                         │   (Role: Unit Kerja/Admin)│
-  └─────────────┬─────────────┘                                         └─────────────┬─────────────┘
-                │                                                                     │
-                ▼                                                                     ▼
-  ┌───────────────────────────┐                                         ┌───────────────────────────┐
-  │ Pilih Mitra & Upload      │                                         │ Klik "Perpanjang          │
-  │ Surat Permohonan (.pdf)   │                                         │ Kerja Sama"               │
-  └─────────────┬─────────────┘                                         └─────────────┬─────────────┘
-                │                                                                     │
-                ▼                                                                     │
-  ┌───────────────────────────┐                                                       │
-  │ Status Pengajuan:         │                                                       │
-  │ "Diajukan"                │                                                       │
-  └─────────────┬─────────────┘                                                       │
-                │                                                                     │
-                ▼                                                                     │
-  ┌───────────────────────────┐                                                       │
-  │ Notifikasi ke PIMPINAN    │                                                       │
-  └─────────────┬─────────────┘                                                       │
-                │                                                                     │
-                ▼                                                                     │
-        /───────────────\                                                             │
-       < Validasi Pimpinan >                                                          │
-        \───────────────/                                                             │
-          │           │                                                               │
-   [Setuju]           [Tolak]                                                         │
-      │               │                                                               │
-      ▼               ▼                                                               │
-┌─────────────┐ ┌─────────────┐                                                       │
-│ Status:     │ │ Status:     │                                                       │
-│ "Disetujui" │ │ "Ditolak"   │                                                       │
-└──────┬──────┘ └─────────────┘                                                       │
-       │                                                                              │
-       ▼                                                                              │
-┌─────────────────────────────┐                                                       │
-│ Notifikasi ke UNIT KERJA    │                                                       │
-└──────┬──────────────────────┘                                                       │
-       │                                                                              │
-       └──────────────────────────────────┬───────────────────────────────────────────┘
-                                          │
-                                          ▼
-                       ┌─────────────────────────────────────┐
-                       │ STATUS DOKUMEN REPOSITORI BERUBAH:  │
-                       │       "Dalam Perpanjangan"          │
-                       └──────────────────┬──────────────────┘
-                                          │
-                                          ▼
-                       ┌─────────────────────────────────────┐
-                       │ Pemrosesan Draf & Unggah Berkas Baru│
-                       │        (Unit Kerja / Admin)         │
-                       └──────────────────┬──────────────────┘
-                                          │
-                                          ▼
-                       ┌─────────────────────────────────────┐
-                       │ STATUS DOKUMEN BARU DI REPOSITORI:  │
-                       │              "Aktif"                │
-                       └─────────────────────────────────────┘
+                 ┌────────────────────────────────────────────────────────┐
+                 │           DOKUMEN KERJA SAMA DI REPOSITORI             │
+                 │             Status: "Aktif" / "Kadaluarsa"             │
+                 └───────────────────────────┬────────────────────────────┘
+                                             │
+                 ┌───────────────────────────┴───────────────────────────┐
+                 │ (Pintu 1: Form Wizard Perpanjangan Publik Mitra)      │
+                 ▼                                                       │
+   ┌───────────────────────────┐                                         │
+   │ Mitra Isi Form 5-Step,    │                                         │
+   │ Kontak (WA/Email) & Surat │                                         │
+   └─────────────┬─────────────┘                                         │
+                 │                                                       │
+                 ▼                                                       │
+   ┌───────────────────────────┐                                         │
+   │ Status: "Diajukan"        │                                         │
+   │ Notifikasi ke PIMPINAN    │                                         │
+   └─────────────┬─────────────┘                                         │
+                 │                                                       │
+                 ▼                                                       │
+         /───────────────\                                               │
+        < Validasi Pimpinan >                                            │
+         \───────────────/                                               │
+           │           │                                                 │
+    [Setuju]           [Tolak] ──► Notifikasi WA & Email Penolakan (Selesai)
+       │                                                                 │
+       ▼                                                                 │
+ ┌─────────────┐                                                         │
+ │ Status:     │ ──► Notifikasi WA & Email Persetujuan ke Mitra          │
+ │ "Disetujui" │                                                         │
+ └──────┬──────┘                                                         │
+        │                                                                │
+        ▼                                                                │
+ ┌───────────────────────────────────────────────┐                       │
+ │ Status Dokumen Lama ➔ "Dalam Perpanjangan"    │                       │
+ └──────┬────────────────────────────────────────┘                       │
+        │                                                                │
+        ▼                                                                │
+ ┌───────────────────────────────────────────────┐                       │
+ │ Notifikasi ke HUMAS / UNIT KERJA              │                       │
+ └──────┬────────────────────────────────────────┘                       │
+        │                                                                │
+        ▼                                                                │
+ ┌───────────────────────────────────────────────┐                       │
+ │ Menu Humas: "Pengajuan Perpanjangan"          │                       │
+ └──────┬────────────────────────────────────────┘                       │
+        │                                                                │
+        └──────────────────────────────────┬─────────────────────────────┘
+                                           │
+                                           ▼
+                        ┌─────────────────────────────────────┐
+                        │ MASUK DETAIL DRAF PINTU 2 (REPOSITORI)│
+                        │ - Auto-fill data pengajuan & lama   │
+                        │ - Humas input doc_number baru       │
+                        └──────────────────┬──────────────────┘
+                                           │
+                                           ▼
+                        ┌─────────────────────────────────────┐
+                        │ PENERBITAN KERJA SAMA BARU          │
+                        │ - Record baru di `cooperations`     │
+                        │ - Record lama tetap utuh (Histori)  │
+                        │ - Status Dokumen Baru: "Aktif"      │
+                        └─────────────────────────────────────┘
 ```
 
 ---

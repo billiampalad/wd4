@@ -307,6 +307,8 @@
                 $isDataKerjasamaActive = request()->routeIs(
                     'unit.dkerjasama',
                     'unit.kerjasama.*',
+                    'unit.pengajuan_perpanjangan',
+                    'unit.pengajuan_perpanjangan.*',
                     'unit.mitra',
                     'unit.mitra.*',
                     'unit.form',
@@ -326,6 +328,10 @@
                         <a class="submenu-item {{ request()->routeIs('unit.dkerjasama', 'unit.kerjasama.*') ? 'active' : '' }}"
                             href="{{ route('unit.dkerjasama') }}">
                             <span class="submenu-dot"></span><span>Repositori</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.pengajuan_perpanjangan', 'unit.pengajuan_perpanjangan.*') ? 'active' : '' }}"
+                            href="{{ route('unit.pengajuan_perpanjangan') }}">
+                            <span class="submenu-dot"></span><span>Pengajuan Perpanjangan</span>
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.mitra', 'unit.mitra.*') ? 'active' : '' }}"
                             href="{{ route('unit.mitra') }}">
@@ -401,6 +407,8 @@
                 @include('auth.layout.unit.detail_kerjasama')
             @elseif(request()->routeIs('unit.dkerjasama'))
                 @include('auth.layout.unit.dkerjasama')
+            @elseif(request()->routeIs('unit.pengajuan_perpanjangan', 'unit.pengajuan_perpanjangan.*'))
+                @include('auth.layout.unit.pengajuan_perpanjangan')
             @elseif(request()->routeIs('unit.analitik.status-kerjasama'))
                 @include('auth.layout.unit.analitik.status_kerjasama')
             @elseif(request()->routeIs('unit.analitik.klasifikasi-mitra'))

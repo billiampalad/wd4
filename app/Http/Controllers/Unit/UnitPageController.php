@@ -13,6 +13,9 @@ use App\Models\Jurusan;
 use App\Models\Klasifikasi;
 use App\Models\Pusat;
 use App\Models\Upa;
+use App\Models\PengajuanKerjasamaMitra;
+use App\Models\Mitra;
+use App\Models\Pejabat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -1495,19 +1498,141 @@ class UnitPageController extends Controller
     {
         $laporan = \App\Models\LaporanFile::findOrFail($id);
 
-        // Pastikan hanya pengunggah atau unit terkait yang bisa menghapus (Opsional, sesuaikan kebutuhan)
-        // if ($laporan->uploaded_by !== Auth::id()) {
-        //     abort(403);
-        // }
-
-        // Hapus file fisik dari storage
         if (Storage::disk('public')->exists($laporan->file_path)) {
             Storage::disk('public')->delete($laporan->file_path);
         }
 
-        // Hapus data dari database
         $laporan->delete();
 
         return back()->with('success', 'Dokumen laporan berhasil dihapus.');
+    }
+
+    /**
+     * Halaman Pengajuan Perpanjangan Disetujui (Role Humas/Unit Kerja)
+     */
+    public function pengajuanPerpanjangan(Request $request)
+    {
+        $query = PengajuanKerjasamaMitra::with(['mitra', 'reviewer', 'klasifikasi', 'cooperation'])
+            ->where('status', PengajuanKerjasamaMitra::STATUS_DISETUJUI)
+            ->where(function ($q) {
+                $q->whereNotNull('mitra_id')
+                  ->orWhereNotNull('doc_number');
+            });
+
+        if ($request->filled('status_progres')) {
+            $progresFilter = strtolower($request->status_progres);
+            if ($progresFilter === 'menunggu') {
+                $query->where(function ($q) {
+                    $q->doesntHave('cooperation')
+                      ->orWhereHas('cooperation', function ($sq) {
+                          $sq->whereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['draft', ''])
+                            ->orWhereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['proses']);
+                      });
+                });
+            } elseif ($progresFilter === 'selesai') {
+                $query->whereHas('cooperation', function ($sq) {
+                    $sq->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['aktif'])
+                      ->orWhereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['aktif', 'selesai']);
+                });
+            }
+        }
+
+        $submissions = $query->latest('reviewed_at')->get();
+
+        $stats = [
+            'total' => $submissions->count(),
+            'menunggu' => $submissions->filter(function ($item) {
+                return !$item->cooperation || in_array(strtolower($item->cooperation->status_dokumen ?? ''), ['draft', ''], true) || strtolower($item->cooperation->status ?? '') === 'proses';
+            })->count(),
+            'selesai' => $submissions->filter(function ($item) {
+                return strtolower($item->cooperation?->status ?? '') === 'aktif' || strtolower($item->cooperation?->status_dokumen ?? '') === 'aktif';
+            })->count(),
+        ];
+
+        return view('auth.unit', compact('submissions', 'stats'));
+    }
+
+    /**
+     * Menyimpan/memproses data perpanjangan kerjasama yang disetujui Pimpinan
+     */
+    public function prosesPengajuanPerpanjangan(Request $request, $id)
+    {
+        $submission = PengajuanKerjasamaMitra::with(['mitra', 'cooperation'])->findOrFail($id);
+
+        $validated = $request->validate([
+            'doc_number' => ['required', 'string', 'max:255'],
+            'start_date' => ['required', 'date'],
+            'end_date'   => ['required', 'date', 'after_or_equal:start_date'],
+            'status_aksi' => ['required', 'in:draf,aktif'],
+            'pesan_tambahan' => ['nullable', 'string'],
+            'file_dokumen' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $mitra = $submission->mitra;
+            if (!$mitra && $submission->nama_mitra) {
+                $mitra = Mitra::firstOrCreate(
+                    ['nama_mitra' => $submission->nama_mitra],
+                    [
+                        'id_klasifikasi' => $submission->id_klasifikasi,
+                        'alamat' => $submission->alamat,
+                        'kategori' => $submission->kategori,
+                        'negara' => $submission->negara,
+                        'telp' => $submission->telp,
+                        'website' => $submission->website,
+                    ]
+                );
+            }
+
+            $uploadedFilePath = null;
+            if ($request->hasFile('file_dokumen')) {
+                $uploadedFilePath = $request->file('file_dokumen')->store('dokumen_kerjasama', 'public');
+            }
+
+            $cooperation = $submission->cooperation;
+            $targetStatus = $validated['status_aksi'] === 'aktif' ? 'aktif' : 'proses';
+            $targetStatusDok = $validated['status_aksi'] === 'aktif' ? 'Aktif' : 'Draft';
+
+            if (!$cooperation) {
+                $cooperation = Cooperation::create([
+                    'jenis' => $submission->jenis ?? 'MoU (Memorandum of Understanding)',
+                    'doc_number' => $validated['doc_number'],
+                    'title' => $submission->judul_pengajuan,
+                    'description' => $submission->tujuan_pengajuan,
+                    'start_date' => $validated['start_date'],
+                    'end_date' => $validated['end_date'],
+                    'status' => $targetStatus,
+                    'status_dokumen' => $targetStatusDok,
+                    'mitra_id' => $mitra?->id,
+                    'pengajuan_kerjasama_mitra_id' => $submission->id,
+                    'created_by' => Auth::id(),
+                ]);
+            } else {
+                $cooperation->update([
+                    'doc_number' => $validated['doc_number'],
+                    'start_date' => $validated['start_date'],
+                    'end_date' => $validated['end_date'],
+                    'status' => $targetStatus,
+                    'status_dokumen' => $targetStatusDok,
+                ]);
+            }
+
+            // Jika status menjadi aktif, update status dokumen lama milik mitra ini jika ada
+            if ($targetStatus === 'aktif' && $mitra) {
+                Cooperation::where('mitra_id', $mitra->id)
+                    ->where('id', '!=', $cooperation->id)
+                    ->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['aktif', 'proses', 'kadaluarsa', 'kadarluarsa'])
+                    ->update(['status' => 'dalam perpanjangan']);
+            }
+
+            DB::commit();
+
+            return redirect()->route('unit.pengajuan_perpanjangan')
+                ->with('success', 'Data pengajuan perpanjangan berhasil ' . ($targetStatus === 'aktif' ? 'disahkan & diaktifkan!' : 'disimpan sebagai draf!'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyimpan data perpanjangan: ' . $e->getMessage())->withInput();
+        }
     }
 }

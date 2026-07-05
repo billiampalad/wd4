@@ -218,11 +218,14 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit/referensi/status-evaluasi', [App\Http\Controllers\Unit\UnitPageController::class, 'statusEvaluasiReferensi'])->name('unit.referensi.status-evaluasi');
     Route::get('/unit/referensi/kriteria-mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'kriteriaMitraReferensi'])->name('unit.referensi.kriteria-mitra');
 
-    // ─── Data Kerjasama ──────────────────────────────────
     Route::get('/unit/data-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasama'])->name('unit.dkerjasama');
     Route::get('/unit/data-kerjasama/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaPreview'])->name('unit.dkerjasama.preview');
     Route::get('/unit/data-kerjasama/pdf', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaPdf'])->name('unit.dkerjasama.pdf');
     Route::get('/unit/data-kerjasama/excel', [App\Http\Controllers\Unit\UnitPageController::class, 'dkerjasamaExcel'])->name('unit.dkerjasama.excel');
+
+    // ─── Pengajuan Perpanjangan Disetujui ─────────────
+    Route::get('/unit/pengajuan-perpanjangan', [App\Http\Controllers\Unit\UnitPageController::class, 'pengajuanPerpanjangan'])->name('unit.pengajuan_perpanjangan');
+    Route::post('/unit/pengajuan-perpanjangan/{id}/proses', [App\Http\Controllers\Unit\UnitPageController::class, 'prosesPengajuanPerpanjangan'])->name('unit.pengajuan_perpanjangan.proses');
 
     // ─── Mitra Unit CRUD ─────────────────────────────────
     Route::get('/unit/mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'mitra'])->name('unit.mitra');

@@ -9446,3 +9446,28 @@ nav {
     }
 }
 
+/* ==========================================================================
+   PERPANJANGAN KERJA SAMA - UNIT / HUMAS DASHBOARD & MODAL STYLES
+   ========================================================================== */
+.btn-proses-perpanjangan:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;
+}
+
+.btn-proses-perpanjangan:active {
+    transform: translateY(0);
+}
+
+.dk-stat-card.dk-stat-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.dk-stat-card.dk-stat-active {
+    border-left: 4px solid #10b981;
+}
+
+.dk-stat-card.dk-stat-total {
+    border-left: 4px solid #3b82f6;
+}
+
+
