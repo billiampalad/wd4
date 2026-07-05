@@ -174,27 +174,37 @@
             } else {
                 detailStatusBadge.className = 'submission-status pending';
                 detailStatusBadge.textContent = 'Menunggu Review';
-                if (detailFormBlock) {
-                    detailFormBlock.hidden = false;
-                    detailFormBlock.style.display = 'flex';
-                }
-                if (detailActiveActions) {
-                    detailActiveActions.hidden = false;
-                    detailActiveActions.style.display = 'flex';
 
-                    if (detailBtnApprove && detailBtnReject) {
-                        if (targetAction === 'approve') {
-                            detailBtnApprove.style.display = 'inline-flex';
-                            detailBtnReject.style.display = 'none';
-                        } else if (targetAction === 'reject') {
-                            detailBtnApprove.style.display = 'none';
-                            detailBtnReject.style.display = 'inline-flex';
-                        } else {
-                            detailBtnApprove.style.display = 'inline-flex';
-                            detailBtnReject.style.display = 'inline-flex';
+                if (targetAction === 'detail') {
+                    if (detailFormBlock) {
+                        detailFormBlock.hidden = true;
+                        detailFormBlock.style.display = 'none';
+                    }
+                    if (detailActiveActions) {
+                        detailActiveActions.hidden = true;
+                        detailActiveActions.style.display = 'none';
+                    }
+                } else {
+                    if (detailFormBlock) {
+                        detailFormBlock.hidden = false;
+                        detailFormBlock.style.display = 'flex';
+                    }
+                    if (detailActiveActions) {
+                        detailActiveActions.hidden = false;
+                        detailActiveActions.style.display = 'flex';
+
+                        if (detailBtnApprove && detailBtnReject) {
+                            if (targetAction === 'approve') {
+                                detailBtnApprove.style.display = 'inline-flex';
+                                detailBtnReject.style.display = 'none';
+                            } else if (targetAction === 'reject') {
+                                detailBtnApprove.style.display = 'none';
+                                detailBtnReject.style.display = 'inline-flex';
+                            }
                         }
                     }
                 }
+
                 detailHistoryNoteWrapper.hidden = true;
                 if (detailCatatanTextarea) detailCatatanTextarea.value = '';
                 updateDetailCounter();
