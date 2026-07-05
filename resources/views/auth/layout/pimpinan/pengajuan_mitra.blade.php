@@ -44,9 +44,17 @@
         </article>
     </section>
 
+    @php
+        $pendingBaru = $pendingSubmissions->filter(fn($s) => empty($s->mitra_id));
+        $pendingPerpanjangan = $pendingSubmissions->filter(fn($s) => !empty($s->mitra_id));
+
+        $reviewedBaru = $reviewedSubmissions->filter(fn($s) => empty($s->mitra_id));
+        $reviewedPerpanjangan = $reviewedSubmissions->filter(fn($s) => !empty($s->mitra_id));
+    @endphp
+
     <section class="submission-stack">
-        {{-- SECTION 1: ANTREAN VALIDASI (DATA TABLE) --}}
-        <div class="dk-card submission-section">
+        {{-- SECTION 1: ANTREAN VALIDASI (DATA TABLE WITH TABS) --}}
+        <div class="dk-card submission-section" x-data="{ activeTab: 'baru' }">
             <div class="dk-card-header">
                 <div class="dk-card-title">
                     <span>Antrean Validasi</span>
@@ -95,120 +103,262 @@
                 </div>
             </div>
 
-            @if ($pendingSubmissions->isEmpty())
-                <div class="dk-empty-state">
-                    <div class="dk-empty-icon">
-                        <i class="fas fa-check-double"></i>
+            {{-- TAB NAVIGATION --}}
+            <div class="submission-tab-nav">
+                <button type="button" class="submission-tab-btn" :class="{ 'is-active': activeTab === 'baru' }" @click="activeTab = 'baru'">
+                    <i class="fas fa-handshake"></i>
+                    <span>Kerja Sama Baru</span>
+                    <span class="submission-tab-count">{{ $pendingBaru->count() }}</span>
+                </button>
+                <button type="button" class="submission-tab-btn perpanjangan" :class="{ 'is-active': activeTab === 'perpanjangan' }" @click="activeTab = 'perpanjangan'">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Perpanjangan Kerja Sama</span>
+                    <span class="submission-tab-count perpanjangan">{{ $pendingPerpanjangan->count() }}</span>
+                </button>
+            </div>
+
+            {{-- TAB CONTENT 1: KERJA SAMA BARU --}}
+            <div x-show="activeTab === 'baru'" class="submission-tab-content">
+                @if ($pendingBaru->isEmpty())
+                    <div class="dk-empty-state">
+                        <div class="dk-empty-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <p>Tidak ada pengajuan kerja sama baru yang sedang menunggu validasi.</p>
                     </div>
-                    <p>Tidak ada pengajuan mitra yang sedang menunggu validasi.</p>
-                </div>
-            @else
-                <div class="table-wrap um-table-wrap dk-table-wrap">
-                    <table class="um-table dk-table submission-data-table">
-                        <thead>
-                            <tr>
-                                <th class="um-th um-th-num">#</th>
-                                <th class="um-th">Kode &amp; Status</th>
-                                <th class="um-th">Nama Mitra</th>
-                                <th class="um-th">Judul Pengajuan</th>
-                                <th class="um-th">Klasifikasi / Kategori</th>
-                                <th class="um-th">Kontak</th>
-                                <th class="um-th">Dikirim</th>
-                                <th class="um-th um-th-aksi text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($pendingSubmissions as $submission)
-                                @php
-                                    $websiteUrl = $submission->website ?: null;
-                                    $statusClass = match ($submission->status) {
-                                        'disetujui' => 'approved',
-                                        'ditolak' => 'rejected',
-                                        default => 'pending',
-                                    };
-                                @endphp
-                                <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
-                                    data-category="{{ strtolower($submission->kategori) }}"
-                                    data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
-                                    data-mitra-phone="{{ $submission->telp }}"
-                                    data-submission-code="{{ $submission->kode_pengajuan }}"
-                                    data-submission-title="{{ $submission->judul_pengajuan }}"
-                                    data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
-                                    data-kategori="{{ ucfirst($submission->kategori) }}"
-                                    data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
-                                    data-website="{{ $websiteUrl }}"
-                                    data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
-                                    data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
-                                    data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
-                                    data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
-                                    data-tujuan="{{ $submission->tujuan_pengajuan }}"
-                                    data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
-                                    data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
-                                    data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}"
-                                    data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telp ?? '')) }}">
-                                    <td class="um-td um-td-num">
-                                        <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                    </td>
-                                    <td class="um-td">
-                                        <div class="sub-code-cell">
-                                            <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
-                                            @if ($submission->mitra_id)
+                @else
+                    <div class="table-wrap um-table-wrap dk-table-wrap">
+                        <table class="um-table dk-table submission-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="um-th um-th-num">#</th>
+                                    <th class="um-th">Kode &amp; Status</th>
+                                    <th class="um-th">Nama Mitra</th>
+                                    <th class="um-th">Judul Pengajuan</th>
+                                    <th class="um-th">Klasifikasi / Kategori</th>
+                                    <th class="um-th">Kontak</th>
+                                    <th class="um-th">Dikirim</th>
+                                    <th class="um-th um-th-aksi text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pendingBaru as $submission)
+                                    @php
+                                        $websiteUrl = $submission->website ?: null;
+                                        $statusClass = match ($submission->status) {
+                                            'disetujui' => 'approved',
+                                            'ditolak' => 'rejected',
+                                            default => 'pending',
+                                        };
+                                    @endphp
+                                    <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
+                                        data-category="{{ strtolower($submission->kategori) }}"
+                                        data-mitra-id="{{ $submission->mitra_id }}"
+                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
+                                        data-doc-number="{{ $submission->doc_number ?: '-' }}"
+                                        data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
+                                        data-end-date="{{ $submission->end_date ? \Carbon\Carbon::parse($submission->end_date)->format('d M Y') : '-' }}"
+                                        data-file-surat="{{ $submission->file_surat ? asset('storage/' . $submission->file_surat) : '' }}"
+                                        data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
+                                        data-mitra-phone="{{ $submission->telp }}"
+                                        data-submission-code="{{ $submission->kode_pengajuan }}"
+                                        data-submission-title="{{ $submission->judul_pengajuan }}"
+                                        data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
+                                        data-kategori="{{ ucfirst($submission->kategori) }}"
+                                        data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                        data-website="{{ $websiteUrl }}"
+                                        data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
+                                        data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
+                                        data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
+                                        data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
+                                        data-tujuan="{{ $submission->tujuan_pengajuan }}"
+                                        data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
+                                        data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
+                                        data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}"
+                                        data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telp ?? '')) }}">
+                                        <td class="um-td um-td-num">
+                                            <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-code-cell">
+                                                <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-mitra-cell">
+                                                <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
+                                                <small class="sub-mitra-meta"><i class="fas fa-globe"></i>
+                                                    {{ $submission->negara ?: '-' }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <span class="sub-title-cell"
+                                                title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-klas-cell">
+                                                <span class="sub-chip-badge">{{ $submission->klasifikasi?->nama ?? 'Umum' }}</span>
+                                                <small class="text-sub">{{ ucfirst($submission->kategori) }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-contact-cell">
+                                                <small><i class="fas fa-envelope"></i> {{ $submission->email ?: '-' }}</small>
+                                                <small><i class="fab fa-whatsapp"></i> {{ $submission->telp ?: '-' }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="sub-date-cell">
+                                                {{ $submission->submitted_at ? $submission->submitted_at->format('d M Y') : '-' }}
+                                            </small>
+                                        </td>
+                                        <td class="um-td um-td-aksi text-center">
+                                            <div class="sub-action-group">
+                                                <button type="button" class="sub-action-btn btn-detail" data-action="detail"
+                                                    title="Lihat Detail Pengajuan">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-approve" data-action="approve"
+                                                    title="Setujui Pengajuan">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-reject" data-action="reject"
+                                                    title="Tolak Pengajuan">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+
+            {{-- TAB CONTENT 2: PERPANJANGAN KERJA SAMA --}}
+            <div x-show="activeTab === 'perpanjangan'" class="submission-tab-content" x-cloak>
+                @if ($pendingPerpanjangan->isEmpty())
+                    <div class="dk-empty-state">
+                        <div class="dk-empty-icon is-perpanjangan">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <p>Tidak ada pengajuan perpanjangan kerja sama yang sedang menunggu validasi.</p>
+                    </div>
+                @else
+                    <div class="table-wrap um-table-wrap dk-table-wrap">
+                        <table class="um-table dk-table submission-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="um-th um-th-num">#</th>
+                                    <th class="um-th">Kode &amp; Status</th>
+                                    <th class="um-th">Nama Mitra</th>
+                                    <th class="um-th">Judul Pengajuan</th>
+                                    <th class="um-th">Klasifikasi / Kategori</th>
+                                    <th class="um-th">Kontak</th>
+                                    <th class="um-th">Dikirim</th>
+                                    <th class="um-th um-th-aksi text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pendingPerpanjangan as $submission)
+                                    @php
+                                        $websiteUrl = $submission->website ?: null;
+                                        $statusClass = match ($submission->status) {
+                                            'disetujui' => 'approved',
+                                            'ditolak' => 'rejected',
+                                            default => 'pending',
+                                        };
+                                    @endphp
+                                    <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
+                                        data-category="{{ strtolower($submission->kategori) }}"
+                                        data-mitra-id="{{ $submission->mitra_id }}"
+                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
+                                        data-doc-number="{{ $submission->doc_number ?: '-' }}"
+                                        data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
+                                        data-end-date="{{ $submission->end_date ? \Carbon\Carbon::parse($submission->end_date)->format('d M Y') : '-' }}"
+                                        data-file-surat="{{ $submission->file_surat ? asset('storage/' . $submission->file_surat) : '' }}"
+                                        data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
+                                        data-mitra-phone="{{ $submission->telp }}"
+                                        data-submission-code="{{ $submission->kode_pengajuan }}"
+                                        data-submission-title="{{ $submission->judul_pengajuan }}"
+                                        data-klasifikasi="{{ $submission->klasifikasi?->nama ?? 'Klasifikasi belum dipilih' }}"
+                                        data-kategori="{{ ucfirst($submission->kategori) }}"
+                                        data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                        data-website="{{ $websiteUrl }}"
+                                        data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
+                                        data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
+                                        data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
+                                        data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
+                                        data-tujuan="{{ $submission->tujuan_pengajuan }}"
+                                        data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
+                                        data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
+                                        data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}"
+                                        data-search="{{ strtolower($submission->kode_pengajuan . ' ' . $submission->judul_pengajuan . ' ' . $submission->nama_mitra . ' ' . $submission->kategori . ' ' . ($submission->negara ?? '') . ' ' . ($submission->klasifikasi?->nama ?? '') . ' ' . ($submission->nama_penandatangan ?? '') . ' ' . ($submission->email ?? '') . ' ' . ($submission->telp ?? '')) }}">
+                                        <td class="um-td um-td-num">
+                                            <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-code-cell">
+                                                <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
                                                 <span class="sub-badge-perpanjangan" title="Pengajuan Perpanjangan">
                                                     <i class="fas fa-sync"></i> Perpanjangan
                                                 </span>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="um-td">
-                                        <div class="sub-mitra-cell">
-                                            <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
-                                            <small class="sub-mitra-meta"><i class="fas fa-globe"></i>
-                                                {{ $submission->negara ?: '-' }}</small>
-                                        </div>
-                                    </td>
-                                    <td class="um-td">
-                                        <span class="sub-title-cell"
-                                            title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
-                                    </td>
-                                    <td class="um-td">
-                                        <div class="sub-klas-cell">
-                                            <span class="sub-chip-badge">{{ $submission->klasifikasi?->nama ?? 'Umum' }}</span>
-                                            <small class="text-sub">{{ ucfirst($submission->kategori) }}</small>
-                                        </div>
-                                    </td>
-                                    <td class="um-td">
-                                        <div class="sub-contact-cell">
-                                            <small><i class="fas fa-envelope"></i> {{ $submission->email }}</small>
-                                            <small><i class="fab fa-whatsapp"></i> {{ $submission->telp }}</small>
-                                        </div>
-                                    </td>
-                                    <td class="um-td">
-                                        <small class="sub-date-cell">
-                                            {{ $submission->submitted_at ? $submission->submitted_at->format('d M Y') : '-' }}
-                                        </small>
-                                    </td>
-                                    <td class="um-td um-td-aksi text-center">
-                                        <div class="sub-action-group">
-                                            <button type="button" class="sub-action-btn btn-detail" data-action="detail"
-                                                title="Lihat Detail Pengajuan">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="sub-action-btn btn-approve" data-action="approve"
-                                                title="Setujui Pengajuan">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <button type="button" class="sub-action-btn btn-reject" data-action="reject"
-                                                title="Tolak Pengajuan">
-                                                <i class="fas fa-ban"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-mitra-cell">
+                                                <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
+                                                <small class="sub-mitra-meta"><i class="fas fa-globe"></i>
+                                                    {{ $submission->negara ?: '-' }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <span class="sub-title-cell"
+                                                title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-klas-cell">
+                                                <span class="sub-chip-badge">{{ $submission->klasifikasi?->nama ?? 'Umum' }}</span>
+                                                <small class="text-sub">{{ ucfirst($submission->kategori) }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-contact-cell">
+                                                <small><i class="fas fa-envelope"></i> {{ $submission->email ?: '-' }}</small>
+                                                <small><i class="fab fa-whatsapp"></i> {{ $submission->telp ?: '-' }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="sub-date-cell">
+                                                {{ $submission->submitted_at ? $submission->submitted_at->format('d M Y') : '-' }}
+                                            </small>
+                                        </td>
+                                        <td class="um-td um-td-aksi text-center">
+                                            <div class="sub-action-group">
+                                                <button type="button" class="sub-action-btn btn-detail" data-action="detail"
+                                                    title="Lihat Detail Pengajuan">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-approve" data-action="approve"
+                                                    title="Setujui Pengajuan">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-reject" data-action="reject"
+                                                    title="Tolak Pengajuan">
+                                                    <i class="fas fa-ban"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
 
             <div class="dk-empty-state submission-filter-empty" hidden>
                 <div class="dk-empty-icon">
@@ -218,120 +368,252 @@
             </div>
         </div>
 
-        {{-- SECTION 2: RIWAYAT REVIEW TERBARU (DATA TABLE) --}}
-        <div class="dk-card submission-section">
+        {{-- SECTION 2: RIWAYAT REVIEW TERBARU (DATA TABLE WITH TABS) --}}
+        <div class="dk-card submission-section" x-data="{ activeTab: 'baru' }">
             <div class="dk-card-header">
                 <div class="dk-card-title">
-                    <span>Riwayat Pengajuan Kerjasama</span>
-                    <small>Data Pengajuan Kerjasama Baru</small>
+                    <span>Riwayat Pengajuan Kerja Sama</span>
+                    <small>Data Riwayat Validasi Pimpinan</small>
                 </div>
             </div>
 
-            @if ($reviewedSubmissions->isEmpty())
-                <div class="dk-empty-state">
-                    <div class="dk-empty-icon">
-                        <i class="fas fa-clock-rotate-left"></i>
-                    </div>
-                    <p>Belum ada riwayat review pengajuan mitra.</p>
-                </div>
-            @else
-                <div class="table-wrap um-table-wrap dk-table-wrap">
-                    <table class="um-table dk-table submission-data-table">
-                        <thead>
-                            <tr>
-                                <th class="um-th um-th-num">#</th>
-                                <th class="um-th">Kode &amp; Status</th>
-                                <th class="um-th">Nama Mitra</th>
-                                <th class="um-th">Judul Pengajuan</th>
-                                <th class="um-th">Reviewer</th>
-                                <th class="um-th">Diproses</th>
-                                <th class="um-th um-th-aksi text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($reviewedSubmissions as $submission)
-                                @php
-                                    $statusClass = match ($submission->status) {
-                                        'disetujui' => 'approved',
-                                        'ditolak' => 'rejected',
-                                        default => 'pending',
-                                    };
-                                @endphp
-                                <tr class="um-row dk-row submission-history-row" data-submission-row
-                                    data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
-                                    data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
-                                    data-mitra-phone="{{ $submission->telp }}"
-                                    data-submission-code="{{ $submission->kode_pengajuan }}"
-                                    data-submission-title="{{ $submission->judul_pengajuan }}"
-                                    data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"
-                                    data-kategori="{{ ucfirst($submission->kategori) }}"
-                                    data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
-                                    data-website="{{ $submission->website }}"
-                                    data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
-                                    data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
-                                    data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
-                                    data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
-                                    data-tujuan="{{ $submission->tujuan_pengajuan }}"
-                                    data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
-                                    data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
-                                    data-catatan-pimpinan="{{ $submission->catatan_pimpinan ?: '' }}"
-                                    data-status="{{ $submission->status }}"
-                                    data-status-label="{{ $submission->status_label }}"
-                                    data-status-class="{{ $statusClass }}"
-                                    data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}">
-                                    <td class="um-td um-td-num">
-                                        <span class="um-num dk-num">{{ str_pad(($reviewedSubmissions->currentPage() - 1) * $reviewedSubmissions->perPage() + $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                    </td>
-                                    <td class="um-td">
-                                        <div class="sub-code-cell">
-                                            <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
-                                            <span
-                                                class="submission-status {{ $statusClass }}">{{ $submission->status_label }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="um-td">
-                                        <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
-                                    </td>
-                                    <td class="um-td">
-                                        <span class="sub-title-cell"
-                                            title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
-                                    </td>
-                                    <td class="um-td">
-                                        <small class="text-sub">{{ $submission->reviewer?->name ?? 'Pimpinan' }}</small>
-                                    </td>
-                                    <td class="um-td">
-                                        <small class="sub-date-cell">
-                                            {{ $submission->reviewed_at ? $submission->reviewed_at->format('d M Y H:i') : '-' }}
-                                        </small>
-                                    </td>
-                                    <td class="um-td um-td-aksi text-center">
-                                        <div class="sub-action-group">
-                                            <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
-                                                title="Lihat Detail History">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button type="button" class="sub-action-btn btn-send-notif" data-action="send-notif-history"
-                                                title="Kirim Notifikasi Email &amp; WhatsApp">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+            {{-- TAB NAVIGATION --}}
+            <div class="submission-tab-nav">
+                <button type="button" class="submission-tab-btn" :class="{ 'is-active': activeTab === 'baru' }" @click="activeTab = 'baru'">
+                    <i class="fas fa-history"></i>
+                    <span>Kerja Sama Baru</span>
+                    <span class="submission-tab-count">{{ $reviewedBaru->count() }}</span>
+                </button>
+                <button type="button" class="submission-tab-btn perpanjangan" :class="{ 'is-active': activeTab === 'perpanjangan' }" @click="activeTab = 'perpanjangan'">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Perpanjangan Kerja Sama</span>
+                    <span class="submission-tab-count perpanjangan">{{ $reviewedPerpanjangan->count() }}</span>
+                </button>
+            </div>
 
-                @if ($reviewedSubmissions->hasPages())
-                    <div class="dk-pagination-footer">
-                        <div class="dk-pagination-info">
-                            Menampilkan <strong>{{ $reviewedSubmissions->firstItem() ?? 0 }}</strong> - <strong>{{ $reviewedSubmissions->lastItem() ?? 0 }}</strong> dari <strong>{{ $reviewedSubmissions->total() }}</strong> riwayat pengajuan
+            {{-- TAB CONTENT 1: KERJA SAMA BARU (HISTORY) --}}
+            <div x-show="activeTab === 'baru'" class="submission-tab-content">
+                @if ($reviewedBaru->isEmpty())
+                    <div class="dk-empty-state">
+                        <div class="dk-empty-icon">
+                            <i class="fas fa-clock-rotate-left"></i>
                         </div>
-                        <div class="dk-pagination-links">
-                            {{ $reviewedSubmissions->links('pagination::bootstrap-4') }}
-                        </div>
+                        <p>Belum ada riwayat review pengajuan kerja sama baru.</p>
+                    </div>
+                @else
+                    <div class="table-wrap um-table-wrap dk-table-wrap">
+                        <table class="um-table dk-table submission-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="um-th um-th-num">#</th>
+                                    <th class="um-th">Kode &amp; Status</th>
+                                    <th class="um-th">Nama Mitra</th>
+                                    <th class="um-th">Judul Pengajuan</th>
+                                    <th class="um-th">Reviewer</th>
+                                    <th class="um-th">Diproses</th>
+                                    <th class="um-th um-th-aksi text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($reviewedBaru as $submission)
+                                    @php
+                                        $statusClass = match ($submission->status) {
+                                            'disetujui' => 'approved',
+                                            'ditolak' => 'rejected',
+                                            default => 'pending',
+                                        };
+                                    @endphp
+                                    <tr class="um-row dk-row submission-history-row" data-submission-row
+                                        data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
+                                        data-mitra-id="{{ $submission->mitra_id }}"
+                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
+                                        data-doc-number="{{ $submission->doc_number ?: '-' }}"
+                                        data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
+                                        data-end-date="{{ $submission->end_date ? \Carbon\Carbon::parse($submission->end_date)->format('d M Y') : '-' }}"
+                                        data-file-surat="{{ $submission->file_surat ? asset('storage/' . $submission->file_surat) : '' }}"
+                                        data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
+                                        data-mitra-phone="{{ $submission->telp }}"
+                                        data-submission-code="{{ $submission->kode_pengajuan }}"
+                                        data-submission-title="{{ $submission->judul_pengajuan }}"
+                                        data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"
+                                        data-kategori="{{ ucfirst($submission->kategori) }}"
+                                        data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                        data-website="{{ $submission->website }}"
+                                        data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
+                                        data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
+                                        data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
+                                        data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
+                                        data-tujuan="{{ $submission->tujuan_pengajuan }}"
+                                        data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
+                                        data-pesan-tambahan="{{ $submission->pesan_tambahan ?: '' }}"
+                                        data-catatan-pimpinan="{{ $submission->catatan_pimpinan ?: '' }}"
+                                        data-status="{{ $submission->status }}"
+                                        data-status-label="{{ $submission->status_label }}"
+                                        data-status-class="{{ $statusClass }}"
+                                        data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}">
+                                        <td class="um-td um-td-num">
+                                            <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-code-cell">
+                                                <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
+                                                <span
+                                                    class="submission-status {{ $statusClass }}">{{ $submission->status_label }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
+                                        </td>
+                                        <td class="um-td">
+                                            <span class="sub-title-cell"
+                                                title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="text-sub">{{ $submission->reviewer?->name ?? 'Pimpinan' }}</small>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="sub-date-cell">
+                                                {{ $submission->reviewed_at ? $submission->reviewed_at->format('d M Y H:i') : '-' }}
+                                            </small>
+                                        </td>
+                                        <td class="um-td um-td-aksi text-center">
+                                            <div class="sub-action-group">
+                                                <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
+                                                    title="Lihat Detail History">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-send-notif" data-action="send-notif-history"
+                                                    title="Kirim Notifikasi Email &amp; WhatsApp">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 @endif
+            </div>
+
+            {{-- TAB CONTENT 2: PERPANJANGAN KERJA SAMA (HISTORY) --}}
+            <div x-show="activeTab === 'perpanjangan'" class="submission-tab-content" x-cloak>
+                @if ($reviewedPerpanjangan->isEmpty())
+                    <div class="dk-empty-state">
+                        <div class="dk-empty-icon is-perpanjangan">
+                            <i class="fas fa-clock-rotate-left"></i>
+                        </div>
+                        <p>Belum ada riwayat review pengajuan perpanjangan kerja sama.</p>
+                    </div>
+                @else
+                    <div class="table-wrap um-table-wrap dk-table-wrap">
+                        <table class="um-table dk-table submission-data-table">
+                            <thead>
+                                <tr>
+                                    <th class="um-th um-th-num">#</th>
+                                    <th class="um-th">Kode &amp; Status</th>
+                                    <th class="um-th">Nama Mitra</th>
+                                    <th class="um-th">Judul Pengajuan</th>
+                                    <th class="um-th">Reviewer</th>
+                                    <th class="um-th">Diproses</th>
+                                    <th class="um-th um-th-aksi text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($reviewedPerpanjangan as $submission)
+                                    @php
+                                        $statusClass = match ($submission->status) {
+                                            'disetujui' => 'approved',
+                                            'ditolak' => 'rejected',
+                                            default => 'pending',
+                                        };
+                                    @endphp
+                                    <tr class="um-row dk-row submission-history-row" data-submission-row
+                                        data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
+                                        data-mitra-id="{{ $submission->mitra_id }}"
+                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
+                                        data-doc-number="{{ $submission->doc_number ?: '-' }}"
+                                        data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
+                                        data-end-date="{{ $submission->end_date ? \Carbon\Carbon::parse($submission->end_date)->format('d M Y') : '-' }}"
+                                        data-file-surat="{{ $submission->file_surat ? asset('storage/' . $submission->file_surat) : '' }}"
+                                        data-mitra-name="{{ $submission->nama_mitra }}" data-mitra-email="{{ $submission->email }}"
+                                        data-mitra-phone="{{ $submission->telp }}"
+                                        data-submission-code="{{ $submission->kode_pengajuan }}"
+                                        data-submission-title="{{ $submission->judul_pengajuan }}"
+                                        data-klasifikasi="{{ $submission->klasifikasi?->nama ?? '-' }}"
+                                        data-kategori="{{ ucfirst($submission->kategori) }}"
+                                        data-negara="{{ $submission->negara ?: '-' }}" data-alamat="{{ $submission->alamat }}"
+                                        data-website="{{ $submission->website }}"
+                                        data-penandatangan-nama="{{ $submission->nama_penandatangan }}"
+                                        data-penandatangan-jabatan="{{ $submission->jabatan_penandatangan ?: '-' }}"
+                                        data-pj-nama="{{ $submission->nama_penanggung_jawab ?: '-' }}"
+                                        data-pj-jabatan="{{ $submission->jabatan_penanggung_jawab ?: '-' }}"
+                                        data-tujuan="{{ $submission->tujuan_pengajuan }}"
+                                        data-ruang-lingkup="{{ $submission->ruang_lingkup ?: '-' }}"
+                                        data-pesan_tambahan="{{ $submission->pesan_tambahan ?: '' }}"
+                                        data-catatan-pimpinan="{{ $submission->catatan_pimpinan ?: '' }}"
+                                        data-status="{{ $submission->status }}"
+                                        data-status-label="{{ $submission->status_label }}"
+                                        data-status-class="{{ $statusClass }}"
+                                        data-review-url="{{ route('pimpinan.pengajuan_mitra.review', $submission->id) }}">
+                                        <td class="um-td um-td-num">
+                                            <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <div class="sub-code-cell">
+                                                <span class="submission-card-code">{{ $submission->kode_pengajuan }}</span>
+                                                <span class="sub-badge-perpanjangan" title="Pengajuan Perpanjangan">
+                                                    <i class="fas fa-sync"></i> Perpanjangan
+                                                </span>
+                                                <span class="submission-status {{ $statusClass }}">{{ $submission->status_label }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="um-td">
+                                            <strong class="sub-mitra-name">{{ $submission->nama_mitra }}</strong>
+                                        </td>
+                                        <td class="um-td">
+                                            <span class="sub-title-cell"
+                                                title="{{ $submission->judul_pengajuan }}">{{ $submission->judul_pengajuan }}</span>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="text-sub">{{ $submission->reviewer?->name ?? 'Pimpinan' }}</small>
+                                        </td>
+                                        <td class="um-td">
+                                            <small class="sub-date-cell">
+                                                {{ $submission->reviewed_at ? $submission->reviewed_at->format('d M Y H:i') : '-' }}
+                                            </small>
+                                        </td>
+                                        <td class="um-td um-td-aksi text-center">
+                                            <div class="sub-action-group">
+                                                <button type="button" class="sub-action-btn btn-detail" data-action="detail-history"
+                                                    title="Lihat Detail History">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="sub-action-btn btn-send-notif" data-action="send-notif-history"
+                                                    title="Kirim Notifikasi Email &amp; WhatsApp">
+                                                    <i class="fas fa-paper-plane"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+
+            @if ($reviewedSubmissions->hasPages())
+                <div class="dk-pagination-footer">
+                    <div class="dk-pagination-info">
+                        Menampilkan <strong>{{ $reviewedSubmissions->firstItem() ?? 0 }}</strong> - <strong>{{ $reviewedSubmissions->lastItem() ?? 0 }}</strong> dari <strong>{{ $reviewedSubmissions->total() }}</strong> riwayat pengajuan
+                    </div>
+                    <div class="dk-pagination-links">
+                        {{ $reviewedSubmissions->links('pagination::bootstrap-4') }}
+                    </div>
+                </div>
             @endif
         </div>
     </section>
@@ -351,7 +633,34 @@
             </div>
 
             <div class="subdetail-modal-body">
-                {{-- Detail Grid --}}
+                {{-- Banner Informasi Khusus Perpanjangan --}}
+                <div id="subdetailPerpanjanganBanner" class="subdetail-perpanjangan-banner" hidden>
+                    <div class="perpanjangan-banner-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="perpanjangan-banner-info">
+                        <strong>Pengajuan Perpanjangan Kerja Sama</strong>
+                        <span>Pengajuan ini memperpanjang dokumen kerja sama yang sudah terdaftar dalam sistem.</span>
+                    </div>
+                </div>
+
+                {{-- Detail Grid Dokumen Lama & Periode Baru (Perpanjangan) --}}
+                <div id="subdetailPerpanjanganGrid" class="subdetail-grid" hidden>
+                    <div class="subdetail-box">
+                        <span class="subdetail-label"><i class="fas fa-file-contract"></i> Jenis Dokumen Lama</span>
+                        <strong id="subdetailJenisDokumen" class="subdetail-value">—</strong>
+                    </div>
+                    <div class="subdetail-box">
+                        <span class="subdetail-label"><i class="fas fa-hashtag"></i> Nomor Dokumen Lama</span>
+                        <strong id="subdetailDocNumber" class="subdetail-value">—</strong>
+                    </div>
+                    <div class="subdetail-box subdetail-box-full">
+                        <span class="subdetail-label"><i class="fas fa-calendar-range"></i> Rencana Periode Kerja Sama Baru</span>
+                        <span id="subdetailPeriode" class="subdetail-value">—</span>
+                    </div>
+                </div>
+
+                {{-- Detail Grid Identitas Mitra --}}
                 <div class="subdetail-grid">
                     <div class="subdetail-box">
                         <span class="subdetail-label"><i class="fas fa-building"></i> Nama Mitra</span>
@@ -402,6 +711,17 @@
                 <div class="subdetail-section">
                     <span class="subdetail-label"><i class="fas fa-list-check"></i> Ruang Lingkup</span>
                     <p id="subdetailRuangLingkup" class="subdetail-text-content">—</p>
+                </div>
+
+                {{-- Berkas Surat Permohonan Perpanjangan --}}
+                <div id="subdetailFileSuratWrapper" class="subdetail-section" hidden>
+                    <span class="subdetail-label"><i class="fas fa-file-pdf"></i> Surat Permohonan Perpanjangan</span>
+                    <div class="subdetail-file-download">
+                        <a id="subdetailFileSuratLink" href="#" target="_blank" rel="noopener noreferrer" class="subdetail-file-btn">
+                            <i class="fas fa-file-arrow-down"></i>
+                            <span>Unduh / Lihat Surat Permohonan (.pdf)</span>
+                        </a>
+                    </div>
                 </div>
 
                 <div id="subdetailPesanWrapper" class="subdetail-note-box" hidden>

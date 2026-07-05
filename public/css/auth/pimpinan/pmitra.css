@@ -1813,3 +1813,287 @@
     cursor: not-allowed;
     background: transparent;
 }
+
+/* ==========================================
+   PREMIUM SUBMISSION TAB NAVIGATION
+   ========================================== */
+.submission-tab-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    background: rgba(241, 245, 249, 0.85);
+    border: 1px solid var(--border, rgba(226, 232, 240, 0.8));
+    border-radius: 14px;
+    margin: 16px 24px 12px;
+    width: fit-content;
+    max-width: calc(100% - 48px);
+}
+
+.submission-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-sub, #64748b);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    outline: none;
+}
+
+.submission-tab-btn:hover {
+    color: var(--text, #0f172a);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.submission-tab-btn i {
+    font-size: 14px;
+    transition: transform 0.22s ease;
+}
+
+.submission-tab-btn:hover i {
+    transform: scale(1.12);
+}
+
+.submission-tab-btn.is-active {
+    background: var(--card-bg, #ffffff);
+    color: #4f46e5;
+    border-color: rgba(79, 70, 229, 0.2);
+    box-shadow: 0 4px 14px -2px rgba(79, 70, 229, 0.14), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    font-weight: 700;
+}
+
+.submission-tab-btn.perpanjangan.is-active {
+    color: #d97706;
+    border-color: rgba(217, 119, 6, 0.25);
+    box-shadow: 0 4px 14px -2px rgba(217, 119, 6, 0.16), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
+.submission-tab-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 99px;
+    font-size: 11.5px;
+    font-weight: 750;
+    background: rgba(79, 70, 229, 0.12);
+    color: #4f46e5;
+    transition: all 0.2s ease;
+}
+
+.submission-tab-count.perpanjangan {
+    background: rgba(245, 158, 11, 0.14);
+    color: #d97706;
+}
+
+.submission-tab-btn.is-active .submission-tab-count {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.submission-tab-btn.perpanjangan.is-active .submission-tab-count.perpanjangan {
+    background: #d97706;
+    color: #ffffff;
+}
+
+.dk-empty-icon.is-perpanjangan {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+}
+
+[data-theme="dark"] .submission-tab-nav {
+    background: rgba(15, 23, 42, 0.65);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .submission-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .submission-tab-btn.is-active {
+    background: #1e293b;
+    color: #818cf8;
+    border-color: rgba(129, 140, 248, 0.35);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .submission-tab-btn.perpanjangan.is-active {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.35);
+}
+
+[data-theme="dark"] .submission-tab-btn.is-active .submission-tab-count {
+    background: #6366f1;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .submission-tab-btn.perpanjangan.is-active .submission-tab-count.perpanjangan {
+    background: #f59e0b;
+    color: #0f172a;
+}
+
+/* ==========================================
+   HORIZONTAL SCROLLABLE TABLE & CUSTOM SCROLLBAR
+   ========================================== */
+.submission-tab-content {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table-wrap.dk-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0 0 16px 16px;
+    position: relative;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: #4f46e5 rgba(226, 232, 240, 0.6);
+}
+
+/* Custom Horizontal Scrollbar Styling for Webkit Browsers */
+.table-wrap.dk-table-wrap::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrap.dk-table-wrap::-webkit-scrollbar-track {
+    background: rgba(241, 245, 249, 0.85);
+    border-radius: 8px;
+    margin: 0 16px;
+}
+
+.table-wrap.dk-table-wrap::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #4f46e5, #6366f1);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.table-wrap.dk-table-wrap::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #4338ca, #4f46e5);
+}
+
+.submission-data-table {
+    width: 100%;
+    min-width: 1180px !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.submission-data-table th,
+.submission-data-table td {
+    white-space: nowrap;
+}
+
+.submission-data-table .sub-title-cell {
+    display: inline-block;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* Dark mode scrollbar support */
+[data-theme="dark"] .table-wrap.dk-table-wrap {
+    scrollbar-color: #6366f1 rgba(30, 41, 59, 0.6);
+}
+
+[data-theme="dark"] .table-wrap.dk-table-wrap::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+[data-theme="dark"] .table-wrap.dk-table-wrap::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+/* ==========================================
+   PERPANJANGAN MODAL DETAIL EXTENSIONS
+   ========================================== */
+.subdetail-perpanjangan-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.06));
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.perpanjangan-banner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #d97706;
+    color: #ffffff;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+}
+
+.perpanjangan-banner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.perpanjangan-banner-info strong {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #b45309;
+}
+
+.perpanjangan-banner-info span {
+    font-size: 12.5px;
+    color: var(--text-sub, #64748b);
+}
+
+.subdetail-file-download {
+    margin-top: 8px;
+}
+
+.subdetail-file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: #ffffff !important;
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    transition: all 0.22s ease;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.22);
+}
+
+.subdetail-file-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.32);
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .subdetail-perpanjangan-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.1));
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .perpanjangan-banner-info strong {
+    color: #fbbf24;
+}

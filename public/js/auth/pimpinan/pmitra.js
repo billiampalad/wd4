@@ -89,10 +89,43 @@
             updateDetailCounter();
         });
 
+        const perpanjanganBanner = document.getElementById('subdetailPerpanjanganBanner');
+        const perpanjanganGrid = document.getElementById('subdetailPerpanjanganGrid');
+        const detailJenisDokumen = document.getElementById('subdetailJenisDokumen');
+        const detailDocNumber = document.getElementById('subdetailDocNumber');
+        const detailPeriode = document.getElementById('subdetailPeriode');
+        const fileSuratWrapper = document.getElementById('subdetailFileSuratWrapper');
+        const fileSuratLink = document.getElementById('subdetailFileSuratLink');
+
         function openDetailModal(row) {
             activeRow = row;
             const ds = row.dataset;
             const isHistory = row.classList.contains('submission-history-row');
+            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+
+            if (isPerpanjangan) {
+                if (perpanjanganBanner) perpanjanganBanner.hidden = false;
+                if (perpanjanganGrid) perpanjanganGrid.hidden = false;
+                if (detailJenisDokumen) detailJenisDokumen.textContent = ds.jenisDokumen || '—';
+                if (detailDocNumber) detailDocNumber.textContent = ds.docNumber || '—';
+                if (detailPeriode) {
+                    if (ds.startDate && ds.endDate && ds.startDate !== '-' && ds.endDate !== '-') {
+                        detailPeriode.textContent = `${ds.startDate} s/d ${ds.endDate}`;
+                    } else {
+                        detailPeriode.textContent = 'Belum diatur';
+                    }
+                }
+                if (ds.fileSurat && fileSuratWrapper && fileSuratLink) {
+                    fileSuratWrapper.hidden = false;
+                    fileSuratLink.href = ds.fileSurat;
+                } else if (fileSuratWrapper) {
+                    fileSuratWrapper.hidden = true;
+                }
+            } else {
+                if (perpanjanganBanner) perpanjanganBanner.hidden = true;
+                if (perpanjanganGrid) perpanjanganGrid.hidden = true;
+                if (fileSuratWrapper) fileSuratWrapper.hidden = true;
+            }
 
             detailCode.textContent = ds.submissionCode || '—';
             detailTitle.textContent = ds.submissionTitle || '—';
