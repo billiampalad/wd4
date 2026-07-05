@@ -776,6 +776,10 @@
             <div class="notif-modal-body">
                 {{-- Info penerima --}}
                 <div class="notif-recipient-info">
+                    <div id="notifPerpanjanganBadgeRow" class="notif-recipient-row" hidden>
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="sub-badge-perpanjangan"><i class="fas fa-sync"></i> Perpanjangan Kerja Sama</span>
+                    </div>
                     <div class="notif-recipient-row">
                         <i class="fas fa-building"></i>
                         <span id="notifMitraName">—</span>

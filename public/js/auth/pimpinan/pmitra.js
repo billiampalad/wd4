@@ -232,22 +232,28 @@
         let pendingDecision = null;
         let pendingNote = '';
 
+        const notifPerpanjanganBadgeRow = document.getElementById('notifPerpanjanganBadgeRow');
+
         function generateEmailTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
+            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const typeText = isPerpanjangan ? 'perpanjangan kerja sama' : 'kerja sama baru';
             const systemUrl = 'https://kerjasamapolimdo.org/';
             if (isApproved) {
-                return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" telah DISETUJUI.\n\n${note ? `Catatan: ${note}\n\n` : ''}Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nHormat kami,\n${appName}`;
+                return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan ${typeText} Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" telah DISETUJUI.\n\n${note ? `Catatan: ${note}\n\n` : ''}Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nHormat kami,\n${appName}`;
             }
-            return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" saat ini belum dapat kami setujui.\n\n${note ? `Catatan dari pimpinan: ${note}\n\n` : ''}Kami tetap menghargai minat Anda dan berharap dapat bekerja sama di kesempatan mendatang.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nHormat kami,\n${appName}`;
+            return `Yth. ${ds.mitraName},\n\nDengan hormat, kami dari ${appName} ingin memberitahukan bahwa pengajuan ${typeText} Anda dengan kode ${ds.submissionCode} — "${ds.submissionTitle}" saat ini belum dapat kami setujui.\n\n${note ? `Catatan dari pimpinan: ${note}\n\n` : ''}Kami tetap menghargai minat Anda dan berharap dapat bekerja sama di kesempatan mendatang.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nHormat kami,\n${appName}`;
         }
 
         function generateWaTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
+            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const typeText = isPerpanjangan ? 'perpanjangan kerja sama' : 'kerja sama baru';
             const systemUrl = 'https://kerjasamapolimdo.org/';
             if (isApproved) {
-                return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ telah *DISETUJUI*. ✅\n\n${note ? `Catatan: _${note}_\n\n` : ''}Terima kasih atas minat dan kepercayaan Anda. Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nSalam hangat,\n${appName}`;
+                return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan ${typeText} Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ telah *DISETUJUI*. ✅\n\n${note ? `Catatan: _${note}_\n\n` : ''}Terima kasih atas minat dan kepercayaan Anda. Tim kami akan segera menghubungi Anda untuk langkah selanjutnya.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nSalam hangat,\n${appName}`;
             }
-            return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan kerja sama Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ saat ini *belum dapat kami setujui*. ❌\n\n${note ? `Catatan dari pimpinan: _${note}_\n\n` : ''}Kami tetap menghargai minat Anda. Jangan ragu untuk mengajukan kembali di kemudian hari.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nSalam hangat,\n${appName}`;
+            return `Halo *${ds.mitraName}*,\n\nKami dari *${appName}* ingin memberitahukan bahwa pengajuan ${typeText} Anda dengan kode *${ds.submissionCode}* — _${ds.submissionTitle}_ saat ini *belum dapat kami setujui*. ❌\n\n${note ? `Catatan dari pimpinan: _${note}_\n\n` : ''}Kami tetap menghargai minat Anda. Jangan ragu untuk mengajukan kembali di kemudian hari.\n\nInformasi selengkapnya dapat diakses melalui portal resmi kami:\n${systemUrl}\n\nSalam hangat,\n${appName}`;
         }
 
         // Tab Switcher
@@ -272,6 +278,11 @@
             const ds = row.dataset;
             const isApproved = decision === 'disetujui';
             const isHistory = row.classList.contains('submission-history-row');
+            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+
+            if (notifPerpanjanganBadgeRow) {
+                notifPerpanjanganBadgeRow.hidden = !isPerpanjangan;
+            }
 
             notifHeader.className = 'notif-modal-header ' + (isApproved ? 'is-approved' : 'is-rejected');
             notifIcon.innerHTML = isApproved
@@ -283,10 +294,10 @@
                 notifSubtitle.textContent = `Kirim notifikasi status (${isApproved ? 'Disetujui' : 'Ditolak'}) via Email atau WhatsApp.`;
             } else {
                 notifTitle.textContent = isApproved
-                    ? `Setujui Pengajuan dari ${ds.mitraName}?`
-                    : `Tolak Pengajuan dari ${ds.mitraName}?`;
+                    ? `Setujui ${isPerpanjangan ? 'Perpanjangan' : 'Pengajuan'} dari ${ds.mitraName}?`
+                    : `Tolak ${isPerpanjangan ? 'Perpanjangan' : 'Pengajuan'} dari ${ds.mitraName}?`;
                 notifSubtitle.textContent = isApproved
-                    ? 'Data mitra akan disimpan ke master mitra dan notifikasi terkirim.'
+                    ? (isPerpanjangan ? 'Pengajuan perpanjangan akan disetujui dan status dokumen diperbarui.' : 'Data mitra akan disimpan ke master mitra dan notifikasi terkirim.')
                     : 'Pengajuan akan ditolak dan mitra akan diberitahu.';
             }
 
@@ -419,7 +430,8 @@
                     return;
                 }
 
-                openNotifModal(row, decision, '');
+                // Call openDetailModal first so pimpinan gets to view all perpanjangan details before confirming approval
+                openDetailModal(row);
             }
         });
 
