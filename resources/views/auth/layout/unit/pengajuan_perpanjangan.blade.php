@@ -143,9 +143,9 @@
                                     data-kode="{{ $item->kode_pengajuan }}"
                                     data-judul="{{ $item->judul_pengajuan }}"
                                     data-jenis="{{ $item->jenis }}"
-                                    data-docnumber="{{ $coop->doc_number ?? $item->doc_number }}"
-                                    data-startdate="{{ $coop->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('Y-m-d') : ($item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('Y-m-d') : '') }}"
-                                    data-enddate="{{ $coop->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('Y-m-d') : ($item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('Y-m-d') : '') }}"
+                                    data-docnumber="{{ $coop?->doc_number ?? $item->doc_number }}"
+                                    data-startdate="{{ $coop?->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('Y-m-d') : ($item->start_date ? \Carbon\Carbon::parse($item->start_date)->format('Y-m-d') : '') }}"
+                                    data-enddate="{{ $coop?->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('Y-m-d') : ($item->end_date ? \Carbon\Carbon::parse($item->end_date)->format('Y-m-d') : '') }}"
                                     data-tujuan="{{ $item->tujuan_pengajuan }}"
                                     data-filesurat="{{ $item->file_surat ? asset('storage/' . $item->file_surat) : '' }}"
                                     style="padding:8px 16px; border-radius:10px; font-size:13px; font-weight:700; border:none; background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff; cursor:pointer; box-shadow:0 2px 8px rgba(37,99,235,0.25); display:inline-flex; align-items:center; gap:6px; transition:transform 0.15s ease, box-shadow 0.15s ease;">
