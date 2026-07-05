@@ -587,6 +587,108 @@
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
                                     </div>
+
+                                    {{-- Email PIC --}}
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="email" style="margin: 0;">Email PIC / Instansi <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi Email"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Email</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Email resmi penanggung jawab untuk pengiriman draf dokumen & konfirmasi perpanjangan.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="position: relative;">
+                                            <i class="fas fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 2; pointer-events: none; font-size: 13px;"></i>
+                                            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                                                placeholder="Contoh: pic@perusahaan.com" required style="padding-left: 38px;">
+                                        </div>
+                                        @error('email')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    {{-- No. HP / WhatsApp --}}
+                                    <div class="partner-field" x-data="{ showInfo: false }">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                                            <label for="telp" style="margin: 0;">No. HP / WhatsApp <span class="partner-required">*</span></label>
+                                            
+                                            <div style="position: relative;">
+                                                <button type="button" 
+                                                    @mouseenter="showInfo = true" 
+                                                    @mouseleave="showInfo = false"
+                                                    @click="showInfo = !showInfo"
+                                                    aria-label="Informasi No WhatsApp"
+                                                    style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
+                                                    onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
+                                                    onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
+                                                    <i class="fas fa-info"></i>
+                                                </button>
+
+                                                <div x-show="showInfo" 
+                                                    x-transition:enter="transition ease-out duration-200"
+                                                    x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave="transition ease-in duration-150"
+                                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                                    x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                                    style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 260px; background: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
+                                                    x-cloak>
+                                                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                                        <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(16, 185, 129, 0.12); color: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                                            <i class="fab fa-whatsapp"></i>
+                                                        </div>
+                                                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                            <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Informasi Kontak WA</span>
+                                                            <p style="font-size: 11px; color: var(--text-sub); margin: 0; line-height: 1.45; font-weight: 400;">
+                                                                Nomor WhatsApp aktif untuk koordinasi cepat & konfirmasi instan selama peninjauan.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: var(--surface, #ffffff); border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="position: relative;">
+                                            <i class="fab fa-whatsapp" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #059669; z-index: 2; pointer-events: none; font-size: 14px;"></i>
+                                            <input id="telp" type="text" name="telp" value="{{ old('telp') }}"
+                                                placeholder="Contoh: 081234567890" required style="padding-left: 38px;">
+                                        </div>
+                                        @error('telp')
+                                            <small class="partner-error">{{ $message }}</small>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1052,6 +1154,14 @@
                                         <span class="partner-review-label">Jabatan Penanggung Jawab</span>
                                         <span class="partner-review-value" id="rev_jabatan_penanggung_jawab">-</span>
                                     </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">Email PIC</span>
+                                        <span class="partner-review-value" id="rev_email">-</span>
+                                    </div>
+                                    <div class="partner-review-item">
+                                        <span class="partner-review-label">No. HP / WhatsApp</span>
+                                        <span class="partner-review-value" id="rev_telp">-</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1376,12 +1486,15 @@
                 if (mitraId && mitraContactMap[mitraId]) {
                     const data = mitraContactMap[mitraId];
 
+                    const telpValue = (data.telp && data.telp.trim() !== '-' && data.telp.trim() !== '') ? data.telp.trim() : '';
+
                     const fields = {
                         'doc_number': data.doc_number,
                         'nama_penandatangan': data.nama_penandatangan,
                         'jabatan_penandatangan': data.jabatan_penandatangan,
                         'nama_penanggung_jawab': data.nama_penanggung_jawab,
                         'jabatan_penanggung_jawab': data.jabatan_penanggung_jawab,
+                        'telp': telpValue,
                         'judul_pengajuan': data.judul_pengajuan,
                     };
 
@@ -1390,16 +1503,20 @@
 
                     for (const [fieldId, value] of Object.entries(fields)) {
                         const el = document.getElementById(fieldId);
-                        if (el && value) {
-                            el.value = value;
-                            el.dispatchEvent(new Event('input', { bubbles: true }));
-                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                        if (el) {
+                            if (value) {
+                                el.value = value;
+                                el.dispatchEvent(new Event('input', { bubbles: true }));
+                                el.dispatchEvent(new Event('change', { bubbles: true }));
 
-                            if (['nama_penandatangan', 'jabatan_penandatangan', 'nama_penanggung_jawab', 'jabatan_penanggung_jawab'].includes(fieldId)) {
-                                filledStep2 = true;
-                            }
-                            if (fieldId === 'judul_pengajuan') {
-                                filledStep3 = true;
+                                if (['nama_penandatangan', 'jabatan_penandatangan', 'nama_penanggung_jawab', 'jabatan_penanggung_jawab', 'telp'].includes(fieldId)) {
+                                    filledStep2 = true;
+                                }
+                                if (fieldId === 'judul_pengajuan') {
+                                    filledStep3 = true;
+                                }
+                            } else if (fieldId === 'telp') {
+                                el.value = '';
                             }
                         }
                     }
@@ -1587,6 +1704,8 @@
             setRevText('rev_jabatan_penandatangan', getVal('jabatan_penandatangan'));
             setRevText('rev_nama_penanggung_jawab', getVal('nama_penanggung_jawab'));
             setRevText('rev_jabatan_penanggung_jawab', getVal('jabatan_penanggung_jawab'));
+            setRevText('rev_email', getVal('email'));
+            setRevText('rev_telp', getVal('telp'));
 
             setRevText('rev_start_date', getVal('start_date'));
             setRevText('rev_end_date', getVal('end_date'));

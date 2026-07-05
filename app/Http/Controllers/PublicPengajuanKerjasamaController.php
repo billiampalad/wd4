@@ -149,12 +149,16 @@ class PublicPengajuanKerjasamaController extends Controller
             // Doc number
             $docNumber = $latestCoop->doc_number ?? $latestSubmission->doc_number ?? '';
 
+            $rawTelp = $mitra->telp ?? $latestSubmission->telp ?? '';
+            $telp = ($rawTelp === '-' || trim($rawTelp) === '') ? '' : trim($rawTelp);
+
             $mitraContactMap[$mitra->id] = [
                 'doc_number'               => $docNumber,
                 'nama_penandatangan'       => $latestCoop->penandatanganMitra->nama ?? $latestSubmission->nama_penandatangan ?? '',
                 'jabatan_penandatangan'    => $latestCoop->penandatanganMitra->jabatan ?? $latestSubmission->jabatan_penandatangan ?? '',
                 'nama_penanggung_jawab'    => $latestCoop->pjMitra->nama ?? $latestSubmission->nama_penanggung_jawab ?? '',
                 'jabatan_penanggung_jawab' => $latestCoop->pjMitra->jabatan ?? $latestSubmission->jabatan_penanggung_jawab ?? '',
+                'telp'                     => $telp,
                 'judul_pengajuan'          => $title,
                 'ruang_lingkup'            => $ruangLingkup,
             ];
@@ -166,14 +170,15 @@ class PublicPengajuanKerjasamaController extends Controller
     public function storePerpanjangan(Request $request)
     {
         $validated = $request->validate([
-            'mitra_id' => ['required', 'exists:mitras,id'],
+            'mitra_id' => ['required', 'exists:mitra,id'],
             'jenis' => ['required', 'string', 'max:255'],
             'doc_number' => ['required', 'string', 'max:255'],
             'nama_penandatangan' => ['required', 'string', 'max:255'],
             'jabatan_penandatangan' => ['required', 'string', 'max:255'],
             'nama_penanggung_jawab' => ['nullable', 'string', 'max:255'],
             'jabatan_penanggung_jawab' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'telp' => ['required', 'string', 'max:30'],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'judul_pengajuan' => ['required', 'string', 'max:255'],
@@ -193,13 +198,13 @@ class PublicPengajuanKerjasamaController extends Controller
 
         try {
             $submission = PengajuanKerjasamaMitra::create(array_merge($validated, [
-                'email' => $validated['email'] ?? '-',
+                'email' => $validated['email'],
+                'telp' => $validated['telp'],
                 'nama_mitra' => $mitra->nama_mitra,
                 'id_klasifikasi' => $mitra->id_klasifikasi,
                 'kategori' => $mitra->kategori ?: 'nasional',
                 'negara' => $mitra->negara,
                 'alamat' => $mitra->alamat ?: '-',
-                'telp' => $mitra->telp ?: '-',
                 'website' => $mitra->website,
                 'kode_pengajuan' => $this->generateSubmissionCode(),
                 'status' => PengajuanKerjasamaMitra::STATUS_DIAJUKAN,
