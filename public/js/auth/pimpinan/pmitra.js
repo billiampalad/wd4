@@ -97,7 +97,7 @@
         const fileSuratWrapper = document.getElementById('subdetailFileSuratWrapper');
         const fileSuratLink = document.getElementById('subdetailFileSuratLink');
 
-        function openDetailModal(row) {
+        function openDetailModal(row, targetAction = 'detail') {
             activeRow = row;
             const ds = row.dataset;
             const isHistory = row.classList.contains('submission-history-row');
@@ -181,6 +181,19 @@
                 if (detailActiveActions) {
                     detailActiveActions.hidden = false;
                     detailActiveActions.style.display = 'flex';
+
+                    if (detailBtnApprove && detailBtnReject) {
+                        if (targetAction === 'approve') {
+                            detailBtnApprove.style.display = 'inline-flex';
+                            detailBtnReject.style.display = 'none';
+                        } else if (targetAction === 'reject') {
+                            detailBtnApprove.style.display = 'none';
+                            detailBtnReject.style.display = 'inline-flex';
+                        } else {
+                            detailBtnApprove.style.display = 'inline-flex';
+                            detailBtnReject.style.display = 'inline-flex';
+                        }
+                    }
                 }
                 detailHistoryNoteWrapper.hidden = true;
                 if (detailCatatanTextarea) detailCatatanTextarea.value = '';
@@ -197,6 +210,7 @@
             setTimeout(() => {
                 detailModal.hidden = true;
             }, 260);
+            activeRow = null;
             document.body.style.overflow = '';
         }
 
@@ -333,9 +347,7 @@
             if (isHistory) {
                 btnConfirmText.textContent = 'Kirim Notifikasi';
             } else {
-                btnConfirmText.textContent = isApproved
-                    ? 'Setujui & Kirim Notifikasi'
-                    : 'Tolak & Kirim Notifikasi';
+                btnConfirmText.textContent = isApproved ? 'Setujui' : 'Tolak';
             }
 
             notifModal.hidden = false;
@@ -396,7 +408,7 @@
             const row = btn.closest('[data-submission-row]');
 
             if (action === 'detail' || action === 'detail-history') {
-                if (row) openDetailModal(row);
+                if (row) openDetailModal(row, 'detail');
                 return;
             }
 
@@ -408,30 +420,26 @@
                 return;
             }
 
-            if (action === 'approve' || action === 'reject') {
+            if (action === 'approve') {
+                if (row) openDetailModal(row, 'approve');
+                return;
+            }
+
+            if (action === 'reject') {
                 if (!row) return;
-                const decision = action === 'approve' ? 'disetujui' : 'ditolak';
+                openDetailModal(row, 'reject');
+                detailCatatanTextarea?.focus();
+                detailCatatanTextarea?.classList.add('is-required');
 
-                // Prompt note validation if rejecting from table directly
-                if (decision === 'ditolak') {
-                    // Open detail modal first or prompt for note
-                    openDetailModal(row);
-                    detailCatatanTextarea?.focus();
-                    detailCatatanTextarea?.classList.add('is-required');
-
-                    if (window.Swal) {
-                        window.Swal.fire({
-                            icon: 'warning',
-                            title: 'Catatan wajib diisi',
-                            text: 'Tambahkan alasan penolakan pada kolom catatan di detail modal.',
-                            confirmButtonText: 'Baik'
-                        });
-                    }
-                    return;
+                if (window.Swal) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Catatan wajib diisi',
+                        text: 'Tambahkan alasan penolakan pada kolom catatan di detail modal.',
+                        confirmButtonText: 'Baik'
+                    });
                 }
-
-                // Call openDetailModal first so pimpinan gets to view all perpanjangan details before confirming approval
-                openDetailModal(row);
+                return;
             }
         });
 

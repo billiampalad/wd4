@@ -752,10 +752,10 @@
 
                 <div id="subdetailActiveActions" class="subdetail-footer-actions">
                     <button type="button" class="ev-btn-reject" id="subdetailBtnReject">
-                        <i class="fas fa-ban"></i> Tolak Pengajuan
+                        <i class="fas fa-ban"></i> Tolak
                     </button>
                     <button type="button" class="ev-btn-approve" id="subdetailBtnApprove">
-                        <i class="fas fa-circle-check"></i> Setujui &amp; Simpan Mitra
+                        <i class="fas fa-circle-check"></i> Setujui
                     </button>
                 </div>
             </div>
