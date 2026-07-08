@@ -38,8 +38,15 @@ class NotifikasiController extends Controller
                         })
                         ->orWhere(function ($typedQuery) {
                             $typedQuery
-                                ->where('source_type', 'pengajuan_mitra')
-                                ->whereHas('pengajuanKerjasamaMitra', function ($submissionQuery) {
+                                ->where('source_type', 'pengajuan_kerjasama_baru')
+                                ->whereHas('pengajuanKerjasamaBaru', function ($submissionQuery) {
+                                    $submissionQuery->where('status', 'diajukan');
+                                });
+                        })
+                        ->orWhere(function ($typedQuery) {
+                            $typedQuery
+                                ->where('source_type', 'pengajuan_perpanjangan_kerjasama')
+                                ->whereHas('pengajuanPerpanjanganKerjasama', function ($submissionQuery) {
                                     $submissionQuery->where('status', 'diajukan');
                                 });
                         });
@@ -63,7 +70,8 @@ class NotifikasiController extends Controller
             'cooperation.jurusans',
             'cooperation.upas',
             'cooperation.pusats',
-            'pengajuanKerjasamaMitra',
+            'pengajuanKerjasamaBaru',
+            'pengajuanPerpanjanganKerjasama',
         ])
             ->latest()
             ->take(10)

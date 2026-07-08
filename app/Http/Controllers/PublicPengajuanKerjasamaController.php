@@ -7,7 +7,8 @@ use App\Models\Cooperation;
 use App\Models\JenisKerjasama;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
-use App\Models\PengajuanKerjasamaMitra;
+use App\Models\PengajuanKerjasamaBaru;
+use App\Models\PengajuanPerpanjanganKerjasama;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,9 +57,9 @@ class PublicPengajuanKerjasamaController extends Controller
         DB::beginTransaction();
 
         try {
-            $submission = PengajuanKerjasamaMitra::create(array_merge($validated, [
+            $submission = PengajuanKerjasamaBaru::create(array_merge($validated, [
                 'kode_pengajuan' => $this->generateSubmissionCode(),
-                'status' => PengajuanKerjasamaMitra::STATUS_DIAJUKAN,
+                'status' => PengajuanKerjasamaBaru::STATUS_DIAJUKAN,
                 'submitted_at' => now(),
             ]));
 
@@ -75,7 +76,7 @@ class PublicPengajuanKerjasamaController extends Controller
                     'Pengajuan Mitra Baru',
                     "Pengajuan {$submission->kode_pengajuan} dari {$submission->nama_mitra} menunggu validasi Anda.",
                     route('pimpinan.pengajuan_mitra'),
-                    'pengajuan_mitra'
+                    'pengajuan_kerjasama_baru'
                 );
             }
 
@@ -96,12 +97,17 @@ class PublicPengajuanKerjasamaController extends Controller
     private function generateSubmissionCode(): string
     {
         $prefix = 'PGM-' . now()->format('Ymd') . '-';
-        $sequence = PengajuanKerjasamaMitra::whereDate('created_at', today())->count() + 1;
+        $sequence = PengajuanKerjasamaBaru::whereDate('created_at', today())->count()
+            + PengajuanPerpanjanganKerjasama::whereDate('created_at', today())->count()
+            + 1;
 
         do {
             $code = $prefix . str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
             $sequence++;
-        } while (PengajuanKerjasamaMitra::where('kode_pengajuan', $code)->exists());
+        } while (
+            PengajuanKerjasamaBaru::where('kode_pengajuan', $code)->exists() ||
+            PengajuanPerpanjanganKerjasama::where('kode_pengajuan', $code)->exists()
+        );
 
         return $code;
     }
@@ -119,9 +125,15 @@ class PublicPengajuanKerjasamaController extends Controller
                 ->latest('id')
                 ->first();
 
-            $latestSubmission = PengajuanKerjasamaMitra::where('mitra_id', $mitra->id)
+            $latestSubmission = PengajuanPerpanjanganKerjasama::where('mitra_id', $mitra->id)
                 ->latest('id')
                 ->first();
+
+            if (!$latestSubmission) {
+                $latestSubmission = PengajuanKerjasamaBaru::where('mitra_id', $mitra->id)
+                    ->latest('id')
+                    ->first();
+            }
 
             // Default title
             $title = '';
@@ -170,7 +182,7 @@ class PublicPengajuanKerjasamaController extends Controller
     public function storePerpanjangan(Request $request)
     {
         $validated = $request->validate([
-            'mitra_id' => ['required', 'exists:mitra,id'],
+            'mitra_id' => ['required', 'exists:mitras,id'],
             'jenis' => ['required', 'string', 'max:255'],
             'doc_number' => ['required', 'string', 'max:255'],
             'nama_penandatangan' => ['required', 'string', 'max:255'],
@@ -197,7 +209,7 @@ class PublicPengajuanKerjasamaController extends Controller
         DB::beginTransaction();
 
         try {
-            $submission = PengajuanKerjasamaMitra::create(array_merge($validated, [
+            $submission = PengajuanPerpanjanganKerjasama::create(array_merge($validated, [
                 'email' => $validated['email'],
                 'telp' => $validated['telp'],
                 'nama_mitra' => $mitra->nama_mitra,
@@ -207,7 +219,7 @@ class PublicPengajuanKerjasamaController extends Controller
                 'alamat' => $mitra->alamat ?: '-',
                 'website' => $mitra->website,
                 'kode_pengajuan' => $this->generateSubmissionCode(),
-                'status' => PengajuanKerjasamaMitra::STATUS_DIAJUKAN,
+                'status' => PengajuanPerpanjanganKerjasama::STATUS_DIAJUKAN,
                 'submitted_at' => now(),
             ]));
 
@@ -224,7 +236,7 @@ class PublicPengajuanKerjasamaController extends Controller
                     'Pengajuan Perpanjangan Mitra',
                     "Pengajuan Perpanjangan {$submission->kode_pengajuan} dari {$submission->nama_mitra} menunggu validasi Anda.",
                     route('pimpinan.pengajuan_mitra'),
-                    'pengajuan_mitra'
+                    'pengajuan_perpanjangan_kerjasama'
                 );
             }
 

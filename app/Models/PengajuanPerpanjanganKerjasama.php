@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PengajuanKerjasamaMitra extends Model
+class PengajuanPerpanjanganKerjasama extends Model
 {
     use HasFactory;
 
@@ -14,10 +14,11 @@ class PengajuanKerjasamaMitra extends Model
     public const STATUS_DISETUJUI = 'disetujui';
     public const STATUS_DITOLAK = 'ditolak';
 
-    protected $table = 'pengajuan_kerjasama_mitras';
+    protected $table = 'pengajuan_perpanjangan_kerjasama';
 
     protected $fillable = [
         'kode_pengajuan',
+        'mitra_id',
         'nama_mitra',
         'id_klasifikasi',
         'kategori',
@@ -30,6 +31,11 @@ class PengajuanKerjasamaMitra extends Model
         'nama_penanggung_jawab',
         'jabatan_penanggung_jawab',
         'email',
+        'jenis',
+        'doc_number',
+        'start_date',
+        'end_date',
+        'file_surat',
         'judul_pengajuan',
         'tujuan_pengajuan',
         'ruang_lingkup',
@@ -39,12 +45,6 @@ class PengajuanKerjasamaMitra extends Model
         'reviewed_by',
         'reviewed_at',
         'submitted_at',
-        'mitra_id',
-        'jenis',
-        'doc_number',
-        'start_date',
-        'end_date',
-        'file_surat',
     ];
 
     protected $appends = [
@@ -54,6 +54,8 @@ class PengajuanKerjasamaMitra extends Model
     protected $casts = [
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function klasifikasi(): BelongsTo
@@ -73,7 +75,7 @@ class PengajuanKerjasamaMitra extends Model
 
     public function cooperation()
     {
-        return $this->hasOne(Cooperation::class, 'pengajuan_kerjasama_mitra_id');
+        return $this->hasOne(Cooperation::class, 'pengajuan_perpanjangan_kerjasama_id');
     }
 
     public function getStatusLabelAttribute(): string
@@ -81,7 +83,7 @@ class PengajuanKerjasamaMitra extends Model
         return match ($this->status) {
             self::STATUS_DISETUJUI => 'Disetujui',
             self::STATUS_DITOLAK => 'Ditolak',
-            default => 'Diajukan',
+            default => 'Menunggu Review',
         };
     }
 }

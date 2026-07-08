@@ -13,7 +13,7 @@ use App\Models\Jurusan;
 use App\Models\Klasifikasi;
 use App\Models\Pusat;
 use App\Models\Upa;
-use App\Models\PengajuanKerjasamaMitra;
+use App\Models\PengajuanPerpanjanganKerjasama;
 use App\Models\Mitra;
 use App\Models\Pejabat;
 use Illuminate\Http\Request;
@@ -1512,12 +1512,8 @@ class UnitPageController extends Controller
      */
     public function pengajuanPerpanjangan(Request $request)
     {
-        $query = PengajuanKerjasamaMitra::with(['mitra', 'reviewer', 'klasifikasi', 'cooperation'])
-            ->where('status', PengajuanKerjasamaMitra::STATUS_DISETUJUI)
-            ->where(function ($q) {
-                $q->whereNotNull('mitra_id')
-                  ->orWhereNotNull('doc_number');
-            });
+        $query = PengajuanPerpanjanganKerjasama::with(['mitra', 'reviewer', 'klasifikasi', 'cooperation'])
+            ->where('status', 'disetujui');
 
         if ($request->filled('status_progres')) {
             $progresFilter = strtolower($request->status_progres);
@@ -1579,7 +1575,7 @@ class UnitPageController extends Controller
      */
     public function prosesPengajuanPerpanjangan(Request $request, $id)
     {
-        $submission = PengajuanKerjasamaMitra::with(['mitra', 'cooperation'])->findOrFail($id);
+        $submission = PengajuanPerpanjanganKerjasama::with(['mitra', 'cooperation'])->findOrFail($id);
 
         $validated = $request->validate([
             'doc_number' => ['required', 'string', 'max:255'],
@@ -1644,7 +1640,7 @@ class UnitPageController extends Controller
                     'penandatangan_mitra_id' => $penandatanganMitra->id,
                     'pj_mitra_id' => $pjMitra?->id,
                     'document_link' => $uploadedFilePath,
-                    'pengajuan_kerjasama_mitra_id' => $submission->id,
+                    'pengajuan_perpanjangan_kerjasama_id' => $submission->id,
                     'created_by' => Auth::id(),
                 ]);
             } else {

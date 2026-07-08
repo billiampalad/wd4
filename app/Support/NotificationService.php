@@ -3,7 +3,6 @@
 namespace App\Support;
 
 use App\Mail\MitraStatusNotificationMail;
-use App\Models\PengajuanKerjasamaMitra;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -13,7 +12,7 @@ class NotificationService
     /**
      * Kirim notifikasi email ke mitra.
      */
-    public static function sendEmail(PengajuanKerjasamaMitra $submission, string $customMessage): void
+    public static function sendEmail(object $submission, string $customMessage): void
     {
         $email = $submission->email;
 
@@ -36,7 +35,7 @@ class NotificationService
      * Pastikan env FONNTE_TOKEN sudah diisi.
      * Jika menggunakan gateway lain, sesuaikan endpoint dan payload.
      */
-    public static function sendWhatsApp(PengajuanKerjasamaMitra $submission, string $customMessage): void
+    public static function sendWhatsApp(object $submission, string $customMessage): void
     {
         $phone = $submission->telp;
         $token = config('services.fonnte.token');
@@ -97,9 +96,9 @@ class NotificationService
     /**
      * Generate default template pesan berdasarkan keputusan.
      */
-    public static function generateDefaultMessage(PengajuanKerjasamaMitra $submission, string $channel = 'email'): string
+    public static function generateDefaultMessage(object $submission, string $channel = 'email'): string
     {
-        $isApproved = $submission->status === PengajuanKerjasamaMitra::STATUS_DISETUJUI;
+        $isApproved = $submission->status === 'disetujui';
         $namaInstitusi = config('app.name', 'Institusi Kami');
         $catatan = $submission->catatan_pimpinan;
 

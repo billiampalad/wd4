@@ -47,55 +47,89 @@
         const appName = document.querySelector('meta[name="app-name"]')?.content || 'Institusi Kami';
 
         /* ============================
+        /* ============================
          * MODAL 1: SUBMISSION DETAIL
          * ============================ */
-        const detailModal = document.getElementById('submissionDetailModal');
-        const detailCode = document.getElementById('subdetailCode');
-        const detailStatusBadge = document.getElementById('subdetailStatusBadge');
-        const detailTitle = document.getElementById('subdetailTitle');
-        const detailMitraName = document.getElementById('subdetailMitraName');
-        const detailKlasifikasi = document.getElementById('subdetailKlasifikasi');
-        const detailNegara = document.getElementById('subdetailNegara');
-        const detailAlamat = document.getElementById('subdetailAlamat');
-        const detailWebsite = document.getElementById('subdetailWebsite');
-        const detailPenandatangan = document.getElementById('subdetailPenandatangan');
-        const detailPj = document.getElementById('subdetailPj');
-        const detailKontak = document.getElementById('subdetailKontak');
-        const detailTujuan = document.getElementById('subdetailTujuan');
-        const detailRuangLingkup = document.getElementById('subdetailRuangLingkup');
-        const detailPesanWrapper = document.getElementById('subdetailPesanWrapper');
-        const detailPesanTambahan = document.getElementById('subdetailPesanTambahan');
-        const detailHistoryNoteWrapper = document.getElementById('subdetailHistoryNoteWrapper');
-        const detailHistoryNote = document.getElementById('subdetailHistoryNote');
-        const detailFormBlock = document.getElementById('subdetailFormBlock');
-        const detailCatatanTextarea = document.getElementById('subdetailCatatanTextarea');
-        const detailCounter = document.getElementById('subdetailCounter');
-        const detailActiveActions = document.getElementById('subdetailActiveActions');
-        const detailBtnClose = document.getElementById('subdetailBtnClose');
-        const detailBtnCancel = document.getElementById('subdetailBtnCancel');
-        const detailBtnApprove = document.getElementById('subdetailBtnApprove');
-        const detailBtnReject = document.getElementById('subdetailBtnReject');
+        const modalBaru = {
+            overlay: document.getElementById('submissionDetailModalBaru'),
+            btnClose: document.getElementById('subdetailBtnCloseBaru'),
+            btnCancel: document.getElementById('subdetailBtnCancelBaru'),
+            btnApprove: document.getElementById('subdetailBtnApproveBaru'),
+            btnReject: document.getElementById('subdetailBtnRejectBaru'),
+            catatan: document.getElementById('subdetailCatatanTextareaBaru'),
+            counter: document.getElementById('subdetailCounterBaru'),
+            code: document.getElementById('subdetailCodeBaru'),
+            statusBadge: document.getElementById('subdetailStatusBadgeBaru'),
+            title: document.getElementById('subdetailTitleBaru'),
+            mitraName: document.getElementById('subdetailMitraNameBaru'),
+            klasifikasi: document.getElementById('subdetailKlasifikasiBaru'),
+            negara: document.getElementById('subdetailNegaraBaru'),
+            alamat: document.getElementById('subdetailAlamatBaru'),
+            website: document.getElementById('subdetailWebsiteBaru'),
+            penandatangan: document.getElementById('subdetailPenandatanganBaru'),
+            pj: document.getElementById('subdetailPjBaru'),
+            kontak: document.getElementById('subdetailKontakBaru'),
+            tujuan: document.getElementById('subdetailTujuanBaru'),
+            ruangLingkup: document.getElementById('subdetailRuangLingkupBaru'),
+            pesanWrapper: document.getElementById('subdetailPesanWrapperBaru'),
+            pesanTambahan: document.getElementById('subdetailPesanTambahanBaru'),
+            historyNoteWrapper: document.getElementById('subdetailHistoryNoteWrapperBaru'),
+            historyNote: document.getElementById('subdetailHistoryNoteBaru'),
+            formBlock: document.getElementById('subdetailFormBlockBaru'),
+            activeActions: document.getElementById('subdetailActiveActionsBaru'),
+        };
 
+        const modalPerpanjangan = {
+            overlay: document.getElementById('submissionDetailModalPerpanjangan'),
+            btnClose: document.getElementById('subdetailBtnClosePerpanjangan'),
+            btnCancel: document.getElementById('subdetailBtnCancelPerpanjangan'),
+            btnApprove: document.getElementById('subdetailBtnApprovePerpanjangan'),
+            btnReject: document.getElementById('subdetailBtnRejectPerpanjangan'),
+            catatan: document.getElementById('subdetailCatatanTextareaPerpanjangan'),
+            counter: document.getElementById('subdetailCounterPerpanjangan'),
+            code: document.getElementById('subdetailCodePerpanjangan'),
+            statusBadge: document.getElementById('subdetailStatusBadgePerpanjangan'),
+            title: document.getElementById('subdetailTitlePerpanjangan'),
+            mitraName: document.getElementById('subdetailMitraNamePerpanjangan'),
+            klasifikasi: document.getElementById('subdetailKlasifikasiPerpanjangan'),
+            negara: document.getElementById('subdetailNegaraPerpanjangan'),
+            alamat: document.getElementById('subdetailAlamatPerpanjangan'),
+            website: document.getElementById('subdetailWebsitePerpanjangan'),
+            penandatangan: document.getElementById('subdetailPenandatanganPerpanjangan'),
+            pj: document.getElementById('subdetailPjPerpanjangan'),
+            kontak: document.getElementById('subdetailKontakPerpanjangan'),
+            tujuan: document.getElementById('subdetailTujuanPerpanjangan'),
+            ruangLingkup: document.getElementById('subdetailRuangLingkupPerpanjangan'),
+            pesanWrapper: document.getElementById('subdetailPesanWrapperPerpanjangan'),
+            pesanTambahan: document.getElementById('subdetailPesanTambahanPerpanjangan'),
+            historyNoteWrapper: document.getElementById('subdetailHistoryNoteWrapperPerpanjangan'),
+            historyNote: document.getElementById('subdetailHistoryNotePerpanjangan'),
+            formBlock: document.getElementById('subdetailFormBlockPerpanjangan'),
+            activeActions: document.getElementById('subdetailActiveActionsPerpanjangan'),
+            // Khusus perpanjangan:
+            jenisDokumen: document.getElementById('subdetailJenisDokumen'),
+            docNumber: document.getElementById('subdetailDocNumber'),
+            periode: document.getElementById('subdetailPeriode'),
+            fileSuratWrapper: document.getElementById('subdetailFileSuratWrapper'),
+            fileSuratLink: document.getElementById('subdetailFileSuratLink'),
+        };
+
+        let activeModalConfig = null;
         let activeRow = null;
 
         // Counter textarea di Modal Detail
-        const updateDetailCounter = () => {
-            if (!detailCounter || !detailCatatanTextarea) return;
-            const len = detailCatatanTextarea.value.trim().length;
-            detailCounter.textContent = `${len} karakter`;
+        const updateDetailCounter = (config) => {
+            if (!config || !config.counter || !config.catatan) return;
+            const len = config.catatan.value.trim().length;
+            config.counter.textContent = `${len} karakter`;
         };
-        detailCatatanTextarea?.addEventListener('input', () => {
-            detailCatatanTextarea.classList.remove('is-required');
-            updateDetailCounter();
-        });
 
-        const perpanjanganBanner = document.getElementById('subdetailPerpanjanganBanner');
-        const perpanjanganGrid = document.getElementById('subdetailPerpanjanganGrid');
-        const detailJenisDokumen = document.getElementById('subdetailJenisDokumen');
-        const detailDocNumber = document.getElementById('subdetailDocNumber');
-        const detailPeriode = document.getElementById('subdetailPeriode');
-        const fileSuratWrapper = document.getElementById('subdetailFileSuratWrapper');
-        const fileSuratLink = document.getElementById('subdetailFileSuratLink');
+        [modalBaru, modalPerpanjangan].forEach((config) => {
+            config.catatan?.addEventListener('input', () => {
+                config.catatan.classList.remove('is-required');
+                updateDetailCounter(config);
+            });
+        });
 
         function openDetailModal(row, targetAction = 'detail') {
             activeRow = row;
@@ -103,131 +137,139 @@
             const isHistory = row.classList.contains('submission-history-row');
             const isPerpanjangan = ds.isPerpanjangan === '1';
 
+            activeModalConfig = isPerpanjangan ? modalPerpanjangan : modalBaru;
+
+            // Tutup overlay lainnya
+            const otherConfig = isPerpanjangan ? modalBaru : modalPerpanjangan;
+            if (otherConfig.overlay) {
+                otherConfig.overlay.hidden = true;
+                otherConfig.overlay.classList.remove('is-visible');
+            }
+
             if (isPerpanjangan) {
-                if (perpanjanganBanner) perpanjanganBanner.hidden = false;
-                if (perpanjanganGrid) perpanjanganGrid.hidden = false;
-                if (detailJenisDokumen) detailJenisDokumen.textContent = ds.jenisDokumen || '—';
-                if (detailDocNumber) detailDocNumber.textContent = ds.docNumber || '—';
-                if (detailPeriode) {
+                if (activeModalConfig.jenisDokumen) activeModalConfig.jenisDokumen.textContent = ds.jenisDokumen || '—';
+                if (activeModalConfig.docNumber) activeModalConfig.docNumber.textContent = ds.docNumber || '—';
+                if (activeModalConfig.periode) {
                     if (ds.startDate && ds.endDate && ds.startDate !== '-' && ds.endDate !== '-') {
-                        detailPeriode.textContent = `${ds.startDate} s/d ${ds.endDate}`;
+                        activeModalConfig.periode.textContent = `${ds.startDate} s/d ${ds.endDate}`;
                     } else {
-                        detailPeriode.textContent = 'Belum diatur';
+                        activeModalConfig.periode.textContent = 'Belum diatur';
                     }
                 }
-                if (ds.fileSurat && fileSuratWrapper && fileSuratLink) {
-                    fileSuratWrapper.hidden = false;
-                    fileSuratLink.href = ds.fileSurat;
-                } else if (fileSuratWrapper) {
-                    fileSuratWrapper.hidden = true;
+                if (ds.fileSurat && activeModalConfig.fileSuratWrapper && activeModalConfig.fileSuratLink) {
+                    activeModalConfig.fileSuratWrapper.hidden = false;
+                    activeModalConfig.fileSuratLink.href = ds.fileSurat;
+                } else if (activeModalConfig.fileSuratWrapper) {
+                    activeModalConfig.fileSuratWrapper.hidden = true;
                 }
-            } else {
-                if (perpanjanganBanner) perpanjanganBanner.hidden = true;
-                if (perpanjanganGrid) perpanjanganGrid.hidden = true;
-                if (fileSuratWrapper) fileSuratWrapper.hidden = true;
             }
 
-            detailCode.textContent = ds.submissionCode || '—';
-            detailTitle.textContent = ds.submissionTitle || '—';
-            detailMitraName.textContent = ds.mitraName || '—';
-            detailKlasifikasi.textContent = `${ds.klasifikasi || 'Umum'} (${ds.kategori || 'Nasional'})`;
-            detailNegara.textContent = ds.negara || '—';
-            detailAlamat.textContent = ds.alamat || '—';
+            activeModalConfig.code.textContent = ds.submissionCode || '—';
+            activeModalConfig.title.textContent = ds.submissionTitle || '—';
+            activeModalConfig.mitraName.textContent = ds.mitraName || '—';
+            activeModalConfig.klasifikasi.textContent = `${ds.klasifikasi || 'Umum'} (${ds.kategori || 'Nasional'})`;
+            activeModalConfig.negara.textContent = ds.negara || '—';
+            activeModalConfig.alamat.textContent = ds.alamat || '—';
 
             if (ds.website) {
-                detailWebsite.innerHTML = `<a href="${ds.website}" target="_blank" rel="noreferrer">${ds.website}</a>`;
+                activeModalConfig.website.innerHTML = `<a href="${ds.website}" target="_blank" rel="noreferrer">${ds.website}</a>`;
             } else {
-                detailWebsite.textContent = 'Belum ada website';
+                activeModalConfig.website.textContent = 'Belum ada website';
             }
 
-            detailPenandatangan.innerHTML = `${ds.penandatanganNama || '—'}<br><small class="text-sub">${ds.penandatanganJabatan || '-'}</small>`;
-            detailPj.innerHTML = `${ds.pjNama || '—'}<br><small class="text-sub">${ds.pjJabatan || '-'}</small>`;
-            detailKontak.innerHTML = `<i class="fas fa-envelope"></i> ${ds.mitraEmail || '—'}<br><i class="fab fa-whatsapp"></i> ${ds.mitraPhone || '—'}`;
-            detailTujuan.textContent = ds.tujuan || '—';
-            detailRuangLingkup.textContent = ds.ruangLingkup || '—';
+            activeModalConfig.penandatangan.innerHTML = `${ds.penandatanganNama || '—'}<br><small class="text-sub">${ds.penandatanganJabatan || '-'}</small>`;
+            activeModalConfig.pj.innerHTML = `${ds.pjNama || '—'}<br><small class="text-sub">${ds.pjJabatan || '-'}</small>`;
+            activeModalConfig.kontak.innerHTML = `<i class="fas fa-envelope"></i> ${ds.mitraEmail || '—'}<br><i class="fab fa-whatsapp"></i> ${ds.mitraPhone || '—'}`;
+            activeModalConfig.tujuan.textContent = ds.tujuan || '—';
+            activeModalConfig.ruangLingkup.textContent = ds.ruangLingkup || '—';
 
             if (ds.pesanTambahan) {
-                detailPesanWrapper.hidden = false;
-                detailPesanTambahan.textContent = ds.pesanTambahan;
+                activeModalConfig.pesanWrapper.hidden = false;
+                activeModalConfig.pesanTambahan.textContent = ds.pesanTambahan;
             } else {
-                detailPesanWrapper.hidden = true;
+                activeModalConfig.pesanWrapper.hidden = true;
             }
 
             if (isHistory) {
-                detailStatusBadge.className = `submission-status ${ds.statusClass || 'pending'}`;
-                detailStatusBadge.textContent = ds.statusLabel || 'Proses';
-                if (detailFormBlock) {
-                    detailFormBlock.hidden = true;
-                    detailFormBlock.style.display = 'none';
+                activeModalConfig.statusBadge.className = `submission-status ${ds.statusClass || 'pending'}`;
+                activeModalConfig.statusBadge.textContent = ds.statusLabel || 'Proses';
+                if (activeModalConfig.formBlock) {
+                    activeModalConfig.formBlock.hidden = true;
+                    activeModalConfig.formBlock.style.display = 'none';
                 }
-                if (detailActiveActions) {
-                    detailActiveActions.hidden = true;
-                    detailActiveActions.style.display = 'none';
+                if (activeModalConfig.activeActions) {
+                    activeModalConfig.activeActions.hidden = true;
+                    activeModalConfig.activeActions.style.display = 'none';
                 }
 
                 if (ds.catatanPimpinan) {
-                    detailHistoryNoteWrapper.hidden = false;
-                    detailHistoryNote.textContent = ds.catatanPimpinan;
+                    activeModalConfig.historyNoteWrapper.hidden = false;
+                    activeModalConfig.historyNote.textContent = ds.catatanPimpinan;
                 } else {
-                    detailHistoryNoteWrapper.hidden = true;
+                    activeModalConfig.historyNoteWrapper.hidden = true;
                 }
             } else {
-                detailStatusBadge.className = 'submission-status pending';
-                detailStatusBadge.textContent = 'Menunggu Review';
+                activeModalConfig.statusBadge.className = 'submission-status pending';
+                activeModalConfig.statusBadge.textContent = 'Menunggu Review';
 
                 if (targetAction === 'detail') {
-                    if (detailFormBlock) {
-                        detailFormBlock.hidden = true;
-                        detailFormBlock.style.display = 'none';
+                    if (activeModalConfig.formBlock) {
+                        activeModalConfig.formBlock.hidden = true;
+                        activeModalConfig.formBlock.style.display = 'none';
                     }
-                    if (detailActiveActions) {
-                        detailActiveActions.hidden = true;
-                        detailActiveActions.style.display = 'none';
+                    if (activeModalConfig.activeActions) {
+                        activeModalConfig.activeActions.hidden = true;
+                        activeModalConfig.activeActions.style.display = 'none';
                     }
                 } else {
-                    if (detailFormBlock) {
-                        detailFormBlock.hidden = false;
-                        detailFormBlock.style.display = 'flex';
+                    if (activeModalConfig.formBlock) {
+                        activeModalConfig.formBlock.hidden = false;
+                        activeModalConfig.formBlock.style.display = 'flex';
                     }
-                    if (detailActiveActions) {
-                        detailActiveActions.hidden = false;
-                        detailActiveActions.style.display = 'flex';
+                    if (activeModalConfig.activeActions) {
+                        activeModalConfig.activeActions.hidden = false;
+                        activeModalConfig.activeActions.style.display = 'flex';
 
-                        if (detailBtnApprove && detailBtnReject) {
+                        if (activeModalConfig.btnApprove && activeModalConfig.btnReject) {
                             if (targetAction === 'approve') {
-                                detailBtnApprove.style.display = 'inline-flex';
-                                detailBtnReject.style.display = 'none';
+                                activeModalConfig.btnApprove.style.display = 'inline-flex';
+                                activeModalConfig.btnReject.style.display = 'none';
                             } else if (targetAction === 'reject') {
-                                detailBtnApprove.style.display = 'none';
-                                detailBtnReject.style.display = 'inline-flex';
+                                activeModalConfig.btnApprove.style.display = 'none';
+                                activeModalConfig.btnReject.style.display = 'inline-flex';
                             }
                         }
                     }
                 }
 
-                detailHistoryNoteWrapper.hidden = true;
-                if (detailCatatanTextarea) detailCatatanTextarea.value = '';
-                updateDetailCounter();
+                activeModalConfig.historyNoteWrapper.hidden = true;
+                if (activeModalConfig.catatan) activeModalConfig.catatan.value = '';
+                updateDetailCounter(activeModalConfig);
             }
 
-            detailModal.hidden = false;
-            requestAnimationFrame(() => detailModal.classList.add('is-visible'));
+            activeModalConfig.overlay.hidden = false;
+            requestAnimationFrame(() => activeModalConfig.overlay.classList.add('is-visible'));
             document.body.style.overflow = 'hidden';
         }
 
         function closeDetailModal() {
-            detailModal.classList.remove('is-visible');
+            if (!activeModalConfig) return;
+            activeModalConfig.overlay.classList.remove('is-visible');
+            const targetOverlay = activeModalConfig.overlay;
             setTimeout(() => {
-                detailModal.hidden = true;
+                targetOverlay.hidden = true;
             }, 260);
             activeRow = null;
+            activeModalConfig = null;
             document.body.style.overflow = '';
         }
 
-        detailBtnClose?.addEventListener('click', closeDetailModal);
-        detailBtnCancel?.addEventListener('click', closeDetailModal);
-        detailModal?.addEventListener('click', (e) => {
-            if (e.target === detailModal) closeDetailModal();
+        [modalBaru, modalPerpanjangan].forEach((config) => {
+            config.btnClose?.addEventListener('click', closeDetailModal);
+            config.btnCancel?.addEventListener('click', closeDetailModal);
+            config.overlay?.addEventListener('click', (e) => {
+                if (e.target === config.overlay) closeDetailModal();
+            });
         });
 
         /* ============================
@@ -439,8 +481,10 @@
             if (action === 'reject') {
                 if (!row) return;
                 openDetailModal(row, 'reject');
-                detailCatatanTextarea?.focus();
-                detailCatatanTextarea?.classList.add('is-required');
+                if (activeModalConfig && activeModalConfig.catatan) {
+                    activeModalConfig.catatan.focus();
+                    activeModalConfig.catatan.classList.add('is-required');
+                }
 
                 if (window.Swal) {
                     window.Swal.fire({
@@ -455,36 +499,38 @@
         });
 
         // Action Buttons inside Detail Modal
-        detailBtnApprove?.addEventListener('click', () => {
-            if (!activeRow) return;
-            const targetRow = activeRow;
-            const note = detailCatatanTextarea?.value.trim() || '';
-            closeDetailModal();
-            openNotifModal(targetRow, 'disetujui', note);
-        });
+        [modalBaru, modalPerpanjangan].forEach((config) => {
+            config.btnApprove?.addEventListener('click', () => {
+                if (!activeRow) return;
+                const targetRow = activeRow;
+                const note = config.catatan?.value.trim() || '';
+                closeDetailModal();
+                openNotifModal(targetRow, 'disetujui', note);
+            });
 
-        detailBtnReject?.addEventListener('click', () => {
-            if (!activeRow) return;
-            const targetRow = activeRow;
-            const note = detailCatatanTextarea?.value.trim() || '';
+            config.btnReject?.addEventListener('click', () => {
+                if (!activeRow) return;
+                const targetRow = activeRow;
+                const note = config.catatan?.value.trim() || '';
 
-            if (note.length === 0) {
-                detailCatatanTextarea?.classList.add('is-required');
-                detailCatatanTextarea?.focus();
+                if (note.length === 0) {
+                    config.catatan?.classList.add('is-required');
+                    config.catatan?.focus();
 
-                if (window.Swal) {
-                    window.Swal.fire({
-                        icon: 'warning',
-                        title: 'Catatan wajib diisi',
-                        text: 'Tambahkan alasan penolakan agar mitra memahami hasil validasi.',
-                        confirmButtonText: 'Baik'
-                    });
+                    if (window.Swal) {
+                        window.Swal.fire({
+                            icon: 'warning',
+                            title: 'Catatan wajib diisi',
+                            text: 'Tambahkan alasan penolakan agar mitra memahami hasil validasi.',
+                            confirmButtonText: 'Baik'
+                        });
+                    }
+                    return;
                 }
-                return;
-            }
 
-            closeDetailModal();
-            openNotifModal(targetRow, 'ditolak', note);
+                closeDetailModal();
+                openNotifModal(targetRow, 'ditolak', note);
+            });
         });
     };
 

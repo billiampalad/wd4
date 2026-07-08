@@ -38,9 +38,14 @@ class Notifikasi extends Model
         return $this->belongsTo(Cooperation::class, 'source_id');
     }
 
-    public function pengajuanKerjasamaMitra()
+    public function pengajuanKerjasamaBaru()
     {
-        return $this->belongsTo(PengajuanKerjasamaMitra::class, 'source_id');
+        return $this->belongsTo(PengajuanKerjasamaBaru::class, 'source_id');
+    }
+
+    public function pengajuanPerpanjanganKerjasama()
+    {
+        return $this->belongsTo(PengajuanPerpanjanganKerjasama::class, 'source_id');
     }
 
     public static function send($userId, $senderId, $sourceId, $type, $judul, $pesan, $link, $sourceType = 'cooperation')

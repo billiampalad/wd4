@@ -9,7 +9,8 @@ use App\Models\JenisKerjasama;
 use App\Models\Mitra;
 use App\Models\Notifikasi;
 use App\Models\Pejabat;
-use App\Models\PengajuanKerjasamaMitra;
+use App\Models\PengajuanKerjasamaBaru;
+use App\Models\PengajuanPerpanjanganKerjasama;
 use App\Models\User;
 use App\Support\NotificationService;
 use Illuminate\Http\Request;
@@ -22,42 +23,60 @@ class PengajuanKerjasamaMitraController extends Controller
 {
     public function index()
     {
-        $pendingSubmissions = PengajuanKerjasamaMitra::with(['klasifikasi'])
-            ->where('status', PengajuanKerjasamaMitra::STATUS_DIAJUKAN)
+        $pendingBaru = PengajuanKerjasamaBaru::with(['klasifikasi'])
+            ->where('status', 'diajukan')
             ->orderByDesc('submitted_at')
             ->orderByDesc('id')
             ->get();
 
-        $reviewedSubmissions = PengajuanKerjasamaMitra::with(['klasifikasi', 'reviewer', 'mitra'])
-            ->whereIn('status', [
-                PengajuanKerjasamaMitra::STATUS_DISETUJUI,
-                PengajuanKerjasamaMitra::STATUS_DITOLAK,
-            ])
+        $pendingPerpanjangan = PengajuanPerpanjanganKerjasama::with(['klasifikasi', 'mitra'])
+            ->where('status', 'diajukan')
+            ->orderByDesc('submitted_at')
+            ->orderByDesc('id')
+            ->get();
+
+        $reviewedBaru = PengajuanKerjasamaBaru::with(['klasifikasi', 'reviewer', 'mitra'])
+            ->whereIn('status', ['disetujui', 'ditolak'])
             ->orderByDesc('reviewed_at')
             ->orderByDesc('id')
-            ->paginate(10, ['*'], 'history_page')
+            ->paginate(10, ['*'], 'baru_page')
+            ->withQueryString();
+
+        $reviewedPerpanjangan = PengajuanPerpanjanganKerjasama::with(['klasifikasi', 'reviewer', 'mitra'])
+            ->whereIn('status', ['disetujui', 'ditolak'])
+            ->orderByDesc('reviewed_at')
+            ->orderByDesc('id')
+            ->paginate(10, ['*'], 'perp_page')
             ->withQueryString();
 
         $submissionStats = [
-            'total' => PengajuanKerjasamaMitra::count(),
-            'pending' => PengajuanKerjasamaMitra::where('status', PengajuanKerjasamaMitra::STATUS_DIAJUKAN)->count(),
-            'approved' => PengajuanKerjasamaMitra::where('status', PengajuanKerjasamaMitra::STATUS_DISETUJUI)->count(),
-            'rejected' => PengajuanKerjasamaMitra::where('status', PengajuanKerjasamaMitra::STATUS_DITOLAK)->count(),
+            'total' => PengajuanKerjasamaBaru::count() + PengajuanPerpanjanganKerjasama::count(),
+            'pending' => PengajuanKerjasamaBaru::where('status', 'diajukan')->count() + PengajuanPerpanjanganKerjasama::where('status', 'diajukan')->count(),
+            'approved' => PengajuanKerjasamaBaru::where('status', 'disetujui')->count() + PengajuanPerpanjanganKerjasama::where('status', 'disetujui')->count(),
+            'rejected' => PengajuanKerjasamaBaru::where('status', 'ditolak')->count() + PengajuanPerpanjanganKerjasama::where('status', 'ditolak')->count(),
         ];
 
         return view('auth.pimpinan', [
             'view' => 'pengajuan_mitra',
-            'pendingSubmissions' => $pendingSubmissions,
-            'reviewedSubmissions' => $reviewedSubmissions,
+            'pendingBaru' => $pendingBaru,
+            'pendingPerpanjangan' => $pendingPerpanjangan,
+            'reviewedBaru' => $reviewedBaru,
+            'reviewedPerpanjangan' => $reviewedPerpanjangan,
             'submissionStats' => $submissionStats,
         ]);
     }
 
     public function review(Request $request, $id)
     {
-        $submission = PengajuanKerjasamaMitra::findOrFail($id);
+        $submission = PengajuanKerjasamaBaru::find($id);
+        $isPerpanjangan = false;
 
-        if ($submission->status !== PengajuanKerjasamaMitra::STATUS_DIAJUKAN) {
+        if (!$submission) {
+            $submission = PengajuanPerpanjanganKerjasama::findOrFail($id);
+            $isPerpanjangan = true;
+        }
+
+        if ($submission->status !== 'diajukan') {
             $sendEmail = $request->boolean('send_email');
             $sendWhatsApp = $request->boolean('send_whatsapp');
 
@@ -94,12 +113,9 @@ class PengajuanKerjasamaMitraController extends Controller
         }
 
         $validated = $request->validate([
-            'keputusan' => ['required', Rule::in([
-                PengajuanKerjasamaMitra::STATUS_DISETUJUI,
-                PengajuanKerjasamaMitra::STATUS_DITOLAK,
-            ])],
+            'keputusan' => ['required', Rule::in(['disetujui', 'ditolak'])],
             'catatan_pimpinan' => [
-                Rule::requiredIf(fn () => $request->input('keputusan') === PengajuanKerjasamaMitra::STATUS_DITOLAK),
+                Rule::requiredIf(fn () => $request->input('keputusan') === 'ditolak'),
                 'nullable',
                 'string',
                 'max:2000',
@@ -113,14 +129,13 @@ class PengajuanKerjasamaMitraController extends Controller
         DB::beginTransaction();
 
         try {
-            $mitraId = $submission->mitra_id;
-            $isPerpanjangan = !empty($submission->mitra_id) || !empty($submission->doc_number);
+            $mitraId = $isPerpanjangan ? $submission->mitra_id : null;
 
-            if ($validated['keputusan'] === PengajuanKerjasamaMitra::STATUS_DISETUJUI) {
+            if ($validated['keputusan'] === 'disetujui') {
 
                 if ($isPerpanjangan) {
                     // === PERPANJANGAN ===
-                    // Tidak membuat record Cooperation/Pejabat/DetailKegiatan.
+                    // Tidak membuat record Cooperation/Pejabat/DetailKegiatan langsung.
                     // Data hanya masuk ke menu "Pengajuan Perpanjangan" Humas/Unit Kerja.
                     // Record Cooperation baru akan dibuat oleh Humas di halaman proses perpanjangan.
 
@@ -138,7 +153,7 @@ class PengajuanKerjasamaMitraController extends Controller
                                 'Pengajuan Perpanjangan Disetujui Pimpinan',
                                 "Pimpinan menyetujui pengajuan perpanjangan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi berkas perpanjangan.",
                                 $linkPerpanjangan,
-                                'pengajuan_mitra'
+                                'pengajuan_perpanjangan_kerjasama'
                             );
                         });
 
@@ -187,7 +202,7 @@ class PengajuanKerjasamaMitraController extends Controller
                     }
 
                     // 3. Buat / Update record Cooperation (Status: proses, Status Dokumen: Draft)
-                    $cooperation = Cooperation::where('pengajuan_kerjasama_mitra_id', $submission->id)->first();
+                    $cooperation = Cooperation::where('pengajuan_kerjasama_baru_id', $submission->id)->first();
                     if (! $cooperation) {
                         $cooperation = Cooperation::create([
                             'jenis' => $submission->jenis ?? 'MoU (Memorandum of Understanding)',
@@ -201,7 +216,7 @@ class PengajuanKerjasamaMitraController extends Controller
                             'mitra_id' => $mitraId,
                             'penandatangan_mitra_id' => $penandatanganMitra->id,
                             'pj_mitra_id' => $pjMitra?->id,
-                            'pengajuan_kerjasama_mitra_id' => $submission->id,
+                            'pengajuan_kerjasama_baru_id' => $submission->id,
                             'created_by' => Auth::id(),
                         ]);
                     } else {
@@ -253,15 +268,20 @@ class PengajuanKerjasamaMitraController extends Controller
                 }
             }
 
-            $submission->update([
+            $updateData = [
                 'status' => $validated['keputusan'],
                 'catatan_pimpinan' => $validated['catatan_pimpinan'] ?? null,
                 'reviewed_by' => Auth::id(),
                 'reviewed_at' => now(),
-                'mitra_id' => $mitraId,
-            ]);
+            ];
 
-            Notifikasi::where('source_type', 'pengajuan_mitra')
+            if (!$isPerpanjangan) {
+                $updateData['mitra_id'] = $mitraId;
+            }
+
+            $submission->update($updateData);
+
+            Notifikasi::where('source_type', $isPerpanjangan ? 'pengajuan_perpanjangan_kerjasama' : 'pengajuan_kerjasama_baru')
                 ->where('source_id', $submission->id)
                 ->update(['is_read' => 1]);
 
@@ -285,7 +305,7 @@ class PengajuanKerjasamaMitraController extends Controller
                 NotificationService::sendWhatsApp($submission, $waMessage);
             }
 
-            $message = $validated['keputusan'] === PengajuanKerjasamaMitra::STATUS_DISETUJUI
+            $message = $validated['keputusan'] === 'disetujui'
                 ? ($isPerpanjangan ? 'Pengajuan perpanjangan berhasil disetujui dan notifikasi dikirim ke Humas/Unit Kerja.' : 'Pengajuan mitra berhasil disetujui dan dicatat ke master mitra.')
                 : 'Pengajuan mitra berhasil ditolak.';
 
@@ -311,4 +331,3 @@ class PengajuanKerjasamaMitraController extends Controller
         }
     }
 }
-

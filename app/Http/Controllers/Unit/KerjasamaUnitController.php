@@ -103,7 +103,7 @@ class KerjasamaUnitController extends Controller
             'status' => 'nullable|string',
             'document_link' => 'nullable|string|max:255',
             'perpanjangan_dari_id' => 'nullable|exists:cooperations,id',
-            'pengajuan_kerjasama_mitra_id' => 'nullable|integer',
+            'pengajuan_perpanjangan_kerjasama_id' => 'nullable|integer',
             'jenis_detail' => 'nullable|array',
             'jenis_detail.*.nilai_kontrak' => 'nullable|string|max:255',
             'jenis_detail.*.income' => 'nullable|string|max:255',
@@ -137,7 +137,7 @@ class KerjasamaUnitController extends Controller
         if ($perpanjanganDariId) {
             $perpanjanganAsal = Cooperation::findOrFail($perpanjanganDariId);
 
-            if (!$request->filled('pengajuan_kerjasama_mitra_id') && !$this->canRequestExtension($perpanjanganAsal)) {
+            if (!$request->filled('pengajuan_perpanjangan_kerjasama_id') && !$this->canRequestExtension($perpanjanganAsal)) {
                 return back()
                     ->withInput()
                     ->with('error', 'Perpanjangan hanya dapat diajukan untuk dokumen yang sudah disahkan dan masa berlakunya kadaluarsa atau tersisa maksimal 30 hari.');
@@ -219,7 +219,7 @@ class KerjasamaUnitController extends Controller
                 'status' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
                 'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
                 'perpanjangan_dari_id' => $perpanjanganDariId,
-                'pengajuan_kerjasama_mitra_id' => $request->pengajuan_kerjasama_mitra_id,
+                'pengajuan_perpanjangan_kerjasama_id' => $request->pengajuan_perpanjangan_kerjasama_id,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
                 'mitra_id' => $mitraId,
@@ -267,7 +267,7 @@ class KerjasamaUnitController extends Controller
 
             DB::commit();
 
-            if ($request->filled('pengajuan_kerjasama_mitra_id')) {
+            if ($request->filled('pengajuan_perpanjangan_kerjasama_id')) {
                 return redirect()->route('unit.pengajuan_perpanjangan')->with('success', 'Data perpanjangan kerjasama berhasil disimpan.');
             }
             return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');

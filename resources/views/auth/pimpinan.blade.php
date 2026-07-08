@@ -149,8 +149,15 @@
                         })
                         ->orWhere(function($typedQuery) {
                         $typedQuery
-                        ->where('source_type', 'pengajuan_mitra')
-                        ->whereHas('pengajuanKerjasamaMitra', function($sq) {
+                        ->where('source_type', 'pengajuan_kerjasama_baru')
+                        ->whereHas('pengajuanKerjasamaBaru', function($sq) {
+                        $sq->where('status', 'diajukan');
+                        });
+                        })
+                        ->orWhere(function($typedQuery) {
+                        $typedQuery
+                        ->where('source_type', 'pengajuan_perpanjangan_kerjasama')
+                        ->whereHas('pengajuanPerpanjanganKerjasama', function($sq) {
                         $sq->where('status', 'diajukan');
                         });
                         });

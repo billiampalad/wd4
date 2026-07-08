@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\PengajuanKerjasamaMitra;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -13,15 +12,15 @@ class MitraStatusNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public PengajuanKerjasamaMitra $submission;
+    public object $submission;
     public string $customMessage;
     public bool $isApproved;
 
-    public function __construct(PengajuanKerjasamaMitra $submission, string $customMessage)
+    public function __construct(object $submission, string $customMessage)
     {
         $this->submission = $submission;
         $this->customMessage = $customMessage;
-        $this->isApproved = $submission->status === PengajuanKerjasamaMitra::STATUS_DISETUJUI;
+        $this->isApproved = $submission->status === 'disetujui';
     }
 
     public function envelope(): Envelope
