@@ -45,11 +45,11 @@
     </section>
 
     @php
-        $pendingBaru = $pendingSubmissions->filter(fn($s) => empty($s->mitra_id));
-        $pendingPerpanjangan = $pendingSubmissions->filter(fn($s) => !empty($s->mitra_id));
+        $pendingBaru = $pendingSubmissions->filter(fn($s) => empty($s->doc_number));
+        $pendingPerpanjangan = $pendingSubmissions->filter(fn($s) => !empty($s->doc_number));
 
-        $reviewedBaru = $reviewedSubmissions->filter(fn($s) => empty($s->mitra_id));
-        $reviewedPerpanjangan = $reviewedSubmissions->filter(fn($s) => !empty($s->mitra_id));
+        $reviewedBaru = $reviewedSubmissions->filter(fn($s) => empty($s->doc_number));
+        $reviewedPerpanjangan = $reviewedSubmissions->filter(fn($s) => !empty($s->doc_number));
     @endphp
 
     <section class="submission-stack">
@@ -154,7 +154,7 @@
                                     <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
                                         data-category="{{ strtolower($submission->kategori) }}"
                                         data-mitra-id="{{ $submission->mitra_id }}"
-                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-is-perpanjangan="{{ !empty($submission->doc_number) ? '1' : '0' }}"
                                         data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
                                         data-doc-number="{{ $submission->doc_number ?: '-' }}"
                                         data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
@@ -274,7 +274,7 @@
                                     <tr class="um-row dk-row submission-row" data-submission-row data-id="{{ $submission->id }}"
                                         data-category="{{ strtolower($submission->kategori) }}"
                                         data-mitra-id="{{ $submission->mitra_id }}"
-                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-is-perpanjangan="{{ !empty($submission->doc_number) ? '1' : '0' }}"
                                         data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
                                         data-doc-number="{{ $submission->doc_number ?: '-' }}"
                                         data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
@@ -426,7 +426,7 @@
                                     <tr class="um-row dk-row submission-history-row" data-submission-row
                                         data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
                                         data-mitra-id="{{ $submission->mitra_id }}"
-                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-is-perpanjangan="{{ !empty($submission->doc_number) ? '1' : '0' }}"
                                         data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
                                         data-doc-number="{{ $submission->doc_number ?: '-' }}"
                                         data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"
@@ -532,7 +532,7 @@
                                     <tr class="um-row dk-row submission-history-row" data-submission-row
                                         data-id="{{ $submission->id }}" data-category="{{ strtolower($submission->kategori) }}"
                                         data-mitra-id="{{ $submission->mitra_id }}"
-                                        data-is-perpanjangan="{{ $submission->mitra_id ? '1' : '0' }}"
+                                        data-is-perpanjangan="{{ !empty($submission->doc_number) ? '1' : '0' }}"
                                         data-jenis-dokumen="{{ $submission->jenis ?: '-' }}"
                                         data-doc-number="{{ $submission->doc_number ?: '-' }}"
                                         data-start-date="{{ $submission->start_date ? \Carbon\Carbon::parse($submission->start_date)->format('d M Y') : '-' }}"

@@ -101,7 +101,7 @@
             activeRow = row;
             const ds = row.dataset;
             const isHistory = row.classList.contains('submission-history-row');
-            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const isPerpanjangan = ds.isPerpanjangan === '1';
 
             if (isPerpanjangan) {
                 if (perpanjanganBanner) perpanjanganBanner.hidden = false;
@@ -260,7 +260,7 @@
 
         function generateEmailTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
-            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const isPerpanjangan = ds.isPerpanjangan === '1';
             const typeText = isPerpanjangan ? 'perpanjangan kerja sama' : 'kerja sama baru';
             const systemUrl = 'https://kerjasamapolimdo.org/';
             if (isApproved) {
@@ -271,7 +271,7 @@
 
         function generateWaTemplate(ds, decision, note) {
             const isApproved = decision === 'disetujui';
-            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const isPerpanjangan = ds.isPerpanjangan === '1';
             const typeText = isPerpanjangan ? 'perpanjangan kerja sama' : 'kerja sama baru';
             const systemUrl = 'https://kerjasamapolimdo.org/';
             if (isApproved) {
@@ -303,7 +303,7 @@
             const ds = row.dataset;
             const isApproved = decision === 'disetujui';
             const isHistory = row.classList.contains('submission-history-row');
-            const isPerpanjangan = ds.isPerpanjangan === '1' || Boolean(ds.mitraId);
+            const isPerpanjangan = ds.isPerpanjangan === '1';
 
             if (notifPerpanjanganBadgeRow) {
                 notifPerpanjanganBadgeRow.hidden = !isPerpanjangan;
