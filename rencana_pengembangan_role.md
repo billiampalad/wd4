@@ -227,13 +227,77 @@ graph TD
   * Database berpotensi dipenuhi akun sampah (spam) yang tidak pernah mengirimkan proposal pengajuan kerja sama.
   * Proses pengisian menjadi dua kali kerja (daftar akun dulu, baru mengisi form pengajuan). -->
 
-## 4. Rekomendasi UX Landing Page
+## 4. Rekomendasi UX Halaman Login
+
+Halaman login utama tetap difokuskan untuk pengguna yang sudah memiliki akun resmi. Untuk menghindari kesan bahwa sistem membuka pendaftaran akun secara bebas, tombol atau link bantuan di halaman login tidak menggunakan teks **"Daftar Akun"**, melainkan diarahkan ke dua kebutuhan yang berbeda:
+
+1. **Ajukan Kerja Sama**:
+   * Digunakan oleh calon mitra baru yang belum memiliki akun.
+   * Link mengarah ke form publik pengajuan kerja sama baru.
+   * Posisi ideal berada sejajar dengan fitur **"Lupa kata sandi?"** sebagai aksi sekunder, bukan tombol utama.
+
+2. **Butuh bantuan akses? Hubungi administrator**:
+   * Digunakan untuk kendala akses akun, bukan untuk pendaftaran akun bebas.
+   * Posisi ideal berada di bagian bawah form login sebagai teks bantuan kecil setelah tombol **"Masuk Sekarang"**.
+   * Desain dibuat tenang dan tidak lebih menonjol daripada tombol login atau link pengajuan kerja sama.
+
+Contoh susunan tampilan login:
+
+```text
+[ Email atau NIP ]
+[ Kata sandi     ]
+
+Lupa kata sandi?              Ajukan kerja sama
+
+[ Masuk Sekarang ]
+
+Butuh bantuan akses? Hubungi administrator
+```
+
+### Fitur Bantuan Akses Login
+
+Fitur **"Butuh bantuan akses? Hubungi administrator"** direkomendasikan sebagai kanal bantuan untuk kasus berikut:
+
+1. **User internal belum dibuatkan akun**
+   * User menghubungi admin dengan data nama lengkap, NIP, email, unit kerja, dan jabatan dan role.
+   * Admin memverifikasi data internal kampus, membuat akun, menentukan role, lalu mengirim link aktivasi atau reset password.
+
+2. **Mitra belum menerima email akses**
+   * Mitra memilih nama perusahaan, email penanggung jawab, kode pengajuan jika ada, dan nama penanggung jawab.
+   * Admin mengecek status pengajuan, memastikan akun mitra sudah dibuat, lalu mengirim ulang email akses atau link reset password.
+
+3. **Akun terkunci**
+   * User mengirim Email/NIP dan identitas dasar.
+   * Admin mengecek status akun, membuka kunci akun, mereset percobaan login gagal, dan bila perlu mewajibkan reset password.
+
+4. **Lupa email yang terdaftar**
+   * User mengirim identitas pendukung untuk internal atau nama perusahaan/kode pengajuan untuk mitra.
+   * Admin melakukan verifikasi identitas. Sistem tidak menampilkan email lengkap secara publik untuk menjaga keamanan.
+
+5. **Password reset tidak masuk email**
+   * User melaporkan Email/NIP dan waktu percobaan reset.
+   * Admin mengecek email terdaftar, status pengiriman email, folder spam, dan mengirim ulang link reset bila diperlukan.
+
+6. **Role/dashboard salah setelah login**
+   * User melaporkan dashboard yang muncul dan dashboard yang seharusnya.
+   * Admin memeriksa role di data user serta relasi profil unit kerja, jurusan, pusat, atau UPA, lalu meminta user logout dan login ulang setelah diperbaiki.
+
+### Rekomendasi Desain Bantuan Akses
+
+* Gunakan teks pendek: **"Butuh bantuan akses? Hubungi administrator"**.
+* Hindari teks **"Belum punya akun?"** agar mitra tidak salah mengira bahwa akun dapat dibuat secara mandiri.
+* Gunakan gaya link kecil dengan ikon bantuan seperti `help-circle`, `headset`, atau `message-circle`.
+* Link dapat diarahkan ke WhatsApp admin, email admin, halaman bantuan, atau form tiket bantuan akses.
+* Untuk tahap awal, cukup gunakan kontak admin. Untuk tahap lanjutan, buat form tiket bantuan akses dengan pilihan kendala.
+
+---
+## 5. Rekomendasi UX Landing Page
 1. **Fitur Pengajuan Baru**: Tetap diletakkan di halaman landing page publik ([welcome.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/welcome.blade.php)) karena calon mitra baru belum memiliki akun untuk masuk ke sistem.
 2. **Fitur Perpanjangan**: Diletakkan di dalam dashboard setelah login (atau jika tombol di landing page diklik, diarahkan untuk login terlebih dahulu) untuk menghindari manipulasi perpanjangan data oleh pihak lain yang tidak bertanggung jawab.
 
 ---
 
-## 5. Penentuan Tujuan Unit Kerja Sama (Multi-Unit Routing)
+## 6. Penentuan Tujuan Unit Kerja Sama (Multi-Unit Routing)
 Agar Pimpinan mengetahui ke mana arah alur kerja sama dari pengajuan baru yang dikirimkan oleh Mitra, sistem akan dirancang dengan mekanisme berikut:
 
 ### A. Pilihan Unit Pelaksana pada Form Pengajuan
@@ -254,7 +318,7 @@ Sistem **sangat mendukung pemilihan lebih dari satu unit pelaksana**.
 
 ---
 
-## 6. Alur Penandatanganan Dokumen Kerja Sama (Signing Hierarchy)
+## 7. Alur Penandatanganan Dokumen Kerja Sama (Signing Hierarchy)
 Untuk menjaga struktur birokrasi dan legalitas kampus yang teratur, urutan penandatanganan dokumen kerja sama diatur berdasarkan tingkatan dokumennya:
 
 ### A. Tingkat MoU (Memorandum of Understanding / Nota Kesepahaman)
