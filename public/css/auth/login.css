@@ -411,8 +411,10 @@ input:focus {
 
 .forgot-password-wrap {
     display: flex;
-    justify-content: center;
-    margin-top: 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
     animation: fadeUp 0.55s ease both 0.42s;
 }
 
@@ -456,6 +458,57 @@ input:focus {
 
 .forgot-password-link:focus-visible {
     outline: 3px solid rgba(19, 85, 237, 0.2);
+    outline-offset: 3px;
+}
+
+.apply-cooperation-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid rgba(22, 163, 74, 0.22);
+    border-radius: 12px;
+    color: #137443;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.92), rgba(236, 253, 245, 0.68));
+    box-shadow: 0 10px 22px rgba(22, 163, 74, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.74);
+    transition: color 0.24s ease, border-color 0.24s ease, background 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+}
+
+.apply-cooperation-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: #15803d;
+    background: #ffffff;
+    box-shadow: 0 6px 14px rgba(22, 163, 74, 0.12);
+    transition: color 0.24s ease, background-color 0.24s ease, transform 0.24s ease;
+}
+
+.apply-cooperation-link:hover {
+    color: #ffffff;
+    border-color: rgba(22, 163, 74, 0.52);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 14px 28px rgba(22, 163, 74, 0.22);
+    transform: translateY(-1px);
+}
+
+.apply-cooperation-link:hover .apply-cooperation-icon {
+    color: #16a34a;
+    background: #ffffff;
+    transform: rotate(4deg) scale(1.03);
+}
+
+.apply-cooperation-link:focus-visible {
+    outline: 3px solid rgba(22, 163, 74, 0.2);
     outline-offset: 3px;
 }
 
@@ -562,6 +615,18 @@ input:focus {
 
     .card-title {
         font-size: 27px;
+    }
+
+    .forgot-password-wrap {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .forgot-password-link,
+    .apply-cooperation-link {
+        width: 100%;
+        justify-content: center;
     }
 
     .background-grid {

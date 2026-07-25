@@ -52,7 +52,7 @@
                         style="border-radius: 50%; object-fit: cover;">
                 </div>
                 <h1 class="card-title">Masuk ke Akun</h1>
-                <p class="card-subtitle">Masukkan NIP dan kata sandi Anda untuk melanjutkan</p>
+                <p class="card-subtitle">Masukkan data akun yang sudah terdaftar</p>
             </div>
 
             <form method="POST" action="/login">
@@ -165,19 +165,6 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">
-                    <div class="btn-inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                            <polyline points="10 17 15 12 10 7" />
-                            <line x1="15" y1="12" x2="3" y2="12" />
-                        </svg>
-                        Masuk Sekarang
-                    </div>
-                </button>
-
                 <div class="forgot-password-wrap">
                     <a href="{{ route('password.request') }}" class="forgot-password-link">
                         <span class="forgot-password-icon" aria-hidden="true">
@@ -191,7 +178,35 @@
                         </span>
                         <span>Lupa kata sandi?</span>
                     </a>
+
+                    <a href="{{ route('pengajuan.kerjasama.create') }}" class="apply-cooperation-link">
+                        <span class="apply-cooperation-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6" />
+                                <path d="M12 18v-6" />
+                                <path d="M9 15h6" />
+                            </svg>
+                        </span>
+                        <span>Ajukan kerja sama</span>
+                    </a>
                 </div>
+
+                <button type="submit" class="btn-submit">
+                    <div class="btn-inner">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                        Masuk Sekarang
+                    </div>
+                </button>
+
 
                 <!-- <div class="divider">
                     <div class="divider-line"></div>
