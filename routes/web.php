@@ -422,13 +422,13 @@ Route::middleware(['auth', 'role:pusat'])->group(function () {
     Route::get('/pusat/laporan/excel', [PusatPageController::class, 'laporanExcel'])->name('pusat.laporan.excel');
 
     Route::get('/pusat/form-laporan', [PusatPageController::class, 'formLaporan'])->name('pusat.form');
-    Route::post('/pusat/form-laporan', [PusatPageController::class, 'formLaporanStore'])->name('pusat.form.store');
-    Route::delete('/pusat/form-laporan/{id}', [PusatPageController::class, 'formLaporanDestroy'])->name('pusat.form.destroy');
 });
 
-// Tambah route prodi & mitra
 Route::middleware(['auth', 'role:prodi'])->group(function () {
     Route::get('/prodi', [DashboardController::class, 'prodi'])->name('prodi.dashboard');
+
+    // ─── Phase 5: Penempatan Mahasiswa (UC20) ──────────────
+    Route::resource('penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {
@@ -437,6 +437,17 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('/mitra/dokumen/{id}', [MitraDokumenController::class, 'show'])->name('mitra.dokumen.show');
     Route::post('/mitra/dokumen/{id}/review', [MitraDokumenController::class, 'storeReview'])->name('mitra.dokumen.review');
     Route::get('/mitra/pengajuan/create', [PublicPengajuanKerjasamaController::class, 'create'])->name('mitra.pengajuan.create');
+
+    // ─── Phase 5: Penilaian Mahasiswa (UC21) ───────────────
+    Route::get('penilaian', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'index'])->name('mitra.penilaian.index');
+    Route::get('penilaian/{id}/edit', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'edit'])->name('mitra.penilaian.edit');
+    Route::put('penilaian/{id}', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'update'])->name('mitra.penilaian.update');
+});
+
+// ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────
+// This route can be accessed by Unit Pengusul
+Route::middleware(['auth'])->group(function () {
+    Route::resource('unit/kegiatan', \App\Http\Controllers\Unit\KegiatanKerjasamaController::class, ['as' => 'unit']);
 });
 
 /*

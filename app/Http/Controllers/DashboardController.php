@@ -105,6 +105,13 @@ class DashboardController
             ->take(10)
             ->get();
 
+        // 1. Mahasiswa Monitoring (UC22)
+        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
+            ->where('status', 'Aktif')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $totalMahasiswaAktif = $penempatans->count();
+
         return view('auth.pimpinan', compact(
             'totalKerjasamaTahunIni',
             'menungguEvaluasi',
@@ -112,6 +119,8 @@ class DashboardController
             'internasional',
             'nasional',
             'dokumenMenunggu',
+            'penempatans',
+            'totalMahasiswaAktif',
             // New Dashboard variables
             'totalKerjasamaAktif',
             'totalMitra',
@@ -606,8 +615,18 @@ class DashboardController
     public function prodi()
     {
         $user = Auth::user();
+
+        // 1. Kegiatan Mahasiswa Monitoring (UC22)
+        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
+            // If Prodi has a relation or we just show all active students
+            ->where('status', 'Aktif')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        $totalMahasiswaAktif = $penempatans->count();
+
         if (view()->exists('auth.prodi')) {
-            return view('auth.prodi', compact('user'));
+            return view('auth.prodi', compact('user', 'penempatans', 'totalMahasiswaAktif'));
         }
         return view('auth.unit', compact('user'));
     }
@@ -615,8 +634,22 @@ class DashboardController
     public function mitra()
     {
         $user = Auth::user();
+        $mitraId = $user->mitra_id;
+
+        // 1. Mahasiswa Monitoring (UC22)
+        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan'])
+            ->where('mitra_id', $mitraId)
+            ->where('status', 'Aktif')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $totalMahasiswaAktif = $penempatans->count();
+        $rataRataNilai = \App\Models\KegiatanMahasiswa::where('mitra_id', $mitraId)
+            ->whereNotNull('nilai_mitra')
+            ->avg('nilai_mitra');
+
         if (view()->exists('auth.mitra')) {
-            return view('auth.mitra', compact('user'));
+            return view('auth.mitra', compact('user', 'penempatans', 'totalMahasiswaAktif', 'rataRataNilai'));
         }
         return view('auth.unit', compact('user'));
     }

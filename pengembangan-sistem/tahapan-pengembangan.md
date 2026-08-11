@@ -361,11 +361,39 @@ graph TD
 ### 📌 Fase 5: Subsistem Kegiatan & Penempatan Mahasiswa
 > **Tujuan**: Mengelola kegiatan pelaksanaan kerja sama berbasis IA (magang, penelitian, dll.), penempatan peserta mahasiswa, dan penilaian industri oleh mitra.
 
-#### 📍 Pemetaan Spesifik per Diagram & Dokumen Analisis:
-- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**: Section 4.5 (Tabel `kegiatan_kerjasamas`, `detail_kegiatans`, `mahasiswas`, `kegiatan_mahasiswas`, `pembimbings`).
-- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**: Section 9 / DFD Level 1.5 (Proses 5.1–5.6 `Mengelola Kegiatan dan Monitoring`).
-- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**: Section 4.4 (`UC19` Menginput Kegiatan, `UC20` Input Peserta Mahasiswa, `UC21` Penilaian Mitra, `UC22` Monitoring Mahasiswa).
-- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**: Section 6 (Flowchart 6.1 `UC19`, 6.2 `UC20`, 6.3 `UC21`, 6.4 `UC22`).
+#### 1. Apa Saja yang Akan Dibuat pada Fase 5?
+1. **Menginput Kegiatan Kerja Sama Berbasis IA (UC19)**: Form & Controller `KegiatanKerjasamaController.php` untuk menginput kegiatan pelaksanaan berbasis perikatan IA yang telah `Disahkan`. Menyimpan data rincian kegiatan (`detail_kegiatans`): jenis kegiatan, Sasaran IKU, Indikator, target volume luaran, nilai kontrak, output, & outcome.
+2. **Menginput Peserta Mahasiswa & Penempatan (UC20)**: Interface & Controller Penempatan Mahasiswa untuk Aktor **Program Studi (Prodi)** (`Prodi/PenempatanMahasiswaController.php`). Input NIM, Nama, Angkatan (`mahasiswas`), penautan ke `kegiatan_kerjasamas` (`kegiatan_mahasiswas`), penetapan periode (`periode_mulai`, `periode_selesai`), serta pengalokasian Pembimbing Dosen Internal & Mentor Eksternal Mitra (`pembimbings`) (`<<include>>` `Memvalidasi Data Mahasiswa` **UC-VM**).
+3. **Memberi Penilaian Mahasiswa oleh Mitra (UC21)**: Interface & Controller Portal Mitra (`Mitra/PenilaianMahasiswaController.php`). Tampilan daftar mahasiswa magang/peserta aktif di instansi mitra dan form pengisian nilai angka (0–100), catatan performa, & feedback kedisiplinan (`<<include>>` `Memvalidasi Hak Akses Mitra` **UC-VAM**).
+4. **Memonitoring Mahasiswa Aktif (UC22)**: Dashboard Monitoring Mahasiswa & Progres Kegiatan untuk Pimpinan, Jurusan, Prodi, dan Mitra (`DashboardController` / `MonitoringController`). Visualisasi statistik real-time mahasiswa aktif per lokasi mitra, status progres kegiatan (`berlangsung`, `selesai`), serta rekapitulasi rata-rata nilai penilaian mitra.
+
+#### 2. Pemetaan per Dokumen & Diagram Analisis:
+- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**:
+  - **Section 3 (Diagram ERD)**: Entitas `kegiatan_kerjasamas`, `detail_kegiatans`, `mahasiswas`, `kegiatan_mahasiswas`, `pembimbings`.
+  - **Section 4.5 (Kegiatan & Penempatan Mahasiswa)**: Tabel 20 (`kegiatan_kerjasamas`), Tabel 21 (`detail_kegiatans`), Tabel 22 (`mahasiswas`), Tabel 23 (`kegiatan_mahasiswas`), Tabel 24 (`pembimbings`).
+- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**:
+  - **Section 2.1 (External Entity)**: Entity E2 (Pimpinan), E4 (Jurusan), E5 (Prodi), E8 (Mitra).
+  - **Section 2.2 (Data Store)**: Data Store `D3 Data Dokumen KS`, `D4 Data Kegiatan`, `D5 Data Mahasiswa & Penempatan`, `D6 Data Pembimbing`.
+  - **Section 4.1 (DFD Level 0)**: `P5` (Mengelola Kegiatan dan Monitoring).
+  - **Section 9 / DFD Level 1.5 (P5)**:
+    - **Proses 5.1**: Menginput Kegiatan Kerja Sama (`P51` ↔ `D3`, `D4`).
+    - **Proses 5.2**: Menginput Data Mahasiswa (`P52` ↔ `D5`).
+    - **Proses 5.3**: Memvalidasi Data Mahasiswa (`P53` ↔ `D5`).
+    - **Proses 5.4**: Menetapkan Pembimbing & Mentor (`P54` ↔ `D6`).
+    - **Proses 5.5**: Memberi Penilaian Mahasiswa (`P55` ↔ `D5`).
+    - **Proses 5.6**: Memonitoring Mahasiswa & Progres Kegiatan (`P56` ↔ `D4`, `D5`).
+- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**:
+  - **Section 2.5 (Prodi)**: `UC20` (Menginput Peserta Mahasiswa & Penempatan), `UC22` (Memonitoring Mahasiswa Aktif).
+  - **Section 2.8 (Mitra DUDIKA)**: `UC21` (Memberi Penilaian Mahasiswa), `UC22` (Memonitoring Mahasiswa Aktif).
+  - **Section 2.1, 2.3, 2.4, 2.6, 2.7 (Admin & Unit Pengusul)**: `UC19` (Menginput Kegiatan Kerja Sama Berbasis IA).
+  - **Section 3.1 & 4.4**: Boundary `🎓 Modul Kegiatan & Penempatan Mahasiswa` (`UC19`–`UC22`).
+  - **Section 5.1 (Relasi `<<include>>`)**: `UC20` `<<include>>` → `Memvalidasi Data Mahasiswa` (`UC-VM`); `UC21` `<<include>>` → `Memvalidasi Hak Akses Mitra` (`UC-VAM`).
+  - **Section 6 (Deskripsi Use Case)**: Deskripsi `UC19`, `UC20`, `UC21`, `UC22`.
+- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**:
+  - **Section 6.1 (UC19)**: Flowchart Menginput Kegiatan Kerja Sama.
+  - **Section 6.2 (UC20)**: Flowchart Menginput Peserta Mahasiswa & Penempatan.
+  - **Section 6.3 (UC21)**: Flowchart Memberi Penilaian Mahasiswa oleh Mitra.
+  - **Section 6.4 (UC22)**: Flowchart Memonitoring Mahasiswa Aktif.
 
 ```mermaid
 graph LR
