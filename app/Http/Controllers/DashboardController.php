@@ -112,6 +112,11 @@ class DashboardController
             ->get();
         $totalMahasiswaAktif = $penempatans->count();
 
+        // 2. Tracking Lulusan (UC33)
+        $totalAlumni = \App\Models\Alumni::count();
+        $alumniBekerja = \App\Models\AlumniMitra::where('status', 'Aktif')->count();
+        $persentasePenyerapan = $totalAlumni > 0 ? round(($alumniBekerja / $totalAlumni) * 100, 2) : 0;
+
         return view('auth.pimpinan', compact(
             'totalKerjasamaTahunIni',
             'menungguEvaluasi',
@@ -121,6 +126,9 @@ class DashboardController
             'dokumenMenunggu',
             'penempatans',
             'totalMahasiswaAktif',
+            'totalAlumni',
+            'alumniBekerja',
+            'persentasePenyerapan',
             // New Dashboard variables
             'totalKerjasamaAktif',
             'totalMitra',
@@ -625,8 +633,25 @@ class DashboardController
         
         $totalMahasiswaAktif = $penempatans->count();
 
+        // 2. Tracking Lulusan (UC33)
+        $prodiId = $user->profile->prodi_id ?? null;
+        $alumniQuery = \App\Models\Alumni::query();
+        if ($prodiId) {
+            $alumniQuery->where('prodi_id', $prodiId);
+        }
+        $totalAlumni = $alumniQuery->count();
+        
+        $alumniBekerjaQuery = \App\Models\AlumniMitra::where('status', 'Aktif');
+        if ($prodiId) {
+            $alumniBekerjaQuery->whereHas('alumni', function($q) use ($prodiId) {
+                $q->where('prodi_id', $prodiId);
+            });
+        }
+        $alumniBekerja = $alumniBekerjaQuery->count();
+        $persentasePenyerapan = $totalAlumni > 0 ? round(($alumniBekerja / $totalAlumni) * 100, 2) : 0;
+
         if (view()->exists('auth.prodi')) {
-            return view('auth.prodi', compact('user', 'penempatans', 'totalMahasiswaAktif'));
+            return view('auth.prodi', compact('user', 'penempatans', 'totalMahasiswaAktif', 'totalAlumni', 'alumniBekerja', 'persentasePenyerapan'));
         }
         return view('auth.unit', compact('user'));
     }
@@ -648,8 +673,11 @@ class DashboardController
             ->whereNotNull('nilai_mitra')
             ->avg('nilai_mitra');
 
+        // 2. Tracking Lulusan (UC33)
+        $alumniTerserap = \App\Models\AlumniMitra::where('mitra_id', $mitraId)->where('status', 'Aktif')->count();
+
         if (view()->exists('auth.mitra')) {
-            return view('auth.mitra', compact('user', 'penempatans', 'totalMahasiswaAktif', 'rataRataNilai'));
+            return view('auth.mitra', compact('user', 'penempatans', 'totalMahasiswaAktif', 'rataRataNilai', 'alumniTerserap'));
         }
         return view('auth.unit', compact('user'));
     }

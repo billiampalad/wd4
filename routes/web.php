@@ -429,6 +429,9 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
 
     // ─── Phase 5: Penempatan Mahasiswa (UC20) ──────────────
     Route::resource('penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
+
+    // ─── Phase 7: Tracking Lulusan (UC32) ──────────────────
+    Route::resource('alumni', \App\Http\Controllers\Prodi\AlumniMitraController::class, ['as' => 'prodi'])->only(['index', 'create', 'store']);
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {
@@ -447,6 +450,10 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('umpan-balik', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'index'])->name('mitra.umpan_balik.index');
     Route::get('umpan-balik/{id}/edit', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'edit'])->name('mitra.umpan_balik.edit');
     Route::put('umpan-balik/{id}', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'update'])->name('mitra.umpan_balik.update');
+
+    // ─── Phase 7: Konfirmasi Alumni (UC32) ─────────────────
+    Route::get('alumni', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'index'])->name('mitra.alumni.index');
+    Route::put('alumni/{id}', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'update'])->name('mitra.alumni.update');
 });
 
 // ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────
