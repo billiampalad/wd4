@@ -147,9 +147,55 @@ class LaporanPimpinanController extends Controller
 
     public function exportExcel(Request $request)
     {
-        // Export Excel belum disesuaikan dengan Cooperation model.
-        // Sementara kembalikan sebagai JSON agar tidak error.
         $data = $this->getFilteredData($request);
-        return response()->json($data);
+
+        $filename = "Laporan_Kerjasama_Pimpinan_" . date('Ymd') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = [
+            'ID', 'Nomor Dokumen', 'Judul', 'Jenis', 'Tipe Pelaksana', 
+            'Pelaksana', 'Mitra', 'Status', 'Tanggal Mulai', 'Tanggal Berakhir'
+        ];
+
+        $callback = function() use($data, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($data as $item) {
+                $row['ID'] = $item->id;
+                $row['Nomor Dokumen'] = $item->doc_number;
+                $row['Judul'] = $item->title;
+                $row['Jenis'] = $item->jenis;
+                $row['Tipe Pelaksana'] = $item->tipe_pelaksana;
+                $row['Pelaksana'] = $item->pelaksana_name;
+                $row['Mitra'] = $item->mitra ? $item->mitra->nama_mitra : '-';
+                $row['Status'] = $item->status;
+                $row['Tanggal Mulai'] = $item->start_date;
+                $row['Tanggal Berakhir'] = $item->end_date;
+
+                fputcsv($file, [
+                    $row['ID'], 
+                    $row['Nomor Dokumen'], 
+                    $row['Judul'], 
+                    $row['Jenis'], 
+                    $row['Tipe Pelaksana'], 
+                    $row['Pelaksana'], 
+                    $row['Mitra'], 
+                    $row['Status'], 
+                    $row['Tanggal Mulai'], 
+                    $row['Tanggal Berakhir']
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
