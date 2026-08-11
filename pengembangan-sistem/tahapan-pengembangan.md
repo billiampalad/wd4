@@ -161,14 +161,106 @@ graph LR
 
 ---
 
+## diagram yang akan dibuat
+### **1. Apa Saja yang Akan Dibuat pada Fase 1?**
+
+Pada **Fase 1**, komponen yang dikerjakan adalah **fondasi struktur tabel basis data (migration)** dan **relasi model Eloquent (ORM)** agar sistem memiliki penampung data (*data store*) yang siap sebelum fitur-fitur transaksi dikembangkan:
+
+1. **Migration 1.1**: Tabel `mahasiswas` (Data peserta mahasiswa).
+2. **Migration 1.2**: Tabel `kegiatan_mahasiswas` (Data penempatan mahasiswa di mitra & nilai dari mitra).
+3. **Migration 1.3**: Tabel `pembimbings` (Data dosen pembimbing & mentor industri).
+4. **Migration 1.4**: Tabel `alumnis` (Data repositori lulusan).
+5. **Migration 1.5**: Tabel `alumni_mitras` (Data penyerapan alumni bekerja di mitra).
+6. **Migration 1.6**: Penambahan kolom `mitra_id` (FK ke `mitras`) pada tabel `users` untuk akun login portal mitra.
+7. **Refactoring Eloquent Models**: Pembuatan model `Mahasiswa.php`, `KegiatanMahasiswa.php`, `Pembimbing.php`, `Alumni.php`, `AlumniMitra.php`, serta pembaruan relasi pada `User.php`, `Mitra.php`, dan `Cooperation.php`.
+
+### **2. Pemetaan per Dokumen & Diagram Analisis:**
+
+#### **📄 A. analysis-erd.md**
+
+- **Section 3 (Diagram ERD Konseptual & Logikal)**: Entitas `users`, `mahasiswas`, `kegiatan_mahasiswas`, `pembimbings`, `alumnis`, dan `alumni_mitras`.
+- **Section 4.1 (Tabel 2 `users`)**: Penambahan FK `mitra_id`.
+- **Section 4.3 (Tabel 10 `cooperations`)**: Penyiapan relasi *self-referencing* `parent_cooperation_id` (MoU → MoA → IA).
+- **Section 4.5 (Subsistem Kegiatan & Penempatan Mahasiswa)**:
+    - Tabel 22 (`mahasiswas`)
+    - Tabel 23 (`kegiatan_mahasiswas`)
+    - Tabel 24 (`pembimbings`)
+- **Section 4.7 (Subsistem Tracking Lulusan)**:
+    - Tabel 26 (`alumnis`)
+    - Tabel 27 (`alumni_mitras`)
+- **Section 5 & 7**: Matriks relasi kardinalitas dan traceability tabel database.
+
+#### **📄 B. analysis-dfd.md**
+
+- **Section 2.2 (Data Store)**:
+    - `D1 Data Pengguna` (`users`, `profiles`, `roles`)
+    - `D5 Data Mahasiswa` (`mahasiswas`, `kegiatan_mahasiswas`, `pembimbings`)
+    - `D7 Data Alumni` (`alumnis`, `alumni_mitras`)
+- **Section 4.1 (DFD Level 0)**: Menyiapkan media penyimpanan untuk mendukung aliran data pada **Proses P1** (Mengelola Data Master), **Proses P5** (Mengelola Kegiatan & Monitoring), dan **Proses P7** (Mengelola Tracking Lulusan).
+
+#### **📄 C. analysis-use-case.md**
+
+- **Section 3.1 (Use Case Diagram Utama)** & **Section 4.4 (Subsistem Kegiatan & Monitoring)**:
+    - `UC20`: Menginput Peserta Mahasiswa Kegiatan
+    - `UC21`: Memberi Penilaian Mahasiswa
+    - `UC22`: Memonitoring Mahasiswa Aktif
+- **Section 3.1** & **Section 4.7 (Subsistem Tracking Lulusan)**:
+    - `UC32`: Menginput Data Lulusan Bekerja di Mitra
+    - `UC33`: Melihat Statistik Penyerapan Lulusan
+- **Section 3.1** & **Section 4.1 (Subsistem Master Data)**:
+    - `UC07`: Mengirim Akses Login Mitra (relasi `users.mitra_id`)
+
+#### **📄 D. analysis-flowchart.md**
+
+- **Section 3.7**: Flowchart `UC07` (Mengirim Akses Login Mitra).
+- **Section 6**: Subsistem Kegiatan dan Monitoring (Flowchart 6.2 `UC20`, Flowchart 6.3 `UC21`, Flowchart 6.4 `UC22`).
+- **Section 9**: Subsistem Tracking Lulusan (Flowchart 9.1 `UC32`, Flowchart 9.2 `UC33`).
+
 ### 📌 Fase 2: Autentikasi, RBAC & Akses Login Mitra
 > **Tujuan**: Mengaktifkan hak akses untuk Aktor **Program Studi (Prodi)** dan **Mitra (DUDIKA)** serta fungsi pengiriman akses login mitra oleh Admin.
 
-#### 📍 Pemetaan Spesifik per Diagram & Dokumen Analisis:
-- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**: Section 4.1 (Tabel 1 `roles`, Tabel 2 `users`, Tabel 3 `profiles`, Tabel 5 `mitras`).
-- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**: Section 5 / DFD Level 1.1 (Proses 1.6 `Mengirim Akses Login Mitra`).
-- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**: Section 2.1, 2.8 & Section 4.1, 4.8 (`UC01`, `UC02`, `UC07` Kirim Akses Login Mitra, `UC36` Login, `UC37` Logout).
-- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**: Section 2 (Flowchart 2.1 `UC36 Login`, Flowchart 2.2 `UC37 Logout`) & Section 3.7 (Flowchart 3.7 `UC07 Mengirim Akses Login Mitra`).
+#### 1. Apa Saja yang Akan Dibuat pada Fase 2?
+1. **Pembaruan Seeder Role & Permission (`RoleSeeder.php`)**: Memastikan 8 Role terdaftar (`admin`, `pimpinan`, `humas`, `jurusan`, `prodi`, `upa`, `pusat`, `mitra`).
+2. **Middleware & Route Grouping**:
+   - Route `/prodi/*` dengan middleware `role:prodi`.
+   - Route `/mitra/*` dengan middleware `role:mitra`.
+3. **Pengembangan Fitur Kirim Akses Login Mitra (UC07)**:
+   - Method `sendAccessLogin(Mitra $mitra)` di `Admin/MitraController.php`.
+   - Cek email mitra → auto-generate password acak aman → buat user role `mitra` dengan `mitra_id` → kirim email credential via Mailable `SendMitraCredentialMail`.
+4. **Modifikasi Controller Autentikasi (`LoginController.php` & `RegisterController.php`)**:
+   - Penyesuaian `authenticated()` untuk memetakan redirect multi-role ke dashboard masing-masing.
+   - Pengecekan status akun aktif/non-aktif (`E {"Akun Aktif?"}`).
+5. **View Email & Interface Admin**:
+   - Template Mail Blade: `resources/views/emails/mitra_credential.blade.php`.
+   - Tombol "Kirim Akses Login" pada daftar Mitra di `admin/mitra/index.blade.php`.
+
+#### 2. Pemetaan per Dokumen & Diagram Analisis:
+- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**:
+  - **Section 3 (Diagram ERD)**: Relasi `roles` `1:N` `users`, `users` `1:1` `profiles`, `users` `M:1` `mitras` (`users.mitra_id`).
+  - **Section 4.1 (Master Data & Pengguna)**:
+    - Tabel 1 (`roles`): pendaftaran role `prodi` & `mitra`.
+    - Tabel 2 (`users`): kolom `email`, `password`, `role_id`, `mitra_id`.
+    - Tabel 3 (`profiles`): profil akun.
+    - Tabel 5 (`mitras`): kolom `email`, `status_akses`.
+- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**:
+  - **Section 2.1 (External Entity)**: Entity E1 (Admin) & E8 (Mitra).
+  - **Section 2.2 (Data Store)**: Data Store `D1 Data Pengguna` & `D2 Data Mitra`.
+  - **Section 4.1 (DFD Level 0)**: Aliran data `Admin` → `P1` (Credential Mitra) → `P1` → `Mitra` (Credential Login).
+  - **Section 5 / DFD Level 1.1 (P1)**:
+    - **Proses 1.1**: Mengelola Data Pengguna.
+    - **Proses 1.2**: Mengelola Data Role.
+    - **Proses 1.6**: Mengirim Akses Login Mitra (`P16`).
+- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**:
+  - **Section 1**: Identifikasi Aktor 5 (Program Studi) & Aktor 8 (Mitra DUDIKA).
+  - **Section 2.1 (Admin)**: `UC01` (Mengelola Data Pengguna), `UC02` (Mengelola Data Role), `UC07` (Mengirim Akses Login Mitra).
+  - **Section 2.5 & 2.8**: Identifikasi Aktor Prodi & Mitra (`UC36` Login, `UC37` Logout).
+  - **Section 4.1 & 4.8**: Diagram Subsistem Master Data & Autentikasi (`UC36 Login`, `UC37 Logout` untuk 8 Aktor).
+  - **Section 5.1 (Relasi `<<include>>`)**: `UC07` (Mengirim Akses Login Mitra) `<<include>>` → `UC36` (Login/Generate Credential).
+  - **Section 6 (Deskripsi Use Case)**: `UC01`, `UC07`, `UC36`, `UC37`.
+- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**:
+  - **Section 2.1 (UC36 — Login)**: Activity Diagram Flowchart Login Multi-Role (Kredensial → Akun Aktif → Role Redirect J1–J8 → Log Login).
+  - **Section 2.2 (UC37 — Logout)**: Activity Diagram Logout.
+  - **Section 3.7 (UC07 — Mengirim Akses Login Mitra)**: Activity Diagram Flowchart Kirim Akses Login (Filter `has_account = false` → Cek Email → Auto-create User `mitra` → Password Acak → Kirim Email Credential).
 
 #### Langkah Execution:
 1. **Seeder Update**
@@ -189,11 +281,41 @@ graph LR
 ### 📌 Fase 3: Subsistem Master Data
 > **Tujuan**: Memastikan seluruh data referensi kampus dan industri terkelola dengan baik oleh Admin dan Unit Terkait.
 
-#### 📍 Pemetaan Spesifik per Diagram & Dokumen Analisis:
-- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**: Section 4.1 (Tabel `roles`, `users`, `profiles`, `klasifikasis`, `mitras`), Section 4.2 (Tabel `jurusans`, `prodis`, `upas`, `pusats`), Section 4.5 (Tabel `jenis_kerjasamas`, `sasarans`, `indikators`).
-- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**: Section 5 / DFD Level 1.1 (Proses 1.1 `Data Pengguna`, 1.2 `Data Role`, 1.3 `Data Mitra`, 1.4 `Data Unit`, 1.5 `Data Referensi`).
-- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**: Section 2.1 & 4.1 (`UC01` Mengelola User, `UC02` Role, `UC03` Jenis KS, `UC04` Mitra, `UC05` Unit, `UC06` Klasifikasi).
-- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**: Section 3 (Flowchart 3.1 `UC01`, 3.2 `UC02`, 3.3 `UC03`, 3.4 `UC04`, 3.5 `UC05`, 3.6 `UC06`).
+#### 1. Apa Saja yang Akan Dibuat pada Fase 3?
+1. **Master Data User & Role (UC01, UC02)**: Interface CRUD Pengguna (`Admin/UserController`) dan Role (`Admin/RoleController`) dengan hak akses RBAC.
+2. **Master Data Unit Kerja & Akademik (UC05)**: Interface CRUD Jurusan, Prodi, UPA, dan Pusat oleh Admin (`Admin/JurusanController`, `ProdiController`, `UpaController`, `PusatController`).
+3. **Master Data Mitra & Klasifikasi Industri (UC04, UC06)**: Controller & UI (`Admin/MitraController` & `KlasifikasiController`) dengan pencarian, filter geolokasi (provinsi/kota), serta kategori industri (BUMN, Swasta, Pemerintah, Edukasi). Akses mengelola mitra dibuka untuk Admin, Humas, Jurusan, UPA, dan Pusat.
+4. **Master Data Referensi IKU (UC03)**: Controller & UI `JenisKerjasamaController`, `SasaranController` (IKU 6), dan `IndikatorController` untuk mengelola jenis kegiatan (Magang, Penelitian Bersama, Sertifikasi, Dosen Tamu) serta parameter sasaran/indikator.
+
+#### 2. Pemetaan per Dokumen & Diagram Analisis:
+- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**:
+  - **Section 3 (Diagram ERD)**: Entitas Master & Akses (`roles`, `users`, `profiles`, `klasifikasis`, `mitras`, `jurusans`, `prodis`, `upas`, `pusats`, `jenis_kerjasamas`, `sasarans`, `indikators`).
+  - **Section 4.1 (Master Data & Pengguna)**: Tabel 1 (`roles`), Tabel 2 (`users`), Tabel 3 (`profiles`), Tabel 4 (`klasifikasis`), Tabel 5 (`mitras`).
+  - **Section 4.2 (Unit Kerja & Akademik)**: Tabel 6 (`jurusans`), Tabel 7 (`prodis`), Tabel 8 (`upas`), Tabel 9 (`pusats`).
+  - **Section 4.5 (Kegiatan & Referensi)**: Tabel 17 (`jenis_kerjasamas`), Tabel 18 (`sasarans`), Tabel 19 (`indikators`).
+- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**:
+  - **Section 2.1 (External Entity)**: Entity E1 (Admin), E3 (Humas), E4 (Jurusan), E6 (UPA), E7 (Pusat).
+  - **Section 2.2 (Data Store)**: Data Store `D1 Data Pengguna`, `D2 Data Mitra`, `D9 Data Unit`, `D10 Data Referensi`.
+  - **Section 4.1 (DFD Level 0)**: `P1 Mengelola Data Master`.
+  - **Section 5 / DFD Level 1.1 (P1)**:
+    - **Proses 1.1**: Mengelola Data Pengguna (`P11` ↔ `D1`).
+    - **Proses 1.2**: Mengelola Data Role (`P12` ↔ `D1`).
+    - **Proses 1.3**: Mengelola Data Mitra (`P13` ↔ `D2`).
+    - **Proses 1.4**: Mengelola Data Unit (`P14` ↔ `D9`).
+    - **Proses 1.5**: Mengelola Data Referensi (`P15` ↔ `D10`).
+- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**:
+  - **Section 2.1 (Admin)**: `UC01` (Mengelola User), `UC02` (Role), `UC03` (Jenis KS), `UC04` (Mitra), `UC05` (Unit), `UC06` (Klasifikasi).
+  - **Section 2.3, 2.4, 2.6, 2.7 (Unit Internal)**: `UC04` (Mengelola Data Mitra).
+  - **Section 3.1 & 4.1**: Modul Master Data (`UC01`–`UC06`).
+  - **Section 6 (Deskripsi Use Case)**: Deskripsi `UC01` & `UC04`.
+  - **Section 7 (Matriks Aktor vs Use Case)**: Matriks akses UC01–UC06.
+- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**:
+  - **Section 3.1 (UC01)**: Flowchart CRUD Pengguna.
+  - **Section 3.2 (UC02)**: Flowchart CRUD Role.
+  - **Section 3.3 (UC03)**: Flowchart CRUD Jenis KS.
+  - **Section 3.4 (UC04)**: Flowchart CRUD Mitra.
+  - **Section 3.5 (UC05)**: Flowchart CRUD Unit.
+  - **Section 3.6 (UC06)**: Flowchart CRUD Klasifikasi Mitra.
 
 ```mermaid
 graph TD

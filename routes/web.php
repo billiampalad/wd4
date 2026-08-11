@@ -18,6 +18,8 @@ use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\KlasifikasiController;
 use App\Http\Controllers\Admin\UpaController;
 use App\Http\Controllers\Admin\PusatController;
+use App\Http\Controllers\Admin\SasaranController;
+use App\Http\Controllers\Admin\IndikatorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
 use App\Http\Controllers\Jurusan\JurusanPageController;
@@ -423,6 +425,15 @@ Route::middleware(['auth', 'role:pusat'])->group(function () {
     Route::delete('/pusat/form-laporan/{id}', [PusatPageController::class, 'formLaporanDestroy'])->name('pusat.form.destroy');
 });
 
+// Tambah route prodi & mitra
+Route::middleware(['auth', 'role:prodi'])->group(function () {
+    Route::get('/prodi', [DashboardController::class, 'prodi'])->name('prodi.dashboard');
+});
+
+Route::middleware(['auth', 'role:mitra'])->group(function () {
+    Route::get('/mitra', [DashboardController::class, 'mitra'])->name('mitra.dashboard');
+});
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN PANEL (WAJIB LOGIN)
@@ -436,6 +447,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('mitra', MitraController::class);
+    Route::post('/mitra/{mitra}/send-access', [MitraController::class, 'sendAccessLogin'])->name('mitra.send-access');
     Route::resource('jkerjasama', JenisKerjasamaController::class);
     Route::resource('upelaksana', UpelaksanaController::class);
     Route::resource('jurusan', JurusanController::class);
@@ -443,6 +455,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('klasifikasi', KlasifikasiController::class);
     Route::resource('upa', UpaController::class);
     Route::resource('pusat', PusatController::class);
+    Route::resource('sasaran', SasaranController::class);
+    Route::resource('indikator', IndikatorController::class);
     Route::get('/profiles', [DashboardController::class, 'profiles'])->name('admin.profiles');
 });
 

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'email_verified_at',
         'password',
         'role_id',
+        'mitra_id',
     ];
 
     /**
@@ -39,15 +40,20 @@ class User extends Authenticatable
     ];
 
     protected $table = 'users';
-    
+
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
-    
+
     public function profile()
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function mitra()
+    {
+        return $this->belongsTo(Mitra::class);
     }
 
     public function sendPasswordResetNotification($token): void

@@ -54,6 +54,14 @@ class LoginController
                 return redirect('/pusat')->with('success', 'Berhasil masuk ke sistem.');
             }
 
+            if ($roleName == 'prodi') {
+                return redirect('/prodi')->with('success', 'Berhasil masuk ke sistem.');
+            }
+
+            if ($roleName == 'mitra') {
+                return redirect('/mitra')->with('success', 'Berhasil masuk ke sistem.');
+            }
+
             if ($roleName == 'admin') {
                 return redirect('/admin')->with('success', 'Berhasil masuk ke sistem.');
             }

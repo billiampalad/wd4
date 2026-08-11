@@ -20,12 +20,28 @@ class Mitra extends Model
         'provinsi',
         'province_code',
         'telp',
+        'email',
         'website',
     ];
 
     public function cooperations()
     {
         return $this->hasMany(Cooperation::class, 'mitra_id');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function kegiatanMahasiswas()
+    {
+        return $this->hasMany(KegiatanMahasiswa::class);
+    }
+
+    public function alumniMitras()
+    {
+        return $this->hasMany(AlumniMitra::class);
     }
 
     public function klasifikasi(): BelongsTo

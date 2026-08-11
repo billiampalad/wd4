@@ -40,6 +40,7 @@ class Cooperation extends Model
         'upa_id',
         'pusat_id',
         'status_dokumen',
+        'parent_cooperation_id',
         'perpanjangan_dari_id',
         'pengajuan_kerjasama_baru_id',
         'pengajuan_perpanjangan_kerjasama_id',
@@ -144,6 +145,16 @@ class Cooperation extends Model
     public function evaluasis()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_cooperation_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_cooperation_id');
     }
 
     public function perpanjanganDari()

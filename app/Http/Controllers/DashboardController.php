@@ -602,4 +602,22 @@ class DashboardController
             'userTerbaru'
         ));
     }
+
+    public function prodi()
+    {
+        $user = Auth::user();
+        if (view()->exists('auth.prodi')) {
+            return view('auth.prodi', compact('user'));
+        }
+        return view('auth.unit', compact('user'));
+    }
+
+    public function mitra()
+    {
+        $user = Auth::user();
+        if (view()->exists('auth.mitra')) {
+            return view('auth.mitra', compact('user'));
+        }
+        return view('auth.unit', compact('user'));
+    }
 }
