@@ -339,16 +339,6 @@ graph TD
 ### 📌 Fase 4: Subsistem Dokumen & Pengajuan Kerja Sama
 > **Tujuan**: Mengelola rantai perikatan legal (MoU → MoA → IA/SPK), proses submission, approval Pimpinan, serta Portal Pengajuan Mitra.
 
-#### 📍 Pemetaan Spesifik per Diagram & Dokumen Analisis:
-- 📄 **[analysis-erd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**: Section 4.3 (Tabel `cooperations`, `pks_numbers`, `laporan_files`), Section 4.4 (Pivot `cooperation_jurusan`, `prodi`, `upa`, `pusat`).
-- 📄 **[analysis-dfd.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**: Section 6 / DFD Level 1.2 (Proses 2.1–2.6 `Mengelola Dokumen KS`), Section 7 / DFD Level 1.3 (Proses 3.1–3.6 `Mengelola Pengajuan KS`), Section 8 / DFD Level 1.4 (Proses 4.1–4.7 `Memvalidasi Dokumen & Pengajuan`).
-- 📄 **[analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**: Section 4.2 (`UC08`–`UC14`), Section 4.3 (`UC15`–`UC18`), Section 5.1/5.2 (Relasi include `Memvalidasi Data Dokumen`, extend `Membuat Akun Mitra Otomatis` **UC-AA**).
-- 📄 **[analysis-flowchart.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**: Section 4 (Flowchart 4.1 `UC08`, 4.2 `UC09`, 4.3 `UC10`, 4.4 `UC11`, 4.5 `UC12`, 4.6 `UC13`, 4.7 `UC14`), Section 5 (Flowchart 5.1 `UC15`, 5.2 `UC16`, 5.3 `UC17`).
-
-#### Langkah Execution:
-1. **Input & Hierarki Dokumen Legal (UC08, UC09 / DFD 2.1, 2.4 / Flowchart 4.1, 4.2)**
-   - Form input dokumen oleh unit pengusul (Humas, Jurusan, UPA, Pusat).
-   - Opsi `parent_cooperation_id` untuk memilih induk perikatan (MoU untuk MoA, MoA untuk IA).
    - Pengisian nomor PKS multi-pihak (`pks_numbers`) dan upload PDF (`laporan_files`).
 2. **Submit Dokumen ke Pimpinan (UC10 / DFD 2.5 / Flowchart 4.3)**
    - Action Submit: Cek kelengkapan data & file PDF -> Ubah status `Draft` → `Menunggu Evaluasi` -> Trigger notifikasi ke Pimpinan.

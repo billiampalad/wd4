@@ -254,6 +254,7 @@ class KerjasamaJurusanController extends Controller
                 'end_date' => $request->end_date,
                 'status' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
                 'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
+                'parent_cooperation_id' => $request->parent_cooperation_id,
                 'perpanjangan_dari_id' => $perpanjanganDariId,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',

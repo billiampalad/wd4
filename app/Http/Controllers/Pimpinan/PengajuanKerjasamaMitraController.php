@@ -187,6 +187,26 @@ class PengajuanKerjasamaMitraController extends Controller
 
                     $mitraId = $mitra?->id ?: $submission->mitra_id;
 
+                    // UC-AA: Auto-create User account with role 'mitra' if email is available and user does not exist
+                    $mitraEmail = $submission->email ?: ($mitra ? $mitra->email : null);
+                    if ($mitraId && $mitraEmail) {
+                        $existingMitraUser = User::where('email', $mitraEmail)->first();
+                        if (! $existingMitraUser) {
+                            $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(role_name)) = ?', ['mitra'])->first();
+                            if ($roleMitra) {
+                                $randomPassword = \Illuminate\Support\Str::random(10);
+                                User::create([
+                                    'name' => $submission->nama_mitra ?: ($mitra ? $mitra->nama_mitra : 'Mitra'),
+                                    'email' => $mitraEmail,
+                                    'password' => \Illuminate\Support\Facades\Hash::make($randomPassword),
+                                    'role_id' => $roleMitra->id,
+                                    'mitra_id' => $mitraId,
+                                    'email_verified_at' => now(),
+                                ]);
+                            }
+                        }
+                    }
+
                     // 2. Buat / Ambil Pejabat penandatangan & penanggung jawab mitra
                     $penandatanganMitra = Pejabat::create([
                         'nama' => $submission->nama_penandatangan ?: 'Mitra',

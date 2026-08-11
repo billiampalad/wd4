@@ -218,6 +218,7 @@ class KerjasamaUnitController extends Controller
                 'end_date' => $request->end_date,
                 'status' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
                 'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
+                'parent_cooperation_id' => $request->parent_cooperation_id,
                 'perpanjangan_dari_id' => $perpanjanganDariId,
                 'pengajuan_perpanjangan_kerjasama_id' => $request->pengajuan_perpanjangan_kerjasama_id,
                 'document_link' => $request->document_link,

@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\UpaController;
 use App\Http\Controllers\Admin\PusatController;
 use App\Http\Controllers\Admin\SasaranController;
 use App\Http\Controllers\Admin\IndikatorController;
+use App\Http\Controllers\Mitra\MitraDokumenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardJurusanController;
 use App\Http\Controllers\Jurusan\JurusanPageController;
@@ -432,6 +433,10 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('/mitra', [DashboardController::class, 'mitra'])->name('mitra.dashboard');
+    Route::get('/mitra/dokumen', [MitraDokumenController::class, 'index'])->name('mitra.dokumen.index');
+    Route::get('/mitra/dokumen/{id}', [MitraDokumenController::class, 'show'])->name('mitra.dokumen.show');
+    Route::post('/mitra/dokumen/{id}/review', [MitraDokumenController::class, 'storeReview'])->name('mitra.dokumen.review');
+    Route::get('/mitra/pengajuan/create', [PublicPengajuanKerjasamaController::class, 'create'])->name('mitra.pengajuan.create');
 });
 
 /*
