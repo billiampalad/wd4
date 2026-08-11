@@ -442,12 +442,21 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('penilaian', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'index'])->name('mitra.penilaian.index');
     Route::get('penilaian/{id}/edit', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'edit'])->name('mitra.penilaian.edit');
     Route::put('penilaian/{id}', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'update'])->name('mitra.penilaian.update');
+
+    // ─── Phase 6: Umpan Balik Mitra (UC26) ──────────────────
+    Route::get('umpan-balik', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'index'])->name('mitra.umpan_balik.index');
+    Route::get('umpan-balik/{id}/edit', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'edit'])->name('mitra.umpan_balik.edit');
+    Route::put('umpan-balik/{id}', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'update'])->name('mitra.umpan_balik.update');
 });
 
 // ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────
-// This route can be accessed by Unit Pengusul
+// ─── Phase 6: Form Evaluasi & Submit Unit (UC23, UC24) ───
 Route::middleware(['auth'])->group(function () {
     Route::resource('unit/kegiatan', \App\Http\Controllers\Unit\KegiatanKerjasamaController::class, ['as' => 'unit']);
+    Route::get('unit/evaluasi', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'index'])->name('unit.evaluasi.index');
+    Route::get('unit/evaluasi/{id}/edit', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'edit'])->name('unit.evaluasi.edit');
+    Route::put('unit/evaluasi/{id}', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'update'])->name('unit.evaluasi.update');
+    Route::post('unit/evaluasi/{id}/submit', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'submit'])->name('unit.evaluasi.submit');
 });
 
 /*
