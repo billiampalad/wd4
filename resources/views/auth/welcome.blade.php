@@ -37,123 +37,168 @@
 <body>
 
     <!-- ═══ NAV ═══════════════════════════════════════════════ -->
-    <nav class="top-nav">
-        <div class="nav-inner">
-            <button type="button" class="mobile-menu-toggle" data-mobile-menu-toggle aria-controls="mobileSidebar"
-                aria-expanded="false" aria-label="Buka menu navigasi">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.4">
-                    <path d="M4 7h16" />
-                    <path d="M4 12h16" />
-                    <path d="M4 17h16" />
-                </svg>
-            </button>
-            <a href="#home" class="logo">
-                <div class="logo-mark">
-                    <img src="{{ asset('img/logo.png') }}" alt="Handshake" width="30" height="30">
-                </div>
-                <span class="logo-text">POLIMDO <span>&</span> DUDIKA</span>
-            </a>
-            <div class="nav-menu" aria-label="Navigasi utama">
-                <a href="#home" class="nav-link is-active" data-nav-link>Home</a>
-                <a href="#ringkasan" class="nav-link" data-nav-link>Ringkasan</a>
-                <a href="#visualisasi-data" class="nav-link" data-nav-link>Visualisasi</a>
-                <a href="#data-kerjasama" class="nav-link" data-nav-link>Data Kerjasama</a>
-            </div>
-            <div class="nav-right">
-                <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
-                    aria-label="Ubah ke mode gelap">
-                    <span class="theme-toggle-orb" aria-hidden="true">
-                        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
-                        </svg>
-                        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="12" cy="12" r="4" />
-                            <path d="M12 2v2" />
-                            <path d="M12 20v2" />
-                            <path d="m4.93 4.93 1.41 1.41" />
-                            <path d="m17.66 17.66 1.41 1.41" />
-                            <path d="M2 12h2" />
-                            <path d="M20 12h2" />
-                            <path d="m6.34 17.66-1.41 1.41" />
-                            <path d="m19.07 4.93-1.41 1.41" />
-                        </svg>
-                    </span>
-                    <span class="theme-toggle-text" data-theme-toggle-label>Mode Gelap</span>
+    <header class="nav-wrapper">
+        <nav class="top-nav" aria-label="Navigasi Utama">
+            <div class="nav-inner">
+                <button type="button" class="mobile-menu-toggle" data-mobile-menu-toggle aria-controls="mobileSidebar"
+                    aria-expanded="false" aria-label="Buka menu navigasi">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2" stroke-linecap="round">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
                 </button>
-                <a href="{{ route('login') }}" class="btn-nav">Login Sistem</a>
+                
+                <a href="#home" class="logo">
+                    <div class="logo-mark-wrap">
+                        <div class="logo-mark">
+                            <img src="{{ asset('img/logo.png') }}" alt="Polimdo Logo" width="28" height="28">
+                        </div>
+                        <span class="logo-pulse-ring"></span>
+                    </div>
+                    <div class="logo-brand-meta">
+                        <span class="logo-text">POLIMDO <span class="logo-amp">&amp;</span> DUDIKA</span>
+                        <span class="logo-tagline">Sistem Informasi Kerjasama</span>
+                    </div>
+                </a>
+
+                <div class="nav-menu" aria-label="Navigasi utama">
+                    <a href="#home" class="nav-link is-active" data-nav-link>
+                        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span>Home</span>
+                    </a>
+                    <a href="#ringkasan" class="nav-link" data-nav-link>
+                        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                        <span>Ringkasan</span>
+                    </a>
+                    <a href="#visualisasi-data" class="nav-link" data-nav-link>
+                        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
+                        <span>Visualisasi</span>
+                    </a>
+                    <a href="#data-kerjasama" class="nav-link" data-nav-link>
+                        <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <span>Data Kerjasama</span>
+                    </a>
+                </div>
+
+                <div class="nav-right">
+                    <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false"
+                        aria-label="Ubah ke mode gelap">
+                        <span class="theme-toggle-orb" aria-hidden="true">
+                            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
+                            </svg>
+                            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4" />
+                                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                            </svg>
+                        </span>
+                        <span class="theme-toggle-text" data-theme-toggle-label>Mode Gelap</span>
+                    </button>
+
+                    <a href="{{ route('login') }}" class="btn-nav">
+                        <span>Login Sistem</span>
+                        <svg class="btn-nav-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                            <polyline points="10 17 15 12 10 7" />
+                            <line x1="15" y1="12" x2="3" y2="12" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
     <aside class="mobile-sidebar" id="mobileSidebar" aria-label="Menu navigasi mobile" aria-hidden="true">
         <div class="mobile-sidebar-head">
             <a href="#home" class="mobile-sidebar-brand" data-mobile-menu-close>
-                <span class="logo-mark">
-                    <img src="{{ asset('img/logo.png') }}" alt="Handshake" width="30" height="30">
-                </span>
-                <span class="logo-text">POLIMDO <span>&</span> DUDIKA</span>
+                <div class="logo-mark-wrap">
+                    <div class="logo-mark">
+                        <img src="{{ asset('img/logo.png') }}" alt="Polimdo Logo" width="26" height="26">
+                    </div>
+                    <span class="logo-pulse-ring"></span>
+                </div>
+                <div class="logo-brand-meta">
+                    <span class="logo-text">POLIMDO <span class="logo-amp">&amp;</span> DUDIKA</span>
+                    <span class="logo-tagline">Menu Navigasi Mobile</span>
+                </div>
             </a>
             <button type="button" class="mobile-sidebar-close" data-mobile-menu-close aria-label="Tutup menu navigasi">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.6">
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
             </button>
         </div>
-        <div class="mobile-sidebar-section">Navigasi</div>
-        <div class="mobile-sidebar-menu">
-            <a href="#home" class="mobile-sidebar-link is-active" data-nav-link>
-                <span class="mobile-sidebar-icon" aria-hidden="true">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="m3 10.5 9-7 9 7" />
-                        <path d="M5 10v10h14V10" />
-                    </svg>
-                </span>
-                <span>Home</span>
-            </a>
-            <a href="#ringkasan" class="mobile-sidebar-link" data-nav-link>
-                <span class="mobile-sidebar-icon" aria-hidden="true">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M4 19V5" />
-                        <path d="M8 19V9" />
-                        <path d="M12 19V7" />
-                        <path d="M16 19v-5" />
-                        <path d="M20 19V3" />
-                    </svg>
-                </span>
-                <span>Ringkasan</span>
-            </a>
-            <a href="#visualisasi-data" class="mobile-sidebar-link" data-nav-link>
-                <span class="mobile-sidebar-icon" aria-hidden="true">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M4 19V5" />
-                        <path d="M9 19v-8" />
-                        <path d="M14 19v-4" />
-                        <path d="M19 19V9" />
-                    </svg>
-                </span>
-                <span>Visualisasi</span>
-            </a>
-            <a href="#data-kerjasama" class="mobile-sidebar-link" data-nav-link>
-                <span class="mobile-sidebar-icon" aria-hidden="true">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path d="M4 7h16" />
-                        <path d="M4 12h16" />
-                        <path d="M4 17h10" />
-                    </svg>
-                </span>
-                <span>Data Kerjasama</span>
-            </a>
+
+        <div class="mobile-sidebar-body">
+            <div class="mobile-sidebar-section">
+                <span class="sidebar-section-dot"></span>
+                <span>JELAJAH PLATFORM</span>
+            </div>
+
+            <nav class="mobile-sidebar-menu" aria-label="Menu navigasi seluler">
+                <a href="#home" class="mobile-sidebar-link is-active" data-nav-link data-mobile-menu-close>
+                    <span class="mobile-sidebar-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                    </span>
+                    <span class="mobile-link-text">Home</span>
+                    <svg class="mobile-link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="#ringkasan" class="mobile-sidebar-link" data-nav-link data-mobile-menu-close>
+                    <span class="mobile-sidebar-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 20V10M12 20V4M6 20v-6" />
+                        </svg>
+                    </span>
+                    <span class="mobile-link-text">Ringkasan</span>
+                    <svg class="mobile-link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="#visualisasi-data" class="mobile-sidebar-link" data-nav-link data-mobile-menu-close>
+                    <span class="mobile-sidebar-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 2a10 10 0 0 1 10 10h-10z" />
+                        </svg>
+                    </span>
+                    <span class="mobile-link-text">Visualisasi</span>
+                    <svg class="mobile-link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <a href="#data-kerjasama" class="mobile-sidebar-link" data-nav-link data-mobile-menu-close>
+                    <span class="mobile-sidebar-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                    </span>
+                    <span class="mobile-link-text">Data Kerjasama</span>
+                    <svg class="mobile-link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+            </nav>
         </div>
-        <a href="{{ route('login') }}" class="mobile-sidebar-login">Login Sistem</a>
+
+        <div class="mobile-sidebar-footer">
+            <a href="{{ route('login') }}" class="mobile-sidebar-login">
+                <span>Login Sistem</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+            </a>
+            <div class="mobile-sidebar-info">
+                <span>Politeknik Negeri Manado</span>
+                <span class="dot-separator">•</span>
+                <span>Kemitraan Vokasi</span>
+            </div>
+        </div>
     </aside>
     <div class="mobile-sidebar-overlay" data-mobile-menu-overlay></div>
 
