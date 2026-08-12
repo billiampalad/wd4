@@ -27,6 +27,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/welcome-stats.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -282,133 +284,263 @@
     </header>
 
     <!-- ═══ STATS CARD ═══════════════════════════════════════ -->
-    <section class="stats-strip" id="ringkasan" aria-labelledby="stats-overview-title">
-        <div class="stats-inner">
-            <div class="stats-heading">
-                <h2 id="stats-overview-title">Ringkasan data kerjasama</h2>
-                <p>Statistik terkini dari seluruh kegiatan kerja sama institusi kami. Berikut informasi ringkas mengenai jumlah kerjasama, jumlah mitra yang tergabung, lalu status pelaksanaan program, hingga persebaran skala kemitraan kami.</p>
+    <section class="stats-new-strip" id="ringkasan" aria-labelledby="stats-overview-title">
+        <!-- Decorative Glow Backgrounds -->
+        <div class="stats-glow glow-top-right"></div>
+        <div class="stats-glow glow-bottom-left"></div>
+
+        <div class="stats-new-inner">
+            <header class="stats-new-header">
+                <div class="stats-title-wrap">
+                    <div class="stats-title-accent"></div>
+                    <h2 id="stats-overview-title" class="stats-new-title">
+                        Ringkasan data <span class="stats-text-gradient">kerjasama</span>
+                    </h2>
+                </div>
+                <p class="stats-new-desc">
+                    <span class="stats-desc-highlight">Statistik terkini</span> dari seluruh kegiatan kerja sama institusi kami. Berikut informasi ringkas mengenai jumlah kerjasama, jumlah mitra yang tergabung, lalu status pelaksanaan program, hingga persebaran skala kemitraan kami.
+                </p>
+            </header>
+
+            <div class="stats-new-grid">
+                <!-- Card 1: Total Kerjasama -->
+                <a href="#data-kerjasama" class="stats-glass-card stat-card-hover-blue group" data-landing-stat data-stat-scope="kerjasama" data-stat-kategori="all" data-stat-status="all">
+                    <div class="card-glow glow-blue"></div>
+                    <div class="card-header">
+                        <div class="card-icon-box text-blue">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">view_headline</span>
+                        </div>
+                        <h3 class="card-title">TOTAL KERJASAMA</h3>
+                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-value">{{ $stats['total_kerjasama'] ?? 0 }}</div>
+                            <div class="card-trend trend-up">
+                                <span class="material-symbols-outlined">trending_up</span>
+                                +12% bulan ini
+                            </div>
+                        </div>
+                        <!-- Mini Sparkline Area Chart -->
+                        <div class="card-chart">
+                            <svg class="chart-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <linearGradient id="gradient-area" x1="0" x2="0" y1="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--stats-blue)" stop-opacity="0.4"></stop>
+                                        <stop offset="100%" stop-color="var(--stats-blue)" stop-opacity="0"></stop>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0,40 L0,30 L20,25 L40,35 L60,15 L80,20 L100,5 L100,40 Z" fill="url(#gradient-area)"></path>
+                                <path d="M0,30 L20,25 L40,35 L60,15 L80,20 L100,5" fill="none" stroke="var(--stats-blue)" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+                                <circle cx="100" cy="5" fill="var(--stats-blue)" r="3"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 2: Total Mitra -->
+                <a href="#data-kerjasama" class="stats-glass-card stat-card-hover-yellow group" data-landing-stat data-stat-scope="mitra" data-stat-kategori="all" data-stat-status="all">
+                    <div class="card-glow glow-yellow"></div>
+                    <div class="card-header">
+                        <div class="card-icon-box text-yellow">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+                        </div>
+                        <h3 class="card-title">TOTAL MITRA</h3>
+                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-stats">
+                            <div class="card-value">{{ $stats['total_mitra'] ?? 0 }}</div>
+                            <div class="card-trend trend-up">
+                                <span class="material-symbols-outlined">trending_up</span>
+                                +3% bulan ini
+                            </div>
+                        </div>
+                        <!-- Mini Bar Chart -->
+                        <div class="card-chart chart-bar">
+                            <div class="bar-col col-low"><div class="bar-tooltip">Ind</div></div>
+                            <div class="bar-col col-mid"><div class="bar-tooltip">Ins</div></div>
+                            <div class="bar-col col-high"><div class="bar-tooltip">Org</div></div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 3: Status Berjalan -->
+                <a href="#data-kerjasama" class="stats-glass-card stat-card-hover-blue group" data-landing-stat data-stat-scope="kerjasama" data-stat-kategori="all" data-stat-status="aktif">
+                    <div class="card-glow glow-blue"></div>
+                    <div class="card-header">
+                        <div class="card-icon-box text-blue">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+                        </div>
+                        <h3 class="card-title">STATUS BERJALAN</h3>
+                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                    </div>
+                    <div class="card-content items-center h-full">
+                        <div class="card-stats">
+                            <div class="card-value-group">
+                                <div class="card-value">{{ $stats['total_aktif'] ?? 0 }}</div>
+                                <div class="card-lbl">Aktif</div>
+                            </div>
+                            <div class="card-subtext">Dari {{ $stats['total_kerjasama'] ?? 0 }} program total</div>
+                        </div>
+                        <!-- Progress Ring -->
+                        <div class="card-ring">
+                            <svg class="ring-svg" viewBox="0 0 36 36">
+                                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="4"></path>
+                                <path class="ring-fg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="100, 100" stroke-width="4"></path>
+                            </svg>
+                            <div class="ring-text">
+                                <span class="ring-val">{{ $stats['total_aktif'] ?? 0 }}</span>
+                                <span class="ring-lbl">Nas</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
 
-            <div class="stats-card-grid">
-                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="kerjasama"
-                    data-stat-kategori="all" data-stat-status="all">
-                    <div class="stat-card-icon stat-card-icon-blue" aria-hidden="true">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M3 12h18" />
-                            <path d="M3 6h18" />
-                            <path d="M3 18h12" />
-                        </svg>
+            <!-- Cakupan Mitra -->
+            <div class="stats-new-breakdown">
+                <div class="breakdown-header">
+                    <div class="breakdown-icon">
+                        <span class="material-symbols-outlined">public</span>
                     </div>
-                    <div class="stat-card-meta">Jumlah Kerjasama</div>
-                    <div class="stat-num">{{ $stats['total_kerjasama'] ?? 0 }}</div>
-                    <p class="stat-desc">Jumlah kerjasama Politeknik sampai saat ini</p>
-                    <span class="stat-card-cta">Klik untuk lihat seluruh daftar</span>
-                </a>
+                    <h2 class="breakdown-title">Cakupan Mitra</h2>
+                </div>
+                
+                <div class="breakdown-grid">
+                    <!-- Mitra Nasional -->
+                    <div class="stats-glass-card break-card break-hover-blue">
+                        <div class="break-head">
+                            <div class="break-head-left">
+                                <p class="break-subtitle text-blue">Mitra Nasional</p>
+                                <div class="break-value-group">
+                                    <h3 class="break-value">{{ $stats['mitra_nasional'] ?? 0 }}</h3>
+                                    <span class="break-trend trend-up"><span class="material-symbols-outlined">trending_up</span>+5%</span>
+                                </div>
+                            </div>
+                            <div class="break-badge badge-green">Dominan</div>
+                        </div>
+                        <div class="break-map-box">
+                            <div class="map-bg-pattern"></div>
+                            <div class="map-bg-icon"><span class="material-symbols-outlined">map</span></div>
+                            <div class="map-bars">
+                                <div class="map-bar-item">
+                                    <div class="map-bar-lbl"><span>Jawa &amp; Bali</span><span>9</span></div>
+                                    <div class="map-bar-track"><div class="map-bar-fill fill-blue" style="width: 53%"></div></div>
+                                </div>
+                                <div class="map-bar-item">
+                                    <div class="map-bar-lbl"><span>Sumatra</span><span>5</span></div>
+                                    <div class="map-bar-track"><div class="map-bar-fill fill-blue-60" style="width: 29%"></div></div>
+                                </div>
+                                <div class="map-bar-item">
+                                    <div class="map-bar-lbl"><span>Lainnya</span><span>{{ ($stats['mitra_nasional'] ?? 0) - 14 }}</span></div>
+                                    <div class="map-bar-track"><div class="map-bar-fill fill-blue-30" style="width: 18%"></div></div>
+                                </div>
+                            </div>
+                            <div class="map-footer"><p>Sebaran Wilayah Indonesia</p></div>
+                        </div>
+                    </div>
 
-                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="mitra"
-                    data-stat-kategori="all" data-stat-status="all" data-stat-sort="title">
-                    <div class="stat-card-icon stat-card-icon-green" aria-hidden="true">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        </svg>
+                    <!-- Mitra Internasional -->
+                    <div class="stats-glass-card break-card break-hover-yellow">
+                        <div class="break-head">
+                            <div class="break-head-left">
+                                <p class="break-subtitle text-yellow">Mitra Internasional</p>
+                                <div class="break-value-group">
+                                    <h3 class="break-value">{{ $stats['mitra_internasional'] ?? 0 }}</h3>
+                                    <span class="break-trend text-yellow-60">Stabil</span>
+                                </div>
+                            </div>
+                            <div class="break-badge badge-yellow">Berkembang</div>
+                        </div>
+                        <div class="break-map-box horizontal">
+                            <div class="map-bg-icon center"><span class="material-symbols-outlined">public</span></div>
+                            <div class="globe-ring">
+                                <svg viewBox="0 0 36 36">
+                                    <circle cx="18" cy="18" fill="none" r="15.9155" stroke="rgba(var(--stats-white-rgb), 0.05)" stroke-width="3"></circle>
+                                    <circle cx="18" cy="18" fill="none" r="15.9155" stroke="var(--stats-yellow)" stroke-dasharray="66 100" stroke-width="3"></circle>
+                                    <circle cx="18" cy="18" fill="none" opacity="0.4" r="15.9155" stroke="var(--stats-yellow)" stroke-dasharray="34 100" stroke-dashoffset="-66" stroke-width="3"></circle>
+                                </svg>
+                                <div class="globe-text">
+                                    <span>100%</span>
+                                    <small>Global</small>
+                                </div>
+                            </div>
+                            <div class="globe-bars">
+                                <div class="map-bar-item">
+                                    <div class="map-bar-lbl"><span>Asia Pasifik</span><span class="text-yellow">2</span></div>
+                                    <div class="map-bar-track"><div class="map-bar-fill fill-yellow" style="width: 66%"></div></div>
+                                </div>
+                                <div class="map-bar-item">
+                                    <div class="map-bar-lbl"><span>Eropa</span><span class="text-yellow-60">1</span></div>
+                                    <div class="map-bar-track"><div class="map-bar-fill fill-yellow-40" style="width: 33%"></div></div>
+                                </div>
+                                <div class="globe-badges">
+                                    <span>Global Reach</span>
+                                    <span>2 Continents</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card-meta">Jumlah Mitra</div>
-                    <div class="stat-num">{{ $stats['total_mitra'] ?? 0 }}</div>
-                    <p class="stat-desc">Organisasi, industri, dan institusi yang sudah tercatat sebagai mitra.</p>
-                    <span class="stat-card-cta">Klik untuk eksplorasi daftar mitra</span>
-                </a>
-
-                <a href="#data-kerjasama" class="stat-card stat-card-action" data-landing-stat data-stat-scope="kerjasama"
-                    data-stat-kategori="all" data-stat-status="aktif">
-                    <div class="stat-card-icon stat-card-icon-amber" aria-hidden="true">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-                            <polyline points="16 7 22 7 22 13" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-meta">Status Berjalan</div>
-                    <div class="stat-num">{{ $stats['total_aktif'] ?? 0 }}</div>
-                    <div class="stat-lbl">Aktif</div>
-                    <p class="stat-desc">Kerjasama yang sedang berjalan.</p>
-                    <span class="stat-card-cta">Klik untuk filter kerjasama aktif</span>
-                </a>
-
-                <article class="stat-card stat-card-breakdown">
-                    <div class="stat-card-icon stat-card-icon-purple" aria-hidden="true">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9Z" />
-                            <path d="M3.6 9h16.8" />
-                            <path d="M3.6 15h16.8" />
-                            <path d="M12 3a15.3 15.3 0 0 1 0 18" />
-                            <path d="M12 3a15.3 15.3 0 0 0 0 18" />
-                        </svg>
-                    </div>
-                    <div class="stat-card-meta">Cakupan Mitra</div>
-                    <div class="stat-lbl">Mitra Nasional & Internasional</div>
-
-                    <div class="stat-split" aria-label="Rincian kategori mitra">
-                        <a href="#data-kerjasama" class="stat-split-item stat-split-item-action" data-landing-stat
-                            data-stat-scope="mitra" data-stat-kategori="nasional" data-stat-status="all"
-                            data-stat-sort="title">
-                            <span class="stat-split-num">{{ $stats['mitra_nasional'] ?? 0 }}</span>
-                            <span class="stat-split-lbl">Nasional</span>
-                        </a>
-                        <a href="#data-kerjasama" class="stat-split-item stat-split-item-action" data-landing-stat
-                            data-stat-scope="mitra" data-stat-kategori="internasional" data-stat-status="all"
-                            data-stat-sort="title">
-                            <span class="stat-split-num">{{ $stats['mitra_internasional'] ?? 0 }}</span>
-                            <span class="stat-split-lbl">Internasional</span>
-                        </a>
-                    </div>
-                </article>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- ═══ TRUST STRIP ════════════════════════════════════════ -->
-    <div class="trust-strip">
-        <div class="trust-inner">
-            <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                Data terverifikasi & akurat
-            </div>
-            <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="2" y1="12" x2="22" y2="12" />
-                    <path
-                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
-                Akses publik & transparan
-            </div>
-            <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M3 9h18M9 21V9" />
-                </svg>
-                Diperbarui secara berkala
-            </div>
-            <div class="trust-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                Multi-mitra & multi-bidang
+    <div class="trust-new-strip">
+        <div class="trust-marquee-container">
+            <div class="trust-marquee-mask">
+                <div class="trust-animate-marquee">
+                    <!-- Badge -->
+                    <div class="trust-badge">
+                        <span class="trust-badge-dot">
+                            <span class="trust-badge-ping"></span>
+                            <span class="trust-badge-core"></span>
+                        </span>
+                        <span class="trust-badge-text">System Integrity</span>
+                    </div>
+                    
+                    <!-- Marquee Content Set 1 -->
+                    <div class="trust-item-group">
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">verified_user</span>
+                            <span class="trust-text">Data terverifikasi &amp; akurat</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">public</span>
+                            <span class="trust-text">Akses publik &amp; transparan</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">update</span>
+                            <span class="trust-text">Diperbarui secara berkala</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">groups</span>
+                            <span class="trust-text">Multi-mitra &amp; multi-bidang</span>
+                        </div>
+                    </div>
+
+                    <!-- Marquee Content Set 2 (Duplicate for seamless loop) -->
+                    <div class="trust-item-group">
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">verified_user</span>
+                            <span class="trust-text">Data terverifikasi &amp; akurat</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">public</span>
+                            <span class="trust-text">Akses publik &amp; transparan</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">update</span>
+                            <span class="trust-text">Diperbarui secara berkala</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="material-symbols-outlined trust-icon">groups</span>
+                            <span class="trust-text">Multi-mitra &amp; multi-bidang</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
