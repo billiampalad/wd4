@@ -1,8 +1,8 @@
 @php
     $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
 
-    $mitraNasional = \App\Models\Mitra::where('kategori', 'Nasional')->count() ?? 0;
-    $mitraInternasional = \App\Models\Mitra::where('kategori', 'Internasional')->count() ?? 0;
+    $mitraNasional = \App\Models\Mitra::nasional()->count() ?? 0;
+    $mitraInternasional = \App\Models\Mitra::internasional()->count() ?? 0;
 
     $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
     $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;

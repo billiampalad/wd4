@@ -750,7 +750,7 @@ class UpaPageController extends Controller
         ];
 
         $latestInternational = \App\Models\Mitra::whereIn('id', $mitraIds)
-            ->where('kategori', 'internasional')
+            ->internasional()
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();

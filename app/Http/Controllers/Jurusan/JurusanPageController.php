@@ -711,8 +711,8 @@ class JurusanPageController extends Controller
             ->distinct()
             ->pluck('mitra_id');
 
-        $nasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->where('kategori', 'nasional')->count();
-        $internasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->where('kategori', 'internasional')->count();
+        $nasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->nasional()->count();
+        $internasionalCount = \App\Models\Mitra::whereIn('id', $mitraIds)->internasional()->count();
         $totalMitras = $nasionalCount + $internasionalCount;
 
         $totalCountries = \App\Models\Mitra::whereIn('id', $mitraIds)
@@ -750,7 +750,7 @@ class JurusanPageController extends Controller
         ];
 
         $latestInternational = \App\Models\Mitra::whereIn('id', $mitraIds)
-            ->where('kategori', 'internasional')
+            ->internasional()
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();

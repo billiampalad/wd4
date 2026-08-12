@@ -730,7 +730,7 @@ class UnitPageController extends Controller
             'colors' => ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81', '#1e1b4b', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc']
         ];
 
-        $latestInternational = \App\Models\Mitra::where('kategori', 'internasional')
+        $latestInternational = \App\Models\Mitra::internasional()
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
