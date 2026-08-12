@@ -319,8 +319,8 @@
                         @foreach ($attentionPanel['items'] as $item)
                             <article class="attention-item tone-{{ $item['tone'] }}">
                                 <div class="attention-copy">
-                                    <h5 class="attention-title" title="{{ $item['title'] }}">{{ $item['title'] }}</h5>
-                                    <p class="attention-subtitle">{{ $item['partner'] }}</p>
+                                    <h5 class="attention-title" title="{{ $item['judul'] ?? 'Tanpa Judul' }}">{{ $item['judul'] ?? 'Tanpa Judul' }}</h5>
+                                    <p class="attention-subtitle">{{ $item['mitra'] ?? 'Tanpa Mitra' }}</p>
                                 </div>
                                 <div class="attention-meta">
                                     <span class="attention-date">{{ $item['meta_label'] }}</span>

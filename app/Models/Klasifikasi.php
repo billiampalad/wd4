@@ -10,7 +10,7 @@ class Klasifikasi extends Model
 {
     use HasFactory;
 
-    protected $table = 'klasifikasi';
+    protected $table = 'klasifikasis';
 
     protected $fillable = [
         'nama',
@@ -18,6 +18,6 @@ class Klasifikasi extends Model
 
     public function mitras(): HasMany
     {
-        return $this->hasMany(Mitra::class, 'id_klasifikasi');
+        return $this->hasMany(Mitra::class, 'klasifikasi_id');
     }
 }

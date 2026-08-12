@@ -841,8 +841,8 @@
                                 @foreach ($attentionPanel['items'] as $item)
                                     <article class="attention-item tone-{{ $item['tone'] }}">
                                         <div class="attention-copy">
-                                            <h5 class="attention-title" title="{{ $item['title'] }}">{{ $item['title'] }}</h5>
-                                            <p class="attention-subtitle">{{ $item['partner'] }}</p>
+                                            <h5 class="attention-title" title="{{ $item['judul'] }}">{{ $item['judul'] }}</h5>
+                                            <p class="attention-subtitle">{{ $item['mitra'] }}</p>
                                         </div>
                                         <div class="attention-meta">
                                             <span class="attention-date">{{ $item['meta_label'] }}</span>
@@ -871,7 +871,7 @@
                             $klasifikasiLabel = $mitra->klasifikasi?->nama ?? 'Klasifikasi belum ditetapkan';
                             $kategoriLabel = $mitra->kategori ? ucfirst($mitra->kategori) : 'Kategori belum diisi';
                             $negaraLabel = $mitra->negara ?: 'Belum diisi';
-                            $telpLabel = $mitra->telp ?: 'Belum diisi';
+                            $telpLabel = $mitra->telepon ?: 'Belum diisi';
                             $alamatLabel = $mitra->alamat ?: 'Alamat belum tersedia';
                             $websiteUrl = $mitra->website;
                             $websiteLabel = $websiteUrl ? \Illuminate\Support\Str::limit($websiteUrl, 30) : 'Belum diisi';
@@ -945,13 +945,13 @@
             <div class="cards-grid">
                 @foreach ($kerjasama as $item)
                     @php
-                        $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status ?? '')));
+                        $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status_dokumen ?? '')));
                         $statusClass = match (true) {
-                            $status === 'aktif' => 'badge-active',
+                            $status === 'disahkan' => 'badge-active',
                             str_contains($status, 'perpanjangan') => 'badge-warning',
-                            in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
+                            in_array($status, ['revisi', 'kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
                             $status === 'tidak aktif' => 'badge-inactive',
-                            $status === 'proses' => 'badge-process',
+                            str_contains($status, 'menunggu') => 'badge-process',
                             default => 'badge-inactive',
                         };
                         $statusLabel = ucfirst($status !== '' ? $status : 'draft');
@@ -964,7 +964,7 @@
                     <div class="kcard {{ $statusClass }}"
                         onclick="openModal(
                                                     {{ $item->id }},
-                                                    `{{ addslashes($item->title) }}`,
+                                                    `{{ addslashes($item->judul) }}`,
                                                     `{{ addslashes($mitraNames) }}`,
                                                     `{{ addslashes($item->doc_number ?? 'Belum ada') }}`,
                                                     `{{ $hasDates ? $item->start_date->format('d M Y') . ' – ' . $item->end_date->format('d M Y') : 'Tanggal belum lengkap' }}`,
@@ -974,7 +974,7 @@
                         <div class="kcard-accent"></div>
 
                         <div class="kcard-top">
-                            <h3 class="kcard-title">{{ $item->title }}</h3>
+                            <h3 class="kcard-title">{{ $item->judul }}</h3>
                             <span class="status-pill {{ $statusClass }}">{{ $statusLabel }}</span>
                         </div>
 
@@ -1005,7 +1005,7 @@
                             <button class="btn-detail"
                                 onclick="event.stopPropagation(); openModal(
                             {{ $item->id }},
-                                `{{ addslashes($item->title) }}`,
+                                `{{ addslashes($item->judul) }}`,
                                 `{{ addslashes($mitraNames) }}`,
                                 `{{ addslashes($item->doc_number ?? 'Belum ada') }}`,
                                 `{{ $hasDates ? $item->start_date->format('d M Y') . ' – ' . $item->end_date->format('d M Y') : 'Tanggal belum lengkap' }}`,

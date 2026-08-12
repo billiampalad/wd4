@@ -119,11 +119,11 @@ class PublicLandingController extends Controller
 
         if ($search !== '') {
             $query->where(function (Builder $builder) use ($search) {
-                $builder->where('title', 'like', "%{$search}%")
+                $builder->where('judul', 'like', "%{$search}%")
                     ->orWhere('doc_number', 'like', "%{$search}%")
                     ->orWhere('jenis', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhere('ruang_lingkup', 'like', "%{$search}%")
+                    ->orWhere('status_berlaku', 'like', "%{$search}%")
                     ->orWhere('status_dokumen', 'like', "%{$search}%")
                     ->orWhere('internal_instansi', 'like', "%{$search}%")
                     ->orWhere('start_date', 'like', "%{$search}%")
@@ -133,22 +133,20 @@ class PublicLandingController extends Controller
                     })
                     ->orWhereHas('mitra', function (Builder $mitraQuery) use ($search) {
                         $mitraQuery->where('nama_mitra', 'like', "%{$search}%")
-                            ->orWhere('kategori', 'like', "%{$search}%")
                             ->orWhere('negara', 'like', "%{$search}%")
                             ->orWhere('alamat', 'like', "%{$search}%")
-                            ->orWhere('telp', 'like', "%{$search}%")
+                            ->orWhere('telepon', 'like', "%{$search}%")
                             ->orWhere('website', 'like', "%{$search}%")
                             ->orWhereHas('klasifikasi', function (Builder $klasifikasiQuery) use ($search) {
                                 $klasifikasiQuery->where('nama', 'like', "%{$search}%");
                             });
                     })
                     ->orWhereHas('details', function (Builder $detailQuery) use ($search) {
-                        $detailQuery->where('tujuan', 'like', "%{$search}%")
-                            ->orWhere('keterangan', 'like', "%{$search}%")
-                            ->orWhere('nilai_kontrak', 'like', "%{$search}%")
+                        $detailQuery->where('keterangan_luaran', 'like', "%{$search}%")
                             ->orWhere('income', 'like', "%{$search}%")
                             ->orWhere('volume_luaran', 'like', "%{$search}%")
-                            ->orWhere('satuan_luaran', 'like', "%{$search}%")
+                            ->orWhere('output', 'like', "%{$search}%")
+                            ->orWhere('outcome', 'like', "%{$search}%")
                             ->orWhereHas('indikator', function (Builder $indikatorQuery) use ($search) {
                                 $indikatorQuery->where('nama_indikator', 'like', "%{$search}%");
                             })
@@ -216,7 +214,7 @@ class PublicLandingController extends Controller
         }
 
         if ($filters['status_scope'] === 'aktif') {
-            $query->where('status', 'aktif');
+            $query->where('status_berlaku', 'Aktif');
         }
 
         return $query;
@@ -284,7 +282,7 @@ class PublicLandingController extends Controller
     {
         match ($sort) {
             'oldest' => $query->oldest(),
-            'title' => $query->orderBy('title'),
+            'title' => $query->orderBy('judul'),
             'ending_soon' => $query
                 ->orderByRaw('case when end_date is null then 1 else 0 end')
                 ->orderBy('end_date'),
@@ -364,7 +362,7 @@ class PublicLandingController extends Controller
 
         return [
             'updated_at_label' => $latestUpdatedCooperation?->updated_at?->format('d M Y, H:i') ?? 'Belum ada pembaruan',
-            'latest_title' => $latestUpdatedCooperation?->title,
+            'latest_title' => $latestUpdatedCooperation?->judul,
             'insight' => $heroInsight,
         ];
     }
@@ -818,8 +816,9 @@ class PublicLandingController extends Controller
                     $daysLeft = max($today->diffInDays($cooperation->end_date, false), 0);
 
                     return [
-                        'title' => $cooperation->title,
-                        'partner' => $cooperation->mitra?->nama_mitra ?? 'Mitra belum ditentukan',
+                        'id' => $cooperation->id,
+                        'judul' => $cooperation->judul,
+                        'mitra' => $cooperation->mitra?->nama_mitra ?? 'Mitra belum ditentukan',
                         'meta_label' => 'Berakhir ' . $cooperation->end_date?->format('d M Y'),
                         'supporting_label' => $daysLeft === 0 ? 'Berakhir hari ini' : "{$daysLeft} hari lagi",
                         'tone' => $daysLeft <= 30 ? 'danger' : 'warning',
@@ -840,8 +839,9 @@ class PublicLandingController extends Controller
             'description' => 'Jika belum ada item yang mendekati akhir masa berlaku, panel ini menampilkan data yang paling baru diperbarui.',
             'items' => $latest->map(function (Cooperation $cooperation) {
                 return [
-                    'title' => $cooperation->title,
-                    'partner' => $cooperation->mitra?->nama_mitra ?? 'Mitra belum ditentukan',
+                    'id' => $cooperation->id,
+                    'judul' => $cooperation->judul,
+                    'mitra' => $cooperation->mitra?->nama_mitra ?? 'Mitra belum ditentukan',
                     'meta_label' => 'Diperbarui ' . ($cooperation->updated_at?->format('d M Y') ?? '-'),
                     'supporting_label' => $cooperation->status ?: 'Status belum diisi',
                     'tone' => 'info',

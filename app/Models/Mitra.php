@@ -85,6 +85,6 @@ class Mitra extends Model
 
     public function klasifikasi(): BelongsTo
     {
-        return $this->belongsTo(Klasifikasi::class, 'id_klasifikasi');
+        return $this->belongsTo(Klasifikasi::class, 'klasifikasi_id');
     }
 }
