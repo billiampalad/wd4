@@ -498,3 +498,5 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/users', [UserController::class, 'index'])->name('users');
 
 Route::get('/profiles', [DashboardController::class, 'profiles'])->name('profiles');
+
+Route::get('/test-design', function() { return view('test-design'); });

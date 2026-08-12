@@ -39,7 +39,7 @@ class CheckExpiredCooperations extends Command
         })->get();
 
         // Cari dokumen aktif
-        $cooperations = Cooperation::where('status', 'aktif')
+        $cooperations = Cooperation::where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
             ->get();
 
@@ -86,12 +86,12 @@ class CheckExpiredCooperations extends Command
                 
                 $this->info("Notifikasi H-$diffDays dibuat untuk dokumen {$coop->doc_number}");
             } elseif ($diffDays < 0) {
-                // Dokumen sudah kadaluarsa tapi status masih 'aktif'
-                // Bisa otomatis mengubah status menjadi 'kadaluarsa'
-                $coop->status = 'kadaluarsa';
+                // Jika dokumen sudah kadaluarsa tapi status masih 'Aktif'
+                // Bisa otomatis mengubah status menjadi 'Kadaluarsa'
+                $coop->status_berlaku = 'Kadaluarsa';
                 $coop->save();
-                
-                $this->info("Dokumen {$coop->doc_number} otomatis diubah statusnya menjadi kadaluarsa.");
+
+                $this->info("Dokumen {$coop->doc_number} otomatis diubah statusnya menjadi Kadaluarsa.");
             }
         }
 

@@ -21,7 +21,7 @@ class DashboardController
         $user = Auth::user();
 
         // ── 1. WIDGET KARTU STATISTIK ─────────────────────────────
-        $totalKerjasamaAktif = Cooperation::where('status', 'aktif')->count();
+        $totalKerjasamaAktif = Cooperation::where('status_berlaku', 'Aktif')->count();
         $totalMitra = \App\Models\Mitra::count();
         $totalNilaiKontrak = \App\Models\DetailKegiatan::sum('nilai_kontrak');
         
@@ -57,18 +57,18 @@ class DashboardController
             ->groupBy('klasifikasi.nama')
             ->get();
 
-        $internasional = \App\Models\Mitra::where('kategori', 'internasional')->count();
-        $nasional = \App\Models\Mitra::where('kategori', 'nasional')->count();
+        $internasional = \App\Models\Mitra::internasional()->count();
+        $nasional = \App\Models\Mitra::nasional()->count();
 
         // ── 3. RINGKASAN TUGAS HARI INI ───────────────────────────
         $expiringSoon = Cooperation::with('mitra')
-            ->where('status', 'aktif')
+            ->where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
             ->whereBetween('end_date', [now(), now()->addDays(60)])
             ->get();
 
         $dalamPerpanjangan = Cooperation::with('mitra')
-            ->where('status', 'proses') // Asumsi proses = perpanjangan
+            ->where('status_berlaku', 'Diperpanjang')
             ->get();
 
         $dokumenTanpaLink = Cooperation::with('mitra')
@@ -187,14 +187,14 @@ class DashboardController
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->get();
-        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status', 'aktif'))
+        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('kegiatanKerjasama', fn($q) => $q->whereHas('cooperation', fn($q2) => $q2->where('status_berlaku', 'Aktif')))
             ->sum('nilai_kontrak');
 
         // 4. Ranking Unit Pelaksana
         $rankJurusan = DB::table('kerjasama_jurusan')
             ->join('jurusans', 'kerjasama_jurusan.jurusan_id', '=', 'jurusans.id')
             ->join('cooperations', 'kerjasama_jurusan.cooperation_id', '=', 'cooperations.id')
-            ->where('cooperations.status', 'aktif')
+            ->where('cooperations.status_berlaku', 'Aktif')
             ->select('jurusans.nama_jurusan as nama', DB::raw('COUNT(*) as total'))
             ->groupBy('jurusans.nama_jurusan')
             ->orderByDesc('total')
@@ -203,7 +203,7 @@ class DashboardController
         $rankUpa = DB::table('kerjasama_upa')
             ->join('upas', 'kerjasama_upa.upa_id', '=', 'upas.id')
             ->join('cooperations', 'kerjasama_upa.cooperation_id', '=', 'cooperations.id')
-            ->where('cooperations.status', 'aktif')
+            ->where('cooperations.status_berlaku', 'Aktif')
             ->select('upas.nama_upa as nama', DB::raw('COUNT(*) as total'))
             ->groupBy('upas.nama_upa')
             ->orderByDesc('total')
@@ -212,7 +212,7 @@ class DashboardController
         $rankPusat = DB::table('kerjasama_pusat')
             ->join('pusats', 'kerjasama_pusat.pusat_id', '=', 'pusats.id')
             ->join('cooperations', 'kerjasama_pusat.cooperation_id', '=', 'cooperations.id')
-            ->where('cooperations.status', 'aktif')
+            ->where('cooperations.status_berlaku', 'Aktif')
             ->select('pusats.nama_pusat as nama', DB::raw('COUNT(*) as total'))
             ->groupBy('pusats.nama_pusat')
             ->orderByDesc('total')
@@ -229,14 +229,14 @@ class DashboardController
 
         // 1. Expiration Alerts
         $criticalExpiry = Cooperation::with(['mitra', 'pjInternal'])
-            ->where('status', 'aktif')
+            ->where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
             ->whereBetween('end_date', [now(), now()->addDays(30)])
             ->orderBy('end_date')
             ->get();
 
         $warningExpiry = Cooperation::with(['mitra', 'pjInternal'])
-            ->where('status', 'aktif')
+            ->where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
             ->whereBetween('end_date', [now()->addDays(31), now()->addDays(90)])
             ->orderBy('end_date')
@@ -244,13 +244,13 @@ class DashboardController
 
         // 2. Idle Cooperations (aktif tapi tanpa detail_kegiatans)
         $idleCooperations = Cooperation::with(['mitra', 'pjInternal'])
-            ->where('status', 'aktif')
+            ->where('status_berlaku', 'Aktif')
             ->whereDoesntHave('details')
             ->get();
 
         // 3. Compliance Alerts (aktif tapi document_link / nomor PKS kosong)
         $complianceAlerts = Cooperation::with(['mitra', 'pksNumbers'])
-            ->where('status', 'aktif')
+            ->where('status_berlaku', 'Aktif')
             ->where(function($q) {
                 $q->whereNull('document_link')
                   ->orWhere('document_link', '')
@@ -260,7 +260,7 @@ class DashboardController
 
         // ── III. EXTRA STATS ──────────────────────────────────────
         $totalKerjasama = $dataKerjasama->count();
-        $aktifCount = $dataKerjasama->where('status', 'aktif')->count();
+        $aktifCount = $dataKerjasama->where('status_berlaku', 'Aktif')->count();
         $expiredCount = $dataKerjasama->filter(fn($i) => in_array(strtolower($i->status ?? ''), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']))->count();
 
         return view('auth.pimpinan', [

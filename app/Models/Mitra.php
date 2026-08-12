@@ -12,17 +12,56 @@ class Mitra extends Model
 
     protected $fillable = [
         'nama_mitra',
-        'id_klasifikasi',
+        'klasifikasi_id',
         'alamat',
-        'kategori',
+        'kota',
         'negara',
         'country_code',
         'provinsi',
         'province_code',
-        'telp',
-        'email',
+        'telepon',
         'website',
+        'status_akses',
     ];
+
+    /**
+     * Virtual "kategori" — nasional jika Indonesia, internasional jika luar negeri.
+     * ponytail: derived from country_code; add real column if classification grows beyond 2 values.
+     */
+    public function getKategoriAttribute(): string
+    {
+        if ($this->country_code === 'ID' || strtolower($this->negara ?? '') === 'indonesia') {
+            return 'nasional';
+        }
+
+        return 'internasional';
+    }
+
+    public function scopeNasional($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('country_code', 'ID')
+              ->orWhere('negara', 'like', '%indonesia%');
+        });
+    }
+
+    public function scopeInternasional($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('country_code', '!=', 'ID')
+              ->where(function ($q2) {
+                  $q2->whereNull('negara')
+                     ->orWhere('negara', 'not like', '%indonesia%');
+              });
+        })->whereNotNull('country_code');
+    }
+
+    public function scopeKategori($query, string $kategori)
+    {
+        return strtolower($kategori) === 'nasional'
+            ? $query->nasional()
+            : $query->internasional();
+    }
 
     public function cooperations()
     {

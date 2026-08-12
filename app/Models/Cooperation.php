@@ -137,9 +137,21 @@ class Cooperation extends Model
         return $this->hasMany(PksNumber::class, 'cooperation_id')->orderBy('sort_order')->orderBy('id');
     }
 
+    public function kegiatanKerjasamas()
+    {
+        return $this->hasMany(KegiatanKerjasama::class, 'cooperation_id');
+    }
+
     public function details()
     {
-        return $this->hasMany(DetailKegiatan::class);
+        return $this->hasManyThrough(
+            DetailKegiatan::class,
+            KegiatanKerjasama::class,
+            'cooperation_id', // Foreign key on kegiatan_kerjasamas table...
+            'kegiatan_kerjasama_id', // Foreign key on detail_kegiatans table...
+            'id', // Local key on cooperations table...
+            'id' // Local key on kegiatan_kerjasamas table...
+        );
     }
 
     public function evaluasis()

@@ -86,7 +86,7 @@ class LaporanPimpinanController extends Controller
 
         // Filter status (aktif / proses / kadarluarsa / dst)
         if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
+            $query->where('status_berlaku', $request->status);
         }
 
         return $query->get();
@@ -114,7 +114,7 @@ class LaporanPimpinanController extends Controller
                 'pelaksana_class' => $item->pelaksana_class,
                 'start_date'     => $item->start_date?->toDateString(),
                 'end_date'       => $item->end_date?->toDateString(),
-                'status'         => $item->status,
+                'status'         => $item->status_berlaku,
                 'mitra'          => $item->mitra ? [
                     'nama_mitra' => $item->mitra->nama_mitra,
                     'kategori'   => $item->mitra->kategori,
@@ -175,7 +175,7 @@ class LaporanPimpinanController extends Controller
                 $row['Tipe Pelaksana'] = $item->tipe_pelaksana;
                 $row['Pelaksana'] = $item->pelaksana_name;
                 $row['Mitra'] = $item->mitra ? $item->mitra->nama_mitra : '-';
-                $row['Status'] = $item->status;
+                $row['Status'] = $item->status_berlaku;
                 $row['Tanggal Mulai'] = $item->start_date;
                 $row['Tanggal Berakhir'] = $item->end_date;
 

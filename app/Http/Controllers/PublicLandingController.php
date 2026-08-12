@@ -176,7 +176,7 @@ class PublicLandingController extends Controller
 
         if ($filters['kategori_mitra'] !== 'all') {
             $query->whereHas('mitra', function (Builder $mitraQuery) use ($filters) {
-                $mitraQuery->where('kategori', $filters['kategori_mitra']);
+            $mitraQuery->kategori($filters['kategori_mitra']);
             });
         }
 
@@ -242,7 +242,7 @@ class PublicLandingController extends Controller
         }
 
         if ($filters['kategori_mitra'] !== 'all') {
-            $query->where('kategori', $filters['kategori_mitra']);
+            $query->kategori($filters['kategori_mitra']);
         }
 
         if ($filters['geo_country'] !== '' || $filters['geo_province'] !== '') {
@@ -341,9 +341,9 @@ class PublicLandingController extends Controller
         return [
             'total_kerjasama' => Cooperation::count(),
             'total_mitra' => Mitra::count(),
-            'total_aktif' => Cooperation::where('status', 'aktif')->count(),
-            'mitra_nasional' => Mitra::where('kategori', 'nasional')->count(),
-            'mitra_internasional' => Mitra::where('kategori', 'internasional')->count(),
+            'total_aktif' => Cooperation::where('status_berlaku', 'Aktif')->count(),
+            'mitra_nasional' => Mitra::nasional()->count(),
+            'mitra_internasional' => Mitra::internasional()->count(),
         ];
     }
 

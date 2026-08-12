@@ -694,8 +694,8 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $nasionalCount = \App\Models\Mitra::where('kategori', 'nasional')->count();
-        $internasionalCount = \App\Models\Mitra::where('kategori', 'internasional')->count();
+        $nasionalCount = \App\Models\Mitra::nasional()->count();
+        $internasionalCount = \App\Models\Mitra::internasional()->count();
         $totalMitras = $nasionalCount + $internasionalCount;
 
         $totalCountries = \App\Models\Mitra::whereNotNull('negara')
