@@ -191,9 +191,9 @@ html[data-theme='dark'] .top-nav {
 }
 
 .logo-text {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.15rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--ink);
     letter-spacing: 0.02em;
     white-space: nowrap;
@@ -206,7 +206,7 @@ html[data-theme='dark'] .top-nav {
 }
 
 .logo-tagline {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.68rem;
     font-weight: 600;
     color: var(--ink-faint);
@@ -228,6 +228,7 @@ html[data-theme='dark'] .top-nav {
 }
 
 .nav-link {
+    font-family: 'Inter', sans-serif;
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -310,7 +311,7 @@ html[data-theme='dark'] .top-nav {
     border-radius: 999px;
     background: var(--surface);
     color: var(--ink-muted);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
@@ -370,7 +371,7 @@ html[data-theme='dark'] .top-nav {
     border: none;
     padding: 0.45rem 1.15rem;
     border-radius: 999px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
@@ -525,6 +526,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .mobile-sidebar-section {
+    font-family: 'Inter', sans-serif;
     display: flex;
     align-items: center;
     gap: 0.45rem;
@@ -550,6 +552,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .mobile-sidebar-link {
+    font-family: 'Inter', sans-serif;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -652,6 +655,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .mobile-sidebar-login {
+    font-family: 'Inter', sans-serif;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -674,6 +678,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .mobile-sidebar-info {
+    font-family: 'Inter', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -733,6 +738,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .hero-eyebrow {
+    font-family: 'Inter', sans-serif;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -762,23 +768,28 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .hero h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.5rem;
-    line-height: 1.15;
-    letter-spacing: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.25rem, 3vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
     color: var(--ink);
     margin-bottom: 1.25rem;
 }
 
 .hero h1 em {
-    font-style: italic;
-    color: var(--blue-700);
+    font-style: normal;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(to right, var(--blue-500), var(--blue-300));
 }
 
 .hero-desc {
-    font-size: 1.05rem;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.125rem, 2vw, 1.25rem);
     color: var(--ink-muted);
-    max-width: 460px;
+    max-width: 672px;
     margin-bottom: 2rem;
     line-height: 1.7;
 }
@@ -791,6 +802,7 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .btn-primary {
+    font-family: 'Inter', sans-serif;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -800,7 +812,7 @@ html[data-theme='dark'] .mobile-sidebar {
     text-decoration: none;
     padding: 0.78rem 1.55rem;
     border-radius: 999px;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.95rem;
     line-height: 1.1;
     white-space: nowrap;
@@ -815,10 +827,11 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .btn-ghost {
+    font-family: 'Inter', sans-serif;
     color: var(--ink-muted);
     text-decoration: none;
-    font-size: 0.92rem;
-    font-weight: 800;
+    font-size: 0.95rem;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -895,7 +908,8 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .preview-label {
-    font-size: 0.72rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
     color: var(--ink-faint);
     font-weight: 500;
     letter-spacing: 0.04em;
@@ -921,12 +935,14 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .pmcard-title {
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--ink);
 }
 
 .pmcard-badge {
+    font-family: 'Inter', sans-serif;
     font-size: 0.65rem;
     font-weight: 600;
     padding: 2px 8px;
@@ -961,7 +977,8 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .pmcard-meta {
-    font-size: 0.73rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
     color: var(--ink-faint);
 }
 
@@ -990,14 +1007,16 @@ html[data-theme='dark'] .mobile-sidebar {
 }
 
 .hfs-num {
-    font-weight: 600;
-    font-size: 1.1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
     color: var(--ink);
     line-height: 1;
 }
 
 .hfs-lbl {
-    font-size: 0.72rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
     color: var(--ink-faint);
 }
 
@@ -3399,7 +3418,6 @@ html[data-theme='dark'] .btn-ghost:hover {
 }
 
 html[data-theme='dark'] .logo-text span,
-html[data-theme='dark'] .hero h1 em,
 html[data-theme='dark'] .section-eyebrow,
 html[data-theme='dark'] .kcard-mitra {
     color: var(--blue-100);
@@ -3848,9 +3866,7 @@ html[data-theme='dark'] .attention-date {
         display: none;
     }
 
-    .hero h1 {
-        font-size: 2.4rem;
-    }
+
 
     .section-title {
         font-size: 1.7rem;
@@ -4012,13 +4028,7 @@ html[data-theme='dark'] .attention-date {
         display: none;
     }
 
-    .hero h1 {
-        font-size: 2rem;
-    }
 
-    .hero-desc {
-        font-size: 0.98rem;
-    }
 
     .hero-cta {
         width: 100%;
