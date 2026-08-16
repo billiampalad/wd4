@@ -144,7 +144,6 @@ graph TD
 
 #### 1. Focus & Scope
 Membangun fondasi antarmuka yang konsisten melalui pendefinisian design tokens, master layout, serta perpustakaan komponen Blade terpakai ulang (*reusable Blade UI components*).
-
 #### 2. Item Pekerjaan Frontend
 1. **CSS Design Tokens & Themeing**:
    - Membuat file CSS utama (`public/css/app.css` / `resources/css/custom.css`) yang memuat variabel CSS untuk warna, *typography*, *border-radius*, *box-shadow*, dan *z-index*.
