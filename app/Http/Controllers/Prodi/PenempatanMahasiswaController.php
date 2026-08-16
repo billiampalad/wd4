@@ -24,7 +24,7 @@ class PenempatanMahasiswaController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('prodi.penempatan.index', compact('penempatans'));
+        return view('auth.layout.prodi.penempatan.index', compact('penempatans'));
     }
 
     /**
@@ -37,7 +37,7 @@ class PenempatanMahasiswaController extends Controller
         $mahasiswas = Mahasiswa::all();
         $mitras = Mitra::all();
 
-        return view('prodi.penempatan.create', compact('kegiatans', 'mahasiswas', 'mitras'));
+        return view('auth.layout.prodi.penempatan.create', compact('kegiatans', 'mahasiswas', 'mitras'));
     }
 
     /**
@@ -94,7 +94,7 @@ class PenempatanMahasiswaController extends Controller
     {
         $penempatan = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra', 'pembimbings'])->findOrFail($id);
 
-        return view('prodi.penempatan.show', compact('penempatan'));
+        return view('auth.layout.prodi.penempatan.show', compact('penempatan'));
     }
 
     /**
@@ -107,7 +107,7 @@ class PenempatanMahasiswaController extends Controller
         $mahasiswas = Mahasiswa::all();
         $mitras = Mitra::all();
 
-        return view('prodi.penempatan.edit', compact('penempatan', 'kegiatans', 'mahasiswas', 'mitras'));
+        return view('auth.layout.prodi.penempatan.edit', compact('penempatan', 'kegiatans', 'mahasiswas', 'mitras'));
     }
 
     /**

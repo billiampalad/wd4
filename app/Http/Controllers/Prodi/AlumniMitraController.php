@@ -24,7 +24,7 @@ class AlumniMitraController extends Controller
             ->orderBy('tahun_lulus', 'desc')
             ->get();
 
-        return view('prodi.alumni.index', compact('alumnis'));
+        return view('auth.layout.prodi.alumni.index', compact('alumnis'));
     }
 
     /**
@@ -33,7 +33,7 @@ class AlumniMitraController extends Controller
     public function create()
     {
         $mitras = Mitra::where('status_aktif', true)->get();
-        return view('prodi.alumni.create', compact('mitras'));
+        return view('auth.layout.prodi.alumni.create', compact('mitras'));
     }
 
     /**
