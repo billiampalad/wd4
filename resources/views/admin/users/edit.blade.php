@@ -189,7 +189,7 @@
                                 <label class="ue-label" for="email">
                                     <i class="fas fa-envelope ue-label-icon"></i>
                                     Email
-                                    <span class="ue-optional">(untuk pemulihan akun)</span>
+                                    <span class="ue-required">*</span>
                                 </label>
                                 <input
                                     type="email" id="email" name="email"
@@ -197,6 +197,7 @@
                                     value="{{ old('email', $user->email) }}"
                                     placeholder="nama@institusi.ac.id"
                                     autocomplete="email"
+                                    required
                                 />
                                 @error('email')
                                 <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>

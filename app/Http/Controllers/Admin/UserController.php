@@ -44,21 +44,21 @@ class UserController
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'max:255', 'unique:users,nik'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'role_id' => ['required', 'exists:roles,id'],
         ]);
 
-        $profileData = $this->profileDataForRole($request);
-
         $user = User::create([
             'nik' => $validated['nik'],
             'name' => $validated['name'],
-            'email' => $validated['email'] ?? null,
-            'email_verified_at' => filled($validated['email'] ?? null) ? now() : null,
+            'email' => $validated['email'],
+            'email_verified_at' => now(),
             'password' => Hash::make($validated['password']),
             'role_id' => $validated['role_id'],
         ]);
+
+        $profileData = $this->profileDataForRole($request);
 
         $user->profile()->create($profileData);
 
@@ -89,14 +89,12 @@ class UserController
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'string', 'max:255', Rule::unique('users', 'nik')->ignore($user->id)],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8'],
             'role_id' => ['required', 'exists:roles,id'],
         ]);
 
-        $profileData = $this->profileDataForRole($request);
-
-        $newEmail = $validated['email'] ?? null;
+        $newEmail = $validated['email'];
         $emailChanged = $newEmail !== $user->email;
         $userData = [
             'name' => $validated['name'],
@@ -105,13 +103,15 @@ class UserController
             'role_id' => $validated['role_id'],
         ];
         if ($emailChanged) {
-            $userData['email_verified_at'] = filled($newEmail) ? now() : null;
+            $userData['email_verified_at'] = now();
         }
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($validated['password']);
         }
 
         $user->update($userData);
+
+        $profileData = $this->profileDataForRole($request);
 
         $user->profile()->updateOrCreate(
             ['user_id' => $user->id],

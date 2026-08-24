@@ -163,7 +163,7 @@
                                 <label class="uc-label" for="email">
                                     <i class="fas fa-envelope uc-label-icon"></i>
                                     Email
-                                    <span class="uc-optional">(untuk pemulihan akun)</span>
+                                    <span class="uc-required">*</span>
                                 </label>
                                 <input
                                     type="email" id="email" name="email"
@@ -171,6 +171,7 @@
                                     placeholder="nama@institusi.ac.id"
                                     value="{{ old('email') }}"
                                     autocomplete="email"
+                                    required
                                 />
                                 @error('email')
                                 <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
