@@ -49,7 +49,7 @@
             $notificationLimit = $notificationToday->copy()->addMonthsNoOverflow(3)->endOfDay();
 
             $expiryQuery = \App\Models\Cooperation::query()
-                ->select(['id', 'title', 'doc_number', 'jenis', 'end_date', 'status'])
+                ->select(['id', 'judul', 'doc_number', 'jenis', 'end_date', 'status_berlaku'])
                 ->whereNotNull('end_date')
                 ->whereDate('end_date', '>=', $notificationToday->toDateString())
                 ->whereDate('end_date', '<=', $notificationLimit->toDateString());
@@ -77,7 +77,7 @@
                     return [
                         'id' => $cooperation->id,
                         'system_id' => 'expiry-' . $cooperation->id,
-                        'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                        'title' => $cooperation->judul ?: 'Kerjasama Tanpa Judul',
                         'doc_number' => $cooperation->doc_number,
                         'jenis' => $cooperation->jenis,
                         'days_remaining' => $daysRemaining,
