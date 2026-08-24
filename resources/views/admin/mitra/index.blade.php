@@ -137,28 +137,39 @@
         </div>
     </div>
 
-    <!-- Modal Kirim Akses Login -->
-    <div id="accessModal" class="um-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
-        <div class="card um-card" style="width: 450px; max-width: 90%; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--border-color);">
-            <div class="card-header um-header" style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-                <div class="card-title" style="margin: 0; font-size: 1.1rem;"><i class="fas fa-key" style="color: var(--blue-500);"></i> Kirim Akses Login</div>
-                <button type="button" onclick="closeAccessModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-sub); transition: color 0.2s;">&times;</button>
-            </div>
+    <!-- Premium Modal Kirim Akses Login -->
+
+
+    <div id="accessModal" class="premium-modal-overlay">
+        <div class="premium-modal-card">
+            <button type="button" class="premium-modal-close" onclick="closeAccessModal()" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
             <form id="accessForm" method="POST" action="">
                 @csrf
-                <div style="padding: 20px;">
-                    <p style="margin-bottom: 20px; font-size: 0.95rem; color: var(--text-sub); line-height: 1.5;">
-                        Kirimkan kredensial login ke mitra: <br>
-                        <strong id="modalMitraName" style="color: var(--text-main); font-size: 1.05rem;"></strong>
+                <div class="premium-modal-body">
+                    <div class="premium-modal-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <h3 class="premium-modal-title">Kirim Akses Login</h3>
+                    <p class="premium-modal-desc">
+                        Tentukan alamat email untuk mengirimkan kredensial login kepada:
+                        <strong id="modalMitraName"></strong>
                     </p>
-                    <div style="margin-bottom: 15px;">
-                        <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: var(--text-main);">Alamat Email</label>
-                        <input type="email" name="email" id="email" required placeholder="Masukkan email aktif mitra..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+                    
+                    <div class="premium-input-group">
+                        <label for="email" class="premium-label">Alamat Email Mitra</label>
+                        <div class="premium-input-wrapper">
+                            <input type="email" name="email" id="email" class="premium-input" required placeholder="contoh@mitra.com">
+                            <i class="fas fa-envelope"></i>
+                        </div>
                     </div>
                 </div>
-                <div style="padding: 15px 20px; border-top: 1px solid var(--border-color); text-align: right; background: var(--bg-body);">
-                    <button type="button" onclick="closeAccessModal()" style="padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; margin-right: 10px; color: var(--text-sub); font-weight: 500;">Batal</button>
-                    <button type="submit" class="um-btn-add" style="padding: 10px 18px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-paper-plane"></i> Kirim Akses</button>
+                <div class="premium-modal-footer">
+                    <button type="button" class="premium-btn premium-btn-cancel" onclick="closeAccessModal()">Batal</button>
+                    <button type="submit" class="premium-btn premium-btn-submit">
+                        <i class="fas fa-paper-plane"></i> Kirim Akses
+                    </button>
                 </div>
             </form>
         </div>
@@ -167,26 +178,37 @@
     <script>
         function openAccessModal(id, name) {
             document.getElementById('modalMitraName').textContent = name;
-            // Kita bisa menggunakan route manual atau menyesuaikan action URL
             document.getElementById('accessForm').action = '/admin/mitra/' + id + '/send-access';
             
             var modal = document.getElementById('accessModal');
-            modal.style.display = 'flex';
+            modal.classList.add('active');
             
             // Set focus ke input email
             setTimeout(() => {
                 document.getElementById('email').focus();
-            }, 100);
+            }, 300); // Tunggu animasi selesai
         }
 
         function closeAccessModal() {
-            document.getElementById('accessModal').style.display = 'none';
-            document.getElementById('email').value = '';
+            var modal = document.getElementById('accessModal');
+            modal.classList.remove('active');
+            
+            // Bersihkan form setelah animasi selesai
+            setTimeout(() => {
+                document.getElementById('email').value = '';
+            }, 300);
         }
         
         // Tutup modal jika klik area luar modal
         document.getElementById('accessModal').addEventListener('click', function(e) {
             if (e.target === this) {
+                closeAccessModal();
+            }
+        });
+        
+        // Tutup dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('accessModal').classList.contains('active')) {
                 closeAccessModal();
             }
         });

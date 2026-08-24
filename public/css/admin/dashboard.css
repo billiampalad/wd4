@@ -51,7 +51,7 @@ body {
     /* Mencegah scroll horizontal pada level body */
 }
 
-/* ─── SCROLLBAR ─────────────────────────────────────── */
+/* â”€â”€â”€ SCROLLBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 html.admin-dashboard-page,
 body.admin-dashboard-page,
 body.admin-dashboard-page * {
@@ -93,7 +93,7 @@ body.admin-dashboard-page *::-webkit-scrollbar-corner {
     background: var(--admin-scrollbar-track) !important;
 }
 
-/* ─── TOPNAV ─────────────────────────────────────────── */
+/* â”€â”€â”€ TOPNAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 nav {
     position: fixed;
     top: 0;
@@ -312,7 +312,7 @@ nav {
     font-weight: 500;
 }
 
-/* ─── LAYOUT ─────────────────────────────────────────── */
+/* â”€â”€â”€ LAYOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .layout {
     display: flex;
     padding-top: var(--nav-h);
@@ -325,7 +325,7 @@ nav {
     /* Mencegah overflow horizontal pada level layout */
 }
 
-/* ─── SIDEBAR ─────────────────────────────────────────── */
+/* â”€â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 aside {
     width: var(--sidebar-w);
     background: var(--surface);
@@ -714,7 +714,7 @@ body.sidebar-collapsed .sidebar-toggle-floating i {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, .2);
 }
 
-/* ─── MAIN CONTENT ────────────────────────────────────── */
+/* â”€â”€â”€ MAIN CONTENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 main {
     margin-left: var(--sidebar-w);
     flex: 1;
@@ -726,7 +726,7 @@ main {
     /* Mencegah scroll pada level main */
 }
 
-/* ─── PAGE HEADER ────────────────────────────────────── */
+/* â”€â”€â”€ PAGE HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page-header {
     margin-bottom: 28px;
 }
@@ -762,7 +762,7 @@ main {
     font-weight: 600;
 }
 
-/* ─── STATS GRID ─────────────────────────────────────── */
+/* â”€â”€â”€ STATS GRID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -870,7 +870,7 @@ main {
     margin-bottom: 4px;
 }
 
-/* ─── CONTENT ROW ────────────────────────────────────── */
+/* â”€â”€â”€ CONTENT ROW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .content-row {
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -878,7 +878,7 @@ main {
     margin-bottom: 20px;
 }
 
-/* ─── CARD ───────────────────────────────────────────── */
+/* â”€â”€â”€ CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -931,7 +931,7 @@ main {
     padding: 18px 20px;
 }
 
-/* ─── TABLE ──────────────────────────────────────────── */
+/* â”€â”€â”€ TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .table-wrap {
     overflow-x: auto;
 }
@@ -1030,7 +1030,7 @@ tbody td {
     margin-left: 0;
 }
 
-/* ─── PROGRESS BAR ───────────────────────────────────── */
+/* â”€â”€â”€ PROGRESS BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .progress-row {
     margin-bottom: 18px;
 }
@@ -1085,7 +1085,7 @@ tbody td {
     background: linear-gradient(to right, #f59e0b, #ef4444);
 }
 
-/* ─── ACTIVITY FEED ──────────────────────────────────── */
+/* â”€â”€â”€ ACTIVITY FEED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .activity-item {
     display: flex;
     gap: 12px;
@@ -1126,7 +1126,7 @@ tbody td {
     margin-top: 3px;
 }
 
-/* ─── SEARCH BAR ─────────────────────────────────────── */
+/* â”€â”€â”€ SEARCH BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .search-bar {
     display: flex;
     align-items: center;
@@ -1186,7 +1186,7 @@ tbody td {
     color: var(--danger);
 }
 
-/* ─── SEARCH HIGHLIGHT ─── */
+/* â”€â”€â”€ SEARCH HIGHLIGHT â”€â”€â”€ */
 .search-highlight {
     background-color: rgba(245, 158, 11, 0.2);
     color: #b45309;
@@ -1200,7 +1200,7 @@ tbody td {
     color: #fbbf24;
 }
 
-/* ─── TABLE PAGINATION ─── */
+/* â”€â”€â”€ TABLE PAGINATION â”€â”€â”€ */
 .table-pagination-controls {
     display: flex;
     align-items: center;
@@ -1266,7 +1266,7 @@ tbody td {
     padding: 0 4px;
 }
 
-/* ─── TABLE ENTRIES ─── */
+/* â”€â”€â”€ TABLE ENTRIES â”€â”€â”€ */
 .table-entries-wrap {
     display: flex;
     align-items: center;
@@ -1306,7 +1306,7 @@ tbody td {
     font-size: 13px;
 }
 
-/* ─── SIDEBAR OVERLAY (mobile) ───────────────────────── */
+/* â”€â”€â”€ SIDEBAR OVERLAY (mobile) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 #sidebarOverlay {
     display: none;
     position: fixed;
@@ -1315,7 +1315,7 @@ tbody td {
     z-index: 39;
 }
 
-/* ─── HAMBURGER BTN ──────────────────────────────────── */
+/* â”€â”€â”€ HAMBURGER BTN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 #hamburger {
     display: none;
     background: none;
@@ -1327,7 +1327,7 @@ tbody td {
     margin-right: 4px;
 }
 
-/* ─── RESPONSIVE ─────────────────────────────────────── */
+/* â”€â”€â”€ RESPONSIVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 1100px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1382,7 +1382,7 @@ tbody td {
     }
 }
 
-/* ─── DARK MODE TRANSITIONS ──────────────────────────── */
+/* â”€â”€â”€ DARK MODE TRANSITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 nav,
 aside,
 .card,
@@ -1429,7 +1429,7 @@ aside,
     box-shadow: 0 6px 20px rgba(79, 70, 229, .38);
 }
 
-/* ── Card header ─────────────────────────────────────────────── */
+/* â”€â”€ Card header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-header {
     display: flex;
     align-items: center;
@@ -1440,7 +1440,7 @@ aside,
     border-bottom: 1px solid var(--border, #e2e8f0);
 }
 
-/* ── Table wrapper ───────────────────────────────────────────── */
+/* â”€â”€ Table wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-table-wrap {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -1450,7 +1450,7 @@ aside,
     display: block;
 }
 
-/* ── Table base ──────────────────────────────────────────────── */
+/* â”€â”€ Table base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-table {
     width: 100%;
     min-width: 1200px;
@@ -1459,7 +1459,7 @@ aside,
     font-size: 13px;
 }
 
-/* ── Header row ──────────────────────────────────────────────── */
+/* â”€â”€ Header row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-th {
     padding: 11px 14px;
     text-align: left;
@@ -1483,7 +1483,7 @@ aside,
     width: 96px;
 }
 
-/* ── Body rows ───────────────────────────────────────────────── */
+/* â”€â”€ Body rows â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-row {
     transition: background .14s;
     border-bottom: 1px solid var(--border, #e2e8f0);
@@ -1512,7 +1512,7 @@ aside,
     text-align: center;
 }
 
-/* ── Row number ──────────────────────────────────────────────── */
+/* â”€â”€ Row number â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-num {
     display: inline-flex;
     align-items: center;
@@ -1527,7 +1527,7 @@ aside,
     font-family: 'DM Mono', monospace;
 }
 
-/* ── NIK ─────────────────────────────────────────────────────── */
+/* â”€â”€ NIK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-nik {
     font-family: 'DM Mono', monospace;
     font-size: 12px;
@@ -1539,7 +1539,7 @@ aside,
     white-space: nowrap;
 }
 
-/* ── User cell (avatar + name) ───────────────────────────────── */
+/* â”€â”€ User cell (avatar + name) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-user-cell {
     display: flex;
     align-items: center;
@@ -1592,7 +1592,7 @@ aside,
     white-space: nowrap;
 }
 
-/* ── Password toggle ─────────────────────────────────────────── */
+/* â”€â”€ Password toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-pass-wrap {
     display: flex;
     align-items: center;
@@ -1633,7 +1633,7 @@ aside,
     background: rgba(79, 70, 229, .08);
 }
 
-/* ── Role tag ────────────────────────────────────────────────── */
+/* â”€â”€ Role tag â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-role-tag {
     font-size: 11px !important;
     font-weight: 600 !important;
@@ -1642,14 +1642,14 @@ aside,
     white-space: nowrap;
 }
 
-/* ── Meta text (jabatan / jurusan / unit) ────────────────────── */
+/* â”€â”€ Meta text (jabatan / jurusan / unit) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-meta {
     font-size: 12.5px;
     color: var(--text, #334155);
     white-space: nowrap;
 }
 
-/* ── Date cell ───────────────────────────────────────────────── */
+/* â”€â”€ Date cell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-date {
     display: flex;
     align-items: center;
@@ -1665,7 +1665,7 @@ aside,
     opacity: .6;
 }
 
-/* ── Action buttons ──────────────────────────────────────────── */
+/* â”€â”€ Action buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-actions {
     display: flex;
     align-items: center;
@@ -1725,7 +1725,7 @@ aside,
     box-shadow: 0 4px 12px rgba(239, 68, 68, .32);
 }
 
-/* ── Empty state ─────────────────────────────────────────────── */
+/* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-empty {
     padding: 0 !important;
 }
@@ -1766,7 +1766,7 @@ aside,
     margin: 0;
 }
 
-/* ── Responsive ──────────────────────────────────────────────── */
+/* â”€â”€ Responsive â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (max-width: 768px) {
 
     .um-th,
@@ -1780,7 +1780,7 @@ aside,
 }
 
 /* style menu users (create) */
-/* ── Layout ──────────────────────────────────────────────────── */
+/* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -1806,7 +1806,7 @@ aside,
     }
 }
 
-/* ── Preview card ────────────────────────────────────────────── */
+/* â”€â”€ Preview card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-preview-card {
     overflow: hidden;
     position: sticky;
@@ -1924,7 +1924,7 @@ aside,
     gap: 6px;
 }
 
-/* ── Steps card ──────────────────────────────────────────────── */
+/* â”€â”€ Steps card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-steps-card {
     padding: 18px 20px;
     margin-top: 0;
@@ -1986,7 +1986,7 @@ aside,
     font-weight: 500;
 }
 
-/* ── Form card ───────────────────────────────────────────────── */
+/* â”€â”€ Form card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-form-col,
 .uc-form-card,
 .uc-form-card .card-body,
@@ -2003,7 +2003,7 @@ aside,
     padding: 22px 22px 4px;
 }
 
-/* ── Section labels ──────────────────────────────────────────── */
+/* â”€â”€ Section labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-section-label {
     display: flex;
     align-items: center;
@@ -2033,7 +2033,7 @@ aside,
     letter-spacing: 0;
 }
 
-/* ── Grid helpers ────────────────────────────────────────────── */
+/* â”€â”€ Grid helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2078,7 +2078,7 @@ aside,
     }
 }
 
-/* ── Form group ──────────────────────────────────────────────── */
+/* â”€â”€ Form group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-form-group {
     display: flex;
     flex-direction: column;
@@ -2086,7 +2086,7 @@ aside,
     overflow: visible;
 }
 
-/* ── Label ───────────────────────────────────────────────────── */
+/* â”€â”€ Label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-label {
     font-size: 12px;
     font-weight: 700;
@@ -2108,7 +2108,7 @@ aside,
     line-height: 1;
 }
 
-/* ── Input base ──────────────────────────────────────────────── */
+/* â”€â”€ Input base â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-input {
     padding: 10px 13px;
     border-radius: 10px;
@@ -2277,7 +2277,7 @@ aside,
     flex-shrink: 0;
 }
 
-/* ── Error message ───────────────────────────────────────────── */
+/* â”€â”€ Error message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-error-msg {
     font-size: 11.5px;
     color: #ef4444;
@@ -2287,7 +2287,7 @@ aside,
     font-weight: 500;
 }
 
-/* ── Password wrapper ────────────────────────────────────────── */
+/* â”€â”€ Password wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-pass-wrap {
     position: relative;
 }
@@ -2316,7 +2316,7 @@ aside,
     color: var(--accent, #4f46e5);
 }
 
-/* ── Password strength ───────────────────────────────────────── */
+/* â”€â”€ Password strength â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-strength-bar {
     height: 4px;
     border-radius: 99px;
@@ -2339,7 +2339,7 @@ aside,
     display: block;
 }
 
-/* ── Footer ──────────────────────────────────────────────────── */
+/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .uc-footer {
     display: flex;
     align-items: center;
@@ -2494,7 +2494,7 @@ aside,
 }
 
 /* style users (edit) */
-/* ── Layout ──────────────────────────────────────────────────── */
+/* â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
@@ -2520,7 +2520,7 @@ aside,
     }
 }
 
-/* ── Profile card ────────────────────────────────────────────── */
+/* â”€â”€ Profile card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-profile-card {
     overflow: hidden;
     position: sticky;
@@ -2647,7 +2647,7 @@ aside,
     gap: 6px;
 }
 
-/* ── Perhatian card ──────────────────────────────────────────── */
+/* â”€â”€ Perhatian card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-change-card {
     padding: 16px 18px;
 }
@@ -2689,7 +2689,7 @@ aside,
     flex-shrink: 0;
 }
 
-/* ── Form card ───────────────────────────────────────────────── */
+/* â”€â”€ Form card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-form-col,
 .ue-form-card,
 .ue-form-card .card-body,
@@ -2722,7 +2722,7 @@ aside,
     padding: 22px 22px 4px;
 }
 
-/* ── Section labels ──────────────────────────────────────────── */
+/* â”€â”€ Section labels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-section-label {
     display: flex;
     align-items: center;
@@ -2752,7 +2752,7 @@ aside,
     letter-spacing: 0;
 }
 
-/* ── Grid helpers ────────────────────────────────────────────── */
+/* â”€â”€ Grid helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2777,7 +2777,7 @@ aside,
     }
 }
 
-/* ── Form group ──────────────────────────────────────────────── */
+/* â”€â”€ Form group â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-form-group {
     display: flex;
     flex-direction: column;
@@ -2813,7 +2813,7 @@ aside,
     margin-left: 2px;
 }
 
-/* ── Input ───────────────────────────────────────────────────── */
+/* â”€â”€ Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-input {
     padding: 10px 13px;
     border-radius: 10px;
@@ -2866,7 +2866,7 @@ aside,
     font-weight: 500;
 }
 
-/* ── Password ────────────────────────────────────────────────── */
+/* â”€â”€ Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-pass-wrap {
     position: relative;
 }
@@ -2920,7 +2920,7 @@ aside,
     color: var(--text-sub, #94a3b8);
 }
 
-/* ── Footer ──────────────────────────────────────────────────── */
+/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .ue-footer {
     display: flex;
     align-items: center;
@@ -2994,7 +2994,7 @@ aside,
     box-shadow: 0 6px 20px rgba(16, 185, 129, .38);
 }
 
-/* ─── PAGE TRANSITIONS (TURBO) ───────────────────────── */
+/* â”€â”€â”€ PAGE TRANSITIONS (TURBO) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .turbo-progress-bar {
     height: 3px;
     background-color: var(--accent);
@@ -3022,7 +3022,7 @@ main {
     animation: fadeIn 0.2s ease-in-out;
 }
 
-/* ─── SWEETALERT DARK MODE ─── */
+/* â”€â”€â”€ SWEETALERT DARK MODE â”€â”€â”€ */
 [data-theme="dark"] .swal2-popup {
     background: var(--surface) !important;
     color: var(--text) !important;
@@ -3885,4 +3885,206 @@ main {
         justify-content: center;
         width: 100%;
     }
+}
+
+/* ─── PREMIUM MODAL (Kirim Akses) ───────────────────── */
+.premium-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.premium-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.premium-modal-card {
+    background: var(--bg-card, #ffffff);
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.5);
+    transform: scale(0.95) translateY(15px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+    position: relative;
+}
+[data-theme="dark"] .premium-modal-card {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.premium-modal-overlay.active .premium-modal-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+.premium-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-body, #f8fafc);
+    border: none;
+    color: var(--text-sub, #64748b);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.premium-modal-close:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+[data-theme="dark"] .premium-modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+.premium-modal-body {
+    padding: 32px 24px 24px;
+    text-align: center;
+}
+.premium-modal-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: #3b82f6;
+    font-size: 1.75rem;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+    transform: rotate(-5deg);
+}
+[data-theme="dark"] .premium-modal-icon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
+    color: #60a5fa;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+.premium-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main, #0f172a);
+    margin-bottom: 8px;
+    letter-spacing: -0.025em;
+}
+.premium-modal-desc {
+    font-size: 0.95rem;
+    color: var(--text-sub, #64748b);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+.premium-modal-desc strong {
+    color: var(--blue-500, #3b82f6);
+    display: block;
+    margin-top: 4px;
+    font-size: 1rem;
+}
+.premium-input-group {
+    text-align: left;
+    margin-bottom: 24px;
+}
+.premium-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-main, #334155);
+    margin-bottom: 8px;
+}
+.premium-input-wrapper {
+    position: relative;
+}
+.premium-input-wrapper i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+.premium-input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    background: var(--bg-body, #f8fafc);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--text-main, #0f172a);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+}
+[data-theme="dark"] .premium-input {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.premium-input:focus {
+    outline: none;
+    background: var(--bg-card, #ffffff);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+.premium-input:focus + i, .premium-input:not(:placeholder-shown) + i {
+    color: #3b82f6;
+}
+.premium-modal-footer {
+    padding: 16px 24px 24px;
+    display: flex;
+    gap: 12px;
+}
+.premium-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+}
+.premium-btn-cancel {
+    background: var(--bg-body, #f1f5f9);
+    color: var(--text-sub, #475569);
+}
+[data-theme="dark"] .premium-btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+}
+.premium-btn-cancel:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+[data-theme="dark"] .premium-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+}
+.premium-btn-submit {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+}
+.premium-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.39);
+}
+.premium-btn-submit:active {
+    transform: translateY(0);
 }
