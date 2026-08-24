@@ -15,10 +15,10 @@
     $totalPendapatan = \App\Models\DetailKegiatan::whereIn('cooperation_id', $dashboardCooperationIds)->sum('nilai_kontrak') ?? 0;
 
     $mitraNasional = \App\Models\Mitra::whereIn('id', $dashboardMitraIds)
-        ->whereRaw('LOWER(kategori) = ?', ['nasional'])
+        ->nasional()
         ->count() ?? 0;
     $mitraInternasional = \App\Models\Mitra::whereIn('id', $dashboardMitraIds)
-        ->whereRaw('LOWER(kategori) = ?', ['internasional'])
+        ->internasional()
         ->count() ?? 0;
 
     $totalMoU = (clone $dashboardCooperationQuery)->where('jenis', 'like', '%MoU%')->count() ?? 0;
