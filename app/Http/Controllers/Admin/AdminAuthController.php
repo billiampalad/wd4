@@ -19,7 +19,16 @@ class AdminAuthController
 
     public function login(Request $request)
     {
-        $credentials = $request->only('nik','password');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ], [
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
+        ]);
+
+        $credentials = $request->only('email', 'password');
         $throttleKey = $this->throttleKey($request);
         $lockoutKey = $this->lockoutKey($request);
 
@@ -27,8 +36,7 @@ class AdminAuthController
             return $this->lockoutResponse($request, $lockoutSeconds);
         }
 
-        if(Auth::attempt($credentials)){
-
+        if (Auth::attempt($credentials)) {
             if (strtolower(trim((string) Auth::user()->role?->role_name)) === 'admin') {
                 RateLimiter::clear($throttleKey);
                 Cache::forget($lockoutKey);
@@ -53,7 +61,7 @@ class AdminAuthController
         Request $request,
         string $throttleKey,
         string $lockoutKey,
-        string $message = 'NIK atau kata sandi salah.'
+        string $message = 'Email atau kata sandi salah.'
     ) {
         RateLimiter::hit($throttleKey, self::LOGIN_LOCKOUT_SECONDS);
 
@@ -68,7 +76,7 @@ class AdminAuthController
 
         return back()
             ->with('error', "{$message} Sisa percobaan: {$remainingAttempts} kali.")
-            ->withInput($request->only('nik'));
+            ->withInput($request->only('email'));
     }
 
     private function activateLockout(string $lockoutKey): void
@@ -100,7 +108,7 @@ class AdminAuthController
         return back()
             ->with('error', "{$prefix} Silakan coba lagi dalam {$seconds} detik.")
             ->with('lockout_seconds', $seconds)
-            ->withInput($request->only('nik'));
+            ->withInput($request->only('email'));
     }
 
     private function throttleKey(Request $request): string
