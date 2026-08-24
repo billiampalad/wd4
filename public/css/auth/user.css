@@ -2445,6 +2445,7 @@ aside,
 .um-btn-view,
 .um-btn-edit,
 .um-btn-warn,
+.um-btn-send,
 .um-btn-delete {
     display: inline-flex;
     align-items: center;
@@ -2457,6 +2458,19 @@ aside,
     cursor: pointer;
     text-decoration: none;
     transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+}
+
+/* Send access button (blue) */
+.um-btn-send {
+    background: rgba(37, 99, 235, .12);
+    color: #2563eb;
+}
+
+.um-btn-send:hover {
+    background: #2563eb;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
 }
 
 /* View button (indigo) */

@@ -47,7 +47,8 @@ body {
     color: var(--text);
     min-height: 100vh;
     transition: background var(--transition), color var(--transition);
-    overflow-x: hidden; /* Mencegah scroll horizontal pada level body */
+    overflow-x: hidden;
+    /* Mencegah scroll horizontal pada level body */
 }
 
 /* ─── SCROLLBAR ─────────────────────────────────────── */
@@ -316,9 +317,12 @@ nav {
     display: flex;
     padding-top: var(--nav-h);
     min-height: 100vh;
-    width: 100%; /* Pastikan layout mengambil seluruh lebar */
-    max-width: 100vw; /* Batasi lebar layout maksimal selebar viewport */
-    overflow-x: hidden; /* Mencegah overflow horizontal pada level layout */
+    width: 100%;
+    /* Pastikan layout mengambil seluruh lebar */
+    max-width: 100vw;
+    /* Batasi lebar layout maksimal selebar viewport */
+    overflow-x: hidden;
+    /* Mencegah overflow horizontal pada level layout */
 }
 
 /* ─── SIDEBAR ─────────────────────────────────────────── */
@@ -334,10 +338,10 @@ aside {
     overflow-x: hidden;
     padding: 20px 12px;
     z-index: 40;
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                background var(--transition), 
-                border-color var(--transition), 
-                transform var(--transition);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        background var(--transition),
+        border-color var(--transition),
+        transform var(--transition);
 }
 
 /* Sidebar Collapsed State */
@@ -375,8 +379,8 @@ body.sidebar-collapsed .menu-item span {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1000;
     flex: none !important;
     display: inline-block !important;
@@ -392,7 +396,8 @@ body.sidebar-collapsed .submenu {
     left: 100%;
     top: 0;
     margin-left: 0;
-    padding-left: 12px; /* Area jembatan hover */
+    padding-left: 12px;
+    /* Area jembatan hover */
     width: 200px;
     background: transparent;
     opacity: 0;
@@ -542,10 +547,10 @@ body.sidebar-collapsed main {
     color: var(--text-sub);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                background var(--transition),
-                color var(--transition),
-                border-color var(--transition),
-                box-shadow var(--transition);
+        background var(--transition),
+        color var(--transition),
+        border-color var(--transition),
+        box-shadow var(--transition);
 }
 
 .sidebar-toggle-floating:hover {
@@ -715,8 +720,10 @@ main {
     flex: 1;
     padding: 28px 28px 40px;
     transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    min-width: 0; /* Penting agar flex item tidak melebar melebihi kontainer */
-    overflow-x: hidden; /* Mencegah scroll pada level main */
+    min-width: 0;
+    /* Penting agar flex item tidak melebar melebihi kontainer */
+    overflow-x: hidden;
+    /* Mencegah scroll pada level main */
 }
 
 /* ─── PAGE HEADER ────────────────────────────────────── */
@@ -1187,6 +1194,7 @@ tbody td {
     border-radius: 2px;
     font-weight: 600;
 }
+
 [data-theme="dark"] .search-highlight {
     background-color: rgba(245, 158, 11, 0.3);
     color: #fbbf24;
@@ -1283,7 +1291,6 @@ tbody td {
 
 .entries-select:focus {
     border-color: var(--accent);
-}
     padding: 8px 14px;
     font-size: 13px;
     color: var(--text-sub);
@@ -1438,14 +1445,16 @@ aside,
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
-    max-width: 100%; /* Pastikan tidak melebihi lebar card */
+    max-width: 100%;
+    /* Pastikan tidak melebihi lebar card */
     display: block;
 }
 
 /* ── Table base ──────────────────────────────────────────────── */
 .um-table {
     width: 100%;
-    min-width: 1200px; /* Tambahkan min-width agar tabel meluap jika layar sempit */
+    min-width: 1200px;
+    /* Tambahkan min-width agar tabel meluap jika layar sempit */
     border-collapse: collapse;
     font-size: 13px;
 }
@@ -1491,7 +1500,8 @@ aside,
 .um-td {
     padding: 12px 14px;
     vertical-align: middle;
-    white-space: nowrap; /* Mencegah teks turun ke bawah agar scroll horizontal muncul */
+    white-space: nowrap;
+    /* Mencegah teks turun ke bawah agar scroll horizontal muncul */
 }
 
 .um-td-num {
@@ -1664,7 +1674,8 @@ aside,
 }
 
 .um-btn-edit,
-.um-btn-delete {
+.um-btn-delete,
+.um-btn-send {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1676,6 +1687,18 @@ aside,
     cursor: pointer;
     text-decoration: none;
     transition: transform .13s, box-shadow .15s, opacity .15s;
+}
+
+.um-btn-send {
+    background: rgba(37, 99, 235, .12);
+    color: #2563eb;
+}
+
+.um-btn-send:hover {
+    background: #2563eb;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
 }
 
 .um-btn-edit {
@@ -2440,6 +2463,7 @@ aside,
 }
 
 @media (max-width: 680px) {
+
     .mitra-form-page .uc-form-header,
     .mitra-form-page .uc-body,
     .mitra-form-page .uc-footer {
@@ -2978,8 +3002,13 @@ aside,
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Hilangkan animasi pada elemen preview agar tidak kedip */
@@ -3021,6 +3050,7 @@ main {
 [data-theme="dark"] .swal2-success-fix {
     background-color: var(--surface) !important;
 }
+
 /* ADMIN DASHBOARD UNIT-STYLE HEADER */
 .admin-dashboard .ud-topbar {
     display: flex;
@@ -3169,6 +3199,7 @@ main {
     height: 34px;
     font-size: 12px;
 }
+
 [data-theme="dark"] .admin-dashboard .ud-topbar {
     background:
         linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(15, 23, 42, 0.82)),
@@ -3796,6 +3827,7 @@ main {
 .prodi-form-page .uc-select-menu {
     z-index: 3001;
 }
+
 .prodi-form-page .prodi-field-jenjang .uc-select-menu {
     top: auto;
     bottom: calc(100% + 6px);

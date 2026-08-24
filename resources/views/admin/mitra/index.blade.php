@@ -88,7 +88,7 @@
                                 <span class="um-meta">-</span>
                             @endif
                         </td>
-                        <td class="um-th">
+                        <td class="um-td">
                             @if($mitra->users->count() > 0)
                                 <span class="tag tag-blue"><i class="fas fa-check-circle" style="margin-right: 4px;"></i> Terdaftar</span>
                             @else
@@ -98,7 +98,11 @@
                         <td class="um-td um-td-aksi">
                             <div class="actions um-actions">
                                 @if($mitra->users->count() == 0)
-                                    <button type="button" class="btn-action" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="background-color: var(--blue-500); color: white; border: none; cursor: pointer;">
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; border: none; cursor: pointer; background: rgba(37, 99, 235, 0.15); color: #2563eb;">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                @else
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Ulang Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; border: none; cursor: pointer; background: rgba(37, 99, 235, 0.15); color: #2563eb;">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 @endif
