@@ -77,20 +77,16 @@
 
                 <div class="form-group" x-data="{ showInfo: false }">
                     <label>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <rect x="2" y="5" width="20" height="14" rx="2" />
-                            <path d="M2 10h20" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                         </svg>
-                        Email/Nomor Induk Pendidikan
+                        Email
                         {{-- Interactive Info Icon & Popover Tooltip --}}
                         <div style="position: relative; display: inline-flex; align-items: center;">
-                            <button type="button"
-                                @mouseenter="showInfo = true"
-                                @mouseleave="showInfo = false"
-                                @click="showInfo = !showInfo"
-                                aria-label="Informasi Email atau NIP"
+                            <button type="button" @mouseenter="showInfo = true" @mouseleave="showInfo = false"
+                                @click="showInfo = !showInfo" aria-label="Informasi Email"
                                 style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.18); width: 22px; height: 22px; border-radius: 50%; color: var(--accent, #4f46e5); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 11px;"
                                 onmouseover="this.style.background='var(--accent, #4f46e5)'; this.style.color='#ffffff';"
                                 onmouseout="this.style.background='rgba(79, 70, 229, 0.08)'; this.style.color='var(--accent, #4f46e5)';">
@@ -98,8 +94,7 @@
                             </button>
 
                             {{-- Floating Premium Tooltip Card --}}
-                            <div x-show="showInfo"
-                                x-transition:enter="transition ease-out duration-200"
+                            <div x-show="showInfo" x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 translate-y-1 scale-95"
                                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
                                 x-transition:leave="transition ease-in duration-150"
@@ -108,18 +103,24 @@
                                 style="position: absolute; right: 0; bottom: calc(100% + 8px); width: 270px; background: #ffffff; border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 12px 14px; box-shadow: 0 14px 30px -4px rgba(0,0,0,0.15); z-index: 70; pointer-events: none;"
                                 x-cloak>
                                 <div style="display: flex; gap: 10px; align-items: flex-start;">
-                                    <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
+                                    <div
+                                        style="width: 26px; height: 26px; border-radius: 8px; background: rgba(79, 70, 229, 0.12); color: var(--accent, #4f46e5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px;">
                                         <i class="fas fa-info-circle"></i>
                                     </div>
                                     <div style="display: flex; flex-direction: column; gap: 2px;">
-                                        <span style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Petunjuk Pengisian</span>
-                                        <p style="font-size: 11px; color: var(--muted); margin: 0; line-height: 1.45; font-weight: 400;">
-                                            Gunakan NIP untuk akun internal kampus. Mitra menggunakan email yang telah terdaftar.
+                                        <span
+                                            style="font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 0.2px;">Petunjuk
+                                            Pengisian</span>
+                                        <p
+                                            style="font-size: 11px; color: var(--muted); margin: 0; line-height: 1.45; font-weight: 400;">
+                                            Gunakan alamat email resmi yang telah terdaftar
                                         </p>
                                     </div>
                                 </div>
                                 {{-- Arrow pointer --}}
-                                <div style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: #ffffff; border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);"></div>
+                                <div
+                                    style="position: absolute; bottom: -5px; right: 7px; width: 8px; height: 8px; background: #ffffff; border-right: 1px solid var(--border, #e2e8f0); border-bottom: 1px solid var(--border, #e2e8f0); transform: rotate(45deg);">
+                                </div>
                             </div>
                         </div>
                     </label>
@@ -127,19 +128,18 @@
                         <svg class="input-prefix" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
+                            <rect width="20" height="16" x="2" y="4" rx="2" />
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                         </svg>
-                        <input type="text" name="nik" placeholder="Masukkan Email atau NIP Anda" autocomplete="off"
-                            value="{{ old('nik') }}" required>
+                        <input type="email" name="email" placeholder="Masukkan alamat email Anda" autocomplete="email"
+                            value="{{ old('email') }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
@@ -152,8 +152,7 @@
                             <rect x="3" y="11" width="18" height="11" rx="2" />
                             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                         </svg>
-                        <input type="password" id="pass" name="password" placeholder="Masukkan kata sandi"
-                            required>
+                        <input type="password" id="pass" name="password" placeholder="Masukkan kata sandi" required>
                         <button type="button" class="eye-btn" onclick="togglePass()" title="Tampilkan">
                             <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -168,9 +167,9 @@
                 <div class="forgot-password-wrap">
                     <a href="{{ route('password.request') }}" class="forgot-password-link">
                         <span class="forgot-password-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <circle cx="7.5" cy="15.5" r="5.5" />
                                 <path d="m21 2-9.6 9.6" />
                                 <path d="m15.5 7.5 2 2L21 6" />
@@ -181,9 +180,9 @@
 
                     <a href="{{ route('pengajuan.kerjasama.create') }}" class="apply-cooperation-link">
                         <span class="apply-cooperation-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                                 <path d="M14 2v6h6" />
                                 <path d="M12 18v-6" />
@@ -196,9 +195,8 @@
 
                 <button type="submit" class="btn-submit">
                     <div class="btn-inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                             <polyline points="10 17 15 12 10 7" />
                             <line x1="15" y1="12" x2="3" y2="12" />

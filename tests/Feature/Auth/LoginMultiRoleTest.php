@@ -27,56 +27,56 @@ class LoginMultiRoleTest extends TestCase
     }
 
     /**
-     * Uji autentikasi dan redirect untuk seluruh 8 role aktor sistem WD4.
+     * Uji autentikasi dan redirect untuk seluruh 8 role aktor sistem WD4 menggunakan email.
      */
-    public function test_all_8_roles_can_login_and_redirect_to_correct_dashboard(): void
+    public function test_all_8_roles_can_login_with_email_and_redirect_to_correct_dashboard(): void
     {
         $roleTestCases = [
             [
                 'role' => 'admin',
-                'nik' => '120604',
+                'email' => 'admin@polnado.ac.id',
                 'expected_redirect' => '/admin',
                 'name' => 'Akun Admin',
             ],
             [
                 'role' => 'pimpinan',
-                'nik' => '012460',
+                'email' => 'pimpinan@polnado.ac.id',
                 'expected_redirect' => '/pimpinan',
                 'name' => 'Akun Pimpinan',
             ],
             [
                 'role' => 'humas',
-                'nik' => '123456',
+                'email' => 'humas@polnado.ac.id',
                 'expected_redirect' => '/unit',
                 'name' => 'Akun Humas / Unit Kerja',
             ],
             [
                 'role' => 'jurusan',
-                'nik' => '222222',
+                'email' => 'jurusan@polnado.ac.id',
                 'expected_redirect' => '/jurusan',
                 'name' => 'Akun Jurusan',
             ],
             [
                 'role' => 'upa',
-                'nik' => '121206',
+                'email' => 'upa@polnado.ac.id',
                 'expected_redirect' => '/upa',
                 'name' => 'Akun UPA',
             ],
             [
                 'role' => 'pusat',
-                'nik' => '3333333',
+                'email' => 'pusat@polnado.ac.id',
                 'expected_redirect' => '/pusat',
                 'name' => 'Akun Pusat',
             ],
             [
                 'role' => 'prodi',
-                'nik' => '4444444',
+                'email' => 'prodi@polnado.ac.id',
                 'expected_redirect' => '/prodi',
                 'name' => 'Akun Prodi',
             ],
             [
                 'role' => 'mitra',
-                'nik' => '5555555',
+                'email' => 'mitra@industri.co.id',
                 'expected_redirect' => '/mitra',
                 'name' => 'Akun Mitra',
             ],
@@ -84,12 +84,12 @@ class LoginMultiRoleTest extends TestCase
 
         foreach ($roleTestCases as $case) {
             // Pastikan user ada di DB
-            $user = User::where('nik', $case['nik'])->first();
-            $this->assertNotNull($user, "User dengan NIK {$case['nik']} untuk role {$case['role']} harus ada di database.");
+            $user = User::where('email', $case['email'])->first();
+            $this->assertNotNull($user, "User dengan email {$case['email']} untuk role {$case['role']} harus ada di database.");
 
-            // Lakukan request login
+            // Lakukan request login dengan email
             $response = $this->post('/login', [
-                'nik' => $case['nik'],
+                'email' => $case['email'],
                 'password' => 'password',
             ]);
 
@@ -113,18 +113,18 @@ class LoginMultiRoleTest extends TestCase
     public function test_each_role_can_access_their_own_dashboard(): void
     {
         $dashboards = [
-            ['nik' => '120604', 'url' => '/admin/dashboard'],
-            ['nik' => '012460', 'url' => '/pimpinan'],
-            ['nik' => '123456', 'url' => '/unit'],
-            ['nik' => '222222', 'url' => '/jurusan'],
-            ['nik' => '121206', 'url' => '/upa'],
-            ['nik' => '3333333', 'url' => '/pusat'],
-            ['nik' => '4444444', 'url' => '/prodi'],
-            ['nik' => '5555555', 'url' => '/mitra'],
+            ['email' => 'admin@polnado.ac.id', 'url' => '/admin/dashboard'],
+            ['email' => 'pimpinan@polnado.ac.id', 'url' => '/pimpinan'],
+            ['email' => 'humas@polnado.ac.id', 'url' => '/unit'],
+            ['email' => 'jurusan@polnado.ac.id', 'url' => '/jurusan'],
+            ['email' => 'upa@polnado.ac.id', 'url' => '/upa'],
+            ['email' => 'pusat@polnado.ac.id', 'url' => '/pusat'],
+            ['email' => 'prodi@polnado.ac.id', 'url' => '/prodi'],
+            ['email' => 'mitra@industri.co.id', 'url' => '/mitra'],
         ];
 
         foreach ($dashboards as $d) {
-            $user = User::where('nik', $d['nik'])->firstOrFail();
+            $user = User::where('email', $d['email'])->firstOrFail();
 
             $response = $this->actingAs($user)->get($d['url']);
             $response->assertStatus(200);
@@ -137,31 +137,31 @@ class LoginMultiRoleTest extends TestCase
     public function test_role_middleware_prevents_unauthorized_cross_role_access(): void
     {
         // 1. User Jurusan mencoba buka Dashboard Pimpinan -> Harus dilarang & redirect ke dashboard jurusan
-        $jurusanUser = User::where('nik', '222222')->firstOrFail();
+        $jurusanUser = User::where('email', 'jurusan@polnado.ac.id')->firstOrFail();
         $response = $this->actingAs($jurusanUser)->get('/pimpinan');
         $response->assertRedirect('/jurusan');
         $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
 
         // 2. User Humas mencoba buka Dashboard Admin -> Harus dilarang & redirect ke dashboard unit
-        $humasUser = User::where('nik', '123456')->firstOrFail();
+        $humasUser = User::where('email', 'humas@polnado.ac.id')->firstOrFail();
         $response = $this->actingAs($humasUser)->get('/admin/dashboard');
         $response->assertRedirect('/unit');
         $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
 
         // 3. User UPA mencoba buka Dashboard Jurusan -> Harus dilarang & redirect ke dashboard upa
-        $upaUser = User::where('nik', '121206')->firstOrFail();
+        $upaUser = User::where('email', 'upa@polnado.ac.id')->firstOrFail();
         $response = $this->actingAs($upaUser)->get('/jurusan');
         $response->assertRedirect('/upa');
         $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
 
         // 4. User Mitra mencoba buka Dashboard Pusat -> Harus dilarang & redirect ke dashboard mitra
-        $mitraUser = User::where('nik', '5555555')->firstOrFail();
+        $mitraUser = User::where('email', 'mitra@industri.co.id')->firstOrFail();
         $response = $this->actingAs($mitraUser)->get('/pusat');
         $response->assertRedirect('/mitra');
         $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
 
         // 5. User Prodi mencoba buka Dashboard Pimpinan -> Harus dilarang & redirect ke dashboard prodi
-        $prodiUser = User::where('nik', '4444444')->firstOrFail();
+        $prodiUser = User::where('email', 'prodi@polnado.ac.id')->firstOrFail();
         $response = $this->actingAs($prodiUser)->get('/pimpinan');
         $response->assertRedirect('/prodi');
         $response->assertSessionHas('error', 'Anda tidak memiliki akses ke halaman tersebut.');
@@ -173,12 +173,27 @@ class LoginMultiRoleTest extends TestCase
     public function test_login_with_invalid_password_returns_error(): void
     {
         $response = $this->post('/login', [
-            'nik' => '120604',
+            'email' => 'admin@polnado.ac.id',
             'password' => 'password-yang-salah-123',
         ]);
 
         $response->assertStatus(302);
         $response->assertSessionHas('error');
+        $this->assertGuest();
+    }
+
+    /**
+     * Uji skenario negatif: Format email tidak valid.
+     */
+    public function test_login_with_invalid_email_format_returns_validation_error(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'bukan-email-valid',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors(['email']);
         $this->assertGuest();
     }
 

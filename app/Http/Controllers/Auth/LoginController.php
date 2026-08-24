@@ -19,7 +19,16 @@ class LoginController
 
     public function login(Request $request)
     {
-        $credentials = $request->only('nik', 'password');
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ], [
+            'email.required' => 'Alamat email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
+        ]);
+
+        $credentials = $request->only('email', 'password');
         $throttleKey = $this->throttleKey($request);
         $lockoutKey = $this->lockoutKey($request);
 
@@ -95,12 +104,12 @@ class LoginController
             RateLimiter::clear($throttleKey);
             $this->activateLockout($lockoutKey);
 
-            return $this->lockoutResponse($request, self::LOGIN_LOCKOUT_SECONDS, 'NIK atau kata sandi salah.');
+            return $this->lockoutResponse($request, self::LOGIN_LOCKOUT_SECONDS, 'Email atau kata sandi salah.');
         }
 
         return back()
-            ->with('error', "NIK atau kata sandi salah. Sisa percobaan: {$remainingAttempts} kali.")
-            ->withInput($request->only('nik'));
+            ->with('error', "Email atau kata sandi salah. Sisa percobaan: {$remainingAttempts} kali.")
+            ->withInput($request->only('email'));
     }
 
     private function activateLockout(string $lockoutKey): void
@@ -132,7 +141,7 @@ class LoginController
         return back()
             ->with('error', "{$prefix} Silakan coba lagi dalam {$seconds} detik.")
             ->with('lockout_seconds', $seconds)
-            ->withInput($request->only('nik'));
+            ->withInput($request->only('email'));
     }
 
     private function normalizeRoleName(?string $roleName): string
