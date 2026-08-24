@@ -25,8 +25,8 @@ class MitraController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
-            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'nama_mitra' => 'required|string|max:255|unique:mitras,nama_mitra',
+            'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'kategori' => 'required|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
@@ -34,15 +34,14 @@ class MitraController extends Controller
             'website' => 'nullable|string|max:255',
         ]);
 
-        Mitra::create($request->only([
-            'nama_mitra',
-            'id_klasifikasi',
-            'kategori',
-            'negara',
-            'alamat',
-            'telp',
-            'website',
-        ]));
+        Mitra::create([
+            'nama_mitra' => $request->nama_mitra,
+            'klasifikasi_id' => $request->id_klasifikasi,
+            'negara' => $request->negara,
+            'alamat' => $request->alamat,
+            'telepon' => $request->telp,
+            'website' => $request->website,
+        ]);
 
         return redirect()->route('mitra.index')->with('success', 'Mitra berhasil ditambahkan.');
     }
@@ -57,8 +56,8 @@ class MitraController extends Controller
     public function update(Request $request, Mitra $mitra)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
-            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'nama_mitra' => 'required|string|max:255|unique:mitras,nama_mitra,' . $mitra->id,
+            'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'kategori' => 'required|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
@@ -66,21 +65,24 @@ class MitraController extends Controller
             'website' => 'nullable|string|max:255',
         ]);
 
-        $mitra->update($request->only([
-            'nama_mitra',
-            'id_klasifikasi',
-            'kategori',
-            'negara',
-            'alamat',
-            'telp',
-            'website',
-        ]));
+        $mitra->update([
+            'nama_mitra' => $request->nama_mitra,
+            'klasifikasi_id' => $request->id_klasifikasi,
+            'negara' => $request->negara,
+            'alamat' => $request->alamat,
+            'telepon' => $request->telp,
+            'website' => $request->website,
+        ]);
 
         return redirect()->route('mitra.index')->with('success', 'Mitra berhasil diperbarui.');
     }
 
     public function destroy(Mitra $mitra)
     {
+        if ($mitra->cooperations()->count() > 0) {
+            return redirect()->route('mitra.index')->with('error', 'Mitra tidak dapat dihapus karena masih terkait dengan data kerjasama.');
+        }
+
         $mitra->delete();
         return redirect()->route('mitra.index')->with('success', 'Mitra berhasil dihapus.');
     }
