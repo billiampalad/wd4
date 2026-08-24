@@ -11,7 +11,7 @@ class MitraController extends Controller
 {
     public function index()
     {
-        $mitras = Mitra::with('cooperations')->latest()->get();
+        $mitras = Mitra::with(['cooperations', 'users'])->latest()->get();
         return view('admin.mitra.index', compact('mitras'));
     }
 
@@ -87,21 +87,23 @@ class MitraController extends Controller
         return redirect()->route('mitra.index')->with('success', 'Mitra berhasil dihapus.');
     }
 
-    public function sendAccessLogin(Mitra $mitra)
+    public function sendAccessLogin(Request $request, Mitra $mitra)
     {
-        if (!$mitra->email) {
-            return back()->with('error', 'Mitra tidak memiliki email.');
-        }
+        $request->validate([
+            'email' => 'required|email|unique:users,email'
+        ]);
 
         $password = \Illuminate\Support\Str::random(10);
         $user = \App\Models\User::create([
             'nik' => 'MITRA' . $mitra->id,
             'name' => $mitra->nama_mitra,
-            'email' => $mitra->email,
+            'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($password),
             'role_id' => \App\Models\Role::where('role_name', 'mitra')->first()?->id,
             'mitra_id' => $mitra->id,
         ]);
+
+        $mitra->update(['status_akses' => 'Aktif']);
 
         return back()->with('success', 'Akses login berhasil dikirim ke ' . $user->email . '. Password: ' . $password);
     }

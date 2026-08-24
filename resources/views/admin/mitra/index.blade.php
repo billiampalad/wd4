@@ -46,6 +46,7 @@
                         <th class="um-th">Kategori</th>
                         <th class="um-th">Total Kegiatan</th>
                         <th class="um-th">Status Kegiatan</th>
+                        <th class="um-th">Status Akun</th>
                         <th class="um-th um-th-aksi">Aksi</th>
                     </tr>
                 </thead>
@@ -87,8 +88,20 @@
                                 <span class="um-meta">-</span>
                             @endif
                         </td>
+                        <td class="um-th">
+                            @if($mitra->users->count() > 0)
+                                <span class="tag tag-blue"><i class="fas fa-check-circle" style="margin-right: 4px;"></i> Terdaftar</span>
+                            @else
+                                <span class="tag tag-yellow" style="background-color: rgba(245, 158, 11, 0.1); color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; border: 1px solid rgba(245, 158, 11, 0.2);"><i class="fas fa-exclamation-circle" style="margin-right: 4px;"></i> Belum Punya Akun</span>
+                            @endif
+                        </td>
                         <td class="um-td um-td-aksi">
                             <div class="actions um-actions">
+                                @if($mitra->users->count() == 0)
+                                    <button type="button" class="btn-action" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="background-color: var(--blue-500); color: white; border: none; cursor: pointer;">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                @endif
                                 <a href="{{ route('mitra.edit', $mitra->id) }}" class="btn-action edit um-btn-edit" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -104,7 +117,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="um-empty">
+                        <td colspan="8" class="um-empty">
                             <div class="um-empty-state">
                                 <div class="um-empty-icon">
                                     <i class="fas fa-handshake-slash"></i>
@@ -119,5 +132,60 @@
             </table>
         </div>
     </div>
+
+    <!-- Modal Kirim Akses Login -->
+    <div id="accessModal" class="um-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div class="card um-card" style="width: 450px; max-width: 90%; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--border-color);">
+            <div class="card-header um-header" style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div class="card-title" style="margin: 0; font-size: 1.1rem;"><i class="fas fa-key" style="color: var(--blue-500);"></i> Kirim Akses Login</div>
+                <button type="button" onclick="closeAccessModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-sub); transition: color 0.2s;">&times;</button>
+            </div>
+            <form id="accessForm" method="POST" action="">
+                @csrf
+                <div style="padding: 20px;">
+                    <p style="margin-bottom: 20px; font-size: 0.95rem; color: var(--text-sub); line-height: 1.5;">
+                        Kirimkan kredensial login ke mitra: <br>
+                        <strong id="modalMitraName" style="color: var(--text-main); font-size: 1.05rem;"></strong>
+                    </p>
+                    <div style="margin-bottom: 15px;">
+                        <label for="email" style="display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: var(--text-main);">Alamat Email</label>
+                        <input type="email" name="email" id="email" required placeholder="Masukkan email aktif mitra..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+                    </div>
+                </div>
+                <div style="padding: 15px 20px; border-top: 1px solid var(--border-color); text-align: right; background: var(--bg-body);">
+                    <button type="button" onclick="closeAccessModal()" style="padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; margin-right: 10px; color: var(--text-sub); font-weight: 500;">Batal</button>
+                    <button type="submit" class="um-btn-add" style="padding: 10px 18px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;"><i class="fas fa-paper-plane"></i> Kirim Akses</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAccessModal(id, name) {
+            document.getElementById('modalMitraName').textContent = name;
+            // Kita bisa menggunakan route manual atau menyesuaikan action URL
+            document.getElementById('accessForm').action = '/admin/mitra/' + id + '/send-access';
+            
+            var modal = document.getElementById('accessModal');
+            modal.style.display = 'flex';
+            
+            // Set focus ke input email
+            setTimeout(() => {
+                document.getElementById('email').focus();
+            }, 100);
+        }
+
+        function closeAccessModal() {
+            document.getElementById('accessModal').style.display = 'none';
+            document.getElementById('email').value = '';
+        }
+        
+        // Tutup modal jika klik area luar modal
+        document.getElementById('accessModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAccessModal();
+            }
+        });
+    </script>
 </main>
 @endsection
