@@ -22,7 +22,7 @@ class KlasifikasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:100',
+            'nama' => 'required|string|max:100|unique:klasifikasis,nama',
         ]);
 
         Klasifikasi::create($request->all());
@@ -38,7 +38,7 @@ class KlasifikasiController extends Controller
     public function update(Request $request, Klasifikasi $klasifikasi)
     {
         $request->validate([
-            'nama' => 'required|string|max:100',
+            'nama' => 'required|string|max:100|unique:klasifikasis,nama,' . $klasifikasi->id,
         ]);
 
         $klasifikasi->update($request->all());

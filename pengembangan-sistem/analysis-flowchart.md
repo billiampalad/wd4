@@ -346,7 +346,7 @@ flowchart TD
 
 ---
 
-### 3.5 UC05 — Mengelola Data Jurusan/Prodi/UPA/Pusat
+### 3.5 UC05 — Mengelola Data Humas/Jurusan/Prodi/UPA/Pusat
 
 **Aktor**: Admin
 
@@ -355,10 +355,11 @@ flowchart TD
     Start(("●"))
     A["Membuka Halaman Kelola Unit"]
     B{"Pilih Jenis Unit?"}
-    C1["Mengelola Data Jurusan"]
-    C2["Mengelola Data Prodi"]
-    C3["Mengelola Data UPA"]
-    C4["Mengelola Data Pusat"]
+    C1["Mengelola Data Humas"]
+    C2["Mengelola Data Jurusan"]
+    C3["Mengelola Data Prodi"]
+    C4["Mengelola Data UPA"]
+    C5["Mengelola Data Pusat"]
     D["Menampilkan Daftar Unit"]
     E{"Pilih Aksi?"}
     F["Tambah Unit Baru"]
@@ -372,10 +373,11 @@ flowchart TD
     End(("◉"))
 
     Start --> A --> B
-    B -- Jurusan --> C1 --> D
-    B -- Prodi --> C2 --> D
-    B -- UPA --> C3 --> D
-    B -- Pusat --> C4 --> D
+    B -- Humas --> C1 --> D
+    B -- Jurusan --> C2 --> D
+    B -- Prodi --> C3 --> D
+    B -- UPA --> C4 --> D
+    B -- Pusat --> C5 --> D
     D --> E
     E -- Tambah --> F --> I
     E -- Edit --> G --> I
