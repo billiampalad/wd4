@@ -11,7 +11,7 @@ class JenisKerjasama extends Model
 
     protected $table = 'jenis_kerjasamas';
 
-    protected $fillable = ['nama_kerjasama'];
+    protected $fillable = ['nama', 'nama_kerjasama'];
 
     public function kegiatanKerjasamas()
     {

@@ -26,10 +26,12 @@ class JenisKerjasamaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama',
+            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama',
         ]);
 
-        JenisKerjasama::create($request->all());
+        JenisKerjasama::create([
+            'nama' => $request->nama_kerjasama
+        ]);
 
         return redirect()
             ->route('jkerjasama.index')
@@ -44,10 +46,12 @@ class JenisKerjasamaController extends Controller
     public function update(Request $request, JenisKerjasama $jkerjasama)
     {
         $request->validate([
-            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama,' . $jkerjasama->id,
+            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama,' . $jkerjasama->id,
         ]);
 
-        $jkerjasama->update($request->all());
+        $jkerjasama->update([
+            'nama' => $request->nama_kerjasama
+        ]);
 
         return redirect()
             ->route('jkerjasama.index')
@@ -56,6 +60,12 @@ class JenisKerjasamaController extends Controller
 
     public function destroy(JenisKerjasama $jkerjasama)
     {
+        if ($jkerjasama->details()->count() > 0) {
+            return redirect()
+                ->route('jkerjasama.index')
+                ->with('error', 'Jenis Kerjasama tidak dapat dihapus karena masih terkait dengan data kegiatan.');
+        }
+
         $jkerjasama->delete();
 
         return redirect()
