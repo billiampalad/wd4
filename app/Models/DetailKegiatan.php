@@ -9,6 +9,7 @@ class DetailKegiatan extends Model
     //
     protected $fillable = [
         'kegiatan_kerjasama_id',
+        'cooperation_id',
         'jenis_kerjasama_id',
         'sasaran_id',
         'indikator_id',
@@ -18,6 +19,11 @@ class DetailKegiatan extends Model
         'output',
         'outcome',
     ];
+
+    public function cooperation()
+    {
+        return $this->belongsTo(Cooperation::class, 'cooperation_id');
+    }
 
     public function kegiatanKerjasama()
     {

@@ -431,7 +431,10 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
     Route::resource('penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
 
     // ─── Phase 7: Tracking Lulusan (UC32) ──────────────────
-    Route::resource('alumni', \App\Http\Controllers\Prodi\AlumniMitraController::class, ['as' => 'prodi'])->only(['index', 'create', 'store']);
+    // Daftarkan index secara eksplisit terlebih dahulu agar terdefinisi dengan benar
+    Route::get('/prodi/alumni', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'index'])->name('prodi.alumni.index');
+    Route::get('/prodi/alumni/create', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'create'])->name('prodi.alumni.create');
+    Route::post('/prodi/alumni', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'store'])->name('prodi.alumni.store');
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {

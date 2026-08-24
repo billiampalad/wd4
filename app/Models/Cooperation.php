@@ -134,7 +134,7 @@ class Cooperation extends Model
 
     public function pksNumbers()
     {
-        return $this->hasMany(PksNumber::class, 'cooperation_id')->orderBy('sort_order')->orderBy('id');
+        return $this->hasMany(PksNumber::class, 'cooperation_id')->orderBy('id');
     }
 
     public function kegiatanKerjasamas()

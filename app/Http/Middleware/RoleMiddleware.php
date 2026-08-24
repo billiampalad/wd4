@@ -24,6 +24,8 @@ class RoleMiddleware
                 'unit_kerja' => 'unit.dashboard',
                 'upa' => 'upa.dashboard',
                 'pusat' => 'pusat.dashboard',
+                'prodi' => 'prodi.dashboard',
+                'mitra' => 'mitra.dashboard',
                 'admin' => 'admin.dashboard',
                 default => null,
             };
