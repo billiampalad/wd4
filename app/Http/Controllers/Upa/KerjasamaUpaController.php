@@ -244,15 +244,23 @@ class KerjasamaUpaController extends Controller
                 }
             }
 
+            $jenisMap = [
+                'MoU (Memorandum of Understanding)' => 'MoU',
+                'MoA (Memorandum of Agreement)' => 'MoA',
+                'IA (Implementation Agreement)' => 'IA',
+                'SPK (Surat Perjanjian Kerjasama)' => 'SPK',
+            ];
+            $jenisEnum = $jenisMap[$request->jenis] ?? $request->jenis;
+
             // 3. Create Cooperation
             $cooperation = Cooperation::create([
-                'title' => $request->title,
-                'jenis' => $request->jenis,
+                'judul' => $request->title,
+                'jenis' => $jenisEnum,
                 'doc_number' => $request->doc_number,
-                'description' => $request->description,
+                'ruang_lingkup' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
+                'status_berlaku' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
                 'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
                 'parent_cooperation_id' => $request->parent_cooperation_id,
                 'perpanjangan_dari_id' => $perpanjanganDariId,
@@ -263,7 +271,7 @@ class KerjasamaUpaController extends Controller
                 'pj_internal_id' => $pjInternal?->id,
                 'penandatangan_mitra_id' => $penandatanganMitra?->id,
                 'pj_mitra_id' => $pjMitra?->id,
-                'tipe_pelaksana' => $request->tipe_pelaksana,
+                'tingkat' => 'Pusat/UPA',
                 'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
                 'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
                 'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
@@ -316,6 +324,7 @@ class KerjasamaUpaController extends Controller
             return redirect()->route('upa.dkerjasama')->with('success', 'Data kerjasama berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Upa Store Error: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Gagal menyimpan data: ' . $this->formatExceptionMessage($e));
         }
     }
@@ -512,15 +521,23 @@ class KerjasamaUpaController extends Controller
                 }
             }
 
+            $jenisMap = [
+                'MoU (Memorandum of Understanding)' => 'MoU',
+                'MoA (Memorandum of Agreement)' => 'MoA',
+                'IA (Implementation Agreement)' => 'IA',
+                'SPK (Surat Perjanjian Kerjasama)' => 'SPK',
+            ];
+            $jenisEnum = $jenisMap[$request->jenis] ?? $request->jenis;
+
             // 3. Update Cooperation
             $cooperation->update([
-                'title' => $request->title,
-                'jenis' => $request->jenis,
+                'judul' => $request->title,
+                'jenis' => $jenisEnum,
                 'doc_number' => $request->doc_number,
-                'description' => $request->description,
+                'ruang_lingkup' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status' => $status,
+                'status_berlaku' => $status,
                 'document_link' => $request->document_link,
                 'internal_instansi' => $request->nama_instansi ?? 'Politeknik Negeri Manado',
                 'mitra_id' => $mitraId,
