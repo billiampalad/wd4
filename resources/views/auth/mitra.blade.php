@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <title>Mitra | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
@@ -36,7 +36,7 @@
     @if ($errors->any())
         <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
-    
+
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
@@ -108,7 +108,7 @@
             <a class="menu-item {{ request()->routeIs('mitra.dokumen.*') ? 'active' : '' }}"
                 href="{{ route('mitra.dokumen.index') ?? '#' }}">
                 <div class="menu-icon"><i class="fas fa-folder-open"></i></div>
-                <span>Dokumen Kerjasama Saya</span>
+                <span>Dokumen Kerjasama</span>
             </a>
 
             <a class="menu-item {{ request()->routeIs('mitra.pengajuan.*') ? 'active' : '' }}"
@@ -150,8 +150,8 @@
         <!-- Main Content -->
         @yield('content')
         @if (!View::hasSection('content'))
-            @if (request()->routeIs('mitra.dashboard'))
-                @include('auth.layout.mitra.index')
+            @if(isset($view) && $view === 'dokumen_detail')
+                @include('auth.layout.mitra.dokumen_detail')
             @else
                 @include('auth.layout.mitra.index')
             @endif
@@ -163,4 +163,5 @@
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
 </body>
+
 </html>

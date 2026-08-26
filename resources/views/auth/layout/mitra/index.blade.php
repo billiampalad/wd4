@@ -51,7 +51,245 @@ $auditUserLabel = function ($user = null) {
 <link rel="stylesheet" href="{{ asset('css/kerjasama/repositori.css') }}" data-turbo-track="reload">
 
 <!-- Main Content -->
-<main id="mainContent" class="dk-page">
+<style>
+    /* Premium Tabs */
+    .dk-tabs-container {
+        margin-bottom: 24px;
+        background: var(--bg-card, #ffffff);
+        border-radius: 16px;
+        padding: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    [data-theme="dark"] .dk-tabs-container {
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    .dk-tabs-wrapper {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+    }
+    .dk-tab-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-sub, #64748b);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    .dk-tab-btn:hover {
+        background: rgba(241, 245, 249, 0.5);
+        color: var(--text-main, #334155);
+    }
+    [data-theme="dark"] .dk-tab-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #e2e8f0;
+    }
+    .dk-tab-btn.active {
+        background: var(--bg-body, #f8fafc);
+        color: #4f46e5;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="dark"] .dk-tab-btn.active {
+        background: rgba(79, 70, 229, 0.15);
+        color: #818cf8;
+    }
+    .dk-tab-badge {
+        background: #ef4444;
+        color: white;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 99px;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Premium Review Modal (UC13) */
+    .review-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+    .review-modal-card {
+        background: var(--bg-card, #ffffff);
+        width: 100%;
+        max-width: 1100px;
+        height: 90vh;
+        border-radius: 24px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+    .review-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border-color, #e2e8f0);
+        background: linear-gradient(to right, var(--bg-card), var(--bg-body));
+    }
+    .review-modal-title {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .review-modal-title .icon-box {
+        width: 48px;
+        height: 48px;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    [data-theme="dark"] .review-modal-title .icon-box {
+        color: #818cf8;
+    }
+    .review-modal-title h3 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+    .review-modal-title p {
+        margin: 4px 0 0 0;
+        font-size: 0.875rem;
+        color: var(--text-sub);
+    }
+    .review-modal-close {
+        background: transparent;
+        border: none;
+        color: var(--text-sub);
+        font-size: 1.25rem;
+        cursor: pointer;
+        transition: color 0.2s;
+        padding: 8px;
+    }
+    .review-modal-close:hover {
+        color: #ef4444;
+    }
+    .review-modal-body {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+    .review-pdf-panel {
+        flex: 1.2;
+        background: #1e293b;
+        border-right: 1px solid var(--border-color, #e2e8f0);
+        position: relative;
+    }
+    .review-form-panel {
+        flex: 0.8;
+        padding: 32px;
+        overflow-y: auto;
+        background: var(--bg-card);
+    }
+    .review-check-list {
+        background: var(--bg-body, #f8fafc);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border-color, #e2e8f0);
+    }
+    .review-check-list h4 {
+        margin: 0 0 16px 0;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .review-check-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 0.875rem;
+        color: var(--text-sub);
+    }
+    .review-check-item i {
+        color: #10b981;
+        margin-top: 3px;
+    }
+    .review-textarea {
+        width: 100%;
+        min-height: 150px;
+        padding: 16px;
+        border-radius: 16px;
+        border: 2px solid var(--border-color, #e2e8f0);
+        background: var(--bg-body);
+        color: var(--text-main);
+        font-family: inherit;
+        font-size: 0.95rem;
+        resize: vertical;
+        transition: all 0.3s ease;
+    }
+    .review-textarea:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        background: var(--bg-card);
+    }
+    .review-action-btns {
+        display: flex;
+        gap: 16px;
+        margin-top: 24px;
+    }
+    .btn-review-submit {
+        flex: 1;
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+    .btn-review-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+    }
+    .btn-review-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4);
+    }
+    .btn-review-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+    .btn-review-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+</style>
+<main id="mainContent" class="dk-page" x-data="mitraDashboard()" x-cloak>
     <section class="ud-topbar">
         <div class="ud-hero-copy">
             <div class="ud-breadcrumb">
@@ -106,88 +344,29 @@ $auditUserLabel = function ($user = null) {
         </div>
     </section>
 
-    <div class="report-filter-container" x-data="{ showFilters: false }">
-        <div class="rfc-header"
-            style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-            @click="showFilters = !showFilters">
-            <div class="rfc-title-area">
-                <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
-                <div class="rfc-text">
-                    <h3>Filter Data Kerjasama</h3>
-                    <p>Menampilkan sesuai data yang anda filter dan data tersebut anda bisa download berupa file dokumen</p>
-                </div>
-            </div>
-            <div style="color: var(--text-sub); font-size: 16px; transition: transform 0.3s;"
-                :style="showFilters ? 'transform: rotate(180deg)' : 'transform: rotate(0)'">
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-
-        <div class="rfc-body" x-show="showFilters" x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 transform -translate-y-4"
-            x-transition:enter-end="opacity-100 transform translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 transform translate-y-0"
-            x-transition:leave-end="opacity-0 transform -translate-y-4">
-            <form id="filterForm" class="rfc-form" method="GET" action="{{ route('mitra.dokumen.index') ?? '#' }}">
-                <div class="rfc-grid">
-                    <div class="rfc-group" x-data="{
-                        open: false,
-                        selected: @js(request('jenis_dokumentasi', 'all')),
-                        items: [{id: 'all', label: 'Semua Jenis'}, {id: 'MoU', label: 'MoU'}, {id: 'MoA', label: 'MoA'}, {id: 'IA', label: 'IA'}],
-                        get selectedLabel() { return this.items.find((item) => item.id === this.selected)?.label || 'Semua Jenis'; }
-                    }">
-                        <label>Jenis Dokumentasi</label>
-                        <input type="hidden" name="jenis_dokumentasi" :value="selected">
-                        <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-file-signature" style="color: #9ca3af; font-size: 13px;"></i>
-                                    <span x-text="selectedLabel"></span>
-                                </div>
-                                <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                            </div>
-                            <div class="ad-menu" x-show="open" x-transition>
-                                <template x-for="item in items" :key="item.id">
-                                    <div class="ad-item" :class="{ 'selected': selected == item.id }"
-                                        @click="selected = item.id; open = false"
-                                        x-text="item.label"></div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rfc-group" x-data="{ open: false, selected: 'all', selectedLabel: 'Semua Status', items: [{ id: 'all', label: 'Semua Status' }, { id: 'aktif', label: 'Aktif' }, { id: 'proses', label: 'Proses' }, { id: 'dalam perpanjangan', label: 'Dalam Perpanjangan' }, { id: 'kadarluarsa', label: 'Kadarluarsa' }, { id: 'tidak aktif', label: 'Tidak Aktif' }] }">
-                        <label>Status</label>
-                        <input type="hidden" name="status" :value="selected">
-                        <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-info-circle" style="color: #9ca3af; font-size: 13px;"></i>
-                                    <span x-text="selectedLabel"></span>
-                                </div>
-                                <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                            </div>
-                            <div class="ad-menu" x-show="open" x-transition>
-                                <template x-for="item in items">
-                                    <div class="ad-item" :class="{ 'selected': selected == item.id }"
-                                        @click="selected = item.id; selectedLabel = item.label; open = false"
-                                        x-text="item.label"></div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rfc-footer">
-                    <button type="submit" id="btnTampilkan" class="rfc-btn rfc-btn-primary">
-                        <i class="fas fa-search"></i> Tampilkan
-                    </button>
-                    <button type="button" id="btnExportExcel" class="rfc-btn rfc-btn-success">
-                        <i class="fas fa-file-excel"></i> Export Excel
-                    </button>
-                </div>
-            </form>
+    <div class="dk-tabs-container">
+        <div class="dk-tabs-wrapper">
+            <button @click="activeTab = 'all'" :class="{'active': activeTab === 'all'}" class="dk-tab-btn">
+                <i class="fas fa-layer-group"></i> Semua Dokumen
+            </button>
+            <button @click="activeTab = 'draft'" :class="{'active': activeTab === 'draft'}" class="dk-tab-btn">
+                <i class="fas fa-file-signature"></i> Menunggu Review 
+                @php
+                    $draftCount = $kerjasamaList->filter(function($i) {
+                        $s = strtolower($i->status ?? '');
+                        return in_array($s, ['draft', 'menunggu evaluasi', 'menunggu review']);
+                    })->count();
+                @endphp
+                @if($draftCount > 0)
+                <span class="dk-tab-badge">{{ $draftCount }}</span>
+                @endif
+            </button>
+            <button @click="activeTab = 'aktif'" :class="{'active': activeTab === 'aktif'}" class="dk-tab-btn">
+                <i class="fas fa-circle-check"></i> Dokumen Aktif
+            </button>
+            <button @click="activeTab = 'perpanjangan'" :class="{'active': activeTab === 'perpanjangan'}" class="dk-tab-btn">
+                <i class="fas fa-clock-rotate-left"></i> Masa Tenggang
+            </button>
         </div>
     </div>
 
@@ -313,6 +492,13 @@ $auditUserLabel = function ($user = null) {
                             $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                             $isExtended = str_contains($status, 'perpanjangan');
 
+                            $tabCategory = match (true) {
+                                $status === 'aktif' => 'aktif',
+                                $status === 'draft' || str_contains($status, 'menunggu') => 'draft',
+                                $isExtended || $isExpired => 'perpanjangan',
+                                default => 'other',
+                            };
+
                             $statusClass = match (true) {
                                 $status === 'aktif' => 'dk-status-active',
                                 $status === 'proses' || str_contains($status, 'menunggu') => 'dk-status-info',
@@ -357,7 +543,7 @@ $auditUserLabel = function ($user = null) {
                             $docNumber = $kegiatan->doc_number ?? '-';
                             $title = $kegiatan->title ?? '-';
                         @endphp
-                        <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}">
+                        <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}" x-show="activeTab === 'all' || activeTab === '{{ $tabCategory }}'">
                             <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
                                 <button type="button" class="dk-expand-toggle" aria-expanded="false" aria-controls="dk-detail-{{ $kegiatan->id }}" title="Lihat metadata">
                                     <i class="fas fa-angles-right"></i>
@@ -403,12 +589,15 @@ $auditUserLabel = function ($user = null) {
                             </td>
                             <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
                                 <div class="um-actions dk-actions-compact">
+                                    @if($tabCategory === 'draft')
+                                    <button @click="openReview({{ $kegiatan->id }}, '{{ $docNumber }}', '{{ addslashes($title) }}', '{{ route('mitra.dokumen.show', $kegiatan->id) }}')" class="dk-action-btn edit" title="Review Draf Online" style="color: #4f46e5; background: rgba(79,70,229,0.1); border:none; cursor:pointer;">
+                                        <i class="fas fa-file-signature"></i>
+                                    </button>
+                                    @else
                                     <a href="{{ route('mitra.dokumen.show', $kegiatan->id) ?? '#' }}" class="dk-action-btn view" title="Lihat Dokumen">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="#" class="dk-action-btn edit" title="Review Draf Online" style="color: #4f46e5; background: rgba(79,70,229,0.1);">
-                                        <i class="fas fa-file-signature"></i>
-                                    </a>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -458,9 +647,102 @@ $auditUserLabel = function ($user = null) {
             </div>
         </div>
     </div>
+    <!-- Review Modal UC13 -->
+    <template x-if="showReviewModal">
+        <div class="review-modal-overlay" @click.self="showReviewModal = false" x-cloak>
+            <div class="review-modal-card"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95">
+                 
+                <!-- Modal Header -->
+                <div class="review-modal-header">
+                    <div class="review-modal-title">
+                        <div class="icon-box">
+                            <i class="fas fa-file-signature"></i>
+                        </div>
+                        <div>
+                            <h3>Review Draf Online</h3>
+                            <p>Dokumen <strong x-text="reviewDocNumber"></strong> - <span x-text="reviewDocTitle"></span></p>
+                        </div>
+                    </div>
+                    <button class="review-modal-close" @click="showReviewModal = false" title="Tutup">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Body (Split View) -->
+                <div class="review-modal-body">
+                    <!-- Kiri: PDF Preview -->
+                    <div class="review-pdf-panel">
+                        <object :data="reviewPdfUrl" type="application/pdf" width="100%" height="100%">
+                            <div style="padding: 20px; color: white; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <i class="fas fa-file-pdf" style="font-size: 48px; margin-bottom: 16px; color: #94a3b8;"></i>
+                                <p>Browser Anda tidak mendukung preview PDF langsung.</p>
+                                <a :href="reviewPdfUrl" target="_blank" style="color: #60a5fa; text-decoration: underline; margin-top: 8px;">Unduh PDF</a>
+                            </div>
+                        </object>
+                    </div>
+                    
+                    <!-- Kanan: Form Catatan -->
+                    <div class="review-form-panel">
+                        <form method="POST" :action="`/mitra/dokumen/${reviewDocId}/review`">
+                            @csrf
+                            <div class="review-check-list">
+                                <h4><i class="fas fa-list-check"></i> Poin Pemeriksaan</h4>
+                                <div class="review-check-item">
+                                    <i class="fas fa-check-circle"></i> <span>Kesesuaian identitas pihak yang bertanda tangan.</span>
+                                </div>
+                                <div class="review-check-item">
+                                    <i class="fas fa-check-circle"></i> <span>Ketentuan hak dan kewajiban masing-masing pihak.</span>
+                                </div>
+                                <div class="review-check-item">
+                                    <i class="fas fa-check-circle"></i> <span>Periode masa berlaku dan penyelesaian masalah.</span>
+                                </div>
+                            </div>
+                            
+                            <label style="display: block; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Catatan Review Klausul</label>
+                            <textarea name="catatan_review" class="review-textarea" placeholder="Tuliskan catatan Anda di sini jika ada pasal/klausul yang perlu diperbaiki... Jika draf sudah sesuai, Anda bisa mengosongkannya."></textarea>
+                            
+                            <div class="review-action-btns">
+                                <button type="submit" name="action" value="revisi" class="btn-review-submit btn-review-warning">
+                                    <i class="fas fa-pen-to-square"></i> Kirim Revisi
+                                </button>
+                                <button type="submit" name="action" value="setuju" class="btn-review-submit btn-review-success">
+                                    <i class="fas fa-check-double"></i> Setujui Draf
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
 </main>
 
 <script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('mitraDashboard', () => ({
+            activeTab: 'all',
+            showReviewModal: false,
+            reviewDocId: null,
+            reviewDocNumber: '',
+            reviewDocTitle: '',
+            reviewPdfUrl: '',
+            
+            openReview(id, docNumber, title, pdfUrl) {
+                this.reviewDocId = id;
+                this.reviewDocNumber = docNumber;
+                this.reviewDocTitle = title;
+                this.reviewPdfUrl = pdfUrl;
+                this.showReviewModal = true;
+            }
+        }));
+    });
+
     document.addEventListener('turbo:load', function() {
         const toggleButtons = document.querySelectorAll('.dk-expand-toggle');
         toggleButtons.forEach(btn => {

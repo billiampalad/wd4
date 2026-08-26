@@ -74,14 +74,24 @@ class MitraDokumenController extends Controller
 
         // Simpan catatan review dan kirim notifikasi ke pembuat/unit pengusul
         if ($cooperation->created_by) {
+            $creator = User::with('role')->find($cooperation->created_by);
+            $roleName = $creator && $creator->role ? $creator->role->name : 'unit_kerja';
+            
+            $routePrefix = match($roleName) {
+                'jurusan' => 'jurusan',
+                'upa' => 'upa',
+                'pusat' => 'pusat',
+                default => 'unit',
+            };
+
             Notifikasi::send(
                 $cooperation->created_by,
                 $user->id,
                 $cooperation->id,
                 'review_draf',
                 'Catatan Review Draf dari Mitra',
-                "Mitra '{$user->name}' mengirimkan catatan review draf untuk dokumen: {$cooperation->title}",
-                route('unit.dkerjasama')
+                "Mitra '{$user->name}' mengirimkan catatan review draf untuk dokumen: {$cooperation->judul}",
+                route("{$routePrefix}.kerjasama.show", $cooperation->id)
             );
         }
 
