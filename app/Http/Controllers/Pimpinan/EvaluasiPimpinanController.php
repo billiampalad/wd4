@@ -54,11 +54,11 @@ class EvaluasiPimpinanController extends Controller
         try {
             // 1. Simpan/Update Evaluasi pada tabel evaluasis.
             $evaluasiData = [
-                'dinilai_oleh' => Auth::id(),
+                'evaluator_id' => Auth::id(),
                 'ringkasan' => $request->ringkasan,
-                'saran' => $request->saran,
+                'rekomendasi' => $request->saran,
                 'tindak_lanjut' => $request->tindak_lanjut,
-                'status_validasi' => $request->status_validasi,
+                'status_validasi' => $request->status_validasi === 'layak' ? 'Divalidasi' : 'Perlu Revisi',
             ];
 
             if ($kegiatan->status_dokumen === 'Menunggu Evaluasi' && $request->status_validasi === 'layak') {
@@ -77,7 +77,7 @@ class EvaluasiPimpinanController extends Controller
                     'keterlibatan' => $request->keterlibatan,
                     'efisiensi' => $request->efisiensi,
                     'kepuasan' => $request->kepuasan,
-                    'catatan' => $request->catatan,
+                    'kendala' => $request->catatan,
                 ]);
             }
 
@@ -91,15 +91,15 @@ class EvaluasiPimpinanController extends Controller
             $updateKegiatan = ['status_dokumen' => $statusDokumen];
 
             if ($statusDokumen === 'Disahkan') {
-                $updateKegiatan['status'] = 'aktif';
+                $updateKegiatan['status_berlaku'] = 'Aktif';
             }
 
             $kegiatan->update($updateKegiatan);
 
             // 4. KIRIM NOTIFIKASI KE PENGUSUL
             $pesan = $statusDokumen === 'Disahkan'
-                ? "Pimpinan telah menyetujui dokumen kerjasama: '{$kegiatan->title}'."
-                : "Pimpinan meminta revisi untuk dokumen kerjasama: '{$kegiatan->title}'.";
+                ? "Pimpinan telah menyetujui dokumen kerjasama: '{$kegiatan->judul}'."
+                : "Pimpinan meminta revisi untuk dokumen kerjasama: '{$kegiatan->judul}'.";
 
             foreach ($this->unitRecipients($kegiatan) as $unitUser) {
                 Notifikasi::send(
@@ -130,6 +130,7 @@ class EvaluasiPimpinanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Pimpinan Evaluate Error: ' . $e->getMessage());
             return back()->with('error', 'Gagal memproses evaluasi: ' . $e->getMessage());
         }
     }

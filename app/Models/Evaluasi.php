@@ -13,15 +13,15 @@ class Evaluasi extends Model
 
     protected $fillable = [
         'cooperation_id',
-        'dinilai_oleh',
+        'evaluator_id',
         'sesuai_rencana',
         'kualitas',
         'keterlibatan',
         'efisiensi',
         'kepuasan',
-        'catatan',
+        'kendala',
         'ringkasan',
-        'saran',
+        'rekomendasi',
         'tindak_lanjut',
         'status_validasi',
     ];
@@ -33,6 +33,6 @@ class Evaluasi extends Model
 
     public function penilai()
     {
-        return $this->belongsTo(User::class, 'dinilai_oleh');
+        return $this->belongsTo(User::class, 'evaluator_id');
     }
 }
