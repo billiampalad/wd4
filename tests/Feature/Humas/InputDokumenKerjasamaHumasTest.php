@@ -70,4 +70,57 @@ class InputDokumenKerjasamaHumasTest extends TestCase
             'tingkat' => 'Institusi',
         ]);
     }
+
+    public function test_humas_can_edit_dokumen_mou()
+    {
+        $role = Role::firstOrCreate(['name' => 'unit_kerja'], ['guard_name' => 'web']);
+        $unit = UnitKerja::firstOrCreate(['nama_unit_pelaksana' => 'Humas Polimdo']);
+        
+        $humasUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $humasUser->id,
+            'unit_kerja_id' => $unit->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test Humas Edit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft Humas Original',
+            'jenis' => 'MoU',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Institusi'
+        ]);
+
+        $response = $this->actingAs($humasUser)->put(route('unit.kerjasama.update', $coop->id), [
+            'title' => 'Draft Humas Diupdate',
+            'jenis' => 'MoU (Memorandum of Understanding)',
+            'doc_number' => 'MOU/HMS/EDIT',
+            'tipe_pelaksana' => ['unit'],
+            'pelaksana_unit_ids' => [$unit->id],
+            'penggiat_mitra_ids' => [$mitra->id],
+            'penggiat' => [
+                [
+                    'nama_penandatangan' => 'Budi',
+                    'jabatan_penandatangan' => 'Direktur',
+                    'nama_pj' => 'Andi',
+                    'jabatan_pj' => 'Manajer',
+                ]
+            ],
+            'document_link' => 'https://drive.google.com/test-humas-edit',
+            'status' => 'Aktif',
+        ]);
+
+        $response->assertRedirect(route('unit.dkerjasama'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'judul' => 'Draft Humas Diupdate',
+        ]);
+    }
 }

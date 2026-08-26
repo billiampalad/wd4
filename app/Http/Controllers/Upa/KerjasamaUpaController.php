@@ -450,7 +450,7 @@ class KerjasamaUpaController extends Controller
                 'Tidak Aktif' => 'tidak aktif',
             ];
 
-            $status = $statusMap[$request->status] ?? $cooperation->status;
+            $status = $statusMap[$request->status] ?? $cooperation->status_berlaku;
 
             // 1. Handle Internal Pejabats (Pihak 1)
             if ($request->nama_penandatangan) {
@@ -603,6 +603,7 @@ class KerjasamaUpaController extends Controller
             return redirect()->route('upa.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Upa Update Error: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $this->formatExceptionMessage($e));
         }
     }

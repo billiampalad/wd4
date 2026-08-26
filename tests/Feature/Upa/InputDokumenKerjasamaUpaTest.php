@@ -63,4 +63,59 @@ class InputDokumenKerjasamaUpaTest extends TestCase
             'tingkat' => 'Pusat/UPA',
         ]);
     }
+
+    public function test_upa_can_edit_dokumen_ia()
+    {
+        $role = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
+        $upa = Upa::firstOrCreate(['nama_upa' => 'UPA TIK']);
+        
+        $upaUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $upaUser->id,
+            'upa_id' => $upa->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test UPA Edit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft UPA Original',
+            'jenis' => 'IA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Pusat/UPA',
+            'upa_id' => $upa->id
+        ]);
+        $coop->upas()->sync([$upa->id]);
+
+        $response = $this->actingAs($upaUser)->put(route('upa.kerjasama.update', $coop->id), [
+            'title' => 'Draft UPA Diupdate',
+            'jenis' => 'IA (Implementation Agreement)',
+            'doc_number' => 'IA/UPA/EDIT',
+            'tipe_pelaksana' => 'upa',
+            'pelaksana_upa_ids' => [$upa->id],
+            'penggiat_mitra_ids' => [$mitra->id],
+            'penggiat' => [
+                [
+                    'nama_penandatangan' => 'Budi',
+                    'jabatan_penandatangan' => 'Direktur',
+                    'nama_pj' => 'Andi',
+                    'jabatan_pj' => 'Manajer',
+                ]
+            ],
+            'document_link' => 'https://drive.google.com/test-upa-edit',
+            'status' => 'Aktif',
+        ]);
+
+        $response->assertRedirect(route('upa.dkerjasama'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'judul' => 'Draft UPA Diupdate',
+        ]);
+    }
 }

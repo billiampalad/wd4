@@ -412,7 +412,7 @@ class KerjasamaUnitController extends Controller
                 'Tidak Aktif' => 'tidak aktif',
             ];
 
-            $status = $statusMap[$request->status] ?? $cooperation->status;
+            $status = $statusMap[$request->status] ?? $cooperation->status_berlaku;
             $primaryTipePelaksana = $tipePelaksana[0] ?? null;
 
             // 1. Handle Internal Pejabats (Pihak 1)
@@ -557,6 +557,7 @@ class KerjasamaUnitController extends Controller
             return redirect()->route('unit.dkerjasama')->with('success', 'Data kerjasama berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Unit Update Error: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $this->formatExceptionMessage($e));
         }
     }

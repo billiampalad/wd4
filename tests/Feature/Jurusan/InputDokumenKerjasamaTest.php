@@ -72,4 +72,59 @@ class InputDokumenKerjasamaTest extends TestCase
             'status_dokumen' => 'Draft',
         ]);
     }
+
+    public function test_jurusan_can_edit_dokumen_mou()
+    {
+        $role = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
+        $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Jurusan Teknik']);
+        
+        $jurusanUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $jurusanUser->id,
+            'jurusan_id' => $jurusan->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test Jurusan Edit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft Jurusan Original',
+            'jenis' => 'MoA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Jurusan',
+            'jurusan_id' => $jurusan->id
+        ]);
+        $coop->jurusans()->sync([$jurusan->id]);
+
+        $response = $this->actingAs($jurusanUser)->put(route('jurusan.kerjasama.update', $coop->id), [
+            'title' => 'Draft Jurusan Diupdate',
+            'jenis' => 'MoA (Memorandum of Agreement)',
+            'doc_number' => 'MOA/JRS/EDIT',
+            'tipe_pelaksana' => 'jurusan',
+            'pelaksana_jurusan_ids' => [$jurusan->id],
+            'penggiat_mitra_ids' => [$mitra->id],
+            'penggiat' => [
+                [
+                    'nama_penandatangan' => 'Budi',
+                    'jabatan_penandatangan' => 'Direktur',
+                    'nama_pj' => 'Andi',
+                    'jabatan_pj' => 'Manajer',
+                ]
+            ],
+            'document_link' => 'https://drive.google.com/test-jurusan-edit',
+            'status' => 'Aktif',
+        ]);
+
+        $response->assertRedirect(route('jurusan.dkerjasama'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'judul' => 'Draft Jurusan Diupdate',
+        ]);
+    }
 }
