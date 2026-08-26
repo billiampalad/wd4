@@ -127,4 +127,45 @@ class InputDokumenKerjasamaTest extends TestCase
             'judul' => 'Draft Jurusan Diupdate',
         ]);
     }
+
+    public function test_jurusan_can_submit_dokumen_mou()
+    {
+        $role = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
+        $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Jurusan Teknik']);
+        
+        $jurusanUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $jurusanUser->id,
+            'jurusan_id' => $jurusan->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test Jurusan Submit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft Jurusan Submit Test',
+            'jenis' => 'MoA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Jurusan',
+            'jurusan_id' => $jurusan->id
+        ]);
+        $coop->jurusans()->sync([$jurusan->id]);
+
+        // Pastikan role pimpinan ada agar tidak error saat fetching
+        Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+
+        $response = $this->actingAs($jurusanUser)->post(route('jurusan.kerjasama.submit', $coop->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'status_dokumen' => 'Menunggu Evaluasi',
+        ]);
+    }
 }

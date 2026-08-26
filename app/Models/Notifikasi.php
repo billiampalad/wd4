@@ -17,9 +17,9 @@ class Notifikasi extends Model
         'source_id',
         'source_type',
         'type',
-        'judul',
-        'pesan',
-        'link',
+        'title',
+        'message',
+        'url',
         'is_read',
     ];
 
@@ -56,9 +56,9 @@ class Notifikasi extends Model
             'source_id' => $sourceId,
             'source_type' => $sourceId ? $sourceType : null,
             'type' => $type,
-            'judul' => $judul,
-            'pesan' => $pesan,
-            'link' => $link,
+            'title' => $judul,
+            'message' => $pesan,
+            'url' => $link,
             'is_read' => 0
         ]);
     }

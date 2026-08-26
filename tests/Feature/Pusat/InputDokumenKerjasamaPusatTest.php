@@ -118,4 +118,45 @@ class InputDokumenKerjasamaPusatTest extends TestCase
             'judul' => 'Draft Pusat Diupdate',
         ]);
     }
+
+    public function test_pusat_can_submit_dokumen_mou()
+    {
+        $role = Role::firstOrCreate(['name' => 'pusat'], ['guard_name' => 'web']);
+        $pusat = Pusat::firstOrCreate(['nama_pusat' => 'Pusat Penelitian']);
+        
+        $pusatUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $pusatUser->id,
+            'pusat_id' => $pusat->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test Pusat Submit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft Pusat Submit Test',
+            'jenis' => 'MoU',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Pusat/UPA',
+            'pusat_id' => $pusat->id
+        ]);
+        $coop->pusats()->sync([$pusat->id]);
+
+        // Pastikan role pimpinan ada agar tidak error saat fetching
+        Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+
+        $response = $this->actingAs($pusatUser)->post(route('pusat.kerjasama.submit', $coop->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'status_dokumen' => 'Menunggu Evaluasi',
+        ]);
+    }
 }

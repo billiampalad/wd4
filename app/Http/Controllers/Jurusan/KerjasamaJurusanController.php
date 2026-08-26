@@ -651,8 +651,8 @@ class KerjasamaJurusanController extends Controller
 
             // 3. Simpan notifikasi secara otomatis ke tabel notifikasis
             $pesan = $kirimUlangSetelahRevisi
-                ? "Dokumen kerjasama revisi: '{$cooperation->title}' telah dikirim ulang dan membutuhkan evaluasi dari Anda."
-                : "Pengajuan kerjasama baru: '{$cooperation->title}' membutuhkan evaluasi dari Anda.";
+                ? "Dokumen kerjasama revisi: '{$cooperation->judul}' telah dikirim ulang dan membutuhkan evaluasi dari Anda."
+                : "Pengajuan kerjasama baru: '{$cooperation->judul}' membutuhkan evaluasi dari Anda.";
             $judul = $kirimUlangSetelahRevisi ? 'Evaluasi Ulang Dokumen Revisi' : 'Persetujuan Kerjasama Baru';
 
             foreach ($pimpinans as $pimpinan) {
@@ -671,6 +671,7 @@ class KerjasamaJurusanController extends Controller
             return back()->with('success', 'Berhasil! Data kerjasama telah dikirim ke Pimpinan untuk dievaluasi.');
         } catch (\Exception $e) {
             DB::rollBack();
+            \Illuminate\Support\Facades\Log::error('Jurusan Submit Error: ' . $e->getMessage());
             return back()->with('error', 'Gagal mengirim permintaan: ' . $this->formatExceptionMessage($e));
         }
     }

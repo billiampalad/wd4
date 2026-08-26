@@ -123,4 +123,43 @@ class InputDokumenKerjasamaHumasTest extends TestCase
             'judul' => 'Draft Humas Diupdate',
         ]);
     }
+
+    public function test_humas_can_submit_dokumen_mou()
+    {
+        $role = Role::firstOrCreate(['name' => 'unit_kerja'], ['guard_name' => 'web']);
+        $unit = UnitKerja::firstOrCreate(['nama_unit_pelaksana' => 'Humas Polimdo']);
+        
+        $humasUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $humasUser->id,
+            'unit_kerja_id' => $unit->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test Humas Submit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft Humas Submit Test',
+            'jenis' => 'MoU',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Institusi'
+        ]);
+
+        // Pastikan role pimpinan ada agar tidak error saat fetching
+        Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+
+        $response = $this->actingAs($humasUser)->post(route('unit.kerjasama.submit', $coop->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'status_dokumen' => 'Menunggu Evaluasi',
+        ]);
+    }
 }

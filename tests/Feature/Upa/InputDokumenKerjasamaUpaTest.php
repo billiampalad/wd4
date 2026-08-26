@@ -118,4 +118,45 @@ class InputDokumenKerjasamaUpaTest extends TestCase
             'judul' => 'Draft UPA Diupdate',
         ]);
     }
+
+    public function test_upa_can_submit_dokumen_ia()
+    {
+        $role = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
+        $upa = Upa::firstOrCreate(['nama_upa' => 'UPA TIK']);
+        
+        $upaUser = User::factory()->create([
+            'role_id' => $role->id,
+        ]);
+
+        Profile::create([
+            'user_id' => $upaUser->id,
+            'upa_id' => $upa->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Test UPA Submit', 'status_akses' => 'Aktif']);
+        
+        $coop = Cooperation::create([
+            'judul' => 'Draft UPA Submit Test',
+            'jenis' => 'IA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Pusat/UPA',
+            'upa_id' => $upa->id
+        ]);
+        $coop->upas()->sync([$upa->id]);
+
+        // Pastikan role pimpinan ada agar tidak error saat fetching
+        Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+
+        $response = $this->actingAs($upaUser)->post(route('upa.kerjasama.submit', $coop->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('cooperations', [
+            'id' => $coop->id,
+            'status_dokumen' => 'Menunggu Evaluasi',
+        ]);
+    }
 }
