@@ -150,7 +150,9 @@
         <!-- Main Content -->
         @yield('content')
         @if (!View::hasSection('content'))
-            @if(isset($view) && $view === 'dokumen_detail')
+            @if(isset($view) && $view === 'dokumen_list')
+                @include('auth.layout.mitra.dokumen_list')
+            @elseif(isset($view) && $view === 'dokumen_detail')
                 @include('auth.layout.mitra.dokumen_detail')
             @else
                 @include('auth.layout.mitra.index')
