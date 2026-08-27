@@ -380,6 +380,24 @@ $auditUserLabel = function ($user = null) {
                 </span>
             </div>
 
+            <div style="display: flex; gap: 10px; margin-left: auto; margin-right: 15px;">
+                <select x-model="jenisFilter" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px;">
+                    <option value="all">Semua Jenis</option>
+                    <option value="MoU">MoU</option>
+                    <option value="MoA">MoA</option>
+                    <option value="IA">IA</option>
+                </select>
+                <select x-model="periodeFilter" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px;">
+                    <option value="all">Semua Periode</option>
+                    @php
+                        $years = $kerjasamaList->map(function($k) { return $k->start_date ? $k->start_date->format('Y') : null; })->filter()->unique()->sortDesc();
+                    @endphp
+                    @foreach($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="dk-card-tools" x-data="{ showModal: false }">
                 <button @click="showModal = true" class="dk-primary-btn">
                     <i class="fas fa-plus"></i>
@@ -542,8 +560,10 @@ $auditUserLabel = function ($user = null) {
                             $selesai = $kegiatan->end_date?->format('d M Y') ?? '-';
                             $docNumber = $kegiatan->doc_number ?? '-';
                             $title = $kegiatan->judul ?? '-';
+                            $docJenis = $kegiatan->jenis ?? '';
+                            $docTahun = $kegiatan->start_date ? $kegiatan->start_date->format('Y') : '';
                         @endphp
-                        <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}" x-show="activeTab === 'all' || activeTab === '{{ $tabCategory }}'">
+                        <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}" x-show="(activeTab === 'all' || activeTab === '{{ $tabCategory }}') && (jenisFilter === 'all' || jenisFilter === '{{ $docJenis }}') && (periodeFilter === 'all' || periodeFilter === '{{ $docTahun }}')">
                             <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
                                 <button type="button" class="dk-expand-toggle" aria-expanded="false" aria-controls="dk-detail-{{ $kegiatan->id }}" title="Lihat metadata">
                                     <i class="fas fa-angles-right"></i>
@@ -727,6 +747,8 @@ $auditUserLabel = function ($user = null) {
     document.addEventListener('alpine:init', () => {
         Alpine.data('mitraDashboard', () => ({
             activeTab: 'all',
+            jenisFilter: 'all',
+            periodeFilter: 'all',
             showReviewModal: false,
             reviewDocId: null,
             reviewDocNumber: '',

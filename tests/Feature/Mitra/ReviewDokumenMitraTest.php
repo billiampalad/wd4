@@ -77,4 +77,35 @@ class ReviewDokumenMitraTest extends TestCase
             'type' => 'review_draf',
         ]);
     }
+
+    public function test_mitra_can_filter_dokumen_list()
+    {
+        $roleMitra = Role::firstOrCreate(['name' => 'mitra'], ['guard_name' => 'web']);
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Penguji Filter', 'status_akses' => 'Aktif']);
+
+        $mitraUser = User::factory()->create([
+            'role_id' => $roleMitra->id,
+            'mitra_id' => $mitra->id,
+        ]);
+
+        $coop = Cooperation::create([
+            'judul' => 'Kerjasama Mitra Test Filter',
+            'jenis' => 'MoA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'Aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Jurusan',
+            'start_date' => '2024-01-01',
+        ]);
+
+        $response = $this->actingAs($mitraUser)->get(route('mitra.dokumen.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Kerjasama Mitra Test Filter');
+        
+        // Assert view contains the Vue/Alpine models
+        $response->assertSee('jenisFilter');
+        $response->assertSee('periodeFilter');
+        $response->assertSee('MoA');
+        $response->assertSee('2024');
+    }
 }
