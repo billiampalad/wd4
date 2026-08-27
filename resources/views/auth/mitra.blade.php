@@ -102,7 +102,7 @@
             <a class="menu-item {{ request()->routeIs('mitra.dashboard') ? 'active' : '' }}"
                 href="{{ route('mitra.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-home"></i></div>
-                <span>Dashboard Mitra</span>
+                <span>Dashboard</span>
             </a>
 
             <a class="menu-item {{ request()->routeIs('mitra.dokumen.*') ? 'active' : '' }}"

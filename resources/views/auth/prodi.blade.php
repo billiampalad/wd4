@@ -107,6 +107,11 @@
                 <span>Dashboard Prodi</span>
             </a>
 
+            <a class="menu-item" href="#">
+                <div class="menu-icon"><i class="fas fa-handshake"></i></div>
+                <span>Kegiatan Kerja Sama</span>
+            </a>
+
             @php
                 $isPenempatanActive = request()->routeIs('prodi.penempatan.*');
             @endphp
@@ -157,6 +162,11 @@
                 </div>
             </div>
 
+            <a class="menu-item" href="#">
+                <div class="menu-icon"><i class="fas fa-chart-pie"></i></div>
+                <span>Evaluasi & Laporan</span>
+            </a>
+
             <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
             <a class="menu-item" href="mailto:admin@polimdo.ac.id">
                 <div class="menu-icon"><i class="fas fa-headset"></i></div>
@@ -172,10 +182,16 @@
         <!-- Main Content -->
         @yield('content')
         @if (!View::hasSection('content'))
-            @if (request()->routeIs('prodi.dashboard'))
+            @if (request()->routeIs('prodi.dashboard') || request()->routeIs('prodi.penempatan.*') || request()->routeIs('prodi.alumni.*'))
                 @include('auth.layout.prodi.index')
             @else
-                @include('auth.layout.prodi.index')
+                <main id="mainContent" class="dk-page">
+                    <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
+                        <i class="fas fa-hammer" style="font-size: 64px; margin-bottom: 24px; color: #cbd5e1;"></i>
+                        <h2 style="font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Halaman Dalam Pengembangan</h2>
+                        <p style="font-size: 16px;">Fitur untuk halaman ini sedang dibangun dan belum tersedia.</p>
+                    </div>
+                </main>
             @endif
         @endif
 

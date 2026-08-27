@@ -82,65 +82,28 @@ $persenIKU = $persentasePenyerapan ?? ($totalAlumniCount > 0 ? round(($alumniBek
         </div>
     </section>
 
-    <!-- Filter Data -->
-    <div class="report-filter-container" x-data="{ showFilters: false }">
-        <div class="rfc-header"
-            style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
-            @click="showFilters = !showFilters">
-            <div class="rfc-title-area">
-                <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
-                <div class="rfc-text">
-                    <h3>Filter Data Kegiatan Mahasiswa</h3>
-                    <p>Saring data penempatan berdasarkan status, kegiatan, atau mitra industri</p>
-                </div>
-            </div>
-            <div style="color: var(--text-sub); font-size: 16px; transition: transform 0.3s;"
-                :style="showFilters ? 'transform: rotate(180deg)' : 'transform: rotate(0)'">
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-
-        <div class="rfc-body" x-show="showFilters" x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 transform -translate-y-4"
-            x-transition:enter-end="opacity-100 transform translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 transform translate-y-0"
-            x-transition:leave-end="opacity-0 transform -translate-y-4">
-            <form id="filterForm" class="rfc-form" method="GET" action="{{ route('prodi.penempatan.index') }}">
-                <div class="rfc-grid">
-                    <div class="rfc-group" x-data="{
-                        open: false,
-                        selected: 'all',
-                        items: [{ id: 'all', label: 'Semua Status' }, { id: 'Aktif', label: 'Aktif' }, { id: 'Selesai', label: 'Selesai' }, { id: 'Dibatalkan', label: 'Dibatalkan' }],
-                        get selectedLabel() { return this.items.find(i => i.id === this.selected)?.label || 'Semua Status'; }
-                    }">
-                        <label>Status Penempatan</label>
-                        <input type="hidden" name="status" :value="selected">
-                        <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-info-circle" style="color: #9ca3af; font-size: 13px;"></i>
-                                    <span x-text="selectedLabel"></span>
-                                </div>
-                                <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
-                            </div>
-                            <div class="ad-menu" x-show="open" x-transition>
-                                <template x-for="item in items" :key="item.id">
-                                    <div class="ad-item" :class="{ 'selected': selected == item.id }"
-                                        @click="selected = item.id; open = false"
-                                        x-text="item.label"></div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rfc-footer">
-                    <button type="submit" id="btnTampilkan" class="rfc-btn rfc-btn-primary">
-                        <i class="fas fa-search"></i> Tampilkan
-                    </button>
-                </div>
-            </form>
+    <style>
+    /* Premium Tabs for Prodi */
+    .dk-tabs-container { margin-bottom: 24px; background: var(--bg-card, #ffffff); border-radius: 16px; padding: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); border: 1px solid rgba(226, 232, 240, 0.8); }
+    [data-theme="dark"] .dk-tabs-container { border-color: rgba(255, 255, 255, 0.05); }
+    .dk-tabs-wrapper { display: flex; gap: 8px; overflow-x: auto; }
+    .dk-tab-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; background: transparent; border: none; border-radius: 12px; font-family: inherit; font-size: 0.95rem; font-weight: 600; color: var(--text-sub, #64748b); cursor: pointer; transition: all 0.3s ease; white-space: nowrap; }
+    .dk-tab-btn:hover { background: rgba(241, 245, 249, 0.5); color: var(--text-main, #334155); }
+    [data-theme="dark"] .dk-tab-btn:hover { background: rgba(255, 255, 255, 0.05); color: #e2e8f0; }
+    .dk-tab-btn.active { background: var(--bg-body, #f8fafc); color: #4f46e5; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="dark"] .dk-tab-btn.active { background: rgba(79, 70, 229, 0.15); color: #818cf8; }
+    </style>
+    <div class="dk-tabs-container" x-data="{ activeTab: 'all' }">
+        <div class="dk-tabs-wrapper">
+            <button @click="activeTab = 'all'" :class="{'active': activeTab === 'all'}" class="dk-tab-btn">
+                <i class="fas fa-layer-group"></i> Semua Status
+            </button>
+            <button @click="activeTab = 'aktif'" :class="{'active': activeTab === 'aktif'}" class="dk-tab-btn">
+                <i class="fas fa-circle-check"></i> Aktif
+            </button>
+            <button @click="activeTab = 'selesai'" :class="{'active': activeTab === 'selesai'}" class="dk-tab-btn">
+                <i class="fas fa-check-double"></i> Selesai
+            </button>
         </div>
     </div>
 
@@ -289,7 +252,7 @@ $persenIKU = $persentasePenyerapan ?? ($totalAlumniCount > 0 ? round(($alumniBek
                             $pembimbingInternal = $item->pembimbings?->where('tipe', 'Internal')->first();
                             $pembimbingEksternal = $item->pembimbings?->where('tipe', 'Eksternal')->first();
                         @endphp
-                        <tr class="um-row dk-row" data-row-id="{{ $item->id }}">
+                        <tr class="um-row dk-row" data-row-id="{{ $item->id }}" x-show="activeTab === 'all' || activeTab === '{{ $status }}'">
                             <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
                                 <button type="button" class="dk-expand-toggle" aria-expanded="false" aria-controls="dk-detail-{{ $item->id }}" title="Lihat rincian pembimbing & nilai">
                                     <i class="fas fa-angles-right"></i>
