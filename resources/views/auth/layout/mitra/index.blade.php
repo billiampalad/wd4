@@ -541,7 +541,7 @@ $auditUserLabel = function ($user = null) {
                             $mulai = $kegiatan->start_date?->format('d M Y') ?? '-';
                             $selesai = $kegiatan->end_date?->format('d M Y') ?? '-';
                             $docNumber = $kegiatan->doc_number ?? '-';
-                            $title = $kegiatan->title ?? '-';
+                            $title = $kegiatan->judul ?? '-';
                         @endphp
                         <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}" x-show="activeTab === 'all' || activeTab === '{{ $tabCategory }}'">
                             <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
