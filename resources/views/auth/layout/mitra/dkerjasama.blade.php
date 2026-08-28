@@ -380,7 +380,14 @@
             </div>
         </div>
 
-        <div class="card-body dk-card-body">
+        <div class="card-body dk-card-body" x-data="{ 
+            currentPage: 1, 
+            perPage: 10,
+            totalRows: {{ $kerjasamaList->count() }},
+            get totalPages() { return Math.ceil(this.totalRows / this.perPage); },
+            get startRange() { return (this.currentPage - 1) * this.perPage + 1; },
+            get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); }
+        }">
             <div class="table-wrap um-table-wrap dk-table-wrap">
                 <table class="um-table dk-table">
                     <thead>
@@ -662,6 +669,21 @@
 </main>
 
 <script>
+    function initDkerjasamaFilter() {
+        var form = document.getElementById('filterForm');
+        var previewBody = document.getElementById('previewBody');
+        var btnTampilkan = document.getElementById('btnTampilkan');
+        var countLabel = document.getElementById('dkerjasamaCount');
+
+        if (!form || !previewBody || !btnTampilkan) return;
+    }
+
+    document.addEventListener('DOMContentLoaded', initDkerjasamaFilter);
+    document.addEventListener('turbo:load', initDkerjasamaFilter);
+    if (document.readyState !== 'loading') {
+        initDkerjasamaFilter();
+    }
+
     document.addEventListener('alpine:init', () => {
         Alpine.data('mitraDashboard', () => ({
             jenisFilter: 'all',
