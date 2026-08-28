@@ -1983,6 +1983,34 @@ function registerAlpineComponents() {
             }, 250);
         }
     }));
+
+    Alpine.data('mitraDashboard', () => ({
+        activeTab: 'all',
+        jenisFilter: 'all',
+        periodeFilter: 'all',
+        statusFilter: 'all',
+        searchFilter: '',
+        showReviewModal: false,
+        reviewDocId: null,
+        reviewDocNumber: '',
+        reviewDocTitle: '',
+        reviewPdfUrl: '',
+
+        resetFilters() {
+            this.jenisFilter = 'all';
+            this.periodeFilter = 'all';
+            this.statusFilter = 'all';
+            this.searchFilter = '';
+        },
+
+        openReview(id, docNumber, title, pdfUrl) {
+            this.reviewDocId = id;
+            this.reviewDocNumber = docNumber;
+            this.reviewDocTitle = title;
+            this.reviewPdfUrl = pdfUrl;
+            this.showReviewModal = true;
+        }
+    }));
 }
 
 // Daftarkan saat awal (initial load)

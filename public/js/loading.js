@@ -79,7 +79,10 @@
         if (!link || event.defaultPrevented || event.button !== 0) return false;
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
         if (link.target === '_blank' || link.hasAttribute('download')) return false;
-        if (link.dataset.noLoading !== undefined || !link.href || link.href.startsWith('javascript:')) return false;
+        
+        const rawHref = (link.getAttribute('href') || '').trim();
+        if (!rawHref || rawHref === '#' || rawHref.startsWith('#') || rawHref.startsWith('javascript:')) return false;
+        if (link.dataset.noLoading !== undefined || !link.href) return false;
 
         const destination = new URL(link.href, window.location.href);
         if (destination.origin !== window.location.origin) return false;

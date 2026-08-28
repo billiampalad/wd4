@@ -459,7 +459,7 @@
                                 </a>
 
                                 {{-- Opsi 2: Perpanjangan --}}
-                                <a href="#" class="modal-option-card"
+                                <a href="{{ route('mitra.perpanjangan.create') }}" class="modal-option-card"
                                     style="display: flex; align-items: center; gap: 20px; padding: 24px; border-radius: 20px; border: 2px solid var(--border); background: var(--surface); text-decoration: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"
                                     onmouseover="this.style.borderColor='#d97706'; this.style.background='rgba(217,119,6,0.03)'; this.style.transform='translateY(-4px)';"
                                     onmouseout="this.style.borderColor='var(--border)'; this.style.background='var(--surface)'; this.style.transform='none';">
@@ -819,34 +819,44 @@
         initDkerjasamaFilter();
     }
 
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('mitraDashboard', () => ({
-            jenisFilter: 'all',
-            periodeFilter: 'all',
-            statusFilter: 'all',
-            searchFilter: '',
-            showReviewModal: false,
-            reviewDocId: null,
-            reviewDocNumber: '',
-            reviewDocTitle: '',
-            reviewPdfUrl: '',
+    function registerMitraDashboardComponent() {
+        if (typeof Alpine !== 'undefined') {
+            Alpine.data('mitraDashboard', () => ({
+                activeTab: 'all',
+                jenisFilter: 'all',
+                periodeFilter: 'all',
+                statusFilter: 'all',
+                searchFilter: '',
+                showReviewModal: false,
+                reviewDocId: null,
+                reviewDocNumber: '',
+                reviewDocTitle: '',
+                reviewPdfUrl: '',
 
-            resetFilters() {
-                this.jenisFilter = 'all';
-                this.periodeFilter = 'all';
-                this.statusFilter = 'all';
-                this.searchFilter = '';
-            },
+                resetFilters() {
+                    this.jenisFilter = 'all';
+                    this.periodeFilter = 'all';
+                    this.statusFilter = 'all';
+                    this.searchFilter = '';
+                },
 
-            openReview(id, docNumber, title, pdfUrl) {
-                this.reviewDocId = id;
-                this.reviewDocNumber = docNumber;
-                this.reviewDocTitle = title;
-                this.reviewPdfUrl = pdfUrl;
-                this.showReviewModal = true;
-            }
-        }));
-    });
+                openReview(id, docNumber, title, pdfUrl) {
+                    this.reviewDocId = id;
+                    this.reviewDocNumber = docNumber;
+                    this.reviewDocTitle = title;
+                    this.reviewPdfUrl = pdfUrl;
+                    this.showReviewModal = true;
+                }
+            }));
+        }
+    }
+
+    if (typeof Alpine !== 'undefined') {
+        registerMitraDashboardComponent();
+    } else {
+        document.addEventListener('alpine:init', registerMitraDashboardComponent);
+    }
+    document.addEventListener('turbo:load', registerMitraDashboardComponent);
 
     document.addEventListener('turbo:load', function () {
         const toggleButtons = document.querySelectorAll('.dk-expand-toggle');

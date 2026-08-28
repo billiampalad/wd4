@@ -443,6 +443,7 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('/mitra/dokumen/{id}', [MitraDokumenController::class, 'show'])->name('mitra.dokumen.show');
     Route::post('/mitra/dokumen/{id}/review', [MitraDokumenController::class, 'storeReview'])->name('mitra.dokumen.review');
     Route::get('/mitra/pengajuan/create', [PublicPengajuanKerjasamaController::class, 'create'])->name('mitra.pengajuan.create');
+    Route::get('/mitra/perpanjangan/create', [PublicPengajuanKerjasamaController::class, 'createPerpanjangan'])->name('mitra.perpanjangan.create');
 
     // ─── Phase 5: Penilaian Mahasiswa (UC21) ───────────────
     Route::get('penilaian', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'index'])->name('mitra.penilaian.index');

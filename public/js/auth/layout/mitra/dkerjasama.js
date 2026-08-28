@@ -1,23 +1,41 @@
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('mitraDashboard', () => ({
-            activeTab: 'all',
-            jenisFilter: 'all',
-            periodeFilter: 'all',
-            showReviewModal: false,
-            reviewDocId: null,
-            reviewDocNumber: '',
-            reviewDocTitle: '',
-            reviewPdfUrl: '',
-            
-            openReview(id, docNumber, title, pdfUrl) {
-                this.reviewDocId = id;
-                this.reviewDocNumber = docNumber;
-                this.reviewDocTitle = title;
-                this.reviewPdfUrl = pdfUrl;
-                this.showReviewModal = true;
-            }
-        }));
-    });
+    function registerMitraDashboard() {
+        if (typeof Alpine !== 'undefined') {
+            Alpine.data('mitraDashboard', () => ({
+                activeTab: 'all',
+                jenisFilter: 'all',
+                periodeFilter: 'all',
+                statusFilter: 'all',
+                searchFilter: '',
+                showReviewModal: false,
+                reviewDocId: null,
+                reviewDocNumber: '',
+                reviewDocTitle: '',
+                reviewPdfUrl: '',
+
+                resetFilters() {
+                    this.jenisFilter = 'all';
+                    this.periodeFilter = 'all';
+                    this.statusFilter = 'all';
+                    this.searchFilter = '';
+                },
+
+                openReview(id, docNumber, title, pdfUrl) {
+                    this.reviewDocId = id;
+                    this.reviewDocNumber = docNumber;
+                    this.reviewDocTitle = title;
+                    this.reviewPdfUrl = pdfUrl;
+                    this.showReviewModal = true;
+                }
+            }));
+        }
+    }
+
+    if (typeof Alpine !== 'undefined') {
+        registerMitraDashboard();
+    } else {
+        document.addEventListener('alpine:init', registerMitraDashboard);
+    }
+    document.addEventListener('turbo:load', registerMitraDashboard);
 
     document.addEventListener('turbo:load', function() {
         const toggleButtons = document.querySelectorAll('.dk-expand-toggle');
