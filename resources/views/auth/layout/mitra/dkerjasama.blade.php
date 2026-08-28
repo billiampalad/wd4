@@ -343,8 +343,21 @@
             this.perPage = value;
             this.currentPage = 1;
             this.perPageOpen = false;
+        },
+        pageNumbers() {
+            const total = this.totalPages;
+            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
+            return Array.from(pages).filter(page => page >= 1 && page <= total).sort((a, b) => a - b);
+        },
+        goToPage(page) {
+            this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+        },
+        clampPage() {
+            if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+            if (this.currentPage < 1) this.currentPage = 1;
         }
-    }">
+    }" x-effect="clampPage()">
         <div class="card-header um-header dk-card-header">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
@@ -378,12 +391,6 @@
                         </div>
                     </div>
                     <span>data</span>
-                </div>
-
-                <div class="mn-table-showing" style="font-size: 13px; color: var(--text-sub);">
-                    Menampilkan <strong x-text="startRange" style="color: var(--text);">0</strong> sampai <strong
-                        x-text="endRange" style="color: var(--text);">0</strong> dari
-                    <strong x-text="totalRows" style="color: var(--text);">{{ $kerjasamaList->count() }}</strong> data
                 </div>
             </div>
 
@@ -659,6 +666,29 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="table-pagination-controls" x-show="totalRows > 0" x-cloak>
+                <div class="pagination-info">
+                    Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari <strong x-text="totalRows">0</strong> data
+                </div>
+                <div class="pagination-buttons" aria-label="Navigasi Halaman">
+                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
+                        <i class="fas fa-angles-left"></i>
+                    </button>
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <template x-for="page in pageNumbers()" :key="page">
+                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }" @click="goToPage(page)" x-text="page"></button>
+                    </template>
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="pag-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
+                        <i class="fas fa-angles-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
