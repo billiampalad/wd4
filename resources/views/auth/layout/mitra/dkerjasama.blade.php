@@ -23,6 +23,66 @@
     $totalMhsMagang = $totalMahasiswaAktif ?? 0;
     $alumniCount = $alumniTerserap ?? 0;
 
+    $pelaksanaGroupsFor = function ($kegiatan) {
+        $groups = collect();
+
+        $jurusanNames = $kegiatan->relationLoaded('jurusans')
+            ? $kegiatan->jurusans->pluck('nama_jurusan')->filter()->values()
+            : collect();
+        if ($jurusanNames->isEmpty() && $kegiatan->jurusan?->nama_jurusan) {
+            $jurusanNames = collect([$kegiatan->jurusan->nama_jurusan]);
+        }
+        if ($jurusanNames->isNotEmpty()) {
+            $groups->push([
+                'type' => 'Jurusan',
+                'icon' => 'fa-microchip',
+                'class' => 'dk-entity-indigo',
+                'names' => $jurusanNames,
+            ]);
+        }
+
+        $upaNames = $kegiatan->relationLoaded('upas')
+            ? $kegiatan->upas->pluck('nama_upa')->filter()->values()
+            : collect();
+        if ($upaNames->isEmpty() && $kegiatan->upa?->nama_upa) {
+            $upaNames = collect([$kegiatan->upa->nama_upa]);
+        }
+        if ($upaNames->isNotEmpty()) {
+            $groups->push([
+                'type' => 'UPA',
+                'icon' => 'fa-building-columns',
+                'class' => 'dk-entity-cyan',
+                'names' => $upaNames,
+            ]);
+        }
+
+        $pusatNames = $kegiatan->relationLoaded('pusats')
+            ? $kegiatan->pusats->pluck('nama_pusat')->filter()->values()
+            : collect();
+        if ($pusatNames->isEmpty() && $kegiatan->pusat?->nama_pusat) {
+            $pusatNames = collect([$kegiatan->pusat->nama_pusat]);
+        }
+        if ($pusatNames->isNotEmpty()) {
+            $groups->push([
+                'type' => 'Pusat',
+                'icon' => 'fa-landmark',
+                'class' => 'dk-entity-violet',
+                'names' => $pusatNames,
+            ]);
+        }
+
+        if ($groups->isEmpty()) {
+            $groups->push([
+                'type' => '',
+                'icon' => $kegiatan->pelaksana_icon ?? 'fa-university',
+                'class' => $kegiatan->pelaksana_class ?? 'dk-entity-indigo',
+                'names' => collect([$kegiatan->pelaksana_name ?: 'Tingkat Institusi']),
+            ]);
+        }
+
+        return $groups;
+    };
+
     $auditUserLabel = function ($user = null) {
         $roleName = $user?->role?->role_name;
         $roleLabel = match (strtolower($roleName ?? '')) {
@@ -399,7 +459,7 @@
                             </th>
                             <th class="um-th um-th-num">#</th>
                             <th class="um-th dk-th-title" style="width: 450px; min-width: 300px;">Judul Kerjasama</th>
-                            <th class="um-th">Unit Pelaksana Kampus</th>
+                            <th class="um-th">Unit Pelaksana</th>
                             <th class="um-th" style="white-space: nowrap;">Masa Berlaku</th>
                             <th class="um-th">Status</th>
                             <th class="um-th um-th-aksi">Aksi</th>
@@ -444,19 +504,7 @@
                                     default => 'Belum Diatur',
                                 };
 
-                                $pelaksanaGroups = collect();
-                                if ($kegiatan->jurusans && $kegiatan->jurusans->isNotEmpty()) {
-                                    $pelaksanaGroups->push(['type' => 'Jurusan', 'icon' => 'fa-building', 'class' => 'dk-entity-indigo', 'names' => $kegiatan->jurusans->pluck('nama_jurusan')->toArray()]);
-                                }
-                                if ($kegiatan->upas && $kegiatan->upas->isNotEmpty()) {
-                                    $pelaksanaGroups->push(['type' => 'UPA', 'icon' => 'fa-building', 'class' => 'dk-entity-emerald', 'names' => $kegiatan->upas->pluck('nama_upa')->toArray()]);
-                                }
-                                if ($kegiatan->pusats && $kegiatan->pusats->isNotEmpty()) {
-                                    $pelaksanaGroups->push(['type' => 'Pusat', 'icon' => 'fa-building', 'class' => 'dk-entity-amber', 'names' => $kegiatan->pusats->pluck('nama_pusat')->toArray()]);
-                                }
-                                if ($pelaksanaGroups->isEmpty()) {
-                                    $pelaksanaGroups->push(['type' => 'Polimdo', 'icon' => 'fa-university', 'class' => 'dk-entity-indigo', 'names' => ['Tingkat Institusi']]);
-                                }
+                                $pelaksanaGroups = $pelaksanaGroupsFor($kegiatan);
 
                                 $mulai = $kegiatan->start_date?->format('d M Y') ?? '-';
                                 $selesai = $kegiatan->end_date?->format('d M Y') ?? '-';
@@ -492,9 +540,11 @@
                                                     <i class="fas {{ $group['icon'] }}"></i>
                                                 </span>
                                                 <span class="dk-entity-text" style="padding-top: 2px;">
-                                                    <small
-                                                        style="display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-sub); margin-bottom:2px;">{{ $group['type'] }}</small>
-                                                    {{ implode(', ', $group['names']) }}
+                                                    @if ($group['type'])
+                                                        <small
+                                                            style="display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-sub); margin-bottom:2px;">{{ $group['type'] }}</small>
+                                                    @endif
+                                                    {{ is_array($group['names']) ? implode(', ', $group['names']) : (is_string($group['names']) ? $group['names'] : $group['names']->implode(', ')) }}
                                                 </span>
                                             </div>
                                         @endforeach
