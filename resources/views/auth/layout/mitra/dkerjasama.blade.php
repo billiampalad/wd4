@@ -119,7 +119,7 @@
     @endphp
 
     {{-- Filter Data Kerjasama (Accordion) --}}
-    <div class="report-filter-container" x-data="{ showFilters: true }" style="margin-bottom: 24px;">
+    <div class="report-filter-container" x-data="{ showFilters: false }">
         <div class="rfc-header"
             style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
             @click="showFilters = !showFilters">
@@ -142,7 +142,7 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 transform translate-y-0"
             x-transition:leave-end="opacity-0 transform -translate-y-4">
-            
+
             <div class="rfc-grid">
                 {{-- 1. Filter Jenis Dokumen --}}
                 <div class="rfc-group" x-data="{
@@ -165,13 +165,13 @@
                                 <i class="fas fa-file-signature" style="color: #9ca3af; font-size: 13px;"></i>
                                 <span x-text="selectedLabel"></span>
                             </div>
-                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s"
+                                :style="open ? 'transform: rotate(180deg)' : ''"></i>
                         </div>
                         <div class="ad-menu" x-show="open" x-transition>
                             <template x-for="item in items" :key="item.id">
                                 <div class="ad-item" :class="{ 'selected': jenisFilter == item.id }"
-                                    @click="jenisFilter = item.id; open = false"
-                                    x-text="item.label"></div>
+                                    @click="jenisFilter = item.id; open = false" x-text="item.label"></div>
                             </template>
                         </div>
                     </div>
@@ -183,7 +183,7 @@
                     items: [
                         { id: 'all', label: 'Semua Periode' },
                         @foreach($years as $year)
-                        { id: '{{ $year }}', label: 'Tahun {{ $year }}' },
+                            { id: '{{ $year }}', label: 'Tahun {{ $year }}' },
                         @endforeach
                     ],
                     get selectedLabel() {
@@ -198,13 +198,13 @@
                                 <i class="fas fa-calendar-alt" style="color: #9ca3af; font-size: 13px;"></i>
                                 <span x-text="selectedLabel"></span>
                             </div>
-                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s"
+                                :style="open ? 'transform: rotate(180deg)' : ''"></i>
                         </div>
                         <div class="ad-menu" x-show="open" x-transition>
                             <template x-for="item in items" :key="item.id">
                                 <div class="ad-item" :class="{ 'selected': String(periodeFilter) == item.id }"
-                                    @click="periodeFilter = item.id; open = false"
-                                    x-text="item.label"></div>
+                                    @click="periodeFilter = item.id; open = false" x-text="item.label"></div>
                             </template>
                         </div>
                     </div>
@@ -233,13 +233,13 @@
                                 <i class="fas fa-info-circle" style="color: #9ca3af; font-size: 13px;"></i>
                                 <span x-text="selectedLabel"></span>
                             </div>
-                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s"
+                                :style="open ? 'transform: rotate(180deg)' : ''"></i>
                         </div>
                         <div class="ad-menu" x-show="open" x-transition>
                             <template x-for="item in items" :key="item.id">
                                 <div class="ad-item" :class="{ 'selected': statusFilter == item.id }"
-                                    @click="statusFilter = item.id; open = false"
-                                    x-text="item.label"></div>
+                                    @click="statusFilter = item.id; open = false" x-text="item.label"></div>
                             </template>
                         </div>
                     </div>
@@ -250,13 +250,20 @@
                     <label>Cari Dokumen</label>
                     <div class="rfc-input-wrap">
                         <i class="fas fa-search rfc-input-icon"></i>
-                        <input type="text" x-model="searchFilter" placeholder="Cari judul / no. dokumen..." class="rfc-input">
+                        <input type="text" x-model="searchFilter" placeholder="Cari judul / no. dokumen..."
+                            class="rfc-input">
                     </div>
                 </div>
             </div>
 
-            <div class="rfc-footer" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
-                <button type="button" @click="resetFilters()" class="rfc-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            <div class="rfc-footer"
+                style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <button type="button" class="rfc-btn rfc-btn-primary"
+                    style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-search"></i> Tampilkan
+                </button>
+                <button type="button" @click="resetFilters()" class="rfc-btn"
+                    style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                     <i class="fas fa-rotate-left"></i> Reset Filter
                 </button>
             </div>
