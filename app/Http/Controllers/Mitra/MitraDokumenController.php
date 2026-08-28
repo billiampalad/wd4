@@ -87,6 +87,7 @@ class MitraDokumenController extends Controller
         return view('auth.mitra', [
             'view' => 'dokumen_detail',
             'cooperation' => $cooperation,
+            'kegiatan' => $cooperation,
         ]);
     }
 

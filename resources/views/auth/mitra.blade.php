@@ -152,6 +152,8 @@
         @if (!View::hasSection('content'))
             @if (request()->routeIs('mitra.dashboard'))
                 @include('auth.layout.mitra.dashboard')
+            @elseif (isset($view) && $view === 'dokumen_detail')
+                @include('auth.layout.mitra.dokumen_detail')
             @elseif (request()->routeIs('mitra.dokumen.*'))
                 @include('auth.layout.mitra.dkerjasama')
             @else
