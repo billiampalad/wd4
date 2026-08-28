@@ -661,6 +661,24 @@ class DashboardController
         $user = Auth::user();
         $mitraId = $user->mitra_id;
 
+        // KPI Metrik Dokumen (Cooperations)
+        $semuaDokumen = \App\Models\Cooperation::where('mitra_id', $mitraId)->get();
+        $aktifCount = $semuaDokumen->where('status', 'Aktif')->count();
+        $pendingReviewCount = $semuaDokumen->filter(function($doc) {
+            $status = strtolower($doc->status ?? '');
+            return $status === 'draft' || str_contains($status, 'menunggu');
+        })->count();
+        $expiringCount = $semuaDokumen->filter(function($doc) {
+            $status = strtolower($doc->status ?? '');
+            return str_contains($status, 'perpanjangan') || in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
+        })->count();
+
+        // Dokumen Terbaru (Summary Tabel)
+        $recentDocuments = \App\Models\Cooperation::where('mitra_id', $mitraId)
+            ->orderBy('created_at', 'desc')
+            ->take(4)
+            ->get();
+
         // 1. Mahasiswa Monitoring (UC22)
         $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan'])
             ->where('mitra_id', $mitraId)
@@ -677,7 +695,10 @@ class DashboardController
         $alumniTerserap = \App\Models\AlumniMitra::where('mitra_id', $mitraId)->where('status', 'Aktif')->count();
 
         if (view()->exists('auth.mitra')) {
-            return view('auth.mitra', compact('user', 'penempatans', 'totalMahasiswaAktif', 'rataRataNilai', 'alumniTerserap'));
+            return view('auth.mitra', compact(
+                'user', 'aktifCount', 'pendingReviewCount', 'expiringCount', 'recentDocuments',
+                'penempatans', 'totalMahasiswaAktif', 'rataRataNilai', 'alumniTerserap'
+            ));
         }
         return view('auth.unit', compact('user'));
     }

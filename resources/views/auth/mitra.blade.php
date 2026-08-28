@@ -151,9 +151,17 @@
         @yield('content')
         @if (!View::hasSection('content'))
             @if (request()->routeIs('mitra.dashboard'))
-                @include('auth.layout.mitra.index')
+                @include('auth.layout.mitra.dashboard')
+            @elseif (request()->routeIs('mitra.dokumen.*'))
+                @include('auth.layout.mitra.dkerjasama')
             @else
-                @include('auth.layout.mitra.index')
+                <main id="mainContent" class="dk-page">
+                    <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
+                        <i class="fas fa-hammer" style="font-size: 64px; margin-bottom: 24px; color: #cbd5e1;"></i>
+                        <h2 style="font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Halaman Dalam Pengembangan</h2>
+                        <p style="font-size: 16px;">Fitur untuk halaman ini sedang dibangun dan belum tersedia.</p>
+                    </div>
+                </main>
             @endif
         @endif
 
