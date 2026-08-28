@@ -17,19 +17,49 @@ class MitraDokumenController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if (!$user->mitra_id) {
-            return redirect()->route('mitra.dashboard')->with('error', 'Akun Anda belum terhubung dengan instansi Mitra.');
+        $mitra = $user->mitra ?: ($user->mitra_id ? \App\Models\Mitra::find($user->mitra_id) : \App\Models\Mitra::first());
+        $mitraId = $mitra?->id;
+        $mitraName = $mitra ? $mitra->nama_mitra : ($user->name ?? 'Mitra Kerjasama');
+
+        $query = Cooperation::with([
+            'jurusans', 'upas', 'pusats', 'jurusan', 'upa', 'pusat',
+            'laporanFiles', 'pksNumbers', 'createdBy', 'updatedBy'
+        ]);
+
+        if ($mitraId) {
+            $query->where('mitra_id', $mitraId);
         }
 
-        $cooperations = Cooperation::with(['jurusans', 'upas', 'pusats', 'laporanFiles', 'pksNumbers'])
-            ->where('mitra_id', $user->mitra_id)
-            ->latest()
-            ->paginate(10);
+        $kerjasamaList = $query->orderBy('created_at', 'desc')->get();
 
-        return view('auth.mitra', [
-            'view' => 'dokumen_list',
-            'cooperations' => $cooperations,
-        ]);
+        // Metrik Statistik
+        $totalKerjasama = $kerjasamaList->count();
+        $aktifCount = $kerjasamaList->filter(function ($item) {
+            $statusBerlaku = strtolower($item->status_berlaku ?? '');
+            $statusDokumen = strtolower($item->status_dokumen ?? '');
+            return $statusBerlaku === 'aktif' || $statusDokumen === 'disahkan';
+        })->count();
+
+        // 1. Mahasiswa Magang Aktif
+        $totalMhsMagang = \App\Models\KegiatanMahasiswa::when($mitraId, function ($q) use ($mitraId) {
+            return $q->where('mitra_id', $mitraId);
+        })->where('status', 'Aktif')->count();
+
+        // 2. Tracking Alumni Terserap
+        $alumniCount = \App\Models\AlumniMitra::when($mitraId, function ($q) use ($mitraId) {
+            return $q->where('mitra_id', $mitraId);
+        })->where('status', 'Aktif')->count();
+
+        return view('auth.mitra', compact(
+            'user',
+            'mitra',
+            'mitraName',
+            'kerjasamaList',
+            'totalKerjasama',
+            'aktifCount',
+            'totalMhsMagang',
+            'alumniCount'
+        ));
     }
 
     /**

@@ -659,44 +659,62 @@ class DashboardController
     public function mitra()
     {
         $user = Auth::user();
-        $mitraId = $user->mitra_id;
+        $mitra = $user->mitra ?: ($user->mitra_id ? \App\Models\Mitra::find($user->mitra_id) : \App\Models\Mitra::first());
+        $mitraId = $mitra?->id;
+        $mitraName = $mitra ? $mitra->nama_mitra : ($user->name ?? 'Mitra');
 
         // KPI Metrik Dokumen (Cooperations)
-        $semuaDokumen = \App\Models\Cooperation::where('mitra_id', $mitraId)->get();
-        $aktifCount = $semuaDokumen->where('status', 'Aktif')->count();
+        $semuaDokumen = \App\Models\Cooperation::when($mitraId, function($q) use ($mitraId) {
+            return $q->where('mitra_id', $mitraId);
+        })->get();
+
+        $aktifCount = $semuaDokumen->filter(function($doc) {
+            $statusBerlaku = strtolower($doc->status_berlaku ?? '');
+            $statusDokumen = strtolower($doc->status_dokumen ?? '');
+            return $statusBerlaku === 'aktif' || $statusDokumen === 'disahkan';
+        })->count();
+
         $pendingReviewCount = $semuaDokumen->filter(function($doc) {
-            $status = strtolower($doc->status ?? '');
+            $status = strtolower($doc->status_dokumen ?? '');
             return $status === 'draft' || str_contains($status, 'menunggu');
         })->count();
+
         $expiringCount = $semuaDokumen->filter(function($doc) {
-            $status = strtolower($doc->status ?? '');
+            $status = strtolower($doc->status_berlaku ?? '');
             return str_contains($status, 'perpanjangan') || in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
         })->count();
 
         // Dokumen Terbaru (Summary Tabel)
-        $recentDocuments = \App\Models\Cooperation::where('mitra_id', $mitraId)
+        $recentDocuments = \App\Models\Cooperation::with(['jurusans', 'upas', 'pusats', 'jurusan', 'upa', 'pusat'])
+            ->when($mitraId, function($q) use ($mitraId) {
+                return $q->where('mitra_id', $mitraId);
+            })
             ->orderBy('created_at', 'desc')
-            ->take(4)
+            ->take(5)
             ->get();
 
         // 1. Mahasiswa Monitoring (UC22)
         $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan'])
-            ->where('mitra_id', $mitraId)
+            ->when($mitraId, function($q) use ($mitraId) {
+                return $q->where('mitra_id', $mitraId);
+            })
             ->where('status', 'Aktif')
             ->orderBy('created_at', 'desc')
             ->get();
 
         $totalMahasiswaAktif = $penempatans->count();
-        $rataRataNilai = \App\Models\KegiatanMahasiswa::where('mitra_id', $mitraId)
-            ->whereNotNull('nilai_mitra')
-            ->avg('nilai_mitra');
+        $rataRataNilai = \App\Models\KegiatanMahasiswa::when($mitraId, function($q) use ($mitraId) {
+            return $q->where('mitra_id', $mitraId);
+        })->whereNotNull('nilai_mitra')->avg('nilai_mitra') ?? 0;
 
         // 2. Tracking Lulusan (UC33)
-        $alumniTerserap = \App\Models\AlumniMitra::where('mitra_id', $mitraId)->where('status', 'Aktif')->count();
+        $alumniTerserap = \App\Models\AlumniMitra::when($mitraId, function($q) use ($mitraId) {
+            return $q->where('mitra_id', $mitraId);
+        })->where('status', 'Aktif')->count();
 
         if (view()->exists('auth.mitra')) {
             return view('auth.mitra', compact(
-                'user', 'aktifCount', 'pendingReviewCount', 'expiringCount', 'recentDocuments',
+                'user', 'mitra', 'mitraName', 'aktifCount', 'pendingReviewCount', 'expiringCount', 'recentDocuments',
                 'penempatans', 'totalMahasiswaAktif', 'rataRataNilai', 'alumniTerserap'
             ));
         }

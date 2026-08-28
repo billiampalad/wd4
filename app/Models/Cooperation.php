@@ -243,6 +243,11 @@ class Cooperation extends Model
 
     // ─── Accessors ───────────────────────────────────────
 
+    public function getStatusAttribute()
+    {
+        return $this->status_berlaku ?: ($this->status_dokumen ?: 'Draft');
+    }
+
     public function getStatusLabelAttribute()
     {
         return $this->status_dokumen ?: 'Draft';
