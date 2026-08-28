@@ -330,7 +330,21 @@
         </div>
     </div>
 
-    <div class="card um-card dk-card">
+    <div class="card um-card dk-card" x-data="{ 
+        currentPage: 1, 
+        perPage: 10,
+        perPageOpen: false,
+        perPageOptions: [5, 10, 25, 50],
+        totalRows: {{ $kerjasamaList->count() }},
+        get totalPages() { return Math.max(1, Math.ceil(this.totalRows / this.perPage)); },
+        get startRange() { return this.totalRows === 0 ? 0 : (this.currentPage - 1) * this.perPage + 1; },
+        get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); },
+        setPerPage(value) {
+            this.perPage = value;
+            this.currentPage = 1;
+            this.perPageOpen = false;
+        }
+    }">
         <div class="card-header um-header dk-card-header">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
@@ -338,6 +352,39 @@
                     <strong>Daftar Dokumen Kerjasama Saya</strong>
                     <small id="dkerjasamaCount">{{ $kerjasamaList->count() }} data ditemukan</small>
                 </span>
+            </div>
+
+            <div class="mn-table-controls" style="display: flex; gap: 16px; align-items: center; margin: 0 auto;">
+                <div class="mn-table-entries"
+                    style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
+                    <span>Tampilkan</span>
+                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
+                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
+                            style="display: flex; align-items: center; justify-content: space-between; min-width: 64px; padding: 8px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; transition: all 0.2s;">
+                            <span x-text="perPage">10</span>
+                            <i class="fas fa-chevron-down"
+                                style="font-size: 10px; margin-left: 8px; color: var(--text-sub);"></i>
+                        </button>
+                        <div class="mn-entry-menu" x-show="perPageOpen" x-cloak x-transition.opacity
+                            style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 50; overflow: hidden; display: flex; flex-direction: column;">
+                            <template x-for="option in perPageOptions" :key="option">
+                                <button type="button" class="mn-entry-option" @click="setPerPage(option)"
+                                    style="width: 100%; padding: 8px 12px; text-align: left; background: transparent; border: none; cursor: pointer; font-size: 13px; color: var(--text); transition: 0.2s; font-weight: 500;"
+                                    onmouseover="this.style.background='var(--surface2)'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <span x-text="option"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    <span>data</span>
+                </div>
+
+                <div class="mn-table-showing" style="font-size: 13px; color: var(--text-sub);">
+                    Menampilkan <strong x-text="startRange" style="color: var(--text);">0</strong> sampai <strong
+                        x-text="endRange" style="color: var(--text);">0</strong> dari
+                    <strong x-text="totalRows" style="color: var(--text);">{{ $kerjasamaList->count() }}</strong> data
+                </div>
             </div>
 
             <div class="dk-card-tools" x-data="{ showModal: false }">
@@ -440,23 +487,11 @@
             </div>
         </div>
 
-        <div class="card-body dk-card-body" x-data="{ 
-            currentPage: 1, 
-            perPage: 10,
-            totalRows: {{ $kerjasamaList->count() }},
-            get totalPages() { return Math.ceil(this.totalRows / this.perPage); },
-            get startRange() { return (this.currentPage - 1) * this.perPage + 1; },
-            get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); }
-        }">
+        <div class="card-body dk-card-body">
             <div class="table-wrap um-table-wrap dk-table-wrap">
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
-                            <th class="um-th dk-th-expand">
-                                <span class="dk-expand-head-icon" title="Expand">
-                                    <i class="fas fa-sort-amount-down"></i>
-                                </span>
-                            </th>
                             <th class="um-th um-th-num">#</th>
                             <th class="um-th dk-th-title" style="width: 450px; min-width: 300px;">Judul Kerjasama</th>
                             <th class="um-th">Unit Pelaksana</th>
@@ -515,12 +550,6 @@
                             @endphp
                             <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}"
                                 x-show="(statusFilter === 'all' || statusFilter === '{{ $tabCategory }}' || statusFilter === '{{ $status }}') && (jenisFilter === 'all' || jenisFilter === '{{ $docJenis }}') && (periodeFilter === 'all' || String(periodeFilter) === '{{ $docTahun }}') && (searchFilter === '' || '{{ strtolower(addslashes($title . ' ' . $docNumber)) }}'.includes(searchFilter.toLowerCase()))">
-                                <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
-                                    <button type="button" class="dk-expand-toggle" aria-expanded="false"
-                                        aria-controls="dk-detail-{{ $kegiatan->id }}" title="Lihat metadata">
-                                        <i class="fas fa-angles-right"></i>
-                                    </button>
-                                </td>
                                 <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
                                     <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -582,7 +611,7 @@
                                 </td>
                             </tr>
                             <tr class="dk-row-detail" id="dk-detail-{{ $kegiatan->id }}" aria-hidden="true">
-                                <td colspan="7" class="dk-detail-cell">
+                                <td colspan="6" class="dk-detail-cell">
                                     <div class="dk-detail-content">
                                         <div class="dk-audit-grid">
                                             <section class="dk-audit-card">
@@ -616,7 +645,7 @@
                             </tr>
                         @empty
                             <tr data-empty>
-                                <td colspan="7" class="um-empty">
+                                <td colspan="6" class="um-empty">
                                     <div class="um-empty-state dk-empty-state">
                                         <div class="um-empty-icon dk-empty-icon">
                                             <i class="fas fa-folder-open"></i>
@@ -656,6 +685,32 @@
                     <button class="review-modal-close" @click="showReviewModal = false" title="Tutup">
                         <i class="fas fa-times"></i>
                     </button>
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="review-pagination-controls">
+                    <div class="pagination-info"
+                        style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
+                        <span style="font-weight: 600; color: var(--text);" x-text="`Halaman ${currentPage}`"></span>
+                        <span style="color: var(--border);">/</span>
+                        <span x-text="totalPages"></span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="pagination-btn" @click="prevPage()" :disabled="currentPage === 1"
+                            style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: none; background: var(--surface); color: var(--text); cursor: pointer; transition: 0.2s;"
+                            :style="currentPage === 1 ? { opacity: 0.3, cursor: 'not-allowed' } : {}"
+                            @mouseover="if(currentPage !== 1) this.style.background='var(--surface2)'"
+                            @mouseout="this.style.background='var(--surface)'" title="Halaman sebelumnya">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="pagination-btn" @click="nextPage()" :disabled="currentPage === totalPages"
+                            style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; border: none; background: var(--surface); color: var(--text); cursor: pointer; transition: 0.2s;"
+                            :style="currentPage === totalPages ? { opacity: 0.3, cursor: 'not-allowed' } : {}"
+                            @mouseover="if(currentPage !== totalPages) this.style.background='var(--surface2)'"
+                            @mouseout="this.style.background='var(--surface)'" title="Halaman berikutnya">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Modal Body (Split View) -->
