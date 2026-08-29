@@ -553,7 +553,7 @@
                                 $docNumber = $kegiatan->doc_number ?? '-';
                                 $title = $kegiatan->judul ?? '-';
                                 $docJenis = $kegiatan->jenis ?? '';
-                                $docTahun = $kegiatan->start_date ? $kegiatan->start_date->format('Y') : '';
+                                $docTahun = $kegiatan->start_date?->format('Y') ?? '';
                             @endphp
                             <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}"
                                 x-show="(statusFilter === 'all' || statusFilter === '{{ $tabCategory }}' || statusFilter === '{{ $status }}') && (jenisFilter === 'all' || jenisFilter === '{{ $docJenis }}') && (periodeFilter === 'all' || String(periodeFilter) === '{{ $docTahun }}') && (searchFilter === '' || '{{ strtolower(addslashes($title . ' ' . $docNumber)) }}'.includes(searchFilter.toLowerCase()))">
