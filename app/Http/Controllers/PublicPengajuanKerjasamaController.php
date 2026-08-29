@@ -132,18 +132,33 @@ class PublicPengajuanKerjasamaController extends Controller
         return $code;
     }
 
-    public function createPerpanjangan()
+    public function createPerpanjangan(Request $request)
     {
         $mitras = Mitra::orderBy('nama_mitra')->get();
         $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
+        $user = auth()->user();
+        $currentMitra = $user ? ($user->mitra ?? ($user->mitra_id ? Mitra::find($user->mitra_id) : null)) : null;
+
+        // Cek jika ada parameter spesifik dokumen
+        $selectedCooperationId = $request->query('cooperation_id') ?? $request->query('dokumen_id');
+        $selectedCooperation = null;
+        if ($selectedCooperationId) {
+            $selectedCooperation = Cooperation::with(['penandatanganMitra', 'pjMitra', 'details.jenisKerjasama', 'pksNumbers'])->find($selectedCooperationId);
+        }
+
         // Build contact and plan map from latest cooperation & submission per mitra
         $mitraContactMap = [];
         foreach ($mitras as $mitra) {
-            $latestCoop = Cooperation::where('mitra_id', $mitra->id)
-                ->with(['penandatanganMitra', 'pjMitra'])
-                ->latest('id')
-                ->first();
+            $latestCoop = null;
+            if ($selectedCooperation && $selectedCooperation->mitra_id === $mitra->id) {
+                $latestCoop = $selectedCooperation;
+            } else {
+                $latestCoop = Cooperation::where('mitra_id', $mitra->id)
+                    ->with(['penandatanganMitra', 'pjMitra', 'details.jenisKerjasama', 'pksNumbers'])
+                    ->latest('id')
+                    ->first();
+            }
 
             $latestSubmission = PengajuanPerpanjanganKerjasama::where('mitra_id', $mitra->id)
                 ->latest('id')
@@ -157,46 +172,77 @@ class PublicPengajuanKerjasamaController extends Controller
 
             // Default title
             $title = '';
-            if ($latestSubmission && ! empty($latestSubmission->judul_pengajuan)) {
-                $title = str_starts_with(strtolower($latestSubmission->judul_pengajuan), 'perpanjangan')
-                    ? $latestSubmission->judul_pengajuan
-                    : 'Perpanjangan ' . $latestSubmission->judul_pengajuan;
+            if ($latestCoop && ! empty($latestCoop->judul)) {
+                $title = str_starts_with(strtolower($latestCoop->judul), 'perpanjangan')
+                    ? $latestCoop->judul
+                    : 'Perpanjangan ' . $latestCoop->judul;
             } elseif ($latestCoop && ! empty($latestCoop->title)) {
                 $title = str_starts_with(strtolower($latestCoop->title), 'perpanjangan')
                     ? $latestCoop->title
                     : 'Perpanjangan ' . $latestCoop->title;
+            } elseif ($latestSubmission && ! empty($latestSubmission->judul_pengajuan)) {
+                $title = str_starts_with(strtolower($latestSubmission->judul_pengajuan), 'perpanjangan')
+                    ? $latestSubmission->judul_pengajuan
+                    : 'Perpanjangan ' . $latestSubmission->judul_pengajuan;
             } else {
                 $title = 'Perpanjangan Kerja Sama - ' . $mitra->nama_mitra;
             }
 
             // Ruang lingkup
-            $ruangLingkup = $latestSubmission->ruang_lingkup ?? '';
-            if (empty($ruangLingkup) && $latestCoop) {
-                $firstDetail = $latestCoop->details()->with('jenisKerjasama')->first();
-                if ($firstDetail && $firstDetail->jenisKerjasama) {
-                    $ruangLingkup = $firstDetail->jenisKerjasama->nama_kerjasama;
+            $ruangLingkup = '';
+            if ($latestCoop) {
+                if (!empty($latestCoop->ruang_lingkup)) {
+                    $ruangLingkup = $latestCoop->ruang_lingkup;
+                } else {
+                    $firstDetail = $latestCoop->details()->with('jenisKerjasama')->first();
+                    if ($firstDetail && $firstDetail->jenisKerjasama) {
+                        $ruangLingkup = $firstDetail->jenisKerjasama->nama_kerjasama;
+                    }
                 }
+            }
+            if (empty($ruangLingkup) && $latestSubmission) {
+                $ruangLingkup = $latestSubmission->ruang_lingkup ?? '';
             }
 
             // Doc number
-            $docNumber = $latestCoop->doc_number ?? $latestSubmission->doc_number ?? '';
+            $docNumber = $latestCoop?->pksNumbers?->first()?->nomor_pihak_mitra 
+                ?? $latestCoop?->pksNumbers?->first()?->nomor_pihak_kampus 
+                ?? $latestCoop?->doc_number 
+                ?? $latestSubmission?->doc_number 
+                ?? '';
 
-            $rawTelp = $mitra->telp ?? $latestSubmission->telp ?? '';
+            // Jenis dokumen (MoU/MoA/IA)
+            $jenisDokumen = '';
+            if ($latestCoop && !empty($latestCoop->jenis)) {
+                $j = strtoupper($latestCoop->jenis);
+                if (str_contains($j, 'MOU')) {
+                    $jenisDokumen = 'MoU (Memorandum of Understanding)';
+                } elseif (str_contains($j, 'MOA')) {
+                    $jenisDokumen = 'MoA (Memorandum of Agreement)';
+                } elseif (str_contains($j, 'IA') || str_contains($j, 'SPK')) {
+                    $jenisDokumen = 'IA (Implementation Agreement)';
+                } else {
+                    $jenisDokumen = $latestCoop->jenis;
+                }
+            }
+
+            $rawTelp = $mitra->telepon ?? $mitra->telp ?? $latestSubmission->telp ?? '';
             $telp = ($rawTelp === '-' || trim($rawTelp) === '') ? '' : trim($rawTelp);
 
             $mitraContactMap[$mitra->id] = [
                 'doc_number'               => $docNumber,
-                'nama_penandatangan'       => $latestCoop->penandatanganMitra->nama ?? $latestSubmission->nama_penandatangan ?? '',
-                'jabatan_penandatangan'    => $latestCoop->penandatanganMitra->jabatan ?? $latestSubmission->jabatan_penandatangan ?? '',
-                'nama_penanggung_jawab'    => $latestCoop->pjMitra->nama ?? $latestSubmission->nama_penanggung_jawab ?? '',
-                'jabatan_penanggung_jawab' => $latestCoop->pjMitra->jabatan ?? $latestSubmission->jabatan_penanggung_jawab ?? '',
+                'jenis'                    => $jenisDokumen,
+                'nama_penandatangan'       => $latestCoop?->penandatanganMitra?->nama ?? $latestSubmission?->nama_penandatangan ?? '',
+                'jabatan_penandatangan'    => $latestCoop?->penandatanganMitra?->jabatan ?? $latestSubmission?->jabatan_penandatangan ?? '',
+                'nama_penanggung_jawab'    => $latestCoop?->pjMitra?->nama ?? $latestSubmission?->nama_penanggung_jawab ?? '',
+                'jabatan_penanggung_jawab' => $latestCoop?->pjMitra?->jabatan ?? $latestSubmission?->jabatan_penanggung_jawab ?? '',
                 'telp'                     => $telp,
                 'judul_pengajuan'          => $title,
                 'ruang_lingkup'            => $ruangLingkup,
             ];
         }
 
-        return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas', 'mitraContactMap'));
+        return view('auth.perpanjangan', compact('mitras', 'jenisKerjasamas', 'mitraContactMap', 'currentMitra'));
     }
 
     public function storePerpanjangan(Request $request)
@@ -222,6 +268,11 @@ class PublicPengajuanKerjasamaController extends Controller
 
         if ($request->hasFile('file_surat')) {
             $validated['file_surat'] = $request->file('file_surat')->store('surat_permohonan', 'public');
+        }
+
+        $user = auth()->user();
+        if ($user && $user->mitra_id) {
+            $validated['mitra_id'] = $user->mitra_id;
         }
 
         $mitra = Mitra::findOrFail($validated['mitra_id']);

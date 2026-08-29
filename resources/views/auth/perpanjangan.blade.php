@@ -185,6 +185,16 @@
                 <form action="{{ route('pengajuan.perpanjangan.store') }}" method="POST" id="wizardForm" enctype="multipart/form-data">
                     @csrf
 
+                    @if(isset($currentMitra) && $currentMitra)
+                        <div class="partner-alert" style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.2); color: #4338ca; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 14px 18px; border-radius: 14px;">
+                            <i class="fas fa-magic" style="font-size: 1.25rem; color: #4f46e5;"></i>
+                            <div>
+                                <div style="font-weight: 700; font-size: 14px;">Profil Mitra &amp; Riwayat Dokumen Terdeteksi</div>
+                                <div style="font-size: 13px; color: #4f46e5; margin-top: 2px;">Data instansi <strong>{{ $currentMitra->nama_mitra }}</strong> beserta riwayat kerja sama sebelumnya telah dimuat secara otomatis. Anda tetap dapat memperbarui informasi jika diperlukan.</div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- ═══ STEP 1: Identitas Mitra Terdaftar ═══ -->
                     <div class="form-step active" data-step="1">
                         <div class="partner-form-head">
@@ -205,7 +215,7 @@
                                                 <option value="">-- Pilih mitra terdaftar --</option>
                                                 @foreach ($mitras as $mitra)
                                                     <option value="{{ $mitra->id }}"
-                                                        {{ (string) old('mitra_id') === (string) $mitra->id ? 'selected' : '' }}>
+                                                        {{ (string) old('mitra_id', $currentMitra->id ?? '') === (string) $mitra->id ? 'selected' : '' }}>
                                                         {{ $mitra->nama_mitra }} ({{ ucfirst($mitra->kategori) }} &middot; {{ $mitra->negara ?: 'Indonesia' }})
                                                     </option>
                                                 @endforeach
@@ -631,7 +641,7 @@
                                         </div>
                                         <div style="position: relative;">
                                             <i class="fas fa-envelope" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sub); z-index: 2; pointer-events: none; font-size: 13px;"></i>
-                                            <input id="email" type="email" name="email" value="{{ old('email') }}"
+                                            <input id="email" type="email" name="email" value="{{ old('email', auth()->user()?->email ?? ($currentMitra->email ?? '')) }}"
                                                 placeholder="Contoh: pic@perusahaan.com" required style="padding-left: 38px;">
                                         </div>
                                         @error('email')
@@ -1546,6 +1556,18 @@
                         }
                     }
 
+                    // Auto-select Jenis Dokumen if present
+                    if (data.jenis) {
+                        const jenisInput = document.querySelector('input[name="jenis"]');
+                        if (jenisInput) {
+                            jenisInput.value = data.jenis;
+                            const alpineWrapper = jenisInput.closest('[x-data]');
+                            if (alpineWrapper && alpineWrapper._x_dataStack) {
+                                alpineWrapper._x_dataStack[0].selected = data.jenis;
+                            }
+                        }
+                    }
+
                     if (autofillNotice && filledStep2) autofillNotice.style.display = 'flex';
                     if (autofillNoticeStep3 && filledStep3) autofillNoticeStep3.style.display = 'flex';
                 } else {
@@ -1553,6 +1575,11 @@
                     if (autofillNoticeStep3) autofillNoticeStep3.style.display = 'none';
                 }
             });
+
+            // Trigger initial autofill if mitra_id is preselected
+            if (mitraSelect.value) {
+                mitraSelect.dispatchEvent(new Event('change'));
+            }
         }
 
         // ── Stepper Interactive Click Navigation ──
