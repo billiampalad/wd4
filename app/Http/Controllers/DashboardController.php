@@ -9,6 +9,10 @@ use App\Models\Evaluasi;
 use App\Models\Profile;
 use App\Models\DetailKegiatan;
 use App\Models\Notifikasi;
+use App\Models\Mitra;
+use App\Models\KegiatanMahasiswa;
+use App\Models\AlumniMitra;
+use App\Models\Alumni;
 use App\Support\CooperationAccess;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,8 +26,8 @@ class DashboardController
 
         // ── 1. WIDGET KARTU STATISTIK ─────────────────────────────
         $totalKerjasamaAktif = Cooperation::where('status_berlaku', 'Aktif')->count();
-        $totalMitra = \App\Models\Mitra::count();
-        $totalNilaiKontrak = \App\Models\DetailKegiatan::sum('nilai_kontrak');
+        $totalMitra = Mitra::count();
+        $totalNilaiKontrak = DetailKegiatan::sum('nilai_kontrak');
         
         $capaianSasaran = DB::table('detail_kegiatans')
             ->join('sasarans', 'detail_kegiatans.sasaran_id', '=', 'sasarans.id')
@@ -57,8 +61,8 @@ class DashboardController
             ->groupBy('klasifikasi.nama')
             ->get();
 
-        $internasional = \App\Models\Mitra::internasional()->count();
-        $nasional = \App\Models\Mitra::nasional()->count();
+        $internasional = Mitra::internasional()->count();
+        $nasional = Mitra::nasional()->count();
 
         // ── 3. RINGKASAN TUGAS HARI INI ───────────────────────────
         $expiringSoon = Cooperation::with('mitra')
@@ -77,7 +81,7 @@ class DashboardController
             })
             ->get();
 
-        $implementasiTerbaru = \App\Models\DetailKegiatan::with(['cooperation.mitra', 'jenisKerjasama'])
+        $implementasiTerbaru = DetailKegiatan::with(['cooperation.mitra', 'jenisKerjasama'])
             ->latest()
             ->limit(5)
             ->get();
@@ -89,7 +93,7 @@ class DashboardController
             ->groupBy('satuan_luaran')
             ->get();
 
-        $notifikasiSistem = \App\Models\Notifikasi::where('user_id', $user->id)
+        $notifikasiSistem = Notifikasi::where('user_id', $user->id)
             ->where('is_read', 0)
             ->latest()
             ->get();
@@ -106,15 +110,15 @@ class DashboardController
             ->get();
 
         // 1. Mahasiswa Monitoring (UC22)
-        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
+        $penempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
             ->where('status', 'Aktif')
             ->orderBy('created_at', 'desc')
             ->get();
         $totalMahasiswaAktif = $penempatans->count();
 
         // 2. Tracking Lulusan (UC33)
-        $totalAlumni = \App\Models\Alumni::count();
-        $alumniBekerja = \App\Models\AlumniMitra::where('status', 'Aktif')->count();
+        $totalAlumni = Alumni::count();
+        $alumniBekerja = AlumniMitra::where('status', 'Aktif')->count();
         $persentasePenyerapan = $totalAlumni > 0 ? round(($alumniBekerja / $totalAlumni) * 100, 2) : 0;
 
         return view('auth.pimpinan', compact(
@@ -155,18 +159,40 @@ class DashboardController
             ->orderBy('id', 'asc')
             ->get();
 
-        // ── I. GRAFIK PERFORMA INSTANSI ───────────────────────────
+        [$funnelData, $sasaranData, $totalSasaranEntries, $financialTrend, $totalNilaiKontrakAktif, $unitRanking] = $this->getMonitoringPerformanceMetrics();
+        [$criticalExpiry, $warningExpiry, $idleCooperations, $complianceAlerts] = $this->getMonitoringEarlyWarningAlerts();
 
-        // 1. Funnel: MoU → MoA → IA conversion
-        // Nilai enum di DB adalah string panjang misal "MoU (Memorandum of Understanding)",
-        // jadi kita gunakan LIKE untuk mencocokkan masing-masing tipe.
+        $totalKerjasama = $dataKerjasama->count();
+        $aktifCount = $dataKerjasama->where('status_berlaku', 'Aktif')->count();
+        $expiredCount = $dataKerjasama->filter(fn($i) => in_array(strtolower($i->status ?? ''), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']))->count();
+
+        return view('auth.pimpinan', [
+            'view' => 'monitoring',
+            'dataKerjasama' => $dataKerjasama,
+            'funnelData' => $funnelData,
+            'sasaranData' => $sasaranData,
+            'totalSasaranEntries' => $totalSasaranEntries,
+            'financialTrend' => $financialTrend,
+            'totalNilaiKontrakAktif' => $totalNilaiKontrakAktif,
+            'unitRanking' => $unitRanking,
+            'criticalExpiry' => $criticalExpiry,
+            'warningExpiry' => $warningExpiry,
+            'idleCooperations' => $idleCooperations,
+            'complianceAlerts' => $complianceAlerts,
+            'totalKerjasama' => $totalKerjasama,
+            'aktifCount' => $aktifCount,
+            'expiredCount' => $expiredCount,
+        ]);
+    }
+
+    private function getMonitoringPerformanceMetrics(): array
+    {
         $funnelData = collect([
             'MoU' => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%MoU%')->count(),
             'MoA' => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%MoA%')->count(),
             'IA'  => Cooperation::whereNotNull('jenis')->where('jenis', 'like', '%IA%')->count(),
         ]);
 
-        // 2. Capaian Sasaran / IKU
         $sasaranData = DB::table('detail_kegiatans')
             ->join('sasarans', 'detail_kegiatans.sasaran_id', '=', 'sasarans.id')
             ->select('sasarans.id', 'sasarans.deskripsi as nama_sasaran', DB::raw('COUNT(*) as total'))
@@ -174,7 +200,6 @@ class DashboardController
             ->get();
         $totalSasaranEntries = $sasaranData->sum('total');
 
-        // 3. Revenue / Financial Trend (monthly for current year)
         $currentYear = (int) date('Y');
         $monthlySums = DB::table('detail_kegiatans')
             ->join('cooperations', 'detail_kegiatans.cooperation_id', '=', 'cooperations.id')
@@ -198,10 +223,9 @@ class DashboardController
             ]);
         }
 
-        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status_berlaku', 'Aktif'))
+        $totalNilaiKontrakAktif = DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status_berlaku', 'Aktif'))
             ->sum('nilai_kontrak');
 
-        // 4. Ranking Unit Pelaksana
         $rankJurusan = DB::table('kerjasama_jurusan')
             ->join('jurusans', 'kerjasama_jurusan.jurusan_id', '=', 'jurusans.id')
             ->join('cooperations', 'kerjasama_jurusan.cooperation_id', '=', 'cooperations.id')
@@ -236,9 +260,11 @@ class DashboardController
             ->sortByDesc('total')
             ->values();
 
-        // ── II. SISTEM PERINGATAN DINI ────────────────────────────
+        return [$funnelData, $sasaranData, $totalSasaranEntries, $financialTrend, $totalNilaiKontrakAktif, $unitRanking];
+    }
 
-        // 1. Expiration Alerts
+    private function getMonitoringEarlyWarningAlerts(): array
+    {
         $criticalExpiry = Cooperation::with(['mitra', 'pjInternal'])
             ->where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
@@ -253,13 +279,11 @@ class DashboardController
             ->orderBy('end_date')
             ->get();
 
-        // 2. Idle Cooperations (aktif tapi tanpa detail_kegiatans)
         $idleCooperations = Cooperation::with(['mitra', 'pjInternal'])
             ->where('status_berlaku', 'Aktif')
             ->whereDoesntHave('details')
             ->get();
 
-        // 3. Compliance Alerts (aktif tapi document_link / nomor PKS kosong)
         $complianceAlerts = Cooperation::with(['mitra', 'pksNumbers'])
             ->where('status_berlaku', 'Aktif')
             ->where(function($q) {
@@ -269,31 +293,7 @@ class DashboardController
             })
             ->get();
 
-        // ── III. EXTRA STATS ──────────────────────────────────────
-        $totalKerjasama = $dataKerjasama->count();
-        $aktifCount = $dataKerjasama->where('status_berlaku', 'Aktif')->count();
-        $expiredCount = $dataKerjasama->filter(fn($i) => in_array(strtolower($i->status ?? ''), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']))->count();
-
-        return view('auth.pimpinan', [
-            'view' => 'monitoring',
-            'dataKerjasama' => $dataKerjasama,
-            // Performance metrics
-            'funnelData' => $funnelData,
-            'sasaranData' => $sasaranData,
-            'totalSasaranEntries' => $totalSasaranEntries,
-            'financialTrend' => $financialTrend,
-            'totalNilaiKontrakAktif' => $totalNilaiKontrakAktif,
-            'unitRanking' => $unitRanking,
-            // Early warnings
-            'criticalExpiry' => $criticalExpiry,
-            'warningExpiry' => $warningExpiry,
-            'idleCooperations' => $idleCooperations,
-            'complianceAlerts' => $complianceAlerts,
-            // Stats
-            'totalKerjasama' => $totalKerjasama,
-            'aktifCount' => $aktifCount,
-            'expiredCount' => $expiredCount,
-        ]);
+        return [$criticalExpiry, $warningExpiry, $idleCooperations, $complianceAlerts];
     }
 
     public function pimpinanMonitoringDetail($id)
@@ -435,25 +435,23 @@ class DashboardController
         $deadlineLimit = now()->addDays(30)->endOfDay();
 
         $kerjasamaQuery = Cooperation::with([
-            'mitra',
-            'pjInternal',
-            'details',
-            'details.sasaran',
-            'details.indikator',
-            'jurusans',
-            'upas',
-            'pusats',
-            'pksNumbers',
+            'mitra', 'pjInternal', 'details', 'details.sasaran',
+            'details.indikator', 'jurusans', 'upas', 'pusats', 'pksNumbers',
         ]);
 
         $kerjasamaUnit = (match ($profileType) {
             'upa' => $kerjasamaQuery->where('upa_id', $unitId),
             'pusat' => $kerjasamaQuery->where('pusat_id', $unitId),
             default => $kerjasamaQuery,
-        })
-                ->latest()
-                ->get();
+        })->latest()->get();
 
+        $metrics = $this->calculateUnitMetrics($kerjasamaUnit, $today, $deadlineLimit);
+
+        return view($view, array_merge(['unitId' => $unitId, 'unitName' => $unitName], $metrics));
+    }
+
+    private function calculateUnitMetrics($kerjasamaUnit, $today, $deadlineLimit): array
+    {
         $cooperationIds = $kerjasamaUnit->pluck('id');
         $iaIds = $kerjasamaUnit
             ->filter(fn ($item) => str_contains(strtolower($item->jenis ?? ''), 'ia'))
@@ -494,9 +492,7 @@ class DashboardController
 
         $kerjasamaTable = $kerjasamaUnit->values();
 
-        return view($view, compact(
-            'unitId',
-            'unitName',
+        return compact(
             'totalKerjasama',
             'menungguValidasi',
             'dokumenKadaluarsa',
@@ -509,7 +505,7 @@ class DashboardController
             'upcomingDeadlines',
             'jenisCounts',
             'kerjasamaTable'
-        ));
+        );
     }
 
     public function unitLegacy()
@@ -525,7 +521,7 @@ class DashboardController
 
         // ── 1. Quick Stats ──────────────────────────────────────
         // Temporarily using Cooperation count instead of unit-specific count
-        $totalKerjasama = \App\Models\Cooperation::count();
+        $totalKerjasama = Cooperation::count();
 
         // These metrics depend on relationships/columns not yet in the new schema
         $menungguEvaluasi = 0;
@@ -544,7 +540,7 @@ class DashboardController
         ];
 
         // ── 4. Tren Kerjasama Per Tahun ──────────────────────────
-        $trenPerTahun = \App\Models\Cooperation::select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
+        $trenPerTahun = Cooperation::select(DB::raw('YEAR(created_at) as tahun'), DB::raw('count(*) as total'))
             ->groupBy('tahun')
             ->orderBy('tahun')
             ->get();
@@ -640,7 +636,7 @@ class DashboardController
         $user = Auth::user();
 
         // 1. Kegiatan Mahasiswa Monitoring (UC22)
-        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
+        $penempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
             // If Prodi has a relation or we just show all active students
             ->where('status', 'Aktif')
             ->orderBy('created_at', 'desc')
@@ -650,13 +646,13 @@ class DashboardController
 
         // 2. Tracking Lulusan (UC33)
         $prodiId = $user->profile->prodi_id ?? null;
-        $alumniQuery = \App\Models\Alumni::query();
+        $alumniQuery = Alumni::query();
         if ($prodiId) {
             $alumniQuery->where('prodi_id', $prodiId);
         }
         $totalAlumni = $alumniQuery->count();
         
-        $alumniBekerjaQuery = \App\Models\AlumniMitra::where('status', 'Aktif');
+        $alumniBekerjaQuery = AlumniMitra::where('status', 'Aktif');
         if ($prodiId) {
             $alumniBekerjaQuery->whereHas('alumni', function($q) use ($prodiId) {
                 $q->where('prodi_id', $prodiId);
@@ -674,12 +670,12 @@ class DashboardController
     public function mitra()
     {
         $user = Auth::user();
-        $mitra = $user->mitra ?: ($user->mitra_id ? \App\Models\Mitra::find($user->mitra_id) : \App\Models\Mitra::first());
+        $mitra = $user->mitra ?: ($user->mitra_id ? Mitra::find($user->mitra_id) : Mitra::first());
         $mitraId = $mitra?->id;
         $mitraName = $mitra ? $mitra->nama_mitra : ($user->name ?? 'Mitra');
 
         // KPI Metrik Dokumen (Cooperations)
-        $semuaDokumen = \App\Models\Cooperation::when($mitraId, function($q) use ($mitraId) {
+        $semuaDokumen = Cooperation::when($mitraId, function($q) use ($mitraId) {
             return $q->where('mitra_id', $mitraId);
         })->get();
 
@@ -700,7 +696,7 @@ class DashboardController
         })->count();
 
         // Dokumen Terbaru (Summary Tabel)
-        $recentDocuments = \App\Models\Cooperation::with(['jurusans', 'upas', 'pusats', 'jurusan', 'upa', 'pusat'])
+        $recentDocuments = Cooperation::with(['jurusans', 'upas', 'pusats', 'jurusan', 'upa', 'pusat'])
             ->when($mitraId, function($q) use ($mitraId) {
                 return $q->where('mitra_id', $mitraId);
             })
@@ -709,7 +705,7 @@ class DashboardController
             ->get();
 
         // 1. Mahasiswa Monitoring (UC22)
-        $penempatans = \App\Models\KegiatanMahasiswa::with(['mahasiswa', 'kegiatan'])
+        $penempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan'])
             ->when($mitraId, function($q) use ($mitraId) {
                 return $q->where('mitra_id', $mitraId);
             })
@@ -718,12 +714,12 @@ class DashboardController
             ->get();
 
         $totalMahasiswaAktif = $penempatans->count();
-        $rataRataNilai = \App\Models\KegiatanMahasiswa::when($mitraId, function($q) use ($mitraId) {
+        $rataRataNilai = KegiatanMahasiswa::when($mitraId, function($q) use ($mitraId) {
             return $q->where('mitra_id', $mitraId);
         })->whereNotNull('nilai_mitra')->avg('nilai_mitra') ?? 0;
 
         // 2. Tracking Lulusan (UC33)
-        $alumniTerserap = \App\Models\AlumniMitra::when($mitraId, function($q) use ($mitraId) {
+        $alumniTerserap = AlumniMitra::when($mitraId, function($q) use ($mitraId) {
             return $q->where('mitra_id', $mitraId);
         })->where('status', 'Aktif')->count();
 
