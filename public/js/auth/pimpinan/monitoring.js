@@ -1,19 +1,27 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
-    const textColor = isDark ? '#8b92a8' : '#6b7280';
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const isMobile = viewportWidth <= 767;
+(function () {
+    let trendChartInstance = null;
 
-    // Financial Trend Chart
-    const finCtx = document.getElementById('financialTrendChart');
-    if (finCtx) {
+    function initFinancialTrendChart() {
+        const finCtx = document.getElementById('financialTrendChart');
+        if (!finCtx || typeof Chart === 'undefined') return;
+
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+        const textColor = isDark ? '#8b92a8' : '#6b7280';
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const isMobile = viewportWidth <= 767;
+
+        if (trendChartInstance) {
+            trendChartInstance.destroy();
+            trendChartInstance = null;
+        }
+
         const raw = JSON.parse(finCtx.dataset.trend || '[]');
         const bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         const labels = raw.map(i => bulan[i.bulan] + ' ' + i.tahun);
         const data = raw.map(i => i.total_kontrak);
 
-        new Chart(finCtx, {
+        trendChartInstance = new Chart(finCtx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -67,4 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
+
+    document.addEventListener('DOMContentLoaded', initFinancialTrendChart);
+    document.addEventListener('turbo:load', initFinancialTrendChart);
+    if (document.readyState !== 'loading') {
+        initFinancialTrendChart();
+    }
+})();

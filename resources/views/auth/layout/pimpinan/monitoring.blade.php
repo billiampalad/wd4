@@ -17,11 +17,101 @@
     $moaCount = $funnel['MoA'] ?? 0;
     $iaCount = $funnel['IA'] ?? 0;
     $bulanNama = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+    // Distinct years for filter
+    $availableYears = $kerjasamaList->map(function ($k) {
+        return $k->start_date ? $k->start_date->year : null;
+    })->filter()->unique()->sortDesc()->values();
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/pimpinan/monitoring.css') }}">
 
 <main id="mainContent" class="dk-page">
+
+    <style>
+        .mn-filter-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--surface2);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .mn-search-box {
+            position: relative;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .mn-search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+
+        .mn-search-input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .mn-search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .mn-filter-select {
+            padding: 10px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 130px;
+        }
+
+        .mn-filter-select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .mn-btn-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mn-btn-reset:hover {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
+        }
+    </style>
 
     {{-- ═══ Page Header ═══ --}}
     <section class="pimpinan-page-header">
@@ -30,7 +120,7 @@
             <div class="pimpinan-breadcrumb">
                 <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link"><i class="fas fa-home"></i></a>
                 <span class="sep">/</span>
-                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link current">Beranda</a>
+                <a href="{{ route('pimpinan.dashboard') }}" class="mn-breadcrumb-link">Beranda</a>
                 <span class="sep">/</span>
                 <span class="current">Monitoring</span>
             </div>
@@ -222,20 +312,23 @@
             <div class="mn-card-head mn-alert-head-red">
                 <h3>
                     <div class="mn-icon mn-rag-red"><i class="fas fa-fire"></i></div> Kritis (< 30 Hari)</h3>
-                        <span class="mn-tag mn-rag-red" style="font-size:13px">{{ $critical->count() }}</span>
+                <span class="mn-tag mn-rag-red" style="font-size:13px">{{ $critical->count() }}</span>
             </div>
             <div class="mn-alert-list-tall">
                 @forelse($critical as $c)
-                    @php $sisa = now()->diffInDays($c->end_date, false); @endphp
+                    @php 
+                        $sisa = now()->diffInDays($c->end_date, false); 
+                        $cJudul = $c->judul ?: ($c->title ?: 'Kerjasama Tanpa Judul');
+                    @endphp
                     <div class="mn-alert-row">
                         <div style="flex:1;min-width:0">
-                            <div class="mn-alert-title" title="{{ $c->title }}">{{ $c->title }}</div>
+                            <div class="mn-alert-title" title="{{ $cJudul }}">{{ $cJudul }}</div>
                             <div class="mn-alert-subtitle"><i class="fas fa-building"></i> {{ $c->mitra->nama_mitra ?? '-' }}</div>
                         </div>
                         <div class="mn-alert-actions">
                             <span class="mn-countdown" style="background:rgba(239,68,68,.1);color:#ef4444"><i class="fas fa-hourglass-half"></i> {{ max(0, $sisa) }} hari</span>
                             @if($c->pjInternal)
-                                <a href="mailto:" class="mn-alert-link" title="PJ: {{ $c->pjInternal->nama }}"><i class="fas fa-envelope"></i> Hubungi PJ</a>
+                                <a href="mailto:{{ $c->pjInternal->email ?? '' }}" class="mn-alert-link" title="PJ: {{ $c->pjInternal->nama }}"><i class="fas fa-envelope"></i> Hubungi PJ</a>
                             @endif
                         </div>
                     </div>
@@ -257,10 +350,13 @@
             </div>
             <div class="mn-alert-list-tall">
                 @forelse($warning as $w)
-                    @php $sisa = now()->diffInDays($w->end_date, false); @endphp
+                    @php 
+                        $sisa = now()->diffInDays($w->end_date, false); 
+                        $wJudul = $w->judul ?: ($w->title ?: 'Kerjasama Tanpa Judul');
+                    @endphp
                     <div class="mn-alert-row">
                         <div style="flex:1;min-width:0">
-                            <div class="mn-alert-title" title="{{ $w->title }}">{{ $w->title }}</div>
+                            <div class="mn-alert-title" title="{{ $wJudul }}">{{ $wJudul }}</div>
                             <div class="mn-alert-subtitle"><i class="fas fa-building"></i> {{ $w->mitra->nama_mitra ?? '-' }}</div>
                         </div>
                         <span class="mn-countdown" style="background:rgba(245,158,11,.1);color:#f59e0b"><i class="fas fa-hourglass-half"></i> {{ $sisa }} hari</span>
@@ -287,10 +383,11 @@
                 </div>
                 <div class="mn-alert-list-short">
                     @forelse($idle->take(3) as $i)
+                        @php $iJudul = $i->judul ?: ($i->title ?: 'Kerjasama Tanpa Judul'); @endphp
                         <div class="mn-alert-row mn-alert-row-compact">
                             <div class="mn-alert-dot orange"></div>
                             <div class="mn-alert-content">
-                                <div class="mn-alert-text-small">{{ $i->title }}</div>
+                                <div class="mn-alert-text-small">{{ $iJudul }}</div>
                                 <div class="mn-alert-text-xs">{{ $i->mitra->nama_mitra ?? '-' }}</div>
                             </div>
                         </div>
@@ -311,11 +408,12 @@
                     <span class="mn-tag mn-tag-gray">{{ $compliance->count() }}</span>
                 </div>
                 <div class="mn-alert-list-short mn-alert-list-clean">
-                    @forelse($compliance as $doc)
+                    @forelse($compliance->take(3) as $doc)
+                        @php $docJudul = $doc->judul ?: ($doc->title ?: 'Kerjasama Tanpa Judul'); @endphp
                         <div class="mn-alert-row mn-alert-row-compact mn-compliance-row">
                             <div class="mn-alert-dot gray"></div>
                             <div class="mn-alert-content">
-                                <div class="mn-alert-text-small">{{ $doc->title }}</div>
+                                <div class="mn-alert-text-small">{{ $docJudul }}</div>
                                 <div class="mn-alert-text-xs mn-alert-helper">Perlu dilengkapi:</div>
                                 <div class="mn-alert-missing-list">
                                     @if(!$doc->document_link)
@@ -348,14 +446,23 @@
         filterTahun: '',
         filterKategori: '',
         filterJenis: '',
+        filterStatus: '',
         currentPage: 1,
         perPage: 10,
         perPageOpen: false,
         perPageOptions: [5, 10, 25, 50],
         init() {
-            ['search', 'filterTahun', 'filterKategori', 'filterJenis'].forEach(key => {
+            ['search', 'filterTahun', 'filterKategori', 'filterJenis', 'filterStatus'].forEach(key => {
                 this.$watch(key, () => this.currentPage = 1);
             });
+        },
+        resetFilters() {
+            this.search = '';
+            this.filterTahun = '';
+            this.filterKategori = '';
+            this.filterJenis = '';
+            this.filterStatus = '';
+            this.currentPage = 1;
         },
         get rows() {
             return this.$refs.rows ? Array.from(this.$refs.rows.querySelectorAll('tr[data-row]')) : [];
@@ -379,7 +486,8 @@
             return (this.search === '' || row.dataset.search.includes(this.search.toLowerCase())) &&
                 (this.filterTahun === '' || row.dataset.tahun === this.filterTahun) &&
                 (this.filterKategori === '' || row.dataset.kategori === this.filterKategori) &&
-                (this.filterJenis === '' || row.dataset.jenis === this.filterJenis);
+                (this.filterJenis === '' || row.dataset.jenis.toLowerCase().includes(this.filterJenis.toLowerCase())) &&
+                (this.filterStatus === '' || row.dataset.status === this.filterStatus);
         },
         isRowVisible(row) {
             const index = this.filteredRows.indexOf(row);
@@ -412,6 +520,47 @@
             if (this.currentPage < 1) this.currentPage = 1;
         }
     }" x-effect="clampPage()" @pimpinan-global-search.window="search = $event.detail; currentPage = 1">
+
+            {{-- ═══ FILTER TOOLBAR ═══ --}}
+            <div class="mn-filter-toolbar">
+                <div class="mn-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="mn-search-input" x-model="search" placeholder="Cari nama mitra, judul, dokumen/PKS, status...">
+                </div>
+
+                <select class="mn-filter-select" x-model="filterTahun" title="Filter Tahun">
+                    <option value="">Semua Tahun</option>
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+
+                <select class="mn-filter-select" x-model="filterJenis" title="Filter Jenis">
+                    <option value="">Semua Jenis</option>
+                    <option value="mou">MoU</option>
+                    <option value="moa">MoA</option>
+                    <option value="ia">IA</option>
+                </select>
+
+                <select class="mn-filter-select" x-model="filterStatus" title="Filter Status">
+                    <option value="">Semua Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="kadarluarsa">Kadaluarsa</option>
+                    <option value="tidak aktif">Tidak Aktif</option>
+                    <option value="dalam perpanjangan">Perpanjangan</option>
+                </select>
+
+                <select class="mn-filter-select" x-model="filterKategori" title="Filter Kategori Mitra">
+                    <option value="">Semua Kategori</option>
+                    <option value="nasional">Nasional</option>
+                    <option value="internasional">Internasional</option>
+                </select>
+
+                <button type="button" class="mn-btn-reset" @click="resetFilters()" title="Reset Filter">
+                    <i class="fas fa-rotate-left"></i> Reset
+                </button>
+            </div>
+
             <div class="mn-table-controls">
                 <div class="mn-table-entries">
                     <span>Tampilkan</span>
@@ -448,10 +597,11 @@
                     <thead>
                         <tr>
                             <th style="width:40px">#</th>
-                            <th>Nama Mitra</th>
+                            <th style="min-width: 220px;">Mitra & Judul Kerjasama</th>
+                            <th style="min-width: 140px;">Unit Pelaksana</th>
                             <th>Klasifikasi</th>
                             <th>Jenis</th>
-                            <th>Implementasi Luaran</th>
+                            <th>Luaran & Nilai</th>
                             <th>Sisa Waktu</th>
                             <th>Status</th>
                             <th style="text-align:center">Aksi</th>
@@ -466,26 +616,44 @@
                                 $end = $endDate ? \Carbon\Carbon::parse($endDate)->startOfDay() : null;
                                 $sisaHari = $end ? (int) $today->diffInDays($end, false) : null;
                                 $isNearExpiry = $end && $sisaHari >= 0 && $end->lte($threeMonthsFromToday);
-                                $statusKerjasama = strtolower($k->status ?? '');
+                                $statusKerjasama = strtolower($k->status_berlaku ?? $k->status ?? '');
                                 $isExpired = in_array($statusKerjasama, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']);
                                 $isAktif = $statusKerjasama === 'aktif';
                                 $kategoriMitra = strtolower($k->mitra->kategori ?? '');
                                 $tahunMulai = $k->start_date ? $k->start_date->year : '';
                                 $luaran = $k->details->map(fn($d) => ($d->volume_luaran ? $d->volume_luaran . ' ' . ($d->satuan_luaran ?? '') : null))->filter()->implode(', ');
                                 $pksSearch = $k->pksNumbers->pluck('number')->implode(' ');
+                                $kJudul = $k->judul ?: ($k->title ?: 'Kerjasama Tanpa Judul');
+                                $pelaksanaText = $k->pelaksana_type_label ?: ($k->pelaksana_name ?: 'Instansi');
+                                $totalNilaiItem = $k->details->sum('nilai_kontrak');
                             @endphp
                             <tr data-row
-                                data-search="{{ strtolower(($k->mitra->nama_mitra ?? '') . ' ' . ($k->title ?? '') . ' ' . ($k->mitra->klasifikasi->nama ?? '') . ' ' . ($k->jenis ?? '') . ' ' . ($k->doc_number ?? '') . ' ' . $pksSearch . ' ' . ($k->status ?? '') . ' ' . ($k->status_dokumen ?? '')) }}"
-                                data-tahun="{{ $tahunMulai }}" data-kategori="{{ $kategoriMitra }}"
-                                data-jenis="{{ $k->jenis ?? '' }}" x-show="isRowVisible($el)" x-cloak>
+                                data-search="{{ strtolower(($k->mitra->nama_mitra ?? '') . ' ' . $kJudul . ' ' . ($k->mitra->klasifikasi->nama ?? '') . ' ' . ($k->jenis ?? '') . ' ' . ($k->doc_number ?? '') . ' ' . $pksSearch . ' ' . $statusKerjasama . ' ' . ($k->status_dokumen ?? '') . ' ' . $pelaksanaText) }}"
+                                data-tahun="{{ $tahunMulai }}" 
+                                data-kategori="{{ $kategoriMitra }}"
+                                data-jenis="{{ $k->jenis ?? '' }}" 
+                                data-status="{{ $statusKerjasama }}"
+                                x-show="isRowVisible($el)" x-cloak>
                                 <td><span class="mn-table-num" x-text="formatRowNumber(rowNumber($el.closest('tr')))">{{ str_pad($loop->iteration, 3, '0', STR_PAD_LEFT) }}</span></td>
                                 <td>
                                     <div class="mn-table-title">{{ $k->mitra->nama_mitra ?? '-' }}</div>
-                                    <div class="mn-table-desc" title="{{ $k->title }}">{{ $k->title }}</div>
+                                    <div class="mn-table-desc" title="{{ $kJudul }}">{{ $kJudul }}</div>
+                                    @if($k->doc_number)
+                                        <div style="font-size:11px;color:var(--text-sub);margin-top:2px;font-family:monospace">#{{ $k->doc_number }}</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div style="font-size:13px;font-weight:700;color:var(--text)">{{ $pelaksanaText }}</div>
+                                    <div style="font-size:11px;color:var(--text-sub)">{{ ucfirst($k->tingkat ?? 'Institusi') }}</div>
                                 </td>
                                 <td><span class="mn-tag" style="background:var(--bg);color:var(--text-sub);border:1px solid var(--border)">{{ $k->mitra->klasifikasi->nama ?? '-' }}</span></td>
                                 <td><span class="mn-tag mn-rag-purple">{{ $k->jenis ?? '-' }}</span></td>
-                                <td style="font-size:12px">{{ $luaran ?: '-' }}</td>
+                                <td>
+                                    @if($totalNilaiItem > 0)
+                                        <div style="font-size:12px;font-weight:700;color:#10b981">Rp {{ number_format($totalNilaiItem, 0, ',', '.') }}</div>
+                                    @endif
+                                    <div style="font-size:11px;color:var(--text-sub)">{{ $luaran ?: '-' }}</div>
+                                </td>
                                 <td>
                                     @if($sisaHari !== null)
                                         @if($sisaHari < 0)
@@ -518,7 +686,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" style="text-align:center;padding:60px 20px;color:var(--text-sub)"><i class="fas fa-folder-open" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i>Belum ada data kerjasama.</td>
+                                <td colspan="9" style="text-align:center;padding:60px 20px;color:var(--text-sub)"><i class="fas fa-folder-open" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i>Belum ada data kerjasama.</td>
                             </tr>
                         @endforelse
                     </tbody>
