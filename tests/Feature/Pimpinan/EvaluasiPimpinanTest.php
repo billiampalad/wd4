@@ -106,4 +106,18 @@ class EvaluasiPimpinanTest extends TestCase
             'rekomendasi' => 'Lengkapi dokumen lampiran',
         ]);
     }
+
+    public function test_pimpinan_can_view_monitoring_page()
+    {
+        $rolePimpinan = Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+        $pimpinanUser = User::factory()->create(['role_id' => $rolePimpinan->id]);
+        Profile::create(['user_id' => $pimpinanUser->id]);
+
+        $response = $this->actingAs($pimpinanUser)->get(route('pimpinan.monitoring'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('auth.pimpinan');
+        $response->assertViewHas('view', 'monitoring');
+        $response->assertViewHas('totalNilaiKontrakAktif');
+    }
 }

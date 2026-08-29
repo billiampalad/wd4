@@ -187,7 +187,7 @@ class DashboardController
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->get();
-        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('kegiatanKerjasama', fn($q) => $q->whereHas('cooperation', fn($q2) => $q2->where('status_berlaku', 'Aktif')))
+        $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status_berlaku', 'Aktif'))
             ->sum('nilai_kontrak');
 
         // 4. Ranking Unit Pelaksana
