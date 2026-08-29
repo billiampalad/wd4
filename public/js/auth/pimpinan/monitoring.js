@@ -18,15 +18,24 @@
 
         const raw = JSON.parse(finCtx.dataset.trend || '[]');
         const bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-        const labels = raw.map(i => bulan[i.bulan] + ' ' + i.tahun);
-        const data = raw.map(i => i.total_kontrak);
+        
+        let labels = [];
+        let data = [];
+
+        if (Array.isArray(raw) && raw.length > 0) {
+            labels = raw.map(i => i.bulan_nama || (bulan[i.bulan] ? bulan[i.bulan] : 'Bln ' + i.bulan));
+            data = raw.map(i => Number(i.total_kontrak) || 0);
+        } else {
+            labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        }
 
         trendChartInstance = new Chart(finCtx, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Nilai Kontrak (Rp)',
+                    label: 'Nilai Kontrak',
                     data: data,
                     borderColor: '#f59e0b',
                     backgroundColor: 'rgba(245,158,11,0.08)',
@@ -65,10 +74,9 @@
                         grid: { display: false },
                         ticks: {
                             color: textColor,
-                            autoSkip: true,
-                            maxRotation: isMobile ? 0 : 45,
-                            maxTicksLimit: isMobile ? 4 : 8,
-                            font: { size: isMobile ? 10 : 12 }
+                            autoSkip: false,
+                            maxRotation: isMobile ? 45 : 0,
+                            font: { size: isMobile ? 10 : 11 }
                         }
                     }
                 }

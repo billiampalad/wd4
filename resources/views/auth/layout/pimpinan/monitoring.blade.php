@@ -260,7 +260,7 @@
                 <h3>
                     <div class="mn-icon" style="background:rgba(245,158,11,.1);color:#f59e0b"><i class="fas fa-chart-area"></i></div> Kontribusi Finansial
                 </h3>
-                <span style="font-size:11px;color:var(--text-sub)">Trend Nilai Kontrak</span>
+                <span style="font-size:11px;color:var(--text-sub)">Trend Nilai Kontrak (Jan - Des {{ date('Y') }})</span>
             </div>
             <div class="mn-card-body">
                 <div style="height:260px"><canvas id="financialTrendChart" data-trend='{!! json_encode($finance) !!}'></canvas></div>

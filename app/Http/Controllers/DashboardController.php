@@ -175,18 +175,29 @@ class DashboardController
         $totalSasaranEntries = $sasaranData->sum('total');
 
         // 3. Revenue / Financial Trend (monthly for current year)
-        $financialTrend = DB::table('detail_kegiatans')
+        $currentYear = (int) date('Y');
+        $monthlySums = DB::table('detail_kegiatans')
             ->join('cooperations', 'detail_kegiatans.cooperation_id', '=', 'cooperations.id')
             ->whereNotNull('cooperations.start_date')
+            ->whereYear('cooperations.start_date', $currentYear)
             ->select(
-                DB::raw('YEAR(cooperations.start_date) as tahun'),
                 DB::raw('MONTH(cooperations.start_date) as bulan'),
-                DB::raw('SUM(detail_kegiatans.nilai_kontrak) as total_kontrak')
+                DB::raw('SUM(COALESCE(detail_kegiatans.nilai_kontrak, 0)) as total_kontrak')
             )
-            ->groupBy('tahun', 'bulan')
-            ->orderBy('tahun')
-            ->orderBy('bulan')
-            ->get();
+            ->groupBy('bulan')
+            ->pluck('total_kontrak', 'bulan');
+
+        $bulanNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $financialTrend = collect();
+        for ($m = 1; $m <= 12; $m++) {
+            $financialTrend->push([
+                'tahun' => $currentYear,
+                'bulan' => $m,
+                'bulan_nama' => $bulanNames[$m],
+                'total_kontrak' => (float) ($monthlySums[$m] ?? 0),
+            ]);
+        }
+
         $totalNilaiKontrakAktif = \App\Models\DetailKegiatan::whereHas('cooperation', fn($q) => $q->where('status_berlaku', 'Aktif'))
             ->sum('nilai_kontrak');
 
