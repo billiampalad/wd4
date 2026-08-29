@@ -4269,6 +4269,85 @@ body {
     box-sizing: border-box;
 }
 
+/* ── Monitoring Filter Toolbar & Dropdowns ── */
+.mn-filter-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--surface2);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+}
+
+.mn-search-box {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+}
+
+.mn-search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+    font-size: 14px;
+}
+
+.mn-search-input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+}
+
+.mn-search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.mn-filter-item {
+    min-width: 160px;
+    flex: 0 1 auto;
+}
+
+.mn-filter-item .ad-trigger {
+    padding-left: 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+}
+
+.mn-btn-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.mn-btn-reset:hover {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+
 .sasaran-indikator-grid {
     width: 100%;
     max-width: 100%;

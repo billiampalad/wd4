@@ -28,90 +28,7 @@
 
 <main id="mainContent" class="dk-page">
 
-    <style>
-        .mn-filter-toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: var(--surface2);
-            border-radius: 14px;
-            border: 1px solid var(--border);
-        }
 
-        .mn-search-box {
-            position: relative;
-            flex: 1;
-            min-width: 240px;
-        }
-
-        .mn-search-box i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-sub);
-            font-size: 14px;
-        }
-
-        .mn-search-input {
-            width: 100%;
-            padding: 10px 14px 10px 38px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
-            color: var(--text);
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .mn-search-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .mn-filter-select {
-            padding: 10px 14px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
-            color: var(--text);
-            outline: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 130px;
-        }
-
-        .mn-filter-select:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .mn-btn-reset {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-sub);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .mn-btn-reset:hover {
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
-            background: rgba(239, 68, 68, 0.05);
-        }
-    </style>
 
     {{-- ═══ Page Header ═══ --}}
     <section class="pimpinan-page-header">
@@ -528,33 +445,129 @@
                     <input type="text" class="mn-search-input" x-model="search" placeholder="Cari nama mitra, judul, dokumen/PKS, status...">
                 </div>
 
-                <select class="mn-filter-select" x-model="filterTahun" title="Filter Tahun">
-                    <option value="">Semua Tahun</option>
-                    @foreach($availableYears as $year)
-                        <option value="{{ $year }}">{{ $year }}</option>
-                    @endforeach
-                </select>
+                {{-- 1. Filter Periode / Tahun --}}
+                <div class="mn-filter-item" x-data="{
+                    open: false,
+                    items: [
+                        { id: '', label: 'Semua Tahun' },
+                        @foreach($availableYears as $year)
+                            { id: '{{ $year }}', label: 'Tahun {{ $year }}' },
+                        @endforeach
+                    ],
+                    get selectedLabel() {
+                        const item = this.items.find(i => i.id === String(filterTahun));
+                        return item ? item.label : 'Semua Tahun';
+                    }
+                }">
+                    <div class="alpine-dropdown" @click.outside="open = false">
+                        <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open" title="Filter Periode / Tahun">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-calendar-alt" style="color: #9ca3af; font-size: 13px;"></i>
+                                <span x-text="selectedLabel"></span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s;" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                        </div>
+                        <div class="ad-menu" x-show="open" x-transition x-cloak>
+                            <template x-for="item in items" :key="item.id">
+                                <div class="ad-item" :class="{ 'selected': String(filterTahun) === String(item.id) }"
+                                    @click="filterTahun = item.id; open = false" x-text="item.label"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
 
-                <select class="mn-filter-select" x-model="filterJenis" title="Filter Jenis">
-                    <option value="">Semua Jenis</option>
-                    <option value="mou">MoU</option>
-                    <option value="moa">MoA</option>
-                    <option value="ia">IA</option>
-                </select>
+                {{-- 2. Filter Jenis Dokumen --}}
+                <div class="mn-filter-item" x-data="{
+                    open: false,
+                    items: [
+                        { id: '', label: 'Semua Jenis' },
+                        { id: 'mou', label: 'MoU' },
+                        { id: 'moa', label: 'MoA' },
+                        { id: 'ia', label: 'IA' }
+                    ],
+                    get selectedLabel() {
+                        const item = this.items.find(i => i.id === filterJenis);
+                        return item ? item.label : 'Semua Jenis';
+                    }
+                }">
+                    <div class="alpine-dropdown" @click.outside="open = false">
+                        <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open" title="Filter Jenis Dokumen">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-file-signature" style="color: #9ca3af; font-size: 13px;"></i>
+                                <span x-text="selectedLabel"></span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s;" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                        </div>
+                        <div class="ad-menu" x-show="open" x-transition x-cloak>
+                            <template x-for="item in items" :key="item.id">
+                                <div class="ad-item" :class="{ 'selected': filterJenis === item.id }"
+                                    @click="filterJenis = item.id; open = false" x-text="item.label"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
 
-                <select class="mn-filter-select" x-model="filterStatus" title="Filter Status">
-                    <option value="">Semua Status</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="kadarluarsa">Kadaluarsa</option>
-                    <option value="tidak aktif">Tidak Aktif</option>
-                    <option value="dalam perpanjangan">Perpanjangan</option>
-                </select>
+                {{-- 3. Filter Status --}}
+                <div class="mn-filter-item" x-data="{
+                    open: false,
+                    items: [
+                        { id: '', label: 'Semua Status' },
+                        { id: 'aktif', label: 'Aktif' },
+                        { id: 'kadarluarsa', label: 'Kadaluarsa' },
+                        { id: 'tidak aktif', label: 'Tidak Aktif' },
+                        { id: 'dalam perpanjangan', label: 'Perpanjangan' }
+                    ],
+                    get selectedLabel() {
+                        const item = this.items.find(i => i.id === filterStatus);
+                        return item ? item.label : 'Semua Status';
+                    }
+                }">
+                    <div class="alpine-dropdown" @click.outside="open = false">
+                        <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open" title="Filter Status Kerjasama">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-info-circle" style="color: #9ca3af; font-size: 13px;"></i>
+                                <span x-text="selectedLabel"></span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s;" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                        </div>
+                        <div class="ad-menu" x-show="open" x-transition x-cloak>
+                            <template x-for="item in items" :key="item.id">
+                                <div class="ad-item" :class="{ 'selected': filterStatus === item.id }"
+                                    @click="filterStatus = item.id; open = false" x-text="item.label"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
 
-                <select class="mn-filter-select" x-model="filterKategori" title="Filter Kategori Mitra">
-                    <option value="">Semua Kategori</option>
-                    <option value="nasional">Nasional</option>
-                    <option value="internasional">Internasional</option>
-                </select>
+                {{-- 4. Filter Kategori Mitra --}}
+                <div class="mn-filter-item" x-data="{
+                    open: false,
+                    items: [
+                        { id: '', label: 'Semua Kategori' },
+                        { id: 'nasional', label: 'Nasional' },
+                        { id: 'internasional', label: 'Internasional' }
+                    ],
+                    get selectedLabel() {
+                        const item = this.items.find(i => i.id === filterKategori);
+                        return item ? item.label : 'Semua Kategori';
+                    }
+                }">
+                    <div class="alpine-dropdown" @click.outside="open = false">
+                        <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open" title="Filter Kategori Mitra">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-globe" style="color: #9ca3af; font-size: 13px;"></i>
+                                <span x-text="selectedLabel"></span>
+                            </div>
+                            <i class="fas fa-chevron-down" style="font-size: 10px; transition: 0.3s;" :style="open ? 'transform: rotate(180deg)' : ''"></i>
+                        </div>
+                        <div class="ad-menu" x-show="open" x-transition x-cloak>
+                            <template x-for="item in items" :key="item.id">
+                                <div class="ad-item" :class="{ 'selected': filterKategori === item.id }"
+                                    @click="filterKategori = item.id; open = false" x-text="item.label"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
 
                 <button type="button" class="mn-btn-reset" @click="resetFilters()" title="Reset Filter">
                     <i class="fas fa-rotate-left"></i> Reset

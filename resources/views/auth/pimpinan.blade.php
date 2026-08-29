@@ -28,37 +28,37 @@
 <body
     class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }} {{ request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view === 'detail_monitoring') ? 'pimpinan-detail-monitoring-page' : '' }}">
     @if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            showConfirmButton: false,
-            timer: 3000
-        });
-    </script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
     @endif
 
     @if(session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: "{{ session('error') }}",
-            showConfirmButton: true
-        });
-    </script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+                showConfirmButton: true
+            });
+        </script>
     @endif
 
     @if($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Validasi Gagal!',
-            text: "{{ $errors->first() }}",
-            showConfirmButton: true
-        });
-    </script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: "{{ $errors->first() }}",
+                showConfirmButton: true
+            });
+        </script>
     @endif
     @php
         $pimpinanExpiryNotifications = collect();
@@ -114,8 +114,10 @@
                 <!-- Search (desktop) -->
                 <div class="search-bar" id="navSearch" style="display:none;">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input" autocomplete="off" />
-                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;" title="Bersihkan pencarian">
+                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input"
+                        autocomplete="off" />
+                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;"
+                        title="Bersihkan pencarian">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
@@ -128,48 +130,49 @@
                     <button class="icon-btn" id="notificationBtn" title="Notifications">
                         <i class="fas fa-bell" id="notificationIcon"></i>
                         @php
-                        $user = auth()->user();
-                        $query = \App\Models\Notifikasi::where('user_id', $user->id)->where('is_read', 0);
+                            $user = auth()->user();
+                            $query = \App\Models\Notifikasi::where('user_id', $user->id)->where('is_read', 0);
 
-                        // Filter khusus pimpinan agar angka sinkron dengan data yang butuh evaluasi
-                        if (strtolower($user->role->role_name ?? '') === 'pimpinan') {
-                        $query->where(function($q) {
-                        $q->where(function($sourceQuery) {
-                        $sourceQuery
-                        ->where(function($typedQuery) {
-                        $typedQuery
-                        ->where(function($typeQuery) {
-                        $typeQuery
-                        ->whereNull('source_type')
-                        ->orWhere('source_type', 'cooperation');
-                        })
-                        ->whereHas('cooperation', function($sq) {
-                        $sq->where('status_dokumen', 'Menunggu Evaluasi');
-                        });
-                        })
-                        ->orWhere(function($typedQuery) {
-                        $typedQuery
-                        ->where('source_type', 'pengajuan_kerjasama_baru')
-                        ->whereHas('pengajuanKerjasamaBaru', function($sq) {
-                        $sq->where('status', 'diajukan');
-                        });
-                        })
-                        ->orWhere(function($typedQuery) {
-                        $typedQuery
-                        ->where('source_type', 'pengajuan_perpanjangan_kerjasama')
-                        ->whereHas('pengajuanPerpanjanganKerjasama', function($sq) {
-                        $sq->where('status', 'diajukan');
-                        });
-                        });
-                        })
-                        ->orWhereNull('source_id')
-                        ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
-                        });
-                        }
-                        $notifCount = $query->count();
-                        $totalNotifCount = $notifCount + $pimpinanExpiryNotifications->count();
+                            // Filter khusus pimpinan agar angka sinkron dengan data yang butuh evaluasi
+                            if (strtolower($user->role->role_name ?? '') === 'pimpinan') {
+                                $query->where(function ($q) {
+                                    $q->where(function ($sourceQuery) {
+                                        $sourceQuery
+                                            ->where(function ($typedQuery) {
+                                                $typedQuery
+                                                    ->where(function ($typeQuery) {
+                                                        $typeQuery
+                                                            ->whereNull('source_type')
+                                                            ->orWhere('source_type', 'cooperation');
+                                                    })
+                                                    ->whereHas('cooperation', function ($sq) {
+                                                        $sq->where('status_dokumen', 'Menunggu Evaluasi');
+                                                    });
+                                            })
+                                            ->orWhere(function ($typedQuery) {
+                                                $typedQuery
+                                                    ->where('source_type', 'pengajuan_kerjasama_baru')
+                                                    ->whereHas('pengajuanKerjasamaBaru', function ($sq) {
+                                                        $sq->where('status', 'diajukan');
+                                                    });
+                                            })
+                                            ->orWhere(function ($typedQuery) {
+                                                $typedQuery
+                                                    ->where('source_type', 'pengajuan_perpanjangan_kerjasama')
+                                                    ->whereHas('pengajuanPerpanjanganKerjasama', function ($sq) {
+                                                        $sq->where('status', 'diajukan');
+                                                    });
+                                            });
+                                    })
+                                        ->orWhereNull('source_id')
+                                        ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
+                                });
+                            }
+                            $notifCount = $query->count();
+                            $totalNotifCount = $notifCount + $pimpinanExpiryNotifications->count();
                         @endphp
-                        <span class="notification-badge" id="notifBadge" style="{{ $totalNotifCount > 0 ? 'display: flex;' : 'display: none;' }}">
+                        <span class="notification-badge" id="notifBadge"
+                            style="{{ $totalNotifCount > 0 ? 'display: flex;' : 'display: none;' }}">
                             {{ $totalNotifCount > 9 ? '9+' : $totalNotifCount }}
                         </span>
                     </button>
@@ -185,8 +188,7 @@
                             @forelse ($pimpinanExpiryNotifications as $expiryNotification)
                                 <a href="{{ $expiryNotification['link'] }}"
                                     class="notification-item unread notification-expiry-item"
-                                    data-system-notification="true"
-                                    data-system-id="{{ $expiryNotification['system_id'] }}">
+                                    data-system-notification="true" data-system-id="{{ $expiryNotification['system_id'] }}">
                                     <div class="notification-icon-wrapper"
                                         style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
                                         <i class="fas fa-hourglass-half"></i>
@@ -194,7 +196,8 @@
                                     <div class="notification-content">
                                         <span class="notification-sender">Masa Aktif Kerjasama</span>
                                         <span class="notification-message">
-                                            {{ $expiryNotification['title'] }} akan berakhir {{ $expiryNotification['remaining_label'] }}.
+                                            {{ $expiryNotification['title'] }} akan berakhir
+                                            {{ $expiryNotification['remaining_label'] }}.
                                         </span>
                                         <div class="notification-meta">
                                             <span class="notification-time">
@@ -285,21 +288,21 @@
         <!-- ── MAIN ──────────────────────────────────────────────── -->
         @yield('content')
         @if(!View::hasSection('content'))
-        @if(request()->routeIs('pimpinan.monitoring'))
-        @include('auth.layout.pimpinan.monitoring')
-        @elseif(request()->routeIs('pimpinan.evaluasi'))
-        @include('auth.layout.pimpinan.evaluasivalidasi')
-        @elseif(request()->routeIs('pimpinan.pengajuan_mitra') || (isset($view) && $view == 'pengajuan_mitra'))
-        @include('auth.layout.pimpinan.pengajuan_mitra')
-        @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
-        @include('auth.layout.pimpinan.detail_monitoring')
-        @elseif(isset($view) && $view == 'detail_evaluasi')
-        @include('auth.layout.pimpinan.detail_evaluasi')
-        @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
-        @include('auth.layout.pimpinan.laporan')
-        @else
-        @include('auth.layout.pimpinan.dashboard')
-        @endif
+            @if(request()->routeIs('pimpinan.monitoring'))
+                @include('auth.layout.pimpinan.monitoring')
+            @elseif(request()->routeIs('pimpinan.evaluasi'))
+                @include('auth.layout.pimpinan.evaluasivalidasi')
+            @elseif(request()->routeIs('pimpinan.pengajuan_mitra') || (isset($view) && $view == 'pengajuan_mitra'))
+                @include('auth.layout.pimpinan.pengajuan_mitra')
+            @elseif(request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view == 'detail_monitoring'))
+                @include('auth.layout.pimpinan.detail_monitoring')
+            @elseif(isset($view) && $view == 'detail_evaluasi')
+                @include('auth.layout.pimpinan.detail_evaluasi')
+            @elseif(request()->routeIs('pimpinan.laporan') || (isset($view) && $view == 'laporan'))
+                @include('auth.layout.pimpinan.laporan')
+            @else
+                @include('auth.layout.pimpinan.dashboard')
+            @endif
         @endif
 
         <div id="sidebarOverlay"></div>
