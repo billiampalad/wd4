@@ -337,44 +337,56 @@ class DashboardController
             ->distinct()
             ->pluck('source_id');
 
-        // 1. Antrean Laporan Jurusan (Menunggu Evaluasi, tipe_pelaksana = jurusan)
+        // 1. Antrean Laporan Jurusan (Menunggu Evaluasi)
         $laporanJurusan = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
-            ->where('tipe_pelaksana', 'jurusan')
+            ->where(function ($q) {
+                $q->whereHas('jurusans')->orWhereNotNull('jurusan_id');
+            })
             ->when($humasSubmittedIds->isNotEmpty(), function ($query) use ($humasSubmittedIds) {
                 $query->whereNotIn('id', $humasSubmittedIds);
             })
-            ->with(['jurusans', 'mitra', 'evaluasis'])
+            ->with(['jurusans', 'jurusan', 'mitra', 'evaluasis'])
             ->latest()
             ->get();
 
-        // 2. Antrean Laporan UPA (Menunggu Evaluasi, tipe_pelaksana = upa)
+        // 2. Antrean Laporan UPA (Menunggu Evaluasi)
         $laporanUpa = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
-            ->where('tipe_pelaksana', 'upa')
+            ->where(function ($q) {
+                $q->whereHas('upas')->orWhereNotNull('upa_id');
+            })
             ->when($humasSubmittedIds->isNotEmpty(), function ($query) use ($humasSubmittedIds) {
                 $query->whereNotIn('id', $humasSubmittedIds);
             })
-            ->with(['mitra', 'upas', 'evaluasis'])
+            ->with(['mitra', 'upas', 'upa', 'evaluasis'])
             ->latest()
             ->get();
 
-        // 3. Antrean Laporan Pusat (Menunggu Evaluasi, tipe_pelaksana = pusat)
+        // 3. Antrean Laporan Pusat (Menunggu Evaluasi)
         $laporanPusat = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
-            ->where('tipe_pelaksana', 'pusat')
+            ->where(function ($q) {
+                $q->whereHas('pusats')->orWhereNotNull('pusat_id');
+            })
             ->when($humasSubmittedIds->isNotEmpty(), function ($query) use ($humasSubmittedIds) {
                 $query->whereNotIn('id', $humasSubmittedIds);
             })
-            ->with(['mitra', 'pusats', 'evaluasis'])
+            ->with(['mitra', 'pusats', 'pusat', 'evaluasis'])
             ->latest()
             ->get();
 
-        // 4. Fallback: Laporan Unit Lainnya (jika ada yang tidak terdefinisi tipenya tapi bukan jurusan)
+        // 4. Antrean Humas / Unit Lainnya
         $laporanUnit = Cooperation::where('status_dokumen', 'Menunggu Evaluasi')
             ->where(function ($q) use ($humasSubmittedIds) {
-                $q->whereNull('tipe_pelaksana')
-                    ->orWhereNotIn('tipe_pelaksana', ['jurusan', 'upa', 'pusat'])
-                    ->when($humasSubmittedIds->isNotEmpty(), function ($query) use ($humasSubmittedIds) {
-                        $query->orWhereIn('id', $humasSubmittedIds);
-                    });
+                $q->where(function ($sub) {
+                    $sub->whereDoesntHave('jurusans')
+                        ->whereNull('jurusan_id')
+                        ->whereDoesntHave('upas')
+                        ->whereNull('upa_id')
+                        ->whereDoesntHave('pusats')
+                        ->whereNull('pusat_id');
+                });
+                if ($humasSubmittedIds->isNotEmpty()) {
+                    $q->orWhereIn('id', $humasSubmittedIds);
+                }
             })
             ->with(['mitra', 'evaluasis', 'upas', 'pusats', 'jurusans'])
             ->latest()

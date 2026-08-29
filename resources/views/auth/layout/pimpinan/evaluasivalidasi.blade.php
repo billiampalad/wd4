@@ -64,7 +64,7 @@
                                 <span>{{ $keg->jurusans->first()->nama_jurusan ?? 'Jurusan N/A' }}</span>
                                 <i class="fas fa-chevron-right" :style="activeId === {{ $keg->id }} ? 'color: #3b82f6;' : 'opacity: 0.3;'"></i>
                             </div>
-                            <h4 class="eval-item-title">{{ $keg->title }}</h4>
+                            <h4 class="eval-item-title">{{ $keg->judul ?: ($keg->title ?: 'Dokumen Kerjasama') }}</h4>
                             <div class="eval-item-meta">
                                 <span><i class="fas fa-handshake mr-1"></i> {{ $keg->mitra->nama_mitra ?? 'Tanpa Mitra' }}</span>
                             </div>
@@ -86,7 +86,7 @@
                                 <span>{{ $keg->upas->first()->nama_upa ?? 'UPA N/A' }}</span>
                                 <i class="fas fa-chevron-right" :style="activeId === {{ $keg->id }} ? 'color: #10b981;' : 'opacity: 0.3;'"></i>
                             </div>
-                            <h4 class="eval-item-title">{{ $keg->title }}</h4>
+                            <h4 class="eval-item-title">{{ $keg->judul ?: ($keg->title ?: 'Dokumen Kerjasama') }}</h4>
                             <div class="eval-item-meta">
                                 <span><i class="fas fa-handshake mr-1"></i> {{ $keg->mitra->nama_mitra ?? 'Tanpa Mitra' }}</span>
                             </div>
@@ -108,7 +108,7 @@
                                 <span>{{ $keg->pusats->first()->nama_pusat ?? 'Pusat N/A' }}</span>
                                 <i class="fas fa-chevron-right" :style="activeId === {{ $keg->id }} ? 'color: #8b5cf6;' : 'opacity: 0.3;'"></i>
                             </div>
-                            <h4 class="eval-item-title">{{ $keg->title }}</h4>
+                            <h4 class="eval-item-title">{{ $keg->judul ?: ($keg->title ?: 'Dokumen Kerjasama') }}</h4>
                             <div class="eval-item-meta">
                                 <span><i class="fas fa-handshake mr-1"></i> {{ $keg->mitra->nama_mitra ?? 'Tanpa Mitra' }}</span>
                             </div>
@@ -137,7 +137,7 @@
                                 <span>{{ $namaUnit }}</span>
                                 <i class="fas fa-chevron-right" :style="activeId === {{ $keg->id }} ? 'color: #64748b;' : 'opacity: 0.3;'"></i>
                             </div>
-                            <h4 class="eval-item-title">{{ $keg->title }}</h4>
+                            <h4 class="eval-item-title">{{ $keg->judul ?: ($keg->title ?: 'Dokumen Kerjasama') }}</h4>
                             <div class="eval-item-meta">
                                 <span><i class="fas fa-handshake mr-1"></i> {{ $keg->mitra->nama_mitra ?? 'Tanpa Mitra' }}</span>
                             </div>
@@ -186,7 +186,7 @@
                             <!-- Context Card Utama -->
                             <div class="ev-card">
                                 <div class="ev-card-header">
-                                    <h3 class="ev-card-title">{{ $keg->title }}</h3>
+                                    <h3 class="ev-card-title">{{ $keg->judul ?: ($keg->title ?: 'Dokumen Kerjasama') }}</h3>
                                     <span class="ev-badge-status {{ strtolower($keg->status_dokumen) == 'disahkan' ? 'disahkan' : 'menunggu' }}">
                                         {{ $keg->status_dokumen }}
                                     </span>
