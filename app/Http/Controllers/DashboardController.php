@@ -289,6 +289,7 @@ class DashboardController
     {
         $kegiatan = Cooperation::with([
             'mitra',
+            'mitra.klasifikasi',
             'jurusans',
             'upas',
             'pusats',
@@ -302,6 +303,9 @@ class DashboardController
             'pjMitra',
             'laporanFiles',
             'pksNumbers',
+            'evaluasis.evaluator',
+            'perpanjanganDari',
+            'perpanjangans',
         ])->findOrFail($id);
 
         return view('auth.pimpinan', [
