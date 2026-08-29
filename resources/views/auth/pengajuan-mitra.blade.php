@@ -21,7 +21,9 @@
         'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates',
         'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
     ];
-    $selectedCountry = old('negara', old('kategori', 'nasional') === 'internasional' ? '' : 'Indonesia');
+    $selectedKategori = old('kategori', $mitra->kategori ?? 'nasional');
+    $defaultCountry = $mitra ? ($mitra->negara ?? ($selectedKategori === 'nasional' ? 'Indonesia' : '')) : ($selectedKategori === 'internasional' ? '' : 'Indonesia');
+    $selectedCountry = old('negara', $defaultCountry);
 @endphp
 <!DOCTYPE html>
 <html lang="id">
@@ -196,6 +198,16 @@
                 <form action="{{ route('pengajuan.kerjasama.store') }}" method="POST" id="wizardForm">
                     @csrf
 
+                    @if($mitra)
+                        <div class="partner-alert" style="background: rgba(79, 70, 229, 0.08); border: 1px solid rgba(79, 70, 229, 0.2); color: #4338ca; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 14px 18px; border-radius: 14px;">
+                            <i class="fas fa-magic" style="font-size: 1.25rem; color: #4f46e5;"></i>
+                            <div>
+                                <div style="font-weight: 700; font-size: 14px;">Profil Mitra Terdeteksi Otomatis</div>
+                                <div style="font-size: 13px; color: #4f46e5; margin-top: 2px;">Data identitas lembaga dan kontak telah diisi secara otomatis dari profil <strong>{{ $mitra->nama_mitra }}</strong>. Anda tetap dapat menyesuaikannya jika diperlukan.</div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- ═══ STEP 1: Profil Mitra ═══ -->
                     <div class="form-step active" data-step="1">
                         <div class="partner-form-head">
@@ -211,7 +223,7 @@
                                 <div class="partner-fields">
                                     <div class="partner-field partner-field-full">
                                         <label for="nama_mitra">Nama Lembaga / Instansi / Perusahaan <span class="partner-required">*</span></label>
-                                        <input id="nama_mitra" type="text" name="nama_mitra" value="{{ old('nama_mitra') }}"
+                                        <input id="nama_mitra" type="text" name="nama_mitra" value="{{ old('nama_mitra', $mitra->nama_mitra ?? '') }}"
                                             placeholder="Contoh: PT Inovasi Sulawesi Utara" required>
                                         @error('nama_mitra')
                                             <small class="partner-error">{{ $message }}</small>
@@ -225,7 +237,7 @@
                                                 <option value="">Pilih klasifikasi</option>
                                                 @foreach ($klasifikasis as $klasifikasi)
                                                     <option value="{{ $klasifikasi->id }}"
-                                                        {{ (string) old('id_klasifikasi') === (string) $klasifikasi->id ? 'selected' : '' }}>
+                                                        {{ (string) old('id_klasifikasi', $mitra->klasifikasi_id ?? '') === (string) $klasifikasi->id ? 'selected' : '' }}>
                                                         {{ $klasifikasi->nama }}
                                                     </option>
                                                 @endforeach
@@ -262,8 +274,8 @@
                                                 negaraSelect.dispatchEvent(new Event('change', { bubbles: true }));
                                             })" x-init="init($refs.native)" @click.outside="close()">
                                             <select x-ref="native" id="kategori" name="kategori" class="partner-native-select" required>
-                                                <option value="nasional" {{ old('kategori', 'nasional') === 'nasional' ? 'selected' : '' }}>Nasional</option>
-                                                <option value="internasional" {{ old('kategori') === 'internasional' ? 'selected' : '' }}>Internasional</option>
+                                                <option value="nasional" {{ old('kategori', $mitra->kategori ?? 'nasional') === 'nasional' ? 'selected' : '' }}>Nasional</option>
+                                                <option value="internasional" {{ old('kategori', $mitra->kategori ?? 'nasional') === 'internasional' ? 'selected' : '' }}>Internasional</option>
                                             </select>
                                             <button type="button" class="partner-select-trigger" :class="{ 'is-open': open, 'is-placeholder': !value }" @click="toggle()" :aria-expanded="open.toString()" aria-haspopup="listbox">
                                                 <span class="partner-select-value" x-text="selectedLabel || placeholder"></span>
@@ -317,7 +329,7 @@
 
                                     <div class="partner-field">
                                         <label for="telp">Nomor HP/WA <span class="partner-required">*</span></label>
-                                        <input id="telp" type="text" name="telp" value="{{ old('telp') }}"
+                                        <input id="telp" type="text" name="telp" value="{{ old('telp', $mitra->telepon ?? '') }}"
                                             placeholder="Contoh: 081234567896" required>
                                         @error('telp')
                                             <small class="partner-error">{{ $message }}</small>
@@ -326,7 +338,7 @@
 
                                     <div class="partner-field partner-field-full">
                                         <label for="website">Website Resmi</label>
-                                        <input id="website" type="url" name="website" value="{{ old('website') }}"
+                                        <input id="website" type="url" name="website" value="{{ old('website', $mitra->website ?? '') }}"
                                             placeholder="https://contohmitra.com">
                                         @error('website')
                                             <small class="partner-error">{{ $message }}</small>
@@ -335,7 +347,7 @@
 
                                     <div class="partner-field partner-field-full">
                                         <label for="alamat">Alamat Kantor <span class="partner-required">*</span></label>
-                                        <textarea id="alamat" name="alamat" rows="3" placeholder="Tulis alamat lengkap, termasuk kota dan provinsi" required>{{ old('alamat') }}</textarea>
+                                        <textarea id="alamat" name="alamat" rows="3" placeholder="Tulis alamat lengkap, termasuk kota dan provinsi" required>{{ old('alamat', $mitra->alamat ?? '') }}</textarea>
                                         @error('alamat')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -360,7 +372,7 @@
                                 <div class="partner-fields">
                                     <div class="partner-field">
                                         <label for="nama_penandatangan">Nama Penandatangan <span class="partner-required">*</span></label>
-                                        <input id="nama_penandatangan" type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan') }}"
+                                        <input id="nama_penandatangan" type="text" name="nama_penandatangan" value="{{ old('nama_penandatangan', $latestCoop?->penandatanganMitra?->nama ?? $latestSubmission?->nama_penandatangan ?? '') }}"
                                             placeholder="Nama lengkap penandatangan" required>
                                         @error('nama_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
@@ -370,7 +382,7 @@
                                     <div class="partner-field">
                                         <label for="jabatan_penandatangan">Jabatan Penandatangan <span class="partner-required">*</span></label>
                                         <input id="jabatan_penandatangan" type="text" name="jabatan_penandatangan"
-                                            value="{{ old('jabatan_penandatangan') }}" placeholder="Contoh: Direktur / Kepala Bagian" required>
+                                            value="{{ old('jabatan_penandatangan', $latestCoop?->penandatanganMitra?->jabatan ?? $latestSubmission?->jabatan_penandatangan ?? '') }}" placeholder="Contoh: Direktur / Kepala Bagian" required>
                                         @error('jabatan_penandatangan')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -378,7 +390,7 @@
                                     <div class="partner-field">
                                         <label for="nama_penanggung_jawab">Nama Penanggung Jawab</label>
                                         <input id="nama_penanggung_jawab" type="text" name="nama_penanggung_jawab"
-                                            value="{{ old('nama_penanggung_jawab') }}" placeholder="Nama lengkap penanggung jawab">
+                                            value="{{ old('nama_penanggung_jawab', $latestCoop?->pjMitra?->nama ?? $latestSubmission?->nama_penanggung_jawab ?? (auth()->user()?->name ?? '')) }}" placeholder="Nama lengkap penanggung jawab">
                                         @error('nama_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -387,7 +399,7 @@
                                     <div class="partner-field">
                                         <label for="jabatan_penanggung_jawab">Jabatan Penanggung Jawab</label>
                                         <input id="jabatan_penanggung_jawab" type="text" name="jabatan_penanggung_jawab"
-                                            value="{{ old('jabatan_penanggung_jawab') }}" placeholder="Contoh: Koordinator Kerja Sama">
+                                            value="{{ old('jabatan_penanggung_jawab', $latestCoop?->pjMitra?->jabatan ?? $latestSubmission?->jabatan_penanggung_jawab ?? '') }}" placeholder="Contoh: Koordinator Kerja Sama">
                                         @error('jabatan_penanggung_jawab')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror
@@ -396,7 +408,7 @@
                                     <div class="partner-field">
                                         <label for="email">Email <span class="partner-required">*</span></label>
                                         <input id="email" type="email" name="email"
-                                            value="{{ old('email') }}" placeholder="email.pic@perusahaan.com" required>
+                                            value="{{ old('email', auth()->user()?->email ?? ($mitra->email ?? '')) }}" placeholder="email.pic@perusahaan.com" required>
                                         @error('email')
                                             <small class="partner-error">{{ $message }}</small>
                                         @enderror

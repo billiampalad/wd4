@@ -21,7 +21,23 @@ class PublicPengajuanKerjasamaController extends Controller
         $klasifikasis = Klasifikasi::orderBy('nama')->get();
         $jenisKerjasamas = JenisKerjasama::orderBy('nama_kerjasama')->get();
 
-        return view('auth.pengajuan-mitra', compact('klasifikasis', 'jenisKerjasamas'));
+        $user = auth()->user();
+        $mitra = $user ? ($user->mitra ?? ($user->mitra_id ? Mitra::find($user->mitra_id) : null)) : null;
+
+        $latestCoop = null;
+        $latestSubmission = null;
+        if ($mitra) {
+            $latestCoop = Cooperation::where('mitra_id', $mitra->id)
+                ->with(['penandatanganMitra', 'pjMitra'])
+                ->latest('id')
+                ->first();
+
+            $latestSubmission = PengajuanKerjasamaBaru::where('mitra_id', $mitra->id)
+                ->latest('id')
+                ->first();
+        }
+
+        return view('auth.pengajuan-mitra', compact('klasifikasis', 'jenisKerjasamas', 'mitra', 'latestCoop', 'latestSubmission'));
     }
 
     public function store(Request $request)
@@ -57,10 +73,14 @@ class PublicPengajuanKerjasamaController extends Controller
         DB::beginTransaction();
 
         try {
+            $user = auth()->user();
+            $mitraId = $user ? ($user->mitra_id ?? $user->mitra?->id) : null;
+
             $submission = PengajuanKerjasamaBaru::create(array_merge($validated, [
                 'kode_pengajuan' => $this->generateSubmissionCode(),
                 'status' => PengajuanKerjasamaBaru::STATUS_DIAJUKAN,
                 'submitted_at' => now(),
+                'mitra_id' => $mitraId,
             ]));
 
             $pimpinans = User::whereHas('role', function ($query) {
