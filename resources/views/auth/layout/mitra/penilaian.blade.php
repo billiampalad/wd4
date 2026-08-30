@@ -485,7 +485,7 @@
     {{-- ═══ MODAL PENILAIAN MAHASISWA (ALPINE.JS) ═══ --}}
     <template x-if="gradingModalOpen">
         <div class="review-modal-overlay" @click.self="gradingModalOpen = false" x-cloak>
-            <div class="review-modal-card" style="max-width: 680px;"
+            <div class="review-modal-card" style="max-width: 680px; height: auto; max-height: 90vh; display: flex; flex-direction: column;"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -494,7 +494,7 @@
                 x-transition:leave-end="opacity-0 scale-95">
                 
                 {{-- Modal Header --}}
-                <div class="review-modal-header">
+                <div class="review-modal-header" style="flex-shrink: 0;">
                     <div class="review-modal-title">
                         <div class="icon-box">
                             <i class="fas fa-clipboard-check"></i>
@@ -510,11 +510,12 @@
                 </div>
 
                 {{-- Form Penilaian --}}
-                <form :action="'/mitra/penilaian/' + activeItem.id" method="POST" id="gradingForm" @submit.prevent="submitGrading($event)">
+                <form :action="'/mitra/penilaian/' + activeItem.id" method="POST" id="gradingForm" @submit.prevent="submitGrading($event)"
+                    style="display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0;">
                     @csrf
                     @method('PUT')
 
-                    <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 18px; padding: 24px;">
+                    <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 18px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0;">
                         
                         {{-- Mini Profile Banner --}}
                         <div style="padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -630,7 +631,7 @@
                     </div>
 
                     {{-- Modal Footer --}}
-                    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface2); border-radius: 0 0 16px 16px;">
+                    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface2); border-radius: 0 0 16px 16px; flex-shrink: 0;">
                         <button type="button" class="rfc-btn" @click="gradingModalOpen = false">
                             Batal
                         </button>
@@ -647,7 +648,7 @@
     {{-- ═══ MODAL DETAIL MAHASISWA (ALPINE.JS) ═══ --}}
     <template x-if="detailModalOpen">
         <div class="review-modal-overlay" @click.self="detailModalOpen = false" x-cloak>
-            <div class="review-modal-card" style="max-width: 580px;"
+            <div class="review-modal-card" style="max-width: 580px; height: auto; max-height: 90vh; display: flex; flex-direction: column;"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -655,7 +656,7 @@
                 x-transition:leave-start="opacity-100 scale-100"
                 x-transition:leave-end="opacity-0 scale-95">
                 
-                <div class="review-modal-header">
+                <div class="review-modal-header" style="flex-shrink: 0;">
                     <div class="review-modal-title">
                         <div class="icon-box">
                             <i class="fas fa-id-card"></i>
@@ -670,7 +671,7 @@
                     </button>
                 </div>
 
-                <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 16px; padding: 24px;">
+                <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0;">
                     
                     {{-- Profile Header Card --}}
                     <div class="dk-entity" style="padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;">
@@ -720,7 +721,7 @@
 
                 </div>
 
-                <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--surface2); border-radius: 0 0 16px 16px;">
+                <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--surface2); border-radius: 0 0 16px 16px; flex-shrink: 0;">
                     <button type="button" class="rfc-btn" @click="detailModalOpen = false">
                         Tutup
                     </button>
