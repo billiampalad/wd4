@@ -30,17 +30,22 @@
 
     <!-- 2. Alert Center (Urgent Attention) -->
     @if($pendingReviewCount > 0 || $expiringCount > 0)
-    <section class="ud-panel" style="background: rgba(245,158,11,0.1); border-left: 4px solid #f59e0b; margin-bottom: 24px; padding: 20px;">
-        <h3 class="ud-panel-title" style="color: #d97706; margin: 0;"><i class="fas fa-bell"></i> Perhatian Mendesak</h3>
-        <ul style="margin: 12px 0 0 24px; color: var(--text-main); font-size: 0.95rem;">
-            @if($pendingReviewCount > 0)
-            <li>Anda memiliki <strong>{{ $pendingReviewCount }}</strong> dokumen kerja sama yang menunggu persetujuan/tanda tangan. <a href="{{ route('mitra.dokumen.index') }}" style="color: #4f46e5; font-weight: 600;">Review Sekarang</a></li>
-            @endif
-            @if($expiringCount > 0)
-            <li>Ada <strong>{{ $expiringCount }}</strong> kerja sama yang akan segera berakhir. Mohon ajukan perpanjangan.</li>
-            @endif
-        </ul>
-    </section>
+        <section class="ud-panel"
+            style="background: rgba(245,158,11,0.1); border-left: 4px solid #f59e0b; margin-bottom: 24px; padding: 20px;">
+            <h3 class="ud-panel-title" style="color: #d97706; margin: 0;"><i class="fas fa-bell"></i> Perhatian Mendesak
+            </h3>
+            <ul style="margin: 12px 0 0 24px; color: var(--text-main); font-size: 0.95rem;">
+                @if($pendingReviewCount > 0)
+                    <li>Anda memiliki <strong>{{ $pendingReviewCount }}</strong> dokumen kerja sama yang menunggu
+                        persetujuan/tanda tangan. <a href="{{ route('mitra.dokumen.index') }}"
+                            style="color: #4f46e5; font-weight: 600;">Review Sekarang</a></li>
+                @endif
+                @if($expiringCount > 0)
+                    <li>Ada <strong>{{ $expiringCount }}</strong> kerja sama yang akan segera berakhir. Mohon ajukan
+                        perpanjangan.</li>
+                @endif
+            </ul>
+        </section>
     @endif
 
     <section class="ud-summary">
@@ -87,7 +92,7 @@
 
     <!-- 4. Main Content Grid (Two Column equivalent) -->
     <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 24px; align-items: start; margin-top: 24px;">
-        
+
         <!-- Left: Quick Actions -->
         <section class="ud-panel">
             <div class="ud-table-head">
@@ -98,16 +103,20 @@
             </div>
             <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
                 <a href="{{ route('mitra.dokumen.index') }}" class="ud-tab" style="justify-content: flex-start;">
-                    <i class="fas fa-file-pen" style="color: var(--accent); width: 24px; text-align: center;"></i> Review Draf Dokumen
+                    <i class="fas fa-file-pen" style="color: var(--accent); width: 24px; text-align: center;"></i>
+                    Review Draf Dokumen
                 </a>
                 <a href="#" class="ud-tab" style="justify-content: flex-start;">
-                    <i class="fas fa-star" style="color: #f59e0b; width: 24px; text-align: center;"></i> Beri Penilaian Mahasiswa
+                    <i class="fas fa-star" style="color: #f59e0b; width: 24px; text-align: center;"></i> Beri Penilaian
+                    Mahasiswa
                 </a>
                 <a href="#" class="ud-tab" style="justify-content: flex-start;">
-                    <i class="fas fa-comments" style="color: #10b981; width: 24px; text-align: center;"></i> Kirim Umpan Balik
+                    <i class="fas fa-comments" style="color: #10b981; width: 24px; text-align: center;"></i> Kirim Umpan
+                    Balik
                 </a>
                 <a href="#" class="ud-tab" style="justify-content: flex-start;">
-                    <i class="fas fa-headset" style="color: var(--text-sub); width: 24px; text-align: center;"></i> Hubungi Administrator
+                    <i class="fas fa-headset" style="color: var(--text-sub); width: 24px; text-align: center;"></i>
+                    Hubungi Administrator
                 </a>
             </div>
         </section>
@@ -120,7 +129,7 @@
                     <p class="ud-panel-desc">Ringkasan pengajuan kerja sama terbaru Anda.</p>
                 </div>
             </div>
-            
+
             <div class="ud-table-wrap">
                 <table class="ud-table">
                     <thead>
@@ -132,40 +141,48 @@
                     </thead>
                     <tbody>
                         @forelse($recentDocuments as $doc)
-                        <tr data-kerjasama-row>
-                            <td>
-                                <div class="ud-small">{{ $doc->nomor_dokumen ?? 'Menunggu Nomor' }}</div>
-                                <div class="ud-doc-title">{{ $doc->judul_kerjasama ?? 'Perjanjian Kerja Sama' }}</div>
-                            </td>
-                            <td>
-                                @php
-                                    $status = strtolower($doc->status ?? '');
-                                    if(str_contains($status, 'aktif')) {
-                                        $lbl = 'Aktif'; $cls = 'is-active'; $icn = 'fa-circle-check';
-                                    } elseif(str_contains($status, 'draft') || str_contains($status, 'menunggu')) {
-                                        $lbl = 'Menunggu Review'; $cls = 'is-pending'; $icn = 'fa-spinner';
-                                    } elseif(str_contains($status, 'perpanjangan') || str_contains($status, 'kedaluwarsa')) {
-                                        $lbl = 'Masa Tenggang'; $cls = 'is-expired'; $icn = 'fa-clock-rotate-left';
-                                    } else {
-                                        $lbl = $doc->status; $cls = ''; $icn = 'fa-circle-question';
-                                    }
-                                @endphp
-                                <span class="ud-status-badge {{ $cls }}">
-                                    <i class="fas {{ $icn }}"></i> {{ $lbl }}
-                                </span>
-                            </td>
-                            <td>
-                                <a href="{{ route('mitra.dokumen.index') }}" class="ud-action-btn" title="Detail">
-                                    <i class="fas fa-arrow-right"></i>
-                                </a>
-                            </td>
-                        </tr>
+                            <tr data-kerjasama-row>
+                                <td>
+                                    <div class="ud-small">{{ $doc->nomor_dokumen ?? 'Menunggu Nomor' }}</div>
+                                    <div class="ud-doc-title">{{ $doc->judul_kerjasama ?? 'Perjanjian Kerja Sama' }}</div>
+                                </td>
+                                <td>
+                                    @php
+                                        $status = strtolower($doc->status ?? '');
+                                        if (str_contains($status, 'aktif')) {
+                                            $lbl = 'Aktif';
+                                            $cls = 'is-active';
+                                            $icn = 'fa-circle-check';
+                                        } elseif (str_contains($status, 'draft') || str_contains($status, 'menunggu')) {
+                                            $lbl = 'Menunggu Review';
+                                            $cls = 'is-pending';
+                                            $icn = 'fa-spinner';
+                                        } elseif (str_contains($status, 'perpanjangan') || str_contains($status, 'kedaluwarsa')) {
+                                            $lbl = 'Masa Tenggang';
+                                            $cls = 'is-expired';
+                                            $icn = 'fa-clock-rotate-left';
+                                        } else {
+                                            $lbl = $doc->status;
+                                            $cls = '';
+                                            $icn = 'fa-circle-question';
+                                        }
+                                    @endphp
+                                    <span class="ud-status-badge {{ $cls }}">
+                                        <i class="fas {{ $icn }}"></i> {{ $lbl }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ route('mitra.dokumen.index') }}" class="ud-action-btn" title="Detail">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="3" style="text-align: center; color: var(--text-sub); padding: 32px;">
-                                Belum ada data kerja sama.
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: var(--text-sub); padding: 32px;">
+                                    Belum ada data kerja sama.
+                                </td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
