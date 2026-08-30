@@ -8,7 +8,7 @@
                 <span>/</span>
                 <a href="{{ route('jurusan.dashboard') }}">Beranda</a>
                 <span>/</span>
-                <span>Klarifikasi Mitra</span>
+                <span>Klasifikasi Mitra</span>
             </div>
             <div class="ud-title-row">
                 <span class="ud-title-icon"><i class="fas fa-chart-bar"></i></span>
@@ -101,7 +101,7 @@
                                     style="display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px;">
                                     <div class="klasifikasi-legend-main" style="display: flex; align-items: center; gap: 8px; min-width: 0;">
                                         <span class="klasifikasi-legend-swatch"
-                                            style="width: 10px; height: 10px; border-radius: 3px; background: {{ $chartDataPayload['colors'][$index] }}; flex-shrink: 0;"></span>
+                                            style="width: 10px; height: 10px; border-radius: 3px; background: {{ $chartDataPayload['colors'][$index] ?? '#3b82f6' }}; flex-shrink: 0;"></span>
                                         <span class="klasifikasi-legend-name" tabindex="0" title="{{ $cls->nama }}"
                                             style="color: var(--text); font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ $cls->nama }}</span>
                                     </div>

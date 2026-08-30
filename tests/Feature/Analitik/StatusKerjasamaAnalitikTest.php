@@ -143,4 +143,82 @@ class StatusKerjasamaAnalitikTest extends TestCase
         $responsePartial->assertStatus(200);
         $responsePartial->assertJsonStructure(['dueDateData' => ['year', 'rows', 'weeks']]);
     }
+
+    public function test_all_roles_can_access_klasifikasi_mitra()
+    {
+        $roleUnit = Role::firstOrCreate(['name' => 'unit_kerja'], ['guard_name' => 'web']);
+        $userUnit = User::factory()->create(['role_id' => $roleUnit->id]);
+        $unitKerja = UnitKerja::firstOrCreate(['nama_unit_pelaksana' => 'Humas']);
+        Profile::create(['user_id' => $userUnit->id, 'unit_kerja_id' => $unitKerja->id]);
+
+        $roleJurusan = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
+        $userJurusan = User::factory()->create(['role_id' => $roleJurusan->id]);
+        $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Teknik Mesin']);
+        Profile::create(['user_id' => $userJurusan->id, 'jurusan_id' => $jurusan->id]);
+
+        $roleUpa = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
+        $userUpa = User::factory()->create(['role_id' => $roleUpa->id]);
+        $upa = Upa::firstOrCreate(['nama_upa' => 'UPA Bahasa']);
+        Profile::create(['user_id' => $userUpa->id, 'upa_id' => $upa->id]);
+
+        $rolePusat = Role::firstOrCreate(['name' => 'pusat'], ['guard_name' => 'web']);
+        $userPusat = User::factory()->create(['role_id' => $rolePusat->id]);
+        $pusat = Pusat::firstOrCreate(['nama_pusat' => 'Pusat Penelitian']);
+        Profile::create(['user_id' => $userPusat->id, 'pusat_id' => $pusat->id]);
+
+        $responseUnit = $this->actingAs($userUnit)->get(route('unit.analitik.klasifikasi-mitra'));
+        $responseUnit->assertStatus(200);
+
+        $responseJurusan = $this->actingAs($userJurusan)->get(route('jurusan.analitik.klasifikasi-mitra'));
+        $responseJurusan->assertStatus(200);
+
+        $responseUpa = $this->actingAs($userUpa)->get(route('upa.analitik.klasifikasi-mitra'));
+        $responseUpa->assertStatus(200);
+
+        $responsePusat = $this->actingAs($userPusat)->get(route('pusat.analitik.klasifikasi-mitra'));
+        $responsePusat->assertStatus(200);
+    }
+
+    public function test_all_roles_can_access_geo_mitra()
+    {
+        $roleUnit = Role::firstOrCreate(['name' => 'unit_kerja'], ['guard_name' => 'web']);
+        $userUnit = User::factory()->create(['role_id' => $roleUnit->id]);
+        $unitKerja = UnitKerja::firstOrCreate(['nama_unit_pelaksana' => 'Humas']);
+        Profile::create(['user_id' => $userUnit->id, 'unit_kerja_id' => $unitKerja->id]);
+
+        $roleJurusan = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
+        $userJurusan = User::factory()->create(['role_id' => $roleJurusan->id]);
+        $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Teknik Sipil']);
+        Profile::create(['user_id' => $userJurusan->id, 'jurusan_id' => $jurusan->id]);
+
+        $roleUpa = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
+        $userUpa = User::factory()->create(['role_id' => $roleUpa->id]);
+        $upa = Upa::firstOrCreate(['nama_upa' => 'UPA Percetakan']);
+        Profile::create(['user_id' => $userUpa->id, 'upa_id' => $upa->id]);
+
+        $rolePusat = Role::firstOrCreate(['name' => 'pusat'], ['guard_name' => 'web']);
+        $userPusat = User::factory()->create(['role_id' => $rolePusat->id]);
+        $pusat = Pusat::firstOrCreate(['nama_pusat' => 'Pusat Inovasi']);
+        Profile::create(['user_id' => $userPusat->id, 'pusat_id' => $pusat->id]);
+
+        $mitra1 = Mitra::firstOrCreate(['nama_mitra' => 'Mitra Indo Geo', 'country_code' => 'ID', 'negara' => 'Indonesia', 'status_akses' => 'Aktif']);
+        $mitra2 = Mitra::firstOrCreate(['nama_mitra' => 'Mitra Japan Geo', 'country_code' => 'JP', 'negara' => 'Jepang', 'status_akses' => 'Aktif']);
+
+        $responseUnit = $this->actingAs($userUnit)->get(route('unit.analitik.geo-mitra'));
+        $responseUnit->assertStatus(200);
+        $responseUnit->assertViewHas('categoryChartData');
+        $responseUnit->assertViewHas('countryChartData');
+
+        $responseJurusan = $this->actingAs($userJurusan)->get(route('jurusan.analitik.geo-mitra'));
+        $responseJurusan->assertStatus(200);
+        $responseJurusan->assertViewHas('categoryChartData');
+
+        $responseUpa = $this->actingAs($userUpa)->get(route('upa.analitik.geo-mitra'));
+        $responseUpa->assertStatus(200);
+        $responseUpa->assertViewHas('categoryChartData');
+
+        $responsePusat = $this->actingAs($userPusat)->get(route('pusat.analitik.geo-mitra'));
+        $responsePusat->assertStatus(200);
+        $responsePusat->assertViewHas('categoryChartData');
+    }
 }

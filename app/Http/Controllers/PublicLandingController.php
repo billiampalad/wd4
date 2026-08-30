@@ -228,10 +228,9 @@ class PublicLandingController extends Controller
         if ($search !== '') {
             $query->where(function (Builder $builder) use ($search) {
                 $builder->where('nama_mitra', 'like', "%{$search}%")
-                    ->orWhere('kategori', 'like', "%{$search}%")
                     ->orWhere('negara', 'like', "%{$search}%")
                     ->orWhere('alamat', 'like', "%{$search}%")
-                    ->orWhere('telp', 'like', "%{$search}%")
+                    ->orWhere('telepon', 'like', "%{$search}%")
                     ->orWhere('website', 'like', "%{$search}%")
                     ->orWhereHas('klasifikasi', function (Builder $klasifikasiQuery) use ($search) {
                         $klasifikasiQuery->where('nama', 'like', "%{$search}%");

@@ -646,8 +646,9 @@ class PusatPageController extends Controller
     public function klasifikasiMitra()
     {
         $unitId = $this->resolveUnitId();
+        $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
 
-        $mitraIds = Cooperation::where('pusat_id', $unitId)
+        $mitraIds = (clone $baseQuery)
             ->whereNotNull('mitra_id')
             ->distinct()
             ->pluck('mitra_id');
@@ -686,7 +687,7 @@ class PusatPageController extends Controller
 
         $topMitras = \App\Models\Mitra::whereIn('id', $mitraIds)
             ->withCount([
-                'cooperations as cooperations_count' => fn ($query) => $query->where('pusat_id', $unitId),
+                'cooperations as cooperations_count' => fn ($query) => $this->scopeUnit($query, $unitId),
             ])
             ->orderBy('cooperations_count', 'desc')
             ->limit(5)
@@ -705,8 +706,9 @@ class PusatPageController extends Controller
     public function geoMitra()
     {
         $unitId = $this->resolveUnitId();
+        $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
 
-        $mitraIds = Cooperation::where('pusat_id', $unitId)
+        $mitraIds = (clone $baseQuery)
             ->whereNotNull('mitra_id')
             ->distinct()
             ->pluck('mitra_id');
@@ -729,8 +731,8 @@ class PusatPageController extends Controller
             ->select(
                 DB::raw("COALESCE(NULLIF(TRIM(negara), ''), 'Indonesia') as country_name"),
                 DB::raw("COUNT(*) as mitras_count"),
-                DB::raw("SUM(CASE WHEN kategori = 'nasional' THEN 1 ELSE 0 END) as nasional_count"),
-                DB::raw("SUM(CASE WHEN kategori = 'internasional' THEN 1 ELSE 0 END) as internasional_count")
+                DB::raw("SUM(CASE WHEN country_code = 'ID' OR LOWER(COALESCE(negara, '')) LIKE '%indonesia%' THEN 1 ELSE 0 END) as nasional_count"),
+                DB::raw("SUM(CASE WHEN (country_code != 'ID' OR country_code IS NULL) AND LOWER(COALESCE(negara, '')) NOT LIKE '%indonesia%' AND negara IS NOT NULL AND TRIM(negara) != '' THEN 1 ELSE 0 END) as internasional_count")
             )
             ->groupBy('country_name')
             ->orderBy('mitras_count', 'desc')
