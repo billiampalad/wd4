@@ -169,6 +169,8 @@
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/layout/mitra/dkerjasama.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/mitra/kegiatan-magang.js') }}" data-turbo-track="reload"></script>
 </body>
 
 </html>

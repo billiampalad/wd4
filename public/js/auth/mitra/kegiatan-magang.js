@@ -55,11 +55,14 @@ function mitraPenilaianApp() {
         },
 
         get rows() {
-            return this.$refs.rows ? Array.from(this.$refs.rows.querySelectorAll('tr[data-row]')) : [];
+            const container = this.$refs.rows || (this.$el ? this.$el.querySelector('tbody[x-ref="rows"]') : null) || document.querySelector('tbody[x-ref="rows"]') || document.querySelector('#mainContent table.dk-table tbody');
+            return container ? Array.from(container.querySelectorAll('tr[data-row]')) : [];
         },
 
         get filteredRows() {
-            return this.rows.filter(row => this.matchesRow(row));
+            const allRows = this.rows;
+            if (!allRows.length) return [];
+            return allRows.filter(row => this.matchesRow(row));
         },
 
         get totalFiltered() {
@@ -79,24 +82,32 @@ function mitraPenilaianApp() {
         },
 
         matchesRow(row) {
-            const q = this.searchQuery.toLowerCase().trim();
+            if (!row || !row.dataset) return true;
+            const q = (this.searchQuery || '').toLowerCase().trim();
             const matchSearch = q === '' ||
                 (row.dataset.nim && row.dataset.nim.includes(q)) ||
                 (row.dataset.nama && row.dataset.nama.includes(q)) ||
                 (row.dataset.prodi && row.dataset.prodi.includes(q)) ||
                 (row.dataset.kegiatan && row.dataset.kegiatan.includes(q));
 
-            const matchProdi = this.prodiFilter === 'all' || (row.dataset.prodi && row.dataset.prodi === this.prodiFilter.toLowerCase());
+            const matchProdi = this.prodiFilter === 'all' || (row.dataset.prodi && row.dataset.prodi.toLowerCase() === this.prodiFilter.toLowerCase());
             const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status === this.statusFilter);
-            const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && row.dataset.tahun === String(this.tahunFilter));
+            const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && String(row.dataset.tahun) === String(this.tahunFilter));
 
             return matchSearch && matchProdi && matchStatus && matchTahun;
         },
 
         isRowVisible(el) {
             const tr = el.tagName === 'TR' ? el : el.closest('tr');
-            if (!tr) return false;
-            const index = this.filteredRows.indexOf(tr);
+            if (!tr) return true;
+            
+            // If matches row check fails, immediately hide
+            if (!this.matchesRow(tr)) return false;
+
+            const fRows = this.filteredRows;
+            if (!fRows.length) return true; // Fallback during initial render
+
+            const index = fRows.indexOf(tr);
             if (index === -1) return false;
             const start = (this.currentPage - 1) * this.perPage;
             const end = start + this.perPage;
@@ -106,7 +117,9 @@ function mitraPenilaianApp() {
         rowNumber(el) {
             const tr = el.tagName === 'TR' ? el : el.closest('tr');
             if (!tr) return '01';
-            const index = this.filteredRows.indexOf(tr);
+            const fRows = this.filteredRows;
+            if (!fRows.length) return '01';
+            const index = fRows.indexOf(tr);
             return index === -1 ? '01' : String(index + 1).padStart(2, '0');
         },
 
@@ -181,3 +194,21 @@ function mitraPenilaianApp() {
         }
     };
 }
+
+// Expose globally on window
+window.mitraPenilaianApp = mitraPenilaianApp;
+
+// Register on Alpine.data
+function registerMitraPenilaianAlpine() {
+    if (typeof Alpine !== 'undefined') {
+        Alpine.data('mitraPenilaianApp', mitraPenilaianApp);
+    }
+}
+
+if (typeof Alpine !== 'undefined') {
+    registerMitraPenilaianAlpine();
+} else {
+    document.addEventListener('alpine:init', registerMitraPenilaianAlpine);
+}
+
+document.addEventListener('turbo:load', registerMitraPenilaianAlpine);

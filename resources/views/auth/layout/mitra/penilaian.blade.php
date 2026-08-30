@@ -747,6 +747,3 @@
     </template>
 
 </main>
-
-{{-- ═══ EXTERNAL ALPINE.JS APPLICATION LOGIC ═══ --}}
-<script src="{{ asset('js/auth/mitra/kegiatan-magang.js') }}"></script>
