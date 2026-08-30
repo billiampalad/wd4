@@ -61,18 +61,18 @@ class PublicLandingController extends Controller
 
     private function resolveFilters(Request $request): array
     {
-        $dataScope = (string) $request->get('data_scope', 'kerjasama');
+        $dataScope = (string) $request->input('data_scope', 'kerjasama');
         $dataScope = in_array($dataScope, ['kerjasama', 'mitra'], true) ? $dataScope : 'kerjasama';
 
-        $kategori = (string) $request->get('kategori_mitra', 'all');
+        $kategori = (string) $request->input('kategori_mitra', 'all');
         $kategori = in_array($kategori, ['all', 'nasional', 'internasional'], true) ? $kategori : 'all';
 
-        $statusScope = (string) $request->get('status_scope', 'all');
+        $statusScope = (string) $request->input('status_scope', 'all');
         $statusScope = in_array($statusScope, ['all', 'aktif'], true) ? $statusScope : 'all';
         $statusScope = $dataScope === 'kerjasama' ? $statusScope : 'all';
 
-        $search = trim((string) $request->get('search', ''));
-        $sort = (string) $request->get('sort', 'latest');
+        $search = trim((string) $request->input('search', ''));
+        $sort = (string) $request->input('sort', 'latest');
 
         $allowedSorts = $dataScope === 'mitra'
             ? ['latest', 'oldest', 'title', 'title_desc', 'most_cooperations']
@@ -82,17 +82,17 @@ class PublicLandingController extends Controller
             $sort = 'latest';
         }
 
-        $geoCountry = trim((string) $request->get('geo_country', ''));
+        $geoCountry = trim((string) $request->input('geo_country', ''));
         $geoCountry = mb_substr($geoCountry, 0, 120);
 
-        $geoProvince = trim((string) $request->get('geo_province', ''));
+        $geoProvince = trim((string) $request->input('geo_province', ''));
         $geoProvince = mb_substr($geoProvince, 0, 120);
 
-        $geoCountryCode = strtoupper(trim((string) $request->get('geo_country_code', '')));
+        $geoCountryCode = strtoupper(trim((string) $request->input('geo_country_code', '')));
         $geoCountryCode = preg_match('/^[A-Z]{2}$/', $geoCountryCode) === 1 ? $geoCountryCode : null;
         $geoCountryCode = $geoCountryCode ?? GeoNormalizer::normalizeCountryCode($geoCountry);
 
-        $geoProvinceCode = trim((string) $request->get('geo_province_code', ''));
+        $geoProvinceCode = trim((string) $request->input('geo_province_code', ''));
         $geoProvinceCode = preg_match('/^[0-9]{2}([0-9]{0,8})$/', $geoProvinceCode) === 1 ? $geoProvinceCode : null;
 
         if ($geoProvince !== '' && $geoCountry === '') {

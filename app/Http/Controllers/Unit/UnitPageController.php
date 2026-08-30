@@ -528,7 +528,7 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $bentukKegiatans = \App\Models\JenisKerjasama::withCount(['details as total_count'])
+        $bentukKegiatans = JenisKerjasama::withCount(['details as total_count'])
             ->orderBy('nama_kerjasama', 'asc')
             ->get();
 
@@ -539,8 +539,8 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $counts = \App\Models\Cooperation::query()
-            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        $counts = Cooperation::query()
+            ->select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status')
             ->all();
@@ -590,8 +590,8 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $counts = \App\Models\Cooperation::query()
-            ->select('status_dokumen', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+        $counts = Cooperation::query()
+            ->select('status_dokumen', DB::raw('count(*) as total'))
             ->groupBy('status_dokumen')
             ->pluck('total', 'status_dokumen')
             ->all();
@@ -634,7 +634,7 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $kriterias = \App\Models\Klasifikasi::withCount(['mitras as total_count'])
+        $kriterias = Klasifikasi::withCount(['mitras as total_count'])
             ->orderBy('nama', 'asc')
             ->get();
 
@@ -645,9 +645,9 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $totalMitras = \App\Models\Mitra::count();
+        $totalMitras = Mitra::count();
 
-        $classifications = \App\Models\Klasifikasi::withCount('mitras')
+        $classifications = Klasifikasi::withCount('mitras')
             ->orderBy('mitras_count', 'desc')
             ->get();
 
@@ -675,7 +675,7 @@ class UnitPageController extends Controller
         $mostFrequentName = $mostFrequent && $mostFrequent->mitras_count > 0 ? $mostFrequent->nama : '-';
         $mostFrequentCount = $mostFrequent ? $mostFrequent->mitras_count : 0;
 
-        $topMitras = \App\Models\Mitra::withCount('cooperations')
+        $topMitras = Mitra::withCount('cooperations')
             ->orderBy('cooperations_count', 'desc')
             ->limit(5)
             ->get();
@@ -694,11 +694,11 @@ class UnitPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $nasionalCount = \App\Models\Mitra::nasional()->count();
-        $internasionalCount = \App\Models\Mitra::internasional()->count();
+        $nasionalCount = Mitra::nasional()->count();
+        $internasionalCount = Mitra::internasional()->count();
         $totalMitras = $nasionalCount + $internasionalCount;
 
-        $totalCountries = \App\Models\Mitra::whereNotNull('negara')
+        $totalCountries = Mitra::whereNotNull('negara')
             ->where('negara', '<>', '')
             ->distinct('negara')
             ->count('negara');
@@ -707,7 +707,7 @@ class UnitPageController extends Controller
             $totalCountries = 1;
         }
 
-        $rawCountries = \App\Models\Mitra::select(
+        $rawCountries = Mitra::select(
                 DB::raw("COALESCE(NULLIF(TRIM(negara), ''), 'Indonesia') as country_name"),
                 DB::raw("COUNT(*) as mitras_count"),
                 DB::raw("SUM(CASE WHEN country_code = 'ID' OR LOWER(COALESCE(negara, '')) LIKE '%indonesia%' THEN 1 ELSE 0 END) as nasional_count"),
@@ -730,7 +730,7 @@ class UnitPageController extends Controller
             'colors' => ['#6366f1', '#4f46e5', '#4338ca', '#3730a3', '#312e81', '#1e1b4b', '#4f46e5', '#6366f1', '#818cf8', '#a5b4fc']
         ];
 
-        $latestInternational = \App\Models\Mitra::internasional()
+        $latestInternational = Mitra::internasional()
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
@@ -783,7 +783,7 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         // Ambil semua mitra dengan hitungan kerjasama
-        $mitras = \App\Models\Mitra::with('klasifikasi')
+        $mitras = Mitra::with('klasifikasi')
             ->withCount('cooperations')
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc')
@@ -809,7 +809,7 @@ class UnitPageController extends Controller
             'website' => 'nullable|string|max:255',
         ]);
 
-        $mitra = \App\Models\Mitra::create([
+        $mitra = Mitra::create([
             'nama_mitra' => $request->nama_mitra,
             'id_klasifikasi' => $request->id_klasifikasi,
             'alamat' => $request->alamat,
@@ -834,14 +834,14 @@ class UnitPageController extends Controller
 
     public function mitraShow($id)
     {
-        $mitra = \App\Models\Mitra::with(['klasifikasi', 'cooperations'])->findOrFail($id);
+        $mitra = Mitra::with(['klasifikasi', 'cooperations'])->findOrFail($id);
 
         return view('auth.unit', compact('mitra'));
     }
 
     public function mitraEdit($id)
     {
-        $mitra = \App\Models\Mitra::with('klasifikasi')->findOrFail($id);
+        $mitra = Mitra::with('klasifikasi')->findOrFail($id);
         $klasifikasi = Klasifikasi::orderBy('nama', 'asc')->get();
         return view('auth.unit', compact('mitra', 'klasifikasi'));
     }
@@ -858,7 +858,7 @@ class UnitPageController extends Controller
             'website' => 'nullable|string|max:255',
         ]);
 
-        $mitra = \App\Models\Mitra::findOrFail($id);
+        $mitra = Mitra::findOrFail($id);
         $mitra->update([
             'nama_mitra' => $request->nama_mitra,
             'id_klasifikasi' => $request->id_klasifikasi,
@@ -884,7 +884,7 @@ class UnitPageController extends Controller
 
     public function mitraDestroy(Request $request, $id)
     {
-        $mitra = \App\Models\Mitra::findOrFail($id);
+        $mitra = Mitra::findOrFail($id);
 
         // Cek apakah mitra memiliki riwayat kerjasama
         if ($mitra->cooperations()->exists()) {
@@ -1133,9 +1133,9 @@ class UnitPageController extends Controller
     {
         $rows = $this->buildLaporanQuery($request)
             ->get()
-            ->filter(fn($c) => !empty($c->title))
+            ->filter(fn(Cooperation $c) => !empty($c->title))
             ->values()
-            ->map(function ($c) {
+            ->map(function (Cooperation $c) {
                 return [
                     'id'             => $c->id,
                     'title'          => $c->title,

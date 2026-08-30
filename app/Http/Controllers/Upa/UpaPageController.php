@@ -54,6 +54,37 @@ class UpaPageController extends Controller
         $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
         $today = now()->toDateString();
 
+        $statusData = $this->calculateStatusDistribution($baseQuery, $today);
+        $statusKerjasamaData = $statusData['statusKerjasamaData'];
+        $mouVsMoaIaData = $statusData['mouVsMoaIaData'];
+        $sebaranDokumenData = $statusData['sebaranDokumenData'];
+
+        $growthMetrics = $this->calculateGrowthMetrics($baseQuery);
+        $growthData = $growthMetrics['growthData'];
+        $growthAverages = $growthMetrics['growthAverages'];
+
+        $calendarData = $this->calculateCalendarAgenda($baseQuery);
+        $dueDateData = $this->calculateDueDateMetrics($baseQuery, $request);
+
+        if ($request->query('partial') === 'due_date') {
+            return response()->json([
+                'dueDateData' => $dueDateData,
+            ]);
+        }
+
+        return view('auth.upa', compact(
+            'statusKerjasamaData',
+            'growthData',
+            'growthAverages',
+            'calendarData',
+            'dueDateData',
+            'mouVsMoaIaData',
+            'sebaranDokumenData'
+        ));
+    }
+
+    private function calculateStatusDistribution($baseQuery, string $today): array
+    {
         $kadaluarsa = (clone $baseQuery)
             ->where(function ($query) use ($today) {
                 $query->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
@@ -142,7 +173,6 @@ class UpaPageController extends Controller
             'moa_ia' => $makeJenisStatusCounts('moa_ia'),
         ];
 
-        // ─── Sebaran Dokumen (per jenis individu × status) ───────
         $buildSingleJenisQuery = function (string $jenisKey) use ($baseQuery) {
             $query = clone $baseQuery;
 
@@ -187,6 +217,11 @@ class UpaPageController extends Controller
             'kadaluarsa' => [$sebaranMou['kadaluarsa'], $sebaranMoa['kadaluarsa'], $sebaranIa['kadaluarsa']],
         ];
 
+        return compact('statusKerjasamaData', 'mouVsMoaIaData', 'sebaranDokumenData');
+    }
+
+    private function calculateGrowthMetrics($baseQuery): array
+    {
         $currentYear = now()->year;
         $firstYear = (int) ((clone $baseQuery)->whereNotNull('created_at')->min(DB::raw('YEAR(created_at)')) ?: $currentYear);
         $startYear = max($firstYear, $currentYear - 8);
@@ -224,6 +259,11 @@ class UpaPageController extends Controller
             'ia' => (int) round(array_sum($growthData['ia']) / $yearCount),
         ];
 
+        return compact('growthData', 'growthAverages');
+    }
+
+    private function calculateCalendarAgenda($baseQuery): array
+    {
         $calendarDate = now();
         $calendarStart = $calendarDate->copy()->startOfMonth();
         $calendarEnd = $calendarDate->copy()->endOfMonth();
@@ -292,14 +332,17 @@ class UpaPageController extends Controller
             ];
         }
 
-        $calendarData = [
+        return [
             'month_label' => $calendarDate->translatedFormat('F Y'),
             'weekdays' => ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
             'start_offset' => (int) $calendarStart->dayOfWeek,
             'days' => $calendarDays,
             'events' => $calendarEventItems,
         ];
+    }
 
+    private function calculateDueDateMetrics($baseQuery, Request $request): array
+    {
         $dueDateYears = (clone $baseQuery)
             ->whereNotNull('created_at')
             ->selectRaw('YEAR(created_at) as due_year')
@@ -393,7 +436,7 @@ class UpaPageController extends Controller
             $dueDateWeeks[] = $dueDateCurrentWeek;
         }
 
-        $dueDateData = [
+        return [
             'year' => $dueDateYear,
             'years' => $dueDateYears,
             'total' => $dueDateTotal,
@@ -414,22 +457,6 @@ class UpaPageController extends Controller
                 ];
             }),
         ];
-
-        if ($request->query('partial') === 'due_date') {
-            return response()->json([
-                'dueDateData' => $dueDateData,
-            ]);
-        }
-
-        return view('auth.upa', compact(
-            'statusKerjasamaData',
-            'growthData',
-            'growthAverages',
-            'calendarData',
-            'dueDateData',
-            'mouVsMoaIaData',
-            'sebaranDokumenData'
-        ));
     }
 
     // ─── Data Kerjasama ──────────────────────────────────────────
@@ -530,7 +557,7 @@ class UpaPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $bentukKegiatans = \App\Models\JenisKerjasama::withCount(['details as total_count'])
+        $bentukKegiatans = JenisKerjasama::withCount(['details as total_count'])
             ->orderBy('nama_kerjasama', 'asc')
             ->get();
 
@@ -542,7 +569,7 @@ class UpaPageController extends Controller
         $this->resolveUnitId();
 
         $counts = $this->scopeUnit(Cooperation::query(), $this->resolveUnitId())
-            ->select('status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status')
             ->all();
@@ -593,7 +620,7 @@ class UpaPageController extends Controller
         $this->resolveUnitId();
 
         $counts = $this->scopeUnit(Cooperation::query(), $this->resolveUnitId())
-            ->select('status_dokumen', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->select('status_dokumen', DB::raw('count(*) as total'))
             ->groupBy('status_dokumen')
             ->pluck('total', 'status_dokumen')
             ->all();
@@ -636,7 +663,7 @@ class UpaPageController extends Controller
     {
         $this->resolveUnitId();
 
-        $kriterias = \App\Models\Klasifikasi::withCount(['mitras as total_count'])
+        $kriterias = Klasifikasi::withCount(['mitras as total_count'])
             ->orderBy('nama', 'asc')
             ->get();
 
@@ -655,7 +682,7 @@ class UpaPageController extends Controller
 
         $totalMitras = $mitraIds->count();
 
-        $classifications = \App\Models\Klasifikasi::withCount([
+        $classifications = Klasifikasi::withCount([
                 'mitras as mitras_count' => fn ($query) => $query->whereIn('id', $mitraIds),
             ])
             ->orderBy('mitras_count', 'desc')
@@ -1157,9 +1184,9 @@ class UpaPageController extends Controller
     {
         $rows = $this->buildLaporanQuery($request, true)
             ->get()
-            ->filter(fn($c) => !empty($c->title))
+            ->filter(fn(Cooperation $c) => !empty($c->title))
             ->values()
-            ->map(function ($c) {
+            ->map(function (Cooperation $c) {
                 return [
                     'id'             => $c->id,
                     'title'          => $c->title,
