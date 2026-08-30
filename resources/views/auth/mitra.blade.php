@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_edit.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/layout/mitra/tracking.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/layout/mitra/umpan_balik.css') }}" data-turbo-track="reload">
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -154,6 +155,8 @@
                 @include('auth.layout.mitra.penilaian')
             @elseif (request()->routeIs('mitra.alumni.*') || (isset($view) && $view === 'tracking'))
                 @include('auth.layout.mitra.tracking')
+            @elseif (request()->routeIs('mitra.umpan_balik.*') || (isset($view) && $view === 'umpan_balik'))
+                @include('auth.layout.mitra.umpan_balik')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
@@ -173,6 +176,8 @@
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/auth/layout/mitra/dkerjasama.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/auth/mitra/kegiatan-magang.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/mitra/tracking.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/mitra/umpan-balik.js') }}" data-turbo-track="reload"></script>
 </body>
 
 </html>

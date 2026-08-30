@@ -14,6 +14,11 @@ class Evaluasi extends Model
     protected $fillable = [
         'cooperation_id',
         'evaluator_id',
+        'tipe_evaluasi',
+        'score',
+        'realisasi_volume',
+        'realisasi_output',
+        'realisasi_outcome',
         'sesuai_rencana',
         'kualitas',
         'keterlibatan',
@@ -22,6 +27,7 @@ class Evaluasi extends Model
         'kendala',
         'ringkasan',
         'rekomendasi',
+        'kesimpulan',
         'tindak_lanjut',
         'status_validasi',
     ];
