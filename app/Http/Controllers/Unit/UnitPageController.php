@@ -54,22 +54,22 @@ class UnitPageController extends Controller
 
         $kadaluarsa = (clone $baseQuery)
             ->where(function ($query) use ($today) {
-                $query->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
+                $query->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
                     ->orWhereDate('end_date', '<', $today);
             })
-            ->whereNotIn(DB::raw("LOWER(COALESCE(status, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif'])
+            ->whereNotIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif'])
             ->count();
 
         $dalamPerpanjangan = (clone $baseQuery)
-            ->whereRaw("LOWER(COALESCE(status, '')) = ?", ['dalam perpanjangan'])
+            ->whereRaw("LOWER(COALESCE(status_berlaku, '')) = ?", ['dalam perpanjangan'])
             ->count();
 
         $proses = (clone $baseQuery)
-            ->whereRaw("LOWER(COALESCE(status, '')) = ?", ['proses'])
+            ->whereRaw("LOWER(COALESCE(status_berlaku, '')) = ?", ['proses'])
             ->count();
 
         $tidakAktif = (clone $baseQuery)
-            ->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['tidak aktif', 'nonaktif', 'non aktif'])
+            ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['tidak aktif', 'nonaktif', 'non aktif'])
             ->count();
 
         $totalKerjasama = (clone $baseQuery)->count();
@@ -83,20 +83,20 @@ class UnitPageController extends Controller
 
         $statusDefinitions = [
             'dalam_perpanjangan' => function ($query) {
-                $query->whereRaw("LOWER(COALESCE(status, '')) = ?", ['dalam perpanjangan']);
+                $query->whereRaw("LOWER(COALESCE(status_berlaku, '')) = ?", ['dalam perpanjangan']);
             },
             'kadaluarsa' => function ($query) use ($today) {
                 $query->where(function ($statusQuery) use ($today) {
-                    $statusQuery->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
+                    $statusQuery->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['kadaluarsa', 'kadarluarsa', 'kedaluwarsa'])
                         ->orWhereDate('end_date', '<', $today);
                 })
-                    ->whereNotIn(DB::raw("LOWER(COALESCE(status, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif']);
+                    ->whereNotIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['dalam perpanjangan', 'proses', 'tidak aktif', 'nonaktif', 'non aktif']);
             },
             'tidak_aktif' => function ($query) {
-                $query->whereIn(DB::raw("LOWER(COALESCE(status, ''))"), ['tidak aktif', 'nonaktif', 'non aktif']);
+                $query->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['tidak aktif', 'nonaktif', 'non aktif']);
             },
             'proses' => function ($query) {
-                $query->whereRaw("LOWER(COALESCE(status, '')) = ?", ['proses']);
+                $query->whereRaw("LOWER(COALESCE(status_berlaku, '')) = ?", ['proses']);
             },
         ];
 
@@ -402,8 +402,8 @@ class UnitPageController extends Controller
             'rows' => $dueDateCooperations->map(function ($cooperation) {
                 return [
                     'id' => $cooperation->id,
-                    'doc_number' => $cooperation->doc_number ?: '-',
-                    'title' => $cooperation->title ?: 'Kerjasama Tanpa Judul',
+                    'doc_number' => $cooperation->doc_number ?: ($cooperation->nomor_dokumen ?: '-'),
+                    'title' => $cooperation->judul ?: ($cooperation->title ?: 'Kerjasama Tanpa Judul'),
                     'jenis' => $cooperation->jenis ?: 'Kerjasama',
                     'mitra' => optional($cooperation->mitra)->nama_mitra ?: 'Mitra belum diisi',
                     'due' => optional($cooperation->end_date)->format('j/n/Y'),
