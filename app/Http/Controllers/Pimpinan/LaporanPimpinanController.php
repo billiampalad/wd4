@@ -28,8 +28,22 @@ class LaporanPimpinanController extends Controller
      */
     private function getFilteredData(Request $request)
     {
-        $query = Cooperation::with(['mitra', 'mitra.klasifikasi', 'jurusan', 'upa', 'pusat'])
-            ->latest();
+        $query = Cooperation::with([
+            'mitra',
+            'mitra.klasifikasi',
+            'jurusan',
+            'upa',
+            'pusat',
+            'jurusans',
+            'upas',
+            'pusats',
+            'pksNumbers',
+            'details',
+            'details.sasaran',
+            'details.indikator',
+            'evaluasis',
+            'pjInternal',
+        ])->latest();
 
         // Filter tanggal mulai (berdasarkan start_date)
         if ($request->filled('tanggal_awal')) {
@@ -56,32 +70,53 @@ class LaporanPimpinanController extends Controller
             });
         }
 
-        // Filter tipe pelaksana (jurusan / upa / pusat)
+        // Filter tipe pelaksana (jurusan / upa / pusat / instansi)
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
-            if ($request->tipe_pelaksana === 'instansi') {
-                $query->where('jenis', 'like', '%MoU%')
-                    ->where(function ($typeQuery) {
-                        $typeQuery->whereNull('tipe_pelaksana')
-                            ->orWhere('tipe_pelaksana', '');
-                    })
+            $tp = strtolower($request->tipe_pelaksana);
+            if ($tp === 'jurusan') {
+                $query->where(function ($q) {
+                    $q->whereHas('jurusans')->orWhereNotNull('jurusan_id');
+                });
+            } elseif ($tp === 'upa') {
+                $query->where(function ($q) {
+                    $q->whereHas('upas')->orWhereNotNull('upa_id');
+                });
+            } elseif ($tp === 'pusat') {
+                $query->where(function ($q) {
+                    $q->whereHas('pusats')->orWhereNotNull('pusat_id');
+                });
+            } elseif ($tp === 'instansi') {
+                $query->whereDoesntHave('jurusans')
                     ->whereNull('jurusan_id')
+                    ->whereDoesntHave('upas')
                     ->whereNull('upa_id')
+                    ->whereDoesntHave('pusats')
                     ->whereNull('pusat_id');
-            } else {
-                $query->where('tipe_pelaksana', $request->tipe_pelaksana);
             }
         }
 
         if ($request->filled('jurusan_id') && $request->jurusan_id !== 'all') {
-            $query->where('jurusan_id', $request->jurusan_id);
+            $jId = $request->jurusan_id;
+            $query->where(function ($q) use ($jId) {
+                $q->where('jurusan_id', $jId)
+                  ->orWhereHas('jurusans', fn($sq) => $sq->where('jurusans.id', $jId));
+            });
         }
 
         if ($request->filled('upa_id') && $request->upa_id !== 'all') {
-            $query->where('upa_id', $request->upa_id);
+            $uId = $request->upa_id;
+            $query->where(function ($q) use ($uId) {
+                $q->where('upa_id', $uId)
+                  ->orWhereHas('upas', fn($sq) => $sq->where('upas.id', $uId));
+            });
         }
 
         if ($request->filled('pusat_id') && $request->pusat_id !== 'all') {
-            $query->where('pusat_id', $request->pusat_id);
+            $pId = $request->pusat_id;
+            $query->where(function ($q) use ($pId) {
+                $q->where('pusat_id', $pId)
+                  ->orWhereHas('pusats', fn($sq) => $sq->where('pusats.id', $pId));
+            });
         }
 
         // Filter status (aktif / proses / kadarluarsa / dst)
@@ -94,38 +129,61 @@ class LaporanPimpinanController extends Controller
 
     /**
      * Preview data via AJAX → JSON.
-     * Field yang dikembalikan sesuai buildRow() di laporan.blade.php:
-     *   id, title, doc_number, jenis, tipe_pelaksana,
-     *   start_date, end_date, status, mitra.{nama_mitra, kategori}
      */
     public function preview(Request $request)
     {
         $data = $this->getFilteredData($request);
 
         $results = $data->map(function ($item) {
+            $title = $item->judul ?: ($item->title ?: 'Dokumen Kerjasama');
+            $docNumber = $item->doc_number ?: ($item->nomor_dokumen ?: ($item->pksNumbers->first()?->nomor_pks ?? '-'));
+
+            $tipePelaksana = 'instansi';
+            $pelaksanaName = $item->internal_instansi ?: 'Politeknik Negeri Manado';
+            $pelaksanaIcon = 'fa-building';
+            $pelaksanaClass = 'dk-entity-indigo';
+
+            if ($item->jurusans->isNotEmpty() || $item->jurusan) {
+                $tipePelaksana = 'jurusan';
+                $pelaksanaName = $item->jurusans->pluck('nama_jurusan')->filter()->implode(', ') ?: ($item->jurusan?->nama_jurusan ?? 'Jurusan');
+                $pelaksanaIcon = 'fa-microchip';
+                $pelaksanaClass = 'dk-entity-blue';
+            } elseif ($item->upas->isNotEmpty() || $item->upa) {
+                $tipePelaksana = 'upa';
+                $pelaksanaName = $item->upas->pluck('nama_upa')->filter()->implode(', ') ?: ($item->upa?->nama_upa ?? 'UPA');
+                $pelaksanaIcon = 'fa-building-columns';
+                $pelaksanaClass = 'dk-entity-cyan';
+            } elseif ($item->pusats->isNotEmpty() || $item->pusat) {
+                $tipePelaksana = 'pusat';
+                $pelaksanaName = $item->pusats->pluck('nama_pusat')->filter()->implode(', ') ?: ($item->pusat?->nama_pusat ?? 'Pusat');
+                $pelaksanaIcon = 'fa-landmark';
+                $pelaksanaClass = 'dk-entity-violet';
+            }
+
             return [
-                'id'             => $item->id,
-                'title'          => $item->title,
-                'doc_number'     => $item->doc_number,
-                'jenis'          => $item->jenis,
-                'tipe_pelaksana' => $item->tipe_pelaksana,
-                'pelaksana_name' => $item->pelaksana_name,
-                'pelaksana_icon' => $item->pelaksana_icon,
-                'pelaksana_class' => $item->pelaksana_class,
-                'start_date'     => $item->start_date?->toDateString(),
-                'end_date'       => $item->end_date?->toDateString(),
-                'status'         => $item->status_berlaku,
-                'mitra'          => $item->mitra ? [
+                'id'              => $item->id,
+                'title'           => $title,
+                'judul'           => $title,
+                'doc_number'      => $docNumber,
+                'jenis'           => $item->jenis,
+                'tipe_pelaksana'  => $tipePelaksana,
+                'pelaksana_name'  => $pelaksanaName,
+                'pelaksana_icon'  => $pelaksanaIcon,
+                'pelaksana_class' => $pelaksanaClass,
+                'start_date'      => $item->start_date?->toDateString(),
+                'end_date'        => $item->end_date?->toDateString(),
+                'status'          => $item->status_berlaku,
+                'mitra'           => $item->mitra ? [
                     'nama_mitra' => $item->mitra->nama_mitra,
                     'kategori'   => $item->mitra->kategori,
                 ] : null,
-                'jurusan'        => $item->jurusan ? [
+                'jurusan'         => $item->jurusan ? [
                     'nama_jurusan' => $item->jurusan->nama_jurusan,
                 ] : null,
-                'upa'            => $item->upa ? [
+                'upa'             => $item->upa ? [
                     'nama_upa' => $item->upa->nama_upa,
                 ] : null,
-                'pusat'          => $item->pusat ? [
+                'pusat'           => $item->pusat ? [
                     'nama_pusat' => $item->pusat->nama_pusat,
                 ] : null,
             ];
@@ -142,16 +200,16 @@ class LaporanPimpinanController extends Controller
             'request' => $request,
         ])->setPaper('a4', 'landscape');
 
-        return $pdf->download('Laporan_Kerjasama_Pimpinan.pdf');
+        return $pdf->download('Laporan_Kerjasama_Pimpinan_' . date('Ymd_His') . '.pdf');
     }
 
     public function exportExcel(Request $request)
     {
         $data = $this->getFilteredData($request);
 
-        $filename = "Laporan_Kerjasama_Pimpinan_" . date('Ymd') . ".csv";
+        $filename = "Laporan_Kerjasama_Pimpinan_" . date('Ymd_His') . ".csv";
         $headers = [
-            "Content-type"        => "text/csv",
+            "Content-type"        => "text/csv; charset=UTF-8",
             "Content-Disposition" => "attachment; filename=$filename",
             "Pragma"              => "no-cache",
             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
@@ -159,37 +217,45 @@ class LaporanPimpinanController extends Controller
         ];
 
         $columns = [
-            'ID', 'Nomor Dokumen', 'Judul', 'Jenis', 'Tipe Pelaksana', 
-            'Pelaksana', 'Mitra', 'Status', 'Tanggal Mulai', 'Tanggal Berakhir'
+            'No', 'Nomor Dokumen', 'Judul Kerjasama', 'Jenis', 'Tipe Pelaksana', 
+            'Unit Pelaksana', 'Mitra Kerjasama', 'Status Berlaku', 'Tanggal Mulai', 'Tanggal Berakhir'
         ];
 
         $callback = function() use($data, $columns) {
             $file = fopen('php://output', 'w');
+            // Add UTF-8 BOM for Excel compatibility
+            fputs($file, "\xEF\xBB\xBF");
             fputcsv($file, $columns);
 
-            foreach ($data as $item) {
-                $row['ID'] = $item->id;
-                $row['Nomor Dokumen'] = $item->doc_number;
-                $row['Judul'] = $item->title;
-                $row['Jenis'] = $item->jenis;
-                $row['Tipe Pelaksana'] = $item->tipe_pelaksana;
-                $row['Pelaksana'] = $item->pelaksana_name;
-                $row['Mitra'] = $item->mitra ? $item->mitra->nama_mitra : '-';
-                $row['Status'] = $item->status_berlaku;
-                $row['Tanggal Mulai'] = $item->start_date;
-                $row['Tanggal Berakhir'] = $item->end_date;
+            foreach ($data as $index => $item) {
+                $title = $item->judul ?: ($item->title ?: 'Dokumen Kerjasama');
+                $docNumber = $item->doc_number ?: ($item->nomor_dokumen ?: ($item->pksNumbers->first()?->nomor_pks ?? '-'));
+
+                $tipePelaksana = 'Instansi';
+                $pelaksanaName = $item->internal_instansi ?: 'Politeknik Negeri Manado';
+
+                if ($item->jurusans->isNotEmpty() || $item->jurusan) {
+                    $tipePelaksana = 'Jurusan';
+                    $pelaksanaName = $item->jurusans->pluck('nama_jurusan')->filter()->implode(', ') ?: ($item->jurusan?->nama_jurusan ?? 'Jurusan');
+                } elseif ($item->upas->isNotEmpty() || $item->upa) {
+                    $tipePelaksana = 'UPA';
+                    $pelaksanaName = $item->upas->pluck('nama_upa')->filter()->implode(', ') ?: ($item->upa?->nama_upa ?? 'UPA');
+                } elseif ($item->pusats->isNotEmpty() || $item->pusat) {
+                    $tipePelaksana = 'Pusat';
+                    $pelaksanaName = $item->pusats->pluck('nama_pusat')->filter()->implode(', ') ?: ($item->pusat?->nama_pusat ?? 'Pusat');
+                }
 
                 fputcsv($file, [
-                    $row['ID'], 
-                    $row['Nomor Dokumen'], 
-                    $row['Judul'], 
-                    $row['Jenis'], 
-                    $row['Tipe Pelaksana'], 
-                    $row['Pelaksana'], 
-                    $row['Mitra'], 
-                    $row['Status'], 
-                    $row['Tanggal Mulai'], 
-                    $row['Tanggal Berakhir']
+                    $index + 1,
+                    $docNumber,
+                    $title,
+                    $item->jenis ?? '-',
+                    $tipePelaksana,
+                    $pelaksanaName,
+                    $item->mitra ? $item->mitra->nama_mitra : '-',
+                    $item->status_berlaku ?? '-',
+                    $item->start_date ? $item->start_date->format('d/m/Y') : '-',
+                    $item->end_date ? $item->end_date->format('d/m/Y') : '-',
                 ]);
             }
 

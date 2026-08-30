@@ -147,4 +147,46 @@ class EvaluasiPimpinanTest extends TestCase
         $response->assertSee('PT Mitra Detail Test');
         $response->assertSee('Penyelenggaraan magang dan riset bersama');
     }
+
+    public function test_pimpinan_can_view_laporan_page_and_preview_data()
+    {
+        $rolePimpinan = Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
+        $pimpinanUser = User::factory()->create(['role_id' => $rolePimpinan->id]);
+        Profile::create(['user_id' => $pimpinanUser->id]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Laporan Test', 'status_akses' => 'Aktif']);
+        $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Teknik Elektro']);
+
+        $coop = Cooperation::create([
+            'judul' => 'Kerjasama Laporan Unit Test',
+            'doc_number' => 'DOC/TEST/2026/001',
+            'jenis' => 'MoA',
+            'status_dokumen' => 'Disahkan',
+            'status_berlaku' => 'aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Jurusan',
+            'jurusan_id' => $jurusan->id,
+            'start_date' => now(),
+            'end_date' => now()->addYear(),
+        ]);
+        $coop->jurusans()->sync([$jurusan->id]);
+
+        // 1. Test view laporan index
+        $responseIndex = $this->actingAs($pimpinanUser)->get(route('pimpinan.laporan'));
+        $responseIndex->assertStatus(200);
+        $responseIndex->assertViewIs('auth.pimpinan');
+        $responseIndex->assertViewHas('view', 'laporan');
+
+        // 2. Test preview AJAX data
+        $responsePreview = $this->actingAs($pimpinanUser)->getJson(route('pimpinan.laporan.preview'));
+        $responsePreview->assertStatus(200);
+        $responsePreview->assertJsonFragment([
+            'id' => $coop->id,
+            'title' => 'Kerjasama Laporan Unit Test',
+            'doc_number' => 'DOC/TEST/2026/001',
+            'jenis' => 'MoA',
+            'tipe_pelaksana' => 'jurusan',
+            'pelaksana_name' => 'Teknik Elektro',
+        ]);
+    }
 }

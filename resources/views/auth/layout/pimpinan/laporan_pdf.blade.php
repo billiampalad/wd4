@@ -1,339 +1,227 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
-    <title>Laporan Global Kerjasama</title>
+    <title>Laporan Data Kerjasama</title>
     <style>
         body {
-            font-family: 'Times New Roman', serif;
-            font-size: 10pt;
-            color: #000;
-            line-height: 1.3;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 9pt;
+            color: #1e293b;
+            line-height: 1.4;
             margin: 0;
             padding: 0;
         }
 
         .kop-surat {
             text-align: center;
-            border-bottom: 3px double #000;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .kop-surat h2 {
             margin: 0;
-            font-size: 14pt;
+            font-size: 13pt;
+            font-weight: 800;
             text-transform: uppercase;
+            color: #0f172a;
+            letter-spacing: 0.5px;
         }
 
         .kop-surat h3 {
-            margin: 0;
-            font-size: 12pt;
+            margin: 3px 0 0;
+            font-size: 11pt;
+            font-weight: 700;
             text-transform: uppercase;
+            color: #334155;
         }
 
         .kop-surat p {
             margin: 2px 0;
-            font-size: 9pt;
-            font-style: italic;
+            font-size: 8.5pt;
+            color: #64748b;
         }
 
         .title-area {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         .title-area h4 {
             margin: 0;
-            font-size: 11pt;
-            text-decoration: underline;
+            font-size: 12pt;
+            font-weight: 800;
             text-transform: uppercase;
+            color: #0f172a;
+            letter-spacing: 0.5px;
         }
 
-        .item-container {
-            margin-bottom: 25px;
-            page-break-inside: avoid;
+        .title-area .sub {
+            margin-top: 3px;
+            font-size: 8.5pt;
+            color: #64748b;
         }
 
-        .section-header {
-            background-color: #f3f4f6;
-            padding: 5px;
-            font-weight: bold;
-            border: 1px solid #000;
-            margin-top: 10px;
-            text-transform: uppercase;
-            font-size: 10pt;
-        }
-
-        .table-detail {
+        table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 5px;
-            table-layout: fixed;
+            margin-bottom: 15px;
         }
 
-        .table-detail td {
-            border: 1px solid #000;
-            padding: 5px;
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #cbd5e1;
+            padding: 7px 6px;
+            text-align: left;
+        }
+
+        table.data-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 6px;
             vertical-align: top;
-            font-size: 9pt;
-            word-wrap: break-word;
+            font-size: 8.5pt;
         }
 
-        .label {
-            font-weight: bold;
-            width: 35%;
-            background-color: #fafafa;
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
         }
 
-        .value {
-            width: 65%;
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 7.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-aktif { background: #dcfce7; color: #166534; }
+        .badge-proses { background: #e0e7ff; color: #3730a3; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-muted { background: #f1f5f9; color: #475569; }
+
+        .badge-jenis {
+            background: #ede9fe;
+            color: #5b21b6;
+            font-weight: 700;
+            font-size: 7.5pt;
+            padding: 1px 5px;
+            border-radius: 3px;
         }
 
         .footer-sign {
-            margin-top: 30px;
+            margin-top: 25px;
             float: right;
-            width: 200px;
+            width: 220px;
             text-align: center;
         }
 
         .footer-sign p {
             margin: 0;
-            font-size: 10pt;
+            font-size: 9pt;
         }
 
         .footer-sign .space {
-            height: 60px;
-        }
-
-        @page {
-            margin: 1.5cm 1cm;
-        }
-
-        .page-break {
-            page-break-after: always;
+            height: 50px;
         }
 
         .clear {
             clear: both;
         }
+
+        @page {
+            margin: 1cm;
+        }
     </style>
 </head>
-
 <body>
     <div class="kop-surat">
-        <h2>KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI</h2>
+        <h2>KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI</h2>
         <h3>POLITEKNIK NEGERI MANADO</h3>
-        <p>Jl. Kampus Bahu, Manado 95115, Sulawesi Utara</p>
-        <p>Telepon: (0431) 861152, Fax: (0431) 861152, Website: www.polimdo.ac.id</p>
+        <p>Jl. Kampus Bahu, Manado 95115, Sulawesi Utara | Telepon: (0431) 861152 | Website: www.polimdo.ac.id</p>
     </div>
-
-    @php
-        $mainTitle = "Rekapitulasi Kerja Sama Global";
-        if ($request->filled('kategori_mitra') && $request->kategori_mitra != 'all') {
-            $mainTitle = "Rekapitulasi Kerja Sama " . ucfirst($request->kategori_mitra);
-        }
-    @endphp
 
     <div class="title-area">
-        <h4>{{ $mainTitle }}</h4>
+        <h4>Laporan Rekapitulasi Data Kerja Sama</h4>
+        <div class="sub">Dicetak pada: {{ now()->translatedFormat('d F Y H:i') }} WITA</div>
     </div>
 
-    @forelse($data as $index => $item)
-        <div class="item-container">
-            <div style="font-weight: bold; font-size: 11pt; margin-bottom: 5px;">DATA KE-{{ $index + 1 }}:
-                {{ strtoupper($item->nama_kegiatan) }}</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 25px; text-align: center;">No</th>
+                <th style="width: 140px;">Nomor Dokumen</th>
+                <th>Judul Kerja Sama & Ruang Lingkup</th>
+                <th style="width: 50px; text-align: center;">Jenis</th>
+                <th style="width: 130px;">Mitra</th>
+                <th style="width: 120px;">Unit Pelaksana</th>
+                <th style="width: 110px;">Masa Berlaku</th>
+                <th style="width: 75px; text-align: center;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($data as $index => $item)
+                @php
+                    $title = $item->judul ?: ($item->title ?: 'Dokumen Kerjasama');
+                    $docNumber = $item->doc_number ?: ($item->nomor_dokumen ?: ($item->pksNumbers->first()?->nomor_pks ?? '-'));
+                    
+                    $pelaksanaName = $item->internal_instansi ?: 'Politeknik Negeri Manado';
+                    if ($item->jurusans->isNotEmpty() || $item->jurusan) {
+                        $pelaksanaName = $item->jurusans->pluck('nama_jurusan')->filter()->implode(', ') ?: ($item->jurusan?->nama_jurusan ?? 'Jurusan');
+                    } elseif ($item->upas->isNotEmpty() || $item->upa) {
+                        $pelaksanaName = $item->upas->pluck('nama_upa')->filter()->implode(', ') ?: ($item->upa?->nama_upa ?? 'UPA');
+                    } elseif ($item->pusats->isNotEmpty() || $item->pusat) {
+                        $pelaksanaName = $item->pusats->pluck('nama_pusat')->filter()->implode(', ') ?: ($item->pusat?->nama_pusat ?? 'Pusat');
+                    }
 
-            <!-- INFORMASI UMUM -->
-            <div class="section-header">I. INFORMASI UMUM</div>
-            <table class="table-detail">
+                    $status = strtolower($item->status_berlaku ?? '');
+                    $badgeClass = 'badge-muted';
+                    if ($status === 'aktif') $badgeClass = 'badge-aktif';
+                    elseif ($status === 'proses') $badgeClass = 'badge-proses';
+                    elseif (str_contains($status, 'perpanjangan')) $badgeClass = 'badge-warning';
+                    elseif (in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'])) $badgeClass = 'badge-danger';
+                @endphp
                 <tr>
-                    <td class="label">NAMA PROGRAM / KEGIATAN</td>
-                    <td class="value">{{ $item->nama_kegiatan }}</td>
-                </tr>
-                <tr>
-                    <td class="label">JENIS KERJA SAMA (Ruang Lingkup)</td>
-                    <td class="value">{{ $item->jenisKerjasama->pluck('nama_kerjasama')->join(', ') }}</td>
-                </tr>
-                <tr>
-                    <td class="label">NAMA MITRA DUDIKA</td>
-                    <td class="value">{{ $item->mitras->pluck('nama_mitra')->join(', ') }}</td>
-                </tr>
-                <tr>
-                    <td class="label">NEGARA</td>
-                    <td class="value">{{ $item->mitras->pluck('negara')->unique()->join(', ') ?: 'Indonesia' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">UNIT PELAKSANA DI POLIMDO</td>
-                    <td class="value">
-                        @php
-                            $pengusul = $item->jurusans->pluck('nama_jurusan')->merge($item->unitKerjas->pluck('nama_unit_pelaksana'))->join(', ');
-                        @endphp
-                        {{ $pengusul ?: 'N/A' }}
+                    <td style="text-align: center;">{{ $index + 1 }}</td>
+                    <td><strong style="color: #0f172a;">{{ $docNumber }}</strong></td>
+                    <td>
+                        <strong style="color: #0f172a;">{{ $title }}</strong>
+                        @if($item->ruang_lingkup)
+                            <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">{{ Str::limit($item->ruang_lingkup, 100) }}</div>
+                        @endif
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="badge-jenis">{{ $item->jenis ?? 'MoU' }}</span>
+                    </td>
+                    <td>{{ $item->mitra->nama_mitra ?? '-' }}</td>
+                    <td>{{ $pelaksanaName }}</td>
+                    <td style="font-size: 8pt;">
+                        {{ $item->start_date ? $item->start_date->format('d/m/Y') : '-' }} s/d<br>
+                        {{ $item->end_date ? $item->end_date->format('d/m/Y') : '-' }}
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="badge {{ $badgeClass }}">{{ $item->status_berlaku ?? 'Aktif' }}</span>
                     </td>
                 </tr>
+            @empty
                 <tr>
-                    <td class="label">PERIODE PELAKSANAAN</td>
-                    <td class="value">
-                        {{ $item->periode_mulai ? $item->periode_mulai->format('d M Y') : '-' }} s/d
-                        {{ $item->periode_selesai ? $item->periode_selesai->format('d M Y') : 'Selesai' }}
+                    <td colspan="8" style="text-align: center; padding: 25px; color: #64748b;">
+                        Tidak ada data kerja sama yang sesuai dengan kriteria filter.
                     </td>
                 </tr>
-                <tr>
-                    <td class="label">NOMOR DAN TANGGAL MOU/MOA</td>
-                    <td class="value">
-                        No: {{ $item->nomor_mou ?? '-' }} <br>
-                        Tgl: {{ $item->tanggal_mou ? $item->tanggal_mou->format('d M Y') : '-' }}
-                    </td>
-                </tr>
-            </table>
-
-            <!-- TUJUAN DAN SASARAN -->
-            <div class="section-header">II. TUJUAN DAN SASARAN</div>
-            <table class="table-detail">
-                <tr>
-                    <td class="label">TUJUAN KERJASAMA</td>
-                    <td class="value">{{ $item->tujuans->pluck('tujuan')->join('; ') ?: '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">SASARAN YANG INGIN DICAPAI</td>
-                    <td class="value">{{ $item->tujuans->pluck('sasaran')->join('; ') ?: '-' }}</td>
-                </tr>
-            </table>
-
-            <!-- PELAKSANAAN KEGIATAN -->
-            <div class="section-header">III. PELAKSANAAN KEGIATAN</div>
-            @php $pel = $item->pelaksanaans->first(); @endphp
-            <table class="table-detail">
-                <tr>
-                    <td class="label">DESKRIPSI SINGKAT KEGIATAN</td>
-                    <td class="value">{{ $pel->deskripsi ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">CAKUPAN DAN SKALA KEGIATAN</td>
-                    <td class="value">{{ $pel->cakupan ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">JUMLAH PESERTA YANG TERLIBAT</td>
-                    <td class="value">{{ $pel->jumlah_peserta ?? 0 }} Orang</td>
-                </tr>
-                <tr>
-                    <td class="label">SUMBER DAYA YANG DIGUNAKAN</td>
-                    <td class="value">{{ $pel->sumber_daya ?? '-' }}</td>
-                </tr>
-            </table>
-
-            <!-- HASIL DAN CAPAIAN -->
-            <div class="section-header">IV. HASIL DAN CAPAIAN</div>
-            @php $h = $item->hasils->first(); @endphp
-            <table class="table-detail">
-                <tr>
-                    <td class="label">OUTPUT (Hasil Langsung)</td>
-                    <td class="value">{{ $h->hasil_langsung ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">OUTCOME (Dampak Jangka Menengah)</td>
-                    <td class="value">{{ $h->dampak ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">MANFAAT BAGI MAHASISWA</td>
-                    <td class="value">{{ $h->manfaat_mahasiswa ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">MANFAAT BAGI POLIMDO</td>
-                    <td class="value">{{ $h->manfaat_polimdo ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">MANFAAT BAGI MITRA DUDIKA</td>
-                    <td class="value">{{ $h->manfaat_mitra ?? '-' }}</td>
-                </tr>
-            </table>
-
-            <!-- EVALUASI KINERJA -->
-            <div class="section-header">V. EVALUASI KINERJA / ASPEK PENILAIAN</div>
-            @php $e = $item->evaluasis->first(); @endphp
-            <table class="table-detail">
-                <tr>
-                    <td class="label">KESESUAIAN DENGAN RENCANA</td>
-                    <td class="value">{{ $e->sesuai_rencana ?? '-' }} / 5</td>
-                </tr>
-                <tr>
-                    <td class="label">KUALITAS PELAKSANAAN</td>
-                    <td class="value">{{ $e->kualitas ?? '-' }} / 5</td>
-                </tr>
-                <tr>
-                    <td class="label">KETERLIBATAN MITRA DUDIKA</td>
-                    <td class="value">{{ $e->keterlibatan ?? '-' }} / 5</td>
-                </tr>
-                <tr>
-                    <td class="label">EFISIENSI SUMBER DAYA</td>
-                    <td class="value">{{ $e->efisiensi ?? '-' }} / 5</td>
-                </tr>
-                <tr>
-                    <td class="label">KEPUASAN PIHAK TERKAIT</td>
-                    <td class="value">{{ $e->kepuasan ?? '-' }} / 5</td>
-                </tr>
-            </table>
-
-            <!-- PERMASALAHAN DAN SOLUSI -->
-            <div class="section-header">VI. PERMASALAHAN DAN SOLUSI</div>
-            @php $m = $item->permasalahanSolusis->first(); @endphp
-            <table class="table-detail">
-                <tr>
-                    <td class="label">KENDALA YANG DIHADAPI</td>
-                    <td class="value">{{ $m->kendala ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">UPAYA MENGATASI KENDALA</td>
-                    <td class="value">{{ $m->solusi ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td class="label">REKOMENDASI PERBAIKAN</td>
-                    <td class="value">{{ $m->rekomendasi ?? '-' }}</td>
-                </tr>
-            </table>
-
-            <!-- DOKUMENTASI & KESIMPULAN -->
-            <div class="section-header">VII. DOKUMENTASI DAN KESIMPULAN</div>
-            @php $k = $item->kesimpulans->first(); @endphp
-            <table class="table-detail">
-                <tr>
-                    <td class="label">DOKUMEN PENDUKUNG (Link)</td>
-                    <td class="value">
-                        @foreach($item->dokumentasis as $dok)
-                            @if($dok->link_drive)
-                                - {{ $dok->keterangan ?: 'Link Drive' }}: <a href="{{ $dok->link_drive }}"
-                                    target="_blank">{{ $dok->link_drive }}</a> <br>
-                            @endif
-                        @endforeach
-                        {{ $item->dokumentasis->whereNotNull('link_drive')->isEmpty() ? '-' : '' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label">KESIMPULAN & SARAN</td>
-                    <td class="value">
-                        <strong>Ringkasan:</strong> {{ $k->ringkasan ?? '-' }} <br>
-                        <strong>Saran:</strong> {{ $k->saran ?? '-' }} <br>
-                        <strong>Tindak Lanjut:</strong> {{ $k->tindak_lanjut ?? '-' }}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label">STATUS DATA</td>
-                    <td class="value" style="font-weight: bold;">{{ $item->status_label }}</td>
-                </tr>
-            </table>
-        </div>
-
-        @if(!$loop->last)
-            <div class="page-break"></div>
-        @endif
-    @empty
-        <p class="text-center">Tidak ada data kerjasama yang ditemukan.</p>
-    @endforelse
+            @endforelse
+        </tbody>
+    </table>
 
     <div class="footer-sign">
-        <p>Manado, {{ date('d F Y') }}</p>
+        <p>Manado, {{ now()->translatedFormat('d F Y') }}</p>
         <p>Mengetahui,</p>
         <p><strong>Pimpinan Politeknik Negeri Manado</strong></p>
         <div class="space"></div>
@@ -342,8 +230,8 @@
     </div>
 
     <div class="clear"></div>
-    <p style="font-size: 8pt; color: #666; margin-top: 20px;">Dicetak otomatis oleh Sistem Informasi Kerjasama pada
-        {{ date('d/m/Y H:i') }}</p>
+    <p style="font-size: 7.5pt; color: #94a3b8; margin-top: 20px;">
+        Dokumen ini di-generate secara otomatis oleh SIM Kerjasama Politeknik Negeri Manado.
+    </p>
 </body>
-
 </html>
