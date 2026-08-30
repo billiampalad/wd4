@@ -318,10 +318,10 @@
 
             <div class="rfc-footer"
                 style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);">
-                <button type="button" class="rfc-btn rfc-btn-primary"
+                <!-- <button type="button" class="rfc-btn rfc-btn-primary"
                     style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                     <i class="fas fa-search"></i> Tampilkan
-                </button>
+                </button> -->
                 <button type="button" @click="resetFilters()" class="rfc-btn"
                     style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
                     <i class="fas fa-rotate-left"></i> Reset Filter
@@ -670,22 +670,28 @@
 
             <div class="table-pagination-controls" x-show="totalRows > 0" x-cloak>
                 <div class="pagination-info">
-                    Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari <strong x-text="totalRows">0</strong> data
+                    Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
+                    <strong x-text="totalRows">0</strong> data
                 </div>
                 <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
+                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
+                        title="Halaman pertama">
                         <i class="fas fa-angles-left"></i>
                     </button>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
+                        :disabled="currentPage === 1" title="Halaman sebelumnya">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <template x-for="page in pageNumbers()" :key="page">
-                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }" @click="goToPage(page)" x-text="page"></button>
+                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
+                            @click="goToPage(page)" x-text="page"></button>
                     </template>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
+                        :disabled="currentPage === totalPages" title="Halaman berikutnya">
                         <i class="fas fa-chevron-right"></i>
                     </button>
-                    <button type="button" class="pag-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
+                    <button type="button" class="pag-btn" @click="goToPage(totalPages)"
+                        :disabled="currentPage === totalPages" title="Halaman terakhir">
                         <i class="fas fa-angles-right"></i>
                     </button>
                 </div>

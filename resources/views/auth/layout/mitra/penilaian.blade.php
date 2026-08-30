@@ -237,40 +237,55 @@
 
     {{-- ═══ CARD TABEL MAHASISWA & PENILAIAN ═══ --}}
     <div class="card um-card dk-card">
-        <div class="dk-card-header">
-            <div class="dk-card-title">
+        <div class="card-header um-header dk-card-header">
+            <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-list-check"></i></span>
                 <span>
                     <strong>Daftar Mahasiswa &amp; Lembar Penilaian</strong>
-                    <small>Kelola penempatan dan evaluasi capaian kompetensi peserta magang</small>
+                    <small id="penilaianCount">{{ $penempatans->count() }} data ditemukan</small>
                 </span>
             </div>
 
-            <div class="table-entries-wrap">
-                <span>Tampilkan</span>
-                <select class="table-entries-select" x-model.number="perPage" @change="currentPage = 1">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
-                <span>data</span>
+            <div class="mn-table-controls" style="display: flex; gap: 16px; align-items: center; margin-left: auto;">
+                <div class="mn-table-entries"
+                    style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
+                    <span>Tampilkan</span>
+                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
+                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
+                            style="display: flex; align-items: center; justify-content: space-between; min-width: 64px; padding: 8px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; transition: all 0.2s;">
+                            <span x-text="perPage">10</span>
+                            <i class="fas fa-chevron-down"
+                                style="font-size: 10px; margin-left: 8px; color: var(--text-sub);"></i>
+                        </button>
+                        <div class="mn-entry-menu" x-show="perPageOpen" x-cloak x-transition.opacity
+                            style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 50; overflow: hidden; display: flex; flex-direction: column;">
+                            <template x-for="option in perPageOptions" :key="option">
+                                <button type="button" class="mn-entry-option" @click="setPerPage(option)"
+                                    style="width: 100%; padding: 8px 12px; text-align: left; background: transparent; border: none; cursor: pointer; font-size: 13px; color: var(--text); transition: 0.2s; font-weight: 500;"
+                                    onmouseover="this.style.background='var(--surface2)'"
+                                    onmouseout="this.style.background='transparent'">
+                                    <span x-text="option"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    <span>data</span>
+                </div>
             </div>
         </div>
 
         {{-- Table Container --}}
-        <div class="dk-card-body">
-            <div class="dk-table-wrap">
-                <table class="dk-table">
+        <div class="card-body dk-card-body">
+            <div class="table-wrap um-table-wrap dk-table-wrap">
+                <table class="um-table dk-table">
                     <thead>
                         <tr>
-                            <th class="um-th" style="width: 50px; text-align: center;">#</th>
-                            <th class="um-th" style="min-width: 240px;">Mahasiswa</th>
-                            <th class="um-th" style="min-width: 220px;">Program &amp; Kegiatan</th>
-                            <th class="um-th" style="min-width: 170px;">Periode Magang</th>
-                            <th class="um-th" style="min-width: 180px;">Pembimbing &amp; Mentor</th>
-                            <th class="um-th" style="min-width: 150px; text-align: center;">Nilai Industri</th>
-                            <th class="um-th" style="width: 120px; text-align: center;">Aksi</th>
+                            <th class="um-th um-th-num">#</th>
+                            <th class="um-th dk-th-title" style="width: 380px; min-width: 260px;">Mahasiswa</th>
+                            <th class="um-th">Program &amp; Kegiatan</th>
+                            <th class="um-th" style="white-space: nowrap;">Masa Magang</th>
+                            <th class="um-th">Status</th>
+                            <th class="um-th um-th-aksi">Aksi</th>
                         </tr>
                     </thead>
                     <tbody x-ref="rows">
@@ -292,105 +307,79 @@
                                 $dosen = $item->pembimbings->where('tipe', 'Internal')->first();
                                 $mentor = $item->pembimbings->where('tipe', 'Eksternal')->first();
 
-                                $mulaiStr = $item->periode_mulai ? \Carbon\Carbon::parse($item->periode_mulai)->format('d M Y') : '-';
-                                $selesaiStr = $item->periode_selesai ? \Carbon\Carbon::parse($item->periode_selesai)->format('d M Y') : '-';
+                                $mulai = $item->periode_mulai ? \Carbon\Carbon::parse($item->periode_mulai)->format('d M Y') : '-';
+                                $selesai = $item->periode_selesai ? \Carbon\Carbon::parse($item->periode_selesai)->format('d M Y') : '-';
                                 $tahunStr = $item->periode_mulai ? \Carbon\Carbon::parse($item->periode_mulai)->format('Y') : '';
                                 $isAktif = strtolower($item->status ?? '') === 'aktif';
+
+                                $statusCategory = $hasScore ? 'sudah_dinilai' : ($isAktif ? 'aktif' : 'belum_dinilai');
+                                $statusClass = $hasScore ? 'dk-status-active' : ($isAktif ? 'dk-status-warning' : 'dk-status-muted');
+                                $statusIcon = $hasScore ? 'fa-circle-check' : ($isAktif ? 'fa-clock' : 'fa-circle-info');
+                                $statusLabel = $hasScore ? number_format($score, 1) . " ($grade)" : ($isAktif ? 'Magang Aktif' : 'Belum Dinilai');
                             @endphp
                             <tr data-row="true"
-                                class="dk-row"
+                                class="um-row dk-row"
                                 data-nim="{{ strtolower($mhs?->nim ?? '') }}"
                                 data-nama="{{ strtolower($mhs?->nama ?? '') }}"
                                 data-prodi="{{ strtolower($prodiName) }}"
                                 data-kegiatan="{{ strtolower($kegiatanName) }}"
-                                data-status="{{ $hasScore ? 'sudah_dinilai' : ($isAktif ? 'aktif' : 'belum_dinilai') }}"
+                                data-status="{{ $statusCategory }}"
                                 data-tahun="{{ $tahunStr }}"
                                 x-show="isRowVisible($el)">
                                 
                                 {{-- Col 1: Index Number --}}
-                                <td class="um-td" style="text-align: center;">
-                                    <span class="dk-num" style="display: inline-flex; align-items: center; justify-content: center;" x-text="rowNumber($el)">
-                                        {{ sprintf('%02d', $index + 1) }}
+                                <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
+                                    <span class="um-num dk-num" x-text="rowNumber($el)">
+                                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                                     </span>
                                 </td>
 
                                 {{-- Col 2: Mahasiswa Identity --}}
-                                <td class="um-td">
-                                    <div class="dk-entity">
-                                        <span class="dk-entity-icon dk-entity-indigo">
-                                            {{ substr($mhs?->nama ?? 'M', 0, 1) }}
-                                        </span>
-                                        <div class="dk-entity-text">
-                                            <strong>{{ $mhs?->nama ?? 'Nama Mahasiswa' }}</strong>
-                                            <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-                                                <span class="dk-doc-number">{{ $mhs?->nim ?? 'NIM' }}</span>
-                                                <span style="font-size: 11px; color: var(--text-sub);">
-                                                    {{ $prodiName }} {{ $mhs?->angkatan ? '• ' . $mhs->angkatan : '' }}
-                                                </span>
-                                            </div>
-                                        </div>
+                                <td class="um-td dk-title-cell" style="vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-doc-cell">
+                                        <span class="dk-doc-number">#{{ $mhs?->nim ?? '-' }}</span>
+                                        <span class="dk-doc-title"
+                                            style="font-weight: 700; line-height: 1.5;">{{ $mhs?->nama ?? '-' }}</span>
+                                        <span class="dk-doc-kind">{{ $prodiName }} {{ $mhs?->angkatan ? '• Angkatan ' . $mhs->angkatan : '' }}</span>
                                     </div>
                                 </td>
 
                                 {{-- Col 3: Program & Kegiatan --}}
-                                <td class="um-td">
-                                    <div class="dk-doc-cell">
-                                        <span class="dk-doc-title">{{ $kegiatanName }}</span>
-                                        <span class="dk-doc-kind">
-                                            <i class="fas fa-file-contract"></i>
-                                            {{ $item->kegiatan?->cooperation?->judul ?? 'Kerjasama Industri POLIMDO' }}
-                                        </span>
+                                <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                    <div style="display: grid; gap: 8px;">
+                                        <div class="dk-entity" style="align-items: flex-start;">
+                                            <span class="dk-entity-icon dk-entity-indigo" style="flex-shrink: 0;">
+                                                <i class="fas fa-user-graduate"></i>
+                                            </span>
+                                            <span class="dk-entity-text" style="padding-top: 2px;">
+                                                <small
+                                                    style="display:block; font-size:10px; font-weight:800; text-transform:uppercase; color:var(--text-sub); margin-bottom:2px;">Kegiatan Magang</small>
+                                                {{ $kegiatanName }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
 
                                 {{-- Col 4: Periode Magang --}}
-                                <td class="um-td">
-                                    <div class="dk-date-range">
-                                        <span><i class="fas fa-calendar-day"></i> {{ $mulaiStr }}</span>
-                                        <span><i class="fas fa-flag-checkered"></i> {{ $selesaiStr }}</span>
-                                        @if($isAktif)
-                                            <strong class="dk-status dk-status-active" style="width: fit-content; min-height: 22px; padding: 2px 8px; margin-left: 0; font-size: 10px;">
-                                                Magang Aktif
-                                            </strong>
-                                        @else
-                                            <strong class="dk-status dk-status-muted" style="width: fit-content; min-height: 22px; padding: 2px 8px; margin-left: 0; font-size: 10px;">
-                                                Selesai
-                                            </strong>
-                                        @endif
+                                <td class="um-td" style="white-space: nowrap; vertical-align: top; padding-top: 15px;">
+                                    <div class="dk-date-range-compact">
+                                        <span class="date-val">{{ $mulai }}</span>
+                                        <span class="date-sep">s/d</span>
+                                        <span class="date-val">{{ $selesai }}</span>
                                     </div>
                                 </td>
 
-                                {{-- Col 5: Pembimbing & Mentor --}}
-                                <td class="um-td">
-                                    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 12px;">
-                                        <div style="display: flex; align-items: center; gap: 6px;" title="Dosen Pembimbing Kampus">
-                                            <i class="fas fa-chalkboard-user" style="color: #4f46e5; width: 14px;"></i>
-                                            <span style="font-weight: 600; color: var(--text);">{{ $dosen?->nama_pembimbing ?? 'Belum Ditugaskan' }}</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 6px;" title="Mentor Lapangan Mitra">
-                                            <i class="fas fa-user-tie" style="color: #059669; width: 14px;"></i>
-                                            <span style="color: var(--text-sub);">{{ $mentor?->nama_pembimbing ?? $mitraName }}</span>
-                                        </div>
-                                    </div>
+                                {{-- Col 5: Status Nilai --}}
+                                <td class="um-td" style="vertical-align: top; padding-top: 15px;">
+                                    <span class="dk-status {{ $statusClass }}">
+                                        <i class="fas {{ $statusIcon }}"></i>
+                                        {{ $statusLabel }}
+                                    </span>
                                 </td>
 
-                                {{-- Col 6: Nilai Industri --}}
-                                <td class="um-td" style="text-align: center;">
-                                    @if($hasScore)
-                                        <span class="dk-status dk-status-active">
-                                            <i class="fas fa-star"></i>
-                                            {{ number_format($score, 1) }} ({{ $grade }})
-                                        </span>
-                                    @else
-                                        <span class="dk-status dk-status-warning">
-                                            <i class="fas fa-clock"></i> Belum Dinilai
-                                        </span>
-                                    @endif
-                                </td>
-
-                                {{-- Col 7: Aksi --}}
-                                <td class="um-td" style="text-align: center;">
-                                    <div class="dk-actions-compact" style="justify-content: center;">
+                                {{-- Col 6: Aksi --}}
+                                <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
+                                    <div class="um-actions dk-actions-compact">
                                         {{-- Action: Penilaian Modal --}}
                                         <button type="button"
                                             @click="openGradingModal({
@@ -402,13 +391,14 @@
                                                 kegiatan: '{{ addslashes($kegiatanName) }}',
                                                 dosen: '{{ addslashes($dosen?->nama_pembimbing ?? '-') }}',
                                                 mentor: '{{ addslashes($mentor?->nama_pembimbing ?? $mitraName) }}',
-                                                periode: '{{ addslashes($mulaiStr . ' - ' . $selesaiStr) }}',
+                                                periode: '{{ addslashes($mulai . ' - ' . $selesai) }}',
                                                 nilai: {{ $score ? $score : 85 }},
                                                 catatan: '{{ addslashes($item->catatan_mitra ?? '') }}',
                                                 hasScore: {{ $hasScore ? 'true' : 'false' }}
                                             })"
                                             class="dk-action-btn edit"
-                                            title="{{ $hasScore ? 'Ubah Penilaian' : 'Beri Penilaian Mahasiswa' }}">
+                                            title="{{ $hasScore ? 'Ubah Penilaian' : 'Beri Penilaian Mahasiswa' }}"
+                                            style="color: #4f46e5; background: rgba(79,70,229,0.1); border:none; cursor:pointer;">
                                             <i class="fas {{ $hasScore ? 'fa-pen-to-square' : 'fa-clipboard-check' }}"></i>
                                         </button>
 
@@ -428,14 +418,15 @@
                                                 dosenKontak: '{{ addslashes($dosen?->kontak ?? '-') }}',
                                                 mentor: '{{ addslashes($mentor?->nama_pembimbing ?? $mitraName) }}',
                                                 mentorKontak: '{{ addslashes($mentor?->kontak ?? '-') }}',
-                                                periode: '{{ addslashes($mulaiStr . ' - ' . $selesaiStr) }}',
+                                                periode: '{{ addslashes($mulai . ' - ' . $selesai) }}',
                                                 status: '{{ $item->status ?? 'Aktif' }}',
                                                 nilai: '{{ $hasScore ? number_format($score, 1) : '-' }}',
                                                 grade: '{{ $hasScore ? $grade : '-' }}',
                                                 catatan: '{{ addslashes($item->catatan_mitra ?? 'Belum ada catatan evaluasi.') }}'
                                             })"
                                             class="dk-action-btn view"
-                                            title="Lihat Detail Penempatan">
+                                            title="Lihat Detail Penempatan"
+                                            style="border:none; cursor:pointer;">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -443,7 +434,7 @@
                             </tr>
                         @empty
                             <tr data-empty>
-                                <td colspan="7" class="um-empty">
+                                <td colspan="6" class="um-empty">
                                     <div class="um-empty-state dk-empty-state">
                                         <div class="um-empty-icon dk-empty-icon">
                                             <i class="fas fa-user-graduate"></i>
@@ -466,19 +457,24 @@
                 </div>
 
                 <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
+                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
+                        title="Halaman pertama">
                         <i class="fas fa-angles-left"></i>
                     </button>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
+                        :disabled="currentPage === 1" title="Halaman sebelumnya">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <template x-for="p in pageNumbers()" :key="p">
-                        <button type="button" class="pag-btn" :class="{ 'active': p === currentPage }" @click="goToPage(p)" x-text="p"></button>
+                    <template x-for="page in pageNumbers()" :key="page">
+                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
+                            @click="goToPage(page)" x-text="page"></button>
                     </template>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
+                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
+                        :disabled="currentPage === totalPages" title="Halaman berikutnya">
                         <i class="fas fa-chevron-right"></i>
                     </button>
-                    <button type="button" class="pag-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
+                    <button type="button" class="pag-btn" @click="goToPage(totalPages)"
+                        :disabled="currentPage === totalPages" title="Halaman terakhir">
                         <i class="fas fa-angles-right"></i>
                     </button>
                 </div>
@@ -746,6 +742,8 @@
 
             currentPage: 1,
             perPage: 10,
+            perPageOpen: false,
+            perPageOptions: [5, 10, 25, 50],
 
             gradingModalOpen: false,
             detailModalOpen: false,
@@ -763,6 +761,12 @@
             calculatedScore: 85.0,
             calculatedGrade: 'A',
             catatanMitra: '',
+
+            setPerPage(value) {
+                this.perPage = value;
+                this.currentPage = 1;
+                this.perPageOpen = false;
+            },
 
             init() {
                 this.$watch('searchQuery', () => this.currentPage = 1);
