@@ -608,7 +608,7 @@ $auditUserLabel = function ($user = null) {
                         $mulai = $kegiatan->start_date?->format('d M Y');
                         $selesai = $kegiatan->end_date?->format('d M Y');
                         $docNumber = $kegiatan->doc_number ?? '';
-                        $title = $kegiatan->title ?? '';
+                        $title = $kegiatan->judul ?: ($kegiatan->title ?? '');
                         $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                         $createdUser = $auditUserLabel($kegiatan->createdBy);
                         $hasUpdateAudit = ! empty($kegiatan->updated_by)

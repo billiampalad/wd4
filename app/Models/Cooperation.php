@@ -255,6 +255,16 @@ class Cooperation extends Model
 
     // ─── Accessors ───────────────────────────────────────
 
+    public function getTitleAttribute(): ?string
+    {
+        return $this->attributes['judul'] ?? $this->judul ?? null;
+    }
+
+    public function setTitleAttribute($value): void
+    {
+        $this->attributes['judul'] = $value;
+    }
+
     public function getStatusAttribute()
     {
         return $this->status_berlaku ?: ($this->status_dokumen ?: 'Draft');
@@ -278,14 +288,22 @@ class Cooperation extends Model
 
     public function getPelaksanaNameAttribute()
     {
-        return match ($this->tipe_pelaksana) {
-            'jurusan' => $this->jurusan?->nama_jurusan ?: '-',
-            'upa' => $this->upa?->nama_upa ?: '-',
-            'pusat' => $this->pusat?->nama_pusat ?: '-',
-            default => str_contains(strtolower($this->jenis ?? ''), 'mou')
-                ? self::DEFAULT_MOU_PELAKSANA
-                : '-',
-        };
+        $groups = $this->pelaksana_groups;
+        if (!empty($groups)) {
+            $allNames = [];
+            foreach ($groups as $group) {
+                if (!empty($group['names'])) {
+                    $allNames = array_merge($allNames, $group['names']);
+                }
+            }
+            if (!empty($allNames)) {
+                return implode(', ', $allNames);
+            }
+        }
+
+        return str_contains(strtolower($this->jenis ?? ''), 'mou')
+            ? self::DEFAULT_MOU_PELAKSANA
+            : '-';
     }
 
     public function getPelaksanaGroupsAttribute(): array
@@ -353,21 +371,22 @@ class Cooperation extends Model
 
     public function getPelaksanaIconAttribute()
     {
-        return match ($this->tipe_pelaksana) {
-            'jurusan' => 'fa-microchip',
-            'upa' => 'fa-building-columns',
-            'pusat' => 'fa-landmark',
-            default => 'fa-building',
-        };
+        $primaryGroup = $this->pelaksana_groups[0] ?? null;
+        if ($primaryGroup && !empty($primaryGroup['icon'])) {
+            return $primaryGroup['icon'];
+        }
+
+        return 'fa-building';
     }
 
     public function getPelaksanaClassAttribute()
     {
-        return match ($this->tipe_pelaksana) {
-            'upa' => 'dk-entity-cyan',
-            'pusat' => 'dk-entity-violet',
-            default => 'dk-entity-indigo',
-        };
+        $primaryGroup = $this->pelaksana_groups[0] ?? null;
+        if ($primaryGroup && !empty($primaryGroup['class'])) {
+            return $primaryGroup['class'];
+        }
+
+        return 'dk-entity-indigo';
     }
 
     protected static function booted(): void

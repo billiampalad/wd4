@@ -1167,15 +1167,14 @@ class PusatPageController extends Controller
     {
         $rows = $this->buildLaporanQuery($request, true)
             ->get()
-            ->filter(fn(Cooperation $c) => !empty($c->title))
+            ->filter(fn(Cooperation $c) => !empty($c->judul) || !empty($c->title))
             ->values()
             ->map(function (Cooperation $c) {
                 return [
                     'id'             => $c->id,
-                    'title'          => $c->title,
+                    'title'          => $c->judul ?: ($c->title ?: '-'),
                     'doc_number'     => $c->doc_number,
                     'jenis'          => $c->jenis,
-                    'tipe_pelaksana' => $c->tipe_pelaksana,
                     'pelaksana_name' => $c->pelaksana_name,
                     'pelaksana_icon' => $c->pelaksana_icon,
                     'pelaksana_class' => $c->pelaksana_class,
