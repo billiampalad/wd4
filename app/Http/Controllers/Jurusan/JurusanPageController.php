@@ -548,13 +548,18 @@ class JurusanPageController extends Controller
 
     public function statusKerjasamaReferensi()
     {
-        $this->resolveUnitId();
+        $unitId = $this->resolveUnitId();
 
-        $counts = $this->scopeUnit(Cooperation::query(), $this->resolveUnitId())
-            ->select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
-            ->pluck('total', 'status')
+        $baseQuery = $this->scopeUnit(Cooperation::query(), $unitId);
+
+        $counts = (clone $baseQuery)
+            ->select('status_berlaku', DB::raw('count(*) as total'))
+            ->groupBy('status_berlaku')
+            ->pluck('total', 'status_berlaku')
+            ->mapWithKeys(fn($v, $k) => [strtolower(trim((string) $k)) => (int) $v])
             ->all();
+
+        $draftTotal = (clone $baseQuery)->where('status_dokumen', 'Draft')->count();
 
         $statusList = collect([
             [
@@ -565,31 +570,31 @@ class JurusanPageController extends Controller
                 'total' => $counts['aktif'] ?? 0,
             ],
             [
-                'key' => 'proses',
-                'name' => 'Proses',
-                'badge' => 'dk-status-info',
-                'description' => 'Kerjasama dalam tahap pengajuan, pembahasan draft, atau penandatanganan.',
-                'total' => $counts['proses'] ?? 0,
-            ],
-            [
-                'key' => 'dalam perpanjangan',
-                'name' => 'Dalam Perpanjangan',
+                'key' => 'segera_berakhir',
+                'name' => 'Segera Berakhir',
                 'badge' => 'dk-status-warning',
-                'description' => 'Masa berlaku kerjasama telah habis namun sedang dalam proses perpanjangan masa aktif.',
-                'total' => $counts['dalam perpanjangan'] ?? 0,
+                'description' => 'Kerjasama yang masa berlakunya akan segera habis dalam waktu dekat.',
+                'total' => ($counts['segera berakhir'] ?? 0) + ($counts['dalam perpanjangan'] ?? 0),
             ],
             [
-                'key' => 'kadarluarsa',
+                'key' => 'kadaluarsa',
                 'name' => 'Kadaluarsa',
                 'badge' => 'dk-status-danger',
-                'description' => 'Masa berlaku kerjasama telah berakhir dan tidak diperpanjang.',
-                'total' => ($counts['kadarluarsa'] ?? 0) + ($counts['kadaluarsa'] ?? 0) + ($counts['kedaluwarsa'] ?? 0),
+                'description' => 'Masa berlaku kerjasama telah berakhir dan belum diperpanjang.',
+                'total' => ($counts['kadaluarsa'] ?? 0) + ($counts['kadarluarsa'] ?? 0) + ($counts['kedaluwarsa'] ?? 0),
             ],
             [
-                'key' => 'tidak aktif',
+                'key' => 'draft',
+                'name' => 'Draft / Proses',
+                'badge' => 'dk-status-info',
+                'description' => 'Kerjasama dalam tahap pengajuan, pembahasan draft, atau pengisian berkas.',
+                'total' => $draftTotal,
+            ],
+            [
+                'key' => 'tidak_aktif',
                 'name' => 'Tidak Aktif',
                 'badge' => 'dk-status-muted',
-                'description' => 'Kerjasama dibatalkan atau dinonaktifkan secara resmi.',
+                'description' => 'Kerjasama dibatalkan, selesai, atau dinonaktifkan secara resmi.',
                 'total' => ($counts['tidak aktif'] ?? 0) + ($counts['nonaktif'] ?? 0) + ($counts['non aktif'] ?? 0),
             ],
         ]);
