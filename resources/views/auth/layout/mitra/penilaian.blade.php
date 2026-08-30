@@ -484,8 +484,11 @@
 
     {{-- ═══ MODAL PENILAIAN MAHASISWA (ALPINE.JS) ═══ --}}
     <template x-if="gradingModalOpen">
-        <div class="review-modal-overlay" @click.self="gradingModalOpen = false" x-cloak>
-            <div class="review-modal-card" style="max-width: 680px; height: auto; max-height: 90vh; display: flex; flex-direction: column;"
+        <div class="modal-overlay"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;"
+            @click.self="gradingModalOpen = false" x-cloak>
+            <div class="modal-card"
+                style="background: var(--surface); border-radius: 24px; width: 100%; max-width: 680px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); border: 1px solid var(--border);"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -494,28 +497,32 @@
                 x-transition:leave-end="opacity-0 scale-95">
                 
                 {{-- Modal Header --}}
-                <div class="review-modal-header" style="flex-shrink: 0;">
-                    <div class="review-modal-title">
-                        <div class="icon-box">
+                <div style="padding: 20px 28px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(79,70,229,0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
                             <i class="fas fa-clipboard-check"></i>
                         </div>
                         <div>
-                            <h3 x-text="activeItem.hasScore ? 'Perbarui Lembar Penilaian' : 'Input Penilaian Mahasiswa Magang'"></h3>
-                            <p>Evaluasi capaian performa &amp; kompetensi mahasiswa</p>
+                            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.01em;" x-text="activeItem.hasScore ? 'Perbarui Lembar Penilaian' : 'Input Penilaian Mahasiswa Magang'"></h3>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: var(--text-sub);">Evaluasi capaian performa &amp; kompetensi mahasiswa</p>
                         </div>
                     </div>
-                    <button type="button" class="review-modal-close" @click="gradingModalOpen = false" title="Tutup">
+                    <button type="button" @click="gradingModalOpen = false"
+                        style="background: transparent; border: none; color: var(--text-sub); cursor: pointer; padding: 8px; font-size: 16px; transition: 0.2s; border-radius: 8px;"
+                        onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.1)'"
+                        onmouseout="this.style.color='var(--text-sub)'; this.style.background='transparent'"
+                        title="Tutup">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
 
                 {{-- Form Penilaian --}}
                 <form :action="'/mitra/penilaian/' + activeItem.id" method="POST" id="gradingForm" @submit.prevent="submitGrading($event)"
-                    style="display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0;">
+                    style="display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; background: var(--surface);">
                     @csrf
                     @method('PUT')
 
-                    <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 18px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0;">
+                    <div style="display: flex; flex-direction: column; gap: 18px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0; background: var(--surface);">
                         
                         {{-- Mini Profile Banner --}}
                         <div style="padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -626,13 +633,14 @@
                             </label>
                             <textarea name="catatan_mitra" x-model="catatanMitra" class="rfc-input" rows="3"
                                 placeholder="Tuliskan ulasan performa, kelebihan, dan saran perbaikan bagi mahasiswa..."
-                                style="height: auto; min-height: 70px;"></textarea>
+                                style="height: auto; min-height: 70px; background: var(--surface); color: var(--text);"></textarea>
                         </div>
                     </div>
 
                     {{-- Modal Footer --}}
-                    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface2); border-radius: 0 0 16px 16px; flex-shrink: 0;">
-                        <button type="button" class="rfc-btn" @click="gradingModalOpen = false">
+                    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface2); border-radius: 0 0 24px 24px; flex-shrink: 0;">
+                        <button type="button" class="rfc-btn" @click="gradingModalOpen = false"
+                            style="padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer;">
                             Batal
                         </button>
                         <button type="submit" class="dk-primary-btn" :disabled="isSubmitting">
@@ -647,8 +655,11 @@
 
     {{-- ═══ MODAL DETAIL MAHASISWA (ALPINE.JS) ═══ --}}
     <template x-if="detailModalOpen">
-        <div class="review-modal-overlay" @click.self="detailModalOpen = false" x-cloak>
-            <div class="review-modal-card" style="max-width: 580px; height: auto; max-height: 90vh; display: flex; flex-direction: column;"
+        <div class="modal-overlay"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;"
+            @click.self="detailModalOpen = false" x-cloak>
+            <div class="modal-card"
+                style="background: var(--surface); border-radius: 24px; width: 100%; max-width: 580px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35); border: 1px solid var(--border);"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -656,22 +667,26 @@
                 x-transition:leave-start="opacity-100 scale-100"
                 x-transition:leave-end="opacity-0 scale-95">
                 
-                <div class="review-modal-header" style="flex-shrink: 0;">
-                    <div class="review-modal-title">
-                        <div class="icon-box">
+                <div style="padding: 20px 28px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(79,70,229,0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
                             <i class="fas fa-id-card"></i>
                         </div>
                         <div>
-                            <h3>Detail Mahasiswa Magang</h3>
-                            <p>Informasi penempatan dan kontak pembimbing</p>
+                            <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: -0.01em;">Detail Mahasiswa Magang</h3>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: var(--text-sub);">Informasi penempatan dan kontak pembimbing</p>
                         </div>
                     </div>
-                    <button type="button" class="review-modal-close" @click="detailModalOpen = false" title="Tutup">
+                    <button type="button" @click="detailModalOpen = false"
+                        style="background: transparent; border: none; color: var(--text-sub); cursor: pointer; padding: 8px; font-size: 16px; transition: 0.2s; border-radius: 8px;"
+                        onmouseover="this.style.color='#ef4444'; this.style.background='rgba(239,68,68,0.1)'"
+                        onmouseout="this.style.color='var(--text-sub)'; this.style.background='transparent'"
+                        title="Tutup">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
 
-                <div class="review-modal-body" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0;">
+                <div style="display: flex; flex-direction: column; gap: 16px; padding: 24px; overflow-y: auto; flex: 1; min-height: 0; background: var(--surface);">
                     
                     {{-- Profile Header Card --}}
                     <div class="dk-entity" style="padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;">
@@ -687,20 +702,20 @@
 
                     {{-- Detail Grid --}}
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div style="padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="padding: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;">
                             <span style="font-size: 11px; font-weight: 700; color: var(--text-sub); display: block;">Email:</span>
                             <span style="font-size: 12.5px; font-weight: 600; color: var(--text);" x-text="detailItem.email"></span>
                         </div>
-                        <div style="padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="padding: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;">
                             <span style="font-size: 11px; font-weight: 700; color: var(--text-sub); display: block;">Telepon / WA:</span>
                             <span style="font-size: 12.5px; font-weight: 600; color: var(--text);" x-text="detailItem.telepon"></span>
                         </div>
-                        <div style="padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="padding: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;">
                             <span style="font-size: 11px; font-weight: 700; color: var(--text-sub); display: block;">Dosen Pembimbing:</span>
                             <span style="font-size: 12.5px; font-weight: 600; color: var(--text);" x-text="detailItem.dosen"></span>
                             <span style="font-size: 11px; color: var(--text-sub);" x-text="'Kontak: ' + detailItem.dosenKontak"></span>
                         </div>
-                        <div style="padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+                        <div style="padding: 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;">
                             <span style="font-size: 11px; font-weight: 700; color: var(--text-sub); display: block;">Mentor Industri:</span>
                             <span style="font-size: 12.5px; font-weight: 600; color: var(--text);" x-text="detailItem.mentor"></span>
                             <span style="font-size: 11px; color: var(--text-sub);" x-text="'Kontak: ' + detailItem.mentorKontak"></span>
@@ -721,8 +736,9 @@
 
                 </div>
 
-                <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--surface2); border-radius: 0 0 16px 16px; flex-shrink: 0;">
-                    <button type="button" class="rfc-btn" @click="detailModalOpen = false">
+                <div style="padding: 14px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--surface2); border-radius: 0 0 24px 24px; flex-shrink: 0;">
+                    <button type="button" class="rfc-btn" @click="detailModalOpen = false"
+                        style="padding: 9px 18px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer;">
                         Tutup
                     </button>
                 </div>
