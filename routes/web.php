@@ -456,9 +456,11 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('umpan-balik/{id}/edit', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'edit'])->name('mitra.umpan_balik.edit');
     Route::put('umpan-balik/{id}', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'update'])->name('mitra.umpan_balik.update');
 
-    // ─── Phase 7: Konfirmasi Alumni (UC32) ─────────────────
+    // ─── Phase 7: Tracking & Konfirmasi Alumni (UC32 & UC33) ─────────────────
     Route::get('alumni', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'index'])->name('mitra.alumni.index');
+    Route::post('alumni', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'store'])->name('mitra.alumni.store');
     Route::put('alumni/{id}', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'update'])->name('mitra.alumni.update');
+    Route::delete('alumni/{id}', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'destroy'])->name('mitra.alumni.destroy');
 });
 
 // ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────

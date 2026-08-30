@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth/user.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_edit.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/layout/mitra/tracking.css') }}" data-turbo-track="reload">
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -95,7 +96,6 @@
 
     <!-- sidebar -->
     <div class="layout">
-        <!-- ── SIDEBAR ──────────────────────────────────────────── -->
         <aside id="sidebar">
             <div class="menu-section">PORTAL MITRA</div>
 
@@ -152,6 +152,8 @@
                 @include('auth.layout.mitra.dkerjasama')
             @elseif (request()->routeIs('mitra.penilaian.*') || (isset($view) && $view === 'penilaian'))
                 @include('auth.layout.mitra.penilaian')
+            @elseif (request()->routeIs('mitra.alumni.*') || (isset($view) && $view === 'tracking'))
+                @include('auth.layout.mitra.tracking')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
