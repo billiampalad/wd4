@@ -33,7 +33,7 @@
     @if (session('error'))
         <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
     @endif
-    @if ($errors->any())
+    @if (isset($errors) && $errors->any())
         <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
 
@@ -150,6 +150,8 @@
                 @include('auth.layout.mitra.dokumen_detail')
             @elseif (request()->routeIs('mitra.dokumen.*'))
                 @include('auth.layout.mitra.dkerjasama')
+            @elseif (request()->routeIs('mitra.penilaian.*') || (isset($view) && $view === 'penilaian'))
+                @include('auth.layout.mitra.penilaian')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">

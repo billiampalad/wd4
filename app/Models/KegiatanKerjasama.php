@@ -33,6 +33,11 @@ class KegiatanKerjasama extends Model
 
     // ─── Relationships ───────────────────────────────────
 
+    public function cooperation()
+    {
+        return $this->belongsTo(Cooperation::class, 'cooperation_id');
+    }
+
     public function jenisKerjasama()
     {
         return $this->belongsToMany(JenisKerjasama::class, 'kegiatan_jenis_kerjasamas', 'id_kegiatan', 'id_jenis');

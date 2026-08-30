@@ -446,9 +446,10 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::get('/mitra/perpanjangan/create', [PublicPengajuanKerjasamaController::class, 'createPerpanjangan'])->name('mitra.perpanjangan.create');
 
     // ─── Phase 5: Penilaian Mahasiswa (UC21) ───────────────
-    Route::get('penilaian', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'index'])->name('mitra.penilaian.index');
-    Route::get('penilaian/{id}/edit', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'edit'])->name('mitra.penilaian.edit');
-    Route::put('penilaian/{id}', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'update'])->name('mitra.penilaian.update');
+    Route::get('/mitra/penilaian', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'index'])->name('mitra.penilaian.index');
+    Route::get('/mitra/penilaian/{id}', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'show'])->name('mitra.penilaian.show');
+    Route::get('/mitra/penilaian/{id}/edit', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'edit'])->name('mitra.penilaian.edit');
+    Route::put('/mitra/penilaian/{id}', [\App\Http\Controllers\Mitra\PenilaianMahasiswaController::class, 'update'])->name('mitra.penilaian.update');
 
     // ─── Phase 6: Umpan Balik Mitra (UC26) ──────────────────
     Route::get('umpan-balik', [\App\Http\Controllers\Mitra\UmpanBalikController::class, 'index'])->name('mitra.umpan_balik.index');
