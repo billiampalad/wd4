@@ -380,7 +380,7 @@
                                 {{-- Col 6: Aksi --}}
                                 <td class="um-td um-td-aksi" style="vertical-align: top; padding-top: 12px;">
                                     <div class="um-actions dk-actions-compact">
-                                        {{-- Action: Penilaian Modal --}}
+                                        {{-- Action: Penilaian Modal (Hijau untuk baru, Kuning untuk ubah) --}}
                                         <button type="button"
                                             @click="openGradingModal({
                                                 id: '{{ $item->id }}',
@@ -396,9 +396,9 @@
                                                 catatan: '{{ addslashes($item->catatan_mitra ?? '') }}',
                                                 hasScore: {{ $hasScore ? 'true' : 'false' }}
                                             })"
-                                            class="dk-action-btn edit"
+                                            class="dk-action-btn {{ $hasScore ? 'edit' : '' }}"
                                             title="{{ $hasScore ? 'Ubah Penilaian' : 'Beri Penilaian Mahasiswa' }}"
-                                            style="color: #4f46e5; background: rgba(79,70,229,0.1); border:none; cursor:pointer;">
+                                            style="color: {{ $hasScore ? '#d97706' : '#059669' }}; background: {{ $hasScore ? 'rgba(217, 119, 6, 0.12)' : 'rgba(5, 150, 105, 0.12)' }}; border: 1px solid {{ $hasScore ? 'rgba(217, 119, 6, 0.25)' : 'rgba(5, 150, 105, 0.25)' }}; cursor: pointer;">
                                             <i class="fas {{ $hasScore ? 'fa-pen-to-square' : 'fa-clipboard-check' }}"></i>
                                         </button>
 
@@ -732,178 +732,5 @@
 
 </main>
 
-{{-- ═══ ALPINE.JS APPLICATION LOGIC ═══ --}}
-<script>
-    function mitraPenilaianApp() {
-        return {
-            searchQuery: '',
-            prodiFilter: 'all',
-            statusFilter: 'all',
-            tahunFilter: 'all',
-
-            currentPage: 1,
-            perPage: 10,
-            perPageOpen: false,
-            perPageOptions: [5, 10, 25, 50],
-
-            gradingModalOpen: false,
-            detailModalOpen: false,
-            isSubmitting: false,
-
-            activeItem: {},
-            detailItem: {},
-
-            // Grading Sub-Aspects (0-100)
-            aspekKedisiplinan: 85,
-            aspekTeknis: 85,
-            aspekKerjasama: 85,
-            aspekInisiatif: 85,
-            aspekKomunikasi: 85,
-            calculatedScore: 85.0,
-            calculatedGrade: 'A',
-            catatanMitra: '',
-
-            setPerPage(value) {
-                this.perPage = value;
-                this.currentPage = 1;
-                this.perPageOpen = false;
-            },
-
-            init() {
-                this.$watch('searchQuery', () => this.currentPage = 1);
-                this.$watch('prodiFilter', () => this.currentPage = 1);
-                this.$watch('statusFilter', () => this.currentPage = 1);
-                this.$watch('tahunFilter', () => this.currentPage = 1);
-                this.$watch('perPage', () => this.currentPage = 1);
-            },
-
-            resetFilters() {
-                this.searchQuery = '';
-                this.prodiFilter = 'all';
-                this.statusFilter = 'all';
-                this.tahunFilter = 'all';
-                this.currentPage = 1;
-            },
-
-            get rows() {
-                return this.$refs.rows ? Array.from(this.$refs.rows.querySelectorAll('tr[data-row]')) : [];
-            },
-
-            get filteredRows() {
-                return this.rows.filter(row => this.matchesRow(row));
-            },
-
-            get totalFiltered() {
-                return this.filteredRows.length;
-            },
-
-            get totalPages() {
-                return Math.max(1, Math.ceil(this.totalFiltered / this.perPage));
-            },
-
-            get startRange() {
-                return this.totalFiltered === 0 ? 0 : ((this.currentPage - 1) * this.perPage) + 1;
-            },
-
-            get endRange() {
-                return Math.min(this.currentPage * this.perPage, this.totalFiltered);
-            },
-
-            matchesRow(row) {
-                const q = this.searchQuery.toLowerCase().trim();
-                const matchSearch = q === '' ||
-                    row.dataset.nim.includes(q) ||
-                    row.dataset.nama.includes(q) ||
-                    row.dataset.prodi.includes(q) ||
-                    row.dataset.kegiatan.includes(q);
-
-                const matchProdi = this.prodiFilter === 'all' || row.dataset.prodi === this.prodiFilter.toLowerCase();
-                const matchStatus = this.statusFilter === 'all' || row.dataset.status === this.statusFilter;
-                const matchTahun = this.tahunFilter === 'all' || row.dataset.tahun === String(this.tahunFilter);
-
-                return matchSearch && matchProdi && matchStatus && matchTahun;
-            },
-
-            isRowVisible(row) {
-                const index = this.filteredRows.indexOf(row);
-                if (index === -1) return false;
-                return index >= ((this.currentPage - 1) * this.perPage) && index < (this.currentPage * this.perPage);
-            },
-
-            rowNumber(row) {
-                const index = this.filteredRows.indexOf(row);
-                return index === -1 ? 0 : String(index + 1).padStart(2, '0');
-            },
-
-            pageNumbers() {
-                const total = this.totalPages;
-                if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-                const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
-                return Array.from(pages).filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
-            },
-
-            goToPage(p) {
-                this.currentPage = Math.min(Math.max(p, 1), this.totalPages);
-            },
-
-            openGradingModal(item) {
-                this.activeItem = item;
-                const baseScore = item.nilai || 85;
-                this.aspekKedisiplinan = baseScore;
-                this.aspekTeknis = baseScore;
-                this.aspekKerjasama = baseScore;
-                this.aspekInisiatif = baseScore;
-                this.aspekKomunikasi = baseScore;
-                this.catatanMitra = item.catatan || '';
-                this.calculateTotalScore();
-                this.gradingModalOpen = true;
-            },
-
-            openDetailModal(item) {
-                this.detailItem = item;
-                this.detailModalOpen = true;
-            },
-
-            calculateTotalScore() {
-                const total = (this.aspekKedisiplinan * 0.20) +
-                              (this.aspekTeknis * 0.30) +
-                              (this.aspekKerjasama * 0.20) +
-                              (this.aspekInisiatif * 0.15) +
-                              (this.aspekKomunikasi * 0.15);
-
-                this.calculatedScore = Math.min(100, Math.max(0, total));
-
-                if (this.calculatedScore >= 85) this.calculatedGrade = 'A';
-                else if (this.calculatedScore >= 75) this.calculatedGrade = 'B+';
-                else if (this.calculatedScore >= 65) this.calculatedGrade = 'B';
-                else if (this.calculatedScore >= 55) this.calculatedGrade = 'C';
-                else this.calculatedGrade = 'D';
-            },
-
-            submitGrading(event) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Simpan Penilaian?',
-                        text: `Anda akan memberikan nilai ${this.calculatedScore.toFixed(1)} (${this.calculatedGrade}) untuk mahasiswa ${this.activeItem.nama}.`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Simpan',
-                        cancelButtonText: 'Batal',
-                        confirmButtonColor: '#4f46e5',
-                        cancelButtonColor: '#64748b'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            this.isSubmitting = true;
-                            event.target.submit();
-                        }
-                    });
-                } else {
-                    if (confirm(`Simpan penilaian untuk mahasiswa ${this.activeItem.nama}?`)) {
-                        this.isSubmitting = true;
-                        event.target.submit();
-                    }
-                }
-            }
-        };
-    }
-</script>
+{{-- ═══ EXTERNAL ALPINE.JS APPLICATION LOGIC ═══ --}}
+<script src="{{ asset('js/auth/mitra/kegiatan-magang.js') }}"></script>
