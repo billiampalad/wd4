@@ -916,16 +916,23 @@ class UnitPageController extends Controller
         $unitId = $this->resolveUnitId();
 
         // Query dasar kerjasama
-        $baseQuery = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat', 'pksNumbers'])
-            ->orderBy('created_at', 'asc');
+        $baseQuery = Cooperation::with([
+            'mitra',
+            'jurusan',
+            'upa',
+            'pusat',
+            'jurusans',
+            'upas',
+            'pusats',
+            'pksNumbers',
+            'evaluasis.penilai',
+        ])->orderBy('created_at', 'asc');
 
         // 1. List DRAFT (Status: Draft)
         $draftList = (clone $baseQuery)->where('status_dokumen', 'Draft')->get();
 
         // 2. List REVISI (Status: Revisi — dikembalikan oleh Pimpinan)
-        $revisiList = (clone $baseQuery)->where('status_dokumen', 'Revisi')
-            ->with('evaluasis.penilai')
-            ->get();
+        $revisiList = (clone $baseQuery)->where('status_dokumen', 'Revisi')->get();
 
         // 3. List MENUNGGU EVALUASI
         $belumEvaluasi = (clone $baseQuery)->where('status_dokumen', 'Menunggu Evaluasi')->get();

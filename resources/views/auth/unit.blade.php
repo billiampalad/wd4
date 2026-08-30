@@ -349,7 +349,7 @@
             </div>
 
             <a class="menu-item {{ request()->routeIs('unit.evaluasi', 'unit.evaluasi.*') ? 'active' : '' }}"
-                href="{{ route('unit.evaluasi.index') }}">
+                href="{{ route('unit.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-check-double"></i></div>
                 <span>Evaluasi Kinerja</span>
             </a>

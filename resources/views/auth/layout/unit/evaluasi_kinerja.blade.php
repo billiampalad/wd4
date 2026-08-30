@@ -80,7 +80,7 @@
                                 $pelaksanaClass = $kegiatan->pelaksana_class;
                                 $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
-                                $title = $kegiatan->title ?? '';
+                                $title = $kegiatan->judul ?: ($kegiatan->title ?? '');
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                             @endphp
                             <tr class="um-row dk-row">
@@ -180,10 +180,10 @@
                                 $pelaksanaClass = $kegiatan->pelaksana_class;
                                 $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
-                                $title = $kegiatan->title ?? '';
+                                $title = $kegiatan->judul ?: ($kegiatan->title ?? '');
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                                 $evalRevisi = $kegiatan->evaluasis?->first();
-                                $catatanRevisi = $evalRevisi?->ringkasan ?? $evalRevisi?->saran ?? null;
+                                $catatanRevisi = $evalRevisi?->ringkasan ?? $evalRevisi?->rekomendasi ?? $evalRevisi?->kendala ?? $evalRevisi?->catatan ?? null;
                             @endphp
                             <tr class="um-row dk-row">
                                 <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
@@ -295,7 +295,7 @@
                                 $pelaksanaClass = $kegiatan->pelaksana_class;
                                 $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
-                                $title = $kegiatan->title ?? '';
+                                $title = $kegiatan->judul ?: ($kegiatan->title ?? '');
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                             @endphp
                             <tr class="um-row dk-row">
@@ -396,7 +396,7 @@
                                 $pelaksanaClass = $kegiatan->pelaksana_class;
                                 $pelaksanaName = $kegiatan->pelaksana_name;
                                 $docNumber = $kegiatan->doc_number ?? '';
-                                $title = $kegiatan->title ?? '';
+                                $title = $kegiatan->judul ?: ($kegiatan->title ?? '');
                                 $mitraName = $kegiatan->mitra?->nama_mitra ?? '';
                             @endphp
                             <tr class="um-row dk-row">

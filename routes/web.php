@@ -461,13 +461,8 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
 });
 
 // ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────
-// ─── Phase 6: Form Evaluasi & Submit Unit (UC23, UC24) ───
 Route::middleware(['auth'])->group(function () {
     Route::resource('unit/kegiatan', \App\Http\Controllers\Unit\KegiatanKerjasamaController::class, ['as' => 'unit']);
-    Route::get('unit/evaluasi', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'index'])->name('unit.evaluasi.index');
-    Route::get('unit/evaluasi/{id}/edit', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'edit'])->name('unit.evaluasi.edit');
-    Route::put('unit/evaluasi/{id}', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'update'])->name('unit.evaluasi.update');
-    Route::post('unit/evaluasi/{id}/submit', [\App\Http\Controllers\Unit\EvaluasiUnitController::class, 'submit'])->name('unit.evaluasi.submit');
 });
 
 /*
