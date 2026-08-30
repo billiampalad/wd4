@@ -1,7 +1,7 @@
 /**
  * Mitra Portal - Tracking Lulusan & Penyerapan Alumni POLIMDO (IKU 1)
  * File: public/js/auth/mitra/tracking.js
- * Logic handler for filtering, pagination, search, and solid modals.
+ * Logic handler for filtering, pagination, search, modal operations, and CRUD submission.
  */
 
 function mitraTrackingApp() {
@@ -52,11 +52,14 @@ function mitraTrackingApp() {
         },
 
         get rows() {
-            return this.$refs.rows ? Array.from(this.$refs.rows.querySelectorAll('tr[data-row]')) : [];
+            const container = this.$refs.rows || (this.$el ? this.$el.querySelector('tbody[x-ref="rows"]') : null) || document.querySelector('tbody[x-ref="rows"]') || document.querySelector('#mainContent table.dk-table tbody');
+            return container ? Array.from(container.querySelectorAll('tr[data-row]')) : [];
         },
 
         get filteredRows() {
-            return this.rows.filter(row => this.matchesRow(row));
+            const allRows = this.rows;
+            if (!allRows.length) return [];
+            return allRows.filter(row => this.matchesRow(row));
         },
 
         get totalFiltered() {
@@ -76,7 +79,8 @@ function mitraTrackingApp() {
         },
 
         matchesRow(row) {
-            const q = this.searchQuery.toLowerCase().trim();
+            if (!row || !row.dataset) return true;
+            const q = (this.searchQuery || '').toLowerCase().trim();
             const matchSearch = q === '' ||
                 (row.dataset.nim && row.dataset.nim.includes(q)) ||
                 (row.dataset.nama && row.dataset.nama.includes(q)) ||
@@ -85,15 +89,22 @@ function mitraTrackingApp() {
 
             const matchProdi = this.prodiFilter === 'all' || (row.dataset.prodi && row.dataset.prodi === this.prodiFilter.toLowerCase());
             const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
-            const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && row.dataset.tahun === String(this.tahunFilter));
+            const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && String(row.dataset.tahun) === String(this.tahunFilter));
 
             return matchSearch && matchProdi && matchStatus && matchTahun;
         },
 
         isRowVisible(el) {
             const tr = el.tagName === 'TR' ? el : el.closest('tr');
-            if (!tr) return false;
-            const index = this.filteredRows.indexOf(tr);
+            if (!tr) return true;
+
+            // If match check fails, immediately hide
+            if (!this.matchesRow(tr)) return false;
+
+            const fRows = this.filteredRows;
+            if (!fRows.length) return true;
+
+            const index = fRows.indexOf(tr);
             if (index === -1) return false;
             const start = (this.currentPage - 1) * this.perPage;
             const end = start + this.perPage;
@@ -103,7 +114,9 @@ function mitraTrackingApp() {
         rowNumber(el) {
             const tr = el.tagName === 'TR' ? el : el.closest('tr');
             if (!tr) return '01';
-            const index = this.filteredRows.indexOf(tr);
+            const fRows = this.filteredRows;
+            if (!fRows.length) return '01';
+            const index = fRows.indexOf(tr);
             return index === -1 ? '01' : String(index + 1).padStart(2, '0');
         },
 
@@ -260,3 +273,21 @@ function mitraTrackingApp() {
         }
     };
 }
+
+// Expose globally on window
+window.mitraTrackingApp = mitraTrackingApp;
+
+// Register on Alpine.data
+function registerMitraTrackingAlpine() {
+    if (typeof Alpine !== 'undefined') {
+        Alpine.data('mitraTrackingApp', mitraTrackingApp);
+    }
+}
+
+if (typeof Alpine !== 'undefined') {
+    registerMitraTrackingAlpine();
+} else {
+    document.addEventListener('alpine:init', registerMitraTrackingAlpine);
+}
+
+document.addEventListener('turbo:load', registerMitraTrackingAlpine);
