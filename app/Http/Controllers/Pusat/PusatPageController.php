@@ -471,82 +471,65 @@ class PusatPageController extends Controller
                         ->where('jenis', 'not like', '%MoA%')
                         ->count();
 
+        $instansiQuery = Cooperation::query()
+            ->whereNull('jurusan_id')
+            ->whereNull('upa_id')
+            ->whereNull('pusat_id')
+            ->whereDoesntHave('jurusans')
+            ->whereDoesntHave('upas')
+            ->whereDoesntHave('pusats');
+
+        $instansiMou = (clone $instansiQuery)->where('jenis', 'like', '%MoU%')->count();
+        $instansiMoa = (clone $instansiQuery)->where('jenis', 'like', '%MoA%')->count();
+        $instansiIa  = (clone $instansiQuery)->where('jenis', 'like', '%IA%')->where('jenis', 'not like', '%MoA%')->count();
+
         $instansi = (object) [
             'nama_instansi' => Cooperation::DEFAULT_MOU_PELAKSANA,
-            'mou_count' => Cooperation::where('jenis', 'like', '%MoU%')
-                ->where(function ($query) {
-                    $query->whereNull('tipe_pelaksana')
-                        ->orWhere('tipe_pelaksana', '');
-                })
-                ->whereNull('jurusan_id')
-                ->whereNull('upa_id')
-                ->whereNull('pusat_id')
-                ->count(),
-            'moa_count' => 0,
-            'ia_count' => 0,
+            'mou_count'     => $instansiMou,
+            'moa_count'     => $instansiMoa,
+            'ia_count'      => $instansiIa,
+            'total_count'   => $instansiMou + $instansiMoa + $instansiIa,
         ];
-        $instansi->total_count = $instansi->mou_count + $instansi->moa_count + $instansi->ia_count;
 
-        // Single aggregate query to get counts grouped by institution and jenis
-        $coopCounts = Cooperation::select('jurusan_id', 'upa_id', 'pusat_id', 'jenis', DB::raw('count(*) as count'))
-            ->where(function($q) {
-                $q->whereNotNull('jurusan_id')
-                  ->orWhereNotNull('upa_id')
-                  ->orWhereNotNull('pusat_id');
-            })
-            ->groupBy('jurusan_id', 'upa_id', 'pusat_id', 'jenis')
-            ->get();
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get()->map(function ($jurusan) {
+            $baseQuery = Cooperation::query()->where(function ($q) use ($jurusan) {
+                $q->where('jurusan_id', $jurusan->id)
+                  ->orWhereHas('jurusans', fn ($sq) => $sq->whereKey($jurusan->id));
+            });
 
-        $getCounts = function($type, $id) use ($coopCounts) {
-            $mou = 0;
-            $moa = 0;
-            $ia = 0;
+            $jurusan->mou_count = (clone $baseQuery)->where('jenis', 'like', '%MoU%')->count();
+            $jurusan->moa_count = (clone $baseQuery)->where('jenis', 'like', '%MoA%')->count();
+            $jurusan->ia_count  = (clone $baseQuery)->where('jenis', 'like', '%IA%')->where('jenis', 'not like', '%MoA%')->count();
+            $jurusan->total_count = $jurusan->mou_count + $jurusan->moa_count + $jurusan->ia_count;
 
-            foreach ($coopCounts as $row) {
-                if ($row->{$type . '_id'} == $id) {
-                    $jenis = strtolower($row->jenis);
-                    if (str_contains($jenis, 'mou')) {
-                        $mou += $row->count;
-                    } elseif (str_contains($jenis, 'moa')) {
-                        $moa += $row->count;
-                    } elseif (str_contains($jenis, 'ia')) {
-                        $ia += $row->count;
-                    }
-                }
-            }
-
-            return [
-                'mou_count' => $mou,
-                'moa_count' => $moa,
-                'ia_count' => $ia,
-                'total_count' => $mou + $moa + $ia
-            ];
-        };
-
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get()->map(function ($jurusan) use ($getCounts) {
-            $counts = $getCounts('jurusan', $jurusan->id);
-            $jurusan->mou_count = $counts['mou_count'];
-            $jurusan->moa_count = $counts['moa_count'];
-            $jurusan->ia_count = $counts['ia_count'];
-            $jurusan->total_count = $counts['total_count'];
             return $jurusan;
         });
 
-        $upas = Upa::orderBy('nama_upa')->get()->map(function ($upa) use ($getCounts) {
-            $counts = $getCounts('upa', $upa->id);
-            $upa->mou_count = $counts['mou_count'];
-            $upa->moa_count = $counts['moa_count'];
-            $upa->ia_count = $counts['ia_count'];
-            $upa->total_count = $counts['total_count'];
+        $upas = Upa::orderBy('nama_upa')->get()->map(function ($upa) {
+            $baseQuery = Cooperation::query()->where(function ($q) use ($upa) {
+                $q->where('upa_id', $upa->id)
+                  ->orWhereHas('upas', fn ($sq) => $sq->whereKey($upa->id));
+            });
+
+            $upa->mou_count = (clone $baseQuery)->where('jenis', 'like', '%MoU%')->count();
+            $upa->moa_count = (clone $baseQuery)->where('jenis', 'like', '%MoA%')->count();
+            $upa->ia_count  = (clone $baseQuery)->where('jenis', 'like', '%IA%')->where('jenis', 'not like', '%MoA%')->count();
+            $upa->total_count = $upa->mou_count + $upa->moa_count + $upa->ia_count;
+
             return $upa;
         });
 
-        $pusats = Pusat::orderBy('nama_pusat')->get()->map(function ($pusat) use ($getCounts) {
-            $counts = $getCounts('pusat', $pusat->id);
-            $pusat->mou_count = $counts['mou_count'];
-            $pusat->moa_count = $counts['moa_count'];
-            $pusat->ia_count = $counts['ia_count'];
-            $pusat->total_count = $counts['total_count'];
+        $pusats = Pusat::orderBy('nama_pusat')->get()->map(function ($pusat) {
+            $baseQuery = Cooperation::query()->where(function ($q) use ($pusat) {
+                $q->where('pusat_id', $pusat->id)
+                  ->orWhereHas('pusats', fn ($sq) => $sq->whereKey($pusat->id));
+            });
+
+            $pusat->mou_count = (clone $baseQuery)->where('jenis', 'like', '%MoU%')->count();
+            $pusat->moa_count = (clone $baseQuery)->where('jenis', 'like', '%MoA%')->count();
+            $pusat->ia_count  = (clone $baseQuery)->where('jenis', 'like', '%IA%')->where('jenis', 'not like', '%MoA%')->count();
+            $pusat->total_count = $pusat->mou_count + $pusat->moa_count + $pusat->ia_count;
+
             return $pusat;
         });
 
@@ -1343,18 +1326,17 @@ class PusatPageController extends Controller
         if ($request->filled('tipe_pelaksana') && $request->tipe_pelaksana !== 'all') {
             if ($request->tipe_pelaksana === 'instansi') {
                 $query->where('jenis', 'like', '%MoU%')
-                    ->where(function ($typeQuery) {
-                        $typeQuery->whereNull('tipe_pelaksana')
-                            ->orWhere('tipe_pelaksana', '');
-                    })
                     ->whereNull('jurusan_id')
                     ->whereNull('upa_id')
-                    ->whereNull('pusat_id');
+                    ->whereNull('pusat_id')
+                    ->whereDoesntHave('jurusans')
+                    ->whereDoesntHave('upas')
+                    ->whereDoesntHave('pusats');
             } else {
                 match ($request->tipe_pelaksana) {
-                    'jurusan' => $query->whereNotNull('jurusan_id'),
-                    'upa'     => $query->whereNotNull('upa_id'),
-                    'pusat'   => $query->whereNotNull('pusat_id'),
+                    'jurusan' => $query->where(fn ($q) => $q->whereNotNull('jurusan_id')->orWhereHas('jurusans')),
+                    'upa'     => $query->where(fn ($q) => $q->whereNotNull('upa_id')->orWhereHas('upas')),
+                    'pusat'   => $query->where(fn ($q) => $q->whereNotNull('pusat_id')->orWhereHas('pusats')),
                     default   => null,
                 };
             }
@@ -1368,10 +1350,18 @@ class PusatPageController extends Controller
             });
         }
         if ($request->filled('upa_id') && $request->upa_id !== 'all') {
-            $query->where('upa_id', $request->upa_id);
+            $upaId = (int) $request->upa_id;
+            $query->where(function ($upaQuery) use ($upaId) {
+                $upaQuery->where('upa_id', $upaId)
+                    ->orWhereHas('upas', fn ($relationQuery) => $relationQuery->whereKey($upaId));
+            });
         }
         if ($request->filled('pusat_id') && $request->pusat_id !== 'all') {
-            $query->where('pusat_id', $request->pusat_id);
+            $pusatId = (int) $request->pusat_id;
+            $query->where(function ($pusatQuery) use ($pusatId) {
+                $pusatQuery->where('pusat_id', $pusatId)
+                    ->orWhereHas('pusats', fn ($relationQuery) => $relationQuery->whereKey($pusatId));
+            });
         }
         // Filter status cocok dengan nilai ENUM DB: aktif | proses | dalam perpanjangan | kadarluarsa | tidak aktif
         if ($request->filled('status') && $request->status !== 'all') {
