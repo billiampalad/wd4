@@ -216,12 +216,13 @@
                     </div>
                 </div>
 
-                {{-- 4. Search Input --}}
+                {{-- 4. Pencarian Teks --}}
                 <div class="rfc-group">
                     <label>Cari Mahasiswa</label>
                     <div class="rfc-input-wrap">
-                        <i class="fas fa-search"></i>
-                        <input type="text" x-model="searchQuery" class="rfc-input" placeholder="Cari nama / NIM / program...">
+                        <i class="fas fa-search rfc-input-icon"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Cari nama / NIM / program..."
+                            class="rfc-input">
                     </div>
                 </div>
             </div>
