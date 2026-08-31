@@ -32,7 +32,7 @@ class AlumniMitraController extends Controller
      */
     public function create()
     {
-        $mitras = Mitra::where('status_aktif', true)->get();
+        $mitras = Mitra::orderBy('nama_mitra')->get();
         return view('auth.layout.prodi.alumni.create', compact('mitras'));
     }
 

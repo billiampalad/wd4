@@ -36,7 +36,7 @@
     @if (session('error'))
         <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
     @endif
-    @if ($errors->any())
+    @if (isset($errors) && $errors->any())
         <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
 
@@ -114,61 +114,17 @@
                 <span>Kegiatan Kerja Sama</span>
             </a>
 
-            @php
-                $isPenempatanActive = request()->routeIs('prodi.penempatan.*');
-            @endphp
-            <div id="penempatanParent" class="sidebar-dropdown"
-                x-data="{ open: {{ $isPenempatanActive ? 'true' : 'false' }} }"
-                style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="penempatanBtn" class="menu-item {{ $isPenempatanActive ? 'active' : '' }}"
-                    :class="{ 'submenu-open': open }"
-                    @click="open = !open"
-                    style="margin:0; cursor: pointer;">
-                    <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
-                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Mahasiswa & Magang</span>
-                    <i class="fas fa-chevron-down menu-chevron"></i>
-                </div>
-                <div class="submenu" :class="{ 'open': open }" id="penempatanSub">
-                    <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('prodi.penempatan.index') ? 'active' : '' }}"
-                            href="{{ route('prodi.penempatan.index') }}">
-                            <span class="submenu-dot"></span><span>Daftar Penempatan</span>
-                        </a>
-                        <a class="submenu-item {{ request()->routeIs('prodi.penempatan.create') ? 'active' : '' }}"
-                            href="{{ route('prodi.penempatan.create') }}">
-                            <span class="submenu-dot"></span><span>Tambah Penempatan</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <a class="menu-item {{ request()->routeIs('prodi.penempatan.*') ? 'active' : '' }}"
+                href="{{ route('prodi.penempatan.index') }}">
+                <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
+                <span>Mahasiswa & Magang</span>
+            </a>
 
-            @php
-                $isAlumniActive = request()->routeIs('prodi.alumni.*');
-            @endphp
-            <div id="alumniParent" class="sidebar-dropdown"
-                x-data="{ open: {{ $isAlumniActive ? 'true' : 'false' }} }"
-                style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="alumniBtn" class="menu-item {{ $isAlumniActive ? 'active' : '' }}"
-                    :class="{ 'submenu-open': open }"
-                    @click="open = !open"
-                    style="margin:0; cursor: pointer;">
-                    <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
-                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Tracking Lulusan</span>
-                    <i class="fas fa-chevron-down menu-chevron"></i>
-                </div>
-                <div class="submenu" :class="{ 'open': open }" id="alumniSub">
-                    <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('prodi.alumni.index') ? 'active' : '' }}"
-                            href="{{ route('prodi.alumni.index') }}">
-                            <span class="submenu-dot"></span><span>Data Alumni Bekerja</span>
-                        </a>
-                        <a class="submenu-item {{ request()->routeIs('prodi.alumni.create') ? 'active' : '' }}"
-                            href="{{ route('prodi.alumni.create') }}">
-                            <span class="submenu-dot"></span><span>Tambah Data Alumni</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <a class="menu-item {{ request()->routeIs('prodi.alumni.*') ? 'active' : '' }}"
+                href="{{ route('prodi.alumni.index') }}">
+                <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
+                <span>Tracking Lulusan</span>
+            </a>
 
             <a class="menu-item" href="#">
                 <div class="menu-icon"><i class="fas fa-chart-pie"></i></div>

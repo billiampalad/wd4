@@ -233,28 +233,6 @@ function initDashboard() {
 
     /* ─ Sidebar Submenus ─ */
     function initSidebarSubmenus() {
-        const submenus = [
-            { btn: 'dataMasterBtn', sub: 'dataMasterSub' },
-            { btn: 'kerjasamaBtn', sub: 'kerjasamaSub' },
-            { btn: 'analitikBtn', sub: 'analitikSub' },
-            { btn: 'referensiBtn', sub: 'referensiSub' },
-            { btn: 'penempatanBtn', sub: 'penempatanSub' },
-            { btn: 'alumniBtn', sub: 'alumniSub' }
-        ];
-
-        submenus.forEach(item => {
-            const btn = document.getElementById(item.btn);
-            const sub = document.getElementById(item.sub);
-            if (btn && sub) {
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    btn.classList.toggle('submenu-open');
-                    sub.classList.toggle('open');
-                };
-            }
-        });
-
-        // Auto-bind all .sidebar-dropdown elements to ensure future-proof dropdown handling
         document.querySelectorAll('.sidebar-dropdown').forEach(parent => {
             const btn = parent.querySelector('.menu-item');
             const sub = parent.querySelector('.submenu');

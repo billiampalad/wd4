@@ -431,7 +431,7 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
     Route::get('/prodi/data-kerjasama', [\App\Http\Controllers\Prodi\KerjasamaProdiController::class, 'index'])->name('prodi.dkerjasama');
 
     // ─── Phase 5: Penempatan Mahasiswa (UC20) ──────────────
-    Route::resource('penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
+    Route::resource('prodi/penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
 
     // ─── Phase 7: Tracking Lulusan (UC32) ──────────────────
     // Daftarkan index secara eksplisit terlebih dahulu agar terdefinisi dengan benar
