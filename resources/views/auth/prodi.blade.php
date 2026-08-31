@@ -26,6 +26,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
 <body>
@@ -171,6 +174,7 @@
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/kerjasama/repositori.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/auth/prodi/dashboard.js') }}" data-turbo-track="reload"></script>
 </body>
 
