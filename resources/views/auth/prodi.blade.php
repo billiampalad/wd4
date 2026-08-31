@@ -118,14 +118,17 @@
                 $isPenempatanActive = request()->routeIs('prodi.penempatan.*');
             @endphp
             <div id="penempatanParent" class="sidebar-dropdown"
+                x-data="{ open: {{ $isPenempatanActive ? 'true' : 'false' }} }"
                 style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="penempatanBtn" class="menu-item {{ $isPenempatanActive ? 'active submenu-open' : '' }}"
+                <div id="penempatanBtn" class="menu-item {{ $isPenempatanActive ? 'active' : '' }}"
+                    :class="{ 'submenu-open': open }"
+                    @click="open = !open"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Mahasiswa & Magang</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
-                <div class="submenu {{ $isPenempatanActive ? 'open' : '' }}" id="penempatanSub">
+                <div class="submenu" :class="{ 'open': open }" id="penempatanSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('prodi.penempatan.index') ? 'active' : '' }}"
                             href="{{ route('prodi.penempatan.index') }}">
@@ -143,14 +146,17 @@
                 $isAlumniActive = request()->routeIs('prodi.alumni.*');
             @endphp
             <div id="alumniParent" class="sidebar-dropdown"
+                x-data="{ open: {{ $isAlumniActive ? 'true' : 'false' }} }"
                 style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="alumniBtn" class="menu-item {{ $isAlumniActive ? 'active submenu-open' : '' }}"
+                <div id="alumniBtn" class="menu-item {{ $isAlumniActive ? 'active' : '' }}"
+                    :class="{ 'submenu-open': open }"
+                    @click="open = !open"
                     style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-briefcase"></i></div>
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Tracking Lulusan</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
-                <div class="submenu {{ $isAlumniActive ? 'open' : '' }}" id="alumniSub">
+                <div class="submenu" :class="{ 'open': open }" id="alumniSub">
                     <div class="submenu-inner">
                         <a class="submenu-item {{ request()->routeIs('prodi.alumni.index') ? 'active' : '' }}"
                             href="{{ route('prodi.alumni.index') }}">
@@ -169,11 +175,11 @@
                 <span>Evaluasi & Laporan</span>
             </a>
 
-            <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
+            <!-- <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
             <a class="menu-item" href="mailto:admin@polimdo.ac.id">
                 <div class="menu-icon"><i class="fas fa-headset"></i></div>
                 <span>Bantuan / Hubungi Admin</span>
-            </a>
+            </a> -->
         </aside>
 
         <!-- Sidebar Toggle (Floating on Border) -->
