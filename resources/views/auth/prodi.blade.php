@@ -115,7 +115,7 @@
             </a>
 
             <a class="menu-item {{ request()->routeIs('prodi.penempatan.*') ? 'active' : '' }}"
-                href="{{ route('prodi.penempatan.index') }}">
+                href="{{ route('prodi.penempatan.mahasiswa-magang') }}">
                 <div class="menu-icon"><i class="fas fa-user-graduate"></i></div>
                 <span>Mahasiswa & Magang</span>
             </a>
@@ -150,8 +150,10 @@
                 @include('auth.layout.prodi.dashboard')
             @elseif (request()->routeIs('prodi.dkerjasama', 'prodi.kerjasama.*'))
                 @include('auth.layout.prodi.dkerjasama')
-            @elseif (request()->routeIs('prodi.penempatan.*') || request()->routeIs('prodi.alumni.*'))
-                @include('auth.layout.prodi.index')
+            @elseif (request()->routeIs('prodi.penempatan.*', 'prodi.mamag.*'))
+                @include('auth.layout.prodi.mamag.index')
+            @elseif (request()->routeIs('prodi.alumni.*'))
+                @include('auth.layout.prodi.alumni.index')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
