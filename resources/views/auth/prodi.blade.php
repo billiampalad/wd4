@@ -108,7 +108,8 @@
                 <span>Beranda</span>
             </a>
 
-            <a class="menu-item" href="#">
+            <a class="menu-item {{ request()->routeIs('prodi.dkerjasama', 'prodi.kerjasama.*') ? 'active' : '' }}"
+                href="{{ route('prodi.dkerjasama') }}">
                 <div class="menu-icon"><i class="fas fa-handshake"></i></div>
                 <span>Kegiatan Kerja Sama</span>
             </a>
@@ -185,6 +186,8 @@
         @if (!View::hasSection('content'))
             @if (request()->routeIs('prodi.dashboard'))
                 @include('auth.layout.prodi.dashboard')
+            @elseif (request()->routeIs('prodi.dkerjasama', 'prodi.kerjasama.*'))
+                @include('auth.layout.prodi.dkerjasama')
             @elseif (request()->routeIs('prodi.penempatan.*') || request()->routeIs('prodi.alumni.*'))
                 @include('auth.layout.prodi.index')
             @else

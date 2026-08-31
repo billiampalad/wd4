@@ -427,6 +427,9 @@ Route::middleware(['auth', 'role:pusat'])->group(function () {
 Route::middleware(['auth', 'role:prodi'])->group(function () {
     Route::get('/prodi', [DashboardController::class, 'prodi'])->name('prodi.dashboard');
 
+    // ─── Data Kerjasama Prodi (UC19/UC28) ──────────────────
+    Route::get('/prodi/data-kerjasama', [\App\Http\Controllers\Prodi\KerjasamaProdiController::class, 'index'])->name('prodi.dkerjasama');
+
     // ─── Phase 5: Penempatan Mahasiswa (UC20) ──────────────
     Route::resource('penempatan', \App\Http\Controllers\Prodi\PenempatanMahasiswaController::class, ['as' => 'prodi']);
 
