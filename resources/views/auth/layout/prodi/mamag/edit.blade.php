@@ -2,14 +2,16 @@
 
 @section('content')
     @php
-        $pembimbingInternal = $penempatan->pembimbings?->where('tipe', 'Internal')->first();
-        $pembimbingEksternal = $penempatan->pembimbings?->where('tipe', 'Eksternal')->first();
+        $pembimbingInternal = $penempatan->pembimbings?->first(fn($p) => strtolower($p->tipe ?? '') === 'internal') 
+            ?? $penempatan->pembimbings?->where('tipe', 'Internal')->first();
+        $pembimbingEksternal = $penempatan->pembimbings?->first(fn($p) => strtolower($p->tipe ?? '') === 'eksternal') 
+            ?? $penempatan->pembimbings?->where('tipe', 'Eksternal')->first();
 
         $valMulai = old('periode_mulai', $penempatan->periode_mulai ? \Carbon\Carbon::parse($penempatan->periode_mulai)->format('Y-m-d') : '');
         $valSelesai = old('periode_selesai', $penempatan->periode_selesai ? \Carbon\Carbon::parse($penempatan->periode_selesai)->format('Y-m-d') : '');
-        $valMhsId = old('mahasiswa_id', $penempatan->mahasiswa_id);
-        $valKegiatanId = old('kegiatan_id', $penempatan->kegiatan_id);
-        $valMitraId = old('mitra_id', $penempatan->mitra_id);
+        $valMhsId = (string) old('mahasiswa_id', $penempatan->mahasiswa_id ?? '');
+        $valKegiatanId = (string) old('kegiatan_id', $penempatan->kegiatan_id ?? '');
+        $valMitraId = (string) old('mitra_id', $penempatan->mitra_id ?? '');
 
         $valNamaInternal = old('nama_pembimbing_internal', $pembimbingInternal->nama_pembimbing ?? '');
         $valKontakInternal = old('kontak_pembimbing_internal', $pembimbingInternal->kontak ?? '');
@@ -34,7 +36,7 @@
                     <div class="ud-title-copy">
                         <h2 class="ud-title" id="pageTitle">Edit Penempatan Mahasiswa</h2>
                         <p class="ud-subtitle" id="pageDesc">
-                            Perbarui informasi kegiatan, periode, dan penetapan pembimbing mahasiswa.
+                            Perbarui informasi kegiatan, periode pelaksanaan, dan penetapan dosen serta pembimbing mitra.
                         </p>
                     </div>
                 </div>
@@ -62,29 +64,29 @@
             </div>
         @endif
 
-        <div class="card um-card dk-card" style="width: 100%; border-radius: 16px; overflow: visible;">
+        <div class="card um-card dk-card" style="width: 100%; max-width: 100%; box-sizing: border-box; border-radius: 16px; overflow: visible;">
             <div class="card-header um-header dk-card-header">
                 <div class="um-title dk-card-title">
                     <span class="dk-title-icon"><i class="fas fa-file-pen"></i></span>
                     <span>
-                        <strong>Edit Formulir Penempatan</strong>
+                        <strong>Formulir Edit Penempatan Mahasiswa</strong>
                         <small>Perbarui data penempatan mahasiswa, mitra industri, periode, dan pembimbing terkait.</small>
                     </span>
                 </div>
             </div>
 
-            <div class="card-body dk-card-body" style="padding: 0;">
-                <form action="{{ route('prodi.penempatan.update', $penempatan->id) }}" method="POST">
+            <div class="card-body dk-card-body" style="padding: 0; width: 100%; box-sizing: border-box; overflow: visible;">
+                <form action="{{ route('prodi.penempatan.update', $penempatan->id) }}" method="POST" style="width: 100%; box-sizing: border-box;">
                     @csrf
                     @method('PUT')
 
-                    {{-- ═══ TWO-COLUMN TOP LAYOUT (Identik dengan unit/create_kerjasama.blade.php) ═══ --}}
-                    <div style="display: grid; grid-template-columns: 340px 1fr; gap: 24px; padding: 24px;">
+                    {{-- ═══ TWO-COLUMN TOP LAYOUT (Width Constrained & Non-Overflowing) ═══ --}}
+                    <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; padding: 24px; width: 100%; max-width: 100%; box-sizing: border-box;">
 
                         {{-- ══ LEFT COLUMN: Masa Berlaku (Sticky) ══ --}}
-                        <div style="position: sticky; top: 24px; align-self: start;">
+                        <div style="position: sticky; top: 24px; align-self: start; min-width: 0; max-width: 100%; box-sizing: border-box;">
                             <div
-                                style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
+                                style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; width: 100%; box-sizing: border-box;">
                                 <div x-data="{ showMasaBerlaku: true }">
                                     {{-- Card Header --}}
                                     <div @click="showMasaBerlaku = !showMasaBerlaku"
@@ -93,30 +95,30 @@
                                             style="width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, #059669, #10b981); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; box-shadow: 0 3px 8px rgba(5,150,105,0.25);">
                                             <i class="fas fa-clock"></i>
                                         </div>
-                                        <div style="flex: 1;">
+                                        <div style="flex: 1; min-width: 0;">
                                             <h4
                                                 style="margin: 0; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;">
                                                 Masa Berlaku
                                             </h4>
                                         </div>
                                         <i class="fas fa-chevron-down"
-                                            style="font-size: 10px; color: var(--text-sub); transition: transform 0.3s ease;"
+                                            style="font-size: 10px; color: var(--text-sub); transition: transform 0.3s ease; flex-shrink: 0;"
                                             :style="showMasaBerlaku ? 'transform: rotate(180deg)' : ''"></i>
                                     </div>
 
                                     {{-- Card Body --}}
-                                    <div x-show="showMasaBerlaku" x-collapse.duration.300ms style="padding: 18px;">
+                                    <div x-show="showMasaBerlaku" x-collapse.duration.300ms style="padding: 18px; width: 100%; box-sizing: border-box;">
 
                                         {{-- ── Periode Mulai ── --}}
                                         <div style="margin-bottom: 16px;">
                                             <div class="mc-group">
                                                 <label class="mc-label">Periode Mulai <span class="mc-req">*</span></label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-calendar-plus mc-icon-left"
                                                         style="color: #059669;"></i>
                                                     <input type="date" name="periode_mulai"
                                                         value="{{ $valMulai }}" required
-                                                        class="mc-input" />
+                                                        class="mc-input" style="width: 100%; box-sizing: border-box;" />
                                                 </div>
                                             </div>
                                         </div>
@@ -125,11 +127,11 @@
                                         <div style="margin-bottom: 16px;">
                                             <div class="mc-group">
                                                 <label class="mc-label">Periode Selesai</label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-calendar-check mc-icon-left"
                                                         style="color: #4f46e5;"></i>
                                                     <input type="date" name="periode_selesai"
-                                                        value="{{ $valSelesai }}" class="mc-input" />
+                                                        value="{{ $valSelesai }}" class="mc-input" style="width: 100%; box-sizing: border-box;" />
                                                 </div>
                                             </div>
                                         </div>
@@ -141,10 +143,10 @@
 
                                         {{-- Panduan Singkat --}}
                                         <div
-                                            style="background: rgba(79,70,229,0.04); border: 1px dashed rgba(79,70,229,0.25); border-radius: 12px; padding: 14px;">
+                                            style="background: rgba(79,70,229,0.04); border: 1px dashed rgba(79,70,229,0.25); border-radius: 12px; padding: 14px; width: 100%; box-sizing: border-box;">
                                             <div style="display: flex; align-items: flex-start; gap: 10px;">
                                                 <i class="fas fa-circle-info"
-                                                    style="color: #4f46e5; margin-top: 2px; font-size: 14px;"></i>
+                                                    style="color: #4f46e5; margin-top: 2px; font-size: 14px; flex-shrink: 0;"></i>
                                                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.5;">
                                                     Pastikan mahasiswa, mitra industri, dan dosen pembimbing telah terdaftar
                                                     aktif pada pangkalan data sistem.
@@ -157,15 +159,15 @@
                             </div>
                         </div>
 
-                        {{-- ══ RIGHT COLUMN: Form Utama ══ --}}
-                        <div>
-                            <div class="mc-body" style="padding: 0;">
+                        {{-- ══ RIGHT COLUMN: Form Utama (Strict min-width: 0 to prevent overflow) ══ --}}
+                        <div style="min-width: 0; width: 100%; max-width: 100%; box-sizing: border-box;">
+                            <div class="mc-body" style="padding: 0; width: 100%; max-width: 100%; box-sizing: border-box;">
 
                                 {{-- ── SEKSI 1: MAHASISWA, KEGIATAN & MITRA ── --}}
-                                <div style="margin-bottom: 24px;">
+                                <div style="margin-bottom: 24px; width: 100%; box-sizing: border-box;">
                                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
                                         <div
-                                            style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #4f46e5, #818cf8);">
+                                            style="width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, #4f46e5, #818cf8); flex-shrink: 0;">
                                         </div>
                                         <span
                                             style="font-weight: 700; font-size: 14px; color: var(--text); letter-spacing: 0.01em;">
@@ -173,9 +175,9 @@
                                         </span>
                                     </div>
 
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+                                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%; box-sizing: border-box;">
                                         {{-- 1. Mahasiswa (Searchable Alpine Dropdown) --}}
-                                        <div class="mc-group" x-data="{
+                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
                                             open: false,
                                             search: '',
                                             selectedId: '{{ $valMhsId }}',
@@ -197,40 +199,40 @@
                                             <input type="hidden" name="mahasiswa_id" :value="selectedId" required>
 
                                             <div class="alpine-dropdown" @click.outside="open = false"
-                                                style="position: relative; width: 100%;">
+                                                style="position: relative; width: 100%; box-sizing: border-box;">
                                                 <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
-                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; width: 100%; box-sizing: border-box;">
                                                     <div
-                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;">
                                                         <div
                                                             style="width: 28px; height: 28px; border-radius: 6px; background: rgba(79,70,229,0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
                                                             <i class="fas fa-user-graduate"></i>
                                                         </div>
                                                         <div
-                                                            style="display: flex; flex-direction: column; min-width: 0; line-height: 1.2;">
+                                                            style="display: flex; flex-direction: column; min-width: 0; line-height: 1.2; overflow: hidden;">
                                                             <span x-show="selectedItem"
                                                                 x-text="selectedItem ? selectedItem.name : ''"
                                                                 style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
                                                             <small x-show="selectedItem"
                                                                 x-text="selectedItem ? 'NIM: ' + selectedItem.nim : ''"
-                                                                style="font-size: 11px; color: var(--text-sub);"></small>
+                                                                style="font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></small>
                                                             <span x-show="!selectedItem"
                                                                 style="color: #9ca3af; font-size: 13px;">— Pilih Mahasiswa
                                                                 —</span>
                                                         </div>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
-                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s;"
+                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s; flex-shrink: 0;"
                                                         :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                                 </div>
 
                                                 <div class="ad-menu" x-show="open" x-transition
-                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);">
+                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 100%; box-sizing: border-box;">
                                                     <div
                                                         style="padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
                                                         <input type="text" x-model="search"
                                                             placeholder="Cari nama atau NIM..."
-                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text);"
+                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); box-sizing: border-box;"
                                                             @click.stop>
                                                     </div>
                                                     <template x-for="item in filteredItems" :key="item.id">
@@ -238,13 +240,13 @@
                                                             :class="{'selected': String(selectedId) === String(item.id)}"
                                                             @click="selectedId = item.id; open = false;"
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
-                                                            <div>
+                                                            <div style="min-width: 0; overflow: hidden; padding-right: 8px;">
                                                                 <strong x-text="item.name"
-                                                                    style="display: block; font-size: 13px; color: var(--text);"></strong>
+                                                                    style="display: block; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></strong>
                                                                 <small x-text="'NIM: ' + item.nim"
                                                                     style="color: var(--text-sub); font-size: 11px;"></small>
                                                             </div>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px;"
+                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -257,7 +259,7 @@
                                         </div>
 
                                         {{-- 2. Kegiatan Kerja Sama (Searchable Alpine Dropdown) --}}
-                                        <div class="mc-group" x-data="{
+                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
                                             open: false,
                                             search: '',
                                             selectedId: '{{ $valKegiatanId }}',
@@ -280,39 +282,39 @@
                                             <input type="hidden" name="kegiatan_id" :value="selectedId" required>
 
                                             <div class="alpine-dropdown" @click.outside="open = false"
-                                                style="position: relative; width: 100%;">
+                                                style="position: relative; width: 100%; box-sizing: border-box;">
                                                 <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
-                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; width: 100%; box-sizing: border-box;">
                                                     <div
-                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;">
                                                         <div
                                                             style="width: 28px; height: 28px; border-radius: 6px; background: rgba(5,150,105,0.1); color: #059669; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
                                                             <i class="fas fa-file-contract"></i>
                                                         </div>
                                                         <div
-                                                            style="display: flex; flex-direction: column; min-width: 0; line-height: 1.2;">
+                                                            style="display: flex; flex-direction: column; min-width: 0; line-height: 1.2; overflow: hidden;">
                                                             <span x-show="selectedItem"
                                                                 x-text="selectedItem ? selectedItem.name : ''"
                                                                 style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
                                                             <small x-show="selectedItem"
                                                                 x-text="selectedItem ? 'Jenis: ' + selectedItem.jenis : ''"
-                                                                style="font-size: 11px; color: var(--text-sub);"></small>
+                                                                style="font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></small>
                                                             <span x-show="!selectedItem"
                                                                 style="color: #9ca3af; font-size: 13px;">— Pilih Kegiatan
                                                                 —</span>
                                                         </div>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
-                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s;"
+                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s; flex-shrink: 0;"
                                                         :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                                 </div>
 
                                                 <div class="ad-menu" x-show="open" x-transition
-                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);">
+                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 100%; box-sizing: border-box;">
                                                     <div
                                                         style="padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
                                                         <input type="text" x-model="search" placeholder="Cari kegiatan..."
-                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text);"
+                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); box-sizing: border-box;"
                                                             @click.stop>
                                                     </div>
                                                     <template x-for="item in filteredItems" :key="item.id">
@@ -320,13 +322,13 @@
                                                             :class="{'selected': String(selectedId) === String(item.id)}"
                                                             @click="selectedId = item.id; open = false;"
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
-                                                            <div>
+                                                            <div style="min-width: 0; overflow: hidden; padding-right: 8px;">
                                                                 <strong x-text="item.name"
-                                                                    style="display: block; font-size: 13px; color: var(--text);"></strong>
+                                                                    style="display: block; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></strong>
                                                                 <small x-text="'Jenis: ' + item.jenis"
                                                                     style="color: var(--text-sub); font-size: 11px;"></small>
                                                             </div>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px;"
+                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -339,7 +341,7 @@
                                         </div>
 
                                         {{-- 3. Mitra Penempatan (DUDIKA) --}}
-                                        <div class="mc-group" style="grid-column: span 2;" x-data="{
+                                        <div class="mc-group" style="grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
                                             open: false,
                                             search: '',
                                             selectedId: '{{ $valMitraId }}',
@@ -362,34 +364,34 @@
                                             <input type="hidden" name="mitra_id" :value="selectedId" required>
 
                                             <div class="alpine-dropdown" @click.outside="open = false"
-                                                style="position: relative; width: 100%;">
+                                                style="position: relative; width: 100%; box-sizing: border-box;">
                                                 <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
-                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                                                    style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; width: 100%; box-sizing: border-box;">
                                                     <div
-                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+                                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;">
                                                         <div
                                                             style="width: 28px; height: 28px; border-radius: 6px; background: rgba(217,119,6,0.1); color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;">
                                                             <i class="fas fa-building"></i>
                                                         </div>
                                                         <span x-show="selectedItem"
                                                             x-text="selectedItem ? selectedItem.name : ''"
-                                                            style="font-weight: 700; font-size: 13px; color: var(--text);"></span>
+                                                            style="font-weight: 700; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
                                                         <span x-show="!selectedItem"
                                                             style="color: #9ca3af; font-size: 13px;">— Pilih Mitra Industri
                                                             —</span>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
-                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s;"
+                                                        style="font-size: 10px; color: #9ca3af; transition: 0.3s; flex-shrink: 0;"
                                                         :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                                 </div>
 
                                                 <div class="ad-menu" x-show="open" x-transition
-                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);">
+                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 100%; box-sizing: border-box;">
                                                     <div
                                                         style="padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
                                                         <input type="text" x-model="search"
                                                             placeholder="Cari nama mitra industri..."
-                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text);"
+                                                            style="width: 100%; padding: 8px 12px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); box-sizing: border-box;"
                                                             @click.stop>
                                                     </div>
                                                     <template x-for="item in filteredItems" :key="item.id">
@@ -398,8 +400,8 @@
                                                             @click="selectedId = item.id; open = false;"
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
                                                             <strong x-text="item.name"
-                                                                style="font-size: 13px; color: var(--text);"></strong>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px;"
+                                                                style="font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;"></strong>
+                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -415,13 +417,13 @@
 
                                 {{-- ── SEKSI 2: PENETAPAN PEMBIMBING ── --}}
                                 <div
-                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 24px;">
+                                    style="background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 24px; width: 100%; box-sizing: border-box;">
                                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
                                         <div
-                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                                            style="width: 32px; height: 32px; border-radius: 8px; background: rgba(79,70,229,0.1); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">
                                             <i class="fas fa-users-rectangle"></i>
                                         </div>
-                                        <div>
+                                        <div style="min-width: 0;">
                                             <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: var(--text);">
                                                 Penetapan Dosen &amp; Pembimbing Industri
                                             </h4>
@@ -431,69 +433,69 @@
                                         </div>
                                     </div>
 
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; box-sizing: border-box;">
                                         {{-- Pembimbing Internal (Dosen) --}}
                                         <div
-                                            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                                            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; width: 100%; box-sizing: border-box;">
                                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
                                                 <i class="fas fa-chalkboard-user"
-                                                    style="color: #4f46e5; font-size: 13px;"></i>
+                                                    style="color: #4f46e5; font-size: 13px; flex-shrink: 0;"></i>
                                                 <span
                                                     style="font-weight: 700; font-size: 13px; color: var(--text);">Pembimbing
                                                     Internal (Dosen)</span>
                                             </div>
 
-                                            <div class="mc-group" style="margin-bottom: 12px;">
+                                            <div class="mc-group" style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Nama Dosen Pembimbing <span
                                                         class="mc-req">*</span></label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-user-tie mc-icon-left"></i>
                                                     <input type="text" name="nama_pembimbing_internal"
                                                         value="{{ $valNamaInternal }}" required
-                                                        placeholder="Contoh: Dr. Ir. Nama Dosen, M.T." class="mc-input">
+                                                        placeholder="Contoh: Dr. Ir. Nama Dosen, M.T." class="mc-input" style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
 
-                                            <div class="mc-group">
+                                            <div class="mc-group" style="width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Kontak / No. WhatsApp Dosen</label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fab fa-whatsapp mc-icon-left" style="color: #10b981;"></i>
                                                     <input type="text" name="kontak_pembimbing_internal"
                                                         value="{{ $valKontakInternal }}"
-                                                        placeholder="08xxxxxxxxxx" class="mc-input">
+                                                        placeholder="08xxxxxxxxxx" class="mc-input" style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
                                         </div>
 
                                         {{-- Pembimbing Eksternal (Mitra) --}}
                                         <div
-                                            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px;">
+                                            style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; width: 100%; box-sizing: border-box;">
                                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
                                                 <i class="fas fa-building-user"
-                                                    style="color: #059669; font-size: 13px;"></i>
+                                                    style="color: #059669; font-size: 13px; flex-shrink: 0;"></i>
                                                 <span
                                                     style="font-weight: 700; font-size: 13px; color: var(--text);">Pembimbing
                                                     Eksternal (Mitra)</span>
                                             </div>
 
-                                            <div class="mc-group" style="margin-bottom: 12px;">
+                                            <div class="mc-group" style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Nama Pembimbing Mitra <span
                                                         class="mc-req">*</span></label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-user-check mc-icon-left"></i>
                                                     <input type="text" name="nama_pembimbing_eksternal"
                                                         value="{{ $valNamaEksternal }}" required
-                                                        placeholder="Nama Pembimbing di Instansi/Mitra" class="mc-input">
+                                                        placeholder="Nama Pembimbing di Instansi/Mitra" class="mc-input" style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
 
-                                            <div class="mc-group">
+                                            <div class="mc-group" style="width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Kontak / Email Pembimbing Mitra</label>
-                                                <div class="mc-input-wrap">
+                                                <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-envelope mc-icon-left" style="color: #6366f1;"></i>
                                                     <input type="text" name="kontak_pembimbing_eksternal"
                                                         value="{{ $valKontakEksternal }}"
-                                                        placeholder="Email / No. Telp" class="mc-input">
+                                                        placeholder="Email / No. Telp" class="mc-input" style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
                                         </div>
@@ -502,7 +504,7 @@
 
                                 {{-- ── FOOTER ACTIONS ── --}}
                                 <div
-                                    style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border);">
+                                    style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border); width: 100%; box-sizing: border-box;">
                                     <a href="{{ route('prodi.penempatan.index') }}" class="rfc-btn"
                                         style="background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
                                         <i class="fas fa-arrow-left"></i> Batal
