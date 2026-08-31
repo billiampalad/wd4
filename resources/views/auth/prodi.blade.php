@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <title>Prodi | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
@@ -38,7 +38,7 @@
     @if ($errors->any())
         <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
     @endif
-    
+
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
@@ -104,7 +104,7 @@
             <a class="menu-item {{ request()->routeIs('prodi.dashboard') ? 'active' : '' }}"
                 href="{{ route('prodi.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-home"></i></div>
-                <span>Dashboard Prodi</span>
+                <span>Beranda</span>
             </a>
 
             <a class="menu-item" href="#">
@@ -182,13 +182,16 @@
         <!-- Main Content -->
         @yield('content')
         @if (!View::hasSection('content'))
-            @if (request()->routeIs('prodi.dashboard') || request()->routeIs('prodi.penempatan.*') || request()->routeIs('prodi.alumni.*'))
+            @if (request()->routeIs('prodi.dashboard'))
+                @include('auth.layout.prodi.dashboard')
+            @elseif (request()->routeIs('prodi.penempatan.*') || request()->routeIs('prodi.alumni.*'))
                 @include('auth.layout.prodi.index')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">
                         <i class="fas fa-hammer" style="font-size: 64px; margin-bottom: 24px; color: #cbd5e1;"></i>
-                        <h2 style="font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Halaman Dalam Pengembangan</h2>
+                        <h2 style="font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Halaman
+                            Dalam Pengembangan</h2>
                         <p style="font-size: 16px;">Fitur untuk halaman ini sedang dibangun dan belum tersedia.</p>
                     </div>
                 </main>
@@ -201,4 +204,5 @@
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
 </body>
+
 </html>

@@ -646,35 +646,93 @@ class DashboardController
     public function prodi()
     {
         $user = Auth::user();
+        $prodiId = $user->profile->prodi_id ?? null;
 
-        // 1. Kegiatan Mahasiswa Monitoring (UC22)
-        $penempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra'])
-            // If Prodi has a relation or we just show all active students
-            ->where('status', 'Aktif')
+        // ── 1. QUERY DASAR: Semua Penempatan Mahasiswa Prodi ─────────
+        $allPenempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra', 'pembimbings'])
+            ->when($prodiId, function ($q) use ($prodiId) {
+                $q->whereHas('mahasiswa', fn($mhs) => $mhs->where('prodi_id', $prodiId));
+            })
             ->orderBy('created_at', 'desc')
             ->get();
-        
-        $totalMahasiswaAktif = $penempatans->count();
 
-        // 2. Tracking Lulusan (UC33)
-        $prodiId = $user->profile->prodi_id ?? null;
+        $totalMahasiswaAktif = $allPenempatans->where('status', 'Aktif')->count();
+        $penempatans = $allPenempatans; // backward compat for index view
+
+        // ── 2. DISTRIBUSI STATUS (Donut Chart) ──────────────────────
+        $statusDistribusi = [
+            'Aktif'      => $allPenempatans->where('status', 'Aktif')->count(),
+            'Selesai'    => $allPenempatans->where('status', 'Selesai')->count(),
+            'Dibatalkan' => $allPenempatans->where('status', 'Dibatalkan')->count(),
+        ];
+
+        // ── 3. TREND PENEMPATAN PER TAHUN (Bar Chart) ───────────────
+        $now = now();
+        $trendTahunan = ['labels' => [], 'data' => []];
+        $yearlyRaw = KegiatanMahasiswa::selectRaw('YEAR(created_at) as tahun, COUNT(*) as total')
+            ->when($prodiId, function ($q) use ($prodiId) {
+                $q->whereHas('mahasiswa', fn($mhs) => $mhs->where('prodi_id', $prodiId));
+            })
+            ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
+            ->groupBy('tahun')
+            ->orderBy('tahun')
+            ->pluck('total', 'tahun')
+            ->toArray();
+
+        for ($i = 4; $i >= 0; $i--) {
+            $yr = $now->copy()->subYears($i)->year;
+            $trendTahunan['labels'][] = (string) $yr;
+            $trendTahunan['data'][] = $yearlyRaw[$yr] ?? 0;
+        }
+
+        // ── 4. TRACKING LULUSAN (UC33) ──────────────────────────────
         $alumniQuery = Alumni::query();
         if ($prodiId) {
             $alumniQuery->where('prodi_id', $prodiId);
         }
         $totalAlumni = $alumniQuery->count();
-        
+
         $alumniBekerjaQuery = AlumniMitra::where('status', 'Aktif');
         if ($prodiId) {
-            $alumniBekerjaQuery->whereHas('alumni', function($q) use ($prodiId) {
-                $q->where('prodi_id', $prodiId);
-            });
+            $alumniBekerjaQuery->whereHas('alumni', fn($q) => $q->where('prodi_id', $prodiId));
         }
         $alumniBekerja = $alumniBekerjaQuery->count();
         $persentasePenyerapan = $totalAlumni > 0 ? round(($alumniBekerja / $totalAlumni) * 100, 2) : 0;
 
+        // ── 5. TABEL RINGKASAN: 5 Mahasiswa Terbaru ─────────────────
+        $recentPenempatans = $allPenempatans->take(5);
+
+        // ── 6. TABEL RINGKASAN: 5 Alumni Bekerja Terbaru ────────────
+        $recentAlumniQuery = AlumniMitra::with(['alumni', 'mitra'])
+            ->when($prodiId, function ($q) use ($prodiId) {
+                $q->whereHas('alumni', fn($a) => $a->where('prodi_id', $prodiId));
+            })
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // ── 7. DISTRIBUSI JENIS KEGIATAN ────────────────────────────
+        $jenisKegiatan = [];
+        foreach ($allPenempatans as $p) {
+            $namaKegiatan = $p->kegiatan->nama_kegiatan ?? 'Lainnya';
+            $jenisKegiatan[$namaKegiatan] = ($jenisKegiatan[$namaKegiatan] ?? 0) + 1;
+        }
+        arsort($jenisKegiatan);
+
         if (view()->exists('auth.prodi')) {
-            return view('auth.prodi', compact('user', 'penempatans', 'totalMahasiswaAktif', 'totalAlumni', 'alumniBekerja', 'persentasePenyerapan'));
+            return view('auth.prodi', compact(
+                'user',
+                'penempatans',
+                'totalMahasiswaAktif',
+                'totalAlumni',
+                'alumniBekerja',
+                'persentasePenyerapan',
+                'statusDistribusi',
+                'trendTahunan',
+                'recentPenempatans',
+                'recentAlumniQuery',
+                'jenisKegiatan'
+            ));
         }
         return view('auth.unit', compact('user'));
     }

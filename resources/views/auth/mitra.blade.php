@@ -103,7 +103,7 @@
             <a class="menu-item {{ request()->routeIs('mitra.dashboard') ? 'active' : '' }}"
                 href="{{ route('mitra.dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-home"></i></div>
-                <span>Dashboard</span>
+                <span>Beranda</span>
             </a>
 
             <a class="menu-item {{ request()->routeIs('mitra.dokumen.*') ? 'active' : '' }}"
@@ -130,11 +130,11 @@
                 <span>Umpan Balik & Evaluasi</span>
             </a>
 
-            <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
+            <!-- <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
             <a class="menu-item" href="mailto:admin@polimdo.ac.id">
                 <div class="menu-icon"><i class="fas fa-headset"></i></div>
                 <span>Bantuan / Hubungi Admin</span>
-            </a>
+            </a> -->
         </aside>
 
         <!-- Sidebar Toggle (Floating on Border) -->
