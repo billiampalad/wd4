@@ -97,8 +97,9 @@
         }
     }">
         {{-- ═══ FILTER DATA KERJASAMA ACCORDION (STANDAR PROYEK) ═══ --}}
-        <section class="card rfc-card" style="margin-bottom: 24px;">
-            <div class="card-header rfc-header"
+        <div class="report-filter-container"
+            style="overflow: visible !important; position: relative; z-index: 40; margin-bottom: 24px;">
+            <div class="rfc-header"
                 style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
                 @click="showFilters = !showFilters">
                 <div class="rfc-title-area">
@@ -128,11 +129,11 @@
                 x-transition:enter-end="opacity-100 transform translate-y-0"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
-                x-transition:leave-end="opacity-0 transform -translate-y-4">
+                x-transition:leave-end="opacity-0 transform -translate-y-4" style="overflow: visible !important;">
 
-                <div class="rfc-grid">
+                <div class="rfc-grid" style="overflow: visible !important;">
                     {{-- 1. Pencarian Kata Kunci --}}
-                    <div class="rfc-group">
+                    <div class="rfc-group" style="position: relative; z-index: 10;">
                         <label>Pencarian Dokumen / Mitra</label>
                         <div class="rfc-input-wrap">
                             <i class="fas fa-search rfc-input-icon"></i>
@@ -142,13 +143,14 @@
                     </div>
 
                     {{-- 2. Filter Jenis Dokumen --}}
-                    <div class="rfc-group" x-data="{
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 30;'" x-data="{
                         open: false,
                         items: [
                             { id: 'all', label: 'Semua Jenis' },
-                            { id: 'MOU', label: 'MoU (Memorandum of Understanding)' },
-                            { id: 'MOA', label: 'MoA (Memorandum of Agreement)' },
-                            { id: 'IA', label: 'IA (Implementation Arrangement)' }
+                            { id: 'MOU', label: 'MoU' },
+                            { id: 'MOA', label: 'MoA' },
+                            { id: 'IA', label: 'IA' }
                         ],
                         get selectedLabel() {
                             const found = this.items.find(i => i.id === jenisFilter);
@@ -164,7 +166,8 @@
                                 </div>
                                 <i class="fas fa-chevron-down ad-chevron" :class="{ 'rotate': open }"></i>
                             </div>
-                            <div class="ad-menu" x-show="open" x-transition>
+                            <div class="ad-menu" x-show="open" x-transition
+                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 9999; max-height: 240px; overflow-y: auto; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);">
                                 <template x-for="item in items" :key="item.id">
                                     <div class="ad-item" :class="{ 'selected': jenisFilter === item.id }"
                                         @click="jenisFilter = item.id; open = false;">
@@ -178,7 +181,8 @@
                     </div>
 
                     {{-- 3. Filter Status Berlaku --}}
-                    <div class="rfc-group" x-data="{
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 20;'" x-data="{
                         open: false,
                         items: [
                             { id: 'all', label: 'Semua Status' },
@@ -200,7 +204,8 @@
                                 </div>
                                 <i class="fas fa-chevron-down ad-chevron" :class="{ 'rotate': open }"></i>
                             </div>
-                            <div class="ad-menu" x-show="open" x-transition>
+                            <div class="ad-menu" x-show="open" x-transition
+                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 9999; max-height: 240px; overflow-y: auto; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);">
                                 <template x-for="item in items" :key="item.id">
                                     <div class="ad-item" :class="{ 'selected': statusFilter === item.id }"
                                         @click="statusFilter = item.id; open = false;">
@@ -214,7 +219,8 @@
                     </div>
 
                     {{-- 4. Filter Tingkat --}}
-                    <div class="rfc-group" x-data="{
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 10;'" x-data="{
                         open: false,
                         items: [
                             { id: 'all', label: 'Semua Tingkat' },
@@ -236,7 +242,8 @@
                                 </div>
                                 <i class="fas fa-chevron-down ad-chevron" :class="{ 'rotate': open }"></i>
                             </div>
-                            <div class="ad-menu" x-show="open" x-transition>
+                            <div class="ad-menu" x-show="open" x-transition
+                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 9999; max-height: 240px; overflow-y: auto; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);">
                                 <template x-for="item in items" :key="item.id">
                                     <div class="ad-item" :class="{ 'selected': tingkatFilter === item.id }"
                                         @click="tingkatFilter = item.id; open = false;">
@@ -257,7 +264,7 @@
                     </button>
                 </div>
             </div>
-        </section>
+        </div>
 
         {{-- ── DATA TABLE CARD ───────────────────────────────────────── --}}
         <div class="card um-card dk-card">
@@ -341,9 +348,9 @@
                                 <tr class="um-row dk-row" data-row-id="{{ $item->id }}" data-search="{{ $searchCorpus }}"
                                     data-status="{{ $filterCategory }}" data-jenis="{{ $jenisDoc }}"
                                     data-tingkat="{{ $item->tingkat ?? 'Institusi' }}" x-show="(!searchQuery || $el.dataset.search.includes(searchQuery.toLowerCase())) &&
-                                            (statusFilter === 'all' || $el.dataset.status === statusFilter) &&
-                                            (jenisFilter === 'all' || $el.dataset.jenis === jenisFilter) &&
-                                            (tingkatFilter === 'all' || $el.dataset.tingkat === tingkatFilter)">
+                                                (statusFilter === 'all' || $el.dataset.status === statusFilter) &&
+                                                (jenisFilter === 'all' || $el.dataset.jenis === jenisFilter) &&
+                                                (tingkatFilter === 'all' || $el.dataset.tingkat === tingkatFilter)">
                                     <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 14px;">
                                         <button type="button" class="dk-expand-toggle" aria-expanded="false"
                                             aria-controls="dk-detail-{{ $item->id }}" title="Lihat rincian kerjasama">
