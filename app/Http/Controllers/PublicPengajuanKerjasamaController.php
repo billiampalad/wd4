@@ -70,6 +70,15 @@ class PublicPengajuanKerjasamaController extends Controller
             'website.url' => 'Website harus berupa URL yang valid, misalnya https://contoh.com.',
         ]);
 
+        // Sesuai alur UC15: Cek jika pengajuan dari form publik dan email sudah terdaftar di sistem
+        if (!auth()->check()) {
+            if (User::where('email', $validated['email'])->exists()) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Email sudah terdaftar di sistem. Silakan login terlebih dahulu untuk mengajukan kerja sama.');
+            }
+        }
+
         DB::beginTransaction();
 
         try {
