@@ -69,6 +69,7 @@ class MitraDokumenController extends Controller
     {
         $user = Auth::user();
         $cooperation = Cooperation::with([
+            'mitra',
             'jurusans',
             'prodis',
             'upas',
@@ -82,6 +83,7 @@ class MitraDokumenController extends Controller
             'details.indikator',
             'laporanFiles',
             'pksNumbers',
+            'evaluasis.penilai',
         ])->where('mitra_id', $user->mitra_id)->findOrFail($id);
 
         return view('auth.mitra', [
