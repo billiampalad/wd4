@@ -64,6 +64,7 @@ class ReviewDokumenMitraTest extends TestCase
         ]);
 
         $response = $this->actingAs($mitraUser)->post(route('mitra.dokumen.review', $coop->id), [
+            'action' => 'revisi',
             'catatan_review' => 'Mohon tambahkan pasal mengenai kerahasiaan data.',
         ]);
 
@@ -76,6 +77,77 @@ class ReviewDokumenMitraTest extends TestCase
             'source_id' => $coop->id,
             'type' => 'review_draf',
         ]);
+    }
+
+    public function test_mitra_can_approve_draft_without_notes()
+    {
+        $roleMitra = Role::firstOrCreate(['name' => 'mitra'], ['guard_name' => 'web']);
+        $roleUpa = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
+
+        $pengusulUser = User::factory()->create([
+            'role_id' => $roleUpa->id,
+        ]);
+
+        $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Setuju Draf', 'status_akses' => 'Aktif']);
+
+        $mitraUser = User::factory()->create([
+            'role_id' => $roleMitra->id,
+            'mitra_id' => $mitra->id,
+        ]);
+
+        $coop = Cooperation::create([
+            'judul' => 'Kerjasama Mitra Test Setuju',
+            'jenis' => 'IA',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'Aktif',
+            'mitra_id' => $mitra->id,
+            'tingkat' => 'Jurusan',
+            'created_by' => $pengusulUser->id,
+        ]);
+
+        $response = $this->actingAs($mitraUser)->post(route('mitra.dokumen.review', $coop->id), [
+            'action' => 'setuju',
+            'catatan_review' => null,
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('notifikasis', [
+            'user_id' => $pengusulUser->id,
+            'sender_id' => $mitraUser->id,
+            'source_id' => $coop->id,
+            'type' => 'review_draf_setuju',
+        ]);
+    }
+
+    public function test_mitra_cannot_review_other_mitra_document()
+    {
+        $roleMitra = Role::firstOrCreate(['name' => 'mitra'], ['guard_name' => 'web']);
+
+        $mitra1 = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Asal', 'status_akses' => 'Aktif']);
+        $mitra2 = Mitra::firstOrCreate(['nama_mitra' => 'PT Mitra Lain', 'status_akses' => 'Aktif']);
+
+        $mitraUser1 = User::factory()->create([
+            'role_id' => $roleMitra->id,
+            'mitra_id' => $mitra1->id,
+        ]);
+
+        $coopMitra2 = Cooperation::create([
+            'judul' => 'Kerjasama Milik Mitra Lain',
+            'jenis' => 'MoU',
+            'status_dokumen' => 'Draft',
+            'status_berlaku' => 'Aktif',
+            'mitra_id' => $mitra2->id,
+            'tingkat' => 'Institusi',
+        ]);
+
+        $response = $this->actingAs($mitraUser1)->post(route('mitra.dokumen.review', $coopMitra2->id), [
+            'action' => 'revisi',
+            'catatan_review' => 'Catatan tidak sah.',
+        ]);
+
+        $response->assertStatus(404);
     }
 
     public function test_mitra_can_filter_dokumen_list()

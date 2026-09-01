@@ -99,9 +99,14 @@ class MitraDokumenController extends Controller
         $user = Auth::user();
         $cooperation = Cooperation::where('mitra_id', $user->mitra_id)->findOrFail($id);
 
+        $action = $request->input('action', 'revisi');
+
         $request->validate([
-            'catatan_review' => 'required|string|max:2000',
+            'catatan_review' => $action === 'setuju' ? 'nullable|string|max:2000' : 'required|string|max:2000',
         ]);
+
+        $isSetuju = $action === 'setuju';
+        $catatan = $request->input('catatan_review');
 
         // Simpan catatan review dan kirim notifikasi ke pembuat/unit pengusul
         if ($cooperation->created_by) {
@@ -115,17 +120,27 @@ class MitraDokumenController extends Controller
                 default => 'unit',
             };
 
+            $notifTitle = $isSetuju ? 'Draf Telah Disetujui oleh Mitra' : 'Catatan Review Draf dari Mitra';
+            $notifType = $isSetuju ? 'review_draf_setuju' : 'review_draf';
+            $notifMsg = $isSetuju 
+                ? "Mitra '{$user->name}' telah menyetujui draf dokumen: {$cooperation->judul}" . ($catatan ? " (Catatan: {$catatan})" : "")
+                : "Mitra '{$user->name}' mengirimkan catatan review draf untuk dokumen: {$cooperation->judul}" . ($catatan ? " (Catatan: {$catatan})" : "");
+
             Notifikasi::send(
                 $cooperation->created_by,
                 $user->id,
                 $cooperation->id,
-                'review_draf',
-                'Catatan Review Draf dari Mitra',
-                "Mitra '{$user->name}' mengirimkan catatan review draf untuk dokumen: {$cooperation->judul}",
+                $notifType,
+                $notifTitle,
+                $notifMsg,
                 route("{$routePrefix}.kerjasama.show", $cooperation->id)
             );
         }
 
-        return back()->with('success', 'Catatan review draf dokumen berhasil dikirim ke unit pengusul.');
+        $successMsg = $isSetuju
+            ? 'Draf dokumen berhasil disetujui. Pemberitahuan telah dikirim ke unit pengusul.'
+            : 'Catatan review draf dokumen berhasil dikirim ke unit pengusul.';
+
+        return back()->with('success', $successMsg);
     }
 }
