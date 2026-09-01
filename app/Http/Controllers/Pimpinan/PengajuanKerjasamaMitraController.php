@@ -221,18 +221,31 @@ class PengajuanKerjasamaMitraController extends Controller
                         ]);
                     }
 
-                    // 3. Buat / Update record Cooperation (Status: proses, Status Dokumen: Draft)
+                    // 3. Buat / Update record Cooperation (Status Dokumen: Draft, Status Berlaku: Aktif)
+                    $jenisEnum = 'MoU';
+                    if (!empty($submission->jenis)) {
+                        $j = strtoupper($submission->jenis);
+                        if (str_contains($j, 'MOA')) {
+                            $jenisEnum = 'MoA';
+                        } elseif (str_contains($j, 'IA') || str_contains($j, 'SPK')) {
+                            $jenisEnum = 'IA';
+                        } else {
+                            $jenisEnum = 'MoU';
+                        }
+                    }
+
                     $cooperation = Cooperation::where('pengajuan_kerjasama_baru_id', $submission->id)->first();
                     if (! $cooperation) {
                         $cooperation = Cooperation::create([
-                            'jenis' => $submission->jenis ?? 'MoU (Memorandum of Understanding)',
+                            'jenis' => $jenisEnum,
                             'doc_number' => $submission->doc_number,
-                            'title' => $submission->judul_pengajuan,
-                            'description' => $submission->tujuan_pengajuan,
+                            'judul' => $submission->judul_pengajuan,
+                            'ruang_lingkup' => $submission->ruang_lingkup ?: $submission->tujuan_pengajuan,
                             'start_date' => $submission->start_date,
                             'end_date' => $submission->end_date,
-                            'status' => 'proses',
+                            'status_berlaku' => 'Aktif',
                             'status_dokumen' => 'Draft',
+                            'tingkat' => 'Institusi',
                             'mitra_id' => $mitraId,
                             'penandatangan_mitra_id' => $penandatanganMitra->id,
                             'pj_mitra_id' => $pjMitra?->id,
@@ -241,7 +254,8 @@ class PengajuanKerjasamaMitraController extends Controller
                         ]);
                     } else {
                         $cooperation->update([
-                            'status' => 'proses',
+                            'judul' => $submission->judul_pengajuan,
+                            'status_berlaku' => 'Aktif',
                             'status_dokumen' => 'Draft',
                             'mitra_id' => $mitraId,
                         ]);
