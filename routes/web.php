@@ -439,6 +439,9 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
     Route::get('/prodi/alumni', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'index'])->name('prodi.alumni.index');
     Route::get('/prodi/alumni/create', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'create'])->name('prodi.alumni.create');
     Route::post('/prodi/alumni', [\App\Http\Controllers\Prodi\AlumniMitraController::class, 'store'])->name('prodi.alumni.store');
+
+    // ─── Evaluasi & Laporan Prodi (UC23/UC28/UC30) ─────────
+    Route::get('/prodi/evaluasi', [\App\Http\Controllers\Prodi\EvaluasiProdiController::class, 'index'])->name('prodi.evaluasi');
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {

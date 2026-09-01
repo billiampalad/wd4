@@ -126,7 +126,8 @@
                 <span>Tracking Lulusan</span>
             </a>
 
-            <a class="menu-item" href="#">
+            <a class="menu-item {{ request()->routeIs('prodi.evaluasi*') ? 'active' : '' }}"
+                href="{{ route('prodi.evaluasi') }}">
                 <div class="menu-icon"><i class="fas fa-chart-pie"></i></div>
                 <span>Evaluasi & Laporan</span>
             </a>
