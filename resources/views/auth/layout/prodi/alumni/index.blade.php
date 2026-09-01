@@ -83,7 +83,7 @@
         </div>
     </section>
 
-    {{-- Root Alpine.js Controller --}}
+    {{-- Root Alpine.js Controller (Identik dengan mamag/index.blade.php) --}}
     <div x-data="{
         showFilters: false,
         searchQuery: '',
@@ -129,130 +129,208 @@
 
         get filteredRows() {
             const allRows = this.rows;
-            const query = (this.searchQuery || '').trim().toLowerCase();
-            const statusF = this.statusFilter;
-            const mitraF = this.mitraFilter;
-            const tahunF = this.tahunFilter;
-
-            return allRows.filter(row => {
-                const textContent = (row.textContent || '').toLowerCase();
-                const matchesSearch = !query || textContent.includes(query);
-
-                const rowStatus = (row.getAttribute('data-status') || '').toLowerCase();
-                const matchesStatus = statusF === 'all' || rowStatus === statusF.toLowerCase();
-
-                const rowMitra = (row.getAttribute('data-mitra') || '').toLowerCase();
-                const matchesMitra = mitraF === 'all' || rowMitra === mitraF.toLowerCase();
-
-                const rowTahun = (row.getAttribute('data-tahun') || '').toLowerCase();
-                const matchesTahun = tahunF === 'all' || rowTahun === tahunF.toLowerCase();
-
-                return matchesSearch && matchesStatus && matchesMitra && matchesTahun;
-            });
+            if (!allRows.length) return [];
+            return allRows.filter(r => this.matchesRow(r));
         },
 
-        get totalItems() {
+        get totalFiltered() {
             return this.filteredRows.length;
         },
 
         get totalPages() {
-            return Math.max(1, Math.ceil(this.totalItems / this.perPage));
+            return Math.max(1, Math.ceil(this.totalFiltered / this.perPage));
         },
 
-        get startIndex() {
-            return (this.currentPage - 1) * this.perPage;
+        get startRange() {
+            return this.totalFiltered === 0 ? 0 : ((this.currentPage - 1) * this.perPage) + 1;
         },
 
-        get endIndex() {
-            return Math.min(this.startIndex + this.perPage, this.totalItems);
+        get endRange() {
+            return Math.min(this.currentPage * this.perPage, this.totalFiltered);
         },
 
-        updateVisibility() {
-            const allRows = this.rows;
-            const visibleSet = new Set(this.filteredRows.slice(this.startIndex, this.endIndex));
-            
-            allRows.forEach(row => {
-                row.style.display = visibleSet.has(row) ? '' : 'none';
-            });
+        matchesRow(r) {
+            if (!r || !r.dataset) return true;
+            const q = (this.searchQuery || '').toLowerCase().trim();
+            const searchCorpus = (r.dataset.search || '').toLowerCase();
+            const matchSearch = q === '' || searchCorpus.includes(q);
+            const matchStatus = this.statusFilter === 'all' || (r.dataset.status && r.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
+            const matchMitra = this.mitraFilter === 'all' || (r.dataset.mitra && r.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
+            const matchTahun = this.tahunFilter === 'all' || (r.dataset.tahun && r.dataset.tahun.toLowerCase() === this.tahunFilter.toLowerCase());
+            return matchSearch && matchStatus && matchMitra && matchTahun;
+        },
 
-            const emptyRow = document.querySelector('tr[data-empty]');
-            if (emptyRow) {
-                emptyRow.style.display = this.totalItems === 0 ? '' : 'none';
-            }
+        isRowVisible(el) {
+            const tr = el.tagName === 'TR' ? el : el.closest('tr');
+            if (!tr) return true;
+            if (!this.matchesRow(tr)) return false;
+            const fRows = this.filteredRows;
+            if (!fRows.length) return true;
+            const index = fRows.indexOf(tr);
+            if (index === -1) return false;
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = start + this.perPage;
+            return index >= start && index < end;
+        },
+
+        pageNumbers() {
+            const total = this.totalPages;
+            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
+            return Array.from(pages).filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
+        },
+
+        goToPage(p) {
+            this.currentPage = Math.min(Math.max(p, 1), this.totalPages);
         },
 
         openDetail(data) {
             this.selectedAlumni = data;
             this.showModal = true;
         }
-    }" x-init="
-        $watch('searchQuery', () => { currentPage = 1; $nextTick(() => updateVisibility()); });
-        $watch('statusFilter', () => { currentPage = 1; $nextTick(() => updateVisibility()); });
-        $watch('mitraFilter', () => { currentPage = 1; $nextTick(() => updateVisibility()); });
-        $watch('tahunFilter', () => { currentPage = 1; $nextTick(() => updateVisibility()); });
-        $watch('currentPage', () => { $nextTick(() => updateVisibility()); });
-        $watch('perPage', () => { $nextTick(() => updateVisibility()); });
-        $nextTick(() => updateVisibility());
-    ">
+    }">
 
-        <!-- Filter Card -->
-        <div class="card um-card dk-card" style="margin-bottom: 24px;" x-show="showFilters" x-collapse.duration.300ms>
-            <div class="card-header um-header dk-card-header" style="background: var(--surface2);">
-                <div class="um-title dk-card-title">
-                    <span class="dk-title-icon"><i class="fas fa-sliders"></i></span>
-                    <span>
-                        <strong>Filter Data Tracking Lulusan</strong>
-                        <small>Saring data alumni berdasarkan mitra, tahun kelulusan, atau status kerja.</small>
-                    </span>
+        {{-- ═══ FILTER DATA ALUMNI ACCORDION (Identik dengan mamag/index.blade.php) ═══ --}}
+        <div class="report-filter-container"
+            style="overflow: visible !important; position: relative; z-index: 40; margin-bottom: 24px;">
+            <div class="rfc-header"
+                style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;"
+                @click="showFilters = !showFilters">
+                <div class="rfc-title-area">
+                    <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
+                    <div class="rfc-text">
+                        <h3>Filter Data Alumni &amp; Tracking Lulusan</h3>
+                        <p>Saring data alumni berdasarkan kata kunci pencarian, status penyerapan, mitra industri, atau tahun kelulusan</p>
+                    </div>
                 </div>
-                <button type="button" class="rfc-btn" @click="resetFilters()"
-                    style="font-size: 12px; padding: 6px 14px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px;">
-                    <i class="fas fa-rotate-left"></i> Reset Filter
-                </button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="dk-badge-tag"
+                        style="font-size: 11px; padding: 3px 10px; background: rgba(79,70,229,0.08); color: #4f46e5; font-weight: 700;"
+                        x-show="searchQuery || statusFilter !== 'all' || mitraFilter !== 'all' || tahunFilter !== 'all'"
+                        x-cloak>
+                        <i class="fas fa-filter"></i> Filter Aktif
+                    </span>
+                    <div style="color: var(--text-sub); font-size: 16px; transition: transform 0.3s;"
+                        :style="showFilters ? 'transform: rotate(180deg)' : 'transform: rotate(0)'">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
             </div>
-            <div class="card-body dk-card-body" style="padding: 20px 24px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-                    {{-- Filter Mitra --}}
-                    <div class="mc-group">
-                        <label class="mc-label">Mitra Industri (DUDIKA)</label>
-                        <div class="mc-input-wrap">
-                            <i class="fas fa-building mc-icon-left" style="color: #4f46e5;"></i>
-                            <select x-model="mitraFilter" class="mc-input" style="padding-left: 38px;">
-                                <option value="all">Semua Mitra</option>
-                                @foreach($uniqueMitraNames as $mName)
-                                    <option value="{{ $mName }}">{{ $mName }}</option>
-                                @endforeach
-                            </select>
+
+            <div class="rfc-body" x-show="showFilters" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform -translate-y-4"
+                x-transition:enter-end="opacity-100 transform translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-y-0"
+                x-transition:leave-end="opacity-0 transform -translate-y-4" style="overflow: visible !important;">
+
+                <div class="rfc-grid" style="overflow: visible !important;">
+                    {{-- 1. Pencarian Kata Kunci --}}
+                    <div class="rfc-group" style="position: relative; z-index: 10;">
+                        <label>Pencarian Alumni / Mitra</label>
+                        <div class="rfc-input-wrap">
+                            <i class="fas fa-search rfc-input-icon"></i>
+                            <input type="text" x-model="searchQuery" placeholder="Cari nama alumni, NIM, mitra, posisi..."
+                                class="rfc-input">
                         </div>
                     </div>
 
-                    {{-- Filter Tahun Lulus --}}
-                    <div class="mc-group">
-                        <label class="mc-label">Tahun Lulus</label>
-                        <div class="mc-input-wrap">
-                            <i class="fas fa-calendar-check mc-icon-left" style="color: #059669;"></i>
-                            <select x-model="tahunFilter" class="mc-input" style="padding-left: 38px;">
-                                <option value="all">Semua Angkatan</option>
-                                @foreach($uniqueTahunLulus as $tLulus)
-                                    <option value="{{ $tLulus }}">Lulusan {{ $tLulus }}</option>
-                                @endforeach
-                            </select>
+                    {{-- 2. Filter Status Penyerapan --}}
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 30;'" x-data="{
+                        open: false,
+                        items: [
+                            { id: 'all', label: 'Semua Status' },
+                            { id: 'aktif', label: 'Aktif Bekerja' },
+                            { id: 'resign', label: 'Resign' },
+                            { id: 'pensiun', label: 'Pensiun / Selesai' }
+                        ],
+                        get selectedLabel() {
+                            const found = this.items.find(i => i.id === statusFilter);
+                            return found ? found.label : 'Semua Status';
+                        }
+                    }">
+                        <label>Status Penyerapan</label>
+                        <div class="alpine-dropdown" @click.outside="open = false">
+                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                                <span x-text="selectedLabel"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="ad-menu" x-show="open" x-transition>
+                                <template x-for="item in items" :key="item.id">
+                                    <div class="ad-item" :class="{'selected': statusFilter === item.id}"
+                                        @click="statusFilter = item.id; open = false;" x-text="item.label"></div>
+                                </template>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Filter Status --}}
-                    <div class="mc-group">
-                        <label class="mc-label">Status Penyerapan</label>
-                        <div class="mc-input-wrap">
-                            <i class="fas fa-signal mc-icon-left" style="color: #d97706;"></i>
-                            <select x-model="statusFilter" class="mc-input" style="padding-left: 38px;">
-                                <option value="all">Semua Status</option>
-                                <option value="Aktif">Aktif Bekerja</option>
-                                <option value="Resign">Resign</option>
-                                <option value="Pensiun">Pensiun / Selesai</option>
-                            </select>
+                    {{-- 3. Filter Mitra Industri --}}
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 20;'" x-data="{
+                        open: false,
+                        items: [
+                            { id: 'all', label: 'Semua Mitra' },
+                            @foreach($uniqueMitraNames as $mName)
+                                { id: '{{ addslashes(strtolower($mName)) }}', label: '{{ addslashes($mName) }}' },
+                            @endforeach
+                        ],
+                        get selectedLabel() {
+                            const found = this.items.find(i => i.id === mitraFilter);
+                            return found ? found.label : 'Semua Mitra';
+                        }
+                    }">
+                        <label>Mitra Industri (DUDIKA)</label>
+                        <div class="alpine-dropdown" @click.outside="open = false">
+                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                                <span x-text="selectedLabel" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="ad-menu" x-show="open" x-transition style="max-height: 220px; overflow-y: auto;">
+                                <template x-for="item in items" :key="item.id">
+                                    <div class="ad-item" :class="{'selected': mitraFilter === item.id}"
+                                        @click="mitraFilter = item.id; open = false;" x-text="item.label"></div>
+                                </template>
+                            </div>
                         </div>
                     </div>
+
+                    {{-- 4. Filter Tahun Lulus --}}
+                    <div class="rfc-group"
+                        :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 10;'" x-data="{
+                        open: false,
+                        items: [
+                            { id: 'all', label: 'Semua Angkatan' },
+                            @foreach($uniqueTahunLulus as $tLulus)
+                                { id: '{{ $tLulus }}', label: 'Lulusan {{ $tLulus }}' },
+                            @endforeach
+                        ],
+                        get selectedLabel() {
+                            const found = this.items.find(i => i.id === tahunFilter);
+                            return found ? found.label : 'Semua Angkatan';
+                        }
+                    }">
+                        <label>Tahun Kelulusan</label>
+                        <div class="alpine-dropdown" @click.outside="open = false">
+                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                                <span x-text="selectedLabel"></span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="ad-menu" x-show="open" x-transition style="max-height: 220px; overflow-y: auto;">
+                                <template x-for="item in items" :key="item.id">
+                                    <div class="ad-item" :class="{'selected': tahunFilter === item.id}"
+                                        @click="tahunFilter = item.id; open = false;" x-text="item.label"></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Action Filter Buttons --}}
+                <div class="rfc-actions" style="margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="rfc-btn rfc-btn-reset" @click="resetFilters()">
+                        <i class="fas fa-rotate-left"></i> Reset Filter
+                    </button>
                 </div>
             </div>
         </div>
@@ -264,30 +342,33 @@
                     <span class="dk-title-icon"><i class="fas fa-users"></i></span>
                     <div>
                         <strong>Daftar Alumni Bekerja di Mitra</strong>
-                        <small x-text="`${totalItems} dari {{ $totalAlumni }} alumni terdata`"></small>
+                        <small id="alumniCount"
+                            x-text="totalFiltered === {{ $totalAlumni }} ? '{{ $totalAlumni }} alumni terdaftar' : totalFiltered + ' dari {{ $totalAlumni }} alumni difilter'">
+                            {{ $totalAlumni }} alumni terdaftar
+                        </small>
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                    {{-- Search Box --}}
-                    <div class="dk-search-box" style="position: relative; min-width: 240px;">
-                        <i class="fas fa-search"
-                            style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 13px;"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Cari nama, NIM, mitra..."
-                            style="width: 100%; padding: 8px 14px 8px 36px; border: 1.5px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font-size: 13px;">
+                <div class="dk-card-actions" style="display: flex; align-items: center; gap: 12px;">
+                    {{-- Dropdown Per Page --}}
+                    <div class="alpine-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
+                        <button type="button" class="rfc-btn" @click="perPageOpen = !perPageOpen"
+                            style="font-size: 12px; padding: 6px 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                            <span x-text="perPage + ' baris'"></span>
+                            <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
+                        </button>
+                        <div class="ad-menu" x-show="perPageOpen" x-transition
+                            style="position: absolute; right: 0; top: calc(100% + 4px); min-width: 100px; z-index: 50;">
+                            <template x-for="opt in perPageOptions" :key="opt">
+                                <div class="ad-item" :class="{'selected': perPage === opt}" @click="setPerPage(opt)"
+                                    x-text="opt + ' baris'"></div>
+                            </template>
+                        </div>
                     </div>
-
-                    {{-- Toggle Filter Button --}}
-                    <button type="button" class="rfc-btn" @click="showFilters = !showFilters"
-                        :style="showFilters ? 'background: rgba(79,70,229,0.1); color: #4f46e5; border-color: rgba(79,70,229,0.3);' : 'background: var(--surface2); color: var(--text); border: 1px solid var(--border);'"
-                        style="padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-filter"></i>
-                        <span x-text="showFilters ? 'Tutup Filter' : 'Filter Data'"></span>
-                    </button>
 
                     {{-- Tambah Data Button --}}
                     <a href="{{ route('prodi.alumni.create') }}" class="dk-primary-btn"
-                        style="text-decoration: none; padding: 8px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                        style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
                         <i class="fas fa-plus"></i>
                         <span>Tambah Data Alumni</span>
                     </a>
@@ -316,11 +397,14 @@
                                     $mName = $mitraRelation->mitra->nama_mitra ?? '-';
                                     $statusVal = $mitraRelation->status ?? 'Aktif';
                                     $initials = collect(explode(' ', $alumni->nama))->map(fn($w) => mb_substr($w, 0, 1))->take(2)->join('');
+                                    $searchBlob = strtolower($alumni->nama . ' ' . $alumni->nim . ' ' . $mName . ' ' . ($mitraRelation->posisi ?? ''));
                                 @endphp
                                 <tr class="um-row dk-row" data-row
+                                    data-search="{{ $searchBlob }}"
                                     data-status="{{ strtolower($statusVal) }}"
                                     data-mitra="{{ strtolower($mName) }}"
-                                    data-tahun="{{ strtolower((string)$alumni->tahun_lulus) }}">
+                                    data-tahun="{{ strtolower((string)$alumni->tahun_lulus) }}"
+                                    x-show="isRowVisible($el)" x-cloak>
                                     
                                     {{-- 1. Nomor --}}
                                     <td class="um-td um-td-num" style="text-align: center; vertical-align: middle;">
@@ -461,61 +545,49 @@
                                     </td>
                                 </tr>
                             @endforelse
+
+                            {{-- Empty state when filter has no matches --}}
+                            <tr x-show="totalFiltered === 0 && {{ $totalAlumni }} > 0" x-cloak>
+                                <td colspan="8" class="um-empty">
+                                    <div class="um-empty-state dk-empty-state" style="padding: 48px 24px; text-align: center;">
+                                        <div class="um-empty-icon dk-empty-icon" style="width: 56px; height: 56px; border-radius: 16px; background: rgba(239,68,68,0.1); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px;">
+                                            <i class="fas fa-filter-circle-xmark"></i>
+                                        </div>
+                                        <p class="um-empty-title" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Data tidak ditemukan</p>
+                                        <p class="um-empty-sub" style="font-size: 13px; color: var(--text-sub);">Tidak ada alumni yang cocok dengan kriteria filter yang dipilih.</p>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                {{-- Pagination Footer --}}
-                <div class="dk-pagination"
-                    style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 14px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 13px; color: var(--text-sub);"
-                            x-text="`Menampilkan ${totalItems > 0 ? startIndex + 1 : 0}-${endIndex} dari ${totalItems} data`"></span>
-                        
-                        {{-- Per Page Dropdown --}}
-                        <div class="alpine-dropdown" @click.outside="perPageOpen = false"
-                            style="position: relative; display: inline-block;">
-                            <button type="button" class="rfc-btn" @click="perPageOpen = !perPageOpen"
-                                style="font-size: 12px; padding: 4px 10px; border-radius: 6px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 6px;">
-                                <span x-text="`${perPage} per hal`"></span>
-                                <i class="fas fa-chevron-down" style="font-size: 9px;"></i>
-                            </button>
-                            <div class="ad-menu" x-show="perPageOpen" x-transition
-                                style="position: absolute; bottom: calc(100% + 4px); left: 0; min-width: 90px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100;">
-                                <template x-for="opt in perPageOptions" :key="opt">
-                                    <div class="ad-item" :class="{'selected': perPage === opt}"
-                                        @click="setPerPage(opt)"
-                                        style="padding: 6px 12px; font-size: 12px; cursor: pointer;"
-                                        x-text="`${opt} per hal`"></div>
-                                </template>
-                            </div>
-                        </div>
+                {{-- ═══ PAGINATION CONTROLS (Identik dengan mamag/index.blade.php) ═══ --}}
+                <div class="table-pagination-controls" x-show="totalFiltered > 0" x-cloak>
+                    <div class="pagination-info">
+                        Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
+                        <strong x-text="totalFiltered">{{ $totalAlumni }}</strong> data
                     </div>
-
-                    {{-- Page Navigation Buttons --}}
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <button type="button" class="rfc-btn" :disabled="currentPage <= 1"
-                            @click="currentPage = Math.max(1, currentPage - 1)"
-                            style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border);"
-                            :style="currentPage <= 1 ? 'opacity: 0.5; cursor: not-allowed;' : 'cursor: pointer;'">
+                    <div class="pagination-buttons" aria-label="Navigasi Halaman">
+                        <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
+                            title="Halaman pertama">
+                            <i class="fas fa-angles-left"></i>
+                        </button>
+                        <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
+                            :disabled="currentPage === 1" title="Halaman sebelumnya">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-
-                        <template x-for="page in totalPages" :key="page">
-                            <button type="button" class="rfc-btn"
-                                x-show="page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)"
-                                @click="currentPage = page"
-                                :style="currentPage === page ? 'background: #4f46e5; color: #fff; border-color: #4f46e5;' : 'background: var(--surface2); color: var(--text); border: 1px solid var(--border);'"
-                                style="padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;"
-                                x-text="page">
-                            </button>
+                        <template x-for="page in pageNumbers()" :key="page">
+                            <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
+                                @click="goToPage(page)" x-text="page"></button>
                         </template>
-
-                        <button type="button" class="rfc-btn" :disabled="currentPage >= totalPages"
-                            @click="currentPage = Math.min(totalPages, currentPage + 1)"
-                            style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border);"
-                            :style="currentPage >= totalPages ? 'opacity: 0.5; cursor: not-allowed;' : 'cursor: pointer;'">
+                        <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
+                            :disabled="currentPage === totalPages" title="Halaman berikutnya">
                             <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button type="button" class="pag-btn" @click="goToPage(totalPages)"
+                            :disabled="currentPage === totalPages" title="Halaman terakhir">
+                            <i class="fas fa-angles-right"></i>
                         </button>
                     </div>
                 </div>
