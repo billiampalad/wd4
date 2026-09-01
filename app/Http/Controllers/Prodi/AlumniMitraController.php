@@ -19,12 +19,14 @@ class AlumniMitraController extends Controller
         $user = Auth::user();
         $prodiId = $user->profile->prodi_id ?? null;
 
-        $alumnis = Alumni::with(['alumniMitras.mitra'])
+        $alumnis = Alumni::with(['alumniMitras.mitra', 'prodi'])
             ->where('prodi_id', $prodiId)
             ->orderBy('tahun_lulus', 'desc')
             ->get();
 
-        return view('auth.layout.prodi.alumni.index', compact('alumnis'));
+        $mitras = Mitra::orderBy('nama_mitra')->get();
+
+        return view('auth.layout.prodi.alumni.index', compact('alumnis', 'mitras'));
     }
 
     /**
