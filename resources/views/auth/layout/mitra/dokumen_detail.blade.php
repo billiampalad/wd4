@@ -194,7 +194,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="ud-detail-actions">
+                <div class="ud-detail-actions" style="display: flex; gap: 10px; align-items: center;">
+                    @if ($canAjukanPerpanjangan)
+                        <a href="{{ route('mitra.perpanjangan.create', ['cooperation_id' => $kegiatan->id]) }}" class="dk-warning-btn" style="display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; font-weight:700; font-size:14px; text-decoration:none;">
+                            <i class="fas fa-rotate"></i>
+                            <span>Ajukan Perpanjangan</span>
+                        </a>
+                    @endif
                     @if ($kegiatan->document_link)
                         <a href="{{ $kegiatan->document_link }}" target="_blank" class="dk-primary-btn">
                             <i class="fas fa-file-pdf"></i>
