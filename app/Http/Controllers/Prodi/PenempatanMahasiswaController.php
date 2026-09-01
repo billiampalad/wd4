@@ -59,6 +59,14 @@ class PenempatanMahasiswaController extends Controller
             'kontak_pembimbing_eksternal' => 'nullable|string|max:255',
         ]);
 
+        $alreadyPlaced = KegiatanMahasiswa::where('kegiatan_id', $request->kegiatan_id)
+            ->where('mahasiswa_id', $request->mahasiswa_id)
+            ->exists();
+
+        if ($alreadyPlaced) {
+            return back()->withInput()->with('error', 'Mahasiswa tersebut sudah terdaftar pada kegiatan kerja sama ini.');
+        }
+
         $penempatan = KegiatanMahasiswa::create([
             'kegiatan_id' => $request->kegiatan_id,
             'mahasiswa_id' => $request->mahasiswa_id,
