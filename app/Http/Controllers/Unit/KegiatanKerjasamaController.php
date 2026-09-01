@@ -20,8 +20,7 @@ class KegiatanKerjasamaController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $kegiatans = KegiatanKerjasama::where('created_by', $user->id)
-            ->with(['jenisKerjasama', 'mitras'])
+        $kegiatans = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.sasaran', 'detailKegiatan.indikator', 'detailKegiatan.jenisKerjasama'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -33,9 +32,13 @@ class KegiatanKerjasamaController extends Controller
      */
     public function create()
     {
-        // Get IA cooperations that are Disahkan
-        $iaDocuments = Cooperation::where('jenis_kerjasama', 'IA')
-            ->where('status', 'Disahkan')
+        // Get IA and SPK cooperations that are Disahkan (as per UC19)
+        $iaDocuments = Cooperation::where(function ($q) {
+                $q->where('jenis', 'IA')
+                  ->orWhere('jenis', 'SPK');
+            })
+            ->where('status_dokumen', 'Disahkan')
+            ->with(['mitra', 'penandatanganMitra', 'pjMitra'])
             ->get();
         
         $sasarans = Sasaran::all();
@@ -53,36 +56,35 @@ class KegiatanKerjasamaController extends Controller
         $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'cooperation_id' => 'required|exists:cooperations,id',
-            'jenis_kerjasama_id' => 'required|array',
+            'jenis_kerjasama_id' => 'nullable',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
-            'sasaran_id' => 'required|exists:sasarans,id',
-            'indikator_id' => 'required|exists:indikators,id',
-            'target_volume' => 'required|integer',
+            'sasaran_id' => 'nullable|exists:sasarans,id',
+            'indikator_id' => 'nullable|exists:indikators,id',
+            'volume_luaran' => 'nullable|string|max:255',
             'output' => 'nullable|string',
             'outcome' => 'nullable|string',
         ]);
 
-        $cooperation = Cooperation::find($request->cooperation_id);
+        $cooperation = Cooperation::findOrFail($request->cooperation_id);
 
         $kegiatan = KegiatanKerjasama::create([
+            'cooperation_id' => $cooperation->id,
             'nama_kegiatan' => $request->nama_kegiatan,
-            'jenis_dokumen' => 'IA',
-            'nomor_mou' => $cooperation->no_dokumen,
-            'tanggal_mou' => $cooperation->tanggal_mulai,
             'periode_mulai' => $request->periode_mulai,
             'periode_selesai' => $request->periode_selesai,
-            'created_by' => Auth::id(),
-            'status' => 'draft',
+            'status' => 'Perencanaan',
         ]);
 
-        $kegiatan->jenisKerjasama()->attach($request->jenis_kerjasama_id);
+        $jenisId = is_array($request->jenis_kerjasama_id) ? ($request->jenis_kerjasama_id[0] ?? null) : $request->jenis_kerjasama_id;
 
         DetailKegiatan::create([
-            'kegiatan_id' => $kegiatan->id,
+            'kegiatan_kerjasama_id' => $kegiatan->id,
+            'cooperation_id' => $cooperation->id,
+            'jenis_kerjasama_id' => $jenisId,
             'sasaran_id' => $request->sasaran_id,
             'indikator_id' => $request->indikator_id,
-            'target_volume' => $request->target_volume,
+            'volume_luaran' => $request->volume_luaran ?: $request->target_volume,
             'output' => $request->output,
             'outcome' => $request->outcome,
         ]);
@@ -95,8 +97,8 @@ class KegiatanKerjasamaController extends Controller
      */
     public function show(string $id)
     {
-        $kegiatan = KegiatanKerjasama::with(['jenisKerjasama', 'mitras', 'tujuans', 'pelaksanaans', 'hasils'])->findOrFail($id);
-        $detail = DetailKegiatan::where('kegiatan_id', $kegiatan->id)->with(['sasaran', 'indikator'])->first();
+        $kegiatan = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.sasaran', 'detailKegiatan.indikator', 'detailKegiatan.jenisKerjasama'])->findOrFail($id);
+        $detail = DetailKegiatan::where('kegiatan_kerjasama_id', $kegiatan->id)->with(['sasaran', 'indikator', 'jenisKerjasama'])->first();
 
         return view('unit.kegiatan.show', compact('kegiatan', 'detail'));
     }
@@ -106,12 +108,16 @@ class KegiatanKerjasamaController extends Controller
      */
     public function edit(string $id)
     {
-        $kegiatan = KegiatanKerjasama::findOrFail($id);
-        $detail = DetailKegiatan::where('kegiatan_id', $kegiatan->id)->first();
+        $kegiatan = KegiatanKerjasama::with('detailKegiatan')->findOrFail($id);
+        $detail = DetailKegiatan::where('kegiatan_kerjasama_id', $kegiatan->id)->first();
         
-        $iaDocuments = Cooperation::where('jenis_kerjasama', 'IA')
-            ->where('status', 'Disahkan')
+        $iaDocuments = Cooperation::where(function ($q) {
+                $q->where('jenis', 'IA')
+                  ->orWhere('jenis', 'SPK');
+            })
+            ->where('status_dokumen', 'Disahkan')
             ->get();
+
         $sasarans = Sasaran::all();
         $indikators = Indikator::all();
         $jenisKerjasamas = JenisKerjasama::all();
@@ -126,12 +132,11 @@ class KegiatanKerjasamaController extends Controller
     {
         $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
-            'jenis_kerjasama_id' => 'required|array',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'nullable|date|after_or_equal:periode_mulai',
-            'sasaran_id' => 'required|exists:sasarans,id',
-            'indikator_id' => 'required|exists:indikators,id',
-            'target_volume' => 'required|integer',
+            'sasaran_id' => 'nullable|exists:sasarans,id',
+            'indikator_id' => 'nullable|exists:indikators,id',
+            'volume_luaran' => 'nullable|string|max:255',
             'output' => 'nullable|string',
             'outcome' => 'nullable|string',
         ]);
@@ -143,23 +148,26 @@ class KegiatanKerjasamaController extends Controller
             'periode_selesai' => $request->periode_selesai,
         ]);
 
-        $kegiatan->jenisKerjasama()->sync($request->jenis_kerjasama_id);
+        $detail = DetailKegiatan::where('kegiatan_kerjasama_id', $kegiatan->id)->first();
+        $jenisId = is_array($request->jenis_kerjasama_id) ? ($request->jenis_kerjasama_id[0] ?? null) : $request->jenis_kerjasama_id;
 
-        $detail = DetailKegiatan::where('kegiatan_id', $kegiatan->id)->first();
         if ($detail) {
             $detail->update([
+                'jenis_kerjasama_id' => $jenisId ?: $detail->jenis_kerjasama_id,
                 'sasaran_id' => $request->sasaran_id,
                 'indikator_id' => $request->indikator_id,
-                'target_volume' => $request->target_volume,
+                'volume_luaran' => $request->volume_luaran ?: $request->target_volume,
                 'output' => $request->output,
                 'outcome' => $request->outcome,
             ]);
         } else {
             DetailKegiatan::create([
-                'kegiatan_id' => $kegiatan->id,
+                'kegiatan_kerjasama_id' => $kegiatan->id,
+                'cooperation_id' => $kegiatan->cooperation_id,
+                'jenis_kerjasama_id' => $jenisId,
                 'sasaran_id' => $request->sasaran_id,
                 'indikator_id' => $request->indikator_id,
-                'target_volume' => $request->target_volume,
+                'volume_luaran' => $request->volume_luaran ?: $request->target_volume,
                 'output' => $request->output,
                 'outcome' => $request->outcome,
             ]);
@@ -174,8 +182,7 @@ class KegiatanKerjasamaController extends Controller
     public function destroy(string $id)
     {
         $kegiatan = KegiatanKerjasama::findOrFail($id);
-        DetailKegiatan::where('kegiatan_id', $kegiatan->id)->delete();
-        $kegiatan->jenisKerjasama()->detach();
+        DetailKegiatan::where('kegiatan_kerjasama_id', $kegiatan->id)->delete();
         $kegiatan->delete();
 
         return redirect()->route('unit.kegiatan.index')->with('success', 'Kegiatan Kerja Sama berhasil dihapus.');

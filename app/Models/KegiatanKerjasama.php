@@ -12,14 +12,10 @@ class KegiatanKerjasama extends Model
     protected $table = 'kegiatan_kerjasamas';
 
     protected $fillable = [
+        'cooperation_id',
         'nama_kegiatan',
-        'jenis_dokumen',
-        'created_by',
         'periode_mulai',
         'periode_selesai',
-        'nomor_mou',
-        'tanggal_mou',
-        'penanggung_jawab',
         'status',
     ];
 
@@ -36,6 +32,16 @@ class KegiatanKerjasama extends Model
     public function cooperation()
     {
         return $this->belongsTo(Cooperation::class, 'cooperation_id');
+    }
+
+    public function detailKegiatan()
+    {
+        return $this->hasOne(DetailKegiatan::class, 'kegiatan_kerjasama_id');
+    }
+
+    public function detailKegiatans()
+    {
+        return $this->hasMany(DetailKegiatan::class, 'kegiatan_kerjasama_id');
     }
 
     public function jenisKerjasama()
