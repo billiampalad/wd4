@@ -1014,7 +1014,7 @@ class JurusanPageController extends Controller
         $kegiatan = $this->findOwnedCooperation($id);
 
         $existingEval = Evaluasi::where('cooperation_id', $kegiatan->id)
-            ->where('dinilai_oleh', Auth::id())
+            ->where('evaluator_id', Auth::id())
             ->first();
 
         return view('auth.jurusan', compact('kegiatan', 'existingEval'));
@@ -1037,7 +1037,7 @@ class JurusanPageController extends Controller
 
         Evaluasi::create([
             'cooperation_id' => $kegiatan->id,
-            'dinilai_oleh' => Auth::id(),
+            'evaluator_id' => Auth::id(),
             'sesuai_rencana' => $request->sesuai_rencana,
             'kualitas' => $request->kualitas,
             'keterlibatan' => $request->keterlibatan,
@@ -1087,7 +1087,7 @@ class JurusanPageController extends Controller
         $kegiatan = $this->findOwnedCooperation($id);
 
         $eval = Evaluasi::where('cooperation_id', $kegiatan->id)
-            ->where('dinilai_oleh', Auth::id())
+            ->where('evaluator_id', Auth::id())
             ->firstOrFail();
 
         $eval->update([
@@ -1132,7 +1132,7 @@ class JurusanPageController extends Controller
 
         // Pastikan sudah ada evaluasi
         $hasEval = Evaluasi::where('cooperation_id', $kegiatan->id)
-            ->where('dinilai_oleh', Auth::id())
+            ->where('evaluator_id', Auth::id())
             ->exists();
 
         if (!$hasEval) {

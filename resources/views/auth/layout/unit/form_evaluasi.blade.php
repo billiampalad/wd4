@@ -41,7 +41,8 @@
             <div class="md-stat-icon md-icon-primary"><i class="fas fa-handshake"></i></div>
             <div class="md-stat-info">
                 <div class="md-stat-label">Jenis</div>
-                <div class="md-stat-value">{{ $kegiatan->jenisKerjasama->pluck('nama_kerjasama')->join(', ') ?: '-' }}
+                <div class="md-stat-value">
+                    {{ $kegiatan->jenis ?? ($kegiatan->jenisKerjasama?->pluck('nama_kerjasama')->join(', ') ?: '-') }}
                 </div>
             </div>
         </div>
@@ -49,13 +50,15 @@
             <div class="md-stat-icon md-icon-warning"><i class="fas fa-calendar"></i></div>
             <div class="md-stat-info">
                 <div class="md-stat-label">Periode</div>
-                <div class="md-stat-value">{{ $kegiatan->periode_mulai?->format('d M Y') ?? '-' }} —
-                    {{ $kegiatan->periode_selesai?->format('d M Y') ?? '-' }}</div>
+                <div class="md-stat-value">
+                    {{ $kegiatan->start_date ? \Carbon\Carbon::parse($kegiatan->start_date)->format('d M Y') : ($kegiatan->periode_mulai?->format('d M Y') ?? '-') }} —
+                    {{ $kegiatan->end_date ? \Carbon\Carbon::parse($kegiatan->end_date)->format('d M Y') : ($kegiatan->periode_selesai?->format('d M Y') ?? '-') }}
+                </div>
             </div>
         </div>
         <div class="md-stat-card" style="flex: 0; min-width: auto; padding: 0 24px; justify-content: center;">
-            <span class="tag {{ $kegiatan->status_class }}" style="font-size: 13px; padding: 8px 16px;">
-                <i class="fas fa-circle" style="font-size:7px;"></i> {{ $kegiatan->status_label }}
+            <span class="tag {{ $kegiatan->status_class ?? 'tag-green' }}" style="font-size: 13px; padding: 8px 16px;">
+                <i class="fas fa-circle" style="font-size:7px;"></i> {{ $kegiatan->status_dokumen ?? ($kegiatan->status_label ?? 'Aktif') }}
             </span>
         </div>
     </div>
@@ -83,42 +86,38 @@
             <div class="mc-grid-2">
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <div>
-                        <div class="md-stat-label" style="margin-bottom:4px;">Nama Kegiatan</div>
-                        <div style="font-size:14px; font-weight:700; color:var(--text);">{{ $kegiatan->nama_kegiatan }}
+                        <div class="md-stat-label" style="margin-bottom:4px;">Judul / Nama Kerjasama</div>
+                        <div style="font-size:14px; font-weight:700; color:var(--text);">
+                            {{ $kegiatan->judul ?: ($kegiatan->nama_kegiatan ?: ($kegiatan->title ?? '-')) }}
                         </div>
                     </div>
                     <div>
                         <div class="md-stat-label" style="margin-bottom:4px;">Jenis Kerjasama</div>
                         <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                            @forelse($kegiatan->jenisKerjasama as $jk)<span class="tag tag-purple"
-                            style="font-size:11px;">{{ $jk->nama_kerjasama }}</span>@empty<span
-                                style="font-size:13px; color:var(--text-sub);">-</span>@endforelse</div>
+                            <span class="tag tag-purple" style="font-size:11px;">{{ $kegiatan->jenis ?? '-' }}</span>
+                        </div>
                     </div>
                     <div>
                         <div class="md-stat-label" style="margin-bottom:4px;">Dibuat Oleh</div>
-                        <div style="font-size:14px; color:var(--text);">{{ $kegiatan->creator?->name ?? '-' }}</div>
+                        <div style="font-size:14px; color:var(--text);">{{ $kegiatan->creator?->name ?? ($kegiatan->pjInternal?->nama ?? '-') }}</div>
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 16px;">
                     <div>
-                        <div class="md-stat-label" style="margin-bottom:4px;">Nomor MoU</div>
+                        <div class="md-stat-label" style="margin-bottom:4px;">Nomor Dokumen</div>
                         <div style="font-size:14px; color:var(--text); font-family:'DM Mono',monospace;">
-                            {{ $kegiatan->nomor_mou ?? '-' }}</div>
+                            {{ $kegiatan->doc_number ?? ($kegiatan->nomor_mou ?? '-') }}</div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom:4px;">Tanggal MoU</div>
+                        <div class="md-stat-label" style="margin-bottom:4px;">Tanggal Mulai</div>
                         <div style="font-size:14px; color:var(--text);">
-                            {{ $kegiatan->tanggal_mou?->format('d M Y') ?? '-' }}</div>
+                            {{ $kegiatan->start_date ? \Carbon\Carbon::parse($kegiatan->start_date)->format('d M Y') : '-' }}</div>
                     </div>
                     <div>
-                        <div class="md-stat-label" style="margin-bottom:4px;">Penanggung Jawab</div>
-                        <div style="font-size:14px; color:var(--text);">{{ $kegiatan->penanggung_jawab ?? '-' }}</div>
-                    </div>
-                    <div>
-                        <div class="md-stat-label" style="margin-bottom:8px;">Mitra Kerjasama</div>
-                        <div style="display:flex; flex-wrap:wrap; gap:6px;">@forelse($kegiatan->mitras as $m)<span
-                        class="tag tag-blue" style="font-size:11px;">{{ $m->nama_mitra }}</span>@empty<span
-                                style="font-size:13px; color:var(--text-sub);">Belum ada mitra</span>@endforelse</div>
+                        <div class="md-stat-label" style="margin-bottom:4px;">Mitra Kerjasama</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                            <span class="tag tag-blue" style="font-size:11px;">{{ $kegiatan->mitra?->nama_mitra ?? '-' }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,7 +126,7 @@
         {{-- TAB: Tujuan & Sasaran --}}
         <div class="tab-content mc-body" x-show="activeTab === 'tujuan'" x-transition
             style="padding: 24px; display: none;">
-            @php $tujuanSasaran = $kegiatan->tujuans->first(); @endphp
+            @php $tujuanSasaran = $kegiatan->tujuans?->first(); @endphp
             @if($tujuanSasaran)
                 <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px;">
                     <div style="margin-bottom:20px;">
@@ -153,7 +152,7 @@
         {{-- TAB: Pelaksanaan --}}
         <div class="tab-content mc-body" x-show="activeTab === 'pelaksanaan'" x-transition
             style="padding: 24px; display: none;">
-            @forelse($kegiatan->pelaksanaans as $p)
+            @forelse($kegiatan->pelaksanaans ?? [] as $p)
                 <div
                     style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;">
                     <div style="font-size:13px; color:var(--text); line-height:1.6; margin-bottom:12px;">{{ $p->deskripsi }}
@@ -179,7 +178,7 @@
         {{-- TAB: Hasil & Capaian --}}
         <div class="tab-content mc-body" x-show="activeTab === 'hasil'" x-transition
             style="padding: 24px; display: none;">
-            @forelse($kegiatan->hasils as $h)
+            @forelse($kegiatan->hasils ?? [] as $h)
                 <div
                     style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;">
                     <div class="mc-grid-2">
@@ -223,7 +222,7 @@
         {{-- TAB: Permasalahan & Solusi --}}
         <div class="tab-content mc-body" x-show="activeTab === 'masalah'" x-transition
             style="padding: 24px; display: none;">
-            @forelse($kegiatan->permasalahanSolusis as $ps)
+            @forelse($kegiatan->permasalahanSolusis ?? [] as $ps)
                 <div
                     style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px;">
                     <div style="display:flex; flex-direction:column; gap:16px;">
@@ -265,7 +264,7 @@
         {{-- TAB: Dokumentasi --}}
         <div class="tab-content mc-body" x-show="activeTab === 'dokumentasi'" x-transition
             style="padding: 24px; display: none;">
-            @forelse($kegiatan->dokumentasis as $d)
+            @forelse($kegiatan->dokumentasis ?? [] as $d)
                 <div
                     style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:12px; display:flex; align-items:center; gap:14px;">
                     <div
