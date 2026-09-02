@@ -752,7 +752,7 @@ class DashboardController
         $aktifCount = $semuaDokumen->filter(function($doc) {
             $statusBerlaku = strtolower($doc->status_berlaku ?? '');
             $statusDokumen = strtolower($doc->status_dokumen ?? '');
-            return $statusBerlaku === 'aktif' || $statusDokumen === 'disahkan';
+            return $statusDokumen === 'disahkan' || ($statusBerlaku === 'aktif' && !in_array($statusDokumen, ['draft', 'menunggu evaluasi', 'menunggu validasi'], true));
         })->count();
 
         $pendingReviewCount = $semuaDokumen->filter(function($doc) {

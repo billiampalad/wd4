@@ -106,17 +106,17 @@
                     <i class="fas fa-file-pen" style="color: var(--accent); width: 24px; text-align: center;"></i>
                     Review Draf Dokumen
                 </a>
-                <a href="#" class="ud-tab" style="justify-content: flex-start;">
+                <a href="{{ route('mitra.penilaian.index') }}" class="ud-tab" style="justify-content: flex-start;">
                     <i class="fas fa-star" style="color: #f59e0b; width: 24px; text-align: center;"></i> Beri Penilaian
                     Mahasiswa
                 </a>
-                <a href="#" class="ud-tab" style="justify-content: flex-start;">
+                <a href="{{ route('mitra.umpan_balik.index') }}" class="ud-tab" style="justify-content: flex-start;">
                     <i class="fas fa-comments" style="color: #10b981; width: 24px; text-align: center;"></i> Kirim Umpan
                     Balik
                 </a>
-                <a href="#" class="ud-tab" style="justify-content: flex-start;">
-                    <i class="fas fa-headset" style="color: var(--text-sub); width: 24px; text-align: center;"></i>
-                    Hubungi Administrator
+                <a href="{{ route('mitra.perpanjangan.create') }}" class="ud-tab" style="justify-content: flex-start;">
+                    <i class="fas fa-arrows-rotate" style="color: #6366f1; width: 24px; text-align: center;"></i>
+                    Ajukan Perpanjangan
                 </a>
             </div>
         </section>
@@ -143,13 +143,13 @@
                         @forelse($recentDocuments as $doc)
                             <tr data-kerjasama-row>
                                 <td>
-                                    <div class="ud-small">{{ $doc->nomor_dokumen ?? 'Menunggu Nomor' }}</div>
-                                    <div class="ud-doc-title">{{ $doc->judul_kerjasama ?? 'Perjanjian Kerja Sama' }}</div>
+                                    <div class="ud-small">{{ $doc->doc_number ?? ($doc->nomor_dokumen ?? 'Menunggu Nomor') }}</div>
+                                    <div class="ud-doc-title">{{ $doc->judul ?? ($doc->judul_kerjasama ?? ($doc->title ?? 'Perjanjian Kerja Sama')) }}</div>
                                 </td>
                                 <td>
                                     @php
-                                        $status = strtolower($doc->status ?? '');
-                                        if (str_contains($status, 'aktif')) {
+                                        $status = strtolower($doc->status_dokumen ?? ($doc->status_berlaku ?? ($doc->status ?? '')));
+                                        if (str_contains($status, 'aktif') || str_contains($status, 'disahkan')) {
                                             $lbl = 'Aktif';
                                             $cls = 'is-active';
                                             $icn = 'fa-circle-check';
@@ -157,12 +157,12 @@
                                             $lbl = 'Menunggu Review';
                                             $cls = 'is-pending';
                                             $icn = 'fa-spinner';
-                                        } elseif (str_contains($status, 'perpanjangan') || str_contains($status, 'kedaluwarsa')) {
+                                        } elseif (str_contains($status, 'perpanjangan') || str_contains($status, 'kedaluwarsa') || str_contains($status, 'kadaluarsa')) {
                                             $lbl = 'Masa Tenggang';
                                             $cls = 'is-expired';
                                             $icn = 'fa-clock-rotate-left';
                                         } else {
-                                            $lbl = $doc->status;
+                                            $lbl = $doc->status_dokumen ?? ($doc->status ?? '-');
                                             $cls = '';
                                             $icn = 'fa-circle-question';
                                         }
@@ -172,7 +172,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('mitra.dokumen.index') }}" class="ud-action-btn" title="Detail">
+                                    <a href="{{ route('mitra.dokumen.show', $doc->id) }}" class="ud-action-btn" title="Detail">
                                         <i class="fas fa-arrow-right"></i>
                                     </a>
                                 </td>
