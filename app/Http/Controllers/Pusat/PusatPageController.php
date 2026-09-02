@@ -1141,6 +1141,7 @@ class PusatPageController extends Controller
         }
 
         $kegiatan->update(['status_dokumen' => 'Menunggu Evaluasi']);
+        Evaluasi::where('cooperation_id', $kegiatan->id)->update(['status_validasi' => 'Menunggu Validasi']);
 
         // ─── KIRIM NOTIFIKASI KE PIMPINAN ───────────────────────
         $pimpinans = \App\Models\User::whereHas('role', function ($q) {
