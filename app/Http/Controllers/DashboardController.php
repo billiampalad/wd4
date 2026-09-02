@@ -27,7 +27,7 @@ class DashboardController
         // ── 1. WIDGET KARTU STATISTIK ─────────────────────────────
         $totalKerjasamaAktif = Cooperation::where('status_berlaku', 'Aktif')->count();
         $totalMitra = Mitra::count();
-        $totalNilaiKontrak = DetailKegiatan::sum('nilai_kontrak');
+        $totalNilaiKontrak = DetailKegiatan::sum('income');
         
         $capaianSasaran = DB::table('detail_kegiatans')
             ->join('sasarans', 'detail_kegiatans.sasaran_id', '=', 'sasarans.id')
