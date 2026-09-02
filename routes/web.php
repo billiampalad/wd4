@@ -283,6 +283,9 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // ─── Laporan Data ────────────────────────────────────
     Route::get('/unit/laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'laporan'])->name('unit.laporan');
+    Route::get('/unit/laporan/preview', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPreview'])->name('unit.laporan.preview');
+    Route::get('/unit/laporan/pdf', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanPdf'])->name('unit.laporan.pdf');
+    Route::get('/unit/laporan/excel', [App\Http\Controllers\Unit\UnitPageController::class, 'laporanExcel'])->name('unit.laporan.excel');
 
     // ─── Form Laporan (PDF/Word Upload) ───────────────────
     Route::get('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporan'])->name('unit.form');
