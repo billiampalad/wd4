@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Cooperation;
 use App\Models\Evaluasi;
 use App\Models\Mitra;
+use App\Models\Notifikasi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -131,6 +133,27 @@ class UmpanBalikController extends Controller
                 'status_validasi' => 'Divalidasi',
             ]
         );
+
+        // ─── KIRIM NOTIFIKASI KE PIMPINAN & UNIT TERKAIT (UC26) ───
+        $cooperation = Cooperation::find($validated['cooperation_id']);
+        $mitraNama = $user->mitra?->nama_mitra ?? ($user->name ?? 'Mitra');
+        $judulKs = $cooperation->judul ?? ($cooperation->title ?? 'Kerja Sama');
+
+        $recipients = User::whereHas('role', function ($q) {
+            $q->whereIn('name', ['pimpinan', 'unit_kerja', 'jurusan']);
+        })->get();
+
+        foreach ($recipients as $recipient) {
+            Notifikasi::send(
+                $recipient->id,
+                $user->id,
+                $cooperation->id,
+                'umpan_balik',
+                'Umpan Balik Mitra Diterima',
+                "$mitraNama telah memberikan umpan balik kepuasan untuk naskah kerjasama: $judulKs.",
+                route('pimpinan.monitoring.detail', $cooperation->id)
+            );
+        }
 
         return redirect()->route('mitra.umpan_balik.index')->with('success', 'Umpan balik kemitraan dan survei kepuasan berhasil disimpan. Terima kasih atas kontribusi Anda!');
     }
