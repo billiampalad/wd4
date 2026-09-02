@@ -147,21 +147,33 @@ class PenilaianMahasiswaController extends Controller
             'status' => 'Selesai', // update status jika sudah dinilai
         ]);
 
-        // Kirim notifikasi sistem ke admin / pimpinan / pengusul
+        // Kirim notifikasi sistem ke pengusul kegiatan, prodi, dan jurusan (UC21)
+        $namaMhs = $penempatan->mahasiswa ? $penempatan->mahasiswa->nama : 'Mahasiswa Magang';
+        $namaMitra = $user->mitra ? $user->mitra->nama_mitra : ($user->name ?? 'Mitra Kerjasama');
+
+        $recipients = collect();
         if ($penempatan->kegiatan && $penempatan->kegiatan->created_by) {
-            $namaMhs = $penempatan->mahasiswa ? $penempatan->mahasiswa->nama : 'Mahasiswa Magang';
-            $namaMitra = $user->mitra ? $user->mitra->nama_mitra : $user->name;
-            
-            Notifikasi::create([
-                'user_id' => $penempatan->kegiatan->created_by,
-                'sender_id' => $user->id,
-                'source_id' => $penempatan->id,
-                'source_type' => 'kegiatan_mahasiswa',
-                'type' => 'penilaian_magang',
-                'title' => 'Penilaian Magang Mahasiswa Baru',
-                'message' => "Mitra '{$namaMitra}' telah menginput nilai ({$nilai}) untuk mahasiswa: {$namaMhs}.",
-                'is_read' => 0,
-            ]);
+            $recipients->push($penempatan->kegiatan->created_by);
+        }
+
+        // Notify prodi users
+        $prodiUsers = User::whereHas('role', function ($q) {
+            $q->whereIn('role_name', ['prodi', 'jurusan']);
+        })->pluck('id');
+
+        $recipients = $recipients->merge($prodiUsers)->unique();
+
+        foreach ($recipients as $recipientId) {
+            Notifikasi::send(
+                $recipientId,
+                $user->id,
+                $penempatan->id,
+                'penilaian_magang',
+                'Penilaian Magang Mahasiswa Baru',
+                "Mitra '{$namaMitra}' telah menginput nilai ({$nilai}) untuk mahasiswa: {$namaMhs}.",
+                route('prodi.penempatan.index'),
+                'kegiatan_mahasiswa'
+            );
         }
 
         if ($request->wantsJson() || $request->ajax()) {
