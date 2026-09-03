@@ -15,6 +15,8 @@ return new class extends Migration
 CREATE TABLE `pks_numbers` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `cooperation_id` bigint unsigned NOT NULL,
+  `number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT '0',
   `nomor_pihak_kampus` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nomor_pihak_mitra` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,

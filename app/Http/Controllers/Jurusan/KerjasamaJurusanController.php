@@ -272,9 +272,9 @@ class KerjasamaJurusanController extends Controller
                 'penandatangan_mitra_id' => $penandatanganMitra?->id,
                 'pj_mitra_id' => $pjMitra?->id,
                 'tingkat' => 'Jurusan',
-                'jurusan_id' => ('Jurusan' === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
-                'upa_id' => ('Jurusan' === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
-                'pusat_id' => ('Jurusan' === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
+                'jurusan_id' => ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
