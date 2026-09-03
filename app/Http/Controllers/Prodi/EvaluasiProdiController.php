@@ -35,7 +35,8 @@ class EvaluasiProdiController extends Controller
             'evaluasis',
             'laporanFiles',
             'prodis',
-            'jurusans'
+            'jurusans',
+            'pksNumbers'
         ])
         ->when($prodiId || $jurusanId, function ($query) use ($prodiId, $jurusanId) {
             $query->where(function ($sub) use ($prodiId, $jurusanId) {

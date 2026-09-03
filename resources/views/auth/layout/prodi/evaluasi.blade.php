@@ -387,8 +387,8 @@
                                     $mName = $coop->mitra?->nama_mitra ?? '-';
                                     $statusVal = strtolower($coop->status ?? 'aktif');
                                     $tingkatVal = strtolower($coop->tingkat ?? 'institusi');
-                                    $docNumber = $coop->nomor_dokumen_pks ?? $coop->nomor_dokumen_mou ?? $coop->nomor_dokumen ?? '-';
-                                    $judul = $coop->judul_kerjasama ?? $coop->deskripsi ?? 'Kerja Sama Industri';
+                                    $docNumber = $coop->doc_number ?: ($coop->pks_number ?: '-');
+                                    $judul = $coop->judul ?: ($coop->title ?: 'Kerja Sama Industri');
                                     $searchBlob = strtolower($docNumber . ' ' . $judul . ' ' . $mName . ' ' . $coop->status);
                                     
                                     $mhsTerkait = $penempatanList->where('mitra_id', $coop->mitra_id)->count();
@@ -417,7 +417,7 @@
                                                 {{ $judul }}
                                             </span>
                                             <small style="display: inline-block; padding: 2px 8px; border-radius: 6px; background: rgba(79,70,229,0.06); color: #4f46e5; font-size: 10px; font-weight: 700; margin-top: 4px;">
-                                                {{ $coop->tingkat ?? 'Institusi' }} • {{ $coop->jenis_kerjasama ?? 'PKS' }}
+                                                {{ $coop->tingkat ?? 'Institusi' }} • {{ $coop->jenis ?? 'PKS' }}
                                             </small>
                                         </div>
                                     </td>
@@ -489,9 +489,9 @@
                                                 mitra: '{{ addslashes($mName) }}',
                                                 periode: '{{ $coop->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('d M Y') : '-' }} s.d {{ $coop->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('d M Y') : '-' }}',
                                                 status: '{{ ucfirst($coop->status ?? 'Aktif') }}',
-                                                evaluasiText: '{{ addslashes($evaluasiItem->ringkasan ?? 'Program kerja sama berjalan sesuai target pencapaian IKU dan indikator kegiatan.') }}',
-                                                skor: '{{ $evaluasiItem->kualitas ? ($evaluasiItem->kualitas * 20) . ' / 100' : 'Sangat Baik (90.0)' }}',
-                                                catatan: '{{ addslashes($evaluasiItem->saran ?? 'Kerja sama industri direkomendasikan untuk diperpanjang pada periode berikutnya.') }}'
+                                                evaluasiText: '{{ addslashes($evaluasiItem?->ringkasan ?? 'Program kerja sama berjalan sesuai target pencapaian IKU dan indikator kegiatan.') }}',
+                                                skor: '{{ ($evaluasiItem?->kualitas) ? ($evaluasiItem->kualitas * 20) . ' / 100' : ($hasEvaluasi ? 'Tervalidasi' : 'Belum Dievaluasi') }}',
+                                                catatan: '{{ addslashes($evaluasiItem?->saran ?? 'Kerja sama industri direkomendasikan untuk diperpanjang pada periode berikutnya.') }}'
                                             })"
                                             title="Lihat Ringkasan Evaluasi"
                                             style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); cursor: pointer;">
