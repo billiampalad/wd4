@@ -8,6 +8,7 @@ use App\Models\Mitra;
 use App\Models\Jurusan;
 use App\Models\Profile;
 use App\Models\JenisKerjasama;
+use App\Models\Cooperation;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -67,7 +68,7 @@ class InputDokumenKerjasamaTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('cooperations', [
-            'title' => 'MoU Kerjasama Jurusan TI dengan PT Mitra Test',
+            'judul' => 'MoU Kerjasama Jurusan TI dengan PT Mitra Test',
             'mitra_id' => $mitra->id,
             'status_dokumen' => 'Draft',
         ]);
