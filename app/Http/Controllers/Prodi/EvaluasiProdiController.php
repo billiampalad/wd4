@@ -81,7 +81,7 @@ class EvaluasiProdiController extends Controller
 
         $uniqueMitras = $cooperations->map(fn($c) => $c->mitra?->nama_mitra)->filter()->unique()->values();
 
-        return view('auth.layout.prodi.evaluasi', compact(
+        return view('auth.layout.prodi.evaluasi.index', compact(
             'cooperations',
             'penempatans',
             'totalKerjasama',
