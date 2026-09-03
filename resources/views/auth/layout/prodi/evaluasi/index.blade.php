@@ -87,17 +87,6 @@
         perPage: 10,
         perPageOpen: false,
         perPageOptions: [5, 10, 25, 50],
-        showModal: false,
-        selectedItem: {
-            nomor: '',
-            judul: '',
-            mitra: '',
-            periode: '',
-            status: '',
-            evaluasiText: '',
-            skor: '',
-            catatan: ''
-        },
 
         resetFilters() {
             this.searchQuery = '';
@@ -173,11 +162,6 @@
 
         goToPage(p) {
             this.currentPage = Math.min(Math.max(p, 1), this.totalPages);
-        },
-
-        openDetail(data) {
-            this.selectedItem = data;
-            this.showModal = true;
         }
     }">
 
@@ -482,21 +466,11 @@
 
                                     {{-- 8. Aksi --}}
                                     <td class="um-td" style="text-align: center; vertical-align: middle;">
-                                        <button type="button" class="rfc-btn"
-                                            @click="openDetail({
-                                                nomor: '{{ addslashes($docNumber) }}',
-                                                judul: '{{ addslashes($judul) }}',
-                                                mitra: '{{ addslashes($mName) }}',
-                                                periode: '{{ $coop->start_date ? \Carbon\Carbon::parse($coop->start_date)->format('d M Y') : '-' }} s.d {{ $coop->end_date ? \Carbon\Carbon::parse($coop->end_date)->format('d M Y') : '-' }}',
-                                                status: '{{ ucfirst($coop->status ?? 'Aktif') }}',
-                                                evaluasiText: '{{ addslashes($evaluasiItem?->ringkasan ?? 'Program kerja sama berjalan sesuai target pencapaian IKU dan indikator kegiatan.') }}',
-                                                skor: '{{ ($evaluasiItem?->kualitas) ? ($evaluasiItem->kualitas * 20) . ' / 100' : ($hasEvaluasi ? 'Tervalidasi' : 'Belum Dievaluasi') }}',
-                                                catatan: '{{ addslashes($evaluasiItem?->saran ?? 'Kerja sama industri direkomendasikan untuk diperpanjang pada periode berikutnya.') }}'
-                                            })"
-                                            title="Lihat Ringkasan Evaluasi"
-                                            style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); cursor: pointer;">
+                                        <a href="{{ route('prodi.evaluasi.show', $coop->id) }}" class="rfc-btn"
+                                            title="Lihat Rincian Evaluasi"
+                                            style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
                                             <i class="fas fa-eye"></i>
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
@@ -560,9 +534,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Include Modal Detail Evaluasi --}}
-        @include('auth.layout.prodi.evaluasi.show')
 
     </div>
 </main>

@@ -445,6 +445,7 @@ Route::middleware(['auth', 'role:prodi'])->group(function () {
 
     // ─── Evaluasi & Laporan Prodi (UC23/UC28/UC30) ─────────
     Route::get('/prodi/evaluasi', [\App\Http\Controllers\Prodi\EvaluasiProdiController::class, 'index'])->name('prodi.evaluasi');
+    Route::get('/prodi/evaluasi/{id}', [\App\Http\Controllers\Prodi\EvaluasiProdiController::class, 'show'])->name('prodi.evaluasi.show');
 });
 
 Route::middleware(['auth', 'role:mitra'])->group(function () {

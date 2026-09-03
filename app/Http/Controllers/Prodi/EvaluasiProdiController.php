@@ -93,4 +93,55 @@ class EvaluasiProdiController extends Controller
             'prodiName'
         ));
     }
+
+    /**
+     * Display the detailed evaluation page for a specific cooperation.
+     */
+    public function show($id)
+    {
+        $user = Auth::user();
+        $prodiId = $user->profile?->prodi_id ?? null;
+        $jurusanId = $user->profile?->jurusan_id ?? null;
+
+        if (!$jurusanId && $prodiId) {
+            $prodiModel = Prodi::find($prodiId);
+            $jurusanId = $prodiModel?->jurusan_id;
+        }
+
+        $currentProdi = $prodiId ? Prodi::with('jurusan')->find($prodiId) : null;
+        $prodiName = $currentProdi?->nama_prodi ?? 'Program Studi';
+
+        $cooperation = Cooperation::with([
+            'mitra',
+            'evaluasis',
+            'laporanFiles',
+            'prodis',
+            'jurusans',
+            'pksNumbers',
+            'penandatanganInternal',
+            'pjInternal',
+            'penandatanganMitra',
+            'pjMitra'
+        ])->findOrFail($id);
+
+        $evaluasi = $cooperation->evaluasis->first();
+
+        // Ambil data mahasiswa penempatan dari prodi yang ditempatkan pada mitra kerjasama ini
+        $penempatans = KegiatanMahasiswa::with(['mahasiswa', 'kegiatan', 'mitra', 'pembimbings'])
+            ->where('mitra_id', $cooperation->mitra_id)
+            ->when($prodiId, function ($query) use ($prodiId) {
+                $query->whereHas('mahasiswa', function ($mQuery) use ($prodiId) {
+                    $mQuery->where('prodi_id', $prodiId);
+                });
+            })
+            ->get();
+
+        return view('auth.layout.prodi.evaluasi.show', compact(
+            'cooperation',
+            'evaluasi',
+            'penempatans',
+            'prodiName',
+            'currentProdi'
+        ));
+    }
 }
