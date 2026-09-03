@@ -142,7 +142,7 @@ class PengajuanKerjasamaMitraController extends Controller
                     $senderId = Auth::id() ?: 1;
                     $linkPerpanjangan = route('unit.pengajuan_perpanjangan');
 
-                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(role_name))'), ['unit_kerja', 'unit', 'humas']))
+                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
                         ->get()
                         ->each(function (User $unitUser) use ($senderId, $submission, $linkPerpanjangan) {
                             Notifikasi::send(
@@ -168,19 +168,19 @@ class PengajuanKerjasamaMitraController extends Controller
                     if (! $mitra && $submission->nama_mitra) {
                         $mitra = Mitra::create([
                             'nama_mitra' => $submission->nama_mitra,
-                            'id_klasifikasi' => $submission->id_klasifikasi,
+                            'klasifikasi_id' => $submission->id_klasifikasi,
                             'alamat' => $submission->alamat ?: '-',
-                            'kategori' => $submission->kategori ?: 'nasional',
                             'negara' => $submission->negara,
-                            'telp' => $submission->telp,
+                            'telepon' => $submission->telp,
                             'website' => $submission->website,
+                            'status_akses' => 'Aktif',
                         ]);
                     } elseif ($mitra) {
                         $mitra->fill([
-                            'id_klasifikasi' => $mitra->id_klasifikasi ?: $submission->id_klasifikasi,
+                            'klasifikasi_id' => $mitra->klasifikasi_id ?: $submission->id_klasifikasi,
                             'alamat' => $mitra->alamat ?: $submission->alamat,
                             'negara' => $mitra->negara ?: $submission->negara,
-                            'telp' => $mitra->telp ?: $submission->telp,
+                            'telepon' => $mitra->telepon ?: $submission->telp,
                             'website' => $mitra->website ?: $submission->website,
                         ])->save();
                     }
@@ -192,7 +192,7 @@ class PengajuanKerjasamaMitraController extends Controller
                     if ($mitraId && $mitraEmail) {
                         $existingMitraUser = User::where('email', $mitraEmail)->first();
                         if (! $existingMitraUser) {
-                            $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(role_name)) = ?', ['mitra'])->first();
+                            $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(name)) = ?', ['mitra'])->first();
                             if ($roleMitra) {
                                 $randomPassword = \Illuminate\Support\Str::random(10);
                                 User::create([
@@ -261,32 +261,11 @@ class PengajuanKerjasamaMitraController extends Controller
                         ]);
                     }
 
-                    // 4. Cari / assign JenisKerjasama
-                    $jenisKerjasamaId = 1;
-                    if ($submission->ruang_lingkup) {
-                        $jenisKerjasamaMatch = JenisKerjasama::whereRaw('LOWER(nama_kerjasama) = ?', [strtolower(trim($submission->ruang_lingkup))])->first();
-                        if ($jenisKerjasamaMatch) {
-                            $jenisKerjasamaId = $jenisKerjasamaMatch->id;
-                        } else {
-                            $jenisKerjasamaId = JenisKerjasama::first()?->id ?? 1;
-                        }
-                    }
-
-                    DetailKegiatan::firstOrCreate(
-                        ['cooperation_id' => $cooperation->id],
-                        [
-                            'jenis_kerjasama_id' => $jenisKerjasamaId,
-                            'tujuan' => $submission->tujuan_pengajuan,
-                            'keterangan' => null,
-                            'nilai_kontrak' => 0,
-                        ]
-                    );
-
-                    // 5. Kirim notifikasi ke Humas / Unit Kerja
+                    // 4. Kirim notifikasi ke Humas / Unit Kerja
                     $senderId = Auth::id() ?: 1;
                     $linkRepositori = route('unit.dkerjasama');
 
-                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(role_name))'), ['unit_kerja', 'unit', 'humas']))
+                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
                         ->get()
                         ->each(function (User $unitUser) use ($senderId, $cooperation, $linkRepositori, $submission) {
                             Notifikasi::send(

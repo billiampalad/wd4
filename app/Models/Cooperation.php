@@ -166,6 +166,11 @@ class Cooperation extends Model
         );
     }
 
+    public function detailKegiatans()
+    {
+        return $this->hasMany(DetailKegiatan::class, 'cooperation_id');
+    }
+
     public function evaluasis()
     {
         return $this->hasMany(Evaluasi::class, 'cooperation_id');
