@@ -9,7 +9,9 @@
     <title>Admin | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
@@ -55,7 +57,8 @@
                 <button id="hamburger" aria-label="Toggle sidebar">
                     <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35" height="35"></div>
+                <div class="brand-icon"><img src="{{ asset('img/logo.png') }}" alt="Handshake" width="35" height="35">
+                </div>
                 <div class="brand-text">
                     <h1>POLIMDO &amp; DUDIKA</h1>
                     <p>Sistem Informasi Kerjasama</p>
@@ -66,8 +69,10 @@
                 <!-- Search (desktop) -->
                 <div class="search-bar" id="navSearch" style="display:none;">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input" autocomplete="off" />
-                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;" title="Bersihkan pencarian">
+                    <input type="text" id="navSearchInput" placeholder="Cari data..." class="search-input"
+                        autocomplete="off" />
+                    <button type="button" id="navSearchClear" class="search-clear-btn" style="display:none;"
+                        title="Bersihkan pencarian">
                         <i class="fas fa-times-circle"></i>
                     </button>
                 </div>
@@ -97,7 +102,8 @@
         <aside id="sidebar">
             <div class="menu-section">Administration</div>
 
-            <a class="menu-item {{ request()->routeIs('dashboard', 'admin.dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+            <a class="menu-item {{ request()->routeIs('dashboard', 'admin.dashboard') ? 'active' : '' }}"
+                href="{{ route('dashboard') }}">
                 <div class="menu-icon"><i class="fas fa-tachometer-alt"></i></div>
                 <span>Dashboard</span>
             </a>
@@ -105,21 +111,27 @@
             @php
                 $isUserManagementActive = request()->routeIs('users', 'users.*', 'roles', 'roles.*', 'profiles', 'profiles.*', 'admin.profiles');
             @endphp
-            <div id="dataMasterParent" class="submenu-parent" style="display:flex; flex-direction:column; align-items:stretch;">
-                <div id="dataMasterBtn" data-submenu-toggle="dataMasterSub" class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}" style="margin:0; cursor: pointer;">
+            <div id="dataMasterParent" class="submenu-parent"
+                style="display:flex; flex-direction:column; align-items:stretch;">
+                <div id="dataMasterBtn" data-submenu-toggle="dataMasterSub"
+                    class="menu-item {{ $isUserManagementActive ? 'active submenu-open' : '' }}"
+                    style="margin:0; cursor: pointer;">
                     <div class="menu-icon"><i class="fas fa-users"></i></div>
-                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">User Management</span>
+                    <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Master Data</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
                 <div class="submenu {{ $isUserManagementActive ? 'open' : '' }}" id="dataMasterSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('users', 'users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                            <span class="submenu-dot"></span><span>Users</span>
+                        <a class="submenu-item {{ request()->routeIs('users', 'users.*') ? 'active' : '' }}"
+                            href="{{ route('users.index') }}">
+                            <span class="submenu-dot"></span><span>Pengguna</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('roles', 'roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('roles', 'roles.*') ? 'active' : '' }}"
+                            href="{{ route('roles.index') }}">
                             <span class="submenu-dot"></span><span>Roles</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*', 'admin.profiles') ? 'active' : '' }}" href="{{ route('admin.profiles') }}">
+                        <a class="submenu-item {{ request()->routeIs('profiles', 'profiles.*', 'admin.profiles') ? 'active' : '' }}"
+                            href="{{ route('admin.profiles') }}">
                             <span class="submenu-dot"></span><span>Profiles</span>
                         </a>
                     </div>
@@ -131,7 +143,8 @@
                 <div class="menu-icon"><i class="fas fa-handshake"></i></div>
                 <span>Mitra Kerjasama</span>
             </a>
-            <a class="menu-item {{ request()->routeIs('jkerjasama.*') ? 'active' : '' }}" href="{{ route('jkerjasama.index') }}">
+            <a class="menu-item {{ request()->routeIs('jkerjasama.*') ? 'active' : '' }}"
+                href="{{ route('jkerjasama.index') }}">
                 <div class="menu-icon"><i class="fas fa-tags"></i></div>
                 <span>Jenis Kerjasama</span>
             </a>
@@ -145,32 +158,40 @@
                 );
             @endphp
             <div class="submenu-parent" style="display:flex; flex-direction:column; align-items:stretch;">
-                <div data-submenu-toggle="unitOrganizationSub" class="menu-item {{ $isUnitOrganizationActive ? 'active submenu-open' : '' }}" style="margin:0; cursor:pointer;">
+                <div data-submenu-toggle="unitOrganizationSub"
+                    class="menu-item {{ $isUnitOrganizationActive ? 'active submenu-open' : '' }}"
+                    style="margin:0; cursor:pointer;">
                     <div class="menu-icon"><i class="fas fa-sitemap"></i></div>
                     <span class="menu-text" style="flex:1; font-size:13px; font-weight:600;">Unit Pelaksana</span>
                     <i class="fas fa-chevron-down menu-chevron"></i>
                 </div>
                 <div class="submenu {{ $isUnitOrganizationActive ? 'open' : '' }}" id="unitOrganizationSub">
                     <div class="submenu-inner">
-                        <a class="submenu-item {{ request()->routeIs('upelaksana.*') ? 'active' : '' }}" href="{{ route('upelaksana.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('upelaksana.*') ? 'active' : '' }}"
+                            href="{{ route('upelaksana.index') }}">
                             <span class="submenu-dot"></span><span>Humas</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('jurusan.*') ? 'active' : '' }}"
+                            href="{{ route('jurusan.index') }}">
                             <span class="submenu-dot"></span><span>Jurusan</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('prodi.*') ? 'active' : '' }}" href="{{ route('prodi.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('prodi.*') ? 'active' : '' }}"
+                            href="{{ route('prodi.index') }}">
                             <span class="submenu-dot"></span><span>Program Studi</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}" href="{{ route('upa.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('upa.*') ? 'active' : '' }}"
+                            href="{{ route('upa.index') }}">
                             <span class="submenu-dot"></span><span>Upa</span>
                         </a>
-                        <a class="submenu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}" href="{{ route('pusat.index') }}">
+                        <a class="submenu-item {{ request()->routeIs('pusat.*') ? 'active' : '' }}"
+                            href="{{ route('pusat.index') }}">
                             <span class="submenu-dot"></span><span>Pusat</span>
                         </a>
                     </div>
                 </div>
             </div>
-            <a class="menu-item {{ request()->routeIs('klasifikasi.*') ? 'active' : '' }}" href="{{ route('klasifikasi.index') }}">
+            <a class="menu-item {{ request()->routeIs('klasifikasi.*') ? 'active' : '' }}"
+                href="{{ route('klasifikasi.index') }}">
                 <div class="menu-icon"><i class="fas fa-microchip"></i></div>
                 <span>Klasifikasi Mitra</span>
             </a>
