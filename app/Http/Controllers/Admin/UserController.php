@@ -66,6 +66,15 @@ class UserController
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->findOrFail($id);
+        return view('admin.users.detail', compact('user'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)

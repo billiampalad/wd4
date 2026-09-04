@@ -121,6 +121,10 @@
                                 </td>
                                 <td class="um-td um-td-aksi">
                                     <div class="actions um-actions">
+                                        <a href="{{ route('users.show', $user->id) }}" class="btn-action detail um-btn-detail"
+                                            title="Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         <a href="{{ route('users.edit', $user->id) }}" class="btn-action edit um-btn-edit"
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
