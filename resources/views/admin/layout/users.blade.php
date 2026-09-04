@@ -26,7 +26,7 @@
                     <div class="ud-title-copy">
                         <h2 class="ud-title" id="pageTitle">Master Data</h2>
                         <p class="ud-subtitle" id="pageDesc">
-                            Tambah, edit, dan hapus data pengguna sistem.
+                            Tambah, edit, lihat detail dan hapus data pengguna sistem.
                         </p>
                     </div>
                 </div>
