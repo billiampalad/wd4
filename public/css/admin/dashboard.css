@@ -5268,18 +5268,34 @@ main {
     color: var(--ud-accent-primary);
 }
 
+.ud-address-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 44px;
+    padding: 0.5rem 0.875rem;
+}
+
 .ud-address-text {
     font-size: 0.8125rem;
     line-height: 1.45;
     color: var(--ud-text-body);
-    margin: 0 0 0.5rem 0;
+    margin: 0;
+    flex: 1;
+    min-width: 200px;
 }
 
 .ud-location-pills {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.4rem;
     flex-wrap: wrap;
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .ud-loc-pill {

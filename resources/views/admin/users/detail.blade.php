@@ -666,7 +666,7 @@
                                             <label class="ud-field-label">
                                                 <i class="fas fa-map-marker-alt"></i> Alamat Lengkap & Wilayah
                                             </label>
-                                            <div class="ud-field-value">
+                                            <div class="ud-field-value ud-address-value">
                                                 <p class="ud-address-text">
                                                     {{ $user->mitra->alamat ?: '— Belum ada alamat terdaftar —' }}
                                                 </p>
