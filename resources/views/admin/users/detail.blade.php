@@ -126,6 +126,10 @@
         $unitType = 'Pusat / Lembaga';
         $unitName = $user->profile->pusat->nama_pusat;
         $unitIcon = 'fas fa-landmark';
+    } elseif ($user->mitra) {
+        $unitType = 'Mitra Perusahaan (DUDIKA)';
+        $unitName = $user->mitra->nama_mitra ?? 'Mitra Industri';
+        $unitIcon = 'fas fa-handshake';
     } elseif ($roleKey === 'admin') {
         $unitType = 'Sistem Pusat';
         $unitName = 'Administrator Sistem WD4';
@@ -157,7 +161,7 @@
                 <div class="ud-title-copy">
                     <h2 class="ud-title" id="pageTitle">Detail Data Pengguna</h2>
                     <p class="ud-subtitle" id="pageDesc">
-                        Informasi lengkap profil, hak akses peran, struktur penempatan unit, dan riwayat kredensial.
+                        Informasi lengkap profil akun, kewenangan peran, keterkaitan unit, serta dokumen kerjasama terkait.
                     </p>
                 </div>
             </div>
@@ -239,105 +243,136 @@
         </div>
     </div>
 
+    {{-- ── Metric Summary Counters ─────────────────────────────────── --}}
+    <div class="ud-metric-grid">
+        <div class="ud-metric-card">
+            <div class="ud-metric-icon icon-primary">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <div class="ud-metric-info">
+                <span class="ud-metric-label">Total Kerjasama</span>
+                <span class="ud-metric-num">{{ $stats['total_cooperations'] ?? 0 }}</span>
+                <span class="ud-metric-sub">Dokumen terkait entitas ini</span>
+            </div>
+        </div>
+
+        <div class="ud-metric-card">
+            <div class="ud-metric-icon icon-success">
+                <i class="fas fa-circle-check"></i>
+            </div>
+            <div class="ud-metric-info">
+                <span class="ud-metric-label">Kerjasama Aktif</span>
+                <span class="ud-metric-num text-success">{{ $stats['active_cooperations'] ?? 0 }}</span>
+                <span class="ud-metric-sub">Masa berlaku masih berjalan</span>
+            </div>
+        </div>
+
+        <div class="ud-metric-card">
+            <div class="ud-metric-icon icon-warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="ud-metric-info">
+                <span class="ud-metric-label">Akan Berakhir</span>
+                <span class="ud-metric-num text-warning">{{ $stats['expiring_cooperations'] ?? 0 }}</span>
+                <span class="ud-metric-sub">Perlu evaluasi/perpanjangan</span>
+            </div>
+        </div>
+
+        <div class="ud-metric-card">
+            <div class="ud-metric-icon icon-purple">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div class="ud-metric-info">
+                <span class="ud-metric-label">Usulan & Pengajuan</span>
+                <span class="ud-metric-num text-purple">{{ $stats['total_proposals'] ?? 0 }}</span>
+                <span class="ud-metric-sub">Pengajuan baru & perpanjangan</span>
+            </div>
+        </div>
+    </div>
+
     {{-- ── Main Grid Section ──────────────────────────────────────── --}}
     <div class="ud-grid-container">
 
         {{-- ── Left Column: Security, Account & Role Tier (380px) ── --}}
         <div class="ud-col-side">
             
-            {{-- Card 1: Informasi Kredensial & Autentikasi --}}
+            {{-- Card 1: Kredensial & Info Login --}}
             <div class="card ud-card">
                 <div class="ud-card-header">
-                    <div class="ud-card-title">
-                        <i class="fas fa-key ud-header-icon" style="color: #6366f1;"></i>
-                        <span>Kredensial & Autentikasi</span>
+                    <div class="ud-card-title-group">
+                        <span class="ud-card-icon icon-cyan">
+                            <i class="fas fa-key"></i>
+                        </span>
+                        <div>
+                            <h3 class="ud-card-title">Kredensial & Login</h3>
+                            <p class="ud-card-subtitle">Informasi autentikasi akun</p>
+                        </div>
                     </div>
-                    <span class="ud-header-badge">Privat</span>
                 </div>
-
+                
                 <div class="ud-card-body">
-                    <div class="ud-info-item">
-                        <div class="ud-info-label">
-                            <i class="fas fa-envelope"></i>
-                            <span>Email Terdaftar</span>
-                        </div>
-                        <div class="ud-info-value-wrap">
-                            <span class="ud-info-val">{{ $user->email }}</span>
-                            <button type="button" class="ud-copy-btn" onclick="copyToClipboard('{{ $user->email }}', 'Email disalin!')" title="Salin Email">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="ud-info-item">
-                        <div class="ud-info-label">
-                            <i class="fas fa-id-card"></i>
-                            <span>Nomor Induk Kependudukan (NIK)</span>
-                        </div>
-                        <div class="ud-info-value-wrap">
-                            <span class="ud-info-val ud-mono">{{ $user->nik ?? 'Belum diisi' }}</span>
-                            @if($user->nik)
-                                <button type="button" class="ud-copy-btn" onclick="copyToClipboard('{{ $user->nik }}', 'NIK disalin!')" title="Salin NIK">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="ud-info-item">
-                        <div class="ud-info-label">
-                            <i class="fas fa-lock"></i>
-                            <span>Keamanan Password</span>
-                        </div>
-                        <div class="ud-pass-status-box">
-                            <div class="ud-pass-dots">
-                                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    <div class="ud-info-stack">
+                        <div class="ud-info-tile">
+                            <div class="ud-tile-icon"><i class="fas fa-at"></i></div>
+                            <div class="ud-tile-content">
+                                <span class="ud-tile-label">Email Login</span>
+                                <span class="ud-tile-value ud-selectable">{{ $user->email }}</span>
                             </div>
-                            <span class="ud-pass-meta"><i class="fas fa-shield-check"></i> Terenkripsi Bcrypt (60-char)</span>
                         </div>
-                    </div>
 
-                    <div class="ud-info-item">
-                        <div class="ud-info-label">
-                            <i class="fas fa-circle-check"></i>
-                            <span>Status Verifikasi Akun</span>
+                        <div class="ud-info-tile">
+                            <div class="ud-tile-icon"><i class="fas fa-shield-halved"></i></div>
+                            <div class="ud-tile-content">
+                                <span class="ud-tile-label">Status Verifikasi</span>
+                                @if($user->email_verified_at)
+                                    <span class="ud-tile-badge badge-green">
+                                        <i class="fas fa-check-circle"></i> Terverifikasi ({{ $user->email_verified_at->format('d/m/Y H:i') }})
+                                    </span>
+                                @else
+                                    <span class="ud-tile-badge badge-amber">
+                                        <i class="fas fa-clock"></i> Menunggu Verifikasi
+                                    </span>
+                                @endif
+                            </div>
                         </div>
-                        <div class="ud-verification-status">
-                            @if($user->email_verified_at)
-                                <div class="ud-status-tag verified">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Terverifikasi pada {{ $user->email_verified_at->format('d/m/Y H:i') }}</span>
-                                </div>
-                            @else
-                                <div class="ud-status-tag unverified">
-                                    <i class="fas fa-triangle-exclamation"></i>
-                                    <span>Belum Diverifikasi</span>
-                                </div>
-                            @endif
+
+                        <div class="ud-info-tile">
+                            <div class="ud-tile-icon"><i class="fas fa-lock"></i></div>
+                            <div class="ud-tile-content">
+                                <span class="ud-tile-label">Kata Sandi</span>
+                                <span class="ud-tile-value text-muted">•••••••••••••••• (Terenkripsi Bcrypt)</span>
+                            </div>
+                        </div>
+
+                        <div class="ud-info-tile">
+                            <div class="ud-tile-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="ud-tile-content">
+                                <span class="ud-tile-label">Terakhir Diperbarui</span>
+                                <span class="ud-tile-value">{{ $user->updated_at ? $user->updated_at->format('d M Y, H:i') . ' WITA' : '—' }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Card 2: Tingkat Akses & Otoritas --}}
+            {{-- Card 2: Hak Akses & Peran --}}
             <div class="card ud-card">
                 <div class="ud-card-header">
-                    <div class="ud-card-title">
-                        <i class="fas fa-user-shield ud-header-icon ud-theme-text-color"></i>
-                        <span>Otoritas & Hak Akses</span>
+                    <div class="ud-card-title-group">
+                        <span class="ud-card-icon icon-purple">
+                            <i class="fas fa-user-shield"></i>
+                        </span>
+                        <div>
+                            <h3 class="ud-card-title">Kewenangan Peran</h3>
+                            <p class="ud-card-subtitle">{{ $currentTheme['access_tier'] }}</p>
+                        </div>
                     </div>
                 </div>
+
                 <div class="ud-card-body">
-                    <div class="ud-role-banner ud-theme-banner">
-                        <div class="ud-role-icon-box ud-theme-icon-color">
-                            <i class="{{ $currentTheme['icon'] }}"></i>
-                        </div>
-                        <div>
-                            <div class="ud-role-banner-title ud-theme-text-color">
-                                {{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? 'Default User' }}
-                            </div>
-                            <div class="ud-role-tier">{{ $currentTheme['access_tier'] }}</div>
-                        </div>
+                    <div class="ud-role-banner ud-theme-badge">
+                        <i class="{{ $currentTheme['icon'] }}"></i>
+                        <span class="ud-role-name">{{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? 'Tanpa Role' }}</span>
                     </div>
 
                     <p class="ud-role-description">
@@ -360,21 +395,26 @@
             {{-- Card 3: Danger Zone (Hapus) --}}
             <div class="card ud-card ud-card-danger">
                 <div class="ud-card-header">
-                    <div class="ud-card-title" style="color: #ef4444;">
-                        <i class="fas fa-triangle-exclamation"></i>
-                        <span>Zona Tindakan Kritis</span>
+                    <div class="ud-card-title-group">
+                        <span class="ud-card-icon icon-danger">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </span>
+                        <div>
+                            <h3 class="ud-card-title text-danger">Tindakan Khusus</h3>
+                            <p class="ud-card-subtitle">Pengelolaan akun sensitif</p>
+                        </div>
                     </div>
                 </div>
                 <div class="ud-card-body">
-                    <p class="ud-danger-desc">
-                        Menghapus pengguna ini akan mencabut seluruh hak akses login ke sistem WD4 secara permanen.
+                    <p class="ud-danger-text">
+                        Menghapus pengguna ini akan mencabut seluruh hak akses login secara permanen.
                     </p>
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengguna {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.');">
+                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna {{ $user->name }}? Tindakan ini tidak dapat dibatalkan.');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="ud-btn-danger">
+                        <button type="submit" class="ud-btn-danger-block">
                             <i class="fas fa-trash-can"></i>
-                            <span>Hapus Akun Pengguna</span>
+                            <span>Hapus Pengguna Ini</span>
                         </button>
                     </form>
                 </div>
@@ -382,1242 +422,1749 @@
 
         </div>
 
-        {{-- ── Right Column: Organization Structure & Timeline (1fr) ── --}}
+        {{-- ── Right Column: Interactive Tabs (Profil, Kerjasama, Usulan, Audit) ── --}}
         <div class="ud-col-main">
 
-            {{-- Card 4: Struktur Penempatan Unit Kerja Kampus --}}
-            <div class="card ud-card">
-                <div class="ud-card-header">
-                    <div class="ud-card-title">
-                        <i class="fas fa-sitemap ud-header-icon" style="color: #0284c7;"></i>
-                        <span>Penempatan Unit & Struktur Organisasi</span>
+            {{-- Tab Navigasi Interaktif --}}
+            <div class="ud-tabs-nav">
+                <button type="button" class="ud-tab-btn active" data-tab="tab-profile" onclick="switchTab('tab-profile', this)">
+                    <i class="fas fa-id-card-clip"></i>
+                    <span>Profil & Penempatan</span>
+                </button>
+                <button type="button" class="ud-tab-btn" data-tab="tab-cooperation" onclick="switchTab('tab-cooperation', this)">
+                    <i class="fas fa-handshake"></i>
+                    <span>Kerjasama Terkait</span>
+                    @if(isset($stats['total_cooperations']) && $stats['total_cooperations'] > 0)
+                        <span class="ud-tab-count">{{ $stats['total_cooperations'] }}</span>
+                    @endif
+                </button>
+                <button type="button" class="ud-tab-btn" data-tab="tab-proposals" onclick="switchTab('tab-proposals', this)">
+                    <i class="fas fa-file-signature"></i>
+                    <span>Usulan & Pengajuan</span>
+                    @if(isset($stats['total_proposals']) && $stats['total_proposals'] > 0)
+                        <span class="ud-tab-count count-purple">{{ $stats['total_proposals'] }}</span>
+                    @endif
+                </button>
+                <button type="button" class="ud-tab-btn" data-tab="tab-audit" onclick="switchTab('tab-audit', this)">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Audit & Keamanan</span>
+                </button>
+            </div>
+
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            {{-- TAB 1: PROFIL & PENEMPATAN                                 --}}
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            <div id="tab-profile" class="ud-tab-pane active">
+
+                {{-- Card: Data Diri Pengguna --}}
+                <div class="card ud-card mb-4">
+                    <div class="ud-card-header">
+                        <div class="ud-card-title-group">
+                            <span class="ud-card-icon icon-primary">
+                                <i class="fas fa-user-gear"></i>
+                            </span>
+                            <div>
+                                <h3 class="ud-card-title">Biodata & Informasi Pribadi</h3>
+                                <p class="ud-card-subtitle">Data identitas resmi pengguna dalam sistem</p>
+                            </div>
+                        </div>
                     </div>
-                    <span class="ud-unit-type-badge">
-                        <i class="{{ $unitIcon }}"></i> {{ $unitType }}
-                    </span>
+
+                    <div class="ud-card-body">
+                        <div class="ud-data-grid">
+                            <div class="ud-field-group">
+                                <label class="ud-field-label">
+                                    <i class="fas fa-user"></i> Nama Lengkap
+                                </label>
+                                <div class="ud-field-value ud-highlight">{{ $user->name }}</div>
+                            </div>
+
+                            <div class="ud-field-group">
+                                <label class="ud-field-label">
+                                    <i class="fas fa-id-card"></i> NIK / NIP Pegawai
+                                </label>
+                                <div class="ud-field-value ud-mono">
+                                    {{ $user->nik ?? '— Belum diisi —' }}
+                                </div>
+                            </div>
+
+                            <div class="ud-field-group">
+                                <label class="ud-field-label">
+                                    <i class="fas fa-envelope"></i> Alamat Email Resmi
+                                </label>
+                                <div class="ud-field-value">
+                                    <a href="mailto:{{ $user->email }}" class="ud-link">
+                                        {{ $user->email }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="ud-field-group">
+                                <label class="ud-field-label">
+                                    <i class="fas fa-user-tag"></i> Role / Peran Akun
+                                </label>
+                                <div class="ud-field-value">
+                                    <span class="ud-inline-badge ud-theme-badge">
+                                        <i class="{{ $currentTheme['icon'] }}"></i>
+                                        {{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? 'Tanpa Role' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="ud-card-body">
-                    <div class="ud-structure-hero">
-                        <div class="ud-structure-icon">
-                            <i class="{{ $unitIcon }}"></i>
-                        </div>
-                        <div class="ud-structure-text">
-                            <span class="ud-structure-eyebrow">Unit Kerja Terdaftar</span>
-                            <h3 class="ud-structure-name">{{ $unitName }}</h3>
-                            <span class="ud-structure-sub">
-                                Politeknik Negeri Manado — Sistem Informasi Kerjasama WD4
+                {{-- Card: Penempatan Unit & Organisasi --}}
+                <div class="card ud-card">
+                    <div class="ud-card-header">
+                        <div class="ud-card-title-group">
+                            <span class="ud-card-icon icon-emerald">
+                                <i class="fas fa-sitemap"></i>
                             </span>
+                            <div>
+                                <h3 class="ud-card-title">Penempatan Struktural & Organisasi</h3>
+                                <p class="ud-card-subtitle">Unit pelaksana, institusi mitra, dan rincian jabatan</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="ud-profile-detail-grid">
-                        <div class="ud-profile-box">
-                            <span class="ud-pbox-icon"><i class="fas fa-briefcase"></i></span>
-                            <div class="ud-pbox-content">
-                                <span class="ud-pbox-label">Jabatan dalam Unit</span>
-                                <span class="ud-pbox-val">{{ $user->profile?->jabatan ?: '— (Belum Ditentukan)' }}</span>
+                    <div class="ud-card-body">
+                        <div class="ud-placement-box">
+                            <div class="ud-placement-icon">
+                                <i class="{{ $unitIcon }}"></i>
+                            </div>
+                            <div class="ud-placement-details">
+                                <span class="ud-placement-type">{{ $unitType }}</span>
+                                <h4 class="ud-placement-name">{{ $unitName }}</h4>
+                                <span class="ud-placement-role">Jabatan: <strong>{{ $user->profile?->jabatan ?: '— Belum diisi —' }}</strong></span>
                             </div>
                         </div>
 
-                        <div class="ud-profile-box">
-                            <span class="ud-pbox-icon"><i class="fas fa-building-user"></i></span>
-                            <div class="ud-pbox-content">
-                                <span class="ud-pbox-label">Tipe Unit Institusi</span>
-                                <span class="ud-pbox-val">{{ $unitType }}</span>
+                        <div class="ud-subgrid mt-4">
+                            <div class="ud-subbox">
+                                <span class="ud-subbox-label"><i class="fas fa-briefcase"></i> Jabatan Terdaftar</span>
+                                <span class="ud-subbox-value">{{ $user->profile?->jabatan ?: '—' }}</span>
+                            </div>
+
+                            <div class="ud-subbox">
+                                <span class="ud-subbox-label"><i class="fas fa-network-wired"></i> Entitas Induk</span>
+                                <span class="ud-subbox-value">
+                                    @if($user->mitra)
+                                        {{ $user->mitra->nama_mitra }}
+                                    @else
+                                        Politeknik Negeri Manado
+                                    @endif
+                                </span>
+                            </div>
+
+                            <div class="ud-subbox">
+                                <span class="ud-subbox-label"><i class="fas fa-layer-group"></i> Tingkat Struktur</span>
+                                <span class="ud-subbox-value">
+                                    @if($user->profile?->jurusan)
+                                        Unit Pelaksana Jurusan (Akademik)
+                                    @elseif($user->profile?->unitKerja)
+                                        Humas / Unit Kerja Pusat
+                                    @elseif($user->profile?->upa)
+                                        Unit Pelaksana Akademik (UPA)
+                                    @elseif($user->profile?->pusat)
+                                        Pusat / Lembaga Khusus
+                                    @elseif($user->mitra)
+                                        Industri / Lembaga Mitra Eksternal
+                                    @elseif($roleKey === 'pimpinan')
+                                        Direksi & Pimpinan Utama
+                                    @else
+                                        Pengelola Sistem
+                                    @endif
+                                </span>
+                            </div>
+
+                            <div class="ud-subbox">
+                                <span class="ud-subbox-label"><i class="fas fa-toggle-on"></i> Status Entitas</span>
+                                <span class="ud-subbox-value text-success">
+                                    <i class="fas fa-circle-check"></i> Terintegrasi Aktif
+                                </span>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        @if($user->profile?->jurusan)
-                            <div class="ud-profile-box">
-                                <span class="ud-pbox-icon"><i class="fas fa-code-branch"></i></span>
-                                <div class="ud-pbox-content">
-                                    <span class="ud-pbox-label">Kode Jurusan</span>
-                                    <span class="ud-pbox-val ud-mono">{{ $user->profile->jurusan->kode_jurusan ?? '-' }}</span>
-                                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            {{-- TAB 2: KERJASAMA TERKAIT                                   --}}
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            <div id="tab-cooperation" class="ud-tab-pane">
+                <div class="card ud-card">
+                    <div class="ud-card-header">
+                        <div class="ud-card-title-group">
+                            <span class="ud-card-icon icon-primary">
+                                <i class="fas fa-handshake"></i>
+                            </span>
+                            <div>
+                                <h3 class="ud-card-title">Daftar Dokumen Kerjasama Terkait</h3>
+                                <p class="ud-card-subtitle">
+                                    @if($roleKey === 'mitra')
+                                        Seluruh MoU, MoA, dan IA resmi antara Polimdo dengan {{ $user->mitra->nama_mitra ?? 'Mitra ini' }}
+                                    @elseif($roleKey === 'jurusan')
+                                        Kerjasama yang mencakup Jurusan {{ $user->profile?->jurusan?->nama_jurusan }}
+                                    @elseif($roleKey === 'upa')
+                                        Kerjasama di lingkup UPA {{ $user->profile?->upa?->nama_upa }}
+                                    @elseif($roleKey === 'pusat')
+                                        Kerjasama di lingkup Pusat {{ $user->profile?->pusat?->nama_pusat }}
+                                    @else
+                                        Dokumen kerjasama yang dikelola atau terdaftar dalam sistem
+                                    @endif
+                                </p>
                             </div>
-                            <div class="ud-profile-box">
-                                <span class="ud-pbox-icon"><i class="fas fa-graduation-cap"></i></span>
-                                <div class="ud-pbox-content">
-                                    <span class="ud-pbox-label">Total Program Studi</span>
-                                    <span class="ud-pbox-val">{{ $user->profile->jurusan->prodis?->count() ?? 0 }} Prodi Terdaftar</span>
+                        </div>
+                    </div>
+
+                    <div class="ud-card-body">
+                        @if(isset($cooperations) && $cooperations->count() > 0)
+                            <div class="ud-coop-list">
+                                @foreach($cooperations as $coop)
+                                    @php
+                                        $jenisClass = match(strtoupper($coop->jenis)) {
+                                            'MOU' => 'badge-mou',
+                                            'MOA' => 'badge-moa',
+                                            'IA'  => 'badge-ia',
+                                            default => 'badge-spk',
+                                        };
+
+                                        $statusClass = match($coop->status_berlaku) {
+                                            'Aktif' => 'badge-status-active',
+                                            'Akan Berakhir' => 'badge-status-warning',
+                                            'Kadaluarsa' => 'badge-status-danger',
+                                            default => 'badge-status-default',
+                                        };
+                                    @endphp
+                                    <div class="ud-coop-item">
+                                        <div class="ud-coop-header">
+                                            <div class="ud-coop-tags">
+                                                <span class="ud-badge-jenis {{ $jenisClass }}">{{ $coop->jenis }}</span>
+                                                <span class="ud-badge-status {{ $statusClass }}">
+                                                    <i class="fas fa-circle"></i> {{ $coop->status_berlaku ?? 'Aktif' }}
+                                                </span>
+                                                @if($coop->tingkat)
+                                                    <span class="ud-badge-tingkat">
+                                                        <i class="fas fa-layer-group"></i> {{ $coop->tingkat }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            <span class="ud-coop-doc-no">
+                                                <i class="fas fa-hashtag"></i> {{ $coop->doc_number ?: 'Tanpa Nomor' }}
+                                            </span>
+                                        </div>
+
+                                        <h4 class="ud-coop-title">{{ $coop->judul }}</h4>
+
+                                        <div class="ud-coop-meta-row">
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-building"></i>
+                                                <span>Mitra: <strong>{{ $coop->mitra->nama_mitra ?? $coop->internal_instansi }}</strong></span>
+                                            </div>
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                <span>Periode: 
+                                                    {{ $coop->start_date ? $coop->start_date->format('d M Y') : '—' }}
+                                                    s.d 
+                                                    {{ $coop->end_date ? $coop->end_date->format('d M Y') : '—' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        @if($coop->ruang_lingkup)
+                                            <p class="ud-coop-scope">
+                                                {{ Str::limit($coop->ruang_lingkup, 140) }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="ud-empty-state">
+                                <div class="ud-empty-icon">
+                                    <i class="fas fa-folder-open"></i>
                                 </div>
+                                <h4 class="ud-empty-title">Belum Ada Dokumen Kerjasama</h4>
+                                <p class="ud-empty-desc">
+                                    Pengguna ini belum memiliki atau belum terkait langsung dengan dokumen kerjasama yang tercatat di sistem.
+                                </p>
                             </div>
                         @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Card 5: Timeline & Audit Trail --}}
-            <div class="card ud-card">
-                <div class="ud-card-header">
-                    <div class="ud-card-title">
-                        <i class="fas fa-clock-rotate-left ud-header-icon" style="color: #10b981;"></i>
-                        <span>Riwayat Aktivitas &amp; Audit Trail</span>
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            {{-- TAB 3: USULAN & PENGAJUAN                                  --}}
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            <div id="tab-proposals" class="ud-tab-pane">
+                <div class="card ud-card">
+                    <div class="ud-card-header">
+                        <div class="ud-card-title-group">
+                            <span class="ud-card-icon icon-purple">
+                                <i class="fas fa-file-signature"></i>
+                            </span>
+                            <div>
+                                <h3 class="ud-card-title">Riwayat Usulan & Pengajuan Kerjasama</h3>
+                                <p class="ud-card-subtitle">Pengajuan kerjasama baru dan usulan perpanjangan</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="ud-card-body">
-                    <div class="ud-timeline">
-                        <div class="ud-timeline-item">
-                            <div class="ud-timeline-bullet created">
-                                <i class="fas fa-user-plus"></i>
+                    <div class="ud-card-body">
+                        @php
+                            $hasProposals = (isset($proposals) && $proposals->count() > 0) || (isset($perpanjangans) && $perpanjangans->count() > 0);
+                        @endphp
+
+                        @if($hasProposals)
+                            <div class="ud-coop-list">
+                                {{-- Pengajuan Kerjasama Baru --}}
+                                @foreach($proposals as $prop)
+                                    @php
+                                        $propStatus = match(strtolower($prop->status ?? 'diajukan')) {
+                                            'disetujui' => 'badge-status-active',
+                                            'ditolak'   => 'badge-status-danger',
+                                            default     => 'badge-status-warning',
+                                        };
+                                    @endphp
+                                    <div class="ud-coop-item">
+                                        <div class="ud-coop-header">
+                                            <div class="ud-coop-tags">
+                                                <span class="ud-badge-jenis badge-mou">Usulan Baru</span>
+                                                <span class="ud-badge-status {{ $propStatus }}">
+                                                    <i class="fas fa-circle"></i> {{ ucfirst($prop->status ?? 'Diajukan') }}
+                                                </span>
+                                            </div>
+                                            <span class="ud-coop-doc-no">
+                                                Kode: {{ $prop->kode_pengajuan ?? 'PRO-#' . $prop->id }}
+                                            </span>
+                                        </div>
+
+                                        <h4 class="ud-coop-title">{{ $prop->judul_pengajuan ?? $prop->nama_mitra }}</h4>
+
+                                        <div class="ud-coop-meta-row">
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-building"></i>
+                                                <span>Mitra: <strong>{{ $prop->nama_mitra }}</strong></span>
+                                            </div>
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-clock"></i>
+                                                <span>Diajukan: {{ $prop->submitted_at ? $prop->submitted_at->format('d M Y') : $prop->created_at->format('d M Y') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                                {{-- Pengajuan Perpanjangan --}}
+                                @foreach($perpanjangans as $perp)
+                                    @php
+                                        $perpStatus = match(strtolower($perp->status ?? 'diajukan')) {
+                                            'disetujui' => 'badge-status-active',
+                                            'ditolak'   => 'badge-status-danger',
+                                            default     => 'badge-status-warning',
+                                        };
+                                    @endphp
+                                    <div class="ud-coop-item">
+                                        <div class="ud-coop-header">
+                                            <div class="ud-coop-tags">
+                                                <span class="ud-badge-jenis badge-moa">Perpanjangan</span>
+                                                <span class="ud-badge-status {{ $perpStatus }}">
+                                                    <i class="fas fa-circle"></i> {{ ucfirst($perp->status ?? 'Diajukan') }}
+                                                </span>
+                                            </div>
+                                            <span class="ud-coop-doc-no">
+                                                Kode: {{ $perp->kode_pengajuan ?? 'EXT-#' . $perp->id }}
+                                            </span>
+                                        </div>
+
+                                        <h4 class="ud-coop-title">{{ $perp->judul_pengajuan ?? ('Perpanjangan Dokumen ' . ($perp->doc_number ?: 'Kerjasama')) }}</h4>
+
+                                        <div class="ud-coop-meta-row">
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-building"></i>
+                                                <span>Mitra: <strong>{{ $perp->nama_mitra }}</strong></span>
+                                            </div>
+                                            <div class="ud-coop-meta-col">
+                                                <i class="fas fa-clock"></i>
+                                                <span>Diajukan: {{ $perp->created_at ? $perp->created_at->format('d M Y') : '—' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="ud-timeline-content">
-                                <div class="ud-tl-top">
-                                    <h4 class="ud-tl-title">Akun Didaftarkan ke Sistem</h4>
-                                    <span class="ud-tl-time">{{ $user->created_at ? $user->created_at->format('d M Y - H:i:s') : '—' }}</span>
+                        @else
+                            <div class="ud-empty-state">
+                                <div class="ud-empty-icon">
+                                    <i class="fas fa-file-circle-question"></i>
                                 </div>
-                                <p class="ud-tl-desc">
-                                    Pengguna resmi ditambahkan ke basis data dengan ID pengguna <strong>#{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</strong> dan role awal <strong>{{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? 'Staf' }}</strong>.
+                                <h4 class="ud-empty-title">Belum Ada Riwayat Pengajuan</h4>
+                                <p class="ud-empty-desc">
+                                    Tidak ada usulan permohonan kerjasama baru maupun perpanjangan yang terhubung dengan akun ini.
                                 </p>
                             </div>
-                        </div>
-
-                        <div class="ud-timeline-item">
-                            <div class="ud-timeline-bullet updated">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="ud-timeline-content">
-                                <div class="ud-tl-top">
-                                    <h4 class="ud-tl-title">Pembaruan Terakhir</h4>
-                                    <span class="ud-tl-time">{{ $user->updated_at ? $user->updated_at->format('d M Y - H:i:s') : '—' }}</span>
-                                </div>
-                                <p class="ud-tl-desc">
-                                    Catatan profil atau data kredensial terakhir disinkronisasi ({{ $user->updated_at ? $user->updated_at->diffForHumans() : '—' }}).
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="ud-timeline-item">
-                            <div class="ud-timeline-bullet verified">
-                                <i class="fas fa-shield-check"></i>
-                            </div>
-                            <div class="ud-timeline-content">
-                                <div class="ud-tl-top">
-                                    <h4 class="ud-tl-title">Verifikasi Keamanan Email</h4>
-                                    <span class="ud-tl-time">
-                                        {{ $user->email_verified_at ? $user->email_verified_at->format('d M Y - H:i:s') : 'Status: Belum Verifikasi' }}
-                                    </span>
-                                </div>
-                                <p class="ud-tl-desc">
-                                    @if($user->email_verified_at)
-                                        Alamat email telah dinyatakan sah dan aktif menerima notifikasi kegiatan kerja sama kampus.
-                                    @else
-                                        Akun belum menyelesaikan proses verifikasi email resmi.
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
 
-            {{-- Card 6: Tindakan Cepat (Quick Action Bar) --}}
-            <div class="card ud-card ud-action-card">
-                <div class="ud-action-card-inner">
-                    <div class="ud-action-info">
-                        <span class="ud-action-badge"><i class="fas fa-bolt"></i> Shortcut Tindakan</span>
-                        <h4 class="ud-action-title">Perlu Mengubah Data Pengguna Ini?</h4>
-                        <p class="ud-action-desc">
-                            Anda dapat memperbarui nama, NIK, jabatan, unit penempatan, atau mengatur ulang kata sandi melalui form edit.
-                        </p>
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            {{-- TAB 4: AUDIT & KEAMANAN AKUN                               --}}
+            {{-- ══════════════════════════════════════════════════════════ --}}
+            <div id="tab-audit" class="ud-tab-pane">
+                <div class="card ud-card">
+                    <div class="ud-card-header">
+                        <div class="ud-card-title-group">
+                            <span class="ud-card-icon icon-cyan">
+                                <i class="fas fa-shield-halved"></i>
+                            </span>
+                            <div>
+                                <h3 class="ud-card-title">Audit Log & Keamanan Akun</h3>
+                                <p class="ud-card-subtitle">Jejak integritas data dan riwayat keamanan kredensial</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ud-action-buttons">
-                        <a href="mailto:{{ $user->email }}" class="ud-btn-contact" title="Kirim Pesan Email">
-                            <i class="fas fa-paper-plane"></i>
-                            <span>Kirim Email</span>
-                        </a>
-                        <a href="{{ route('users.edit', $user->id) }}" class="ud-btn-edit-primary">
-                            <i class="fas fa-pen-to-square"></i>
-                            <span>Edit Data Lengkap</span>
-                        </a>
+
+                    <div class="ud-card-body">
+                        <div class="ud-audit-grid">
+                            <div class="ud-audit-card">
+                                <div class="ud-audit-icon"><i class="fas fa-calendar-plus"></i></div>
+                                <div class="ud-audit-info">
+                                    <span class="ud-audit-label">Waktu Registrasi Akun</span>
+                                    <span class="ud-audit-val">{{ $user->created_at ? $user->created_at->format('d F Y, H:i:s') . ' WITA' : '—' }}</span>
+                                    <span class="ud-audit-sub">{{ $user->created_at ? $user->created_at->diffForHumans() : '' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="ud-audit-card">
+                                <div class="ud-audit-icon"><i class="fas fa-user-pen"></i></div>
+                                <div class="ud-audit-info">
+                                    <span class="ud-audit-label">Pembaruan Data Terakhir</span>
+                                    <span class="ud-audit-val">{{ $user->updated_at ? $user->updated_at->format('d F Y, H:i:s') . ' WITA' : '—' }}</span>
+                                    <span class="ud-audit-sub">{{ $user->updated_at ? $user->updated_at->diffForHumans() : '' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="ud-audit-card">
+                                <div class="ud-audit-icon"><i class="fas fa-envelope-circle-check"></i></div>
+                                <div class="ud-audit-info">
+                                    <span class="ud-audit-label">Waktu Verifikasi Email</span>
+                                    <span class="ud-audit-val">{{ $user->email_verified_at ? $user->email_verified_at->format('d F Y, H:i:s') . ' WITA' : 'Belum Diverifikasi' }}</span>
+                                    <span class="ud-audit-sub">{{ $user->email_verified_at ? 'Email resmi terverifikasi' : 'Harap kirim ulang verifikasi jika diperlukan' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="ud-audit-card">
+                                <div class="ud-audit-icon"><i class="fas fa-fingerprint"></i></div>
+                                <div class="ud-audit-info">
+                                    <span class="ud-audit-label">Token Remember Me</span>
+                                    <span class="ud-audit-val ud-mono">{{ $user->remember_token ? 'Aktif (' . substr($user->remember_token, 0, 12) . '...)' : 'Tidak Tersimpan' }}</span>
+                                    <span class="ud-audit-sub">Perlindungan sesi login berkelanjutan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ud-security-notice">
+                            <i class="fas fa-shield-check"></i>
+                            <div>
+                                <h5>Integritas Enkripsi Terjaga</h5>
+                                <p>Seluruh password disimpan dengan algoritma hashing standar Bcrypt berkeamanan tinggi. Tidak ada plaintext password yang disimpan di database.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
+    </div>
 
+    {{-- Toast Notifikasi Copy Clipboard --}}
+    <div id="udToast" class="ud-toast">
+        <i class="fas fa-circle-check"></i>
+        <span id="udToastText">Teks berhasil disalin!</span>
     </div>
 </main>
 
-{{-- ── Toast Notification for Copy Action ──────────────────────── --}}
-<div id="udToast" class="ud-toast">
-    <i class="fas fa-circle-check"></i>
-    <span id="udToastMsg">Teks berhasil disalin ke clipboard</span>
-</div>
-
-@endsection
-
-@section('styles')
+{{-- ── STYLING (DUAL-THEME: LIGHT & DARK MODE) ──────────────────────── --}}
 <style>
-/* ==========================================================================
-   DETAIL USER PAGE — DUAL THEME (LIGHT & DARK MODE)
-   ========================================================================== */
-
-.ud-detail-page {
+/* ─── CSS Variables & Design Tokens ───────────────────────────────── */
+:root {
+    --ud-bg: #f8fafc;
     --ud-card-bg: #ffffff;
     --ud-card-border: #e2e8f0;
-    --ud-body-bg: #f8fafc;
+    --ud-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    --ud-card-hover-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.09), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+    
     --ud-text-title: #0f172a;
-    --ud-text-desc: #475569;
+    --ud-text-body: #334155;
     --ud-text-muted: #64748b;
-    --ud-box-bg: #f8fafc;
-    --ud-box-border: #e2e8f0;
-    --ud-box-hover: #ffffff;
-    --ud-input-val: #0f172a;
-    --ud-hero-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
-    --ud-card-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-    --ud-pattern-color: rgba(148, 163, 184, 0.15);
-    --ud-timeline-line: #e2e8f0;
-    --ud-timeline-bg: #f8fafc;
-    --ud-toast-bg: #0f172a;
-    --ud-toast-text: #f8fafc;
-
-    padding-bottom: 60px;
+    --ud-text-sub: #94a3b8;
+    
+    --ud-item-bg: #f8fafc;
+    --ud-item-border: #e2e8f0;
+    --ud-item-hover-bg: #f1f5f9;
+    
+    --ud-accent-primary: #0284c7;
+    --ud-accent-primary-rgb: 2, 132, 199;
 }
 
-/* ── Dark Mode Overrides ────────────────────────────────────────────────── */
-[data-theme="dark"] .ud-detail-page {
+/* Dark Mode Tokens */
+[data-theme="dark"] .ud-detail-page,
+[data-theme="dark"] {
+    --ud-bg: #0f1117;
     --ud-card-bg: #181c27;
     --ud-card-border: #2a2f45;
-    --ud-body-bg: #0f1117;
+    --ud-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+    --ud-card-hover-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6);
+    
     --ud-text-title: #f8fafc;
-    --ud-text-desc: #cbd5e1;
+    --ud-text-body: #cbd5e1;
     --ud-text-muted: #94a3b8;
-    --ud-box-bg: #1e2333;
-    --ud-box-border: rgba(255, 255, 255, 0.08);
-    --ud-box-hover: #22283a;
-    --ud-input-val: #ffffff;
-    --ud-hero-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.45);
-    --ud-card-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
-    --ud-pattern-color: rgba(255, 255, 255, 0.04);
-    --ud-timeline-line: rgba(255, 255, 255, 0.12);
-    --ud-timeline-bg: #1e2333;
-    --ud-toast-bg: #1e2333;
-    --ud-toast-text: #f8fafc;
+    --ud-text-sub: #64748b;
+    
+    --ud-item-bg: #1e2333;
+    --ud-item-border: #2e354d;
+    --ud-item-hover-bg: #262c40;
+    
+    --ud-accent-primary: #38bdf8;
+    --ud-accent-primary-rgb: 56, 189, 248;
 }
 
-/* ── Role Theme Palette (Light & Dark Compatible) ───────────────────────── */
-/* Admin */
-.role-admin {
-    --ud-theme-accent: #7c3aed;
-    --ud-theme-accent-text: #7c3aed;
-    --ud-theme-accent-bg: rgba(124, 58, 237, 0.12);
-    --ud-theme-accent-border: rgba(124, 58, 237, 0.25);
-    --ud-theme-glow: rgba(124, 58, 237, 0.15);
-}
-[data-theme="dark"] .role-admin {
-    --ud-theme-accent-text: #a78bfa;
-    --ud-theme-accent-bg: rgba(124, 58, 237, 0.22);
-    --ud-theme-accent-border: rgba(167, 139, 250, 0.35);
-    --ud-theme-glow: rgba(124, 58, 237, 0.28);
+/* ─── Base Page Layout ────────────────────────────────────────────── */
+.ud-detail-page {
+    padding: 1.5rem 1.75rem 3rem 1.75rem;
+    color: var(--ud-text-body);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Pimpinan */
-.role-pimpinan {
-    --ud-theme-accent: #d97706;
-    --ud-theme-accent-text: #d97706;
-    --ud-theme-accent-bg: rgba(217, 119, 6, 0.12);
-    --ud-theme-accent-border: rgba(217, 119, 6, 0.25);
-    --ud-theme-glow: rgba(217, 119, 6, 0.15);
-}
-[data-theme="dark"] .role-pimpinan {
-    --ud-theme-accent-text: #fbbf24;
-    --ud-theme-accent-bg: rgba(217, 119, 6, 0.22);
-    --ud-theme-accent-border: rgba(251, 191, 36, 0.35);
-    --ud-theme-glow: rgba(217, 119, 6, 0.28);
-}
-
-/* Jurusan */
-.role-jurusan {
-    --ud-theme-accent: #0284c7;
-    --ud-theme-accent-text: #0284c7;
-    --ud-theme-accent-bg: rgba(14, 165, 233, 0.12);
-    --ud-theme-accent-border: rgba(14, 165, 233, 0.25);
-    --ud-theme-glow: rgba(14, 165, 233, 0.15);
-}
-[data-theme="dark"] .role-jurusan {
-    --ud-theme-accent-text: #38bdf8;
-    --ud-theme-accent-bg: rgba(14, 165, 233, 0.22);
-    --ud-theme-accent-border: rgba(56, 189, 248, 0.35);
-    --ud-theme-glow: rgba(14, 165, 233, 0.28);
-}
-
-/* Humas (Unit Kerja) */
-.role-unit-kerja {
-    --ud-theme-accent: #059669;
-    --ud-theme-accent-text: #059669;
-    --ud-theme-accent-bg: rgba(16, 185, 129, 0.12);
-    --ud-theme-accent-border: rgba(16, 185, 129, 0.25);
-    --ud-theme-glow: rgba(16, 185, 129, 0.15);
-}
-[data-theme="dark"] .role-unit-kerja {
-    --ud-theme-accent-text: #34d399;
-    --ud-theme-accent-bg: rgba(16, 185, 129, 0.22);
-    --ud-theme-accent-border: rgba(52, 211, 153, 0.35);
-    --ud-theme-glow: rgba(16, 185, 129, 0.28);
-}
-
-/* UPA */
-.role-upa {
-    --ud-theme-accent: #0891b2;
-    --ud-theme-accent-text: #0891b2;
-    --ud-theme-accent-bg: rgba(6, 182, 212, 0.12);
-    --ud-theme-accent-border: rgba(6, 182, 212, 0.25);
-    --ud-theme-glow: rgba(6, 182, 212, 0.15);
-}
-[data-theme="dark"] .role-upa {
-    --ud-theme-accent-text: #22d3ee;
-    --ud-theme-accent-bg: rgba(6, 182, 212, 0.22);
-    --ud-theme-accent-border: rgba(34, 211, 238, 0.35);
-    --ud-theme-glow: rgba(6, 182, 212, 0.28);
-}
-
-/* Pusat */
-.role-pusat {
-    --ud-theme-accent: #9333ea;
-    --ud-theme-accent-text: #9333ea;
-    --ud-theme-accent-bg: rgba(168, 85, 247, 0.12);
-    --ud-theme-accent-border: rgba(168, 85, 247, 0.25);
-    --ud-theme-glow: rgba(168, 85, 247, 0.15);
-}
-[data-theme="dark"] .role-pusat {
-    --ud-theme-accent-text: #c084fc;
-    --ud-theme-accent-bg: rgba(168, 85, 247, 0.22);
-    --ud-theme-accent-border: rgba(192, 132, 252, 0.35);
-    --ud-theme-glow: rgba(168, 85, 247, 0.28);
-}
-
-/* Mitra */
-.role-mitra {
-    --ud-theme-accent: #2563eb;
-    --ud-theme-accent-text: #2563eb;
-    --ud-theme-accent-bg: rgba(37, 99, 235, 0.12);
-    --ud-theme-accent-border: rgba(37, 99, 235, 0.25);
-    --ud-theme-glow: rgba(37, 99, 235, 0.15);
-}
-[data-theme="dark"] .role-mitra {
-    --ud-theme-accent-text: #60a5fa;
-    --ud-theme-accent-bg: rgba(37, 99, 235, 0.22);
-    --ud-theme-accent-border: rgba(96, 165, 250, 0.35);
-    --ud-theme-glow: rgba(37, 99, 235, 0.28);
-}
-
-/* Theme Utilities */
-.ud-theme-badge {
-    background: var(--ud-theme-accent-bg) !important;
-    color: var(--ud-theme-accent-text) !important;
-    border-color: var(--ud-theme-accent-border) !important;
-}
-.ud-theme-icon-box {
-    background: var(--ud-theme-accent-bg) !important;
-    color: var(--ud-theme-accent-text) !important;
-}
-.ud-theme-banner {
-    background: var(--ud-theme-accent-bg) !important;
-    border-color: var(--ud-theme-accent-border) !important;
-}
-.ud-theme-text-color {
-    color: var(--ud-theme-accent-text) !important;
-}
-.ud-theme-icon-color {
-    color: var(--ud-theme-accent-text) !important;
-}
-
-/* ─── Breadcrumbs & Topbar ──────────────────────────────────────────────── */
+/* ─── Topbar & Actions ────────────────────────────────────────────── */
 .ud-topbar {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    align-items: flex-end;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
-    margin-bottom: 24px;
 }
-.ud-title {
-    color: var(--ud-text-title);
-    font-weight: 800;
-}
-.ud-subtitle {
+
+.ud-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
     color: var(--ud-text-muted);
+    margin-bottom: 0.5rem;
 }
+
+.ud-breadcrumb-link {
+    color: var(--ud-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.ud-breadcrumb-link:hover {
+    color: var(--ud-accent-primary);
+}
+
+.ud-title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ud-title-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    color: var(--ud-accent-primary);
+    border: 1px solid rgba(var(--ud-accent-primary-rgb), 0.2);
+}
+
+.ud-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ud-text-title);
+    margin: 0;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+.ud-subtitle {
+    font-size: 0.875rem;
+    color: var(--ud-text-muted);
+    margin: 0.25rem 0 0 0;
+}
+
 .ud-topbar-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
 }
-.ud-btn-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
-    border-radius: 11px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--ud-text-muted);
-    background: var(--ud-card-bg);
-    border: 1px solid var(--ud-card-border);
-    text-decoration: none;
-    transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-.ud-btn-back:hover {
-    color: var(--ud-text-title);
-    background: var(--ud-box-hover);
-    border-color: #3b82f6;
-    transform: translateX(-2px);
-}
+
+.ud-btn-back,
 .ud-btn-edit {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 9px 18px;
-    border-radius: 11px;
-    font-size: 13.5px;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     text-decoration: none;
-    border: none;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
-    transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.ud-btn-edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
-    color: #ffffff;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Hero Spotlight Card ───────────────────────────────────────────────── */
+.ud-btn-back {
+    background: var(--ud-card-bg);
+    color: var(--ud-text-body);
+    border: 1px solid var(--ud-card-border);
+}
+
+.ud-btn-back:hover {
+    background: var(--ud-item-hover-bg);
+    color: var(--ud-text-title);
+    transform: translateY(-1px);
+}
+
+.ud-btn-edit {
+    background: var(--ud-accent-primary);
+    color: #ffffff !important;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 12px rgba(var(--ud-accent-primary-rgb), 0.25);
+}
+
+.ud-btn-edit:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(var(--ud-accent-primary-rgb), 0.35);
+}
+
+/* ─── Hero Spotlight Card ─────────────────────────────────────────── */
 .ud-hero-card {
     position: relative;
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
     border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 24px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--ud-card-shadow);
     overflow: hidden;
-    box-shadow: var(--ud-hero-shadow);
-    transition: background .2s ease, border-color .2s ease;
+    backdrop-filter: blur(10px);
 }
+
 .ud-hero-glow {
     position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 250px;
-    height: 250px;
-    background: radial-gradient(circle, var(--ud-theme-glow) 0%, rgba(59, 130, 246, 0) 70%);
-    border-radius: 50%;
+    top: -80px;
+    right: -80px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(var(--ud-accent-primary-rgb), 0.15) 0%, rgba(var(--ud-accent-primary-rgb), 0) 70%);
     pointer-events: none;
 }
+
 .ud-hero-pattern {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(var(--ud-pattern-color) 1px, transparent 1px);
-    background-size: 16px 16px;
-    mask-image: linear-gradient(to right, transparent 60%, black 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 60%, black 100%);
+    background-image: radial-gradient(var(--ud-card-border) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.4;
     pointer-events: none;
 }
+
 .ud-hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 1.75rem;
     flex-wrap: wrap;
 }
+
 .ud-avatar-wrapper {
     position: relative;
     flex-shrink: 0;
 }
+
 .ud-avatar {
-    width: 88px;
-    height: 88px;
-    border-radius: 24px;
-    color: #ffffff;
-    font-size: 32px;
-    font-weight: 800;
+    width: 84px;
+    height: 84px;
+    border-radius: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: -0.02em;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    letter-spacing: -0.05em;
 }
+
 .ud-status-pulse {
     position: absolute;
     bottom: -2px;
     right: -2px;
     width: 18px;
     height: 18px;
+    border-radius: 50%;
     background: #10b981;
     border: 3px solid var(--ud-card-bg);
-    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
 }
+
 .ud-user-meta {
     flex: 1;
-    min-width: 280px;
+    min-width: 260px;
 }
+
 .ud-user-top {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
     flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
 }
+
 .ud-user-name {
-    font-size: 1.65rem;
+    font-size: 1.625rem;
     font-weight: 800;
     color: var(--ud-text-title);
     margin: 0;
     letter-spacing: -0.02em;
 }
+
 .ud-role-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 12.5px;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
     font-weight: 700;
-    border: 1px solid transparent;
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    color: var(--ud-accent-primary);
+    border: 1px solid rgba(var(--ud-accent-primary-rgb), 0.25);
 }
+
 .ud-verified-pill {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 11.5px;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
     font-weight: 600;
     background: rgba(16, 185, 129, 0.12);
-    color: #059669;
+    color: #10b981;
     border: 1px solid rgba(16, 185, 129, 0.25);
 }
-[data-theme="dark"] .ud-verified-pill {
-    color: #34d399;
-    background: rgba(16, 185, 129, 0.18);
-    border-color: rgba(52, 211, 153, 0.3);
-}
+
 .ud-unverified-pill {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 11.5px;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
     font-weight: 600;
     background: rgba(245, 158, 11, 0.12);
-    color: #d97706;
+    color: #f59e0b;
     border: 1px solid rgba(245, 158, 11, 0.25);
 }
-[data-theme="dark"] .ud-unverified-pill {
-    color: #fbbf24;
-    background: rgba(245, 158, 11, 0.18);
-    border-color: rgba(251, 191, 36, 0.3);
-}
+
 .ud-quick-badges {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
     flex-wrap: wrap;
 }
+
 .ud-quick-item {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 12px;
-    border-radius: 10px;
-    background: var(--ud-box-bg);
-    border: 1px solid var(--ud-box-border);
-    font-size: 13px;
-    color: var(--ud-text-desc);
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    color: var(--ud-text-muted);
     cursor: pointer;
-    transition: all .15s ease;
+    transition: all 0.15s ease;
 }
+
 .ud-quick-item:hover {
-    background: var(--ud-box-hover);
+    background: var(--ud-item-hover-bg);
     color: var(--ud-text-title);
-    border-color: #3b82f6;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-color: var(--ud-accent-primary);
 }
+
 .ud-copy-icon {
-    font-size: 11px;
-    opacity: 0.6;
-    margin-left: 2px;
+    font-size: 0.75rem;
+    opacity: 0.5;
 }
-.ud-mono {
-    font-family: 'DM Mono', monospace;
-    font-weight: 500;
+
+.ud-quick-item:hover .ud-copy-icon {
+    opacity: 1;
+    color: var(--ud-accent-primary);
 }
 
 .ud-hero-stats {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding-left: 20px;
+    gap: 1.5rem;
+    padding-left: 1.5rem;
     border-left: 1px solid var(--ud-card-border);
 }
+
 .ud-stat-box {
     display: flex;
     flex-direction: column;
 }
+
 .ud-stat-label {
-    font-size: 11.5px;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--ud-text-muted);
-    margin-bottom: 3px;
+    color: var(--ud-text-sub);
+    margin-bottom: 0.2rem;
 }
+
 .ud-stat-value {
-    font-size: 14.5px;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--ud-text-title);
 }
+
 .ud-stat-sub {
-    font-size: 11.5px;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
 }
+
 .ud-stat-divider {
     width: 1px;
     height: 36px;
     background: var(--ud-card-border);
 }
 
-/* ─── Grid Layout (380px / 1fr) ─────────────────────────────────────────── */
-.ud-grid-container {
+/* ─── Metric Summary Counters ─────────────────────────────────────── */
+.ud-metric-grid {
     display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 24px;
-    align-items: start;
-}
-@media (max-width: 1080px) {
-    .ud-grid-container {
-        grid-template-columns: 1fr;
-    }
-    .ud-hero-stats {
-        border-left: none;
-        padding-left: 0;
-        width: 100%;
-        margin-top: 10px;
-    }
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-/* ─── Card Design System ────────────────────────────────────────────────── */
+.ud-metric-card {
+    background: var(--ud-card-bg);
+    border: 1px solid var(--ud-card-border);
+    border-radius: 16px;
+    padding: 1.25rem 1.25rem;
+    box-shadow: var(--ud-card-shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.2s ease;
+}
+
+.ud-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ud-card-hover-shadow);
+}
+
+.ud-metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.icon-primary { background: rgba(2, 132, 199, 0.12); color: #0284c7; }
+.icon-success { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.icon-warning { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+.icon-purple  { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
+.icon-cyan    { background: rgba(6, 182, 212, 0.12); color: #0891b2; }
+.icon-emerald { background: rgba(5, 150, 105, 0.12); color: #059669; }
+.icon-danger  { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+
+.ud-metric-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.ud-metric-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ud-text-muted);
+}
+
+.ud-metric-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ud-text-title);
+    line-height: 1.2;
+}
+
+.ud-metric-sub {
+    font-size: 0.75rem;
+    color: var(--ud-text-sub);
+}
+
+/* ─── Grid Layout (Side 380px + Main) ─────────────────────────────── */
+.ud-grid-container {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.ud-col-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ud-col-main {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ─── Tab Navigation Bar ─────────────────────────────────────────── */
+.ud-tabs-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ud-card-bg);
+    border: 1px solid var(--ud-card-border);
+    border-radius: 14px;
+    padding: 0.375rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--ud-card-shadow);
+    overflow-x: auto;
+}
+
+.ud-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ud-text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ud-tab-btn:hover {
+    color: var(--ud-text-title);
+    background: var(--ud-item-hover-bg);
+}
+
+.ud-tab-btn.active {
+    color: var(--ud-accent-primary);
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+}
+
+.ud-tab-count {
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--ud-accent-primary);
+    color: #ffffff;
+}
+
+.ud-tab-count.count-purple {
+    background: #a855f7;
+}
+
+.ud-tab-pane {
+    display: none;
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+.ud-tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Cards Styling ──────────────────────────────────────────────── */
 .ud-card {
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
     border-radius: 18px;
-    margin-bottom: 24px;
-    overflow: hidden;
     box-shadow: var(--ud-card-shadow);
-    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    transition: box-shadow 0.2s ease;
 }
+
+.ud-card:hover {
+    box-shadow: var(--ud-card-hover-shadow);
+}
+
 .ud-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--ud-card-border);
-    background: var(--ud-card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-.ud-card-title {
+
+.ud-card-title-group {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 15px;
+    gap: 0.875rem;
+}
+
+.ud-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.ud-card-title {
+    font-size: 1.0625rem;
     font-weight: 700;
     color: var(--ud-text-title);
+    margin: 0;
+    letter-spacing: -0.01em;
 }
-.ud-header-icon {
-    font-size: 16px;
-}
-.ud-header-badge {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: var(--ud-box-bg);
+
+.ud-card-subtitle {
+    font-size: 0.8125rem;
     color: var(--ud-text-muted);
-    border: 1px solid var(--ud-box-border);
+    margin: 0.15rem 0 0 0;
 }
+
 .ud-card-body {
-    padding: 24px;
+    padding: 1.5rem;
 }
 
-/* ─── Info Item Rows (Kredensial) ───────────────────────────────────────── */
-.ud-info-item {
-    margin-bottom: 18px;
-}
-.ud-info-item:last-child {
-    margin-bottom: 0;
-}
-.ud-info-label {
+/* ─── Info Stack (Left Column) ────────────────────────────────────── */
+.ud-info-stack {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ud-text-muted);
-    margin-bottom: 6px;
+    flex-direction: column;
+    gap: 0.875rem;
 }
-.ud-info-value-wrap {
+
+.ud-info-tile {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--ud-box-bg);
-    border: 1px solid var(--ud-box-border);
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.75rem 0.875rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
     border-radius: 12px;
-    transition: all .15s ease;
+    transition: background 0.15s ease;
 }
-.ud-info-value-wrap:hover {
-    border-color: #3b82f6;
-    background: var(--ud-box-hover);
+
+.ud-info-tile:hover {
+    background: var(--ud-item-hover-bg);
 }
-.ud-info-val {
-    font-size: 14px;
+
+.ud-tile-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    color: var(--ud-accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.ud-tile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.ud-tile-label {
+    font-size: 0.75rem;
     font-weight: 600;
-    color: var(--ud-input-val);
-    word-break: break-all;
-}
-.ud-copy-btn {
-    background: transparent;
-    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--ud-text-muted);
-    cursor: pointer;
-    padding: 4px;
+}
+
+.ud-tile-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ud-text-title);
+    word-break: break-word;
+}
+
+.ud-tile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
     border-radius: 6px;
-    font-size: 13px;
-    transition: all .15s ease;
-}
-.ud-copy-btn:hover {
-    color: #3b82f6;
-    background: rgba(59, 130, 246, 0.12);
-}
-
-/* ─── Password Status Box ───────────────────────────────────────────────── */
-.ud-pass-status-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px;
-    background: var(--ud-box-bg);
-    border: 1px solid var(--ud-box-border);
-    border-radius: 12px;
-}
-.ud-pass-dots {
-    display: flex;
-    gap: 4px;
-}
-.ud-pass-dots span {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--ud-text-muted);
-}
-.ud-pass-meta {
-    font-size: 11.5px;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: #059669;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-[data-theme="dark"] .ud-pass-meta {
-    color: #34d399;
+    width: fit-content;
 }
 
-/* ─── Verification Status Tag ───────────────────────────────────────────── */
-.ud-status-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    width: 100%;
-}
-.ud-status-tag.verified {
-    background: rgba(16, 185, 129, 0.12);
-    color: #059669;
-    border: 1px solid rgba(16, 185, 129, 0.25);
-}
-[data-theme="dark"] .ud-status-tag.verified {
-    color: #34d399;
-    background: rgba(16, 185, 129, 0.18);
-    border-color: rgba(52, 211, 153, 0.3);
-}
-.ud-status-tag.unverified {
-    background: rgba(245, 158, 11, 0.12);
-    color: #d97706;
-    border: 1px solid rgba(245, 158, 11, 0.25);
-}
-[data-theme="dark"] .ud-status-tag.unverified {
-    color: #fbbf24;
-    background: rgba(245, 158, 11, 0.18);
-    border-color: rgba(251, 191, 36, 0.3);
-}
+.badge-green { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.badge-amber { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
 
-/* ─── Role Authority Card ───────────────────────────────────────────────── */
+/* ─── Role Card Special ───────────────────────────────────────────── */
 .ud-role-banner {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px;
-    border-radius: 14px;
-    margin-bottom: 14px;
-    border: 1px solid transparent;
-}
-.ud-role-icon-box {
-    width: 44px;
-    height: 44px;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
     border-radius: 12px;
-    background: var(--ud-card-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
 }
-.ud-role-banner-title {
-    font-size: 15px;
-    font-weight: 800;
-}
-.ud-role-tier {
-    font-size: 12px;
-    color: var(--ud-text-muted);
-    font-weight: 500;
-}
+
 .ud-role-description {
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: var(--ud-text-desc);
-    margin: 0 0 16px 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ud-text-muted);
+    margin-bottom: 1rem;
 }
+
 .ud-role-meta-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    border-top: 1px dashed var(--ud-card-border);
-    padding-top: 14px;
+    gap: 0.5rem;
 }
+
 .ud-role-meta-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ud-text-desc);
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--ud-text-body);
 }
 
-/* ─── Danger Card ───────────────────────────────────────────────────────── */
+/* ─── Danger Zone ─────────────────────────────────────────────────── */
 .ud-card-danger {
-    border-color: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.3);
 }
-[data-theme="dark"] .ud-card-danger {
-    border-color: rgba(239, 68, 68, 0.35);
-    background: rgba(239, 68, 68, 0.03);
-}
-.ud-danger-desc {
-    font-size: 13px;
+
+.ud-danger-text {
+    font-size: 0.8125rem;
     color: var(--ud-text-muted);
-    line-height: 1.5;
-    margin: 0 0 16px 0;
+    margin-bottom: 1rem;
+    line-height: 1.4;
 }
-.ud-btn-danger {
+
+.ud-btn-danger-block {
     width: 100%;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 11px;
-    font-size: 13.5px;
-    font-weight: 600;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 }
-.ud-btn-danger:hover {
+
+.ud-btn-danger-block:hover {
     background: #ef4444;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* ─── Structure Hero Card ───────────────────────────────────────────────── */
-.ud-unit-type-badge {
+/* ─── Right Column: Data Grid ─────────────────────────────────────── */
+.ud-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.ud-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ud-field-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ud-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ud-field-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ud-text-title);
+    padding: 0.75rem 1rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    border-radius: 10px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.ud-field-value.ud-highlight {
+    font-weight: 700;
+    color: var(--ud-accent-primary);
+}
+
+.ud-link {
+    color: var(--ud-accent-primary);
+    text-decoration: none;
+}
+
+.ud-link:hover {
+    text-decoration: underline;
+}
+
+.ud-inline-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: rgba(2, 132, 199, 0.12);
-    color: #0284c7;
-    border: 1px solid rgba(2, 132, 199, 0.25);
-}
-[data-theme="dark"] .ud-unit-type-badge {
-    color: #38bdf8;
-    background: rgba(14, 165, 233, 0.18);
-    border-color: rgba(56, 189, 248, 0.3);
-}
-.ud-structure-hero {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    padding: 18px;
-    background: var(--ud-box-bg);
-    border: 1px solid var(--ud-box-border);
-    border-radius: 16px;
-    margin-bottom: 20px;
-}
-.ud-structure-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    flex-shrink: 0;
-    background: rgba(2, 132, 199, 0.12);
-    color: #0284c7;
-    border: 1px solid rgba(2, 132, 199, 0.2);
-}
-[data-theme="dark"] .ud-structure-icon {
-    color: #38bdf8;
-    background: rgba(14, 165, 233, 0.18);
-    border-color: rgba(56, 189, 248, 0.3);
-}
-.ud-structure-text {
-    flex: 1;
-}
-.ud-structure-eyebrow {
-    font-size: 11.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ud-text-muted);
-    display: block;
-    margin-bottom: 2px;
-}
-.ud-structure-name {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--ud-text-title);
-    margin: 0 0 3px 0;
-}
-.ud-structure-sub {
-    font-size: 12.5px;
-    color: var(--ud-text-muted);
+    gap: 0.4rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
 }
 
-/* ─── Profile Detail Grid ───────────────────────────────────────────────── */
-.ud-profile-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 14px;
-}
-.ud-profile-box {
+/* ─── Placement Box ───────────────────────────────────────────────── */
+.ud-placement-box {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: var(--ud-card-bg);
-    border: 1px solid var(--ud-card-border);
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
     border-radius: 14px;
-    transition: all .2s ease;
 }
-.ud-profile-box:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-}
-.ud-pbox-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: var(--ud-box-bg);
-    color: var(--ud-text-desc);
-    border: 1px solid var(--ud-box-border);
+
+.ud-placement-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    color: var(--ud-accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 1.5rem;
     flex-shrink: 0;
 }
-.ud-pbox-content {
+
+.ud-placement-details {
     display: flex;
     flex-direction: column;
 }
-.ud-pbox-label {
-    font-size: 12px;
+
+.ud-placement-type {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ud-accent-primary);
+}
+
+.ud-placement-name {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--ud-text-title);
+    margin: 0.15rem 0 0.25rem 0;
+}
+
+.ud-placement-role {
+    font-size: 0.8125rem;
+    color: var(--ud-text-muted);
+}
+
+.ud-subgrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.ud-subbox {
+    padding: 1rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ud-subbox-label {
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--ud-text-muted);
-    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
-.ud-pbox-val {
-    font-size: 13.5px;
+
+.ud-subbox-value {
+    font-size: 0.875rem;
     font-weight: 700;
     color: var(--ud-text-title);
 }
 
-/* ─── Timeline Audit Trail ──────────────────────────────────────────────── */
-.ud-timeline {
-    position: relative;
-    padding-left: 28px;
+/* ─── Cooperation List & Cards ────────────────────────────────────── */
+.ud-coop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
-.ud-timeline::before {
-    content: '';
-    position: absolute;
-    left: 11px;
-    top: 6px;
-    bottom: 6px;
-    width: 2px;
-    background: var(--ud-timeline-line);
+
+.ud-coop-item {
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    transition: all 0.2s ease;
 }
-.ud-timeline-item {
-    position: relative;
-    margin-bottom: 22px;
+
+.ud-coop-item:hover {
+    background: var(--ud-item-hover-bg);
+    border-color: var(--ud-accent-primary);
+    transform: translateY(-1px);
 }
-.ud-timeline-item:last-child {
-    margin-bottom: 0;
+
+.ud-coop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.625rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
-.ud-timeline-bullet {
-    position: absolute;
-    left: -28px;
-    top: 2px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+
+.ud-coop-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.ud-badge-jenis {
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.badge-mou { background: rgba(2, 132, 199, 0.15); color: #0284c7; }
+.badge-moa { background: rgba(124, 58, 237, 0.15); color: #7c3aed; }
+.badge-ia  { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.badge-spk { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+
+.ud-badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.ud-badge-status i {
+    font-size: 0.5rem;
+}
+
+.badge-status-active { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.badge-status-warning { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+.badge-status-danger { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+.badge-status-default { background: rgba(100, 116, 139, 0.12); color: #64748b; }
+
+.ud-badge-tingkat {
+    font-size: 0.75rem;
+    color: var(--ud-text-muted);
+}
+
+.ud-coop-doc-no {
+    font-size: 0.8125rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: var(--ud-text-muted);
+}
+
+.ud-coop-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--ud-text-title);
+    margin: 0 0 0.625rem 0;
+    line-height: 1.4;
+}
+
+.ud-coop-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.8125rem;
+    color: var(--ud-text-muted);
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.ud-coop-meta-col {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ud-coop-meta-col strong {
+    color: var(--ud-text-title);
+}
+
+.ud-coop-scope {
+    font-size: 0.8125rem;
+    color: var(--ud-text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* ─── Empty State ─────────────────────────────────────────────────── */
+.ud-empty-state {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ud-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    color: var(--ud-text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    background: var(--ud-card-bg);
-    border: 2px solid;
-    z-index: 1;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
 }
-.ud-timeline-bullet.created {
-    color: #3b82f6;
-    border-color: #3b82f6;
-    background: #eff6ff;
-}
-[data-theme="dark"] .ud-timeline-bullet.created {
-    background: #1e293b;
-    color: #60a5fa;
-    border-color: #60a5fa;
-}
-.ud-timeline-bullet.updated {
-    color: #0284c7;
-    border-color: #0284c7;
-    background: #f0f9ff;
-}
-[data-theme="dark"] .ud-timeline-bullet.updated {
-    background: #1e293b;
-    color: #38bdf8;
-    border-color: #38bdf8;
-}
-.ud-timeline-bullet.verified {
-    color: #10b981;
-    border-color: #10b981;
-    background: #ecfdf5;
-}
-[data-theme="dark"] .ud-timeline-bullet.verified {
-    background: #1e293b;
-    color: #34d399;
-    border-color: #34d399;
-}
-.ud-timeline-content {
-    background: var(--ud-timeline-bg);
-    border: 1px solid var(--ud-box-border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    transition: background .2s ease, border-color .2s ease;
-}
-.ud-tl-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
-}
-.ud-tl-title {
-    font-size: 13.5px;
+
+.ud-empty-title {
+    font-size: 1.0625rem;
     font-weight: 700;
     color: var(--ud-text-title);
+    margin: 0 0 0.25rem 0;
+}
+
+.ud-empty-desc {
+    font-size: 0.875rem;
+    color: var(--ud-text-muted);
+    max-width: 420px;
     margin: 0;
 }
-.ud-tl-time {
-    font-size: 11.5px;
+
+/* ─── Audit & Security Tab ────────────────────────────────────────── */
+.ud-audit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.ud-audit-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.125rem;
+    background: var(--ud-item-bg);
+    border: 1px solid var(--ud-item-border);
+    border-radius: 14px;
+}
+
+.ud-audit-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    color: var(--ud-accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+.ud-audit-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.ud-audit-label {
+    font-size: 0.75rem;
     font-weight: 600;
-    font-family: 'DM Mono', monospace;
+    color: var(--ud-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ud-audit-val {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ud-text-title);
+}
+
+.ud-audit-sub {
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
 }
-.ud-tl-desc {
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--ud-text-desc);
-    margin: 0;
+
+.ud-security-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.125rem 1.25rem;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
 }
 
-/* ─── Shortcut Action Banner Card ───────────────────────────────────────── */
-.ud-action-card {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(79, 70, 229, 0.05) 100%);
-    border: 1px solid rgba(59, 130, 246, 0.25);
+.ud-security-notice i {
+    font-size: 1.5rem;
+    color: #10b981;
+    margin-top: 0.1rem;
 }
-[data-theme="dark"] .ud-action-card {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.16) 0%, rgba(79, 70, 229, 0.1) 100%);
-    border-color: rgba(59, 130, 246, 0.35);
-}
-.ud-action-card-inner {
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-.ud-action-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
+
+.ud-security-notice h5 {
+    font-size: 0.9375rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #2563eb;
-    margin-bottom: 6px;
-}
-[data-theme="dark"] .ud-action-badge {
-    color: #60a5fa;
-}
-.ud-action-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--ud-text-title);
-    margin: 0 0 4px 0;
-}
-.ud-action-desc {
-    font-size: 13px;
-    color: var(--ud-text-desc);
-    margin: 0;
-    max-width: 520px;
-}
-.ud-action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-.ud-btn-contact {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 11px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--ud-text-title);
-    background: var(--ud-card-bg);
-    border: 1px solid var(--ud-card-border);
-    text-decoration: none;
-    transition: all .2s ease;
-}
-.ud-btn-contact:hover {
-    background: var(--ud-box-hover);
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-}
-.ud-btn-edit-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 11px;
-    font-size: 13.5px;
-    font-weight: 600;
-    color: #ffffff;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    text-decoration: none;
-    border: none;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-    transition: all .2s ease;
-}
-.ud-btn-edit-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
-    color: #ffffff;
+    color: #10b981;
+    margin: 0 0 0.2rem 0;
 }
 
-/* ─── Floating Toast Notification ───────────────────────────────────────── */
+.ud-security-notice p {
+    font-size: 0.8125rem;
+    color: var(--ud-text-body);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ─── Typography & Helpers ────────────────────────────────────────── */
+.ud-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.ud-selectable {
+    user-select: all;
+}
+
+.text-success { color: #10b981 !important; }
+.text-warning { color: #f59e0b !important; }
+.text-danger  { color: #ef4444 !important; }
+.text-purple  { color: #a855f7 !important; }
+.text-muted   { color: var(--ud-text-muted) !important; }
+
+/* ─── Role Theme Colors ───────────────────────────────────────────── */
+.role-admin { --ud-accent-primary: #7c3aed; --ud-accent-primary-rgb: 124, 58, 237; }
+.role-pimpinan { --ud-accent-primary: #d97706; --ud-accent-primary-rgb: 217, 119, 6; }
+.role-jurusan { --ud-accent-primary: #0284c7; --ud-accent-primary-rgb: 2, 132, 199; }
+.role-unit-kerja { --ud-accent-primary: #059669; --ud-accent-primary-rgb: 5, 150, 105; }
+.role-upa { --ud-accent-primary: #0891b2; --ud-accent-primary-rgb: 8, 145, 178; }
+.role-pusat { --ud-accent-primary: #9333ea; --ud-accent-primary-rgb: 147, 51, 234; }
+.role-mitra { --ud-accent-primary: #2563eb; --ud-accent-primary-rgb: 37, 99, 235; }
+
+/* ─── Toast Notification ──────────────────────────────────────────── */
 .ud-toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--ud-toast-bg);
-    color: var(--ud-toast-text);
-    border: 1px solid var(--ud-box-border);
-    padding: 12px 20px;
+    bottom: 2rem;
+    right: 2rem;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 0.875rem 1.25rem;
     border-radius: 12px;
-    font-size: 13.5px;
-    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    transform: translateY(100px);
+    gap: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 9999;
     opacity: 0;
-    visibility: hidden;
-    transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 99999;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.ud-toast.active {
-    transform: translateY(0);
+
+[data-theme="dark"] .ud-toast {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+.ud-toast.show {
     opacity: 1;
-    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
 }
+
 .ud-toast i {
     color: #10b981;
-    font-size: 16px;
+    font-size: 1.125rem;
 }
-[data-theme="dark"] .ud-toast i {
-    color: #34d399;
+
+/* ─── Responsive Media Queries ────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .ud-metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .ud-grid-container {
+        grid-template-columns: 1fr;
+    }
+    .ud-hero-stats {
+        padding-left: 0;
+        border-left: none;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--ud-card-border);
+    }
+}
+
+@media (max-width: 768px) {
+    .ud-detail-page {
+        padding: 1rem;
+    }
+    .ud-data-grid,
+    .ud-subgrid,
+    .ud-audit-grid {
+        grid-template-columns: 1fr;
+    }
+    .ud-metric-grid {
+        grid-template-columns: 1fr;
+    }
+    .ud-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .ud-topbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 </style>
 
+{{-- ── JAVASCRIPT (MICRO-INTERACTIONS & TABS) ───────────────────────── --}}
 <script>
-function copyToClipboard(text, message) {
-    if (!text || text === '-') return;
-    navigator.clipboard.writeText(text).then(function() {
-        showToast(message || 'Berhasil disalin ke clipboard');
-    }).catch(function(err) {
-        console.error('Gagal menyalin:', err);
-    });
+// Switch Tab Function
+function switchTab(tabId, btnElement) {
+    // Hide all panes
+    const panes = document.querySelectorAll('.ud-tab-pane');
+    panes.forEach(pane => pane.classList.remove('active'));
+
+    // Deactivate all buttons
+    const buttons = document.querySelectorAll('.ud-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // Activate selected
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) {
+        targetPane.classList.add('active');
+    }
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    // Save active tab in session storage
+    sessionStorage.setItem('ud_active_tab', tabId);
 }
 
-function showToast(message) {
-    const toast = document.getElementById('udToast');
-    const msgEl = document.getElementById('udToastMsg');
-    if (!toast || !msgEl) return;
-    
-    msgEl.textContent = message;
-    toast.classList.add('active');
-    
-    clearTimeout(window.toastTimer);
-    window.toastTimer = setTimeout(function() {
-        toast.classList.remove('active');
-    }, 2800);
+// Clipboard Copy Helper
+let toastTimer = null;
+function copyToClipboard(text, message) {
+    if (!text || text === '-' || text === '—') return;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(message || 'Teks berhasil disalin!');
+        });
+    } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-999999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast(message || 'Teks berhasil disalin!');
+        } catch (err) {
+            console.error('Gagal menyalin:', err);
+        }
+        document.body.removeChild(textarea);
+    }
 }
+
+function showToast(text) {
+    const toast = document.getElementById('udToast');
+    const toastText = document.getElementById('udToastText');
+    if (!toast || !toastText) return;
+
+    toastText.innerText = text;
+    toast.classList.add('show');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2500);
+}
+
+// Restore Tab on Page Load
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTab = sessionStorage.getItem('ud_active_tab');
+    if (savedTab) {
+        const btn = document.querySelector(`.ud-tab-btn[data-tab="${savedTab}"]`);
+        if (btn) {
+            switchTab(savedTab, btn);
+        }
+    }
+});
 </script>
 @endsection

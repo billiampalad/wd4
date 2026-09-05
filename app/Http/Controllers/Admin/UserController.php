@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+use App\Models\Cooperation;
+use App\Models\PengajuanKerjasamaBaru;
+use App\Models\PengajuanPerpanjanganKerjasama;
+
 class UserController
 {
     /**
@@ -70,8 +74,77 @@ class UserController
      */
     public function show(string $id)
     {
-        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->findOrFail($id);
-        return view('admin.users.detail', compact('user'));
+        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat', 'mitra'])->findOrFail($id);
+        
+        $roleKey = strtolower($user->role?->role_name ?? '');
+
+        // Query related cooperations based on user context
+        if (($roleKey === 'mitra' || $user->mitra_id) && $user->mitra_id) {
+            $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+                ->where('mitra_id', $user->mitra_id)
+                ->latest()
+                ->get();
+            $proposals = PengajuanKerjasamaBaru::where('mitra_id', $user->mitra_id)
+                ->orWhere('email', $user->email)
+                ->latest()
+                ->get();
+            $perpanjangans = PengajuanPerpanjanganKerjasama::where('mitra_id', $user->mitra_id)
+                ->orWhere('email', $user->email)
+                ->latest()
+                ->get();
+        } elseif ($roleKey === 'jurusan' && $user->profile?->jurusan_id) {
+            $jurusanId = $user->profile->jurusan_id;
+            $cooperations = Cooperation::with(['mitra', 'jurusan'])
+                ->where('jurusan_id', $jurusanId)
+                ->orWhereHas('jurusans', fn($q) => $q->where('jurusans.id', $jurusanId))
+                ->latest()
+                ->get();
+            $proposals = collect();
+            $perpanjangans = collect();
+        } elseif ($roleKey === 'upa' && $user->profile?->upa_id) {
+            $upaId = $user->profile->upa_id;
+            $cooperations = Cooperation::with(['mitra', 'upa'])
+                ->where('upa_id', $upaId)
+                ->latest()
+                ->get();
+            $proposals = collect();
+            $perpanjangans = collect();
+        } elseif ($roleKey === 'pusat' && $user->profile?->pusat_id) {
+            $pusatId = $user->profile->pusat_id;
+            $cooperations = Cooperation::with(['mitra', 'pusat'])
+                ->where('pusat_id', $pusatId)
+                ->latest()
+                ->get();
+            $proposals = collect();
+            $perpanjangans = collect();
+        } elseif ($roleKey === 'unit_kerja' || $roleKey === 'humas') {
+            $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+                ->where('created_by', $user->id)
+                ->orWhere('updated_by', $user->id)
+                ->latest()
+                ->take(20)
+                ->get();
+            $proposals = PengajuanKerjasamaBaru::latest()->take(10)->get();
+            $perpanjangans = PengajuanPerpanjanganKerjasama::latest()->take(10)->get();
+        } else {
+            // Admin & Pimpinan: overview summary
+            $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
+                ->latest()
+                ->take(15)
+                ->get();
+            $proposals = PengajuanKerjasamaBaru::latest()->take(10)->get();
+            $perpanjangans = PengajuanPerpanjanganKerjasama::latest()->take(10)->get();
+        }
+
+        $stats = [
+            'total_cooperations'   => $cooperations->count(),
+            'active_cooperations'  => $cooperations->where('status_berlaku', 'Aktif')->count(),
+            'expiring_cooperations'=> $cooperations->where('status_berlaku', 'Akan Berakhir')->count(),
+            'expired_cooperations' => $cooperations->where('status_berlaku', 'Kadaluarsa')->count(),
+            'total_proposals'      => $proposals->count() + $perpanjangans->count(),
+        ];
+
+        return view('admin.users.detail', compact('user', 'cooperations', 'proposals', 'perpanjangans', 'stats'));
     }
 
     /**
