@@ -438,6 +438,9 @@ function initDashboard() {
             };
         });
     }
+
+    /* User Detail Tab Auto-Restore */
+    initUserDetail();
 }
 
 // Global functions for modals and preview
@@ -722,3 +725,80 @@ function checkStrength(val) {
 
 // Jalankan saat pertama kali dan setiap kali Turbo navigasi
 document.addEventListener('turbo:load', initDashboard);
+document.addEventListener('DOMContentLoaded', initDashboard);
+
+/* ─ User Detail Page: Tabs & Clipboard ─ */
+let udToastTimer = null;
+
+function switchTab(tabId, btnElement) {
+    const panes = document.querySelectorAll('.ud-tab-pane');
+    panes.forEach(pane => pane.classList.remove('active'));
+
+    const buttons = document.querySelectorAll('.ud-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) {
+        targetPane.classList.add('active');
+    }
+    if (btnElement) {
+        btnElement.classList.add('active');
+    }
+
+    sessionStorage.setItem('ud_active_tab', tabId);
+}
+
+function copyToClipboard(text, message) {
+    if (!text || text === '-' || text === '—') return;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast(message || 'Teks berhasil disalin!');
+        }).catch(() => {
+            fallbackCopyToClipboard(text, message);
+        });
+    } else {
+        fallbackCopyToClipboard(text, message);
+    }
+}
+
+function fallbackCopyToClipboard(text, message) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-999999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        showToast(message || 'Teks berhasil disalin!');
+    } catch (err) {
+        console.error('Gagal menyalin teks:', err);
+    }
+    document.body.removeChild(textarea);
+}
+
+function showToast(text) {
+    const toast = document.getElementById('udToast');
+    const toastText = document.getElementById('udToastText');
+    if (!toast || !toastText) return;
+
+    toastText.innerText = text;
+    toast.classList.add('show');
+
+    if (udToastTimer) clearTimeout(udToastTimer);
+    udToastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2500);
+}
+
+function initUserDetail() {
+    const savedTab = sessionStorage.getItem('ud_active_tab');
+    if (savedTab && document.getElementById(savedTab)) {
+        const btn = document.querySelector(`.ud-tab-btn[data-tab="${savedTab}"]`);
+        if (btn) {
+            switchTab(savedTab, btn);
+        }
+    }
+}
