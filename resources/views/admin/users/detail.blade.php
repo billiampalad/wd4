@@ -252,7 +252,7 @@
             <div class="ud-metric-info">
                 <span class="ud-metric-label">Total Kerjasama</span>
                 <span class="ud-metric-num">{{ $stats['total_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Dokumen terkait entitas ini</span>
+                <span class="ud-metric-sub">Dokumen terkait</span>
             </div>
         </div>
 
@@ -263,7 +263,7 @@
             <div class="ud-metric-info">
                 <span class="ud-metric-label">Kerjasama Aktif</span>
                 <span class="ud-metric-num text-success">{{ $stats['active_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Masa berlaku masih berjalan</span>
+                <span class="ud-metric-sub">Masa berlaku berjalan</span>
             </div>
         </div>
 
@@ -274,7 +274,7 @@
             <div class="ud-metric-info">
                 <span class="ud-metric-label">Akan Berakhir</span>
                 <span class="ud-metric-num text-warning">{{ $stats['expiring_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Perlu evaluasi/perpanjangan</span>
+                <span class="ud-metric-sub">Perlu evaluasi</span>
             </div>
         </div>
 
@@ -293,7 +293,7 @@
     {{-- ── Main Grid Section with Horizontal Scroll Wrapper ──────── --}}
     <div class="ud-grid-container">
 
-        {{-- ── Left Column: Security, Account & Role Tier (360px) ── --}}
+        {{-- ── Left Column: Security, Account & Role Tier (340px) ── --}}
         <div class="ud-col-side">
             
             {{-- Card 1: Kredensial & Info Login --}}
@@ -340,7 +340,7 @@
                             <div class="ud-tile-icon"><i class="fas fa-lock"></i></div>
                             <div class="ud-tile-content">
                                 <span class="ud-tile-label">Kata Sandi</span>
-                                <span class="ud-tile-value text-muted">•••••••••••••••• (Terenkripsi Bcrypt)</span>
+                                <span class="ud-tile-value text-muted">•••••••••••••••• (Bcrypt)</span>
                             </div>
                         </div>
 
@@ -386,7 +386,7 @@
                         </div>
                         <div class="ud-role-meta-item">
                             <i class="fas fa-bell" style="color: #3b82f6;"></i>
-                            <span>Notifikasi Transaksi Sistem Aktif</span>
+                            <span>Notifikasi Transaksi Aktif</span>
                         </div>
                     </div>
                 </div>
@@ -463,7 +463,7 @@
                     <div id="tab-profile" class="ud-tab-pane active">
 
                         {{-- Card: Data Diri Pengguna --}}
-                        <div class="card ud-card mb-4">
+                        <div class="card ud-card">
                             <div class="ud-card-header">
                                 <div class="ud-card-title-group">
                                     <span class="ud-card-icon icon-primary">
@@ -546,7 +546,7 @@
                                     </div>
                                 </div>
 
-                                <div class="ud-subgrid mt-4">
+                                <div class="ud-subgrid">
                                     <div class="ud-subbox">
                                         <span class="ud-subbox-label"><i class="fas fa-briefcase"></i> Jabatan Terdaftar</span>
                                         <span class="ud-subbox-value">{{ $user->profile?->jabatan ?: '—' }}</span>
@@ -567,7 +567,7 @@
                                         <span class="ud-subbox-label"><i class="fas fa-layer-group"></i> Tingkat Struktur</span>
                                         <span class="ud-subbox-value">
                                             @if($user->profile?->jurusan)
-                                                Unit Pelaksana Jurusan (Akademik)
+                                                Unit Jurusan (Akademik)
                                             @elseif($user->profile?->unitKerja)
                                                 Humas / Unit Kerja Pusat
                                             @elseif($user->profile?->upa)
@@ -575,7 +575,7 @@
                                             @elseif($user->profile?->pusat)
                                                 Pusat / Lembaga Khusus
                                             @elseif($user->mitra)
-                                                Industri / Lembaga Mitra Eksternal
+                                                Mitra Industri Eksternal
                                             @elseif($roleKey === 'pimpinan')
                                                 Direksi & Pimpinan Utama
                                             @else
@@ -681,7 +681,7 @@
 
                                                 @if($coop->ruang_lingkup)
                                                     <p class="ud-coop-scope">
-                                                        {{ Str::limit($coop->ruang_lingkup, 140) }}
+                                                        {{ Str::limit($coop->ruang_lingkup, 130) }}
                                                     </p>
                                                 @endif
                                             </div>
@@ -846,7 +846,7 @@
                                     <div class="ud-audit-card">
                                         <div class="ud-audit-icon"><i class="fas fa-user-pen"></i></div>
                                         <div class="ud-audit-info">
-                                            <span class="ud-audit-label">Pembaruan Data Terakhir</span>
+                                            <span class="ud-audit-label">Pembaruan Terakhir</span>
                                             <span class="ud-audit-val">{{ $user->updated_at ? $user->updated_at->format('d F Y, H:i:s') . ' WITA' : '—' }}</span>
                                             <span class="ud-audit-sub">{{ $user->updated_at ? $user->updated_at->diffForHumans() : '' }}</span>
                                         </div>
@@ -855,9 +855,9 @@
                                     <div class="ud-audit-card">
                                         <div class="ud-audit-icon"><i class="fas fa-envelope-circle-check"></i></div>
                                         <div class="ud-audit-info">
-                                            <span class="ud-audit-label">Waktu Verifikasi Email</span>
+                                            <span class="ud-audit-label">Verifikasi Email</span>
                                             <span class="ud-audit-val">{{ $user->email_verified_at ? $user->email_verified_at->format('d F Y, H:i:s') . ' WITA' : 'Belum Diverifikasi' }}</span>
-                                            <span class="ud-audit-sub">{{ $user->email_verified_at ? 'Email resmi terverifikasi' : 'Harap kirim ulang verifikasi jika diperlukan' }}</span>
+                                            <span class="ud-audit-sub">{{ $user->email_verified_at ? 'Email resmi terverifikasi' : 'Harap verifikasi jika diperlukan' }}</span>
                                         </div>
                                     </div>
 
@@ -865,8 +865,8 @@
                                         <div class="ud-audit-icon"><i class="fas fa-fingerprint"></i></div>
                                         <div class="ud-audit-info">
                                             <span class="ud-audit-label">Token Remember Me</span>
-                                            <span class="ud-audit-val ud-mono">{{ $user->remember_token ? 'Aktif (' . substr($user->remember_token, 0, 12) . '...)' : 'Tidak Tersimpan' }}</span>
-                                            <span class="ud-audit-sub">Perlindungan sesi login berkelanjutan</span>
+                                            <span class="ud-audit-val ud-mono">{{ $user->remember_token ? 'Aktif (' . substr($user->remember_token, 0, 10) . '...)' : 'Tidak Tersimpan' }}</span>
+                                            <span class="ud-audit-sub">Perlindungan sesi aktif</span>
                                         </div>
                                     </div>
                                 </div>
@@ -875,7 +875,7 @@
                                     <i class="fas fa-shield-check"></i>
                                     <div>
                                         <h5>Integritas Enkripsi Terjaga</h5>
-                                        <p>Seluruh password disimpan dengan algoritma hashing standar Bcrypt berkeamanan tinggi. Tidak ada plaintext password yang disimpan di database.</p>
+                                        <p>Seluruh password disimpan dengan algoritma hashing standar Bcrypt berkeamanan tinggi.</p>
                                     </div>
                                 </div>
                             </div>
@@ -895,15 +895,15 @@
     </div>
 </main>
 
-{{-- ── STYLING (DUAL-THEME: LIGHT & DARK MODE + HORIZONTAL SCROLL) ──── --}}
+{{-- ── STYLING (TIGHTENED & PROPORTIONAL DUAL-THEME) ─────────────────── --}}
 <style>
 /* ─── CSS Variables & Design Tokens ───────────────────────────────── */
 :root {
     --ud-bg: #f8fafc;
     --ud-card-bg: #ffffff;
     --ud-card-border: #e2e8f0;
-    --ud-card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-    --ud-card-hover-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.09), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+    --ud-card-shadow: 0 2px 12px -1px rgba(15, 23, 42, 0.05), 0 1px 4px -1px rgba(15, 23, 42, 0.03);
+    --ud-card-hover-shadow: 0 8px 20px -3px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
     
     --ud-text-title: #0f172a;
     --ud-text-body: #334155;
@@ -916,6 +916,11 @@
     
     --ud-accent-primary: #0284c7;
     --ud-accent-primary-rgb: 2, 132, 199;
+
+    /* Uniform Spacing Hierarchy */
+    --ud-space-section: 0.875rem; /* 14px consistent section gap */
+    --ud-space-inner: 0.75rem;   /* 12px inner grid gap */
+    --ud-space-item: 0.5rem;     /* 8px micro item gap */
 }
 
 /* Dark Mode Tokens */
@@ -924,8 +929,8 @@
     --ud-bg: #0f1117;
     --ud-card-bg: #181c27;
     --ud-card-border: #2a2f45;
-    --ud-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-    --ud-card-hover-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.6);
+    --ud-card-shadow: 0 3px 14px -1px rgba(0, 0, 0, 0.4);
+    --ud-card-hover-shadow: 0 8px 22px -2px rgba(0, 0, 0, 0.6);
     
     --ud-text-title: #f8fafc;
     --ud-text-body: #cbd5e1;
@@ -942,7 +947,7 @@
 
 /* ─── Base Page Layout ────────────────────────────────────────────── */
 .ud-detail-page {
-    padding: 1.5rem 1.75rem 3rem 1.75rem;
+    padding: 1rem 1.25rem 2rem 1.25rem;
     color: var(--ud-text-body);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -952,18 +957,18 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 1.5rem;
-    gap: 1.5rem;
+    margin-bottom: var(--ud-space-section);
+    gap: var(--ud-space-section);
     flex-wrap: wrap;
 }
 
 .ud-breadcrumb {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
+    gap: 0.4rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .ud-breadcrumb-link {
@@ -979,51 +984,51 @@
 .ud-title-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .ud-title-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     background: rgba(var(--ud-accent-primary-rgb), 0.12);
     color: var(--ud-accent-primary);
     border: 1px solid rgba(var(--ud-accent-primary-rgb), 0.2);
 }
 
 .ud-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--ud-text-title);
     margin: 0;
-    line-height: 1.25;
+    line-height: 1.2;
     letter-spacing: -0.02em;
 }
 
 .ud-subtitle {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--ud-text-muted);
-    margin: 0.25rem 0 0 0;
+    margin: 0.15rem 0 0 0;
 }
 
 .ud-topbar-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .ud-btn-back,
 .ud-btn-edit {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.125rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
+    gap: 0.4rem;
+    padding: 0.45rem 0.875rem;
+    border-radius: 8px;
+    font-size: 0.8125rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1045,13 +1050,13 @@
     background: var(--ud-accent-primary);
     color: #ffffff !important;
     border: 1px solid transparent;
-    box-shadow: 0 4px 12px rgba(var(--ud-accent-primary-rgb), 0.25);
+    box-shadow: 0 3px 8px rgba(var(--ud-accent-primary-rgb), 0.25);
 }
 
 .ud-btn-edit:hover {
     filter: brightness(1.1);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(var(--ud-accent-primary-rgb), 0.35);
+    box-shadow: 0 4px 12px rgba(var(--ud-accent-primary-rgb), 0.35);
 }
 
 /* ─── Hero Spotlight Card ─────────────────────────────────────────── */
@@ -1059,9 +1064,9 @@
     position: relative;
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
-    border-radius: 20px;
-    padding: 1.75rem 2rem;
-    margin-bottom: 1.5rem;
+    border-radius: 16px;
+    padding: 1.125rem 1.35rem;
+    margin-bottom: var(--ud-space-section);
     box-shadow: var(--ud-card-shadow);
     overflow: hidden;
     backdrop-filter: blur(10px);
@@ -1069,11 +1074,11 @@
 
 .ud-hero-glow {
     position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 260px;
-    height: 260px;
-    background: radial-gradient(circle, rgba(var(--ud-accent-primary-rgb), 0.15) 0%, rgba(var(--ud-accent-primary-rgb), 0) 70%);
+    top: -60px;
+    right: -60px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(var(--ud-accent-primary-rgb), 0.12) 0%, rgba(var(--ud-accent-primary-rgb), 0) 70%);
     pointer-events: none;
 }
 
@@ -1081,8 +1086,8 @@
     position: absolute;
     inset: 0;
     background-image: radial-gradient(var(--ud-card-border) 1px, transparent 1px);
-    background-size: 24px 24px;
-    opacity: 0.4;
+    background-size: 20px 20px;
+    opacity: 0.35;
     pointer-events: none;
 }
 
@@ -1091,7 +1096,7 @@
     z-index: 2;
     display: flex;
     align-items: center;
-    gap: 1.75rem;
+    gap: 1.25rem;
     flex-wrap: wrap;
 }
 
@@ -1101,46 +1106,46 @@
 }
 
 .ud-avatar {
-    width: 84px;
-    height: 84px;
-    border-radius: 22px;
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 1.625rem;
     font-weight: 800;
     color: #ffffff;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    letter-spacing: -0.05em;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    letter-spacing: -0.04em;
 }
 
 .ud-status-pulse {
     position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 18px;
-    height: 18px;
+    bottom: -1px;
+    right: -1px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
     background: #10b981;
-    border: 3px solid var(--ud-card-bg);
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+    border: 2.5px solid var(--ud-card-bg);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35);
 }
 
 .ud-user-meta {
     flex: 1;
-    min-width: 260px;
+    min-width: 240px;
 }
 
 .ud-user-top {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.35rem;
 }
 
 .ud-user-name {
-    font-size: 1.625rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--ud-text-title);
     margin: 0;
@@ -1150,10 +1155,10 @@
 .ud-role-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.85rem;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 9999px;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 700;
     background: rgba(var(--ud-accent-primary-rgb), 0.12);
     color: var(--ud-accent-primary);
@@ -1163,10 +1168,10 @@
 .ud-verified-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
     border-radius: 9999px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     background: rgba(16, 185, 129, 0.12);
     color: #10b981;
@@ -1176,10 +1181,10 @@
 .ud-unverified-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
     border-radius: 9999px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     background: rgba(245, 158, 11, 0.12);
     color: #f59e0b;
@@ -1189,19 +1194,19 @@
 .ud-quick-badges {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
 .ud-quick-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.35rem 0.75rem;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 8px;
-    font-size: 0.8125rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
     cursor: pointer;
     transition: all 0.15s ease;
@@ -1214,7 +1219,7 @@
 }
 
 .ud-copy-icon {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     opacity: 0.5;
 }
 
@@ -1226,8 +1231,8 @@
 .ud-hero-stats {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    padding-left: 1.5rem;
+    gap: 1.125rem;
+    padding-left: 1.125rem;
     border-left: 1px solid var(--ud-card-border);
 }
 
@@ -1237,28 +1242,28 @@
 }
 
 .ud-stat-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     color: var(--ud-text-sub);
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.15rem;
 }
 
 .ud-stat-value {
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 700;
     color: var(--ud-text-title);
 }
 
 .ud-stat-sub {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--ud-text-muted);
 }
 
 .ud-stat-divider {
     width: 1px;
-    height: 36px;
+    height: 30px;
     background: var(--ud-card-border);
 }
 
@@ -1266,35 +1271,35 @@
 .ud-metric-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--ud-space-section);
+    margin-bottom: var(--ud-space-section);
 }
 
 .ud-metric-card {
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
-    border-radius: 16px;
-    padding: 1.25rem 1.25rem;
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
     box-shadow: var(--ud-card-shadow);
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     transition: all 0.2s ease;
 }
 
 .ud-metric-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--ud-card-hover-shadow);
 }
 
 .ud-metric-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 1.15rem;
     flex-shrink: 0;
 }
 
@@ -1312,35 +1317,35 @@
 }
 
 .ud-metric-label {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--ud-text-muted);
 }
 
 .ud-metric-num {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--ud-text-title);
-    line-height: 1.2;
+    line-height: 1.15;
 }
 
 .ud-metric-sub {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--ud-text-sub);
 }
 
-/* ─── Grid Layout (Side 360px + Main) ─────────────────────────────── */
+/* ─── Grid Layout (Side 340px + Main) ─────────────────────────────── */
 .ud-grid-container {
     display: grid;
-    grid-template-columns: 360px minmax(0, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: var(--ud-space-section);
     align-items: start;
 }
 
 .ud-col-side {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: var(--ud-space-section);
 }
 
 .ud-col-main {
@@ -1354,7 +1359,7 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--ud-space-section);
     scrollbar-width: thin;
 }
 
@@ -1371,13 +1376,13 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
     scrollbar-width: thin;
 }
 
 /* Sleek Scrollbar for Light & Dark Mode */
 .ud-main-scroll-wrapper::-webkit-scrollbar {
-    height: 6px;
+    height: 5px;
 }
 
 .ud-main-scroll-wrapper::-webkit-scrollbar-track {
@@ -1403,11 +1408,11 @@
 .ud-tabs-nav {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
-    border-radius: 14px;
-    padding: 0.375rem;
+    border-radius: 12px;
+    padding: 0.25rem;
     box-shadow: var(--ud-card-shadow);
     min-width: max-content;
 }
@@ -1415,10 +1420,10 @@
 .ud-tab-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1.125rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
+    gap: 0.4rem;
+    padding: 0.45rem 0.875rem;
+    border-radius: 8px;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--ud-text-muted);
     background: transparent;
@@ -1439,9 +1444,9 @@
 }
 
 .ud-tab-count {
-    padding: 0.15rem 0.5rem;
+    padding: 0.1rem 0.45rem;
     border-radius: 9999px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     background: var(--ud-accent-primary);
     color: #ffffff;
@@ -1453,7 +1458,7 @@
 
 .ud-tab-pane {
     display: none;
-    animation: fadeIn 0.25s ease-in-out;
+    animation: fadeIn 0.2s ease-in-out;
 }
 
 .ud-tab-pane.active {
@@ -1461,7 +1466,7 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
+    from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1469,11 +1474,15 @@
 .ud-card {
     background: var(--ud-card-bg);
     border: 1px solid var(--ud-card-border);
-    border-radius: 18px;
+    border-radius: 14px;
     box-shadow: var(--ud-card-shadow);
     overflow: hidden;
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--ud-space-section);
     transition: box-shadow 0.2s ease;
+}
+
+.ud-card:last-child {
+    margin-bottom: 0;
 }
 
 .ud-card:hover {
@@ -1481,7 +1490,7 @@
 }
 
 .ud-card-header {
-    padding: 1.25rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--ud-card-border);
     display: flex;
     justify-content: space-between;
@@ -1491,22 +1500,22 @@
 .ud-card-title-group {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
+    gap: 0.65rem;
 }
 
 .ud-card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.125rem;
+    font-size: 0.95rem;
     flex-shrink: 0;
 }
 
 .ud-card-title {
-    font-size: 1.0625rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--ud-text-title);
     margin: 0;
@@ -1514,30 +1523,30 @@
 }
 
 .ud-card-subtitle {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
-    margin: 0.15rem 0 0 0;
+    margin: 0.1rem 0 0 0;
 }
 
 .ud-card-body {
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 /* ─── Info Stack (Left Column) ────────────────────────────────────── */
 .ud-info-stack {
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
+    gap: var(--ud-space-item);
 }
 
 .ud-info-tile {
     display: flex;
     align-items: flex-start;
-    gap: 0.875rem;
-    padding: 0.75rem 0.875rem;
+    gap: 0.65rem;
+    padding: 0.5rem 0.65rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 12px;
+    border-radius: 10px;
     transition: background 0.15s ease;
 }
 
@@ -1546,15 +1555,15 @@
 }
 
 .ud-tile-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: rgba(var(--ud-accent-primary-rgb), 0.12);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(var(--ud-accent-primary-rgb), 0.1);
     color: var(--ud-accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     flex-shrink: 0;
     margin-top: 0.1rem;
 }
@@ -1562,12 +1571,12 @@
 .ud-tile-content {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
     min-width: 0;
 }
 
 .ud-tile-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -1575,7 +1584,7 @@
 }
 
 .ud-tile-value {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--ud-text-title);
     word-break: break-word;
@@ -1584,10 +1593,10 @@
 .ud-tile-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    gap: 0.3rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.7rem;
     font-weight: 600;
     width: fit-content;
 }
@@ -1599,32 +1608,32 @@
 .ud-role-banner {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.875rem 1rem;
-    border-radius: 12px;
-    font-size: 1rem;
+    gap: 0.6rem;
+    padding: 0.65rem 0.875rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.65rem;
 }
 
 .ud-role-description {
-    font-size: 0.875rem;
-    line-height: 1.5;
+    font-size: 0.775rem;
+    line-height: 1.45;
     color: var(--ud-text-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
 }
 
 .ud-role-meta-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .ud-role-meta-item {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    font-size: 0.8125rem;
+    gap: 0.5rem;
+    font-size: 0.75rem;
     color: var(--ud-text-body);
 }
 
@@ -1634,10 +1643,10 @@
 }
 
 .ud-danger-text {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
-    margin-bottom: 1rem;
-    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    line-height: 1.35;
 }
 
 .ud-btn-danger-block {
@@ -1645,13 +1654,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.625rem 1rem;
+    gap: 0.4rem;
+    padding: 0.5rem 0.875rem;
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.25);
-    border-radius: 10px;
-    font-size: 0.875rem;
+    border-radius: 8px;
+    font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1660,40 +1669,40 @@
 .ud-btn-danger-block:hover {
     background: #ef4444;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
 }
 
 /* ─── Right Column: Data Grid ─────────────────────────────────────── */
 .ud-data-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
+    gap: var(--ud-space-inner);
 }
 
 .ud-field-group {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
 }
 
 .ud-field-label {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--ud-text-muted);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .ud-field-value {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--ud-text-title);
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 10px;
-    min-height: 44px;
+    border-radius: 8px;
+    min-height: 38px;
     display: flex;
     align-items: center;
 }
@@ -1715,10 +1724,10 @@
 .ud-inline-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.8125rem;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
@@ -1726,23 +1735,24 @@
 .ud-placement-box {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    padding: 1.25rem 1.5rem;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 14px;
+    border-radius: 12px;
+    margin-bottom: var(--ud-space-section);
 }
 
 .ud-placement-icon {
-    width: 54px;
-    height: 54px;
-    border-radius: 14px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
     background: rgba(var(--ud-accent-primary-rgb), 0.12);
     color: var(--ud-accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     flex-shrink: 0;
 }
 
@@ -1752,52 +1762,52 @@
 }
 
 .ud-placement-type {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     color: var(--ud-accent-primary);
 }
 
 .ud-placement-name {
-    font-size: 1.125rem;
+    font-size: 0.95rem;
     font-weight: 800;
     color: var(--ud-text-title);
-    margin: 0.15rem 0 0.25rem 0;
+    margin: 0.1rem 0 0.15rem 0;
 }
 
 .ud-placement-role {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
 }
 
 .ud-subgrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: var(--ud-space-inner);
 }
 
 .ud-subbox {
-    padding: 1rem;
+    padding: 0.65rem 0.75rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.15rem;
 }
 
 .ud-subbox-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--ud-text-muted);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .ud-subbox-value {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     color: var(--ud-text-title);
 }
@@ -1806,14 +1816,14 @@
 .ud-coop-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--ud-space-inner);
 }
 
 .ud-coop-item {
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 14px;
-    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    padding: 0.875rem 1.125rem;
     transition: all 0.2s ease;
 }
 
@@ -1827,22 +1837,22 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.625rem;
+    margin-bottom: 0.4rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .ud-coop-tags {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
 }
 
 .ud-badge-jenis {
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -1856,15 +1866,15 @@
 .ud-badge-status {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    gap: 0.3rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    font-size: 0.7rem;
     font-weight: 600;
 }
 
 .ud-badge-status i {
-    font-size: 0.5rem;
+    font-size: 0.45rem;
 }
 
 .badge-status-active { background: rgba(16, 185, 129, 0.12); color: #10b981; }
@@ -1873,38 +1883,38 @@
 .badge-status-default { background: rgba(100, 116, 139, 0.12); color: #64748b; }
 
 .ud-badge-tingkat {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--ud-text-muted);
 }
 
 .ud-coop-doc-no {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     color: var(--ud-text-muted);
 }
 
 .ud-coop-title {
-    font-size: 1.0625rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--ud-text-title);
-    margin: 0 0 0.625rem 0;
-    line-height: 1.4;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.35;
 }
 
 .ud-coop-meta-row {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    font-size: 0.8125rem;
+    gap: 1.125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
     flex-wrap: wrap;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
 }
 
 .ud-coop-meta-col {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .ud-coop-meta-col strong {
@@ -1912,15 +1922,15 @@
 }
 
 .ud-coop-scope {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-muted);
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
 /* ─── Empty State ─────────────────────────────────────────────────── */
 .ud-empty-state {
-    padding: 3rem 1.5rem;
+    padding: 2.25rem 1.25rem;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -1929,30 +1939,30 @@
 }
 
 .ud-empty-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 16px;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
     color: var(--ud-text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
 }
 
 .ud-empty-title {
-    font-size: 1.0625rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--ud-text-title);
-    margin: 0 0 0.25rem 0;
+    margin: 0 0 0.2rem 0;
 }
 
 .ud-empty-desc {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--ud-text-muted);
-    max-width: 420px;
+    max-width: 380px;
     margin: 0;
 }
 
@@ -1960,41 +1970,41 @@
 .ud-audit-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--ud-space-inner);
+    margin-bottom: var(--ud-space-section);
 }
 
 .ud-audit-card {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    padding: 1.125rem;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
     background: var(--ud-item-bg);
     border: 1px solid var(--ud-item-border);
-    border-radius: 14px;
+    border-radius: 10px;
 }
 
 .ud-audit-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     background: rgba(var(--ud-accent-primary-rgb), 0.12);
     color: var(--ud-accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.125rem;
+    font-size: 0.95rem;
     flex-shrink: 0;
 }
 
 .ud-audit-info {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .ud-audit-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--ud-text-muted);
     text-transform: uppercase;
@@ -2002,44 +2012,44 @@
 }
 
 .ud-audit-val {
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     color: var(--ud-text-title);
 }
 
 .ud-audit-sub {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--ud-text-muted);
 }
 
 .ud-security-notice {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    padding: 1.125rem 1.25rem;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
     background: rgba(16, 185, 129, 0.08);
     border: 1px solid rgba(16, 185, 129, 0.2);
-    border-radius: 12px;
+    border-radius: 10px;
 }
 
 .ud-security-notice i {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: #10b981;
     margin-top: 0.1rem;
 }
 
 .ud-security-notice h5 {
-    font-size: 0.9375rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: #10b981;
-    margin: 0 0 0.2rem 0;
+    margin: 0 0 0.15rem 0;
 }
 
 .ud-security-notice p {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: var(--ud-text-body);
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 /* ─── Typography & Helpers ────────────────────────────────────────── */
@@ -2056,8 +2066,8 @@
 .text-danger  { color: #ef4444 !important; }
 .text-purple  { color: #a855f7 !important; }
 .text-muted   { color: var(--ud-text-muted) !important; }
-.mb-4         { margin-bottom: 1.25rem !important; }
-.mt-4         { margin-top: 1.25rem !important; }
+.mb-4         { margin-bottom: 0.75rem !important; }
+.mt-4         { margin-top: 0.75rem !important; }
 
 /* ─── Role Theme Colors ───────────────────────────────────────────── */
 .role-admin { --ud-accent-primary: #7c3aed; --ud-accent-primary-rgb: 124, 58, 237; }
@@ -2071,21 +2081,21 @@
 /* ─── Toast Notification ──────────────────────────────────────────── */
 .ud-toast {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 1.5rem;
+    right: 1.5rem;
     background: #0f172a;
     color: #f8fafc;
-    padding: 0.875rem 1.25rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    font-size: 0.875rem;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     z-index: 9999;
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
     pointer-events: none;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -2103,7 +2113,7 @@
 
 .ud-toast i {
     color: #10b981;
-    font-size: 1.125rem;
+    font-size: 1rem;
 }
 
 /* ─── Responsive Media Queries ────────────────────────────────────── */
@@ -2122,15 +2132,15 @@
         border-left: none;
         width: 100%;
         justify-content: flex-start;
-        gap: 2rem;
-        padding-top: 1rem;
+        gap: 1.5rem;
+        padding-top: 0.75rem;
         border-top: 1px solid var(--ud-card-border);
     }
 }
 
 @media (max-width: 768px) {
     .ud-detail-page {
-        padding: 1rem;
+        padding: 0.75rem;
     }
     .ud-data-grid,
     .ud-subgrid,
