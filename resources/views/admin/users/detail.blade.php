@@ -2056,6 +2056,8 @@
 .text-danger  { color: #ef4444 !important; }
 .text-purple  { color: #a855f7 !important; }
 .text-muted   { color: var(--ud-text-muted) !important; }
+.mb-4         { margin-bottom: 1.25rem !important; }
+.mt-4         { margin-top: 1.25rem !important; }
 
 /* ─── Role Theme Colors ───────────────────────────────────────────── */
 .role-admin { --ud-accent-primary: #7c3aed; --ud-accent-primary-rgb: 124, 58, 237; }
