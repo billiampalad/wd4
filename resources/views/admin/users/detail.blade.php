@@ -250,9 +250,8 @@
                 <i class="fas fa-handshake"></i>
             </div>
             <div class="ud-metric-info">
+                <span class="ud-metric-num text-primary">{{ $stats['total_cooperations'] ?? 0 }}</span>
                 <span class="ud-metric-label">Total Kerjasama</span>
-                <span class="ud-metric-num">{{ $stats['total_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Dokumen terkait</span>
             </div>
         </div>
 
@@ -261,9 +260,8 @@
                 <i class="fas fa-circle-check"></i>
             </div>
             <div class="ud-metric-info">
-                <span class="ud-metric-label">Kerjasama Aktif</span>
                 <span class="ud-metric-num text-success">{{ $stats['active_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Masa berlaku berjalan</span>
+                <span class="ud-metric-label">Kerjasama Aktif</span>
             </div>
         </div>
 
@@ -272,9 +270,8 @@
                 <i class="fas fa-clock"></i>
             </div>
             <div class="ud-metric-info">
-                <span class="ud-metric-label">Akan Berakhir</span>
                 <span class="ud-metric-num text-warning">{{ $stats['expiring_cooperations'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Perlu evaluasi</span>
+                <span class="ud-metric-label">Akan Berakhir</span>
             </div>
         </div>
 
@@ -283,9 +280,8 @@
                 <i class="fas fa-file-signature"></i>
             </div>
             <div class="ud-metric-info">
-                <span class="ud-metric-label">Usulan & Pengajuan</span>
                 <span class="ud-metric-num text-purple">{{ $stats['total_proposals'] ?? 0 }}</span>
-                <span class="ud-metric-sub">Pengajuan baru & perpanjangan</span>
+                <span class="ud-metric-label">Usulan & Pengajuan</span>
             </div>
         </div>
     </div>
