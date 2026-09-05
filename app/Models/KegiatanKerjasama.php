@@ -46,62 +46,29 @@ class KegiatanKerjasama extends Model
 
     public function jenisKerjasama()
     {
-        return $this->belongsToMany(JenisKerjasama::class, 'kegiatan_jenis_kerjasamas', 'id_kegiatan', 'id_jenis');
+        return $this->hasOneThrough(
+            JenisKerjasama::class,
+            DetailKegiatan::class,
+            'kegiatan_kerjasama_id',
+            'id',
+            'id',
+            'jenis_kerjasama_id'
+        );
     }
 
-    public function jurusans()
+    public function kegiatanMahasiswas()
     {
-        return $this->belongsToMany(Jurusan::class, 'kegiatan_jurusans', 'id_kegiatan', 'id_jurusan');
+        return $this->hasMany(KegiatanMahasiswa::class, 'kegiatan_kerjasama_id');
     }
 
-    public function unitKerjas()
+    public function mahasiswas()
     {
-        return $this->belongsToMany(UnitKerja::class, 'kegiatan_units', 'id_kegiatan', 'id_unit');
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function mitras()
-    {
-        return $this->belongsToMany(Mitra::class, 'kegiatan_mitras', 'id_kegiatan', 'id_mitra');
-    }
-
-    public function tujuans()
-    {
-        return $this->hasMany(Tujuan::class, 'id_kegiatan');
-    }
-
-    public function pelaksanaans()
-    {
-        return $this->hasMany(Pelaksanaan::class, 'id_kegiatan');
-    }
-
-    public function hasils()
-    {
-        return $this->hasMany(Hasil::class, 'id_kegiatan');
-    }
-
-    public function dokumentasis()
-    {
-        return $this->hasMany(Dokumentasi::class, 'id_kegiatan');
+        return $this->belongsToMany(Mahasiswa::class, 'kegiatan_mahasiswas', 'kegiatan_kerjasama_id', 'mahasiswa_id');
     }
 
     public function evaluasis()
     {
-        return $this->hasMany(Evaluasi::class, 'id_kegiatan');
-    }
-
-    public function kesimpulans()
-    {
-        return $this->hasMany(Kesimpulan::class, 'id_kegiatan');
-    }
-
-    public function permasalahanSolusis()
-    {
-        return $this->hasMany(PermasalahanSolusi::class, 'id_kegiatan');
+        return $this->hasMany(Evaluasi::class, 'cooperation_id', 'cooperation_id');
     }
 
     // ─── Helpers ─────────────────────────────────────────

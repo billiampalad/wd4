@@ -435,6 +435,13 @@
                             <span class="ud-tab-count">{{ $stats['total_cooperations'] }}</span>
                         @endif
                     </button>
+                    <button type="button" class="ud-tab-btn" data-tab="tab-activities" onclick="switchTab('tab-activities', this)">
+                        <i class="fas fa-tasks"></i>
+                        <span>Kegiatan Kerjasama</span>
+                        @if(isset($stats['total_kegiatan']) && $stats['total_kegiatan'] > 0)
+                            <span class="ud-tab-count count-green">{{ $stats['total_kegiatan'] }}</span>
+                        @endif
+                    </button>
                     <button type="button" class="ud-tab-btn" data-tab="tab-proposals" onclick="switchTab('tab-proposals', this)">
                         <i class="fas fa-file-signature"></i>
                         <span>Usulan & Pengajuan</span>
@@ -590,6 +597,100 @@
                             </div>
                         </div>
 
+                        @if($user->mitra)
+                            {{-- Card: Detail Kontak & Profil Perusahaan Mitra --}}
+                            <div class="card ud-card">
+                                <div class="ud-card-header">
+                                    <div class="ud-card-title-group">
+                                        <span class="ud-card-icon icon-primary">
+                                            <i class="fas fa-building-circle-check"></i>
+                                        </span>
+                                        <div>
+                                            <h3 class="ud-card-title">Profil Perusahaan & Kontak Mitra</h3>
+                                            <p class="ud-card-subtitle">Informasi legalitas institusi, klasifikasi usaha, dan kontak resmi mitra</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ud-card-body">
+                                    <div class="ud-data-grid">
+                                        <div class="ud-field-group">
+                                            <label class="ud-field-label">
+                                                <i class="fas fa-building"></i> Nama Perusahaan / Institusi
+                                            </label>
+                                            <div class="ud-field-value ud-highlight">{{ $user->mitra->nama_mitra }}</div>
+                                        </div>
+
+                                        <div class="ud-field-group">
+                                            <label class="ud-field-label">
+                                                <i class="fas fa-tags"></i> Klasifikasi Mitra
+                                            </label>
+                                            <div class="ud-field-value">
+                                                <span class="ud-inline-badge badge-cyan">
+                                                    {{ $user->mitra->klasifikasi->nama_klasifikasi ?? 'Umum / Industri' }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ud-field-group">
+                                            <label class="ud-field-label">
+                                                <i class="fas fa-phone"></i> Nomor Telepon Resmi
+                                            </label>
+                                            <div class="ud-field-value">
+                                                @if($user->mitra->telepon)
+                                                    <a href="tel:{{ $user->mitra->telepon }}" class="ud-link">
+                                                        <i class="fas fa-phone-volume"></i> {{ $user->mitra->telepon }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">— Belum diisi —</span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="ud-field-group">
+                                            <label class="ud-field-label">
+                                                <i class="fas fa-globe"></i> Website Resmi
+                                            </label>
+                                            <div class="ud-field-value">
+                                                @if($user->mitra->website)
+                                                    <a href="{{ Str::startsWith($user->mitra->website, ['http://', 'https://']) ? $user->mitra->website : 'https://' . $user->mitra->website }}" target="_blank" rel="noopener noreferrer" class="ud-link">
+                                                        <i class="fas fa-external-link-alt"></i> {{ $user->mitra->website }}
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">— Belum diisi —</span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="ud-field-group ud-field-full">
+                                            <label class="ud-field-label">
+                                                <i class="fas fa-map-marker-alt"></i> Alamat Lengkap & Wilayah
+                                            </label>
+                                            <div class="ud-field-value">
+                                                <p class="ud-address-text">
+                                                    {{ $user->mitra->alamat ?: '— Belum ada alamat terdaftar —' }}
+                                                </p>
+                                                <div class="ud-location-pills">
+                                                    @if($user->mitra->kota)
+                                                        <span class="ud-loc-pill"><i class="fas fa-city"></i> {{ $user->mitra->kota }}</span>
+                                                    @endif
+                                                    @if($user->mitra->provinsi)
+                                                        <span class="ud-loc-pill"><i class="fas fa-map"></i> {{ $user->mitra->provinsi }}</span>
+                                                    @endif
+                                                    @if($user->mitra->negara)
+                                                        <span class="ud-loc-pill"><i class="fas fa-flag"></i> {{ $user->mitra->negara }}</span>
+                                                    @endif
+                                                    <span class="ud-loc-pill ud-loc-kategori {{ $user->mitra->kategori === 'internasional' ? 'kategori-intl' : 'kategori-nas' }}">
+                                                        <i class="fas fa-earth-asia"></i> {{ ucfirst($user->mitra->kategori) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
 
                     {{-- ══════════════════════════════════════════════════════ --}}
@@ -699,7 +800,85 @@
                     </div>
 
                     {{-- ══════════════════════════════════════════════════════ --}}
-                    {{-- TAB 3: USULAN & PENGAJUAN                              --}}
+                    {{-- TAB 3: KEGIATAN KERJASAMA                              --}}
+                    {{-- ══════════════════════════════════════════════════════ --}}
+                    <div id="tab-activities" class="ud-tab-pane">
+                        <div class="card ud-card">
+                            <div class="ud-card-header">
+                                <div class="ud-card-title-group">
+                                    <span class="ud-card-icon icon-emerald">
+                                        <i class="fas fa-tasks"></i>
+                                    </span>
+                                    <div>
+                                        <h3 class="ud-card-title">Riwayat Kegiatan Implementasi Kerjasama</h3>
+                                        <p class="ud-card-subtitle">Aktivitas realisasi, program magang, penelitian, atau kuliah tamu yang terlaksana</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ud-card-body">
+                                @if(isset($kegiatanKerjasamas) && $kegiatanKerjasamas->count() > 0)
+                                    <div class="ud-kegiatan-list">
+                                        @foreach($kegiatanKerjasamas as $kegiatan)
+                                            <div class="ud-kegiatan-item">
+                                                <div class="ud-kegiatan-header">
+                                                    <div class="ud-kegiatan-tags">
+                                                        <span class="ud-badge-status {{ $kegiatan->status_class }}">
+                                                            <i class="fas fa-circle"></i> {{ $kegiatan->status_label }}
+                                                        </span>
+                                                        @if($kegiatan->detailKegiatan?->jenisKerjasama)
+                                                            <span class="ud-badge-jenis badge-ia">{{ $kegiatan->detailKegiatan->jenisKerjasama->nama_kerjasama ?? $kegiatan->detailKegiatan->jenisKerjasama->nama }}</span>
+                                                        @elseif($kegiatan->jenisKerjasama)
+                                                            <span class="ud-badge-jenis badge-ia">{{ $kegiatan->jenisKerjasama->nama_kerjasama ?? $kegiatan->jenisKerjasama->nama }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <span class="ud-kegiatan-date">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        {{ $kegiatan->periode_mulai ? $kegiatan->periode_mulai->format('d M Y') : '—' }}
+                                                        s.d
+                                                        {{ $kegiatan->periode_selesai ? $kegiatan->periode_selesai->format('d M Y') : 'Selesai' }}
+                                                    </span>
+                                                </div>
+
+                                                <h4 class="ud-kegiatan-title">{{ $kegiatan->nama_kegiatan }}</h4>
+
+                                                @if($kegiatan->cooperation)
+                                                    <div class="ud-kegiatan-parent">
+                                                        <i class="fas fa-file-contract"></i>
+                                                        <span>Dokumen Induk: <strong>{{ $kegiatan->cooperation->judul }}</strong> ({{ $kegiatan->cooperation->doc_number ?: 'Tanpa No Dokumen' }})</span>
+                                                    </div>
+                                                @endif
+
+                                                <div class="ud-kegiatan-footer">
+                                                    <div class="ud-kegiatan-badges">
+                                                        @if($kegiatan->detailKegiatan?->volume_luaran)
+                                                            <span class="ud-kegiatan-stat"><i class="fas fa-layer-group"></i> Vol: {{ $kegiatan->detailKegiatan->volume_luaran }}</span>
+                                                        @endif
+                                                        @if($kegiatan->evaluasis && $kegiatan->evaluasis->count() > 0)
+                                                            <span class="ud-kegiatan-stat"><i class="fas fa-clipboard-check"></i> {{ $kegiatan->evaluasis->count() }} Evaluasi</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="ud-empty-state">
+                                        <div class="ud-empty-icon">
+                                            <i class="fas fa-calendar-xmark"></i>
+                                        </div>
+                                        <h4 class="ud-empty-title">Belum Ada Kegiatan Kerjasama</h4>
+                                        <p class="ud-empty-desc">
+                                            Belum ada agenda atau realisasi kegiatan implementasi kerjasama yang terhubung dengan akun ini.
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ══════════════════════════════════════════════════════ --}}
+                    {{-- TAB 4: USULAN & PENGAJUAN                              --}}
                     {{-- ══════════════════════════════════════════════════════ --}}
                     <div id="tab-proposals" class="ud-tab-pane">
                         <div class="card ud-card">
@@ -812,7 +991,7 @@
                     </div>
 
                     {{-- ══════════════════════════════════════════════════════ --}}
-                    {{-- TAB 4: AUDIT & KEAMANAN AKUN                           --}}
+                    {{-- TAB 5: AUDIT & KEAMANAN AKUN                           --}}
                     {{-- ══════════════════════════════════════════════════════ --}}
                     <div id="tab-audit" class="ud-tab-pane">
                         <div class="card ud-card">
@@ -874,6 +1053,58 @@
                                         <p>Seluruh password disimpan dengan algoritma hashing standar Bcrypt berkeamanan tinggi.</p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        {{-- Card: Log Notifikasi Sistem Akun --}}
+                        <div class="card ud-card">
+                            <div class="ud-card-header">
+                                <div class="ud-card-title-group">
+                                    <span class="ud-card-icon icon-primary">
+                                        <i class="fas fa-bell"></i>
+                                    </span>
+                                    <div>
+                                        <h3 class="ud-card-title">Log Notifikasi & Aktivitas Akun</h3>
+                                        <p class="ud-card-subtitle">Riwayat pemberitahuan sistem dan interaksi transaksi terbaru</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ud-card-body">
+                                @if(isset($notifikasis) && $notifikasis->count() > 0)
+                                    <div class="ud-notif-timeline">
+                                        @foreach($notifikasis as $notif)
+                                            <div class="ud-notif-item {{ $notif->is_read ? 'read' : 'unread' }}">
+                                                <div class="ud-notif-dot">
+                                                    <i class="fas {{ $notif->is_read ? 'fa-check' : 'fa-circle' }}"></i>
+                                                </div>
+                                                <div class="ud-notif-body">
+                                                    <div class="ud-notif-head">
+                                                        <h5 class="ud-notif-title">{{ $notif->title }}</h5>
+                                                        <span class="ud-notif-time">{{ $notif->created_at ? $notif->created_at->diffForHumans() : '' }}</span>
+                                                    </div>
+                                                    <p class="ud-notif-desc">{{ $notif->message }}</p>
+                                                    @if($notif->url)
+                                                        <a href="{{ $notif->url }}" class="ud-notif-link">
+                                                            <span>Lihat Dokumen Terkait</span>
+                                                            <i class="fas fa-arrow-right"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="ud-empty-state">
+                                        <div class="ud-empty-icon">
+                                            <i class="fas fa-bell-slash"></i>
+                                        </div>
+                                        <h4 class="ud-empty-title">Belum Ada Riwayat Notifikasi</h4>
+                                        <p class="ud-empty-desc">
+                                            Pengguna ini belum menerima pemberitahuan otomatis atau pesan sistem.
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -15,11 +15,28 @@ class JenisKerjasama extends Model
 
     public function kegiatanKerjasamas()
     {
-        return $this->belongsToMany(KegiatanKerjasama::class, 'kegiatan_jenis_kerjasamas', 'id_jenis', 'id_kegiatan');
+        return $this->hasManyThrough(
+            KegiatanKerjasama::class,
+            DetailKegiatan::class,
+            'jenis_kerjasama_id',
+            'id',
+            'id',
+            'kegiatan_kerjasama_id'
+        );
     }
 
     public function details()
     {
         return $this->hasMany(DetailKegiatan::class, 'jenis_kerjasama_id');
+    }
+
+    public function getNamaJenisAttribute()
+    {
+        return $this->nama ?? $this->attributes['nama_kerjasama'] ?? null;
+    }
+
+    public function getNamaKerjasamaAttribute()
+    {
+        return $this->nama ?? $this->attributes['nama_kerjasama'] ?? null;
     }
 }

@@ -15,6 +15,8 @@ use Illuminate\Validation\Rule;
 use App\Models\Cooperation;
 use App\Models\PengajuanKerjasamaBaru;
 use App\Models\PengajuanPerpanjanganKerjasama;
+use App\Models\KegiatanKerjasama;
+use App\Models\Notifikasi;
 
 class UserController
 {
@@ -74,11 +76,11 @@ class UserController
      */
     public function show(string $id)
     {
-        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat', 'mitra'])->findOrFail($id);
+        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat', 'mitra.klasifikasi'])->findOrFail($id);
         
         $roleKey = strtolower($user->role?->role_name ?? '');
 
-        // Query related cooperations based on user context
+        // Query related cooperations & activities based on user context
         if (($roleKey === 'mitra' || $user->mitra_id) && $user->mitra_id) {
             $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
                 ->where('mitra_id', $user->mitra_id)
@@ -92,6 +94,11 @@ class UserController
                 ->orWhere('email', $user->email)
                 ->latest()
                 ->get();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->whereHas('cooperation', fn($q) => $q->where('mitra_id', $user->mitra_id))
+                ->latest()
+                ->take(20)
+                ->get();
         } elseif ($roleKey === 'jurusan' && $user->profile?->jurusan_id) {
             $jurusanId = $user->profile->jurusan_id;
             $cooperations = Cooperation::with(['mitra', 'jurusan'])
@@ -101,6 +108,14 @@ class UserController
                 ->get();
             $proposals = collect();
             $perpanjangans = collect();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->whereHas('cooperation', function ($q) use ($jurusanId) {
+                    $q->where('jurusan_id', $jurusanId)
+                      ->orWhereHas('jurusans', fn($sq) => $sq->where('jurusans.id', $jurusanId));
+                })
+                ->latest()
+                ->take(20)
+                ->get();
         } elseif ($roleKey === 'upa' && $user->profile?->upa_id) {
             $upaId = $user->profile->upa_id;
             $cooperations = Cooperation::with(['mitra', 'upa'])
@@ -109,6 +124,11 @@ class UserController
                 ->get();
             $proposals = collect();
             $perpanjangans = collect();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->whereHas('cooperation', fn($q) => $q->where('upa_id', $upaId))
+                ->latest()
+                ->take(20)
+                ->get();
         } elseif ($roleKey === 'pusat' && $user->profile?->pusat_id) {
             $pusatId = $user->profile->pusat_id;
             $cooperations = Cooperation::with(['mitra', 'pusat'])
@@ -117,6 +137,11 @@ class UserController
                 ->get();
             $proposals = collect();
             $perpanjangans = collect();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->whereHas('cooperation', fn($q) => $q->where('pusat_id', $pusatId))
+                ->latest()
+                ->take(20)
+                ->get();
         } elseif ($roleKey === 'unit_kerja' || $roleKey === 'humas') {
             $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
                 ->where('created_by', $user->id)
@@ -126,6 +151,10 @@ class UserController
                 ->get();
             $proposals = PengajuanKerjasamaBaru::latest()->take(10)->get();
             $perpanjangans = PengajuanPerpanjanganKerjasama::latest()->take(10)->get();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->latest()
+                ->take(20)
+                ->get();
         } else {
             // Admin & Pimpinan: overview summary
             $cooperations = Cooperation::with(['mitra', 'jurusan', 'upa', 'pusat'])
@@ -134,17 +163,27 @@ class UserController
                 ->get();
             $proposals = PengajuanKerjasamaBaru::latest()->take(10)->get();
             $perpanjangans = PengajuanPerpanjanganKerjasama::latest()->take(10)->get();
+            $kegiatanKerjasamas = KegiatanKerjasama::with(['cooperation.mitra', 'detailKegiatan.jenisKerjasama', 'evaluasis'])
+                ->latest()
+                ->take(20)
+                ->get();
         }
+
+        $notifikasis = Notifikasi::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
 
         $stats = [
             'total_cooperations'   => $cooperations->count(),
             'active_cooperations'  => $cooperations->where('status_berlaku', 'Aktif')->count(),
             'expiring_cooperations'=> $cooperations->where('status_berlaku', 'Akan Berakhir')->count(),
             'expired_cooperations' => $cooperations->where('status_berlaku', 'Kadaluarsa')->count(),
+            'total_kegiatan'       => $kegiatanKerjasamas->count(),
             'total_proposals'      => $proposals->count() + $perpanjangans->count(),
         ];
 
-        return view('admin.users.detail', compact('user', 'cooperations', 'proposals', 'perpanjangans', 'stats'));
+        return view('admin.users.detail', compact('user', 'cooperations', 'proposals', 'perpanjangans', 'kegiatanKerjasamas', 'notifikasis', 'stats'));
     }
 
     /**
