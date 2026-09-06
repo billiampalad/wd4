@@ -97,7 +97,7 @@ class LoginController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/login')->with('success', 'Anda telah berhasil keluar dari akun.');
     }
 
     public function heartbeat()

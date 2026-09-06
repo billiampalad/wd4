@@ -11,16 +11,42 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <style>
         [x-cloak] {
             display: none !important;
         }
     </style>
+    <script src="{{ asset('js/component/alert.js') }}"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body>
+
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                CustomAlert.success(@json(session('success')), 'Berhasil');
+            });
+        </script>
+    @endif
+
+    @if(session('status'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                CustomAlert.info(@json(session('status')), 'Informasi');
+            });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                CustomAlert.error(@json(session('error')), 'Gagal');
+            });
+        </script>
+    @endif
 
     <div class="login-background" aria-hidden="true">
         <div class="background-orb orb-top"></div>
