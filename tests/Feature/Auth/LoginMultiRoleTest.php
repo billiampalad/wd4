@@ -27,17 +27,11 @@ class LoginMultiRoleTest extends TestCase
     }
 
     /**
-     * Uji autentikasi dan redirect untuk seluruh 8 role aktor sistem WD4 menggunakan email.
+     * Uji autentikasi dan redirect untuk seluruh role non-admin pada portal login umum (/login).
      */
-    public function test_all_8_roles_can_login_with_email_and_redirect_to_correct_dashboard(): void
+    public function test_non_admin_roles_can_login_with_email_and_redirect_to_correct_dashboard(): void
     {
         $roleTestCases = [
-            [
-                'role' => 'admin',
-                'email' => 'admin@polnado.ac.id',
-                'expected_redirect' => '/admin',
-                'name' => 'Akun Admin',
-            ],
             [
                 'role' => 'pimpinan',
                 'email' => 'pimpinan@polnado.ac.id',
@@ -105,6 +99,43 @@ class LoginMultiRoleTest extends TestCase
             $this->post('/logout');
             $this->assertGuest();
         }
+    }
+
+    /**
+     * Uji akun admin login melalui portal khusus /admin/login.
+     */
+    public function test_admin_can_login_via_admin_portal_and_redirects_to_dashboard(): void
+    {
+        $admin = User::where('email', 'admin@polnado.ac.id')->firstOrFail();
+
+        $response = $this->post('/admin/login', [
+            'email' => 'admin@polnado.ac.id',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('/admin/dashboard');
+        $response->assertSessionHas('success', 'Berhasil masuk ke sistem admin.');
+        $this->assertAuthenticatedAs($admin);
+
+        $this->post('/logout');
+        $this->assertGuest();
+    }
+
+    /**
+     * Uji akun admin ditolak ketika mencoba login di portal umum /login.
+     */
+    public function test_admin_login_attempt_on_public_login_portal_is_rejected(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'admin@polnado.ac.id',
+            'password' => 'password',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertRedirect('/');
+        $response->assertSessionHas('error');
+        $this->assertGuest();
     }
 
     /**

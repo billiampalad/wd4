@@ -54,6 +54,17 @@ class LoginController
 
             $roleName = $this->normalizeRoleName($user->role?->role_name);
 
+            if ($roleName === 'admin') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return $this->failedLoginResponse($request, $throttleKey, $lockoutKey);
+            }
+
+            RateLimiter::clear($throttleKey);
+            Cache::forget($lockoutKey);
+
             if ($roleName == 'pimpinan') {
                 return redirect('/pimpinan')->with('success', 'Berhasil masuk ke sistem.');
             }
@@ -80,10 +91,6 @@ class LoginController
 
             if ($roleName == 'mitra') {
                 return redirect('/mitra')->with('success', 'Berhasil masuk ke sistem.');
-            }
-
-            if ($roleName == 'admin') {
-                return redirect('/admin')->with('success', 'Berhasil masuk ke sistem.');
             }
         }
 

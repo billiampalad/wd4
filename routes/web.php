@@ -485,6 +485,7 @@ Route::middleware(['auth'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
+Route::get('/admin', fn() => redirect()->route('admin.dashboard'))->middleware(['auth', 'role:admin']);
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'role:admin'])->name('admin.dashboard');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
