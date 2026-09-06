@@ -6236,3 +6236,14 @@ main {
         justify-content: space-between;
     }
 }
+
+/* ── Strong Hidden Attribute Enforcement ── */
+[hidden],
+.uc-form-group[hidden],
+.ue-form-group[hidden],
+.uc-info-row[hidden],
+.ue-info-row[hidden],
+[data-profile-field][hidden],
+[data-preview-field][hidden] {
+    display: none !important;
+}

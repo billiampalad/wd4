@@ -412,6 +412,7 @@
                                     x-data="adminUserSelect({
                                         placeholder: '-- Pilih Program Studi --',
                                         filterJurusan: true,
+                                        currentJurusanId: @js((string) old('jurusan_id', $user->profile?->jurusan_id)),
                                         selectedValue: @js((string) old('prodi_id', $user->profile?->prodi_id)),
                                         items: @js($prodis->map(fn ($prodi) => [
                                             'value' => (string) $prodi->id,

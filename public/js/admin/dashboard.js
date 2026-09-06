@@ -611,17 +611,19 @@ function updateProfileFields() {
             admin: ['jabatan'],
             mitra: ['jabatan'],
             jurusan: ['jabatan', 'jurusan'],
-            prodi: ['jabatan', 'jurusan', 'prodi'],
+            prodi: ['jabatan', 'jurusan'],
             unit_kerja: ['jabatan', 'unit'],
             upa: ['jabatan', 'upa'],
             pusat: ['jabatan', 'pusat'],
-        }[roleName] || ['jabatan', 'jurusan', 'prodi', 'unit', 'upa', 'pusat'];
+        }[roleName] || [];
 
         fields.forEach(field => {
             const isVisible = visibleFields.includes(field.dataset.profileField);
             const controls = field.querySelectorAll('input, select, textarea');
 
             field.hidden = !isVisible;
+            field.style.display = isVisible ? '' : 'none';
+
             field.querySelectorAll('.uc-alpine-select').forEach(selectWrap => {
                 if (selectWrap._x_dataStack?.[0]?.setDisabled) {
                     selectWrap._x_dataStack[0].setDisabled(!isVisible);
@@ -640,19 +642,50 @@ function updateProfileFields() {
         if (roleName === 'prodi') {
             const jurusanSelect = document.getElementById('jurusan_id');
             const prodiField = document.querySelector('[data-profile-field="prodi"]');
+            const previewProdiRow = document.querySelector('[data-preview-field="prodi"]');
             const jurusanId = jurusanSelect ? jurusanSelect.value : '';
+            const shouldShowProdi = Boolean(jurusanId);
 
             if (prodiField) {
                 const prodiAlpine = prodiField.querySelector('.uc-alpine-select');
                 if (prodiAlpine?._x_dataStack?.[0]?.filterByJurusan) {
                     prodiAlpine._x_dataStack[0].filterByJurusan(jurusanId);
                 }
-                prodiField.hidden = !jurusanId;
+
+                prodiField.hidden = !shouldShowProdi;
+                prodiField.style.display = shouldShowProdi ? '' : 'none';
+
+                const controls = prodiField.querySelectorAll('input, select, textarea');
+                controls.forEach(control => {
+                    control.disabled = !shouldShowProdi;
+                    if (!shouldShowProdi && control.value !== '') {
+                        control.value = '';
+                    }
+                });
+
+                if (prodiAlpine?._x_dataStack?.[0]?.setDisabled) {
+                    prodiAlpine._x_dataStack[0].setDisabled(!shouldShowProdi);
+                }
+            }
+
+            if (previewProdiRow) {
+                previewProdiRow.hidden = !shouldShowProdi;
+                previewProdiRow.style.display = shouldShowProdi ? '' : 'none';
             }
         }
 
         previewRows.forEach(row => {
-            row.hidden = !visibleFields.includes(row.dataset.previewField);
+            if (row.dataset.previewField === 'prodi') {
+                const jurusanSelect = document.getElementById('jurusan_id');
+                const jurusanId = jurusanSelect ? jurusanSelect.value : '';
+                const shouldShow = roleName === 'prodi' && Boolean(jurusanId);
+                row.hidden = !shouldShow;
+                row.style.display = shouldShow ? '' : 'none';
+            } else {
+                const isVisible = visibleFields.includes(row.dataset.previewField);
+                row.hidden = !isVisible;
+                row.style.display = isVisible ? '' : 'none';
+            }
         });
 
         if (pointer) {
