@@ -150,26 +150,44 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if(auth()->id() !== $user->id)
-                                            <form action="{{ route('users.toggle-status', $user->id) }}" method="POST"
-                                                onsubmit="return confirm('{{ $user->isActive() ? 'Apakah Anda yakin ingin menonaktifkan sementara akun ' . addslashes($user->name) . '? Pengguna tidak akan dapat login ke portal.' : 'Apakah Anda yakin ingin mengaktifkan kembali akun ' . addslashes($user->name) . '?' }}')">
+                                            <form id="form-toggle-status-{{ $user->id }}" action="{{ route('users.toggle-status', $user->id) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 @if($user->isActive())
-                                                    <button type="submit" class="btn-action toggle-deactivate um-btn-deactivate" title="Nonaktifkan Akun">
+                                                    <button type="button" class="btn-action toggle-deactivate um-btn-deactivate" title="Nonaktifkan Akun"
+                                                        onclick="CustomAlert.showDeactivate({
+                                                            accountName: '{{ addslashes($user->name) }}',
+                                                            formId: 'form-toggle-status-{{ $user->id }}'
+                                                        })">
                                                         <i class="fas fa-user-slash"></i>
                                                     </button>
                                                 @else
-                                                    <button type="submit" class="btn-action toggle-activate um-btn-activate" title="Aktifkan Akun">
+                                                    <button type="button" class="btn-action toggle-activate um-btn-activate" title="Aktifkan Akun"
+                                                        onclick="CustomAlert.confirm({
+                                                            title: 'Aktifkan Akun',
+                                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali.',
+                                                            type: 'primary',
+                                                            confirmText: 'Aktifkan',
+                                                            confirmColor: 'primary',
+                                                            onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
+                                                        })">
                                                         <i class="fas fa-user-check"></i>
                                                     </button>
                                                 @endif
                                             </form>
                                         @endif
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                                        <form id="form-delete-user-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-action delete um-btn-delete" title="Hapus">
+                                            <button type="button" class="btn-action delete um-btn-delete" title="Hapus"
+                                                onclick="CustomAlert.confirm({
+                                                    title: 'Hapus Pengguna',
+                                                    message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.',
+                                                    type: 'danger',
+                                                    confirmText: 'Hapus',
+                                                    confirmColor: 'danger',
+                                                    onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
+                                                })">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

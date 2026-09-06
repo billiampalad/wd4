@@ -19,8 +19,20 @@
     --alert-danger-shadow-hover: rgba(239, 68, 68, 0.48);
     --alert-warning-bg: var(--warning, #f59e0b);
     --alert-warning-hover: #d97706;
+    --alert-warning-shadow: rgba(245, 158, 11, 0.35);
+    --alert-warning-shadow-hover: rgba(245, 158, 11, 0.48);
+    --alert-success-bg: var(--success, #10b981);
+    --alert-success-hover: #059669;
+    --alert-success-shadow: rgba(16, 185, 129, 0.35);
+    --alert-success-shadow-hover: rgba(16, 185, 129, 0.48);
     --alert-primary-bg: var(--accent, #4f46e5);
     --alert-primary-hover: #4338ca;
+    --alert-primary-shadow: rgba(79, 70, 229, 0.35);
+    --alert-primary-shadow-hover: rgba(79, 70, 229, 0.48);
+    --alert-info-bg: var(--accent3, #0ea5e9);
+    --alert-info-hover: #0284c7;
+    --alert-info-shadow: rgba(14, 165, 233, 0.35);
+    --alert-info-shadow-hover: rgba(14, 165, 233, 0.48);
     --alert-card-shadow: 0 20px 48px -10px rgba(13, 27, 42, 0.16), 0 10px 24px -5px rgba(13, 27, 42, 0.08);
 }
 
@@ -122,12 +134,22 @@ html.dark {
 
 .custom-alert-icon-wrapper[data-alert-type="warning"] .custom-alert-icon-svg {
     color: var(--alert-warning-bg);
-    filter: drop-shadow(0 8px 18px rgba(245, 158, 11, 0.35));
+    filter: drop-shadow(0 8px 18px var(--alert-warning-shadow));
+}
+
+.custom-alert-icon-wrapper[data-alert-type="success"] .custom-alert-icon-svg {
+    color: var(--alert-success-bg);
+    filter: drop-shadow(0 8px 18px var(--alert-success-shadow));
 }
 
 .custom-alert-icon-wrapper[data-alert-type="primary"] .custom-alert-icon-svg {
     color: var(--alert-primary-bg);
-    filter: drop-shadow(0 8px 18px rgba(79, 70, 229, 0.35));
+    filter: drop-shadow(0 8px 18px var(--alert-primary-shadow));
+}
+
+.custom-alert-icon-wrapper[data-alert-type="info"] .custom-alert-icon-svg {
+    color: var(--alert-info-bg);
+    filter: drop-shadow(0 8px 18px var(--alert-info-shadow));
 }
 
 /* Typography */
@@ -225,16 +247,55 @@ html.dark {
     transform: translateY(-1.5px);
 }
 
+/* Confirm Warning Button */
+.custom-alert-btn-warning {
+    background: var(--alert-warning-bg);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--alert-warning-shadow);
+}
+
+.custom-alert-btn-warning:hover {
+    background: var(--alert-warning-hover);
+    box-shadow: 0 6px 20px var(--alert-warning-shadow-hover);
+    transform: translateY(-1.5px);
+}
+
+/* Confirm Success Button */
+.custom-alert-btn-success {
+    background: var(--alert-success-bg);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--alert-success-shadow);
+}
+
+.custom-alert-btn-success:hover {
+    background: var(--alert-success-hover);
+    box-shadow: 0 6px 20px var(--alert-success-shadow-hover);
+    transform: translateY(-1.5px);
+}
+
 /* Confirm Primary Button */
 .custom-alert-btn-primary {
     background: var(--alert-primary-bg);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 4px 14px var(--alert-primary-shadow);
 }
 
 .custom-alert-btn-primary:hover {
     background: var(--alert-primary-hover);
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    box-shadow: 0 6px 20px var(--alert-primary-shadow-hover);
+    transform: translateY(-1.5px);
+}
+
+/* Confirm Info Button */
+.custom-alert-btn-info {
+    background: var(--alert-info-bg);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--alert-info-shadow);
+}
+
+.custom-alert-btn-info:hover {
+    background: var(--alert-info-hover);
+    box-shadow: 0 6px 20px var(--alert-info-shadow-hover);
     transform: translateY(-1.5px);
 }
 

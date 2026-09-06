@@ -425,16 +425,28 @@
                             <p class="ud-action-text">
                                 {{ $user->isActive() ? 'Nonaktifkan sementara akun ini jika ada masalah pemakaian atau pelanggaran akses.' : 'Akun ini sedang dinonaktifkan. Anda dapat mengaktifkannya kembali kapan saja.' }}
                             </p>
-                            <form action="{{ route('users.toggle-status', $user->id) }}" method="POST" onsubmit="return confirm('{{ $user->isActive() ? 'Apakah Anda yakin ingin menonaktifkan sementara akun ' . addslashes($user->name) . '? Pengguna tidak akan dapat login ke portal.' : 'Apakah Anda yakin ingin mengaktifkan kembali akun ' . addslashes($user->name) . '?' }}');">
+                            <form id="form-toggle-status-detail" action="{{ route('users.toggle-status', $user->id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 @if($user->isActive())
-                                    <button type="submit" class="ud-btn-warning-block">
+                                    <button type="button" class="ud-btn-warning-block"
+                                        onclick="CustomAlert.showDeactivate({
+                                            accountName: '{{ addslashes($user->name) }}',
+                                            formId: 'form-toggle-status-detail'
+                                        })">
                                         <i class="fas fa-user-slash"></i>
                                         <span>Nonaktifkan Akun Sementara</span>
                                     </button>
                                 @else
-                                    <button type="submit" class="ud-btn-success-block">
+                                    <button type="button" class="ud-btn-success-block"
+                                        onclick="CustomAlert.confirm({
+                                            title: 'Aktifkan Akun',
+                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali ke portal.',
+                                            type: 'primary',
+                                            confirmText: 'Aktifkan Akun',
+                                            confirmColor: 'primary',
+                                            onConfirm: () => document.getElementById('form-toggle-status-detail').submit()
+                                        })">
                                         <i class="fas fa-user-check"></i>
                                         <span>Aktifkan Kembali Akun</span>
                                     </button>
@@ -448,10 +460,18 @@
                         <p class="ud-danger-text">
                             Menghapus pengguna ini akan mencabut seluruh hak akses login secara permanen.
                         </p>
-                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna {{ $user->name }}? Tindakan ini tidak dapat dibatalkan.');">
+                        <form id="form-delete-user-detail" action="{{ route('users.destroy', $user->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="ud-btn-danger-block">
+                            <button type="button" class="ud-btn-danger-block"
+                                onclick="CustomAlert.confirm({
+                                    title: 'Hapus Pengguna',
+                                    message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini permanen dan tidak dapat dibatalkan.',
+                                    type: 'danger',
+                                    confirmText: 'Hapus Pengguna',
+                                    confirmColor: 'danger',
+                                    onConfirm: () => document.getElementById('form-delete-user-detail').submit()
+                                })">
                                 <i class="fas fa-trash-can"></i>
                                 <span>Hapus Pengguna Ini</span>
                             </button>
