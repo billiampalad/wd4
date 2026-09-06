@@ -348,7 +348,7 @@
                                         id="jurusan_id" name="jurusan_id"
                                         class="uc-native-select"
                                         x-model="selectedValue"
-                                        @change="syncFromNative(); updatePreview()"
+                                        @change="syncFromNative(); updateProfileFields(); updatePreview()"
                                         tabindex="-1"
                                         aria-hidden="true"
                                     >

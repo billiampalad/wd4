@@ -504,6 +504,7 @@ function adminUserSelect(config = {}) {
         selectedLabel: '',
         allItems: config.items || [],
         items: config.items || [],
+        lastJurusanId: undefined,
 
         init() {
             if (config.filterJurusan && config.currentJurusanId) {
@@ -523,16 +524,17 @@ function adminUserSelect(config = {}) {
             this.selectedLabel = item.label;
             this.open = false;
 
-            this.$nextTick(() => {
-                const select = this.$root.querySelector('select');
-                if (!select) return;
-
+            const select = this.$root ? this.$root.querySelector('select') : null;
+            if (select) {
                 select.value = this.selectedValue;
                 select.dispatchEvent(new Event('change', { bubbles: true }));
-            });
+            }
         },
 
         filterByJurusan(jurusanId) {
+            if (this.lastJurusanId === jurusanId) return;
+            this.lastJurusanId = jurusanId;
+
             if (!jurusanId) {
                 this.items = [];
                 this.selectedValue = '';
@@ -542,15 +544,15 @@ function adminUserSelect(config = {}) {
                 if (!this.items.some(item => item.value === this.selectedValue)) {
                     this.selectedValue = '';
                     this.selectedLabel = '';
+                } else {
+                    this.syncLabel();
                 }
             }
-            this.$nextTick(() => {
-                const select = this.$root.querySelector('select');
-                if (select) {
-                    select.value = this.selectedValue;
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            });
+
+            const select = this.$root ? this.$root.querySelector('select') : null;
+            if (select) {
+                select.value = this.selectedValue;
+            }
         },
 
         syncFromNative() {
@@ -591,78 +593,86 @@ function getSelectedRoleName() {
     return roleName === 'humas' ? 'unit_kerja' : roleName;
 }
 
+let isUpdatingProfileFields = false;
+
 function updateProfileFields() {
-    const fields = document.querySelectorAll('[data-profile-field]');
-    const previewRows = document.querySelectorAll('[data-preview-field]');
-    const pointer = document.getElementById('profileRolePointer');
-    if (!fields.length && !previewRows.length) return;
+    if (isUpdatingProfileFields) return;
+    isUpdatingProfileFields = true;
 
-    const roleName = getSelectedRoleName();
-    const visibleFields = {
-        pimpinan: ['jabatan'],
-        admin: ['jabatan'],
-        mitra: ['jabatan'],
-        jurusan: ['jabatan', 'jurusan'],
-        prodi: ['jabatan', 'jurusan', 'prodi'],
-        unit_kerja: ['jabatan', 'unit'],
-        upa: ['jabatan', 'upa'],
-        pusat: ['jabatan', 'pusat'],
-    }[roleName] || ['jabatan', 'jurusan', 'prodi', 'unit', 'upa', 'pusat'];
+    try {
+        const fields = document.querySelectorAll('[data-profile-field]');
+        const previewRows = document.querySelectorAll('[data-preview-field]');
+        const pointer = document.getElementById('profileRolePointer');
+        if (!fields.length && !previewRows.length) return;
 
-    fields.forEach(field => {
-        const isVisible = visibleFields.includes(field.dataset.profileField);
-        const controls = field.querySelectorAll('input, select, textarea');
+        const roleName = getSelectedRoleName();
+        const visibleFields = {
+            pimpinan: ['jabatan'],
+            admin: ['jabatan'],
+            mitra: ['jabatan'],
+            jurusan: ['jabatan', 'jurusan'],
+            prodi: ['jabatan', 'jurusan', 'prodi'],
+            unit_kerja: ['jabatan', 'unit'],
+            upa: ['jabatan', 'upa'],
+            pusat: ['jabatan', 'pusat'],
+        }[roleName] || ['jabatan', 'jurusan', 'prodi', 'unit', 'upa', 'pusat'];
 
-        field.hidden = !isVisible;
-        field.querySelectorAll('.uc-alpine-select').forEach(selectWrap => {
-            if (selectWrap._x_dataStack?.[0]?.setDisabled) {
-                selectWrap._x_dataStack[0].setDisabled(!isVisible);
-            }
+        fields.forEach(field => {
+            const isVisible = visibleFields.includes(field.dataset.profileField);
+            const controls = field.querySelectorAll('input, select, textarea');
+
+            field.hidden = !isVisible;
+            field.querySelectorAll('.uc-alpine-select').forEach(selectWrap => {
+                if (selectWrap._x_dataStack?.[0]?.setDisabled) {
+                    selectWrap._x_dataStack[0].setDisabled(!isVisible);
+                }
+            });
+
+            controls.forEach(control => {
+                control.disabled = !isVisible;
+                if (!isVisible && control.value !== '') {
+                    control.value = '';
+                }
+            });
         });
 
-        controls.forEach(control => {
-            control.disabled = !isVisible;
-            if (!isVisible && control.value !== '') {
-                control.value = '';
-                control.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-        });
-    });
+        // Handle dependent Jurusan -> Prodi for role 'prodi'
+        if (roleName === 'prodi') {
+            const jurusanSelect = document.getElementById('jurusan_id');
+            const prodiField = document.querySelector('[data-profile-field="prodi"]');
+            const jurusanId = jurusanSelect ? jurusanSelect.value : '';
 
-    // Handle dependent Jurusan -> Prodi for role 'prodi'
-    if (roleName === 'prodi') {
-        const jurusanSelect = document.getElementById('jurusan_id');
-        const prodiField = document.querySelector('[data-profile-field="prodi"]');
-        const jurusanId = jurusanSelect ? jurusanSelect.value : '';
-
-        if (prodiField) {
-            const prodiAlpine = prodiField.querySelector('.uc-alpine-select');
-            if (prodiAlpine?._x_dataStack?.[0]?.filterByJurusan) {
-                prodiAlpine._x_dataStack[0].filterByJurusan(jurusanId);
+            if (prodiField) {
+                const prodiAlpine = prodiField.querySelector('.uc-alpine-select');
+                if (prodiAlpine?._x_dataStack?.[0]?.filterByJurusan) {
+                    prodiAlpine._x_dataStack[0].filterByJurusan(jurusanId);
+                }
+                prodiField.hidden = !jurusanId;
             }
-            prodiField.hidden = !jurusanId;
         }
-    }
 
-    previewRows.forEach(row => {
-        row.hidden = !visibleFields.includes(row.dataset.previewField);
-    });
+        previewRows.forEach(row => {
+            row.hidden = !visibleFields.includes(row.dataset.previewField);
+        });
 
-    if (pointer) {
-        const messages = {
-            pimpinan: 'Role pimpinan hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
-            admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
-            mitra: 'Role Mitra DUDIKA hanya dapat mengisi Jabatan pada institusi/perusahaan mitra.',
-            jurusan: 'Role Jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Program Studi dan Unit tidak digunakan untuk role ini.',
-            prodi: 'Role Prodi dapat mengisi Jabatan, Nama Jurusan, dan Program Studi terkait. Pilihan Program Studi akan disesuaikan otomatis dengan Jurusan yang dipilih.',
-            unit_kerja: 'Role unit kerja dapat mengisi Jabatan dan Nama Unit. Nama Jurusan tidak digunakan untuk role ini.',
-            upa: 'Role upa dapat mengisi Jabatan dan Nama Upa. Nama Jurusan, Nama Unit, dan Nama Pusat tidak digunakan untuk role ini.',
-            pusat: 'Role pusat dapat mengisi Jabatan dan Nama Pusat. Nama Jurusan, Nama Unit, dan Nama Upa tidak digunakan untuk role ini.',
-        };
+        if (pointer) {
+            const messages = {
+                pimpinan: 'Role pimpinan hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
+                admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
+                mitra: 'Role Mitra DUDIKA hanya dapat mengisi Jabatan pada institusi/perusahaan mitra.',
+                jurusan: 'Role Jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Program Studi dan Unit tidak digunakan untuk role ini.',
+                prodi: 'Role Prodi dapat mengisi Jabatan, Nama Jurusan, dan Program Studi terkait. Pilihan Program Studi akan disesuaikan otomatis dengan Jurusan yang dipilih.',
+                unit_kerja: 'Role unit kerja dapat mengisi Jabatan dan Nama Unit. Nama Jurusan tidak digunakan untuk role ini.',
+                upa: 'Role upa dapat mengisi Jabatan dan Nama Upa. Nama Jurusan, Nama Unit, dan Nama Pusat tidak digunakan untuk role ini.',
+                pusat: 'Role pusat dapat mengisi Jabatan dan Nama Pusat. Nama Jurusan, Nama Unit, dan Nama Upa tidak digunakan untuk role ini.',
+            };
 
-        pointer.innerHTML = '<i class="fas fa-circle-info"></i><span>' +
-            (messages[roleName] || 'Pilih role terlebih dahulu untuk melihat form profil yang dapat digunakan.') +
-            '</span>';
+            pointer.innerHTML = '<i class="fas fa-circle-info"></i><span>' +
+                (messages[roleName] || 'Pilih role terlebih dahulu untuk melihat form profil yang dapat digunakan.') +
+                '</span>';
+        }
+    } finally {
+        isUpdatingProfileFields = false;
     }
 }
 
