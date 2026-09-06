@@ -96,15 +96,38 @@
                 document.body.appendChild(modal);
             }
 
+            const getIconSvg = (type) => {
+                if (type === 'success') {
+                    return `<svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        <path d="M15 24.5L21 30.5L33 17.5" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>`;
+                } else if (type === 'logout') {
+                    return `<svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        <path d="M22 15H16C14.8954 15 14 15.8954 14 17V31C14 32.1046 14.8954 33 16 33H22" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M28 18L34 24L28 30" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M20 24H33" stroke="white" stroke-width="3" stroke-linecap="round" />
+                    </svg>`;
+                } else if (type === 'primary' || type === 'info') {
+                    return `<svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        <path d="M24 21V33" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+                        <circle cx="24" cy="15" r="2" fill="white" />
+                    </svg>`;
+                }
+                return `<svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.1716 7.75736C22.6719 5.25686 25.3281 5.25686 26.8284 7.75736L43.4558 35.4697C44.9561 37.9702 43.628 40 40.7274 40H7.27258C4.37202 40 3.04388 37.9702 4.54416 35.4697L21.1716 7.75736Z" fill="currentColor" />
+                    <path d="M24 16V26" stroke="white" stroke-width="3.2" stroke-linecap="round" />
+                    <circle cx="24" cy="32" r="1.8" fill="white" />
+                </svg>`;
+            };
+
             modal.innerHTML = `
                 <div class="custom-alert-card" role="document">
                     <div class="custom-alert-icon-wrapper" data-alert-type="${opts.type}">
                         <div class="custom-alert-icon-bg">
-                            <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21.1716 7.75736C22.6719 5.25686 25.3281 5.25686 26.8284 7.75736L43.4558 35.4697C44.9561 37.9702 43.628 40 40.7274 40H7.27258C4.37202 40 3.04388 37.9702 4.54416 35.4697L21.1716 7.75736Z" fill="currentColor" />
-                                <path d="M24 16V26" stroke="white" stroke-width="3.2" stroke-linecap="round" />
-                                <circle cx="24" cy="32" r="1.8" fill="white" />
-                            </svg>
+                            ${getIconSvg(opts.type)}
                         </div>
                     </div>
                     <div class="custom-alert-content">
@@ -163,6 +186,36 @@
                 type: 'danger',
                 cancelText: 'Batal',
                 confirmText: 'Nonaktifkan',
+                confirmColor: 'danger',
+                onConfirm: () => {
+                    if (opts.formId) {
+                        const form = document.getElementById(opts.formId);
+                        if (form) form.submit();
+                    } else if (typeof opts.onConfirm === 'function') {
+                        opts.onConfirm();
+                    }
+                }
+            });
+        },
+
+        /**
+         * Specialized helper for Logout Confirmation
+         * @param {Object} [options]
+         */
+        showLogout: function (options) {
+            const opts = Object.assign({
+                title: 'Keluar dari Sistem',
+                message: 'Apakah Anda yakin ingin mengakhiri sesi dan keluar dari sistem?',
+                formId: null,
+                onConfirm: null
+            }, options);
+
+            this.confirm({
+                title: opts.title,
+                message: opts.message,
+                type: 'logout',
+                cancelText: 'Batal',
+                confirmText: 'Keluar',
                 confirmColor: 'danger',
                 onConfirm: () => {
                     if (opts.formId) {

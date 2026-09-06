@@ -88,12 +88,19 @@
                     <span class="notification-badge">3</span>
                 </button>
 
-                <form method="POST" action="/logout" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="icon-btn danger" id="logoutBtn" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </form>
+                <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout" data-alert-target="modalLogout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <x-alert 
+                    id="modalLogout"
+                    type="logout"
+                    title="Keluar dari Sistem"
+                    message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
+                    confirmText="Ya, Keluar"
+                    cancelText="Batal"
+                    action="{{ route('logout') }}"
+                    method="POST"
+                />
             </div>
         </div>
     </nav>

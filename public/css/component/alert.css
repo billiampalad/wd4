@@ -127,7 +127,8 @@ html.dark {
 }
 
 /* Icon Type Colors */
-.custom-alert-icon-wrapper[data-alert-type="danger"] .custom-alert-icon-svg {
+.custom-alert-icon-wrapper[data-alert-type="danger"] .custom-alert-icon-svg,
+.custom-alert-icon-wrapper[data-alert-type="logout"] .custom-alert-icon-svg {
     color: var(--alert-danger-bg);
     filter: drop-shadow(0 8px 18px var(--alert-danger-shadow));
 }

@@ -1,10 +1,10 @@
 @props([
     'id' => 'customAlertModal',
-    'type' => 'danger', // danger, warning, info, success, primary
-    'title' => 'Nonaktifkan Akun',
-    'message' => 'Apakah Anda yakin ingin menonaktifkan akun ini? Tindakan ini akan membatasi akses pengguna ke sistem.',
+    'type' => 'danger', // danger, warning, info, success, primary, logout
+    'title' => null,
+    'message' => null,
     'cancelText' => 'Batal',
-    'confirmText' => 'Nonaktifkan',
+    'confirmText' => null,
     'confirmColor' => null,
     'formId' => null,
     'action' => null,
@@ -12,7 +12,18 @@
 ])
 
 @php
-    $confirmColor = $confirmColor ?? $type;
+    // Default values based on type
+    if ($type === 'logout') {
+        $title = $title ?? 'Keluar dari Sistem';
+        $message = $message ?? 'Apakah Anda yakin ingin mengakhiri sesi dan keluar dari sistem?';
+        $confirmText = $confirmText ?? 'Keluar';
+        $confirmColor = $confirmColor ?? 'danger';
+    } else {
+        $title = $title ?? 'Nonaktifkan Akun';
+        $message = $message ?? 'Apakah Anda yakin ingin menonaktifkan akun ini? Tindakan ini akan membatasi akses pengguna ke sistem.';
+        $confirmText = $confirmText ?? 'Nonaktifkan';
+        $confirmColor = $confirmColor ?? ($type === 'danger' ? 'danger' : $type);
+    }
 @endphp
 
 <div id="{{ $id }}" class="custom-alert-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="{{ $id }}-title" aria-describedby="{{ $id }}-desc">
@@ -25,6 +36,15 @@
                     <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="24" cy="24" r="19" fill="currentColor" />
                         <path d="M15 24.5L21 30.5L33 17.5" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                @elseif($type === 'logout')
+                    <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        {{-- Door bracket --}}
+                        <path d="M22 15H16C14.8954 15 14 15.8954 14 17V31C14 32.1046 14.8954 33 16 33H22" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        {{-- Exit arrow --}}
+                        <path d="M28 18L34 24L28 30" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M20 24H33" stroke="white" stroke-width="3" stroke-linecap="round" />
                     </svg>
                 @elseif($type === 'primary' || $type === 'info')
                     <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
