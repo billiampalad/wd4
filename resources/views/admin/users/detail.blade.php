@@ -112,7 +112,8 @@
 
     if ($user->profile?->prodi) {
         $unitType = 'Program Studi (Prodi)';
-        $unitName = $user->profile->prodi->nama_prodi . ($user->profile->jurusan ? ' — Jurusan ' . $user->profile->jurusan->nama_jurusan : '');
+        $prodiLabel = ($user->profile->prodi->jenjang ? $user->profile->prodi->jenjang . ' ' : '') . $user->profile->prodi->nama_prodi;
+        $unitName = $prodiLabel . ($user->profile->jurusan ? ' — Jurusan ' . $user->profile->jurusan->nama_jurusan : '');
         $unitIcon = 'fas fa-book-open';
     } elseif ($user->profile?->jurusan) {
         $unitType = 'Jurusan';

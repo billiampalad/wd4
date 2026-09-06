@@ -86,7 +86,7 @@
                         </span>
                         <div>
                             <div class="ue-info-label">Program Studi</div>
-                            <div class="ue-info-val" id="previewProdi">{{ $user->profile?->prodi?->nama_prodi ?: '—' }}</div>
+                            <div class="ue-info-val" id="previewProdi">{{ $user->profile?->prodi ? ($user->profile->prodi->jenjang ? $user->profile->prodi->jenjang . ' - ' : '') . $user->profile->prodi->nama_prodi : '—' }}</div>
                         </div>
                     </div>
                     <div class="ue-info-row" data-preview-field="unit">
@@ -416,7 +416,7 @@
                                         selectedValue: @js((string) old('prodi_id', $user->profile?->prodi_id)),
                                         items: @js($prodis->map(fn ($prodi) => [
                                             'value' => (string) $prodi->id,
-                                            'label' => $prodi->nama_prodi,
+                                            'label' => ($prodi->jenjang ? $prodi->jenjang . ' - ' : '') . $prodi->nama_prodi,
                                             'jurusan_id' => (string) $prodi->jurusan_id,
                                         ])->values())
                                     })"
@@ -435,7 +435,7 @@
                                         <option value="">-- Pilih Program Studi --</option>
                                         @foreach($prodis as $prodi)
                                             <option value="{{ $prodi->id }}" data-jurusan-id="{{ $prodi->jurusan_id }}" {{ old('prodi_id', $user->profile?->prodi_id) == $prodi->id ? 'selected' : '' }}>
-                                                {{ $prodi->nama_prodi }}
+                                                {{ $prodi->jenjang ? $prodi->jenjang . ' - ' : '' }}{{ $prodi->nama_prodi }}
                                             </option>
                                         @endforeach
                                     </select>

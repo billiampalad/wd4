@@ -114,7 +114,7 @@
                                     <span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span>
                                     @if($user->profile?->prodi)
                                         <div style="font-size: 11px; color: var(--text-muted, #64748b); margin-top: 2px;">
-                                            <i class="fas fa-book-open" style="font-size: 10px; margin-right: 3px;"></i>{{ $user->profile->prodi->nama_prodi }}
+                                            <i class="fas fa-book-open" style="font-size: 10px; margin-right: 3px;"></i>{{ $user->profile->prodi->jenjang ? '[' . $user->profile->prodi->jenjang . '] ' : '' }}{{ $user->profile->prodi->nama_prodi }}
                                         </div>
                                     @endif
                                 </td>
