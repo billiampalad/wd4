@@ -37,7 +37,19 @@ class AdminAuthController
         }
 
         if (Auth::attempt($credentials)) {
-            if (strtolower(trim((string) Auth::user()->role?->role_name)) === 'admin') {
+            $user = Auth::user();
+
+            if (!$user->isActive()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->with('error', 'Akun Anda telah dinonaktifkan sementara oleh Administrator. Silakan hubungi pengelola sistem.')
+                    ->withInput($request->only('email'));
+            }
+
+            if (strtolower(trim((string) $user->role?->role_name)) === 'admin') {
                 RateLimiter::clear($throttleKey);
                 Cache::forget($lockoutKey);
 

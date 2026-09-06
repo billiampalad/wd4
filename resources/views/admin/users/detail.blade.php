@@ -189,7 +189,11 @@
                 <div class="ud-avatar" style="background: {{ $currentTheme['gradient'] }};">
                     {{ $initials }}
                 </div>
-                <div class="ud-status-pulse" title="Akun Aktif"></div>
+                @if($user->isActive())
+                    <div class="ud-status-pulse" title="Akun Aktif"></div>
+                @else
+                    <div class="ud-status-pulse ud-status-pulse-inactive" title="Akun Dinonaktifkan"></div>
+                @endif
             </div>
 
             <div class="ud-user-meta">
@@ -199,6 +203,15 @@
                         <i class="{{ $currentTheme['icon'] }}"></i>
                         {{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? 'Tanpa Role' }}
                     </span>
+                    @if($user->isActive())
+                        <span class="ud-status-pill status-active" title="Akun aktif">
+                            <i class="fas fa-circle-check"></i> Aktif
+                        </span>
+                    @else
+                        <span class="ud-status-pill status-inactive" title="Akun dinonaktifkan sementara">
+                            <i class="fas fa-circle-xmark"></i> Nonaktif
+                        </span>
+                    @endif
                     @if($user->email_verified_at)
                         <span class="ud-verified-pill" title="Email telah diverifikasi">
                             <i class="fas fa-circle-check"></i> Terverifikasi
@@ -402,17 +415,43 @@
                     </div>
                 </div>
                 <div class="ud-card-body">
-                    <p class="ud-danger-text">
-                        Menghapus pengguna ini akan mencabut seluruh hak akses login secara permanen.
-                    </p>
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna {{ $user->name }}? Tindakan ini tidak dapat dibatalkan.');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="ud-btn-danger-block">
-                            <i class="fas fa-trash-can"></i>
-                            <span>Hapus Pengguna Ini</span>
-                        </button>
-                    </form>
+                    @if(auth()->id() !== $user->id)
+                        <div class="ud-action-section">
+                            <p class="ud-action-text">
+                                {{ $user->isActive() ? 'Nonaktifkan sementara akun ini jika ada masalah pemakaian atau pelanggaran akses.' : 'Akun ini sedang dinonaktifkan. Anda dapat mengaktifkannya kembali kapan saja.' }}
+                            </p>
+                            <form action="{{ route('users.toggle-status', $user->id) }}" method="POST" onsubmit="return confirm('{{ $user->isActive() ? 'Apakah Anda yakin ingin menonaktifkan sementara akun ' . addslashes($user->name) . '? Pengguna tidak akan dapat login ke portal.' : 'Apakah Anda yakin ingin mengaktifkan kembali akun ' . addslashes($user->name) . '?' }}');">
+                                @csrf
+                                @method('PATCH')
+                                @if($user->isActive())
+                                    <button type="submit" class="ud-btn-warning-block">
+                                        <i class="fas fa-user-slash"></i>
+                                        <span>Nonaktifkan Akun Sementara</span>
+                                    </button>
+                                @else
+                                    <button type="submit" class="ud-btn-success-block">
+                                        <i class="fas fa-user-check"></i>
+                                        <span>Aktifkan Kembali Akun</span>
+                                    </button>
+                                @endif
+                            </form>
+                        </div>
+                        <div class="ud-action-divider"></div>
+                    @endif
+
+                    <div class="ud-action-section">
+                        <p class="ud-danger-text">
+                            Menghapus pengguna ini akan mencabut seluruh hak akses login secara permanen.
+                        </p>
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna {{ $user->name }}? Tindakan ini tidak dapat dibatalkan.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="ud-btn-danger-block">
+                                <i class="fas fa-trash-can"></i>
+                                <span>Hapus Pengguna Ini</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 

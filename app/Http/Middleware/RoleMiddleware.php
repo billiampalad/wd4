@@ -14,6 +14,14 @@ class RoleMiddleware
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
+        if (!Auth::user()->isActive()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->with('error', 'Akun Anda telah dinonaktifkan sementara oleh Administrator.');
+        }
+
         $roleName = $this->normalizeRoleName(Auth::user()->role?->role_name);
         $allowedRoles = [$this->normalizeRoleName($role)];
 

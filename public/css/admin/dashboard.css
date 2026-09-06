@@ -1675,7 +1675,9 @@ aside,
 
 .um-btn-edit,
 .um-btn-delete,
-.um-btn-send {
+.um-btn-send,
+.um-btn-deactivate,
+.um-btn-activate {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1713,6 +1715,30 @@ aside,
     box-shadow: 0 4px 12px rgba(16, 185, 129, .35);
 }
 
+.um-btn-deactivate {
+    background: rgba(245, 158, 11, .12);
+    color: #f59e0b;
+}
+
+.um-btn-deactivate:hover {
+    background: #f59e0b;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, .35);
+}
+
+.um-btn-activate {
+    background: rgba(16, 185, 129, .12);
+    color: #10b981;
+}
+
+.um-btn-activate:hover {
+    background: #10b981;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, .35);
+}
+
 .um-btn-delete {
     background: rgba(239, 68, 68, .10);
     color: #ef4444;
@@ -1723,6 +1749,39 @@ aside,
     color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, .32);
+}
+
+.um-row-inactive {
+    opacity: 0.72;
+    background: rgba(239, 68, 68, 0.02);
+}
+
+.um-row-inactive:hover {
+    opacity: 1;
+}
+
+/* ─── Status Badges ─── */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.badge-status-active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-status-danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 /* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -4668,6 +4727,33 @@ main {
     border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
+.ud-status-pulse-inactive {
+    background: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.35) !important;
+}
+
+.ud-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.ud-status-pill.status-active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.ud-status-pill.status-inactive {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
 .ud-quick-badges {
     display: flex;
     align-items: center;
@@ -5222,6 +5308,75 @@ main {
     border-color: #ef4444;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+
+.ud-action-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.ud-action-divider {
+    height: 1px;
+    background: var(--ud-card-border);
+    margin: 0.75rem 0;
+}
+
+.ud-action-text {
+    font-size: 0.75rem;
+    color: var(--ud-text-muted);
+    margin: 0 0 0.4rem 0;
+    line-height: 1.4;
+}
+
+.ud-btn-warning-block {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.875rem;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ud-btn-warning-block:hover {
+    background: #f59e0b;
+    color: #ffffff;
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+.ud-btn-success-block {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.875rem;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ud-btn-success-block:hover {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
 }
 
 /* ─── Right Column: Data Grid ─── */

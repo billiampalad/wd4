@@ -37,10 +37,21 @@ class LoginController
         }
 
         if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if (!$user->isActive()) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->with('error', 'Akun Anda telah dinonaktifkan sementara oleh Administrator. Silakan hubungi pengelola sistem.')
+                    ->withInput($request->only('email'));
+            }
+
             RateLimiter::clear($throttleKey);
             Cache::forget($lockoutKey);
 
-            $user = Auth::user();
             $roleName = $this->normalizeRoleName($user->role?->role_name);
 
             if ($roleName == 'pimpinan') {

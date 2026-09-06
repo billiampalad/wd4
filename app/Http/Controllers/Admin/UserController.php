@@ -247,8 +247,33 @@ class UserController
      */
     public function destroy(string $id)
     {
-        User::destroy($id);
+        $user = User::findOrFail($id);
+
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $user->delete();
         return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+    }
+
+    /**
+     * Toggle active/inactive status of the specified user.
+     */
+    public function toggleStatus(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        if (auth()->id() === $user->id) {
+            return back()->with('error', 'Anda tidak dapat menonaktifkan akun Anda sendiri.');
+        }
+
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        $statusText = $user->is_active ? 'diaktifkan kembali' : 'dinonaktifkan sementara';
+
+        return back()->with('success', "Akun {$user->name} berhasil {$statusText}.");
     }
 
     private function profileDataForRole(Request $request): array

@@ -489,6 +489,7 @@ Route::get('/admin/dashboard', [DashboardController::class, 'index'])->middlewar
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
+    Route::patch('/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('mitra', MitraController::class);

@@ -50,6 +50,7 @@
                             <th class="um-th">Email</th>
                             <th class="um-th">Password</th>
                             <th class="um-th">Role</th>
+                            <th class="um-th">Status</th>
                             <th class="um-th">Jabatan</th>
                             <th class="um-th">Jurusan</th>
                             <th class="um-th">Unit</th>
@@ -62,7 +63,7 @@
                     </thead>
                     <tbody>
                         @forelse($users as $i => $user)
-                            <tr class="um-row">
+                            <tr class="um-row {{ !$user->isActive() ? 'um-row-inactive' : '' }}">
                                 <td class="um-td um-td-num">
                                     <span class="um-num">{{ $i + 1 }}</span>
                                 </td>
@@ -94,6 +95,17 @@
                                     <span class="tag tag-{{ strtolower($user->role?->role_name ?? 'default') }} um-role-tag">
                                         {{ $roleLabels[$user->role?->role_name] ?? $user->role?->role_name ?? '-' }}
                                     </span>
+                                </td>
+                                <td class="um-td">
+                                    @if($user->isActive())
+                                        <span class="badge-status badge-status-active" title="Akun aktif dan dapat login">
+                                            <i class="fas fa-circle-check"></i> Aktif
+                                        </span>
+                                    @else
+                                        <span class="badge-status badge-status-danger" title="Akun dinonaktifkan sementara">
+                                            <i class="fas fa-circle-xmark"></i> Nonaktif
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="um-td"><span class="um-meta">{{ $user->profile?->jabatan ?? '-' }}</span></td>
                                 <td class="um-td"><span
@@ -129,6 +141,22 @@
                                             title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        @if(auth()->id() !== $user->id)
+                                            <form action="{{ route('users.toggle-status', $user->id) }}" method="POST"
+                                                onsubmit="return confirm('{{ $user->isActive() ? 'Apakah Anda yakin ingin menonaktifkan sementara akun ' . addslashes($user->name) . '? Pengguna tidak akan dapat login ke portal.' : 'Apakah Anda yakin ingin mengaktifkan kembali akun ' . addslashes($user->name) . '?' }}')">
+                                                @csrf
+                                                @method('PATCH')
+                                                @if($user->isActive())
+                                                    <button type="submit" class="btn-action toggle-deactivate um-btn-deactivate" title="Nonaktifkan Akun">
+                                                        <i class="fas fa-user-slash"></i>
+                                                    </button>
+                                                @else
+                                                    <button type="submit" class="btn-action toggle-activate um-btn-activate" title="Aktifkan Akun">
+                                                        <i class="fas fa-user-check"></i>
+                                                    </button>
+                                                @endif
+                                            </form>
+                                        @endif
                                         <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                             onsubmit="return confirm('Yakin ingin menghapus user ini?')">
                                             @csrf
@@ -142,7 +170,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="14" class="um-empty">
+                                <td colspan="15" class="um-empty">
                                     <div class="um-empty-state">
                                         <div class="um-empty-icon">
                                             <i class="fas fa-users-slash"></i>
