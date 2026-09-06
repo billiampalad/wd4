@@ -193,17 +193,16 @@
 
     <script>
         function openDeactivateAlert() {
-            CustomAlert.open('demoDeactivateAlert');
+            CustomAlert.showDeactivate({
+                accountName: 'Budi Santoso',
+                onConfirm: () => {
+                    document.getElementById('statusMessage').innerHTML = '<span style="color: #ef4444; font-weight: 600;">✓ Akun Budi Santoso berhasil dinonaktifkan!</span>';
+                },
+                onCancel: () => {
+                    document.getElementById('statusMessage').textContent = 'Aksi dibatalkan oleh pengguna.';
+                }
+            });
             document.getElementById('statusMessage').textContent = 'Modal alert sedang terbuka...';
-        }
-
-        function onCancelClick() {
-            document.getElementById('statusMessage').textContent = 'Aksi dibatalkan oleh pengguna.';
-        }
-
-        function onConfirmClick() {
-            CustomAlert.close('demoDeactivateAlert');
-            document.getElementById('statusMessage').innerHTML = '<span style="color: #ef4444; font-weight: 600;">✓ Akun berhasil dinonaktifkan!</span>';
         }
 
         function toggleTheme() {

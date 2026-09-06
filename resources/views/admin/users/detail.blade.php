@@ -425,33 +425,37 @@
                             <p class="ud-action-text">
                                 {{ $user->isActive() ? 'Nonaktifkan sementara akun ini jika ada masalah pemakaian atau pelanggaran akses.' : 'Akun ini sedang dinonaktifkan. Anda dapat mengaktifkannya kembali kapan saja.' }}
                             </p>
-                            <form id="form-toggle-status-detail" action="{{ route('users.toggle-status', $user->id) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                @if($user->isActive())
-                                    <button type="button" class="ud-btn-warning-block"
-                                        onclick="CustomAlert.showDeactivate({
-                                            accountName: '{{ addslashes($user->name) }}',
-                                            formId: 'form-toggle-status-detail'
-                                        })">
-                                        <i class="fas fa-user-slash"></i>
-                                        <span>Nonaktifkan Akun Sementara</span>
-                                    </button>
-                                @else
-                                    <button type="button" class="ud-btn-success-block"
-                                        onclick="CustomAlert.confirm({
-                                            title: 'Aktifkan Akun',
-                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali ke portal.',
-                                            type: 'primary',
-                                            confirmText: 'Aktifkan Akun',
-                                            confirmColor: 'primary',
-                                            onConfirm: () => document.getElementById('form-toggle-status-detail').submit()
-                                        })">
-                                        <i class="fas fa-user-check"></i>
-                                        <span>Aktifkan Kembali Akun</span>
-                                    </button>
-                                @endif
-                            </form>
+                            @if($user->isActive())
+                                <button type="button" class="ud-btn-warning-block" data-alert-target="modalDeactivateUser">
+                                    <i class="fas fa-user-slash"></i>
+                                    <span>Nonaktifkan Akun Sementara</span>
+                                </button>
+                                <x-alert 
+                                    id="modalDeactivateUser"
+                                    type="danger"
+                                    title="Nonaktifkan Akun"
+                                    message="Pengguna <span class='custom-alert-highlight'>{{ $user->name }}</span> sementara tidak dapat mengakses sistem ini."
+                                    confirmText="Nonaktifkan"
+                                    cancelText="Batal"
+                                    action="{{ route('users.toggle-status', $user->id) }}"
+                                    method="PATCH"
+                                />
+                            @else
+                                <button type="button" class="ud-btn-success-block" data-alert-target="modalActivateUser">
+                                    <i class="fas fa-user-check"></i>
+                                    <span>Aktifkan Kembali Akun</span>
+                                </button>
+                                <x-alert 
+                                    id="modalActivateUser"
+                                    type="primary"
+                                    title="Aktifkan Akun"
+                                    message="Apakah Anda yakin ingin mengaktifkan kembali akun <span class='custom-alert-highlight'>{{ $user->name }}</span>? Pengguna akan dapat login kembali ke portal."
+                                    confirmText="Aktifkan Akun"
+                                    cancelText="Batal"
+                                    action="{{ route('users.toggle-status', $user->id) }}"
+                                    method="PATCH"
+                                />
+                            @endif
                         </div>
                         <div class="ud-action-divider"></div>
                     @endif
@@ -460,22 +464,20 @@
                         <p class="ud-danger-text">
                             Menghapus pengguna ini akan mencabut seluruh hak akses login secara permanen.
                         </p>
-                        <form id="form-delete-user-detail" action="{{ route('users.destroy', $user->id) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="ud-btn-danger-block"
-                                onclick="CustomAlert.confirm({
-                                    title: 'Hapus Pengguna',
-                                    message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini permanen dan tidak dapat dibatalkan.',
-                                    type: 'danger',
-                                    confirmText: 'Hapus Pengguna',
-                                    confirmColor: 'danger',
-                                    onConfirm: () => document.getElementById('form-delete-user-detail').submit()
-                                })">
-                                <i class="fas fa-trash-can"></i>
-                                <span>Hapus Pengguna Ini</span>
-                            </button>
-                        </form>
+                        <button type="button" class="ud-btn-danger-block" data-alert-target="modalDeleteUser">
+                            <i class="fas fa-trash-can"></i>
+                            <span>Hapus Pengguna Ini</span>
+                        </button>
+                        <x-alert 
+                            id="modalDeleteUser"
+                            type="danger"
+                            title="Hapus Pengguna"
+                            message="Jika pengguna <span class='custom-alert-highlight'>{{ $user->name }}</span> dihapus, pengguna tersebut tidak dapat lagi login ke sistem."
+                            confirmText="Hapus"
+                            cancelText="Batal"
+                            action="{{ route('users.destroy', $user->id) }}"
+                            method="DELETE"
+                        />
                     </div>
                 </div>
             </div>

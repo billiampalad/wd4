@@ -1,15 +1,19 @@
 @props([
     'id' => 'customAlertModal',
-    'type' => 'danger', // danger, warning, info, success
+    'type' => 'danger', // danger, warning, info, success, primary
     'title' => 'Nonaktifkan Akun',
     'message' => 'Apakah Anda yakin ingin menonaktifkan akun ini? Tindakan ini akan membatasi akses pengguna ke sistem.',
     'cancelText' => 'Batal',
     'confirmText' => 'Nonaktifkan',
-    'confirmColor' => 'danger', // danger, primary, warning
+    'confirmColor' => null,
     'formId' => null,
     'action' => null,
     'method' => 'POST',
 ])
+
+@php
+    $confirmColor = $confirmColor ?? $type;
+@endphp
 
 <div id="{{ $id }}" class="custom-alert-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="{{ $id }}-title" aria-describedby="{{ $id }}-desc">
     <div class="custom-alert-card" role="document">
@@ -17,14 +21,26 @@
         {{-- Icon Area --}}
         <div class="custom-alert-icon-wrapper" data-alert-type="{{ $type }}">
             <div class="custom-alert-icon-bg">
-                <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    {{-- Soft rounded warning triangle --}}
-                    <path d="M21.1716 7.75736C22.6719 5.25686 25.3281 5.25686 26.8284 7.75736L43.4558 35.4697C44.9561 37.9702 43.628 40 40.7274 40H7.27258C4.37202 40 3.04388 37.9702 4.54416 35.4697L21.1716 7.75736Z" 
-                          fill="currentColor" />
-                    {{-- Exclamation mark --}}
-                    <path d="M24 16V26" stroke="white" stroke-width="3.2" stroke-linecap="round" />
-                    <circle cx="24" cy="32" r="1.8" fill="white" />
-                </svg>
+                @if($type === 'success')
+                    <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        <path d="M15 24.5L21 30.5L33 17.5" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                @elseif($type === 'primary' || $type === 'info')
+                    <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="19" fill="currentColor" />
+                        <path d="M24 21V33" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+                        <circle cx="24" cy="15" r="2" fill="white" />
+                    </svg>
+                @else
+                    {{-- Danger / Warning Triangle --}}
+                    <svg class="custom-alert-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.1716 7.75736C22.6719 5.25686 25.3281 5.25686 26.8284 7.75736L43.4558 35.4697C44.9561 37.9702 43.628 40 40.7274 40H7.27258C4.37202 40 3.04388 37.9702 4.54416 35.4697L21.1716 7.75736Z" 
+                              fill="currentColor" />
+                        <path d="M24 16V26" stroke="white" stroke-width="3.2" stroke-linecap="round" />
+                        <circle cx="24" cy="32" r="1.8" fill="white" />
+                    </svg>
+                @endif
             </div>
         </div>
 
@@ -34,7 +50,7 @@
                 {{ $title ?? $slot }}
             </h3>
             <p id="{{ $id }}-desc" class="custom-alert-message">
-                {{ $message }}
+                {!! $message !!}
             </p>
         </div>
 

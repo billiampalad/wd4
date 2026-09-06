@@ -43,7 +43,7 @@
          * @param {string|HTMLElement} [target]
          */
         close: function (target) {
-            const modal = target 
+            const modal = target
                 ? (typeof target === 'string' ? document.getElementById(target) : target)
                 : this.activeModal;
 
@@ -148,13 +148,14 @@
         showDeactivate: function (options) {
             const opts = Object.assign({
                 accountName: '',
+                message: null,
                 onConfirm: null,
                 formId: null
             }, options);
 
-            const message = opts.accountName 
-                ? `Apakah Anda yakin ingin menonaktifkan akun "${opts.accountName}"? Pengguna tidak akan dapat mengakses sistem ini lagi.`
-                : 'Apakah Anda yakin ingin menonaktifkan akun ini? Tindakan ini akan membatasi akses pengguna ke sistem.';
+            const message = opts.message || (opts.accountName
+                ? `Pengguna <span class="custom-alert-highlight">${opts.accountName}</span> sementara tidak dapat mengakses sistem ini.`
+                : 'Apakah Anda yakin ingin menonaktifkan akun ini? Tindakan ini akan membatasi akses pengguna ke sistem.');
 
             this.confirm({
                 title: 'Nonaktifkan Akun',

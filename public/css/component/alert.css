@@ -172,10 +172,33 @@ html.dark {
     font-size: 14.5px;
     font-weight: 400;
     color: var(--alert-message-color);
-    line-height: 1.55;
+    line-height: 1.6;
     margin: 0;
     font-family: inherit;
     transition: color 0.25s ease;
+}
+
+/* Lighting / Glowing Highlight Badge */
+.custom-alert-highlight {
+    font-weight: 700;
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 2px 8px;
+    border-radius: 7px;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.28);
+    display: inline-block;
+    letter-spacing: -0.01em;
+    transition: all 0.25s ease;
+}
+
+[data-theme="dark"] .custom-alert-highlight,
+body.dark-mode .custom-alert-highlight,
+html.dark .custom-alert-highlight {
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
 }
 
 /* Buttons Container */
