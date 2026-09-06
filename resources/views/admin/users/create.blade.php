@@ -54,6 +54,13 @@
                             <div class="uc-info-val" id="previewJurusan">—</div>
                         </div>
                     </div>
+                    <div class="uc-info-row" data-preview-field="prodi">
+                        <span class="uc-info-icon" style="background:rgba(99,102,241,.1);color:#6366f1;"><i class="fas fa-book-open"></i></span>
+                        <div>
+                            <div class="uc-info-label">Program Studi</div>
+                            <div class="uc-info-val" id="previewProdi">—</div>
+                        </div>
+                    </div>
                     <div class="uc-info-row" data-preview-field="unit">
                         <span class="uc-info-icon" style="background:rgba(16,185,129,.1);color:#10b981;"><i class="fas fa-building"></i></span>
                         <div>
@@ -349,6 +356,68 @@
                                         @foreach($jurusans as $jurusan)
                                             <option value="{{ $jurusan->id }}" {{ old('jurusan_id') == $jurusan->id ? 'selected' : '' }}>
                                                 {{ $jurusan->nama_jurusan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button
+                                        type="button"
+                                        class="uc-select-trigger"
+                                        :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                        @click="toggle()"
+                                        :disabled="disabled"
+                                    >
+                                        <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                        <i class="fas fa-chevron-down uc-select-chevron"></i>
+                                    </button>
+                                    <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                        <template x-for="item in items" :key="item.value">
+                                            <button
+                                                type="button"
+                                                class="uc-select-option"
+                                                :class="{ 'is-selected': selectedValue === item.value }"
+                                                @click="choose(item)"
+                                            >
+                                                <span x-text="item.label"></span>
+                                                <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="uc-form-group" data-profile-field="prodi">
+                                <label class="uc-label" for="prodi_id">
+                                    <i class="fas fa-book-open uc-label-icon"></i>
+                                    Program Studi (Prodi)
+                                </label>
+                                <div
+                                    class="uc-alpine-select"
+                                    x-data="adminUserSelect({
+                                        placeholder: '-- Pilih Program Studi --',
+                                        filterJurusan: true,
+                                        selectedValue: @js((string) old('prodi_id', '')),
+                                        items: @js($prodis->map(fn ($prodi) => [
+                                            'value' => (string) $prodi->id,
+                                            'label' => $prodi->nama_prodi,
+                                            'jurusan_id' => (string) $prodi->jurusan_id,
+                                        ])->values())
+                                    })"
+                                    x-init="init()"
+                                    :class="{ 'is-open': open }"
+                                    @click.outside="open = false"
+                                >
+                                    <select
+                                        id="prodi_id" name="prodi_id"
+                                        class="uc-native-select"
+                                        x-model="selectedValue"
+                                        @change="syncFromNative(); updatePreview()"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                    >
+                                        <option value="">-- Pilih Program Studi --</option>
+                                        @foreach($prodis as $prodi)
+                                            <option value="{{ $prodi->id }}" data-jurusan-id="{{ $prodi->jurusan_id }}" {{ old('prodi_id') == $prodi->id ? 'selected' : '' }}>
+                                                {{ $prodi->nama_prodi }}
                                             </option>
                                         @endforeach
                                     </select>

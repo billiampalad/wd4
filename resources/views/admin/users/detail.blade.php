@@ -110,7 +110,11 @@
     $unitName = '—';
     $unitIcon = 'fas fa-building-circle-exclamation';
 
-    if ($user->profile?->jurusan) {
+    if ($user->profile?->prodi) {
+        $unitType = 'Program Studi (Prodi)';
+        $unitName = $user->profile->prodi->nama_prodi . ($user->profile->jurusan ? ' — Jurusan ' . $user->profile->jurusan->nama_jurusan : '');
+        $unitIcon = 'fas fa-book-open';
+    } elseif ($user->profile?->jurusan) {
         $unitType = 'Jurusan';
         $unitName = $user->profile->jurusan->nama_jurusan . ($user->profile->jurusan->kode_jurusan ? ' (' . $user->profile->jurusan->kode_jurusan . ')' : '');
         $unitIcon = 'fas fa-graduation-cap';
@@ -608,7 +612,9 @@
                                     <div class="ud-subbox">
                                         <span class="ud-subbox-label"><i class="fas fa-layer-group"></i> Tingkat Struktur</span>
                                         <span class="ud-subbox-value">
-                                            @if($user->profile?->jurusan)
+                                            @if($user->profile?->prodi)
+                                                Program Studi (Prodi)
+                                            @elseif($user->profile?->jurusan)
                                                 Unit Jurusan (Akademik)
                                             @elseif($user->profile?->unitKerja)
                                                 Humas / Unit Kerja Pusat

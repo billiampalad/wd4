@@ -13,6 +13,7 @@ class Profile extends Model
         'user_id',
         'jabatan',
         'jurusan_id',
+        'prodi_id',
         'unit_kerja_id',
         'upa_id',
         'pusat_id',
@@ -26,6 +27,11 @@ class Profile extends Model
     public function jurusan()
     {
         return $this->belongsTo(Jurusan::class);
+    }
+
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_id');
     }
 
     public function unitKerja()

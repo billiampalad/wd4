@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Jurusan;
+use App\Models\Prodi;
 use App\Models\Pusat;
 use App\Models\UnitKerja;
 use App\Models\Upa;
@@ -25,7 +26,7 @@ class UserController
      */
     public function index()
     {
-        $users = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->latest()->get();
+        $users = User::with(['role', 'profile.jurusan', 'profile.prodi', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->latest()->get();
         return view('admin.layout.users', compact('users'));
     }
 
@@ -36,10 +37,11 @@ class UserController
     {
         $roles = Role::all();
         $jurusans = Jurusan::all();
+        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
         $unitKerjas = UnitKerja::all();
         $upas = Upa::orderBy('nama_upa')->get();
         $pusats = Pusat::orderBy('nama_pusat')->get();
-        return view('admin.users.create', compact('roles', 'jurusans', 'unitKerjas', 'upas', 'pusats'));
+        return view('admin.users.create', compact('roles', 'jurusans', 'prodis', 'unitKerjas', 'upas', 'pusats'));
     }
 
     /**
@@ -53,6 +55,8 @@ class UserController
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'role_id' => ['required', 'exists:roles,id'],
+            'jurusan_id' => ['nullable', 'exists:jurusans,id'],
+            'prodi_id' => ['nullable', 'exists:prodis,id'],
         ]);
 
         $user = User::create([
@@ -76,7 +80,7 @@ class UserController
      */
     public function show(string $id)
     {
-        $user = User::with(['role', 'profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat', 'mitra.klasifikasi'])->findOrFail($id);
+        $user = User::with(['role', 'profile.jurusan', 'profile.prodi', 'profile.unitKerja', 'profile.upa', 'profile.pusat', 'mitra.klasifikasi'])->findOrFail($id);
         
         $roleKey = strtolower($user->role?->role_name ?? '');
 
@@ -191,14 +195,15 @@ class UserController
      */
     public function edit(string $id)
     {
-        $user = User::with(['profile.jurusan', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->findOrFail($id);
+        $user = User::with(['profile.jurusan', 'profile.prodi', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->findOrFail($id);
         $roles = Role::all();
         $jurusans = Jurusan::all();
+        $prodis = Prodi::with('jurusan')->orderBy('nama_prodi')->get();
         $unitKerjas = UnitKerja::all();
         $upas = Upa::orderBy('nama_upa')->get();
         $pusats = Pusat::orderBy('nama_pusat')->get();
 
-        return view('admin.users.edit', compact('user', 'roles', 'jurusans', 'unitKerjas', 'upas', 'pusats'));
+        return view('admin.users.edit', compact('user', 'roles', 'jurusans', 'prodis', 'unitKerjas', 'upas', 'pusats'));
     }
 
     /**
@@ -213,6 +218,8 @@ class UserController
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8'],
             'role_id' => ['required', 'exists:roles,id'],
+            'jurusan_id' => ['nullable', 'exists:jurusans,id'],
+            'prodi_id' => ['nullable', 'exists:prodis,id'],
         ]);
 
         $newEmail = $validated['email'];
@@ -284,7 +291,8 @@ class UserController
 
         return [
             'jabatan' => $request->jabatan,
-            'jurusan_id' => $roleName === 'jurusan' ? $request->jurusan_id : null,
+            'jurusan_id' => in_array($roleName, ['jurusan', 'prodi']) ? $request->jurusan_id : null,
+            'prodi_id' => $roleName === 'prodi' ? $request->prodi_id : null,
             'unit_kerja_id' => $roleName === 'unit_kerja' ? $request->unit_kerja_id : null,
             'upa_id' => $roleName === 'upa' ? $request->upa_id : null,
             'pusat_id' => $roleName === 'pusat' ? $request->pusat_id : null,

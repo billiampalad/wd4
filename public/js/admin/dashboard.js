@@ -495,16 +495,20 @@ function togglePass(btnOrId) {
     }
 }
 
-function adminUserSelect(config) {
+function adminUserSelect(config = {}) {
     return {
         open: false,
         disabled: false,
         placeholder: config.placeholder || 'Pilih data',
         selectedValue: config.selectedValue || '',
         selectedLabel: '',
+        allItems: config.items || [],
         items: config.items || [],
 
         init() {
+            if (config.filterJurusan && config.currentJurusanId) {
+                this.items = this.allItems.filter(item => String(item.jurusan_id) === String(config.currentJurusanId));
+            }
             this.syncLabel();
         },
 
@@ -528,12 +532,33 @@ function adminUserSelect(config) {
             });
         },
 
+        filterByJurusan(jurusanId) {
+            if (!jurusanId) {
+                this.items = [];
+                this.selectedValue = '';
+                this.selectedLabel = '';
+            } else {
+                this.items = this.allItems.filter(item => String(item.jurusan_id) === String(jurusanId));
+                if (!this.items.some(item => item.value === this.selectedValue)) {
+                    this.selectedValue = '';
+                    this.selectedLabel = '';
+                }
+            }
+            this.$nextTick(() => {
+                const select = this.$root.querySelector('select');
+                if (select) {
+                    select.value = this.selectedValue;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+        },
+
         syncFromNative() {
             this.syncLabel();
         },
 
         syncLabel() {
-            const selected = this.items.find(item => item.value === this.selectedValue);
+            const selected = this.items.find(item => item.value === this.selectedValue) || this.allItems.find(item => item.value === this.selectedValue);
             this.selectedLabel = selected ? selected.label : '';
         },
 
@@ -576,11 +601,13 @@ function updateProfileFields() {
     const visibleFields = {
         pimpinan: ['jabatan'],
         admin: ['jabatan'],
+        mitra: ['jabatan'],
         jurusan: ['jabatan', 'jurusan'],
+        prodi: ['jabatan', 'jurusan', 'prodi'],
         unit_kerja: ['jabatan', 'unit'],
         upa: ['jabatan', 'upa'],
         pusat: ['jabatan', 'pusat'],
-    }[roleName] || ['jabatan', 'jurusan', 'unit', 'upa', 'pusat'];
+    }[roleName] || ['jabatan', 'jurusan', 'prodi', 'unit', 'upa', 'pusat'];
 
     fields.forEach(field => {
         const isVisible = visibleFields.includes(field.dataset.profileField);
@@ -602,15 +629,32 @@ function updateProfileFields() {
         });
     });
 
+    // Handle dependent Jurusan -> Prodi for role 'prodi'
+    if (roleName === 'prodi') {
+        const jurusanSelect = document.getElementById('jurusan_id');
+        const prodiField = document.querySelector('[data-profile-field="prodi"]');
+        const jurusanId = jurusanSelect ? jurusanSelect.value : '';
+
+        if (prodiField) {
+            const prodiAlpine = prodiField.querySelector('.uc-alpine-select');
+            if (prodiAlpine?._x_dataStack?.[0]?.filterByJurusan) {
+                prodiAlpine._x_dataStack[0].filterByJurusan(jurusanId);
+            }
+            prodiField.hidden = !jurusanId;
+        }
+    }
+
     previewRows.forEach(row => {
         row.hidden = !visibleFields.includes(row.dataset.previewField);
     });
 
     if (pointer) {
         const messages = {
-            pimpinan: 'Role pimpinan hanya dapat mengisi Jabatan. Nama Jurusan dan Nama Unit tidak digunakan untuk role ini.',
-            admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan dan Nama Unit tidak digunakan untuk role ini.',
-            jurusan: 'Role jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Unit tidak digunakan untuk role ini.',
+            pimpinan: 'Role pimpinan hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
+            admin: 'Role admin hanya dapat mengisi Jabatan. Nama Jurusan, Program Studi, dan Unit tidak digunakan untuk role ini.',
+            mitra: 'Role Mitra DUDIKA hanya dapat mengisi Jabatan pada institusi/perusahaan mitra.',
+            jurusan: 'Role Jurusan dapat mengisi Jabatan dan Nama Jurusan. Nama Program Studi dan Unit tidak digunakan untuk role ini.',
+            prodi: 'Role Prodi dapat mengisi Jabatan, Nama Jurusan, dan Program Studi terkait. Pilihan Program Studi akan disesuaikan otomatis dengan Jurusan yang dipilih.',
             unit_kerja: 'Role unit kerja dapat mengisi Jabatan dan Nama Unit. Nama Jurusan tidak digunakan untuk role ini.',
             upa: 'Role upa dapat mengisi Jabatan dan Nama Upa. Nama Jurusan, Nama Unit, dan Nama Pusat tidak digunakan untuk role ini.',
             pusat: 'Role pusat dapat mengisi Jabatan dan Nama Pusat. Nama Jurusan, Nama Unit, dan Nama Upa tidak digunakan untuk role ini.',
@@ -660,6 +704,7 @@ function updatePreview() {
     const nik = nikInput ? nikInput.value.trim() : '';
     const jabatan = jabatanInput && !jabatanInput.disabled ? jabatanInput.value.trim() : '';
     const jurusan = getSelectedOptionText('jurusan_id');
+    const prodi = getSelectedOptionText('prodi_id');
     const unit = getSelectedOptionText('unit_kerja_id');
     const upa = getSelectedOptionText('upa_id');
     const pusat = getSelectedOptionText('pusat_id');
@@ -679,6 +724,7 @@ function updatePreview() {
     if (document.getElementById('previewNik')) document.getElementById('previewNik').textContent = nik ? 'NIK: ' + nik : 'NIK: —';
     if (document.getElementById('previewJabatan')) document.getElementById('previewJabatan').textContent = jabatan || '—';
     if (document.getElementById('previewJurusan')) document.getElementById('previewJurusan').textContent = jurusan || '—';
+    if (document.getElementById('previewProdi')) document.getElementById('previewProdi').textContent = prodi || '—';
     if (document.getElementById('previewUnit')) document.getElementById('previewUnit').textContent = unit || '—';
     if (document.getElementById('previewUpa')) document.getElementById('previewUpa').textContent = upa || '—';
     if (document.getElementById('previewPusat')) document.getElementById('previewPusat').textContent = pusat || '—';

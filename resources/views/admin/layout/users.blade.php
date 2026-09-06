@@ -5,6 +5,8 @@
         $roleLabels = [
             'pimpinan' => 'Pimpinan',
             'jurusan' => 'Jurusan',
+            'prodi' => 'Prodi',
+            'mitra' => 'Mitra',
             'unit_kerja' => 'Humas',
             'upa' => 'Upa',
             'pusat' => 'Pusat',
@@ -108,8 +110,14 @@
                                     @endif
                                 </td>
                                 <td class="um-td"><span class="um-meta">{{ $user->profile?->jabatan ?? '-' }}</span></td>
-                                <td class="um-td"><span
-                                        class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span></td>
+                                <td class="um-td">
+                                    <span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span>
+                                    @if($user->profile?->prodi)
+                                        <div style="font-size: 11px; color: var(--text-muted, #64748b); margin-top: 2px;">
+                                            <i class="fas fa-book-open" style="font-size: 10px; margin-right: 3px;"></i>{{ $user->profile->prodi->nama_prodi }}
+                                        </div>
+                                    @endif
+                                </td>
                                 <td class="um-td">
                                     <span class="um-meta">{{ $user->profile?->unitKerja?->nama_unit_pelaksana ?? '-' }}</span>
                                 </td>
