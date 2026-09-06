@@ -29,13 +29,7 @@
     @if(session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: @json(session('success')),
-                    showConfirmButton: false,
-                    timer: 3000
-                });
+                CustomAlert.success(@json(session('success')));
             });
         </script>
     @endif
@@ -43,12 +37,7 @@
     @if(session('error'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: @json(session('error')),
-                    showConfirmButton: true
-                });
+                CustomAlert.error(@json(session('error')));
             });
         </script>
     @endif

@@ -229,6 +229,118 @@
         },
 
         /**
+         * Show floating toast notification matching reference design
+         * @param {Object} options
+         * @param {string} [options.type] - 'success' | 'info' | 'warning' | 'danger'
+         * @param {string} [options.title]
+         * @param {string} [options.message]
+         * @param {number} [options.duration] - default 4000ms
+         */
+        toast: function (options) {
+            const opts = Object.assign({
+                type: 'success',
+                title: 'Berhasil!',
+                message: 'Aksi telah berhasil diproses.',
+                duration: 4000
+            }, typeof options === 'string' ? { message: options } : options);
+
+            let container = document.querySelector('.custom-toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'custom-toast-container';
+                document.body.appendChild(container);
+            }
+
+            const getToastIcon = (type) => {
+                if (type === 'success') {
+                    return `<svg class="custom-toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9.5" stroke="#10b981" stroke-width="2" fill="none" />
+                        <path d="M8 12.2L10.8 15L16 9.5" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>`;
+                } else if (type === 'info' || type === 'information' || type === 'primary') {
+                    return `<svg class="custom-toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="9.5" stroke="#0ea5e9" stroke-width="2" fill="none" />
+                        <path d="M12 11V16" stroke="#0ea5e9" stroke-width="2.2" stroke-linecap="round" />
+                        <circle cx="12" cy="8" r="1.2" fill="#0ea5e9" />
+                    </svg>`;
+                } else if (type === 'warning') {
+                    return `<svg class="custom-toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10.8 4.2C11.3 3.3 12.7 3.3 13.2 4.2L20.8 17.5C21.3 18.4 20.6 19.5 19.6 19.5H4.4C3.4 19.5 2.7 18.4 3.2 17.5L10.8 4.2Z" stroke="#f59e0b" stroke-width="2" fill="none" />
+                        <path d="M12 9.5V13.5" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" />
+                        <circle cx="12" cy="16.5" r="1.2" fill="#f59e0b" />
+                    </svg>`;
+                }
+                return `<svg class="custom-toast-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9.5" stroke="#ef4444" stroke-width="2" fill="none" />
+                    <path d="M12 8V12.5" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" />
+                    <circle cx="12" cy="15.5" r="1.2" fill="#ef4444" />
+                </svg>`;
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `custom-toast-card custom-toast-${opts.type}`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="custom-toast-icon-box">
+                    ${getToastIcon(opts.type)}
+                </div>
+                <div class="custom-toast-body">
+                    <h4 class="custom-toast-title">${opts.title}</h4>
+                    <p class="custom-toast-desc">${opts.message}</p>
+                </div>
+                <button type="button" class="custom-toast-close" aria-label="Tutup notifikasi">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+
+            const removeToast = () => {
+                toast.classList.add('is-hiding');
+                setTimeout(() => toast.remove(), 250);
+            };
+
+            toast.querySelector('.custom-toast-close').onclick = removeToast;
+
+            container.appendChild(toast);
+
+            if (opts.duration > 0) {
+                setTimeout(removeToast, opts.duration);
+            }
+
+            return toast;
+        },
+
+        /**
+         * Shortcut for Success Toast
+         */
+        success: function (message, title = 'Berhasil!') {
+            return this.toast({ type: 'success', title: title, message: message });
+        },
+
+        /**
+         * Shortcut for Info Toast
+         */
+        info: function (message, title = 'Informasi') {
+            return this.toast({ type: 'info', title: title, message: message });
+        },
+
+        /**
+         * Shortcut for Warning Toast
+         */
+        warning: function (message, title = 'Peringatan') {
+            return this.toast({ type: 'warning', title: title, message: message });
+        },
+
+        /**
+         * Shortcut for Error Toast
+         */
+        error: function (message, title = 'Gagal!') {
+            return this.toast({ type: 'danger', title: title, message: message });
+        },
+
+        /**
          * Initialize event listeners for static components
          */
         init: function () {
