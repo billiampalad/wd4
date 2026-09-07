@@ -26,7 +26,7 @@ class UserController
      */
     public function index()
     {
-        $users = User::with(['role', 'profile.jurusan', 'profile.prodi', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->latest()->get();
+        $users = User::with(['role', 'profile.jurusan', 'profile.prodi', 'profile.unitKerja', 'profile.upa', 'profile.pusat'])->oldest()->get();
         return view('admin.layout.users', compact('users'));
     }
 

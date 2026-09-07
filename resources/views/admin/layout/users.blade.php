@@ -209,19 +209,6 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr id="userSearchEmptyRow" style="display: none;">
-                                <td colspan="15" class="um-empty">
-                                    <div class="um-empty-state">
-                                        <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
-                                            <i class="fas fa-search-minus"></i>
-                                        </div>
-                                        <p class="um-empty-title">Data Tidak Ditemukan</p>
-                                        <p class="um-empty-sub">Tidak ada pengguna yang cocok dengan kata kunci "<span
-                                                id="userSearchQueryText"
-                                                style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
-                                    </div>
-                                </td>
-                            </tr>
                         @empty
                             <tr>
                                 <td colspan="15" class="um-empty">
@@ -235,6 +222,19 @@
                                 </td>
                             </tr>
                         @endforelse
+                        <tr id="userSearchEmptyRow" style="display: none;">
+                            <td colspan="15" class="um-empty">
+                                <div class="um-empty-state">
+                                    <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                        <i class="fas fa-search-minus"></i>
+                                    </div>
+                                    <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                    <p class="um-empty-sub">Tidak ada pengguna yang cocok dengan kata kunci "<span
+                                            id="userSearchQueryText"
+                                            style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
