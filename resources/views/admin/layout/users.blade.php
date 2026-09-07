@@ -38,9 +38,20 @@
         <div class="card um-card">
             <div class="card-header um-header">
                 <div class="card-title"><i class="fas fa-users"></i> Daftar Pengguna</div>
-                <a href="{{ route('users.create') }}" class="um-btn-add">
-                    <i class="fas fa-plus"></i> Tambah Pengguna
-                </a>
+                <div class="um-header-actions">
+                    <div class="um-search-wrap">
+                        <i class="fas fa-search um-search-icon"></i>
+                        <input type="text" id="userSearchInput" class="um-search-input" placeholder="Cari data pengguna"
+                            autocomplete="off">
+                        <button type="button" id="userSearchClear" class="um-search-clear" style="display: none;"
+                            title="Hapus pencarian">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <a href="{{ route('users.create') }}" class="um-btn-add">
+                        <i class="fas fa-plus"></i> Tambah Pengguna
+                    </a>
+                </div>
             </div>
             <div class="table-wrap um-table-wrap">
                 <table class="um-table">
@@ -113,7 +124,8 @@
                                 <td class="um-td">
                                     <span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span>
                                     @if($user->profile?->prodi)
-                                        <div class="um-prodi-lighting" title="Program Studi: {{ $user->profile->prodi->nama_prodi }}">
+                                        <div class="um-prodi-lighting"
+                                            title="Program Studi: {{ $user->profile->prodi->nama_prodi }}">
                                             <i class="fas fa-graduation-cap um-prodi-lighting-icon"></i>
                                             @if($user->profile->prodi->jenjang)
                                                 <span class="um-prodi-lighting-jenjang">{{ $user->profile->prodi->jenjang }}</span>
@@ -154,47 +166,61 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @if(auth()->id() !== $user->id)
-                                            <form id="form-toggle-status-{{ $user->id }}" action="{{ route('users.toggle-status', $user->id) }}" method="POST">
+                                            <form id="form-toggle-status-{{ $user->id }}"
+                                                action="{{ route('users.toggle-status', $user->id) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 @if($user->isActive())
-                                                    <button type="button" class="btn-action toggle-deactivate um-btn-deactivate" title="Nonaktifkan Akun"
-                                                        onclick="CustomAlert.showDeactivate({
-                                                            accountName: '{{ addslashes($user->name) }}',
-                                                            formId: 'form-toggle-status-{{ $user->id }}'
-                                                        })">
+                                                    <button type="button" class="btn-action toggle-deactivate um-btn-deactivate"
+                                                        title="Nonaktifkan Akun" onclick="CustomAlert.showDeactivate({
+                                                                            accountName: '{{ addslashes($user->name) }}',
+                                                                            formId: 'form-toggle-status-{{ $user->id }}'
+                                                                        })">
                                                         <i class="fas fa-user-slash"></i>
                                                     </button>
                                                 @else
-                                                    <button type="button" class="btn-action toggle-activate um-btn-activate" title="Aktifkan Akun"
-                                                        onclick="CustomAlert.confirm({
-                                                            title: 'Aktifkan Akun',
-                                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali.',
-                                                            type: 'primary',
-                                                            confirmText: 'Aktifkan',
-                                                            confirmColor: 'primary',
-                                                            onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
-                                                        })">
+                                                    <button type="button" class="btn-action toggle-activate um-btn-activate"
+                                                        title="Aktifkan Akun" onclick="CustomAlert.confirm({
+                                                                            title: 'Aktifkan Akun',
+                                                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali.',
+                                                                            type: 'primary',
+                                                                            confirmText: 'Aktifkan',
+                                                                            confirmColor: 'primary',
+                                                                            onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
+                                                                        })">
                                                         <i class="fas fa-user-check"></i>
                                                     </button>
                                                 @endif
                                             </form>
                                         @endif
-                                        <form id="form-delete-user-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST">
+                                        <form id="form-delete-user-{{ $user->id }}"
+                                            action="{{ route('users.destroy', $user->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn-action delete um-btn-delete" title="Hapus"
-                                                onclick="CustomAlert.confirm({
-                                                    title: 'Hapus Pengguna',
-                                                    message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.',
-                                                    type: 'danger',
-                                                    confirmText: 'Hapus',
-                                                    confirmColor: 'danger',
-                                                    onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
-                                                })">
+                                            <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
+                                                            title: 'Hapus Pengguna',
+                                                            message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.',
+                                                            type: 'danger',
+                                                            confirmText: 'Hapus',
+                                                            confirmColor: 'danger',
+                                                            onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
+                                                        })">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="userSearchEmptyRow" style="display: none;">
+                                <td colspan="15" class="um-empty">
+                                    <div class="um-empty-state">
+                                        <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                            <i class="fas fa-search-minus"></i>
+                                        </div>
+                                        <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                        <p class="um-empty-sub">Tidak ada pengguna yang cocok dengan kata kunci "<span
+                                                id="userSearchQueryText"
+                                                style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
                                     </div>
                                 </td>
                             </tr>
@@ -216,4 +242,70 @@
             </div>
         </div>
     </main>
+@endsection
+
+@section('scripts')
+    <script>
+        (function () {
+            function initUserSearch() {
+                const searchInput = document.getElementById('userSearchInput');
+                const searchClear = document.getElementById('userSearchClear');
+                const emptyRow = document.getElementById('userSearchEmptyRow');
+                const querySpan = document.getElementById('userSearchQueryText');
+                const tableRows = document.querySelectorAll('.um-table tbody tr.um-row');
+
+                if (!searchInput) return;
+
+                function filterUsers() {
+                    const query = searchInput.value.trim().toLowerCase();
+                    let visibleCount = 0;
+
+                    if (searchClear) {
+                        searchClear.style.display = query ? 'inline-flex' : 'none';
+                    }
+
+                    tableRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if (!query || text.includes(query)) {
+                            row.style.display = '';
+                            visibleCount++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    if (emptyRow) {
+                        if (visibleCount === 0 && query !== '' && tableRows.length > 0) {
+                            emptyRow.style.display = '';
+                            if (querySpan) querySpan.textContent = searchInput.value.trim();
+                        } else {
+                            emptyRow.style.display = 'none';
+                        }
+                    }
+                }
+
+                searchInput.removeEventListener('input', filterUsers);
+                searchInput.addEventListener('input', filterUsers);
+
+                if (searchClear) {
+                    searchClear.addEventListener('click', function () {
+                        searchInput.value = '';
+                        searchInput.focus();
+                        filterUsers();
+                    });
+                }
+
+                searchInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        searchInput.value = '';
+                        filterUsers();
+                        searchInput.blur();
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', initUserSearch);
+            document.addEventListener('turbo:load', initUserSearch);
+        })();
+    </script>
 @endsection

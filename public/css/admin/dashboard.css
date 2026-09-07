@@ -1440,6 +1440,104 @@ aside,
     border-bottom: 1px solid var(--border, #e2e8f0);
 }
 
+/* ── Header actions & Search bar ─────────────────────────────────── */
+.um-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.um-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 100px;
+    max-width: 200px;
+    flex: 1;
+}
+
+.um-search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-sub, #94a3b8);
+    font-size: 13px;
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.um-search-input {
+    width: 100%;
+    padding: 8px 34px 8px 34px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text, #0f172a);
+    background: var(--surface2, #f8fafc);
+    border: 1.5px solid var(--border, #e2e8f0);
+    border-radius: 10px;
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.um-search-input::placeholder {
+    color: var(--text-sub, #94a3b8);
+    font-size: 12.5px;
+}
+
+.um-search-input:focus {
+    background: var(--surface, #ffffff);
+    border-color: var(--accent, #4f46e5);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 2px 8px rgba(79, 70, 229, 0.1);
+}
+
+.um-search-wrap:focus-within .um-search-icon {
+    color: var(--accent, #4f46e5);
+}
+
+.um-search-clear {
+    position: absolute;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(148, 163, 184, 0.2);
+    border: none;
+    color: var(--text-sub, #64748b);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.um-search-clear:hover {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+[data-theme="dark"] .um-search-input {
+    background: var(--surface2, #1e2333);
+    border-color: var(--border, #2a2f45);
+    color: var(--text, #e8eaf6);
+}
+
+[data-theme="dark"] .um-search-input:focus {
+    background: var(--surface, #181c27);
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2), 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .um-search-clear {
+    background: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .um-search-clear:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+}
+
 /* â”€â”€ Table wrapper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .um-table-wrap {
     overflow-x: auto;
@@ -4942,15 +5040,37 @@ main {
 }
 
 /* Specific Accent Border & Hover on Metric Cards */
-.ud-metric-card:nth-child(1)::after { background: #0284c7; }
-.ud-metric-card:nth-child(2)::after { background: #10b981; }
-.ud-metric-card:nth-child(3)::after { background: #f59e0b; }
-.ud-metric-card:nth-child(4)::after { background: #a855f7; }
+.ud-metric-card:nth-child(1)::after {
+    background: #0284c7;
+}
 
-.ud-metric-card:nth-child(1):hover { border-color: rgba(2, 132, 199, 0.35); }
-.ud-metric-card:nth-child(2):hover { border-color: rgba(16, 185, 129, 0.35); }
-.ud-metric-card:nth-child(3):hover { border-color: rgba(245, 158, 11, 0.35); }
-.ud-metric-card:nth-child(4):hover { border-color: rgba(168, 85, 247, 0.35); }
+.ud-metric-card:nth-child(2)::after {
+    background: #10b981;
+}
+
+.ud-metric-card:nth-child(3)::after {
+    background: #f59e0b;
+}
+
+.ud-metric-card:nth-child(4)::after {
+    background: #a855f7;
+}
+
+.ud-metric-card:nth-child(1):hover {
+    border-color: rgba(2, 132, 199, 0.35);
+}
+
+.ud-metric-card:nth-child(2):hover {
+    border-color: rgba(16, 185, 129, 0.35);
+}
+
+.ud-metric-card:nth-child(3):hover {
+    border-color: rgba(245, 158, 11, 0.35);
+}
+
+.ud-metric-card:nth-child(4):hover {
+    border-color: rgba(168, 85, 247, 0.35);
+}
 
 .ud-metric-icon {
     width: 38px;
@@ -6116,11 +6236,30 @@ main {
 }
 
 /* ─── Status Tags ─── */
-.tag-blue   { background: rgba(2, 132, 199, 0.15); color: #0284c7; }
-.tag-purple { background: rgba(124, 58, 237, 0.15); color: #7c3aed; }
-.tag-green  { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.tag-red    { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-.tag-orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.tag-blue {
+    background: rgba(2, 132, 199, 0.15);
+    color: #0284c7;
+}
+
+.tag-purple {
+    background: rgba(124, 58, 237, 0.15);
+    color: #7c3aed;
+}
+
+.tag-green {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+}
+
+.tag-red {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.tag-orange {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
 
 /* ─── Typography & Helpers ─── */
 .ud-mono {
@@ -6175,13 +6314,33 @@ main {
 }
 
 /* ─── Text Accent Utilities ─── */
-.text-primary { color: #0284c7 !important; }
-.text-success { color: #10b981 !important; }
-.text-warning { color: #f59e0b !important; }
-.text-danger  { color: #ef4444 !important; }
-.text-purple  { color: #a855f7 !important; }
-.text-cyan    { color: #0891b2 !important; }
-.text-muted   { color: var(--ud-text-muted) !important; }
+.text-primary {
+    color: #0284c7 !important;
+}
+
+.text-success {
+    color: #10b981 !important;
+}
+
+.text-warning {
+    color: #f59e0b !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-purple {
+    color: #a855f7 !important;
+}
+
+.text-cyan {
+    color: #0891b2 !important;
+}
+
+.text-muted {
+    color: var(--ud-text-muted) !important;
+}
 
 /* ─── Role Theme Colors ─── */
 .role-admin {
