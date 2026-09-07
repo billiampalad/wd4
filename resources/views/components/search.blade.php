@@ -4,7 +4,9 @@
     'value' => null,
     'placeholder' => 'Cari data...',
     'size' => 'md', // sm, md, lg
-    'variant' => 'default', // default, filled, glass, pill, outline, table
+    'variant' => 'default', // default, filled, glass, pill, outline, table, expandable
+    'expandable' => false, // true = icon-only by default, expands on click
+    'expandedWidth' => null, // custom width when expanded (e.g. '300px')
     'target' => null, // CSS selector untuk live filter (misal: '.um-table tbody tr')
     'emptyTarget' => null, // Selector / ID pesan data kosong (misal: '#userSearchEmptyRow')
     'querySpan' => null, // Selector / ID elemen teks kata kunci (misal: '#userSearchQueryText')
@@ -29,6 +31,8 @@
     $value = $value ?? request($name, request('q', ''));
     $hasForm = !empty($action);
     $shortcutText = is_string($shortcut) ? $shortcut : ($shortcut ? 'Ctrl+K' : null);
+    $isExpandable = $expandable || $variant === 'expandable';
+    $hasInitialValue = !empty($value);
 @endphp
 
 @if($hasForm)
@@ -48,12 +52,16 @@
         'custom-search-wrapper',
         'custom-search-' . $size,
         'custom-search-' . $variant,
-        'has-value' => !empty($value),
+        'custom-search-expandable' => $isExpandable,
+        'is-expanded' => $hasInitialValue,
+        'has-value' => $hasInitialValue,
         'has-button' => !empty($button),
     ]) }}
-    @if($width) style="width: {{ $width }};" @endif
+    @if($width && !$isExpandable) style="width: {{ $width }};" @endif
+    @if($expandedWidth) style="--search-expanded-width: {{ $expandedWidth }};" @endif
     data-custom-search
     data-search-id="{{ $id }}"
+    @if($isExpandable) data-search-expandable="true" @endif
     @if($target) data-search-target="{{ $target }}" @endif
     @if($emptyTarget) data-search-empty="{{ $emptyTarget }}" @endif
     @if($querySpan) data-search-query-span="{{ $querySpan }}" @endif
@@ -62,10 +70,22 @@
     @if($shortcutText) data-search-shortcut="{{ $shortcutText }}" @endif
 >
     <div class="custom-search-inner">
-        {{-- Search Icon --}}
-        <span class="custom-search-icon" aria-hidden="true">
-            <i class="{{ $icon }}"></i>
-        </span>
+        {{-- Search Icon / Expand Toggle Button --}}
+        @if($isExpandable)
+            <button 
+                type="button" 
+                class="custom-search-icon custom-search-toggle-btn" 
+                title="Buka pencarian (Ctrl+K)"
+                aria-label="Buka pencarian"
+                tabindex="-1"
+            >
+                <i class="{{ $icon }}"></i>
+            </button>
+        @else
+            <span class="custom-search-icon" aria-hidden="true">
+                <i class="{{ $icon }}"></i>
+            </span>
+        @endif
 
         {{-- Search Input --}}
         <input 

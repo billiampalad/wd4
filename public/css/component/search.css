@@ -1,7 +1,7 @@
 /* ==========================================================================
-   CUSTOM SEARCH COMPONENT
-   Theme-aware & highly responsive search input component
-   Supports Light & Dark Modes, Glassmorphism, Pill, and Table variants.
+   CUSTOM SEARCH COMPONENT — PREMIUM LUXURY EDITION
+   Theme-aware, highly responsive, cinematic smooth transitions
+   Supports Light & Dark Modes, Glassmorphism, Pill, Table, and Expandable.
    ========================================================================== */
 
 :root {
@@ -15,7 +15,8 @@
     --search-placeholder: var(--text-sub, #94a3b8);
     --search-icon-color: var(--text-sub, #94a3b8);
     --search-icon-active: var(--accent, #4f46e5);
-    --search-ring-color: rgba(79, 70, 229, 0.16);
+    --search-ring-color: rgba(79, 70, 229, 0.14);
+    --search-glow-color: rgba(79, 70, 229, 0.28);
     --search-clear-color: #94a3b8;
     --search-clear-hover-color: var(--danger, #ef4444);
     --search-clear-hover-bg: rgba(239, 68, 68, 0.08);
@@ -25,10 +26,16 @@
     --search-btn-bg: var(--accent, #4f46e5);
     --search-btn-hover: #4338ca;
     --search-btn-text: #ffffff;
-    --search-radius: var(--radius, 10px);
-    --search-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 4px 12px rgba(79, 70, 229, 0.08);
-    --search-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --search-radius: var(--radius, 12px);
+    --search-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 8px 24px rgba(79, 70, 229, 0.12);
+    --search-transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    
+    /* Precision Dimensions (Compact & Golden Ratio) */
+    --search-height-sm: 32px;
+    --search-height-md: 38px;
+    --search-height-lg: 46px;
+    --search-expanded-width: 320px;
 }
 
 /* Dark Mode Overrides */
@@ -45,7 +52,8 @@ html.dark {
     --search-placeholder: var(--text-sub, #64748b);
     --search-icon-color: var(--text-sub, #64748b);
     --search-icon-active: var(--accent, #818cf8);
-    --search-ring-color: rgba(99, 102, 241, 0.25);
+    --search-ring-color: rgba(99, 102, 241, 0.22);
+    --search-glow-color: rgba(99, 102, 241, 0.35);
     --search-clear-color: #64748b;
     --search-clear-hover-color: #f87171;
     --search-clear-hover-bg: rgba(239, 68, 68, 0.16);
@@ -53,7 +61,36 @@ html.dark {
     --search-shortcut-text: #94a3b8;
     --search-shortcut-border: var(--border, #2e364c);
     --search-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 4px 16px rgba(0, 0, 0, 0.4);
+    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   🌟 LUXURY KEYFRAME ANIMATIONS (Breathing Aura & Shimmer)
+   ───────────────────────────────────────────────────────────── */
+@keyframes searchLuxuryBreath {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.82;
+        color: var(--search-icon-color);
+        filter: drop-shadow(0 0 0 rgba(79, 70, 229, 0));
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+        color: var(--search-icon-active);
+        filter: drop-shadow(0 0 6px var(--search-glow-color));
+    }
+}
+
+@keyframes searchAuraPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04);
+        border-color: var(--search-border);
+    }
+    50% {
+        box-shadow: 0 0 0 4px var(--search-ring-color), 0 4px 14px var(--search-glow-color);
+        border-color: rgba(79, 70, 229, 0.38);
+    }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -62,6 +99,8 @@ html.dark {
 .custom-search-form {
     display: inline-block;
     max-width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .custom-search-wrapper {
@@ -73,6 +112,7 @@ html.dark {
     max-width: 100%;
     box-sizing: border-box;
     font-family: inherit;
+    margin: 0;
 }
 
 .custom-search-inner {
@@ -80,12 +120,20 @@ html.dark {
     display: flex;
     align-items: center;
     width: 100%;
+    height: var(--search-height-md);
     background: var(--search-bg);
     border: 1px solid var(--search-border);
     border-radius: var(--search-radius);
     box-shadow: var(--search-shadow-sm);
-    transition: var(--search-transition);
+    transition: width 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+                border-radius 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+                background 0.28s ease,
+                border-color 0.28s ease,
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     overflow: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .custom-search-inner:hover {
@@ -99,33 +147,61 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Search Icon
+   Search Icon & Toggle Button (Centered & Proportional)
    ───────────────────────────────────────────────────────────── */
 .custom-search-icon {
     position: absolute;
-    left: 14px;
+    left: 13px;
     top: 50%;
     transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--search-icon-color);
-    pointer-events: none;
-    transition: var(--search-transition);
-    font-size: 14px;
+    transition: left 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.25s ease,
+                filter 0.25s ease;
+    font-size: 13.5px;
+    line-height: 1;
     z-index: 2;
+    pointer-events: none;
+    margin: 0;
+    padding: 0;
 }
 
-.custom-search-inner:focus-within .custom-search-icon {
+.custom-search-toggle-btn {
+    pointer-events: auto;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    color: var(--search-icon-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-search-toggle-btn:hover {
     color: var(--search-icon-active);
-    transform: translateY(-50%) scale(1.05);
+}
+
+.custom-search-inner:focus-within .custom-search-icon,
+.custom-search-wrapper:hover .custom-search-icon {
+    color: var(--search-icon-active);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Input Element
+   Input Element (Symmetric & Staggered Slide)
    ───────────────────────────────────────────────────────────── */
 .custom-search-input {
     width: 100%;
+    height: 100%;
     border: none;
     outline: none;
     background: transparent;
@@ -133,10 +209,14 @@ html.dark {
     font-family: inherit;
     font-weight: 500;
     letter-spacing: -0.01em;
-    padding: 9px 12px 9px 38px;
+    padding: 0 42px 0 38px;
     font-size: 13.5px;
-    line-height: 1.4;
-    transition: var(--search-transition);
+    line-height: normal;
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.2s ease;
+    box-sizing: border-box;
+    margin: 0;
 }
 
 .custom-search-input::placeholder {
@@ -145,25 +225,21 @@ html.dark {
     font-weight: 400;
 }
 
-/* When clear button or shortcut is present, add right padding */
-.custom-search-wrapper .custom-search-input {
-    padding-right: 36px;
-}
-
-.custom-search-wrapper[data-search-shortcut] .custom-search-input {
-    padding-right: 68px;
+/* When shortcut badge is visible, provide extra right padding */
+.custom-search-wrapper[data-search-shortcut]:not(.has-value) .custom-search-input {
+    padding-right: 70px;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Clear Button
+   Clear / Close Button (Aligned with right margin)
    ───────────────────────────────────────────────────────────── */
 .custom-search-clear {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: none;
     background: transparent;
@@ -172,9 +248,11 @@ html.dark {
     align-items: center;
     justify-content: center;
     font-size: 11px;
+    line-height: 1;
     cursor: pointer;
     transition: var(--search-transition);
     padding: 0;
+    margin: 0;
     z-index: 3;
 }
 
@@ -197,17 +275,18 @@ html.dark {
     top: 50%;
     transform: translateY(-50%);
     padding: 2px 6px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-family: 'DM Mono', monospace, inherit;
     font-weight: 600;
     color: var(--search-shortcut-text);
     background: var(--search-shortcut-bg);
     border: 1px solid var(--search-shortcut-border);
-    border-radius: 6px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     pointer-events: none;
-    transition: var(--search-transition);
+    transition: opacity 0.25s ease, transform 0.25s ease;
     user-select: none;
+    margin: 0;
 }
 
 /* Hide shortcut chip when typing or input has value */
@@ -226,11 +305,12 @@ html.dark {
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--search-icon-active);
     display: none;
     pointer-events: none;
     z-index: 3;
+    margin: 0;
 }
 
 .custom-search-wrapper.is-loading .custom-search-spinner {
@@ -250,18 +330,19 @@ html.dark {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 100%;
-    padding: 0 16px;
+    height: var(--search-height-md);
+    padding: 0 15px;
     background: var(--search-btn-bg);
     color: var(--search-btn-text);
     border: none;
     border-radius: var(--search-radius);
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
     transition: var(--search-transition);
     box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    margin: 0;
 }
 
 .custom-search-btn:hover {
@@ -281,6 +362,7 @@ html.dark {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    margin: 0;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -288,73 +370,80 @@ html.dark {
    ───────────────────────────────────────────────────────────── */
 /* Small (sm) */
 .custom-search-sm .custom-search-inner {
+    height: var(--search-height-sm);
     border-radius: max(6px, calc(var(--search-radius) - 3px));
 }
 
 .custom-search-sm .custom-search-icon {
-    left: 10px;
-    font-size: 12px;
+    left: 9px;
+    font-size: 11.5px;
 }
 
 .custom-search-sm .custom-search-input {
-    padding: 6px 10px 6px 30px;
-    font-size: 12.5px;
-}
-
-.custom-search-sm.has-value .custom-search-input {
-    padding-right: 28px;
+    padding: 0 34px 0 30px;
+    font-size: 12px;
 }
 
 .custom-search-sm .custom-search-clear {
-    right: 6px;
-    width: 18px;
-    height: 18px;
-    font-size: 9.5px;
+    right: 7px;
+    width: 17px;
+    height: 17px;
+    font-size: 9px;
+}
+
+.custom-search-sm .custom-search-shortcut {
+    right: 7px;
 }
 
 .custom-search-sm .custom-search-btn {
-    padding: 0 12px;
-    font-size: 12px;
+    height: var(--search-height-sm);
+    padding: 0 11px;
+    font-size: 11.5px;
     border-radius: max(6px, calc(var(--search-radius) - 3px));
 }
 
-/* Medium (md) - Default */
+/* Medium (md) - Default (38px height) */
+.custom-search-md .custom-search-inner {
+    height: var(--search-height-md);
+}
+
 .custom-search-md .custom-search-input {
-    padding: 9px 12px 9px 38px;
+    padding: 0 42px 0 38px;
     font-size: 13.5px;
 }
 
-.custom-search-md .custom-search-btn {
-    height: 40px;
-}
-
-/* Large (lg) */
+/* Large (lg - 46px height) */
 .custom-search-lg .custom-search-inner {
-    border-radius: calc(var(--search-radius) + 4px);
+    height: var(--search-height-lg);
+    border-radius: calc(var(--search-radius) + 3px);
 }
 
 .custom-search-lg .custom-search-icon {
-    left: 18px;
-    font-size: 16px;
+    left: 15px;
+    font-size: 15px;
 }
 
 .custom-search-lg .custom-search-input {
-    padding: 13px 16px 13px 48px;
-    font-size: 15px;
+    padding: 0 48px 0 46px;
+    font-size: 14.5px;
 }
 
 .custom-search-lg .custom-search-clear {
-    right: 14px;
-    width: 26px;
-    height: 26px;
-    font-size: 13px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+}
+
+.custom-search-lg .custom-search-shortcut {
+    right: 12px;
 }
 
 .custom-search-lg .custom-search-btn {
-    height: 48px;
-    padding: 0 22px;
-    font-size: 15px;
-    border-radius: calc(var(--search-radius) + 4px);
+    height: var(--search-height-lg);
+    padding: 0 20px;
+    font-size: 14.5px;
+    border-radius: calc(var(--search-radius) + 3px);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -383,11 +472,12 @@ html.dark {
 }
 
 .custom-search-pill .custom-search-icon {
-    left: 16px;
+    left: 14px;
 }
 
 .custom-search-pill .custom-search-input {
-    padding-left: 42px;
+    padding-left: 40px;
+    padding-right: 42px;
 }
 
 .custom-search-pill .custom-search-clear {
@@ -401,20 +491,20 @@ html.dark {
 /* Variant: Glassmorphism */
 .custom-search-glass .custom-search-inner {
     background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="dark"] .custom-search-glass .custom-search-inner,
 body.dark-mode .custom-search-glass .custom-search-inner {
-    background: rgba(24, 28, 39, 0.7);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    background: rgba(24, 28, 39, 0.72);
+    border-color: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 4px 22px rgba(0, 0, 0, 0.4);
 }
 
-/* Variant: Table Toolbar Search (Specifically optimized for table headers) */
+/* Variant: Table Toolbar Search */
 .custom-search-table {
     max-width: 320px;
 }
@@ -432,46 +522,133 @@ body.dark-mode .custom-search-glass .custom-search-inner {
 }
 
 .custom-search-table .custom-search-input {
-    padding: 8px 12px 8px 34px;
+    padding: 0 38px 0 36px;
     font-size: 13px;
     font-weight: 500;
 }
 
+.custom-search-table .custom-search-clear {
+    right: 10px;
+}
+
 /* ─────────────────────────────────────────────────────────────
-   SEARCH RESULTS HIGHLIGHT & EMPTY STATE HELPERS
+   ✨ ANIMATED EXPANDABLE VARIANT (.custom-search-expandable)
+   - Compact circle (38px x 38px) with luxury breathing aura.
+   - Cinematic smooth expansion (0.48s) on HOVER or FOCUS.
    ───────────────────────────────────────────────────────────── */
-.search-highlight {
-    background-color: rgba(245, 158, 11, 0.25);
-    color: inherit;
-    padding: 1px 3px;
-    border-radius: 3px;
-    font-weight: 600;
-}
-
-.search-count-badge {
+.custom-search-expandable {
+    width: auto !important;
     display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 20px;
-    background: var(--surface2, #f1f5f9);
-    color: var(--text-sub, #64748b);
-    border: 1px solid var(--border, #e2e8f0);
-    transition: var(--search-transition);
 }
 
-.search-count-badge.has-results {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success, #10b981);
-    border-color: rgba(16, 185, 129, 0.2);
+.custom-search-expandable .custom-search-inner {
+    width: var(--search-height-md);
+    border-radius: 9999px;
+    cursor: pointer;
 }
 
-.search-count-badge.no-results {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger, #ef4444);
-    border-color: rgba(239, 68, 68, 0.2);
+/* 🌟 Idle Motion: Luxury Breathing Aura & Glow */
+.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-inner {
+    animation: searchAuraPulse 3.8s ease-in-out infinite;
+}
+
+.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-icon {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: searchLuxuryBreath 3.8s ease-in-out infinite;
+}
+
+.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-input {
+    opacity: 0;
+    transform: translateX(6px);
+    pointer-events: none;
+    padding: 0;
+    width: 0;
+}
+
+.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-clear,
+.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-shortcut {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 🚀 EXPANDED STATE (Triggered via HOVER, FOCUS, or IS-EXPANDED) */
+.custom-search-expandable:hover .custom-search-inner,
+.custom-search-expandable.is-expanded .custom-search-inner,
+.custom-search-expandable:focus-within .custom-search-inner {
+    width: var(--search-expanded-width);
+    cursor: default;
+    background: var(--search-bg-focus);
+    border-color: var(--search-border-focus);
+    box-shadow: var(--search-shadow-focus);
+    animation: none; /* Stop idle breathing */
+}
+
+.custom-search-expandable:hover .custom-search-icon,
+.custom-search-expandable.is-expanded .custom-search-icon,
+.custom-search-expandable:focus-within .custom-search-icon {
+    left: 13px;
+    transform: translateY(-50%) scale(1);
+    animation: none;
+    color: var(--search-icon-active);
+    filter: none;
+}
+
+.custom-search-expandable:hover .custom-search-input,
+.custom-search-expandable.is-expanded .custom-search-input,
+.custom-search-expandable:focus-within .custom-search-input {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    width: 100%;
+    padding-left: 38px;
+    padding-right: 42px;
+    transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
+                transform 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+}
+
+/* Shortcut badge visibility on expand */
+.custom-search-expandable:hover:not(.has-value) .custom-search-shortcut,
+.custom-search-expandable.is-expanded:not(.has-value) .custom-search-shortcut {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Expandable Sizes */
+.custom-search-expandable.custom-search-sm .custom-search-inner {
+    width: var(--search-height-sm);
+}
+
+.custom-search-expandable.custom-search-sm:hover .custom-search-inner,
+.custom-search-expandable.custom-search-sm.is-expanded .custom-search-inner,
+.custom-search-expandable.custom-search-sm:focus-within .custom-search-inner {
+    width: calc(var(--search-expanded-width) * 0.85);
+}
+
+.custom-search-expandable.custom-search-sm:hover .custom-search-input,
+.custom-search-expandable.custom-search-sm.is-expanded .custom-search-input,
+.custom-search-expandable.custom-search-sm:focus-within .custom-search-input {
+    padding-left: 30px;
+    padding-right: 34px;
+}
+
+.custom-search-expandable.custom-search-lg .custom-search-inner {
+    width: var(--search-height-lg);
+}
+
+.custom-search-expandable.custom-search-lg:hover .custom-search-inner,
+.custom-search-expandable.custom-search-lg.is-expanded .custom-search-inner,
+.custom-search-expandable.custom-search-lg:focus-within .custom-search-inner {
+    width: calc(var(--search-expanded-width) * 1.15);
+}
+
+.custom-search-expandable.custom-search-lg:hover .custom-search-input,
+.custom-search-expandable.custom-search-lg.is-expanded .custom-search-input,
+.custom-search-expandable.custom-search-lg:focus-within .custom-search-input {
+    padding-left: 46px;
+    padding-right: 48px;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -488,5 +665,12 @@ body.dark-mode .custom-search-glass .custom-search-inner {
 
     .custom-search-shortcut {
         display: none !important;
+    }
+
+    .custom-search-expandable:hover .custom-search-inner,
+    .custom-search-expandable.is-expanded .custom-search-inner,
+    .custom-search-expandable:focus-within .custom-search-inner {
+        width: 100%;
+        max-width: calc(100vw - 40px);
     }
 }

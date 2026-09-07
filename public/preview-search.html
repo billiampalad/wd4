@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Komponen Search - Light & Dark Mode</title>
+    <title>Preview Komponen Search Premium - Light & Dark Mode</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,25 +26,20 @@
             --text-sub: #6b7280;
             --accent: #4f46e5;
             --accent2: #7c3aed;
-            --accent3: #0ea5e9;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --radius: 12px;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --radius: 20px;
+            --shadow: 0 16px 48px rgba(79, 70, 229, 0.07);
         }
 
         [data-theme="dark"] {
-            --bg: #0f1117;
-            --surface: #181c27;
-            --surface2: #1e2333;
-            --border: #2a2f45;
+            --bg: #0b0d13;
+            --surface: #141722;
+            --surface2: #1b202e;
+            --border: #262c3f;
             --text: #e8eaf6;
             --text-sub: #8b92a8;
             --accent: #6366f1;
             --accent2: #8b5cf6;
-            --accent3: #38bdf8;
-            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow: 0 20px 52px rgba(0, 0, 0, 0.55);
         }
 
         * {
@@ -58,644 +53,243 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            padding: 40px 20px;
-            transition: background 0.25s ease, color 0.25s ease;
-        }
-
-        .container {
-            max-width: 1060px;
-            margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 32px;
-        }
-
-        /* Top Header */
-        .header {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
+            justify-content: center;
+            padding: 24px;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .header-title-group h1 {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-title-group h1 i {
-            color: var(--accent);
-        }
-
-        .header-title-group p {
-            font-size: 14px;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-theme-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
+        .preview-card {
+            width: 100%;
+            max-width: 520px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 13.5px;
-            font-weight: 600;
-            color: var(--text);
-            cursor: pointer;
+            border-radius: var(--radius);
+            padding: 44px 34px;
             box-shadow: var(--shadow);
-            transition: all 0.2s ease;
-        }
-
-        .btn-theme-toggle:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-1px);
-        }
-
-        /* Section Cards */
-        .section-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px;
-            box-shadow: var(--shadow);
-        }
-
-        .section-header {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
+            text-align: center;
+            gap: 26px;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
-        .section-title {
-            font-size: 17px;
-            font-weight: 700;
+        .preview-header {
             display: flex;
+            flex-direction: column;
             align-items: center;
             gap: 8px;
         }
 
-        .section-badge {
-            font-size: 11.5px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 20px;
-            background: rgba(79, 70, 229, 0.1);
-            color: var(--accent);
-        }
-
-        /* Grid Demos */
-        .demo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .demo-item {
-            background: var(--surface2);
-            border: 1px solid var(--border);
+        .preview-icon-badge {
+            width: 48px;
+            height: 48px;
             border-radius: 14px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .demo-item-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .demo-item-desc {
-            font-size: 12px;
-            color: var(--text-sub);
-        }
-
-        /* Table Preview Layout */
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            margin-top: 16px;
-        }
-
-        .demo-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 13.5px;
-        }
-
-        .demo-table th {
-            background: var(--surface2);
-            padding: 12px 16px;
-            font-weight: 700;
-            color: var(--text-sub);
-            border-bottom: 1px solid var(--border);
-            font-size: 12.5px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-
-        .demo-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .demo-table tbody tr {
-            transition: background 0.15s ease;
-        }
-
-        .demo-table tbody tr:hover {
-            background: var(--surface2);
-        }
-
-        .user-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: white;
-            font-size: 12px;
-            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 20px;
+            margin-bottom: 4px;
+            box-shadow: 0 8px 22px rgba(79, 70, 229, 0.32);
         }
 
-        .role-pill {
-            display: inline-block;
-            padding: 3px 10px;
-            font-size: 11.5px;
-            font-weight: 600;
-            border-radius: 20px;
-            background: rgba(79, 70, 229, 0.1);
-            color: var(--accent);
+        .preview-title {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: var(--text);
         }
 
-        .status-dot {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12.5px;
-            font-weight: 600;
-        }
-
-        .status-dot::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--success);
-        }
-
-        /* Empty State */
-        .empty-row {
-            text-align: center;
-            padding: 36px 16px !important;
+        .preview-subtitle {
+            font-size: 14px;
             color: var(--text-sub);
+            max-width: 420px;
+            line-height: 1.55;
         }
 
-        .empty-icon {
-            font-size: 32px;
-            color: var(--text-sub);
-            opacity: 0.5;
-            margin-bottom: 8px;
-        }
-
-        .live-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-count {
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .shortcut-hint {
+        /* Search Showcase Container */
+        .search-showcase {
+            width: 100%;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 0 10px 0;
+        }
+
+        .search-status {
+            font-size: 13.5px;
+            color: var(--text-sub);
+            min-height: 22px;
+            transition: color 0.2s ease;
+        }
+
+        .search-status span {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Theme Toggle Button */
+        .theme-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+
+        .theme-btn:hover {
+            background: var(--border);
+            border-color: var(--text-sub);
+            transform: translateY(-1px);
+        }
+
+        .theme-btn:active {
+            transform: translateY(0);
+        }
+
+        .hint-badge {
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             font-size: 12px;
             color: var(--text-sub);
-            margin-top: 8px;
+            background: var(--surface2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
         }
 
-        .shortcut-hint kbd {
+        .hint-badge kbd {
             padding: 2px 6px;
-            background: var(--surface2);
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 4px;
             font-family: 'DM Mono', monospace;
             font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
         }
-
-        /* Code Snippet Box */
-        .code-box {
-            background: #111827;
-            color: #f3f4f6;
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-family: 'DM Mono', monospace;
-            font-size: 12.5px;
-            overflow-x: auto;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-
-        .code-tag { color: #f472b6; }
-        .code-attr { color: #60a5fa; }
-        .code-val { color: #34d399; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- ── Top Header ──────────────────────────────────────── -->
-        <header class="header">
-            <div class="header-title-group">
-                <h1><i class="fas fa-search"></i> Preview Komponen Search</h1>
-                <p>Uji coba komponen pencarian interaktif, live filter tabel, varian ukuran, dan mode tampilan.</p>
+    <main class="preview-card">
+        <header class="preview-header">
+            <div class="preview-icon-badge">
+                <i class="fas fa-search"></i>
             </div>
-            <div class="header-actions">
-                <button class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">
-                    <i class="fas fa-moon" id="themeIcon"></i>
-                    <span id="themeText">Dark Mode</span>
-                </button>
-            </div>
+            <h1 class="preview-title">Search Component (Premium Edition)</h1>
+            <p class="preview-subtitle">
+                Arahkan kursor mouse (hover) ke ikon pencarian untuk melihat transisi sinematik yang mulus dan elegan.
+            </p>
         </header>
 
-        <!-- ── Section 1: Live Interactive Table Search ─────────── -->
-        <section class="section-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title"><i class="fas fa-table text-primary"></i> Live Client-side Table Filter</h2>
-                    <p style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
-                        Ketik nama, NIK, email, atau role untuk memfilter data baris tabel secara langsung (realtime).
-                    </p>
-                </div>
-                <div class="live-badge">
-                    <span>Hasil Ditemukan:</span>
-                    <span class="badge-count" id="tableResultCount">5</span>
-                </div>
-            </div>
-
-            <!-- Custom Search Component: Table Variant -->
+        <!-- Animated Expandable Search Component (Luxury Breathing & Cinematic Hover) -->
+        <div class="search-showcase">
             <div 
-                class="custom-search-wrapper custom-search-md custom-search-table" 
+                class="custom-search-wrapper custom-search-md custom-search-expandable" 
                 data-custom-search 
-                data-search-id="userTableSearch"
-                data-search-target="#previewUserTable tbody tr.user-row"
-                data-search-empty="#tableEmptyRow"
-                data-search-query-span="#tableQuerySpan"
-                data-search-count-target="#tableResultCount"
+                data-search-expandable="true"
+                data-search-id="demoAnimatedSearch"
                 data-search-shortcut="Ctrl+K"
-                style="max-width: 360px;"
             >
                 <div class="custom-search-inner">
-                    <span class="custom-search-icon"><i class="fas fa-search"></i></span>
+                    <button 
+                        type="button" 
+                        class="custom-search-icon custom-search-toggle-btn" 
+                        title="Arahkan kursor atau tekan Ctrl+K"
+                        aria-label="Buka pencarian"
+                    >
+                        <i class="fas fa-search"></i>
+                    </button>
+
                     <input 
                         type="text" 
-                        id="userTableSearch" 
+                        id="demoAnimatedSearch" 
                         class="custom-search-input" 
-                        placeholder="Cari nama, NIK, email, role..." 
+                        placeholder="Cari data pengguna, dokumen..." 
                         autocomplete="off" 
                     />
-                    <span class="custom-search-spinner"><i class="fas fa-circle-notch fa-spin"></i></span>
-                    <button type="button" class="custom-search-clear" style="display: none;" title="Hapus (Esc)">
+
+                    <span class="custom-search-spinner">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                    </span>
+
+                    <button 
+                        type="button" 
+                        class="custom-search-clear" 
+                        style="display: none;" 
+                        title="Hapus pencarian (Esc)"
+                    >
                         <i class="fas fa-times"></i>
                     </button>
+
                     <kbd class="custom-search-shortcut">Ctrl+K</kbd>
                 </div>
             </div>
 
-            <div class="shortcut-hint">
-                <span>Tip: Tekan shortcut</span>
-                <kbd>Ctrl + K</kbd>
-                <span>atau</span>
-                <kbd>/</kbd>
-                <span>untuk langsung fokus pada kotak pencarian di mana saja.</span>
+            <div class="search-status" id="searchStatus">
+                Status: <strong>Luxury Breathing Aura</strong> — Arahkan kursor ke ikon untuk meluas.
             </div>
 
-            <!-- Preview Table -->
-            <div class="table-wrapper">
-                <table class="demo-table" id="previewUserTable">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Pengguna</th>
-                            <th>NIK</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="user-row">
-                            <td>1</td>
-                            <td>
-                                <div class="user-cell">
-                                    <div class="avatar" style="background: linear-gradient(135deg, #4f46e5, #7c3aed);">BP</div>
-                                    <strong>Billiam Palad</strong>
-                                </div>
-                            </td>
-                            <td>198501152010121001</td>
-                            <td>billiam@polimdo.ac.id</td>
-                            <td><span class="role-pill">Admin</span></td>
-                            <td><span class="status-dot">Aktif</span></td>
-                        </tr>
-                        <tr class="user-row">
-                            <td>2</td>
-                            <td>
-                                <div class="user-cell">
-                                    <div class="avatar" style="background: linear-gradient(135deg, #0ea5e9, #3b82f6);">RS</div>
-                                    <strong>Rendy Saroinsong</strong>
-                                </div>
-                            </td>
-                            <td>199002202015041002</td>
-                            <td>rendy.s@polimdo.ac.id</td>
-                            <td><span class="role-pill" style="color: #0ea5e9; background: rgba(14, 165, 233, 0.1);">Pimpinan</span></td>
-                            <td><span class="status-dot">Aktif</span></td>
-                        </tr>
-                        <tr class="user-row">
-                            <td>3</td>
-                            <td>
-                                <div class="user-cell">
-                                    <div class="avatar" style="background: linear-gradient(135deg, #10b981, #059669);">ML</div>
-                                    <strong>Maria Lengkey</strong>
-                                </div>
-                            </td>
-                            <td>198807122014022003</td>
-                            <td>maria.lengkey@polimdo.ac.id</td>
-                            <td><span class="role-pill" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">Jurusan Elektro</span></td>
-                            <td><span class="status-dot">Aktif</span></td>
-                        </tr>
-                        <tr class="user-row">
-                            <td>4</td>
-                            <td>
-                                <div class="user-cell">
-                                    <div class="avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">PT</div>
-                                    <strong>PT Telkom Indonesia</strong>
-                                </div>
-                            </td>
-                            <td>-</td>
-                            <td>partnership@telkom.co.id</td>
-                            <td><span class="role-pill" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);">Mitra Industri</span></td>
-                            <td><span class="status-dot">Aktif</span></td>
-                        </tr>
-                        <tr class="user-row">
-                            <td>5</td>
-                            <td>
-                                <div class="user-cell">
-                                    <div class="avatar" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">FK</div>
-                                    <strong>Fadly Kawulusan</strong>
-                                </div>
-                            </td>
-                            <td>199203152019031005</td>
-                            <td>fadly.k@polimdo.ac.id</td>
-                            <td><span class="role-pill" style="color: #ec4899; background: rgba(236, 72, 153, 0.1);">Humas</span></td>
-                            <td><span class="status-dot">Aktif</span></td>
-                        </tr>
-
-                        <!-- Empty State Row (Hidden by default) -->
-                        <tr id="tableEmptyRow" class="empty-state-row" style="display: none;">
-                            <td colspan="6" class="empty-row">
-                                <div class="empty-icon"><i class="fas fa-search-minus"></i></div>
-                                <div style="font-weight: 700; color: var(--text); font-size: 15px; margin-bottom: 4px;">Data tidak ditemukan</div>
-                                <div style="font-size: 13px;">Tidak ada data yang cocok dengan kata kunci "<span id="tableQuerySpan" style="font-weight: 600; color: var(--accent);"></span>".</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="hint-badge">
+                <i class="fas fa-sparkles" style="color: #f59e0b;"></i>
+                <span>Arahkan kursor (hover) atau tekan <kbd>Ctrl+K</kbd> / <kbd>/</kbd></span>
             </div>
+        </div>
 
-            <div style="margin-top: 18px;">
-                <span class="section-badge">Contoh Kode Blade:</span>
-                <pre class="code-box"><code><span class="code-tag">&lt;x-search</span>
-    <span class="code-attr">placeholder</span>=<span class="code-val">"Cari nama, NIK, email, role..."</span>
-    <span class="code-attr">variant</span>=<span class="code-val">"table"</span>
-    <span class="code-attr">target</span>=<span class="code-val">"#previewUserTable tbody tr.user-row"</span>
-    <span class="code-attr">emptyTarget</span>=<span class="code-val">"#tableEmptyRow"</span>
-    <span class="code-attr">querySpan</span>=<span class="code-val">"#tableQuerySpan"</span>
-    <span class="code-attr">countTarget</span>=<span class="code-val">"#tableResultCount"</span>
-    <span class="code-attr">shortcut</span>=<span class="code-val">"Ctrl+K"</span>
-<span class="code-tag">/&gt;</span></code></pre>
-            </div>
-        </section>
-
-        <!-- ── Section 2: Visual Variants Gallery ──────────────── -->
-        <section class="section-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title"><i class="fas fa-palette text-primary"></i> Galeri Varian Tampilan (Styles)</h2>
-                    <p style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
-                        Pilih gaya tampilan visual yang sesuai dengan kebutuhan layout halaman.
-                    </p>
-                </div>
-            </div>
-
-            <div class="demo-grid">
-                <!-- Variant 1: Default -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>1. Default (Bordered)</span>
-                        <span class="role-pill">variant="default"</span>
-                    </div>
-                    <p class="demo-item-desc">Border elegan dengan soft focus glow ring.</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-default" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Cari sesuatu..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Variant 2: Filled -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>2. Filled (Surface2 Tint)</span>
-                        <span class="role-pill">variant="filled"</span>
-                    </div>
-                    <p class="demo-item-desc">Latar belakang lembut yang menyatu dengan kartu dashboard.</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-filled" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Cari data master..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Variant 3: Pill (Full Rounded) -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>3. Pill (Full Rounded)</span>
-                        <span class="role-pill">variant="pill"</span>
-                    </div>
-                    <p class="demo-item-desc">Sudut membulat penuh, ideal untuk topbar / hero section.</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-pill" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Cari dokumen kerjasama..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Variant 4: Glassmorphism -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>4. Glassmorphism</span>
-                        <span class="role-pill">variant="glass"</span>
-                    </div>
-                    <p class="demo-item-desc">Efek kaca transparan (backdrop-filter blur).</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-glass" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Cari dengan efek kaca..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Variant 5: With Submit Button -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>5. Search + Submit Button</span>
-                        <span class="role-pill">button="true"</span>
-                    </div>
-                    <p class="demo-item-desc">Dilengkapi tombol aksi submit langsung.</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-default" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Ketik kata kunci..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                        <button type="button" class="custom-search-btn">
-                            <i class="fas fa-arrow-right"></i>
-                            <span>Cari</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Variant 6: Loading Spinner State -->
-                <div class="demo-item">
-                    <div class="demo-item-label">
-                        <span>6. Loading Spinner State</span>
-                        <span class="role-pill">.is-loading</span>
-                    </div>
-                    <p class="demo-item-desc">Indikator memuat saat mencari data asinkron / AJAX.</p>
-                    <div class="custom-search-wrapper custom-search-md custom-search-default is-loading" id="loadingDemoWrapper" data-custom-search>
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" value="Memuat data AJAX..." />
-                            <span class="custom-search-spinner" style="display:inline-flex;"><i class="fas fa-circle-notch fa-spin"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ── Section 3: Size Variants ────────────────────────── -->
-        <section class="section-card">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title"><i class="fas fa-text-height text-primary"></i> Varian Ukuran (Sizes)</h2>
-                    <p style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
-                        Tersedia dalam ukuran Small (sm), Medium (md - standar), dan Large (lg).
-                    </p>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 18px;">
-                <!-- Small -->
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Small (size="sm" - 32px height)</div>
-                    <div class="custom-search-wrapper custom-search-sm custom-search-default" data-custom-search style="max-width: 320px;">
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Ukuran kecil..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Medium -->
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Medium (size="md" - 40px height - Default)</div>
-                    <div class="custom-search-wrapper custom-search-md custom-search-default" data-custom-search style="max-width: 420px;">
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Ukuran sedang (standar)..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Large -->
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Large (size="lg" - 48px height - Hero Search)</div>
-                    <div class="custom-search-wrapper custom-search-lg custom-search-default" data-custom-search style="max-width: 520px;">
-                        <div class="custom-search-inner">
-                            <span class="custom-search-icon"><i class="fas fa-search"></i></span>
-                            <input type="text" class="custom-search-input" placeholder="Ukuran besar untuk hero / header halaman..." />
-                            <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
-                        </div>
-                        <button type="button" class="custom-search-btn">
-                            <i class="fas fa-search"></i>
-                            <span>Telusuri</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+        <!-- Theme Toggle Button -->
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="themeIcon"></i>
+            <span id="themeText">Beralih ke Dark Mode</span>
+        </button>
+    </main>
 
     <!-- Component JS -->
     <script src="js/component/search.js"></script>
 
     <script>
+        const searchInput = document.getElementById('demoAnimatedSearch');
+        const searchStatus = document.getElementById('searchStatus');
+        const searchWrapper = document.querySelector('[data-custom-search]');
+
+        if (searchWrapper && searchStatus) {
+            searchWrapper.addEventListener('search:expand', () => {
+                searchStatus.innerHTML = `Status: <span>Terbuka (Cinematic Smooth)</span> — Siap mengetik.`;
+            });
+
+            searchWrapper.addEventListener('search:collapse', () => {
+                searchStatus.innerHTML = `Status: <strong>Luxury Breathing Aura</strong> — Arahkan kursor ke ikon untuk meluas.`;
+            });
+
+            searchWrapper.addEventListener('search:input', (e) => {
+                const query = e.detail?.query?.trim();
+                if (query) {
+                    searchStatus.innerHTML = `Mencari: <span>"${query}"</span>`;
+                } else {
+                    searchStatus.innerHTML = `Status: <span>Terbuka</span> — Masukkan kata kunci.`;
+                }
+            });
+
+            searchWrapper.addEventListener('search:clear', () => {
+                searchStatus.innerHTML = `Pencarian dibersihkan.`;
+            });
+        }
+
         // Theme Toggle Functionality
         function toggleTheme() {
             const html = document.documentElement;
@@ -710,10 +304,10 @@
 
             if (newTheme === 'dark') {
                 themeIcon.className = 'fas fa-sun';
-                themeText.textContent = 'Light Mode';
+                themeText.textContent = 'Beralih ke Light Mode';
             } else {
                 themeIcon.className = 'fas fa-moon';
-                themeText.textContent = 'Dark Mode';
+                themeText.textContent = 'Beralih ke Dark Mode';
             }
         }
 
@@ -725,7 +319,7 @@
                 const themeIcon = document.getElementById('themeIcon');
                 const themeText = document.getElementById('themeText');
                 if (themeIcon) themeIcon.className = 'fas fa-sun';
-                if (themeText) themeText.textContent = 'Light Mode';
+                if (themeText) themeText.textContent = 'Beralih ke Light Mode';
             }
         })();
     </script>
