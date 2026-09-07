@@ -4,15 +4,13 @@
     'value' => null,
     'placeholder' => 'Cari data...',
     'size' => 'md', // sm, md, lg
-    'variant' => 'default', // default, filled, glass, pill, outline, table, expandable
-    'expandable' => false, // true = icon-only by default, expands on click
-    'expandedWidth' => null, // custom width when expanded (e.g. '300px')
+    'variant' => 'default', // default, filled, glass, pill, outline, table
+    'width' => '200px', // default width 200px
     'target' => null, // CSS selector untuk live filter (misal: '.um-table tbody tr')
     'emptyTarget' => null, // Selector / ID pesan data kosong (misal: '#userSearchEmptyRow')
     'querySpan' => null, // Selector / ID elemen teks kata kunci (misal: '#userSearchQueryText')
     'countTarget' => null, // Selector / ID elemen jumlah hasil ditemukan
     'clearable' => true,
-    'shortcut' => false, // false, true (Ctrl+K), atau custom string seperti '/'
     'debounce' => 200,
     'action' => null,
     'method' => 'GET',
@@ -20,7 +18,6 @@
     'button' => false,
     'buttonText' => 'Cari',
     'buttonIcon' => null,
-    'width' => null,
     'autofocus' => false,
     'autocomplete' => 'off',
     'disabled' => false,
@@ -30,9 +27,6 @@
     $id = $id ?? ('customSearch_' . uniqid());
     $value = $value ?? request($name, request('q', ''));
     $hasForm = !empty($action);
-    $shortcutText = is_string($shortcut) ? $shortcut : ($shortcut ? 'Ctrl+K' : null);
-    $isExpandable = $expandable || $variant === 'expandable';
-    $hasInitialValue = !empty($value);
 @endphp
 
 @if($hasForm)
@@ -52,40 +46,23 @@
         'custom-search-wrapper',
         'custom-search-' . $size,
         'custom-search-' . $variant,
-        'custom-search-expandable' => $isExpandable,
-        'is-expanded' => $hasInitialValue,
-        'has-value' => $hasInitialValue,
+        'has-value' => !empty($value),
         'has-button' => !empty($button),
     ]) }}
-    @if($width && !$isExpandable) style="width: {{ $width }};" @endif
-    @if($expandedWidth) style="--search-expanded-width: {{ $expandedWidth }};" @endif
+    style="width: {{ $width }};"
     data-custom-search
     data-search-id="{{ $id }}"
-    @if($isExpandable) data-search-expandable="true" @endif
     @if($target) data-search-target="{{ $target }}" @endif
     @if($emptyTarget) data-search-empty="{{ $emptyTarget }}" @endif
     @if($querySpan) data-search-query-span="{{ $querySpan }}" @endif
     @if($countTarget) data-search-count-target="{{ $countTarget }}" @endif
     @if($debounce) data-search-debounce="{{ $debounce }}" @endif
-    @if($shortcutText) data-search-shortcut="{{ $shortcutText }}" @endif
 >
     <div class="custom-search-inner">
-        {{-- Search Icon / Expand Toggle Button --}}
-        @if($isExpandable)
-            <button 
-                type="button" 
-                class="custom-search-icon custom-search-toggle-btn" 
-                title="Buka pencarian (Ctrl+K)"
-                aria-label="Buka pencarian"
-                tabindex="-1"
-            >
-                <i class="{{ $icon }}"></i>
-            </button>
-        @else
-            <span class="custom-search-icon" aria-hidden="true">
-                <i class="{{ $icon }}"></i>
-            </span>
-        @endif
+        {{-- Search Icon --}}
+        <span class="custom-search-icon" aria-hidden="true">
+            <i class="{{ $icon }}"></i>
+        </span>
 
         {{-- Search Input --}}
         <input 
@@ -111,19 +88,12 @@
             <button 
                 type="button" 
                 class="custom-search-clear" 
-                title="Hapus pencarian (Esc)"
+                title="Hapus pencarian"
                 aria-label="Hapus pencarian"
                 style="{{ empty($value) ? 'display: none;' : '' }}"
             >
                 <i class="fas fa-times"></i>
             </button>
-        @endif
-
-        {{-- Keyboard Shortcut Badge --}}
-        @if($shortcutText)
-            <kbd class="custom-search-shortcut" title="Tekan shortcut untuk mencari">
-                {{ $shortcutText }}
-            </kbd>
         @endif
     </div>
 

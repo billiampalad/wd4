@@ -1,7 +1,7 @@
 /* ==========================================================================
-   CUSTOM SEARCH COMPONENT — PREMIUM LUXURY EDITION
-   Theme-aware, highly responsive, cinematic smooth transitions
-   Supports Light & Dark Modes, Glassmorphism, Pill, Table, and Expandable.
+   CUSTOM SEARCH COMPONENT
+   Compact (200px width), clean, responsive search input
+   Supports Light & Dark Modes, Glassmorphism, Pill, and Table variants.
    ========================================================================== */
 
 :root {
@@ -16,26 +16,22 @@
     --search-icon-color: var(--text-sub, #94a3b8);
     --search-icon-active: var(--accent, #4f46e5);
     --search-ring-color: rgba(79, 70, 229, 0.14);
-    --search-glow-color: rgba(79, 70, 229, 0.28);
     --search-clear-color: #94a3b8;
     --search-clear-hover-color: var(--danger, #ef4444);
     --search-clear-hover-bg: rgba(239, 68, 68, 0.08);
-    --search-shortcut-bg: var(--surface2, #f1f5f9);
-    --search-shortcut-text: var(--text-sub, #64748b);
-    --search-shortcut-border: var(--border, #e2e8f0);
     --search-btn-bg: var(--accent, #4f46e5);
     --search-btn-hover: #4338ca;
     --search-btn-text: #ffffff;
-    --search-radius: var(--radius, 12px);
-    --search-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 8px 24px rgba(79, 70, 229, 0.12);
-    --search-transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    --search-radius: var(--radius, 10px);
+    --search-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 4px 14px rgba(79, 70, 229, 0.1);
+    --search-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     
-    /* Precision Dimensions (Compact & Golden Ratio) */
+    /* Dimensions */
+    --search-width: 200px;
     --search-height-sm: 32px;
     --search-height-md: 38px;
-    --search-height-lg: 46px;
-    --search-expanded-width: 320px;
+    --search-height-lg: 44px;
 }
 
 /* Dark Mode Overrides */
@@ -53,44 +49,11 @@ html.dark {
     --search-icon-color: var(--text-sub, #64748b);
     --search-icon-active: var(--accent, #818cf8);
     --search-ring-color: rgba(99, 102, 241, 0.22);
-    --search-glow-color: rgba(99, 102, 241, 0.35);
     --search-clear-color: #64748b;
     --search-clear-hover-color: #f87171;
     --search-clear-hover-bg: rgba(239, 68, 68, 0.16);
-    --search-shortcut-bg: var(--surface2, #1e2333);
-    --search-shortcut-text: #94a3b8;
-    --search-shortcut-border: var(--border, #2e364c);
     --search-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 8px 28px rgba(0, 0, 0, 0.5);
-}
-
-/* ─────────────────────────────────────────────────────────────
-   🌟 LUXURY KEYFRAME ANIMATIONS (Breathing Aura & Shimmer)
-   ───────────────────────────────────────────────────────────── */
-@keyframes searchLuxuryBreath {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.82;
-        color: var(--search-icon-color);
-        filter: drop-shadow(0 0 0 rgba(79, 70, 229, 0));
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.1);
-        opacity: 1;
-        color: var(--search-icon-active);
-        filter: drop-shadow(0 0 6px var(--search-glow-color));
-    }
-}
-
-@keyframes searchAuraPulse {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.2), 0 2px 6px rgba(0, 0, 0, 0.04);
-        border-color: var(--search-border);
-    }
-    50% {
-        box-shadow: 0 0 0 4px var(--search-ring-color), 0 4px 14px var(--search-glow-color);
-        border-color: rgba(79, 70, 229, 0.38);
-    }
+    --search-shadow-focus: 0 0 0 3px var(--search-ring-color), 0 4px 18px rgba(0, 0, 0, 0.45);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -108,7 +71,7 @@ html.dark {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    width: 100%;
+    width: var(--search-width);
     max-width: 100%;
     box-sizing: border-box;
     font-family: inherit;
@@ -125,11 +88,7 @@ html.dark {
     border: 1px solid var(--search-border);
     border-radius: var(--search-radius);
     box-shadow: var(--search-shadow-sm);
-    transition: width 0.48s cubic-bezier(0.22, 1, 0.36, 1),
-                border-radius 0.32s cubic-bezier(0.22, 1, 0.36, 1),
-                background 0.28s ease,
-                border-color 0.28s ease,
-                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: var(--search-transition);
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -147,11 +106,11 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Search Icon & Toggle Button (Centered & Proportional)
+   Search Icon
    ───────────────────────────────────────────────────────────── */
 .custom-search-icon {
     position: absolute;
-    left: 13px;
+    left: 12px;
     top: 50%;
     transform: translateY(-50%);
     width: 15px;
@@ -160,11 +119,8 @@ html.dark {
     align-items: center;
     justify-content: center;
     color: var(--search-icon-color);
-    transition: left 0.44s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
-                color 0.25s ease,
-                filter 0.25s ease;
-    font-size: 13.5px;
+    transition: var(--search-transition);
+    font-size: 13px;
     line-height: 1;
     z-index: 2;
     pointer-events: none;
@@ -172,32 +128,12 @@ html.dark {
     padding: 0;
 }
 
-.custom-search-toggle-btn {
-    pointer-events: auto;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    padding: 0;
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    color: var(--search-icon-color);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.custom-search-toggle-btn:hover {
-    color: var(--search-icon-active);
-}
-
-.custom-search-inner:focus-within .custom-search-icon,
-.custom-search-wrapper:hover .custom-search-icon {
+.custom-search-inner:focus-within .custom-search-icon {
     color: var(--search-icon-active);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Input Element (Symmetric & Staggered Slide)
+   Input Element
    ───────────────────────────────────────────────────────────── */
 .custom-search-input {
     width: 100%;
@@ -209,12 +145,10 @@ html.dark {
     font-family: inherit;
     font-weight: 500;
     letter-spacing: -0.01em;
-    padding: 0 42px 0 38px;
-    font-size: 13.5px;
+    padding: 0 32px 0 34px;
+    font-size: 13px;
     line-height: normal;
-    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                color 0.2s ease;
+    transition: var(--search-transition);
     box-sizing: border-box;
     margin: 0;
 }
@@ -225,21 +159,16 @@ html.dark {
     font-weight: 400;
 }
 
-/* When shortcut badge is visible, provide extra right padding */
-.custom-search-wrapper[data-search-shortcut]:not(.has-value) .custom-search-input {
-    padding-right: 70px;
-}
-
 /* ─────────────────────────────────────────────────────────────
-   Clear / Close Button (Aligned with right margin)
+   Clear / Close Button
    ───────────────────────────────────────────────────────────── */
 .custom-search-clear {
     position: absolute;
-    right: 10px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     border: none;
     background: transparent;
@@ -247,7 +176,7 @@ html.dark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10.5px;
     line-height: 1;
     cursor: pointer;
     transition: var(--search-transition);
@@ -267,45 +196,14 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Keyboard Shortcut Badge (kbd)
-   ───────────────────────────────────────────────────────────── */
-.custom-search-shortcut {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 2px 6px;
-    font-size: 10px;
-    font-family: 'DM Mono', monospace, inherit;
-    font-weight: 600;
-    color: var(--search-shortcut-text);
-    background: var(--search-shortcut-bg);
-    border: 1px solid var(--search-shortcut-border);
-    border-radius: 5px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    user-select: none;
-    margin: 0;
-}
-
-/* Hide shortcut chip when typing or input has value */
-.custom-search-wrapper.has-value .custom-search-shortcut,
-.custom-search-inner:focus-within .custom-search-shortcut {
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-50%) scale(0.85);
-}
-
-/* ─────────────────────────────────────────────────────────────
    Loading Spinner
    ───────────────────────────────────────────────────────────── */
 .custom-search-spinner {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12.5px;
+    font-size: 12px;
     color: var(--search-icon-active);
     display: none;
     pointer-events: none;
@@ -317,8 +215,7 @@ html.dark {
     display: inline-flex;
 }
 
-.custom-search-wrapper.is-loading .custom-search-clear,
-.custom-search-wrapper.is-loading .custom-search-shortcut {
+.custom-search-wrapper.is-loading .custom-search-clear {
     display: none !important;
 }
 
@@ -331,7 +228,7 @@ html.dark {
     justify-content: center;
     gap: 6px;
     height: var(--search-height-md);
-    padding: 0 15px;
+    padding: 0 14px;
     background: var(--search-btn-bg);
     color: var(--search-btn-text);
     border: none;
@@ -369,6 +266,10 @@ html.dark {
    SIZE VARIANTS
    ───────────────────────────────────────────────────────────── */
 /* Small (sm) */
+.custom-search-sm {
+    width: 170px;
+}
+
 .custom-search-sm .custom-search-inner {
     height: var(--search-height-sm);
     border-radius: max(6px, calc(var(--search-radius) - 3px));
@@ -380,70 +281,56 @@ html.dark {
 }
 
 .custom-search-sm .custom-search-input {
-    padding: 0 34px 0 30px;
+    padding: 0 26px 0 28px;
     font-size: 12px;
 }
 
 .custom-search-sm .custom-search-clear {
-    right: 7px;
-    width: 17px;
-    height: 17px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
     font-size: 9px;
 }
 
-.custom-search-sm .custom-search-shortcut {
-    right: 7px;
+/* Medium (md) - Default (200px width, 38px height) */
+.custom-search-md {
+    width: var(--search-width);
 }
 
-.custom-search-sm .custom-search-btn {
-    height: var(--search-height-sm);
-    padding: 0 11px;
-    font-size: 11.5px;
-    border-radius: max(6px, calc(var(--search-radius) - 3px));
-}
-
-/* Medium (md) - Default (38px height) */
 .custom-search-md .custom-search-inner {
     height: var(--search-height-md);
 }
 
 .custom-search-md .custom-search-input {
-    padding: 0 42px 0 38px;
-    font-size: 13.5px;
+    padding: 0 32px 0 34px;
+    font-size: 13px;
 }
 
-/* Large (lg - 46px height) */
+/* Large (lg) */
+.custom-search-lg {
+    width: 260px;
+}
+
 .custom-search-lg .custom-search-inner {
     height: var(--search-height-lg);
     border-radius: calc(var(--search-radius) + 3px);
 }
 
 .custom-search-lg .custom-search-icon {
-    left: 15px;
+    left: 14px;
     font-size: 15px;
 }
 
 .custom-search-lg .custom-search-input {
-    padding: 0 48px 0 46px;
-    font-size: 14.5px;
+    padding: 0 38px 0 40px;
+    font-size: 14px;
 }
 
 .custom-search-lg .custom-search-clear {
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
-}
-
-.custom-search-lg .custom-search-shortcut {
-    right: 12px;
-}
-
-.custom-search-lg .custom-search-btn {
-    height: var(--search-height-lg);
-    padding: 0 20px;
-    font-size: 14.5px;
-    border-radius: calc(var(--search-radius) + 3px);
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -472,20 +359,16 @@ html.dark {
 }
 
 .custom-search-pill .custom-search-icon {
-    left: 14px;
+    left: 13px;
 }
 
 .custom-search-pill .custom-search-input {
-    padding-left: 40px;
-    padding-right: 42px;
+    padding-left: 36px;
+    padding-right: 32px;
 }
 
 .custom-search-pill .custom-search-clear {
-    right: 12px;
-}
-
-.custom-search-pill .custom-search-btn {
-    border-radius: 9999px;
+    right: 10px;
 }
 
 /* Variant: Glassmorphism */
@@ -506,7 +389,7 @@ body.dark-mode .custom-search-glass .custom-search-inner {
 
 /* Variant: Table Toolbar Search */
 .custom-search-table {
-    max-width: 320px;
+    width: var(--search-width);
 }
 
 .custom-search-table .custom-search-inner {
@@ -516,161 +399,11 @@ body.dark-mode .custom-search-glass .custom-search-inner {
     height: 38px;
 }
 
-.custom-search-table .custom-search-icon {
-    left: 12px;
-    font-size: 13px;
-}
-
-.custom-search-table .custom-search-input {
-    padding: 0 38px 0 36px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.custom-search-table .custom-search-clear {
-    right: 10px;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   ✨ ANIMATED EXPANDABLE VARIANT (.custom-search-expandable)
-   - Compact circle (38px x 38px) with luxury breathing aura.
-   - Cinematic smooth expansion (0.48s) on HOVER or FOCUS.
-   ───────────────────────────────────────────────────────────── */
-.custom-search-expandable {
-    width: auto !important;
-    display: inline-flex;
-}
-
-.custom-search-expandable .custom-search-inner {
-    width: var(--search-height-md);
-    border-radius: 9999px;
-    cursor: pointer;
-}
-
-/* 🌟 Idle Motion: Luxury Breathing Aura & Glow */
-.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-inner {
-    animation: searchAuraPulse 3.8s ease-in-out infinite;
-}
-
-.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-icon {
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: searchLuxuryBreath 3.8s ease-in-out infinite;
-}
-
-.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-input {
-    opacity: 0;
-    transform: translateX(6px);
-    pointer-events: none;
-    padding: 0;
-    width: 0;
-}
-
-.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-clear,
-.custom-search-expandable:not(.is-expanded):not(:hover):not(:focus-within) .custom-search-shortcut {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-/* 🚀 EXPANDED STATE (Triggered via HOVER, FOCUS, or IS-EXPANDED) */
-.custom-search-expandable:hover .custom-search-inner,
-.custom-search-expandable.is-expanded .custom-search-inner,
-.custom-search-expandable:focus-within .custom-search-inner {
-    width: var(--search-expanded-width);
-    cursor: default;
-    background: var(--search-bg-focus);
-    border-color: var(--search-border-focus);
-    box-shadow: var(--search-shadow-focus);
-    animation: none; /* Stop idle breathing */
-}
-
-.custom-search-expandable:hover .custom-search-icon,
-.custom-search-expandable.is-expanded .custom-search-icon,
-.custom-search-expandable:focus-within .custom-search-icon {
-    left: 13px;
-    transform: translateY(-50%) scale(1);
-    animation: none;
-    color: var(--search-icon-active);
-    filter: none;
-}
-
-.custom-search-expandable:hover .custom-search-input,
-.custom-search-expandable.is-expanded .custom-search-input,
-.custom-search-expandable:focus-within .custom-search-input {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
-    width: 100%;
-    padding-left: 38px;
-    padding-right: 42px;
-    transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.08s,
-                transform 0.32s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
-}
-
-/* Shortcut badge visibility on expand */
-.custom-search-expandable:hover:not(.has-value) .custom-search-shortcut,
-.custom-search-expandable.is-expanded:not(.has-value) .custom-search-shortcut {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-/* Expandable Sizes */
-.custom-search-expandable.custom-search-sm .custom-search-inner {
-    width: var(--search-height-sm);
-}
-
-.custom-search-expandable.custom-search-sm:hover .custom-search-inner,
-.custom-search-expandable.custom-search-sm.is-expanded .custom-search-inner,
-.custom-search-expandable.custom-search-sm:focus-within .custom-search-inner {
-    width: calc(var(--search-expanded-width) * 0.85);
-}
-
-.custom-search-expandable.custom-search-sm:hover .custom-search-input,
-.custom-search-expandable.custom-search-sm.is-expanded .custom-search-input,
-.custom-search-expandable.custom-search-sm:focus-within .custom-search-input {
-    padding-left: 30px;
-    padding-right: 34px;
-}
-
-.custom-search-expandable.custom-search-lg .custom-search-inner {
-    width: var(--search-height-lg);
-}
-
-.custom-search-expandable.custom-search-lg:hover .custom-search-inner,
-.custom-search-expandable.custom-search-lg.is-expanded .custom-search-inner,
-.custom-search-expandable.custom-search-lg:focus-within .custom-search-inner {
-    width: calc(var(--search-expanded-width) * 1.15);
-}
-
-.custom-search-expandable.custom-search-lg:hover .custom-search-input,
-.custom-search-expandable.custom-search-lg.is-expanded .custom-search-input,
-.custom-search-expandable.custom-search-lg:focus-within .custom-search-input {
-    padding-left: 46px;
-    padding-right: 48px;
-}
-
 /* ─────────────────────────────────────────────────────────────
    Responsive Adjustments
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
     .custom-search-wrapper {
         width: 100%;
-    }
-
-    .custom-search-table {
-        max-width: 100%;
-    }
-
-    .custom-search-shortcut {
-        display: none !important;
-    }
-
-    .custom-search-expandable:hover .custom-search-inner,
-    .custom-search-expandable.is-expanded .custom-search-inner,
-    .custom-search-expandable:focus-within .custom-search-inner {
-        width: 100%;
-        max-width: calc(100vw - 40px);
     }
 }

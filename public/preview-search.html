@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Komponen Search Premium - Light & Dark Mode</title>
+    <title>Preview Komponen Search - Light & Dark Mode</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
             --text-sub: #6b7280;
             --accent: #4f46e5;
             --accent2: #7c3aed;
-            --radius: 20px;
+            --radius: 18px;
             --shadow: 0 16px 48px rgba(79, 70, 229, 0.07);
         }
 
@@ -58,23 +58,23 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.25s ease, color 0.25s ease;
         }
 
         .preview-card {
             width: 100%;
-            max-width: 520px;
+            max-width: 480px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 44px 34px;
+            padding: 40px 32px;
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 26px;
-            transition: background 0.3s ease, border-color 0.3s ease;
+            gap: 24px;
+            transition: background 0.25s ease, border-color 0.25s ease;
         }
 
         .preview-header {
@@ -85,31 +85,31 @@
         }
 
         .preview-icon-badge {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 14px;
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 19px;
             margin-bottom: 4px;
-            box-shadow: 0 8px 22px rgba(79, 70, 229, 0.32);
+            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
         }
 
         .preview-title {
-            font-size: 23px;
+            font-size: 22px;
             font-weight: 800;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.02em;
             color: var(--text);
         }
 
         .preview-subtitle {
             font-size: 14px;
             color: var(--text-sub);
-            max-width: 420px;
-            line-height: 1.55;
+            max-width: 380px;
+            line-height: 1.5;
         }
 
         /* Search Showcase Container */
@@ -118,14 +118,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
-            padding: 22px 0 10px 0;
+            gap: 14px;
+            padding: 14px 0 6px 0;
         }
 
         .search-status {
-            font-size: 13.5px;
+            font-size: 13px;
             color: var(--text-sub);
-            min-height: 22px;
+            min-height: 20px;
             transition: color 0.2s ease;
         }
 
@@ -139,7 +139,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 20px;
+            padding: 10px 18px;
             background: var(--surface2);
             color: var(--text);
             border: 1px solid var(--border);
@@ -148,7 +148,7 @@
             font-size: 13.5px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.22s ease;
+            transition: all 0.2s ease;
         }
 
         .theme-btn:hover {
@@ -160,29 +160,6 @@
         .theme-btn:active {
             transform: translateY(0);
         }
-
-        .hint-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text-sub);
-            background: var(--surface2);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .hint-badge kbd {
-            padding: 2px 6px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text);
-        }
     </style>
 </head>
 <body>
@@ -192,36 +169,29 @@
             <div class="preview-icon-badge">
                 <i class="fas fa-search"></i>
             </div>
-            <h1 class="preview-title">Search Component (Premium Edition)</h1>
+            <h1 class="preview-title">Komponen Search</h1>
             <p class="preview-subtitle">
-                Arahkan kursor mouse (hover) ke ikon pencarian untuk melihat transisi sinematik yang mulus dan elegan.
+                Tampilan form pencarian ringkas (lebar 200px) yang langsung siap digunakan.
             </p>
         </header>
 
-        <!-- Animated Expandable Search Component (Luxury Breathing & Cinematic Hover) -->
+        <!-- Compact 200px Search Component -->
         <div class="search-showcase">
             <div 
-                class="custom-search-wrapper custom-search-md custom-search-expandable" 
+                class="custom-search-wrapper custom-search-md custom-search-default" 
                 data-custom-search 
-                data-search-expandable="true"
-                data-search-id="demoAnimatedSearch"
-                data-search-shortcut="Ctrl+K"
+                data-search-id="demoSearchInput"
             >
                 <div class="custom-search-inner">
-                    <button 
-                        type="button" 
-                        class="custom-search-icon custom-search-toggle-btn" 
-                        title="Arahkan kursor atau tekan Ctrl+K"
-                        aria-label="Buka pencarian"
-                    >
+                    <span class="custom-search-icon">
                         <i class="fas fa-search"></i>
-                    </button>
+                    </span>
 
                     <input 
                         type="text" 
-                        id="demoAnimatedSearch" 
+                        id="demoSearchInput" 
                         class="custom-search-input" 
-                        placeholder="Cari data pengguna, dokumen..." 
+                        placeholder="Cari data..." 
                         autocomplete="off" 
                     />
 
@@ -233,22 +203,15 @@
                         type="button" 
                         class="custom-search-clear" 
                         style="display: none;" 
-                        title="Hapus pencarian (Esc)"
+                        title="Hapus pencarian"
                     >
                         <i class="fas fa-times"></i>
                     </button>
-
-                    <kbd class="custom-search-shortcut">Ctrl+K</kbd>
                 </div>
             </div>
 
             <div class="search-status" id="searchStatus">
-                Status: <strong>Luxury Breathing Aura</strong> — Arahkan kursor ke ikon untuk meluas.
-            </div>
-
-            <div class="hint-badge">
-                <i class="fas fa-sparkles" style="color: #f59e0b;"></i>
-                <span>Arahkan kursor (hover) atau tekan <kbd>Ctrl+K</kbd> / <kbd>/</kbd></span>
+                Ketik untuk mencari data...
             </div>
         </div>
 
@@ -263,25 +226,17 @@
     <script src="js/component/search.js"></script>
 
     <script>
-        const searchInput = document.getElementById('demoAnimatedSearch');
+        const searchInput = document.getElementById('demoSearchInput');
         const searchStatus = document.getElementById('searchStatus');
         const searchWrapper = document.querySelector('[data-custom-search]');
 
-        if (searchWrapper && searchStatus) {
-            searchWrapper.addEventListener('search:expand', () => {
-                searchStatus.innerHTML = `Status: <span>Terbuka (Cinematic Smooth)</span> — Siap mengetik.`;
-            });
-
-            searchWrapper.addEventListener('search:collapse', () => {
-                searchStatus.innerHTML = `Status: <strong>Luxury Breathing Aura</strong> — Arahkan kursor ke ikon untuk meluas.`;
-            });
-
+        if (searchWrapper && searchStatus && searchInput) {
             searchWrapper.addEventListener('search:input', (e) => {
                 const query = e.detail?.query?.trim();
                 if (query) {
                     searchStatus.innerHTML = `Mencari: <span>"${query}"</span>`;
                 } else {
-                    searchStatus.innerHTML = `Status: <span>Terbuka</span> — Masukkan kata kunci.`;
+                    searchStatus.innerHTML = `Ketik untuk mencari data...`;
                 }
             });
 

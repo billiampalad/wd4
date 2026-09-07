@@ -39,15 +39,13 @@
             <div class="card-header um-header">
                 <div class="card-title"><i class="fas fa-users"></i> Daftar Pengguna</div>
                 <div class="um-header-actions">
-                    <div class="um-search-wrap">
-                        <i class="fas fa-search um-search-icon"></i>
-                        <input type="text" id="userSearchInput" class="um-search-input" placeholder="Cari data pengguna"
-                            autocomplete="off">
-                        <button type="button" id="userSearchClear" class="um-search-clear" style="display: none;"
-                            title="Hapus pencarian">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                    <x-search 
+                        id="userSearchInput"
+                        placeholder="Cari data pengguna..."
+                        target=".um-table tbody tr.um-row"
+                        emptyTarget="#userSearchEmptyRow"
+                        querySpan="#userSearchQueryText"
+                    />
                     <a href="{{ route('users.create') }}" class="um-btn-add">
                         <i class="fas fa-plus"></i> Tambah Pengguna
                     </a>
@@ -243,69 +241,4 @@
         </div>
     </main>
 @endsection
-
-@section('scripts')
-    <script>
-        (function () {
-            function initUserSearch() {
-                const searchInput = document.getElementById('userSearchInput');
-                const searchClear = document.getElementById('userSearchClear');
-                const emptyRow = document.getElementById('userSearchEmptyRow');
-                const querySpan = document.getElementById('userSearchQueryText');
-                const tableRows = document.querySelectorAll('.um-table tbody tr.um-row');
-
-                if (!searchInput) return;
-
-                function filterUsers() {
-                    const query = searchInput.value.trim().toLowerCase();
-                    let visibleCount = 0;
-
-                    if (searchClear) {
-                        searchClear.style.display = query ? 'inline-flex' : 'none';
-                    }
-
-                    tableRows.forEach(row => {
-                        const text = row.textContent.toLowerCase();
-                        if (!query || text.includes(query)) {
-                            row.style.display = '';
-                            visibleCount++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-
-                    if (emptyRow) {
-                        if (visibleCount === 0 && query !== '' && tableRows.length > 0) {
-                            emptyRow.style.display = '';
-                            if (querySpan) querySpan.textContent = searchInput.value.trim();
-                        } else {
-                            emptyRow.style.display = 'none';
-                        }
-                    }
-                }
-
-                searchInput.removeEventListener('input', filterUsers);
-                searchInput.addEventListener('input', filterUsers);
-
-                if (searchClear) {
-                    searchClear.addEventListener('click', function () {
-                        searchInput.value = '';
-                        searchInput.focus();
-                        filterUsers();
-                    });
-                }
-
-                searchInput.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') {
-                        searchInput.value = '';
-                        filterUsers();
-                        searchInput.blur();
-                    }
-                });
-            }
-
-            document.addEventListener('DOMContentLoaded', initUserSearch);
-            document.addEventListener('turbo:load', initUserSearch);
-        })();
-    </script>
-@endsection
+

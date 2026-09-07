@@ -1,8 +1,7 @@
 /**
  * ============================================================================
- * Custom Search Component JS — Premium Luxury Edition
- * Supports Animated Expandable Search with Luxury Breathing Motion,
- * Cinematic Hover-to-Expand, Live Filtering, Debounce, & Keyboard Shortcuts.
+ * Custom Search Component JS
+ * Supports Client-side Table/Card Live Filtering, Debounce, & Clear Button.
  * ============================================================================
  */
 
@@ -11,8 +10,6 @@
 
     const CustomSearch = {
         instances: new Map(),
-        _globalShortcutsBound: false,
-        _clickOutsideBound: false,
 
         /**
          * Initialize all custom search elements within container or document
@@ -23,9 +20,6 @@
             searchWrappers.forEach((wrapper) => {
                 this.bindSearch(wrapper);
             });
-
-            this.bindGlobalShortcuts();
-            this.bindClickOutside();
         },
 
         /**
@@ -38,8 +32,6 @@
 
             const input = wrapper.querySelector('.custom-search-input');
             const clearBtn = wrapper.querySelector('.custom-search-clear');
-            const toggleBtn = wrapper.querySelector('.custom-search-toggle-btn');
-            const isExpandable = wrapper.hasAttribute('data-search-expandable') || wrapper.classList.contains('custom-search-expandable');
             const targetSelector = wrapper.getAttribute('data-search-target');
             const emptySelector = wrapper.getAttribute('data-search-empty');
             const querySpanSelector = wrapper.getAttribute('data-search-query-span');
@@ -49,65 +41,6 @@
             if (!input) return;
 
             let debounceTimer = null;
-            let leaveTimer = null;
-            let isHovered = false;
-
-            // Expand / Collapse handlers for expandable search
-            const expand = (shouldFocus = true) => {
-                clearTimeout(leaveTimer);
-                if (!wrapper.classList.contains('is-expanded')) {
-                    wrapper.classList.add('is-expanded');
-                    wrapper.dispatchEvent(new CustomEvent('search:expand', { bubbles: true }));
-                }
-                if (shouldFocus && document.activeElement !== input) {
-                    input.focus();
-                }
-            };
-
-            const collapse = () => {
-                if (isExpandable && input.value.trim() === '' && document.activeElement !== input && !isHovered) {
-                    wrapper.classList.remove('is-expanded');
-                    wrapper.dispatchEvent(new CustomEvent('search:collapse', { bubbles: true }));
-                }
-            };
-
-            // 🌟 CINEMATIC HOVER-TO-EXPAND INTERACTION
-            if (isExpandable) {
-                wrapper.addEventListener('mouseenter', () => {
-                    isHovered = true;
-                    expand(true);
-                });
-
-                wrapper.addEventListener('mouseleave', () => {
-                    isHovered = false;
-                    clearTimeout(leaveTimer);
-                    leaveTimer = setTimeout(() => {
-                        collapse();
-                    }, 300); // 300ms smooth grace period
-                });
-
-                input.addEventListener('blur', () => {
-                    clearTimeout(leaveTimer);
-                    leaveTimer = setTimeout(() => {
-                        collapse();
-                    }, 300);
-                });
-            }
-
-            // Click Toggle Button / Icon
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!wrapper.classList.contains('is-expanded')) {
-                        expand(true);
-                    } else if (input.value.trim() === '') {
-                        collapse();
-                    } else {
-                        input.focus();
-                    }
-                });
-            }
 
             // Debounced Filter Handler
             const handleFilter = () => {
@@ -115,7 +48,7 @@
 
                 // Toggle Clear Button & has-value class
                 if (query.length > 0) {
-                    wrapper.classList.add('has-value', 'is-expanded');
+                    wrapper.classList.add('has-value');
                     if (clearBtn) clearBtn.style.display = 'inline-flex';
                 } else {
                     wrapper.classList.remove('has-value');
@@ -150,28 +83,6 @@
                 debounceTimer = setTimeout(handleFilter, debounceMs);
             });
 
-            // Focus Listener for Expandable
-            input.addEventListener('focus', () => {
-                if (isExpandable) expand(false);
-            });
-
-            // Keydown Listener (Escape to clear/collapse/blur)
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (input.value.trim() !== '') {
-                        e.preventDefault();
-                        this.clear(wrapper);
-                    } else if (isExpandable) {
-                        e.preventDefault();
-                        input.blur();
-                        isHovered = false;
-                        collapse();
-                    } else {
-                        input.blur();
-                    }
-                }
-            });
-
             // Clear Button Click
             if (clearBtn) {
                 clearBtn.addEventListener('click', (e) => {
@@ -185,12 +96,11 @@
             // Store instance
             const id = wrapper.getAttribute('data-search-id') || input.id;
             if (id) {
-                this.instances.set(id, { wrapper, input, expand, collapse, handleFilter });
+                this.instances.set(id, { wrapper, input, handleFilter });
             }
 
             // Initial check if input has initial value
             if (input.value.trim().length > 0) {
-                wrapper.classList.add('is-expanded');
                 handleFilter();
             }
         },
@@ -345,91 +255,11 @@
 
             if (!wrapper) return;
 
-            wrapper.classList.add('is-expanded');
             const input = wrapper.querySelector('.custom-search-input');
             if (input) {
                 input.focus();
                 input.select();
             }
-        },
-
-        /**
-         * Expand search wrapper
-         * @param {string|HTMLElement} target
-         */
-        expand: function (target) {
-            this.focus(target);
-        },
-
-        /**
-         * Collapse search wrapper
-         * @param {string|HTMLElement} target
-         */
-        collapse: function (target) {
-            const wrapper = typeof target === 'string'
-                ? document.querySelector(`[data-search-id="${target}"]`) || document.getElementById(target)?.closest('[data-custom-search]')
-                : target;
-
-            if (!wrapper) return;
-
-            const input = wrapper.querySelector('.custom-search-input');
-            if (!input || input.value.trim() === '') {
-                wrapper.classList.remove('is-expanded');
-                wrapper.dispatchEvent(new CustomEvent('search:collapse', { bubbles: true }));
-            }
-        },
-
-        /**
-         * Global click outside listener to collapse expandable search
-         */
-        bindClickOutside: function () {
-            if (this._clickOutsideBound) return;
-            this._clickOutsideBound = true;
-
-            document.addEventListener('click', (e) => {
-                const expandableSearches = document.querySelectorAll('.custom-search-expandable.is-expanded');
-                expandableSearches.forEach((wrapper) => {
-                    if (!wrapper.contains(e.target)) {
-                        const input = wrapper.querySelector('.custom-search-input');
-                        if (input && input.value.trim() === '') {
-                            wrapper.classList.remove('is-expanded');
-                            wrapper.dispatchEvent(new CustomEvent('search:collapse', { bubbles: true }));
-                        }
-                    }
-                });
-            });
-        },
-
-        /**
-         * Setup Global Keyboard Shortcuts (Ctrl+K, Cmd+K, /)
-         */
-        bindGlobalShortcuts: function () {
-            if (this._globalShortcutsBound) return;
-            this._globalShortcutsBound = true;
-
-            document.addEventListener('keydown', (e) => {
-                const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-                const isEditable = activeTag === 'input' || activeTag === 'textarea' || document.activeElement.isContentEditable;
-
-                // Check for Ctrl+K or Cmd+K
-                if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
-                    const searchWrapper = document.querySelector('[data-custom-search]');
-                    if (searchWrapper) {
-                        e.preventDefault();
-                        CustomSearch.focus(searchWrapper);
-                    }
-                    return;
-                }
-
-                // Check for '/' shortcut when not in input
-                if (e.key === '/' && !isEditable) {
-                    const shortcutSearch = document.querySelector('[data-search-shortcut]') || document.querySelector('[data-custom-search]');
-                    if (shortcutSearch) {
-                        e.preventDefault();
-                        CustomSearch.focus(shortcutSearch);
-                    }
-                }
-            });
         },
     };
 
