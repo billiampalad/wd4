@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
  * PAGINAV COMPONENT JAVASCRIPT - CLIENT & SERVER-SIDE PAGINATION ENGINE
- * Features: Smart Ellipsis Truncation, Alpine.js Dropdown, Live Search Sync
+ * Features: Smart Ellipsis Truncation, Top Toolbar Entries, Live Search Sync
  * ==========================================================================
  */
 
@@ -28,7 +28,6 @@
             this.btnPrev = element.querySelector('[data-page-action="prev"]');
             this.btnNext = element.querySelector('[data-page-action="next"]');
             this.btnLast = element.querySelector('[data-page-action="last"]');
-            this.perPageSelect = element.querySelector('.paginav-perpage-select');
             this.jumpInput = element.querySelector('.paginav-jump-input');
             
             // Counter labels
@@ -36,11 +35,35 @@
             this.countTo = element.querySelector('.paginav-count-to');
             this.countTotal = element.querySelector('.paginav-count-total');
 
+            // Find Per Page Select (Inside wrapper OR in external top toolbar <x-paginav-entries>)
+            this.perPageSelects = this.findPerPageSelects();
+
             if (!this.isServerSide && this.targetSelector) {
                 this.initClientSide();
             } else {
                 this.initServerSide();
             }
+        }
+
+        /* ── Cari Semua Dropdown Per Page Terkait ─────────────────────────────── */
+        findPerPageSelects() {
+            const selects = [];
+            // Select di dalam wrapper
+            const internalSelect = this.wrapper.querySelector('.paginav-perpage-select');
+            if (internalSelect) selects.push(internalSelect);
+
+            // Select di top toolbar (data-paginav-entries)
+            if (this.targetSelector) {
+                const externalEntries = document.querySelectorAll(`[data-paginav-entries][data-paginav-target="${this.targetSelector}"]`);
+                externalEntries.forEach(entriesEl => {
+                    const sel = entriesEl.querySelector('.paginav-perpage-select');
+                    if (sel && !selects.includes(sel)) {
+                        selects.push(sel);
+                    }
+                });
+            }
+
+            return selects;
         }
 
         /* ── Inisialisasi Client-Side Pagination ─────────────────────────────── */
@@ -58,8 +81,8 @@
 
         /* ── Inisialisasi Server-Side Pagination ─────────────────────────────── */
         initServerSide() {
-            if (this.perPageSelect) {
-                this.perPageSelect.addEventListener('change', (e) => {
+            this.perPageSelects.forEach(select => {
+                select.addEventListener('change', (e) => {
                     const url = new URL(window.location.href);
                     url.searchParams.set('per_page', e.target.value);
                     url.searchParams.set('page', '1');
@@ -69,7 +92,7 @@
                         window.location.href = url.toString();
                     }
                 });
-            }
+            });
         }
 
         /* ── Bind Event Listeners ────────────────────────────────────────────── */
@@ -88,14 +111,14 @@
                 this.btnLast.addEventListener('click', () => this.goToPage(this.totalPages));
             }
 
-            // Pilihan rows per page (Native change event dari select atau Alpine.js)
-            if (this.perPageSelect) {
-                this.perPageSelect.addEventListener('change', (e) => {
+            // Pilihan rows per page (Bekerja untuk dropdown internal maupun external di toolbar atas)
+            this.perPageSelects.forEach(select => {
+                select.addEventListener('change', (e) => {
                     this.perPage = parseInt(e.target.value, 10);
                     this.currentPage = 1;
                     this.refresh();
                 });
-            }
+            });
 
             // Jump to page input
             if (this.jumpInput) {
@@ -358,6 +381,7 @@
                         this.instances.set(el.id, inst);
                     }
                 } else {
+                    el._paginavInstance.perPageSelects = el._paginavInstance.findPerPageSelects();
                     el._paginavInstance.refresh();
                 }
             });

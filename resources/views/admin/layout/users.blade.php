@@ -37,7 +37,14 @@
 
         <div class="card um-card">
             <div class="card-header um-header">
-                <div class="card-title"><i class="fas fa-users"></i> Daftar Pengguna</div>
+                <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                    <div class="card-title"><i class="fas fa-users"></i> Daftar Pengguna</div>
+                    <x-paginav-entries 
+                        target=".um-table tbody tr.um-row"
+                        :perPage="10"
+                        :options="[5, 10, 25, 50]"
+                    />
+                </div>
                 <div class="um-header-actions">
                     <x-search 
                         id="userSearchInput"
@@ -242,9 +249,8 @@
                 id="userTablePaginav"
                 target=".um-table tbody tr.um-row"
                 :perPage="10"
-                :perPageOptions="[5, 10, 25, 50]"
                 :showInfo="true"
-                :showPerPage="true"
+                :showPerPage="false"
             />
         </div>
     </main>
