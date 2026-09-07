@@ -113,8 +113,12 @@
                                 <td class="um-td">
                                     <span class="um-meta">{{ $user->profile?->jurusan?->nama_jurusan ?? '-' }}</span>
                                     @if($user->profile?->prodi)
-                                        <div style="font-size: 11px; color: var(--text-muted, #64748b); margin-top: 2px;">
-                                            <i class="fas fa-book-open" style="font-size: 10px; margin-right: 3px;"></i>{{ $user->profile->prodi->jenjang ? '[' . $user->profile->prodi->jenjang . '] ' : '' }}{{ $user->profile->prodi->nama_prodi }}
+                                        <div class="um-prodi-lighting" title="Program Studi: {{ $user->profile->prodi->nama_prodi }}">
+                                            <i class="fas fa-graduation-cap um-prodi-lighting-icon"></i>
+                                            @if($user->profile->prodi->jenjang)
+                                                <span class="um-prodi-lighting-jenjang">{{ $user->profile->prodi->jenjang }}</span>
+                                            @endif
+                                            <span class="um-prodi-lighting-nama">{{ $user->profile->prodi->nama_prodi }}</span>
                                         </div>
                                     @endif
                                 </td>
