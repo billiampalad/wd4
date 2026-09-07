@@ -168,24 +168,22 @@
                                                 @method('PATCH')
                                                 @if($user->isActive())
                                                     <button type="button" class="btn-action toggle-deactivate um-btn-deactivate"
-                                                        title="Nonaktifkan Akun"
-                                                        onclick="CustomAlert.showDeactivate({
-                                                                accountName: '{{ addslashes($user->name) }}',
-                                                                formId: 'form-toggle-status-{{ $user->id }}'
-                                                            })">
+                                                        title="Nonaktifkan Akun" onclick="CustomAlert.showDeactivate({
+                                                                                accountName: '{{ addslashes($user->name) }}',
+                                                                                formId: 'form-toggle-status-{{ $user->id }}'
+                                                                            })">
                                                         <i class="fas fa-user-slash"></i>
                                                     </button>
                                                 @else
                                                     <button type="button" class="btn-action toggle-activate um-btn-activate"
-                                                        title="Aktifkan Akun"
-                                                        onclick="CustomAlert.confirm({
-                                                                title: 'Aktifkan Akun',
-                                                                message: 'Jika akun <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span> diaktifkan, maka pengguna akan dapat login kembali.',
-                                                                type: 'primary',
-                                                                confirmText: 'Aktifkan',
-                                                                confirmColor: 'primary',
-                                                                onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
-                                                            })">
+                                                        title="Aktifkan Akun" onclick="CustomAlert.confirm({
+                                                                                title: 'Aktifkan Akun',
+                                                                                message: 'Jika akun <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span> diaktifkan, maka pengguna akan dapat login kembali.',
+                                                                                type: 'primary',
+                                                                                confirmText: 'Aktifkan',
+                                                                                confirmColor: 'primary',
+                                                                                onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
+                                                                            })">
                                                         <i class="fas fa-user-check"></i>
                                                     </button>
                                                 @endif
@@ -196,13 +194,13 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
-                                                                    title: 'Hapus Pengguna',
-                                                                    message: 'Apakah Anda yakin ingin menghapus pengguna <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span>? Tindakan ini tidak dapat dibatalkan.',
-                                                                    type: 'danger',
-                                                                    confirmText: 'Hapus',
-                                                                    confirmColor: 'danger',
-                                                                    onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
-                                                                })">
+                                                                            title: 'Hapus Pengguna',
+                                                                            message: 'Menghapus akun pengguna <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span> tidak dapat dikembalikan.',
+                                                                            type: 'danger',
+                                                                            confirmText: 'Hapus',
+                                                                            confirmColor: 'danger',
+                                                                            onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
+                                                                        })">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
