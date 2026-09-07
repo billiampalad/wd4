@@ -60,17 +60,78 @@
         @endif
 
         @if($showPerPage && count($perPageOptions) > 1)
-            <div class="paginav-perpage-wrap">
-                <label for="{{ $id }}_perpage" class="paginav-perpage-label">Baris:</label>
-                <div class="paginav-select-custom">
-                    <select id="{{ $id }}_perpage" class="paginav-perpage-select" aria-label="Jumlah baris per halaman">
+            <div 
+                class="paginav-perpage-wrap" 
+                x-data="{ 
+                    open: false, 
+                    selected: {{ $currentPerPage }},
+                    select(val) {
+                        this.selected = val;
+                        this.open = false;
+                        const selectEl = $refs.hiddenSelect;
+                        if (selectEl) {
+                            selectEl.value = val;
+                            selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+                }"
+            >
+                <span class="paginav-perpage-label">Baris:</span>
+                <div class="paginav-dropdown-custom" @click.outside="open = false">
+                    {{-- Alpine Trigger Button --}}
+                    <button 
+                        type="button" 
+                        class="paginav-dropdown-trigger" 
+                        @click="open = !open"
+                        :aria-expanded="open.toString()"
+                        aria-haspopup="listbox"
+                    >
+                        <span class="paginav-dropdown-value" x-text="selected"></span>
+                        <i class="fas fa-chevron-down paginav-dropdown-arrow" :class="{ 'is-open': open }" aria-hidden="true"></i>
+                    </button>
+
+                    {{-- Alpine Floating Dropdown Menu --}}
+                    <div 
+                        class="paginav-dropdown-menu" 
+                        x-show="open" 
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 transform scale-95 -translate-y-1"
+                        x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 transform scale-95 -translate-y-1"
+                        role="listbox"
+                    >
+                        @foreach($perPageOptions as $opt)
+                            <button 
+                                type="button" 
+                                class="paginav-dropdown-item" 
+                                :class="{ 'is-active': selected == {{ $opt }} }"
+                                @click="select({{ $opt }})"
+                                role="option"
+                                :aria-selected="(selected == {{ $opt }}).toString()"
+                            >
+                                <span class="paginav-dropdown-item-text">{{ $opt }} baris</span>
+                                <i class="fas fa-check paginav-dropdown-check" x-show="selected == {{ $opt }}" aria-hidden="true"></i>
+                            </button>
+                        @endforeach
+                    </div>
+
+                    {{-- Hidden Native Select for standard JS listener fallback --}}
+                    <select 
+                        id="{{ $id }}_perpage" 
+                        x-ref="hiddenSelect" 
+                        class="paginav-perpage-select" 
+                        style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;"
+                        aria-hidden="true"
+                    >
                         @foreach($perPageOptions as $opt)
                             <option value="{{ $opt }}" {{ $currentPerPage == $opt ? 'selected' : '' }}>
                                 {{ $opt }}
                             </option>
                         @endforeach
                     </select>
-                    <i class="fas fa-chevron-down paginav-select-arrow" aria-hidden="true"></i>
                 </div>
             </div>
         @endif
@@ -103,7 +164,7 @@
             <span class="paginav-btn-label">Prev</span>
         </button>
 
-        {{-- Container Nomor Halaman Dinamis --}}
+        {{-- Container Nomor Halaman Dinamis (Smart Truncation Ellipsis) --}}
         <div class="paginav-pages-container" role="list">
             @if($isServerSide)
                 {{-- Server-side render link Laravel --}}

@@ -1,6 +1,6 @@
 /* ==========================================================================
    PAGINAV COMPONENT - MODERN RESPONSIVE UI/UX PAGINATION
-   Supports Light/Dark Mode, Micro-Interactions, Dynamic Truncation
+   Supports Light/Dark Mode, Alpine.js Custom Dropdowns, Truncation Ellipsis
    ========================================================================== */
 
 :root {
@@ -15,6 +15,7 @@
     --paginav-radius-btn: 9px;
     --paginav-radius-card: 14px;
     --paginav-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --paginav-shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     --paginav-shadow-active: 0 4px 14px rgba(var(--paginav-primary-rgb), 0.35);
     --paginav-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -29,7 +30,12 @@
     --paginav-primary-hover: #4f46e5;
     --paginav-primary-rgb: 99, 102, 241;
     --paginav-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.25);
+    --paginav-shadow-dropdown: 0 12px 30px -5px rgba(0, 0, 0, 0.5), 0 8px 12px -6px rgba(0, 0, 0, 0.35);
     --paginav-shadow-active: 0 4px 16px rgba(99, 102, 241, 0.45);
+}
+
+[x-cloak] {
+    display: none !important;
 }
 
 /* ── Container Utama ─────────────────────────────────────────────────────── */
@@ -47,6 +53,7 @@
     color: var(--paginav-text);
     transition: background var(--paginav-transition), border-color var(--paginav-transition);
     user-select: none;
+    position: relative;
 }
 
 /* Alignment Variants */
@@ -88,50 +95,105 @@
     gap: 8px;
     font-size: 0.8125rem;
     color: var(--paginav-text-sub);
+    position: relative;
 }
 
-.paginav-select-custom {
+/* ── Alpine.js Custom Floating Dropdown ─────────────────────────────────── */
+.paginav-dropdown-custom {
     position: relative;
+    display: inline-block;
+}
+
+.paginav-dropdown-trigger {
     display: inline-flex;
     align-items: center;
-}
-
-.paginav-perpage-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 58px;
+    height: 32px;
+    padding: 0 10px;
     background: var(--paginav-surface);
     color: var(--paginav-text);
     border: 1px solid var(--paginav-border);
     border-radius: var(--paginav-radius-btn);
-    padding: 5px 28px 5px 10px;
     font-size: 0.8125rem;
     font-weight: 600;
     cursor: pointer;
     outline: none;
     transition: var(--paginav-transition);
+    box-shadow: var(--paginav-shadow-sm);
 }
 
-.paginav-perpage-select:hover {
+.paginav-dropdown-trigger:hover {
     border-color: var(--paginav-primary);
+    color: var(--paginav-primary);
 }
 
-.paginav-perpage-select:focus {
+.paginav-dropdown-trigger:focus {
     border-color: var(--paginav-primary);
     box-shadow: 0 0 0 3px rgba(var(--paginav-primary-rgb), 0.15);
 }
 
-.paginav-select-arrow {
-    position: absolute;
-    right: 9px;
-    pointer-events: none;
+.paginav-dropdown-arrow {
     font-size: 0.6875rem;
     color: var(--paginav-text-sub);
-    transition: transform var(--paginav-transition);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.paginav-perpage-select:focus + .paginav-select-arrow {
+.paginav-dropdown-arrow.is-open {
     transform: rotate(180deg);
+    color: var(--paginav-primary);
+}
+
+/* Floating Menu Popup */
+.paginav-dropdown-menu {
+    position: absolute;
+    bottom: calc(100% + 6px); /* Buka ke atas agar tidak tertutup tepi bawah */
+    left: 0;
+    z-index: 50;
+    min-width: 120px;
+    background: var(--paginav-bg);
+    border: 1px solid var(--paginav-border);
+    border-radius: var(--paginav-radius-btn);
+    box-shadow: var(--paginav-shadow-dropdown);
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.paginav-dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 7px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--paginav-text);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: var(--paginav-transition);
+    outline: none;
+}
+
+.paginav-dropdown-item:hover {
+    background: rgba(var(--paginav-primary-rgb), 0.08);
+    color: var(--paginav-primary);
+}
+
+.paginav-dropdown-item.is-active {
+    background: rgba(var(--paginav-primary-rgb), 0.12);
+    color: var(--paginav-primary);
+    font-weight: 700;
+}
+
+.paginav-dropdown-check {
+    font-size: 0.75rem;
     color: var(--paginav-primary);
 }
 
@@ -140,10 +202,11 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Cegah tombol navigasi pecah baris */
+    max-width: 100%;
 }
 
-/* Base button style (Nav Buttons & Page Numbers) */
+/* Base button style */
 .paginav-btn,
 .paginav-page-item {
     display: inline-flex;
@@ -166,6 +229,7 @@
     box-shadow: var(--paginav-shadow-sm);
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .paginav-btn:hover:not(:disabled),
@@ -210,13 +274,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 28px;
+    min-width: 24px;
     height: 36px;
     color: var(--paginav-text-sub);
     font-weight: 700;
     letter-spacing: 2px;
     font-size: 0.875rem;
     user-select: none;
+    flex-shrink: 0;
 }
 
 /* Container Angka Halaman */
@@ -224,6 +289,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-shrink: 0;
 }
 
 /* ── Lompat ke Halaman (Jump Input) ─────────────────────────────────────── */
@@ -234,6 +300,7 @@
     margin-left: 6px;
     font-size: 0.8125rem;
     color: var(--paginav-text-sub);
+    flex-shrink: 0;
 }
 
 .paginav-jump-input {
@@ -255,58 +322,9 @@
     box-shadow: 0 0 0 3px rgba(var(--paginav-primary-rgb), 0.15);
 }
 
-/* Hide number spinner on jump input */
-.paginav-jump-input::-webkit-outer-spin-button,
-.paginav-jump-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.paginav-jump-input[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* ── Size Variants ──────────────────────────────────────────────────────── */
-/* Small */
-.custom-paginav-wrapper.paginav-sm {
-    padding: 10px 14px;
-    font-size: 0.75rem;
-}
-.custom-paginav-wrapper.paginav-sm .paginav-btn,
-.custom-paginav-wrapper.paginav-sm .paginav-page-item {
-    min-width: 30px;
-    height: 30px;
-    padding: 0 6px;
-    font-size: 0.75rem;
-    border-radius: 7px;
-}
-.custom-paginav-wrapper.paginav-sm .paginav-perpage-select,
-.custom-paginav-wrapper.paginav-sm .paginav-jump-input {
-    height: 30px;
-    font-size: 0.75rem;
-}
-
-/* Large */
-.custom-paginav-wrapper.paginav-lg {
-    padding: 20px 24px;
-    font-size: 0.9375rem;
-}
-.custom-paginav-wrapper.paginav-lg .paginav-btn,
-.custom-paginav-wrapper.paginav-lg .paginav-page-item {
-    min-width: 42px;
-    height: 42px;
-    padding: 0 14px;
-    font-size: 0.9375rem;
-    border-radius: 11px;
-}
-.custom-paginav-wrapper.paginav-lg .paginav-perpage-select,
-.custom-paginav-wrapper.paginav-lg .paginav-jump-input {
-    height: 42px;
-    font-size: 0.9375rem;
-}
-
 /* ── Smooth Row Transition ──────────────────────────────────────────────── */
 .paginav-row-transition {
-    animation: paginavFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: paginavFadeIn 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes paginavFadeIn {
@@ -338,16 +356,31 @@
     .paginav-controls-section {
         justify-content: center;
         width: 100%;
+        gap: 4px;
     }
 
     .paginav-btn .paginav-btn-label {
-        display: none; /* Hanya tampilkan icon di mobile */
+        display: none; /* Hanya tampilkan icon panah di mobile */
     }
 
     .paginav-btn,
     .paginav-page-item {
         min-width: 32px;
         height: 32px;
-        padding: 0 8px;
+        padding: 0 6px;
+        font-size: 0.75rem;
+    }
+
+    .paginav-ellipsis {
+        min-width: 18px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .paginav-btn-first,
+    .paginav-btn-last {
+        display: none; /* Di HP kecil, sembunyikan first/last agar muat 100% tanpa scroll */
     }
 }

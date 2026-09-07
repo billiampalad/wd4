@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
  * PAGINAV COMPONENT JAVASCRIPT - CLIENT & SERVER-SIDE PAGINATION ENGINE
- * Features: Smart Ellipsis, Rows Per Page, Live Search Sync, Turbo Support
+ * Features: Smart Ellipsis Truncation, Alpine.js Dropdown, Live Search Sync
  * ==========================================================================
  */
 
@@ -48,6 +48,12 @@
             this.bindEvents();
             this.refresh();
             this.listenForSearchSync();
+
+            // Handle window resize untuk re-render nomor halaman jika breakpoint berubah
+            window.addEventListener('resize', () => {
+                clearTimeout(this._resizeTimer);
+                this._resizeTimer = setTimeout(() => this.renderPageButtons(), 150);
+            });
         }
 
         /* ── Inisialisasi Server-Side Pagination ─────────────────────────────── */
@@ -82,7 +88,7 @@
                 this.btnLast.addEventListener('click', () => this.goToPage(this.totalPages));
             }
 
-            // Pilihan rows per page
+            // Pilihan rows per page (Native change event dari select atau Alpine.js)
             if (this.perPageSelect) {
                 this.perPageSelect.addEventListener('change', (e) => {
                     this.perPage = parseInt(e.target.value, 10);
@@ -146,7 +152,8 @@
             const validItems = allItems.filter(el => {
                 return !el.classList.contains('um-search-empty') && 
                        !el.classList.contains('empty-state-row') &&
-                       el.id !== 'userSearchEmptyRow';
+                       el.id !== 'userSearchEmptyRow' &&
+                       el.id !== 'demoEmptyRow';
             });
 
             if (!this.currentSearchQuery) {
@@ -166,7 +173,8 @@
             const allItems = Array.from(document.querySelectorAll(this.targetSelector)).filter(el => {
                 return !el.classList.contains('um-search-empty') && 
                        !el.classList.contains('empty-state-row') &&
-                       el.id !== 'userSearchEmptyRow';
+                       el.id !== 'userSearchEmptyRow' &&
+                       el.id !== 'demoEmptyRow';
             });
 
             const matchingItems = this.getMatchingItems();
@@ -223,39 +231,67 @@
             if (this.countTotal) this.countTotal.textContent = this.totalItems;
         }
 
-        /* ── Render Smart Page Buttons dengan Ellipsis ───────────────────────── */
+        /* ── Render Smart Page Buttons dengan Truncation Ellipsis ─────────────── */
         renderPageButtons() {
             if (!this.pagesContainer) return;
 
             let html = '';
             const cur = this.currentPage;
             const total = this.totalPages;
+            const isMobile = window.innerWidth <= 576;
 
-            if (total <= 7) {
-                // Tampilkan semua nomor jika total halaman <= 7
-                for (let i = 1; i <= total; i++) {
-                    html += this.createPageButtonHtml(i, i === cur);
+            if (isMobile) {
+                // Di layar HP kecil: Tampilkan maksimal 3-4 item agar tidak overflow
+                if (total <= 4) {
+                    for (let i = 1; i <= total; i++) {
+                        html += this.createPageButtonHtml(i, i === cur);
+                    }
+                } else {
+                    if (cur === 1) {
+                        html += this.createPageButtonHtml(1, true);
+                        html += this.createPageButtonHtml(2, false);
+                        html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                        html += this.createPageButtonHtml(total, false);
+                    } else if (cur === total) {
+                        html += this.createPageButtonHtml(1, false);
+                        html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                        html += this.createPageButtonHtml(total - 1, false);
+                        html += this.createPageButtonHtml(total, true);
+                    } else {
+                        html += this.createPageButtonHtml(1, false);
+                        if (cur > 2) html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                        html += this.createPageButtonHtml(cur, true);
+                        if (cur < total - 1) html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                        html += this.createPageButtonHtml(total, false);
+                    }
                 }
             } else {
-                // Algoritma Smart Truncation Ellipsis
-                html += this.createPageButtonHtml(1, cur === 1);
+                // Layar Desktop / Tablet: Tampilkan maksimal 7 tombol
+                if (total <= 7) {
+                    for (let i = 1; i <= total; i++) {
+                        html += this.createPageButtonHtml(i, i === cur);
+                    }
+                } else {
+                    // Smart sliding window truncation
+                    html += this.createPageButtonHtml(1, cur === 1);
 
-                if (cur > 3) {
-                    html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                    if (cur > 3) {
+                        html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                    }
+
+                    const start = Math.max(2, cur <= 3 ? 2 : (cur >= total - 2 ? total - 4 : cur - 1));
+                    const end = Math.min(total - 1, cur >= total - 2 ? total - 1 : (cur <= 3 ? 4 : cur + 1));
+
+                    for (let i = start; i <= end; i++) {
+                        html += this.createPageButtonHtml(i, i === cur);
+                    }
+
+                    if (cur < total - 2) {
+                        html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
+                    }
+
+                    html += this.createPageButtonHtml(total, cur === total);
                 }
-
-                const start = Math.max(2, cur - 1);
-                const end = Math.min(total - 1, cur + 1);
-
-                for (let i = start; i <= end; i++) {
-                    html += this.createPageButtonHtml(i, i === cur);
-                }
-
-                if (cur < total - 2) {
-                    html += '<span class="paginav-ellipsis" aria-hidden="true">&hellip;</span>';
-                }
-
-                html += this.createPageButtonHtml(total, cur === total);
             }
 
             this.pagesContainer.innerHTML = html;
