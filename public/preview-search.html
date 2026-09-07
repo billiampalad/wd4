@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Komponen Search - Light & Dark Mode</title>
+    <title>Preview Komponen Search (Live Text Highlighting) - Light & Dark Mode</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,95 +57,127 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            padding: 32px 20px;
             transition: background 0.25s ease, color 0.25s ease;
         }
 
         .preview-card {
             width: 100%;
-            max-width: 480px;
+            max-width: 640px;
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 40px 32px;
+            padding: 36px 28px;
             box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 24px;
+            gap: 22px;
             transition: background 0.25s ease, border-color 0.25s ease;
         }
 
         .preview-header {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-title-group h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .preview-icon-badge {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            margin-bottom: 4px;
-            box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
+        .preview-title-group p {
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-top: 3px;
         }
 
-        .preview-title {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
+        /* Table & Controls Toolbar */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .demo-table th {
+            background: var(--surface2);
+            padding: 10px 14px;
+            font-weight: 700;
+            color: var(--text-sub);
+            border-bottom: 1px solid var(--border);
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .demo-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
             color: var(--text);
         }
 
-        .preview-subtitle {
-            font-size: 14px;
-            color: var(--text-sub);
-            max-width: 380px;
-            line-height: 1.5;
+        .demo-table tbody tr {
+            transition: background 0.15s ease;
         }
 
-        /* Search Showcase Container */
-        .search-showcase {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 0 6px 0;
+        .demo-table tbody tr:hover {
+            background: var(--surface2);
         }
 
-        .search-status {
-            font-size: 13px;
-            color: var(--text-sub);
-            min-height: 20px;
-            transition: color 0.2s ease;
-        }
-
-        .search-status span {
+        .role-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
             font-weight: 600;
+            border-radius: 12px;
+            background: rgba(79, 70, 229, 0.1);
             color: var(--accent);
+        }
+
+        /* Empty State */
+        .empty-row td {
+            text-align: center;
+            padding: 28px 14px !important;
+            color: var(--text-sub);
         }
 
         /* Theme Toggle Button */
         .theme-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
+            gap: 6px;
+            padding: 8px 14px;
             background: var(--surface2);
             color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             font-family: inherit;
-            font-size: 13.5px;
+            font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -156,31 +188,39 @@
             border-color: var(--text-sub);
             transform: translateY(-1px);
         }
-
-        .theme-btn:active {
-            transform: translateY(0);
-        }
     </style>
 </head>
 <body>
 
     <main class="preview-card">
         <header class="preview-header">
-            <div class="preview-icon-badge">
-                <i class="fas fa-search"></i>
+            <div class="preview-title-group">
+                <h1><i class="fas fa-highlighter" style="color: #f59e0b;"></i> Komponen Search + Text Highlight</h1>
+                <p>Ketik kata kunci untuk melihat penyorotan teks (*real-time highlight*) pada tabel data.</p>
             </div>
-            <h1 class="preview-title">Komponen Search</h1>
-            <p class="preview-subtitle">
-                Tampilan form pencarian ringkas (lebar 200px) yang langsung siap digunakan.
-            </p>
+
+            <!-- Theme Toggle Button -->
+            <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="themeIcon"></i>
+                <span id="themeText">Dark Mode</span>
+            </button>
         </header>
 
-        <!-- Compact 200px Search Component -->
-        <div class="search-showcase">
+        <!-- Search Toolbar -->
+        <div class="toolbar">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text);">
+                Daftar Pengguna
+            </div>
+
+            <!-- Compact 200px Search Component with Live Highlight -->
             <div 
                 class="custom-search-wrapper custom-search-md custom-search-default" 
                 data-custom-search 
                 data-search-id="demoSearchInput"
+                data-search-target="#previewUserTable tbody tr.user-row"
+                data-search-empty="#tableEmptyRow"
+                data-search-query-span="#tableQuerySpan"
+                data-search-highlight="true"
             >
                 <div class="custom-search-inner">
                     <span class="custom-search-icon">
@@ -191,7 +231,7 @@
                         type="text" 
                         id="demoSearchInput" 
                         class="custom-search-input" 
-                        placeholder="Cari data..." 
+                        placeholder="Cari pengguna..." 
                         autocomplete="off" 
                     />
 
@@ -209,42 +249,66 @@
                     </button>
                 </div>
             </div>
-
-            <div class="search-status" id="searchStatus">
-                Ketik untuk mencari data...
-            </div>
         </div>
 
-        <!-- Theme Toggle Button -->
-        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">
-            <i class="fas fa-moon" id="themeIcon"></i>
-            <span id="themeText">Beralih ke Dark Mode</span>
-        </button>
+        <!-- Table with Search Target -->
+        <div class="table-wrap">
+            <table class="demo-table" id="previewUserTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Pengguna</th>
+                        <th>NIK</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="user-row">
+                        <td>1</td>
+                        <td><strong>Billiam Palad</strong></td>
+                        <td>198501152010121001</td>
+                        <td>billiam@polimdo.ac.id</td>
+                        <td><span class="role-badge">Admin</span></td>
+                    </tr>
+                    <tr class="user-row">
+                        <td>2</td>
+                        <td><strong>Rendy Saroinsong</strong></td>
+                        <td>199002202015041002</td>
+                        <td>rendy.s@polimdo.ac.id</td>
+                        <td><span class="role-badge" style="color: #0ea5e9; background: rgba(14, 165, 233, 0.1);">Pimpinan</span></td>
+                    </tr>
+                    <tr class="user-row">
+                        <td>3</td>
+                        <td><strong>Maria Lengkey</strong></td>
+                        <td>198807122014022003</td>
+                        <td>maria.lengkey@polimdo.ac.id</td>
+                        <td><span class="role-badge" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">Jurusan Elektro</span></td>
+                    </tr>
+                    <tr class="user-row">
+                        <td>4</td>
+                        <td><strong>PT Telkom Indonesia</strong></td>
+                        <td>-</td>
+                        <td>partnership@telkom.co.id</td>
+                        <td><span class="role-badge" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);">Mitra Industri</span></td>
+                    </tr>
+
+                    <!-- Empty Row -->
+                    <tr id="tableEmptyRow" class="empty-row" style="display: none;">
+                        <td colspan="5">
+                            <i class="fas fa-search-minus" style="font-size: 24px; opacity: 0.5; margin-bottom: 6px; display: block;"></i>
+                            Tidak ada data yang cocok dengan "<span id="tableQuerySpan" style="font-weight: 700; color: var(--accent);"></span>".
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </main>
 
     <!-- Component JS -->
     <script src="js/component/search.js"></script>
 
     <script>
-        const searchInput = document.getElementById('demoSearchInput');
-        const searchStatus = document.getElementById('searchStatus');
-        const searchWrapper = document.querySelector('[data-custom-search]');
-
-        if (searchWrapper && searchStatus && searchInput) {
-            searchWrapper.addEventListener('search:input', (e) => {
-                const query = e.detail?.query?.trim();
-                if (query) {
-                    searchStatus.innerHTML = `Mencari: <span>"${query}"</span>`;
-                } else {
-                    searchStatus.innerHTML = `Ketik untuk mencari data...`;
-                }
-            });
-
-            searchWrapper.addEventListener('search:clear', () => {
-                searchStatus.innerHTML = `Pencarian dibersihkan.`;
-            });
-        }
-
         // Theme Toggle Functionality
         function toggleTheme() {
             const html = document.documentElement;
@@ -259,10 +323,10 @@
 
             if (newTheme === 'dark') {
                 themeIcon.className = 'fas fa-sun';
-                themeText.textContent = 'Beralih ke Light Mode';
+                themeText.textContent = 'Light Mode';
             } else {
                 themeIcon.className = 'fas fa-moon';
-                themeText.textContent = 'Beralih ke Dark Mode';
+                themeText.textContent = 'Dark Mode';
             }
         }
 
@@ -274,7 +338,7 @@
                 const themeIcon = document.getElementById('themeIcon');
                 const themeText = document.getElementById('themeText');
                 if (themeIcon) themeIcon.className = 'fas fa-sun';
-                if (themeText) themeText.textContent = 'Beralih ke Light Mode';
+                if (themeText) themeText.textContent = 'Light Mode';
             }
         })();
     </script>

@@ -10,6 +10,7 @@
     'emptyTarget' => null, // Selector / ID pesan data kosong (misal: '#userSearchEmptyRow')
     'querySpan' => null, // Selector / ID elemen teks kata kunci (misal: '#userSearchQueryText')
     'countTarget' => null, // Selector / ID elemen jumlah hasil ditemukan
+    'highlight' => true, // Real-time text highlighting
     'clearable' => true,
     'debounce' => 200,
     'action' => null,
@@ -57,6 +58,7 @@
     @if($querySpan) data-search-query-span="{{ $querySpan }}" @endif
     @if($countTarget) data-search-count-target="{{ $countTarget }}" @endif
     @if($debounce) data-search-debounce="{{ $debounce }}" @endif
+    data-search-highlight="{{ $highlight ? 'true' : 'false' }}"
 >
     <div class="custom-search-inner">
         {{-- Search Icon --}}

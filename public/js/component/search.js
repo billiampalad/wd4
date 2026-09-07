@@ -1,7 +1,8 @@
 /**
  * ============================================================================
  * Custom Search Component JS
- * Supports Client-side Table/Card Live Filtering, Debounce, & Clear Button.
+ * Supports Client-side Table/Card Live Filtering, Real-time Text Highlighting,
+ * Debounce, and Clear Button.
  * ============================================================================
  */
 
@@ -36,6 +37,7 @@
             const emptySelector = wrapper.getAttribute('data-search-empty');
             const querySpanSelector = wrapper.getAttribute('data-search-query-span');
             const countTargetSelector = wrapper.getAttribute('data-search-count-target');
+            const enableHighlight = wrapper.getAttribute('data-search-highlight') !== 'false';
             const debounceMs = parseInt(wrapper.getAttribute('data-search-debounce') || '200', 10);
 
             if (!input) return;
@@ -65,6 +67,7 @@
                         emptySelector,
                         querySpanSelector,
                         countTargetSelector,
+                        enableHighlight,
                     });
                 }
 
@@ -106,7 +109,95 @@
         },
 
         /**
-         * Perform filtering on matching elements
+         * Escape special RegExp characters
+         */
+        escapeRegExp: function (string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        },
+
+        /**
+         * Remove all active highlights inside container
+         * @param {HTMLElement|Document} container
+         */
+        removeHighlights: function (container = document) {
+            if (!container) return;
+            const marks = container.querySelectorAll('mark.search-highlight');
+            marks.forEach((mark) => {
+                const parent = mark.parentNode;
+                if (parent) {
+                    mark.replaceWith(...mark.childNodes);
+                    parent.normalize();
+                }
+            });
+        },
+
+        /**
+         * Safely apply text highlight to text nodes inside element
+         * @param {Node} node
+         * @param {RegExp} regex
+         */
+        applyHighlightToNode: function (node, regex) {
+            if (!node) return;
+
+            // Skip non-text or excluded elements (buttons, actions, svgs, icons)
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const tagName = node.tagName.toLowerCase();
+                if (
+                    tagName === 'button' ||
+                    tagName === 'svg' ||
+                    tagName === 'i' ||
+                    tagName === 'script' ||
+                    tagName === 'style' ||
+                    tagName === 'select' ||
+                    tagName === 'option' ||
+                    node.classList.contains('actions') ||
+                    node.classList.contains('btn-action') ||
+                    node.classList.contains('um-actions') ||
+                    node.hasAttribute('data-no-highlight')
+                ) {
+                    return;
+                }
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.nodeValue;
+                if (!text || !regex.test(text)) return;
+
+                const fragment = document.createDocumentFragment();
+                let lastIndex = 0;
+                regex.lastIndex = 0;
+                let match;
+
+                while ((match = regex.exec(text)) !== null) {
+                    // Append text before match
+                    if (match.index > lastIndex) {
+                        fragment.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+                    }
+
+                    // Create highlight mark
+                    const mark = document.createElement('mark');
+                    mark.className = 'search-highlight';
+                    mark.textContent = match[0];
+                    fragment.appendChild(mark);
+
+                    lastIndex = regex.lastIndex;
+                }
+
+                // Append remaining text after last match
+                if (lastIndex < text.length) {
+                    fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
+                }
+
+                node.replaceWith(fragment);
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.childNodes) {
+                // Clone childNodes array because modifying DOM changes live NodeList
+                const children = Array.from(node.childNodes);
+                children.forEach((child) => this.applyHighlightToNode(child, regex));
+            }
+        },
+
+        /**
+         * Perform filtering and highlighting on matching elements
          */
         executeClientFilter: function (params) {
             const {
@@ -117,16 +208,26 @@
                 emptySelector,
                 querySpanSelector,
                 countTargetSelector,
+                enableHighlight = true,
             } = params;
 
             const targets = document.querySelectorAll(targetSelector);
             let visibleCount = 0;
             let totalCount = 0;
 
+            // Prepare highlight regex
+            const rawQuery = input.value.trim();
+            const highlightRegex = (enableHighlight && rawQuery.length > 0)
+                ? new RegExp(this.escapeRegExp(rawQuery), 'gi')
+                : null;
+
             targets.forEach((el) => {
                 if (el.classList.contains('um-search-empty') || el.classList.contains('empty-state-row')) {
                     return;
                 }
+
+                // Clear existing highlights on this row first
+                this.removeHighlights(el);
 
                 totalCount++;
                 const text = el.textContent.toLowerCase();
@@ -134,6 +235,11 @@
                 if (!query || text.includes(query)) {
                     el.style.display = '';
                     visibleCount++;
+
+                    // Apply new text highlight if enabled and query exists
+                    if (highlightRegex) {
+                        this.applyHighlightToNode(el, highlightRegex);
+                    }
                 } else {
                     el.style.display = 'none';
                 }
@@ -189,7 +295,7 @@
         },
 
         /**
-         * Clear search value and reset filters
+         * Clear search value, remove highlights, and reset filters
          * @param {HTMLElement|string} target
          */
         clear: function (target) {
@@ -211,7 +317,7 @@
                 clearBtn.style.display = 'none';
             }
 
-            // Trigger reset on targets
+            // Trigger reset on targets and clear all highlights
             const targetSelector = wrapper.getAttribute('data-search-target');
             const emptySelector = wrapper.getAttribute('data-search-empty');
             const countTargetSelector = wrapper.getAttribute('data-search-count-target');
@@ -219,6 +325,7 @@
             if (targetSelector) {
                 const targets = document.querySelectorAll(targetSelector);
                 targets.forEach((el) => {
+                    this.removeHighlights(el);
                     el.style.display = '';
                 });
             }
