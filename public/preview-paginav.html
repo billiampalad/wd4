@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Komponen Paginav - Modern UI/UX</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="css/component/search.css">
+    <link rel="stylesheet" href="css/component/paginav.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f1f5f9;
+            --surface: #ffffff;
+            --surface2: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-sub: #64748b;
+            --accent: #4f46e5;
+            --accent2: #7c3aed;
+            --radius: 14px;
+            --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.25s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b0f19;
+            --surface: #131b2e;
+            --surface2: #1e293b;
+            --border: #243049;
+            --text: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent: #6366f1;
+            --accent2: #8b5cf6;
+            --shadow: 0 4px 25px -2px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
+            transition: var(--transition);
+        }
+
+        .preview-container {
+            max-width: 1050px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-title h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            color: var(--text-sub);
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* Card Container */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--accent);
+        }
+
+        /* Table */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: var(--surface2);
+            color: var(--text-sub);
+            padding: 12px 18px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: middle;
+        }
+
+        tr.demo-row:hover td {
+            background: rgba(var(--paginav-primary-rgb, 79, 70, 229), 0.03);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+        }
+
+        .badge-inactive {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+        }
+
+        .role-tag {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Empty state */
+        .empty-row {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-sub);
+        }
+
+        .empty-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="preview-container">
+    <!-- Header -->
+    <div class="preview-header">
+        <div class="header-title">
+            <h1><i class="fas fa-layer-group"></i> Preview Komponen Paginav</h1>
+            <p>Demonstrasi interaktif paginasi responsif, pencarian live, rows per page, dan Dark Mode.</p>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+            <i class="fas fa-moon" id="themeIcon"></i>
+            <span id="themeLabel">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-users"></i>
+                <span>Data Pengguna (35 Data Terdaftar)</span>
+            </div>
+            
+            <!-- Custom Search Component -->
+            <div 
+                class="custom-search-wrapper custom-search-md custom-search-default"
+                style="width: 250px;"
+                data-custom-search
+                data-search-id="demoSearch"
+                data-search-target=".demo-table tbody tr.demo-row"
+                data-search-empty="#demoEmptyRow"
+                data-search-query-span="#demoQuerySpan"
+                data-search-highlight="true"
+            >
+                <div class="custom-search-inner">
+                    <span class="custom-search-icon"><i class="fas fa-search"></i></span>
+                    <input type="text" class="custom-search-input" placeholder="Cari nama, email, role..." />
+                    <button type="button" class="custom-search-clear" style="display: none;"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-wrap">
+            <table class="demo-table">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">#</th>
+                        <th>Pengguna</th>
+                        <th>NIK</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Jabatan / Jurusan</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="demoTableBody">
+                    <!-- Dynamic Generated Rows (35 data) -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Custom Paginav Component -->
+        <div 
+            class="custom-paginav-wrapper paginav-between paginav-md paginav-default is-clientside"
+            id="demoPaginav"
+            data-custom-paginav
+            data-paginav-target=".demo-table tbody tr.demo-row"
+            data-paginav-per-page="5"
+            data-paginav-current-page="1"
+            data-paginav-serverside="false"
+        >
+            <div class="paginav-meta-section">
+                <div class="paginav-info" aria-live="polite">
+                    <span class="paginav-info-text">
+                        Menampilkan <strong class="paginav-count-from">1</strong>–<strong class="paginav-count-to">5</strong> dari <strong class="paginav-count-total">35</strong> data
+                    </span>
+                </div>
+                <div class="paginav-perpage-wrap">
+                    <label for="demoPaginav_perpage" class="paginav-perpage-label">Baris:</label>
+                    <div class="paginav-select-custom">
+                        <select id="demoPaginav_perpage" class="paginav-perpage-select">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                        <i class="fas fa-chevron-down paginav-select-arrow"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paginav-controls-section">
+                <button type="button" class="paginav-btn paginav-btn-first" title="Halaman Pertama" data-page-action="first">
+                    <i class="fas fa-angles-left"></i>
+                </button>
+                <button type="button" class="paginav-btn paginav-btn-prev" title="Halaman Sebelumnya" data-page-action="prev">
+                    <i class="fas fa-chevron-left"></i>
+                    <span class="paginav-btn-label">Prev</span>
+                </button>
+                <div class="paginav-pages-container">
+                    <!-- Page buttons auto-injected by paginav.js -->
+                </div>
+                <button type="button" class="paginav-btn paginav-btn-next" title="Halaman Selanjutnya" data-page-action="next">
+                    <span class="paginav-btn-label">Next</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button type="button" class="paginav-btn paginav-btn-last" title="Halaman Terakhir" data-page-action="last">
+                    <i class="fas fa-angles-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dummy Data Generator & Scripts -->
+<script src="js/component/search.js"></script>
+<script src="js/component/paginav.js"></script>
+
+<script>
+    // 1. Generate 35 sample user rows
+    const names = [
+        "Ahmad Fauzi", "Budi Santoso", "Citra Lestari", "Dewi Sartika", "Eko Prasetyo",
+        "Fajar Pratama", "Gita Gutawa", "Hendra Gunawan", "Indah Permata", "Joko Widodo",
+        "Kartika Putri", "Lukman Hakim", "Maya Indriani", "Noval Ardiansyah", "Olivia Tan",
+        "Panji Gumilang", "Qori Sandioriva", "Rizky Ramadhan", "Siti Nurhaliza", "Taufik Hidayat",
+        "Utami Ningrum", "Vicky Shu", "Wahyu Hidayat", "Xaverius Ronald", "Yuliana Safitri",
+        "Zulham Zamrun", "Bayu Skak", "Chelsea Islan", "Dimas Anggara", "Eunike Febiola",
+        "Ferry Salim", "Gading Marten", "Hesti Purwadinata", "Iqbaal Ramadhan", "Jessica Mila"
+    ];
+
+    const roles = ["Admin", "Pimpinan", "Jurusan", "Prodi", "Mitra", "Humas", "Upa"];
+    const jurusans = ["Teknik Elektro", "Teknik Mesin", "Teknik Sipil", "Akuntansi", "Administrasi Bisnis", "Pariwisata"];
+
+    const tbody = document.getElementById('demoTableBody');
+    let rowsHtml = '';
+
+    names.forEach((name, i) => {
+        const role = roles[i % roles.length];
+        const jurusan = jurusans[i % jurusans.length];
+        const nik = "7171" + String(10000000 + i * 137).substring(0, 8);
+        const email = name.toLowerCase().replace(/\s+/g, '.') + "@polimdo.ac.id";
+        const isActive = i % 7 !== 0;
+
+        rowsHtml += `
+            <tr class="demo-row">
+                <td style="font-weight: 600; color: var(--text-sub);">${i + 1}</td>
+                <td>
+                    <div class="user-cell">
+                        <div class="avatar">${name.split(' ').map(n=>n[0]).join('').slice(0, 2)}</div>
+                        <strong>${name}</strong>
+                    </div>
+                </td>
+                <td style="font-family: monospace; font-size: 0.85rem;">${nik}</td>
+                <td style="color: var(--text-sub);">${email}</td>
+                <td><span class="role-tag">${role}</span></td>
+                <td style="color: var(--text-sub);">${jurusan}</td>
+                <td>
+                    <span class="badge ${isActive ? 'badge-active' : 'badge-inactive'}">
+                        <i class="fas ${isActive ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                        ${isActive ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                </td>
+            </tr>
+        `;
+    });
+
+    // Empty search state row
+    rowsHtml += `
+        <tr id="demoEmptyRow" style="display: none;">
+            <td colspan="7">
+                <div class="empty-row">
+                    <div class="empty-icon"><i class="fas fa-search-minus"></i></div>
+                    <h4 style="font-weight: 700; margin-bottom: 4px;">Data Tidak Ditemukan</h4>
+                    <p style="font-size: 0.875rem;">Tidak ada data yang cocok dengan kata kunci "<span id="demoQuerySpan" style="color: var(--accent); font-weight: 700;"></span>".</p>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    tbody.innerHTML = rowsHtml;
+
+    // 2. Initialize Paginav & Search
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.CustomSearch) CustomSearch.init();
+        if (window.CustomPaginav) CustomPaginav.init();
+    });
+
+    // 3. Dark Mode Toggle
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+
+    themeBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+
+        if (nextTheme === 'dark') {
+            themeIcon.className = 'fas fa-sun';
+            themeLabel.textContent = 'Light Mode';
+        } else {
+            themeIcon.className = 'fas fa-moon';
+            themeLabel.textContent = 'Dark Mode';
+        }
+    });
+</script>
+
+</body>
+</html>

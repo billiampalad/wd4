@@ -1,0 +1,353 @@
+/* ==========================================================================
+   PAGINAV COMPONENT - MODERN RESPONSIVE UI/UX PAGINATION
+   Supports Light/Dark Mode, Micro-Interactions, Dynamic Truncation
+   ========================================================================== */
+
+:root {
+    --paginav-bg: var(--surface, #ffffff);
+    --paginav-surface: var(--surface2, #f8fafc);
+    --paginav-border: var(--border, #e2e8f0);
+    --paginav-text: var(--text, #1e293b);
+    --paginav-text-sub: var(--text-sub, #64748b);
+    --paginav-primary: var(--accent, #4f46e5);
+    --paginav-primary-hover: #4338ca;
+    --paginav-primary-rgb: 79, 70, 229;
+    --paginav-radius-btn: 9px;
+    --paginav-radius-card: 14px;
+    --paginav-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --paginav-shadow-active: 0 4px 14px rgba(var(--paginav-primary-rgb), 0.35);
+    --paginav-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+    --paginav-bg: var(--surface, #181c27);
+    --paginav-surface: var(--surface2, #1e2333);
+    --paginav-border: var(--border, #2a2f45);
+    --paginav-text: var(--text, #e8eaf6);
+    --paginav-text-sub: var(--text-sub, #8b92a8);
+    --paginav-primary: #6366f1;
+    --paginav-primary-hover: #4f46e5;
+    --paginav-primary-rgb: 99, 102, 241;
+    --paginav-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.25);
+    --paginav-shadow-active: 0 4px 16px rgba(99, 102, 241, 0.45);
+}
+
+/* ── Container Utama ─────────────────────────────────────────────────────── */
+.custom-paginav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    padding: 16px 20px;
+    background: var(--paginav-bg);
+    border-top: 1px solid var(--paginav-border);
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--paginav-text);
+    transition: background var(--paginav-transition), border-color var(--paginav-transition);
+    user-select: none;
+}
+
+/* Alignment Variants */
+.custom-paginav-wrapper.paginav-between {
+    justify-content: space-between;
+}
+.custom-paginav-wrapper.paginav-center {
+    justify-content: center;
+}
+.custom-paginav-wrapper.paginav-start {
+    justify-content: flex-start;
+}
+.custom-paginav-wrapper.paginav-end {
+    justify-content: flex-end;
+}
+
+/* ── Bagian Meta (Info & Rows per page) ─────────────────────────────────── */
+.paginav-meta-section {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.paginav-info {
+    color: var(--paginav-text-sub);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+.paginav-info strong {
+    color: var(--paginav-text);
+    font-weight: 600;
+}
+
+.paginav-perpage-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--paginav-text-sub);
+}
+
+.paginav-select-custom {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.paginav-perpage-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: var(--paginav-surface);
+    color: var(--paginav-text);
+    border: 1px solid var(--paginav-border);
+    border-radius: var(--paginav-radius-btn);
+    padding: 5px 28px 5px 10px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: var(--paginav-transition);
+}
+
+.paginav-perpage-select:hover {
+    border-color: var(--paginav-primary);
+}
+
+.paginav-perpage-select:focus {
+    border-color: var(--paginav-primary);
+    box-shadow: 0 0 0 3px rgba(var(--paginav-primary-rgb), 0.15);
+}
+
+.paginav-select-arrow {
+    position: absolute;
+    right: 9px;
+    pointer-events: none;
+    font-size: 0.6875rem;
+    color: var(--paginav-text-sub);
+    transition: transform var(--paginav-transition);
+}
+
+.paginav-perpage-select:focus + .paginav-select-arrow {
+    transform: rotate(180deg);
+    color: var(--paginav-primary);
+}
+
+/* ── Bagian Kontrol Tombol ───────────────────────────────────────────────── */
+.paginav-controls-section {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Base button style (Nav Buttons & Page Numbers) */
+.paginav-btn,
+.paginav-page-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: var(--paginav-radius-btn);
+    border: 1px solid var(--paginav-border);
+    background: var(--paginav-surface);
+    color: var(--paginav-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+    transition: var(--paginav-transition);
+    box-shadow: var(--paginav-shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.paginav-btn:hover:not(:disabled),
+.paginav-page-item:hover:not(.is-active) {
+    background: var(--paginav-bg);
+    border-color: var(--paginav-primary);
+    color: var(--paginav-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.paginav-btn:active:not(:disabled),
+.paginav-page-item:active:not(.is-active) {
+    transform: translateY(0);
+}
+
+/* Disabled State */
+.paginav-btn:disabled,
+.paginav-page-item:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--paginav-surface);
+    border-color: var(--paginav-border);
+    color: var(--paginav-text-sub);
+    box-shadow: none;
+    transform: none !important;
+}
+
+/* Active Page Item */
+.paginav-page-item.is-active {
+    background: linear-gradient(135deg, var(--paginav-primary) 0%, var(--accent2, #7c3aed) 100%);
+    border-color: transparent;
+    color: #ffffff !important;
+    font-weight: 700;
+    cursor: default;
+    box-shadow: var(--paginav-shadow-active);
+    transform: translateY(-1px);
+}
+
+/* Truncation Ellipsis (...) */
+.paginav-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 36px;
+    color: var(--paginav-text-sub);
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 0.875rem;
+    user-select: none;
+}
+
+/* Container Angka Halaman */
+.paginav-pages-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Lompat ke Halaman (Jump Input) ─────────────────────────────────────── */
+.paginav-jump-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 6px;
+    font-size: 0.8125rem;
+    color: var(--paginav-text-sub);
+}
+
+.paginav-jump-input {
+    width: 48px;
+    height: 36px;
+    text-align: center;
+    background: var(--paginav-surface);
+    color: var(--paginav-text);
+    border: 1px solid var(--paginav-border);
+    border-radius: var(--paginav-radius-btn);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    outline: none;
+    transition: var(--paginav-transition);
+}
+
+.paginav-jump-input:focus {
+    border-color: var(--paginav-primary);
+    box-shadow: 0 0 0 3px rgba(var(--paginav-primary-rgb), 0.15);
+}
+
+/* Hide number spinner on jump input */
+.paginav-jump-input::-webkit-outer-spin-button,
+.paginav-jump-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.paginav-jump-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* ── Size Variants ──────────────────────────────────────────────────────── */
+/* Small */
+.custom-paginav-wrapper.paginav-sm {
+    padding: 10px 14px;
+    font-size: 0.75rem;
+}
+.custom-paginav-wrapper.paginav-sm .paginav-btn,
+.custom-paginav-wrapper.paginav-sm .paginav-page-item {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    border-radius: 7px;
+}
+.custom-paginav-wrapper.paginav-sm .paginav-perpage-select,
+.custom-paginav-wrapper.paginav-sm .paginav-jump-input {
+    height: 30px;
+    font-size: 0.75rem;
+}
+
+/* Large */
+.custom-paginav-wrapper.paginav-lg {
+    padding: 20px 24px;
+    font-size: 0.9375rem;
+}
+.custom-paginav-wrapper.paginav-lg .paginav-btn,
+.custom-paginav-wrapper.paginav-lg .paginav-page-item {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 0.9375rem;
+    border-radius: 11px;
+}
+.custom-paginav-wrapper.paginav-lg .paginav-perpage-select,
+.custom-paginav-wrapper.paginav-lg .paginav-jump-input {
+    height: 42px;
+    font-size: 0.9375rem;
+}
+
+/* ── Smooth Row Transition ──────────────────────────────────────────────── */
+.paginav-row-transition {
+    animation: paginavFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes paginavFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Responsif & Mobile Optimization ────────────────────────────────────── */
+@media (max-width: 768px) {
+    .custom-paginav-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+        padding: 14px 12px;
+    }
+
+    .paginav-meta-section {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .paginav-controls-section {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .paginav-btn .paginav-btn-label {
+        display: none; /* Hanya tampilkan icon di mobile */
+    }
+
+    .paginav-btn,
+    .paginav-page-item {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+    }
+}

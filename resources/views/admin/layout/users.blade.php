@@ -238,6 +238,14 @@
                     </tbody>
                 </table>
             </div>
+            <x-paginav 
+                id="userTablePaginav"
+                target=".um-table tbody tr.um-row"
+                :perPage="10"
+                :perPageOptions="[5, 10, 25, 50]"
+                :showInfo="true"
+                :showPerPage="true"
+            />
         </div>
     </main>
 @endsection
