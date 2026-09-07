@@ -32,17 +32,43 @@
 <body class="admin-dashboard-page">
     @if(session('success'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                CustomAlert.success(@json(session('success')));
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.success(@json(session('success')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 
     @if(session('error'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                CustomAlert.error(@json(session('error')));
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json(session('error')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
     <!-- navbar -->

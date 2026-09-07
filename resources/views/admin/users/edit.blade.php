@@ -146,7 +146,7 @@
                     </span>
                 </div>
 
-                <form action="{{ route('users.update', $user->id) }}" method="POST">
+                <form id="formEditUser" action="{{ route('users.update', $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="card-body ue-body">

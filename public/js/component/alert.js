@@ -398,6 +398,7 @@
     } else {
         CustomAlert.init();
     }
+    document.addEventListener('turbo:load', () => CustomAlert.init());
 
     // Expose globally
     global.CustomAlert = CustomAlert;
