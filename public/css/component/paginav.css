@@ -95,14 +95,75 @@
 }
 
 .paginav-info {
-    color: var(--paginav-text-sub);
-    font-size: 0.8125rem;
-    line-height: 1.4;
+    display: inline-flex;
+    align-items: center;
 }
 
-.paginav-info strong {
-    color: var(--paginav-text);
-    font-weight: 600;
+.paginav-info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--paginav-surface);
+    border: 1px solid var(--paginav-border);
+    border-radius: 99px;
+    color: var(--paginav-text-sub);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    box-shadow: var(--paginav-shadow-sm);
+    transition: var(--paginav-transition);
+}
+
+.paginav-info-badge:hover {
+    border-color: rgba(var(--paginav-primary-rgb), 0.35);
+    background: var(--paginav-bg);
+}
+
+.paginav-info-icon {
+    color: var(--paginav-primary);
+    font-size: 0.8125rem;
+    opacity: 0.9;
+}
+
+.paginav-info-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.paginav-badge-highlight {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 7px;
+    border-radius: 6px;
+    background: rgba(var(--paginav-primary-rgb), 0.09);
+    color: var(--paginav-primary);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.2px;
+    border: 1px solid rgba(var(--paginav-primary-rgb), 0.15);
+    transition: var(--paginav-transition);
+}
+
+.paginav-badge-highlight.total {
+    background: linear-gradient(135deg, rgba(var(--paginav-primary-rgb), 0.15), rgba(124, 58, 237, 0.12));
+    color: var(--paginav-primary);
+    border-color: rgba(var(--paginav-primary-rgb), 0.25);
+    font-weight: 800;
+}
+
+[data-theme="dark"] .paginav-badge-highlight {
+    background: rgba(99, 102, 241, 0.16);
+    color: #a5b4fc;
+    border-color: rgba(99, 102, 241, 0.28);
+}
+
+[data-theme="dark"] .paginav-badge-highlight.total {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+    color: #c7d2fe;
+    border-color: rgba(99, 102, 241, 0.4);
 }
 
 .paginav-perpage-wrap {

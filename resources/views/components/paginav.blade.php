@@ -47,12 +47,20 @@
     <div class="paginav-meta-section">
         @if($showInfo)
             <div class="paginav-info" aria-live="polite">
-                <span class="paginav-info-text">
-                    Menampilkan
-                    <strong class="paginav-count-from">{{ $from }}</strong>–<strong class="paginav-count-to">{{ $to }}</strong>
-                    dari
-                    <strong class="paginav-count-total">{{ $total }}</strong> data
-                </span>
+                <div class="paginav-info-badge">
+                    <i class="fas fa-layer-group paginav-info-icon" aria-hidden="true"></i>
+                    <span class="paginav-info-text">
+                        Menampilkan
+                        <span class="paginav-badge-highlight">
+                            <span class="paginav-count-from">{{ $from }}</span>–<span class="paginav-count-to">{{ $to }}</span>
+                        </span>
+                        dari
+                        <span class="paginav-badge-highlight total">
+                            <span class="paginav-count-total">{{ $total }}</span>
+                        </span>
+                        data
+                    </span>
+                </div>
             </div>
         @endif
 
