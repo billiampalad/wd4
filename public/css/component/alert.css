@@ -202,6 +202,44 @@ html.dark .custom-alert-highlight {
     box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
 }
 
+/* Primary / Blue Glowing Highlight */
+.custom-alert-highlight-primary,
+.custom-alert-card:has([data-alert-type="primary"]) .custom-alert-highlight {
+    color: #4f46e5;
+    background: rgba(79, 70, 229, 0.1);
+    border-color: rgba(79, 70, 229, 0.25);
+    box-shadow: 0 0 12px rgba(79, 70, 229, 0.28);
+}
+
+[data-theme="dark"] .custom-alert-highlight-primary,
+[data-theme="dark"] .custom-alert-card:has([data-alert-type="primary"]) .custom-alert-highlight,
+body.dark-mode .custom-alert-highlight-primary,
+html.dark .custom-alert-highlight-primary {
+    color: #a5b4fc;
+    background: rgba(79, 70, 229, 0.22);
+    border-color: rgba(79, 70, 229, 0.45);
+    box-shadow: 0 0 16px rgba(79, 70, 229, 0.5);
+}
+
+/* Success Glowing Highlight */
+.custom-alert-highlight-success,
+.custom-alert-card:has([data-alert-type="success"]) .custom-alert-highlight {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.28);
+}
+
+[data-theme="dark"] .custom-alert-highlight-success,
+[data-theme="dark"] .custom-alert-card:has([data-alert-type="success"]) .custom-alert-highlight,
+body.dark-mode .custom-alert-highlight-success,
+html.dark .custom-alert-highlight-success {
+    color: #6ee7b7;
+    background: rgba(16, 185, 129, 0.22);
+    border-color: rgba(16, 185, 129, 0.45);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.5);
+}
+
 /* Buttons Container */
 .custom-alert-actions {
     display: flex;

@@ -39,20 +39,11 @@
             <div class="card-header um-header">
                 <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
                     <div class="card-title"><i class="fas fa-users"></i> Daftar Pengguna</div>
-                    <x-paginav-entries 
-                        target=".um-table tbody tr.um-row"
-                        :perPage="10"
-                        :options="[5, 10, 25, 50]"
-                    />
+                    <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
                 </div>
                 <div class="um-header-actions">
-                    <x-search 
-                        id="userSearchInput"
-                        placeholder="Cari data pengguna..."
-                        target=".um-table tbody tr.um-row"
-                        emptyTarget="#userSearchEmptyRow"
-                        querySpan="#userSearchQueryText"
-                    />
+                    <x-search id="userSearchInput" placeholder="Cari data pengguna..." target=".um-table tbody tr.um-row"
+                        emptyTarget="#userSearchEmptyRow" querySpan="#userSearchQueryText" />
                     <a href="{{ route('users.create') }}" class="um-btn-add">
                         <i class="fas fa-plus"></i> Tambah Pengguna
                     </a>
@@ -177,22 +168,24 @@
                                                 @method('PATCH')
                                                 @if($user->isActive())
                                                     <button type="button" class="btn-action toggle-deactivate um-btn-deactivate"
-                                                        title="Nonaktifkan Akun" onclick="CustomAlert.showDeactivate({
-                                                                            accountName: '{{ addslashes($user->name) }}',
-                                                                            formId: 'form-toggle-status-{{ $user->id }}'
-                                                                        })">
+                                                        title="Nonaktifkan Akun"
+                                                        onclick="CustomAlert.showDeactivate({
+                                                                accountName: '{{ addslashes($user->name) }}',
+                                                                formId: 'form-toggle-status-{{ $user->id }}'
+                                                            })">
                                                         <i class="fas fa-user-slash"></i>
                                                     </button>
                                                 @else
                                                     <button type="button" class="btn-action toggle-activate um-btn-activate"
-                                                        title="Aktifkan Akun" onclick="CustomAlert.confirm({
-                                                                            title: 'Aktifkan Akun',
-                                                                            message: 'Apakah Anda yakin ingin mengaktifkan kembali akun {{ addslashes($user->name) }}? Pengguna akan dapat login kembali.',
-                                                                            type: 'primary',
-                                                                            confirmText: 'Aktifkan',
-                                                                            confirmColor: 'primary',
-                                                                            onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
-                                                                        })">
+                                                        title="Aktifkan Akun"
+                                                        onclick="CustomAlert.confirm({
+                                                                title: 'Aktifkan Akun',
+                                                                message: 'Jika akun <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span> diaktifkan, maka pengguna akan dapat login kembali.',
+                                                                type: 'primary',
+                                                                confirmText: 'Aktifkan',
+                                                                confirmColor: 'primary',
+                                                                onConfirm: () => document.getElementById('form-toggle-status-{{ $user->id }}').submit()
+                                                            })">
                                                         <i class="fas fa-user-check"></i>
                                                     </button>
                                                 @endif
@@ -203,13 +196,13 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
-                                                            title: 'Hapus Pengguna',
-                                                            message: 'Apakah Anda yakin ingin menghapus pengguna {{ addslashes($user->name) }}? Tindakan ini tidak dapat dibatalkan.',
-                                                            type: 'danger',
-                                                            confirmText: 'Hapus',
-                                                            confirmColor: 'danger',
-                                                            onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
-                                                        })">
+                                                                    title: 'Hapus Pengguna',
+                                                                    message: 'Apakah Anda yakin ingin menghapus pengguna <span class=\'custom-alert-highlight\'>{{ addslashes($user->name) }}</span>? Tindakan ini tidak dapat dibatalkan.',
+                                                                    type: 'danger',
+                                                                    confirmText: 'Hapus',
+                                                                    confirmColor: 'danger',
+                                                                    onConfirm: () => document.getElementById('form-delete-user-{{ $user->id }}').submit()
+                                                                })">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
@@ -245,14 +238,8 @@
                     </tbody>
                 </table>
             </div>
-            <x-paginav 
-                id="userTablePaginav"
-                target=".um-table tbody tr.um-row"
-                :perPage="10"
-                :showInfo="true"
-                :showPerPage="false"
-            />
+            <x-paginav id="userTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
+                :showPerPage="false" />
         </div>
     </main>
 @endsection
-
