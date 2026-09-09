@@ -107,19 +107,13 @@
                     <span class="notification-badge">3</span>
                 </button>
 
-                <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout" data-alert-target="modalLogout">
+                <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"
+                    data-alert-target="modalLogout">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
-                <x-alert 
-                    id="modalLogout"
-                    type="logout"
-                    title="Keluar dari Sistem"
+                <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
                     message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
-                    confirmText="Ya, Keluar"
-                    cancelText="Batal"
-                    action="{{ route('logout') }}"
-                    method="POST"
-                />
+                    confirmText="Ya, Keluar" cancelText="Batal" action="{{ route('logout') }}" method="POST" />
             </div>
         </div>
     </nav>
@@ -166,7 +160,7 @@
                 </div>
             </div>
 
-            <div class="menu-section">MASTER DATA</div>
+            <!-- <div class="menu-section">MASTER DATA</div> -->
             <a class="menu-item {{ request()->routeIs('mitra.*') ? 'active' : '' }}" href="{{ route('mitra.index') }}">
                 <div class="menu-icon"><i class="fas fa-handshake"></i></div>
                 <span>Mitra Kerjasama</span>
