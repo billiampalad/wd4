@@ -137,7 +137,7 @@
             <div class="role-modal-header">
                 <div class="role-modal-title-wrap">
                     <div class="role-modal-icon-badge role-modal-icon-add">
-                        <i class="fas fa-shield-circle-plus"></i>
+                        <i class="fas fa-shield-alt"></i>
                     </div>
                     <div>
                         <h3 class="role-modal-title">Tambah Role Baru</h3>
@@ -184,7 +184,7 @@
             <div class="role-modal-header">
                 <div class="role-modal-title-wrap">
                     <div class="role-modal-icon-badge role-modal-icon-edit">
-                        <i class="fas fa-pen-to-square"></i>
+                        <i class="fas fa-edit"></i>
                     </div>
                     <div>
                         <h3 class="role-modal-title">Edit Role</h3>
