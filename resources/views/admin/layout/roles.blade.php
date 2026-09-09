@@ -23,12 +23,6 @@
         </div>
     </section>
 
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
-
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="card-title"><i class="fas fa-shield-alt"></i> Daftar Role</div>
