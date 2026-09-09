@@ -35,12 +35,6 @@
         </div>
     </section>
 
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
-
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -78,10 +72,17 @@
                                 <a href="{{ route('klasifikasi.edit', $item->id) }}" class="btn-action edit um-btn-edit" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('klasifikasi.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus klasifikasi ini?')">
+                                <form id="form-delete-klasifikasi-{{ $item->id }}" action="{{ route('klasifikasi.destroy', $item->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-action delete um-btn-delete" title="Hapus">
+                                    <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
+                                        title: 'Hapus Klasifikasi',
+                                        message: 'Menghapus klasifikasi <span class=\'custom-alert-highlight\'>{{ addslashes($item->nama) }}</span> tidak dapat dikembalikan.',
+                                        type: 'danger',
+                                        confirmText: 'Hapus',
+                                        confirmColor: 'danger',
+                                        onConfirm: () => document.getElementById('form-delete-klasifikasi-{{ $item->id }}').submit()
+                                    })">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
