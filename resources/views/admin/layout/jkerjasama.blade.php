@@ -31,10 +31,17 @@
 
     <div class="card um-card">
         <div class="card-header um-header">
-            <div class="card-title"><i class="fas fa-tags"></i> Daftar Jenis Kerjasama</div>
-            <a href="{{ route('jkerjasama.create') }}" class="um-btn-add">
-                <i class="fas fa-plus"></i> Tambah Jenis
-            </a>
+            <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                <div class="card-title"><i class="fas fa-tags"></i> Daftar Jenis Kerjasama</div>
+                <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
+            </div>
+            <div class="um-header-actions">
+                <x-search id="jkerjasamaSearchInput" placeholder="Cari jenis kerjasama..." target=".um-table tbody tr.um-row"
+                    emptyTarget="#jkerjasamaSearchEmptyRow" querySpan="#jkerjasamaSearchQueryText" />
+                <a href="{{ route('jkerjasama.create') }}" class="um-btn-add">
+                    <i class="fas fa-plus"></i> Tambah Jenis
+                </a>
+            </div>
         </div>
 
         <div class="table-wrap um-table-wrap">
@@ -97,9 +104,24 @@
                             </td>
                         </tr>
                     @endforelse
+                    <tr id="jkerjasamaSearchEmptyRow" style="display: none;">
+                        <td colspan="5" class="um-empty">
+                            <div class="um-empty-state">
+                                <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                    <i class="fas fa-search-minus"></i>
+                                </div>
+                                <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                <p class="um-empty-sub">Tidak ada jenis kerjasama yang cocok dengan kata kunci "<span
+                                        id="jkerjasamaSearchQueryText"
+                                        style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        <x-paginav id="jkerjasamaTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
+            :showPerPage="false" />
     </div>
 </main>
 @endsection
