@@ -23,12 +23,6 @@
         </div>
     </section>
 
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-    @endif
-
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -116,10 +110,17 @@
                                 <a href="{{ route('mitra.edit', $mitra->id) }}" class="btn-action edit um-btn-edit" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('mitra.destroy', $mitra->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus mitra ini?')">
+                                <form id="form-delete-mitra-{{ $mitra->id }}" action="{{ route('mitra.destroy', $mitra->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-action delete um-btn-delete" title="Hapus">
+                                    <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
+                                        title: 'Hapus Mitra',
+                                        message: 'Menghapus mitra <span class=\'custom-alert-highlight\'>{{ addslashes($mitra->nama_mitra) }}</span> tidak dapat dikembalikan.',
+                                        type: 'danger',
+                                        confirmText: 'Hapus',
+                                        confirmColor: 'danger',
+                                        onConfirm: () => document.getElementById('form-delete-mitra-{{ $mitra->id }}').submit()
+                                    })">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
