@@ -25,7 +25,10 @@
 
         <div class="card um-card">
             <div class="card-header um-header">
-                <div class="card-title"><i class="fas fa-shield-alt"></i> Daftar Role</div>
+                <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                    <div class="card-title"><i class="fas fa-shield-alt"></i> Daftar Role</div>
+                    <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
+                </div>
                 <a href="{{ route('roles.create') }}" class="um-btn-add">
                     <i class="fas fa-plus"></i> Tambah Role
                 </a>
