@@ -22,11 +22,11 @@ class RoleController
     public function store(Request $request)
     {
         $request->validate([
-            'role_name' => 'required|string|max:255|unique:roles,name',
+            'role_name' => 'required|string|max:255|unique:roles,role_name',
         ]);
 
         Role::create([
-            'name' => $request->role_name,
+            'role_name' => $request->role_name,
         ]);
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil ditambahkan.');
@@ -40,11 +40,11 @@ class RoleController
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'role_name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'role_name' => 'required|string|max:255|unique:roles,role_name,' . $role->id,
         ]);
 
         $role->update([
-            'name' => $request->role_name,
+            'role_name' => $request->role_name,
         ]);
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui.');

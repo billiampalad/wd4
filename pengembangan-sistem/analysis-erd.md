@@ -122,8 +122,7 @@ erDiagram
     %% ==========================================
     roles {
         bigint id PK
-        string name
-        string display_name
+        string role_name
     }
 
     users {
@@ -194,8 +193,7 @@ Menyimpan data peranan hak akses pengguna dalam sistem (RBAC).
 | Nama Kolom | Tipe Data | Nullable | Key | Default | Keterangan |
 |---|---|---|---|---|---|
 | `id` | BIGINT UNSIGNED | NO | PK | Auto-Increment | Identitas unik role |
-| `name` | VARCHAR(50) | NO | UNIQUE | - | Kode role (`admin`, `pimpinan`, `humas`, `jurusan`, `prodi`, `upa`, `pusat`, `mitra`) |
-| `display_name` | VARCHAR(100) | NO | - | - | Nama tampilan role (misal: "Program Studi") |
+| `role_name` | VARCHAR(255) | NO | UNIQUE | - | Nama peranan role (`Admin`, `Pimpinan`, `Humas`, `Jurusan`, `Prodi`, `Upa`, `Pusat`, `Mitra`) |
 | `description` | TEXT | YES | - | NULL | Deskripsi wewenang role |
 | `created_at` | TIMESTAMP | YES | - | NULL | Waktu pembuatan data |
 | `updated_at` | TIMESTAMP | YES | - | NULL | Waktu perbaruan data |

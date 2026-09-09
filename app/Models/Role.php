@@ -8,11 +8,14 @@ class Role extends Model
 {
     protected $table = 'roles';
 
-    protected $fillable = ['name', 'role_name', 'display_name', 'description'];
+    protected $fillable = ['role_name', 'description'];
 
-    public function getRoleNameAttribute(): ?string
+    /**
+     * Backward-compatibility accessor if $role->name is called
+     */
+    public function getNameAttribute(): ?string
     {
-        return $this->attributes['role_name'] ?? $this->attributes['name'] ?? null;
+        return $this->attributes['role_name'] ?? null;
     }
 
     public function users()
