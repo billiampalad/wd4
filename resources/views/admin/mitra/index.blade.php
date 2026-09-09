@@ -99,11 +99,11 @@
                         <td class="um-td um-td-aksi">
                             <div class="actions um-actions">
                                 @if($mitra->users->count() == 0)
-                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; border: none; cursor: pointer; background: rgba(37, 99, 235, 0.15); color: #2563eb;">
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 @else
-                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Ulang Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; border: none; cursor: pointer; background: rgba(37, 99, 235, 0.15); color: #2563eb;">
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Ulang Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 @endif
@@ -161,11 +161,9 @@
     </div>
 
     <!-- Premium Modal Kirim Akses Login -->
-
-
-    <div id="accessModal" class="premium-modal-overlay">
+    <div id="accessModal" class="premium-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalAccessTitle">
         <div class="premium-modal-card">
-            <button type="button" class="premium-modal-close" onclick="closeAccessModal()" aria-label="Close">
+            <button type="button" class="premium-modal-close" onclick="closeAccessModal()" aria-label="Tutup Modal" title="Tutup">
                 <i class="fas fa-times"></i>
             </button>
             <form id="accessForm" method="POST" action="">
@@ -174,7 +172,7 @@
                     <div class="premium-modal-icon">
                         <i class="fas fa-paper-plane"></i>
                     </div>
-                    <h3 class="premium-modal-title">Kirim Akses Login</h3>
+                    <h3 class="premium-modal-title" id="modalAccessTitle">Kirim Akses Login</h3>
                     <p class="premium-modal-desc">
                         Tentukan alamat email untuk mengirimkan kredensial login kepada:
                         <strong id="modalMitraName"></strong>
@@ -183,13 +181,15 @@
                     <div class="premium-input-group">
                         <label for="email" class="premium-label">Alamat Email Mitra</label>
                         <div class="premium-input-wrapper">
-                            <input type="email" name="email" id="email" class="premium-input" required placeholder="contoh@mitra.com">
+                            <input type="email" name="email" id="email" class="premium-input" required placeholder="contoh@mitra.com" autocomplete="email">
                             <i class="fas fa-envelope"></i>
                         </div>
                     </div>
                 </div>
                 <div class="premium-modal-footer">
-                    <button type="button" class="premium-btn premium-btn-cancel" onclick="closeAccessModal()">Batal</button>
+                    <button type="button" class="premium-btn premium-btn-cancel" onclick="closeAccessModal()">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
                     <button type="submit" class="premium-btn premium-btn-submit">
                         <i class="fas fa-paper-plane"></i> Kirim Akses
                     </button>
