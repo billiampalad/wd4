@@ -31,10 +31,17 @@
 
     <div class="card um-card">
         <div class="card-header um-header">
-            <div class="card-title"><i class="fas fa-graduation-cap"></i> Daftar Program Studi</div>
-            <a href="{{ route('prodi.create') }}" class="um-btn-add">
-                <i class="fas fa-plus"></i> Tambah Prodi
-            </a>
+            <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                <div class="card-title"><i class="fas fa-graduation-cap"></i> Daftar Program Studi</div>
+                <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
+            </div>
+            <div class="um-header-actions">
+                <x-search id="prodiSearchInput" placeholder="Cari program studi..." target=".um-table tbody tr.um-row"
+                    emptyTarget="#prodiSearchEmptyRow" querySpan="#prodiSearchQueryText" />
+                <a href="{{ route('prodi.create') }}" class="um-btn-add">
+                    <i class="fas fa-plus"></i> Tambah Prodi
+                </a>
+            </div>
         </div>
 
         <div class="table-wrap um-table-wrap">
@@ -102,9 +109,24 @@
                             </td>
                         </tr>
                     @endforelse
+                    <tr id="prodiSearchEmptyRow" style="display: none;">
+                        <td colspan="7" class="um-empty">
+                            <div class="um-empty-state">
+                                <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                    <i class="fas fa-search-minus"></i>
+                                </div>
+                                <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                <p class="um-empty-sub">Tidak ada program studi yang cocok dengan kata kunci "<span
+                                        id="prodiSearchQueryText"
+                                        style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        <x-paginav id="prodiTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
+            :showPerPage="false" />
     </div>
 </main>
 @endsection
