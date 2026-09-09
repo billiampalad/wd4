@@ -54,6 +54,23 @@
                         <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
                 </div>
+
+                <div class="uc-form-group">
+                    <label class="uc-label" for="description">
+                        <i class="fas fa-align-left uc-label-icon"></i>
+                        Deskripsi
+                    </label>
+                    <textarea 
+                        id="description" name="description" 
+                        class="uc-input @error('description') uc-input-error @enderror"
+                        placeholder="Penjelasan wewenang atau hak akses role (opsional)"
+                        rows="3"
+                        style="resize: vertical;"
+                    >{{ old('description') }}</textarea>
+                    @error('description')
+                        <span class="uc-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                    @enderror
+                </div>
             </div>
             <div class="card-footer uc-footer">
                 <a href="{{ route('roles.index') }}" class="uc-btn-cancel">

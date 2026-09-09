@@ -42,6 +42,9 @@
                     <tr>
                         <th class="um-th um-th-num">#</th>
                         <th class="um-th">Nama Role</th>
+                        <th class="um-th">Deskripsi</th>
+                        <th class="um-th">Dibuat</th>
+                        <th class="um-th">Diperbarui</th>
                         <th class="um-th um-th-aksi">Aksi</th>
                     </tr>
                 </thead>
@@ -53,6 +56,21 @@
                         </td>
                         <td class="um-td">
                             <span class="um-name">{{ $role->role_name ?? '-' }}</span>
+                        </td>
+                        <td class="um-td">
+                            <span class="um-meta">{{ $role->description ?? '-' }}</span>
+                        </td>
+                        <td class="um-td">
+                            <div class="um-date">
+                                <i class="fas fa-calendar-plus um-date-icon"></i>
+                                {{ $role->created_at?->format('d-m-Y H:i') ?? '-' }}
+                            </div>
+                        </td>
+                        <td class="um-td">
+                            <div class="um-date">
+                                <i class="fas fa-calendar-check um-date-icon"></i>
+                                {{ $role->updated_at?->format('d-m-Y H:i') ?? '-' }}
+                            </div>
                         </td>
                         <td class="um-td um-td-aksi">
                             <div class="actions um-actions">
@@ -71,7 +89,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="um-empty">
+                        <td colspan="6" class="um-empty">
                             <div class="um-empty-state">
                                 <div class="um-empty-icon">
                                     <i class="fas fa-shield-alt"></i>

@@ -58,6 +58,23 @@
                         <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                     @enderror
                 </div>
+
+                <div class="ue-form-group">
+                    <label class="ue-label" for="description">
+                        <i class="fas fa-align-left ue-label-icon"></i>
+                        Deskripsi
+                    </label>
+                    <textarea 
+                        id="description" name="description" 
+                        class="ue-input @error('description') ue-input-error @enderror"
+                        placeholder="Penjelasan wewenang atau hak akses role (opsional)"
+                        rows="3"
+                        style="resize: vertical;"
+                    >{{ old('description', $role->description) }}</textarea>
+                    @error('description')
+                        <span class="ue-error-msg"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                    @enderror
+                </div>
             </div>
             <div class="card-footer ue-footer">
                 <a href="{{ route('roles.index') }}" class="ue-btn-cancel">
