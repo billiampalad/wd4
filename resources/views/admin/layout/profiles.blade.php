@@ -25,7 +25,14 @@
 
     <div class="card um-card">
         <div class="card-header um-header">
-            <div class="card-title"><i class="fas fa-id-card"></i> Daftar Profil Pengguna</div>
+            <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                <div class="card-title"><i class="fas fa-id-card"></i> Daftar Profil Pengguna</div>
+                <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
+            </div>
+            <div class="um-header-actions">
+                <x-search id="profileSearchInput" placeholder="Cari data profil..." target=".um-table tbody tr.um-row"
+                    emptyTarget="#profileSearchEmptyRow" querySpan="#profileSearchQueryText" />
+            </div>
         </div>
         <div class="table-wrap um-table-wrap">
             <table class="um-table">
@@ -81,9 +88,24 @@
                         </td>
                     </tr>
                     @endforelse
+                    <tr id="profileSearchEmptyRow" style="display: none;">
+                        <td colspan="7" class="um-empty">
+                            <div class="um-empty-state">
+                                <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                    <i class="fas fa-search-minus"></i>
+                                </div>
+                                <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                <p class="um-empty-sub">Tidak ada profil yang cocok dengan kata kunci "<span
+                                        id="profileSearchQueryText"
+                                        style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        <x-paginav id="profileTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
+            :showPerPage="false" />
     </div>
 </main>
 @endsection
