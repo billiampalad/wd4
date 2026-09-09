@@ -106,6 +106,8 @@
                     </tbody>
                 </table>
             </div>
+            <x-paginav id="roleTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
+                :showPerPage="false" />
         </div>
     </main>
 @endsection
