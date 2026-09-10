@@ -23,12 +23,6 @@
         </div>
     </section>
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -81,10 +75,17 @@
                                     <a href="{{ route('upelaksana.edit', $upelaksana->id) }}" class="btn-action edit um-btn-edit" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('upelaksana.destroy', $upelaksana->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus unit pelaksana ini?')">
+                                    <form id="form-delete-upelaksana-{{ $upelaksana->id }}" action="{{ route('upelaksana.destroy', $upelaksana->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-action delete um-btn-delete" title="Hapus">
+                                        <button type="button" class="btn-action delete um-btn-delete" title="Hapus" onclick="CustomAlert.confirm({
+                                            title: 'Hapus Unit Humas',
+                                            message: 'Menghapus unit pelaksana humas <span class=\'custom-alert-highlight\'>{{ addslashes($upelaksana->nama_unit_pelaksana) }}</span> tidak dapat dikembalikan.',
+                                            type: 'danger',
+                                            confirmText: 'Hapus',
+                                            confirmColor: 'danger',
+                                            onConfirm: () => document.getElementById('form-delete-upelaksana-{{ $upelaksana->id }}').submit()
+                                        })">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
