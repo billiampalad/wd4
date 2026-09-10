@@ -19,45 +19,77 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <link rel="stylesheet" href="{{ asset('css/auth/user.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}" data-turbo-track="reload">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="turbo-cache-control" content="no-preview">
 </head>
 
 <body
     class="{{ request()->routeIs('pimpinan.dashboard') ? 'pimpinan-dashboard-page' : '' }} {{ request()->routeIs('pimpinan.monitoring') ? 'pimpinan-monitoring-page' : '' }} {{ request()->routeIs('pimpinan.monitoring.detail') || (isset($view) && $view === 'detail_monitoring') ? 'pimpinan-detail-monitoring-page' : '' }}">
     @if(session('success'))
         <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 3000
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.success(@json(session('success')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 
     @if(session('error'))
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: "{{ session('error') }}",
-                showConfirmButton: true
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json(session('error')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 
     @if($errors->any())
         <script>
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal!',
-                text: "{{ $errors->first() }}",
-                showConfirmButton: true
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json($errors->first()));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
     @php
@@ -233,12 +265,16 @@
                     </div>
                 </div>
 
-                <form id="logout-form" method="POST" action="/logout" style="display: inline;">
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
                     @csrf
-                    <button type="submit" class="icon-btn danger" id="logoutBtn" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
                 </form>
+                <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"
+                    data-alert-target="modalLogout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
+                    message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
+                    confirmText="Ya, Keluar" cancelText="Batal" action="{{ route('logout') }}" method="POST" />
             </div>
         </div>
     </nav>
