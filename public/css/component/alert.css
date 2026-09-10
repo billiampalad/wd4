@@ -386,7 +386,7 @@ html.dark .custom-alert-highlight-success {
 
 .custom-toast-container {
     position: fixed;
-    top: 24px;
+    top: calc(var(--nav-h, 0px) + 20px);
     right: 24px;
     z-index: 999999;
     display: flex;

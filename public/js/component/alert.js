@@ -340,10 +340,15 @@
             return this.toast({ type: 'danger', title: title, message: message });
         },
 
+        _initialized: false,
+
         /**
          * Initialize event listeners for static components
          */
         init: function () {
+            if (this._initialized) return;
+            this._initialized = true;
+
             // Click outside or cancel button
             document.addEventListener('click', (e) => {
                 // Trigger button with data-alert-target

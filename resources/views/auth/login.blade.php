@@ -26,25 +26,64 @@
 
     @if(session('success'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                CustomAlert.success(@json(session('success')), 'Berhasil');
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.success(@json(session('success')), 'Berhasil');
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 
     @if(session('status'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                CustomAlert.info(@json(session('status')), 'Informasi');
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.info(@json(session('status')), 'Informasi');
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 
     @if(session('error'))
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                CustomAlert.error(@json(session('error')), 'Gagal');
-            });
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json(session('error')), 'Gagal');
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
         </script>
     @endif
 

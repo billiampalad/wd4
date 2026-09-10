@@ -272,9 +272,6 @@
                     data-alert-target="modalLogout">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
-                <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
-                    message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
-                    confirmText="Ya, Keluar" cancelText="Batal" action="{{ route('logout') }}" method="POST" />
             </div>
         </div>
     </nav>
@@ -343,6 +340,10 @@
 
         <div id="sidebarOverlay"></div>
     </div>
+
+    <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
+        message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
+        confirmText="Ya, Keluar" cancelText="Batal" action="{{ route('logout') }}" method="POST" />
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
