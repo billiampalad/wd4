@@ -81,56 +81,19 @@ function initDashboard() {
             const form = logoutBtn.closest('form');
             if (!form) return;
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Apakah anda ingin keluar?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#7c3aed',
-                    cancelButtonColor: '#ef4444',
-                    confirmButtonText: 'Ya, Keluar!',
-                    cancelButtonText: 'Batal',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
+                    title: 'Konfirmasi Keluar',
+                    message: 'Apakah Anda yakin ingin keluar dari sistem?',
+                    type: 'danger',
+                    confirmText: 'Keluar',
+                    confirmColor: 'danger',
+                    onConfirm: () => form.submit()
                 });
-            } else {
-                if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
-                    form.submit();
-                }
+            } else if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
+                form.submit();
             }
         };
-    }
-
-    /* ─ Global Delete Confirm with SweetAlert ─ */
-    if (typeof Swal !== 'undefined') {
-        document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
-            const originalOnSubmit = form.getAttribute('onsubmit');
-            if (originalOnSubmit && originalOnSubmit.includes('confirm')) {
-                const match = originalOnSubmit.match(/confirm\(['"](.+)['"]\)/);
-                const message = match ? match[1] : 'Yakin ingin melanjutkan?';
-
-                form.removeAttribute('onsubmit');
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    Swal.fire({
-                        title: 'Konfirmasi',
-                        text: message,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#7c3aed',
-                        cancelButtonColor: '#ef4444',
-                        confirmButtonText: 'Ya, Lanjutkan!',
-                        cancelButtonText: 'Batal',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            }
-        });
     }
 
     /* Live preview (untuk halaman create/edit user) */
@@ -154,22 +117,76 @@ function initDashboard() {
     initUserDetail();
 }
 
-// Global functions for modals and preview
-function openModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.add('open');
+/**
+ * ─── Universal Admin Modal Helper ───
+ */
+const AdminModal = {
+    open(modalId, options = {}) {
+        const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+        if (!modal) return;
+
+        if (options.resetForm) {
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+        }
+
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+
+        setTimeout(() => {
+            modal.classList.add('active');
+            // Auto focus first input / textarea / select
+            if (options.autoFocus !== false) {
+                const focusEl = modal.querySelector('input:not([type="hidden"]), textarea, select');
+                if (focusEl) focusEl.focus();
+            }
+        }, 10);
+    },
+
+    close(modalId) {
+        const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+        if (!modal) return;
+
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 250);
+    },
+
+    initGlobalListeners() {
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModals = document.querySelectorAll('.adm-modal-overlay.active, .role-modal-overlay.active, .jkerjasama-modal-overlay.active, .premium-modal-overlay.active');
+                activeModals.forEach(modal => AdminModal.close(modal));
+            }
+        });
+
+        // Close on overlay backdrop click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('adm-modal-overlay') || 
+                e.target.classList.contains('role-modal-overlay') || 
+                e.target.classList.contains('jkerjasama-modal-overlay')) {
+                AdminModal.close(e.target);
+            }
+        });
     }
+};
+
+// Global backward-compatible aliases
+function openModal(id, options) {
+    AdminModal.open(id, options);
 }
 
 function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-    }
+    AdminModal.close(id);
 }
+
+// Initialize global modal listeners immediately
+AdminModal.initGlobalListeners();
 
 function togglePass(btnOrId) {
     // Jika argumen adalah element (untuk halaman list user)
