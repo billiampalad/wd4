@@ -18,30 +18,84 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/auth/user.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_edit.css') }}" data-turbo-track="reload">
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="turbo-cache-control" content="no-preview">
 </head>
 
 <body
     class="{{ request()->routeIs('*.analitik.status-kerjasama') ? 'status-kerjasama-page' : '' }} {{ request()->routeIs('*.analitik.klasifikasi-mitra') ? 'klasifikasi-mitra-page' : '' }} {{ request()->routeIs('*.analitik.geo-mitra') ? 'geo-mitra-page' : '' }} {{ request()->routeIs('*.institusi') ? 'institusi-page' : '' }} {{ request()->routeIs('*.evaluasi') ? 'evaluasi-kinerja-page' : '' }} {{ request()->routeIs('*.referensi.bentuk-kegiatan') ? 'bentuk-kegiatan-page' : '' }} {{ request()->routeIs('*.laporan') ? 'laporan-page' : '' }}">
-    {{-- SweetAlert flash messages (Turbo-compatible: fires once, then self-removes) --}}
-    @if (session('success'))
-        <div id="swal-flash-success" data-message="{{ session('success') }}" style="display:none;"></div>
+    @if(session('success'))
+        <script>
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.success(@json(session('success')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
+        </script>
     @endif
-    @if (session('error'))
-        <div id="swal-flash-error" data-message="{{ session('error') }}" style="display:none;"></div>
+
+    @if(session('error'))
+        <script>
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json(session('error')));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
+        </script>
     @endif
-    @if ($errors->any())
-        <div id="swal-flash-validation" data-message="{{ implode(' ', $errors->all()) }}" style="display:none;"></div>
+
+    @if($errors->any())
+        <script>
+            (function () {
+                var shown = false;
+                function showToast() {
+                    if (shown) return;
+                    shown = true;
+                    if (window.CustomAlert) {
+                        CustomAlert.error(@json($errors->first()));
+                    }
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                } else {
+                    showToast();
+                }
+                document.addEventListener('turbo:load', showToast, { once: true });
+            })();
+        </script>
     @endif
     @php
         $unitExpiryNotifications = collect();
         $notificationUser = auth()->user();
-
         if ($notificationUser) {
             $notificationUser->loadMissing('profile.pusat');
             $notificationProfile = $notificationUser->profile;
@@ -183,12 +237,13 @@
                     </div>
                 </div>
 
-                <form id="logout-form" method="POST" action="/logout" style="display: inline;">
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" data-turbo="false" style="display: none;">
                     @csrf
-                    <button type="submit" class="icon-btn danger" id="logoutBtn" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
                 </form>
+                <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"
+                    data-alert-target="modalLogout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -396,6 +451,11 @@
 
         <div id="sidebarOverlay"></div>
     </div>
+
+    {{-- Alert Modal Logout --}}
+    <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
+        message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?" confirmText="Ya, Keluar"
+        cancelText="Batal" action="{{ route('logout') }}" method="POST" />
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
