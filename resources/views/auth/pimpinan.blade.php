@@ -265,7 +265,7 @@
                     </div>
                 </div>
 
-                <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: none;">
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" data-turbo="false" style="display: none;">
                     @csrf
                 </form>
                 <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"

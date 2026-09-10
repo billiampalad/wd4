@@ -149,7 +149,7 @@
                 @endif
                 
                 @if($action)
-                    <form id="{{ $id }}-form" action="{{ $action }}" method="POST" class="custom-alert-form">
+                    <form id="{{ $id }}-form" action="{{ $action }}" method="POST" class="custom-alert-form" @if($type === 'logout') data-turbo="false" @endif>
                         @csrf
                         @if(strtoupper($method) !== 'POST')
                             @method($method)

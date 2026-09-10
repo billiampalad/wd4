@@ -30,9 +30,11 @@
                 var shown = false;
                 function showToast() {
                     if (shown) return;
-                    shown = true;
                     if (window.CustomAlert) {
+                        shown = true;
                         CustomAlert.success(@json(session('success')), 'Berhasil');
+                    } else {
+                        setTimeout(showToast, 50);
                     }
                 }
                 if (document.readyState === 'loading') {
@@ -51,9 +53,11 @@
                 var shown = false;
                 function showToast() {
                     if (shown) return;
-                    shown = true;
                     if (window.CustomAlert) {
+                        shown = true;
                         CustomAlert.info(@json(session('status')), 'Informasi');
+                    } else {
+                        setTimeout(showToast, 50);
                     }
                 }
                 if (document.readyState === 'loading') {
@@ -72,9 +76,11 @@
                 var shown = false;
                 function showToast() {
                     if (shown) return;
-                    shown = true;
                     if (window.CustomAlert) {
+                        shown = true;
                         CustomAlert.error(@json(session('error')), 'Gagal');
+                    } else {
+                        setTimeout(showToast, 50);
                     }
                 }
                 if (document.readyState === 'loading') {
