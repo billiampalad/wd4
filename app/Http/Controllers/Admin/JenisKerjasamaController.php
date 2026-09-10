@@ -20,7 +20,7 @@ class JenisKerjasamaController extends Controller
 
     public function create()
     {
-        return view('admin.jkerjasama.create');
+        return redirect()->route('jkerjasama.index');
     }
 
     public function store(Request $request)
@@ -40,7 +40,7 @@ class JenisKerjasamaController extends Controller
 
     public function edit(JenisKerjasama $jkerjasama)
     {
-        return view('admin.jkerjasama.edit', compact('jkerjasama'));
+        return redirect()->route('jkerjasama.index');
     }
 
     public function update(Request $request, JenisKerjasama $jkerjasama)
