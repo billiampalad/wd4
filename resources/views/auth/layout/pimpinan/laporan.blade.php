@@ -370,13 +370,22 @@
     <!-- Preview Table Section -->
     <div class="card um-card">
         <div class="card-header um-header"
-            style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;">
-            <div class="card-title"
-                style="font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-eye" style="color: var(--accent);"></i>
-                <span>Preview Data</span>
-                <span id="previewCount"
-                    style="display:none; font-size: 12px; font-weight: 600; color: var(--accent); background: rgba(79,70,229,.1); padding: 3px 10px; border-radius: 20px;"></span>
+            style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; flex-wrap: wrap; gap: 14px;">
+            <div class="um-header-left" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <div class="card-title"
+                    style="font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-eye" style="color: var(--accent);"></i>
+                    <span>Preview Data</span>
+                    <span id="previewCount"
+                        style="display:none; font-size: 12px; font-weight: 600; color: var(--accent); background: rgba(79,70,229,.1); padding: 3px 10px; border-radius: 20px;"></span>
+                </div>
+            </div>
+            <div class="um-header-actions">
+                <x-paginav-entries 
+                    target="#previewTable tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
             </div>
         </div>
         <div class="card-body" style="padding: 0;">
@@ -407,6 +416,13 @@
                     </tbody>
                 </table>
             </div>
+            <x-paginav 
+                id="laporanPreviewPaginav"
+                target="#previewTable tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 </main>
@@ -449,15 +465,18 @@
 
         function showLoading() {
             previewBody.innerHTML = AppLoading.tableRow(6, 'Memuat data kerjasama...');
+            if (window.CustomPaginav) CustomPaginav.init();
         }
 
         function showEmpty() {
             previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><div class="um-empty-icon"><i class="fas fa-inbox" style="font-size:28px; opacity:0.3; color:var(--text-sub);"></i></div><p class="um-empty-title">Tidak ada data ditemukan</p><p class="um-empty-sub">Coba ubah filter untuk menampilkan data lain.</p></div></td></tr>';
             previewCount.style.display = 'none';
+            if (window.CustomPaginav) CustomPaginav.init();
         }
 
         function showError() {
             previewBody.innerHTML = '<tr><td colspan="6" class="um-empty"><div class="um-empty-state" style="padding:30px 0;"><p class="um-empty-title" style="color:#ef4444;">Gagal memuat data</p><p class="um-empty-sub">Terjadi kesalahan. Silakan coba lagi.</p></div></td></tr>';
+            if (window.CustomPaginav) CustomPaginav.init();
         }
 
         function buildRow(item, idx) {
@@ -595,8 +614,14 @@
                             console.error('Error rendering row ' + idx + ':', e);
                         }
                     });
+
                     previewBody.innerHTML = '';
                     previewBody.appendChild(fragment);
+
+                    // Re-initialize custom paginav
+                    if (window.CustomPaginav) {
+                        CustomPaginav.init();
+                    }
                 })
                 .catch(function (err) {
                     console.error(err);
