@@ -41,4 +41,14 @@ class Evaluasi extends Model
     {
         return $this->belongsTo(User::class, 'evaluator_id');
     }
+
+    public function evaluator()
+    {
+        return $this->belongsTo(User::class, 'evaluator_id');
+    }
+
+    public function getSaranAttribute()
+    {
+        return $this->rekomendasi;
+    }
 }
