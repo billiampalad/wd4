@@ -401,9 +401,9 @@
         },
         matchesRow(row) {
             return (this.search === '' || row.dataset.search.includes(this.search.toLowerCase())) &&
-                (this.filterTahun === '' || row.dataset.tahun === this.filterTahun) &&
+                (this.filterTahun === '' || String(row.dataset.tahun) === String(this.filterTahun)) &&
                 (this.filterKategori === '' || row.dataset.kategori === this.filterKategori) &&
-                (this.filterJenis === '' || row.dataset.jenis.toLowerCase().includes(this.filterJenis.toLowerCase())) &&
+                (this.filterJenis === '' || row.dataset.jenis.toLowerCase() === this.filterJenis.toLowerCase()) &&
                 (this.filterStatus === '' || row.dataset.status === this.filterStatus);
         },
         isRowVisible(row) {
@@ -485,7 +485,8 @@
                         { id: '', label: 'Semua Jenis' },
                         { id: 'mou', label: 'MoU' },
                         { id: 'moa', label: 'MoA' },
-                        { id: 'ia', label: 'IA' }
+                        { id: 'ia', label: 'IA' },
+                        { id: 'spk', label: 'SPK' }
                     ],
                     get selectedLabel() {
                         const item = this.items.find(i => i.id === filterJenis);
@@ -515,9 +516,9 @@
                     items: [
                         { id: '', label: 'Semua Status' },
                         { id: 'aktif', label: 'Aktif' },
-                        { id: 'kadarluarsa', label: 'Kadaluarsa' },
-                        { id: 'tidak aktif', label: 'Tidak Aktif' },
-                        { id: 'dalam perpanjangan', label: 'Perpanjangan' }
+                        { id: 'akan berakhir', label: 'Akan Berakhir' },
+                        { id: 'kadaluarsa', label: 'Kadaluarsa' },
+                        { id: 'diperpanjang', label: 'Diperpanjang' }
                     ],
                     get selectedLabel() {
                         const item = this.items.find(i => i.id === filterStatus);
@@ -605,8 +606,13 @@
                                 $sisaHari = $end ? (int) $today->diffInDays($end, false) : null;
                                 $isNearExpiry = $end && $sisaHari >= 0 && $end->lte($threeMonthsFromToday);
                                 $statusKerjasama = strtolower($k->status_berlaku ?? $k->status ?? '');
-                                $isExpired = in_array($statusKerjasama, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa']);
+                                if (in_array($statusKerjasama, ['kadarluarsa', 'kedaluwarsa'])) {
+                                    $statusKerjasama = 'kadaluarsa';
+                                }
+                                $isExpired = $statusKerjasama === 'kadaluarsa';
                                 $isAktif = $statusKerjasama === 'aktif';
+                                $isAkanBerakhir = $statusKerjasama === 'akan berakhir';
+                                $isDiperpanjang = $statusKerjasama === 'diperpanjang';
                                 $kategoriMitra = strtolower($k->mitra->kategori ?? '');
                                 $tahunMulai = $k->start_date ? $k->start_date->year : '';
                                 $luaran = $k->details->map(fn($d) => ($d->volume_luaran ? $d->volume_luaran . ' ' . ($d->satuan_luaran ?? '') : null))->filter()->implode(', ');
@@ -662,8 +668,12 @@
                                 <td>
                                     @if($isAktif)
                                         <span class="mn-tag mn-rag-green"><i class="fas fa-circle mn-table-status-dot"></i> Aktif</span>
+                                    @elseif($isAkanBerakhir)
+                                        <span class="mn-tag mn-rag-yellow" style="background:rgba(245,158,11,.15);color:#f59e0b"><i class="fas fa-circle mn-table-status-dot"></i> Akan Berakhir</span>
                                     @elseif($isExpired)
                                         <span class="mn-tag mn-rag-red"><i class="fas fa-circle mn-table-status-dot"></i> Kadaluarsa</span>
+                                    @elseif($isDiperpanjang)
+                                        <span class="mn-tag mn-rag-blue"><i class="fas fa-circle mn-table-status-dot"></i> Diperpanjang</span>
                                     @else
                                         <span class="mn-tag" style="background:var(--bg);color:var(--text-sub)"><i class="fas fa-circle mn-table-status-dot"></i> {{ ucwords($statusKerjasama ?: 'N/A') }}</span>
                                     @endif
@@ -677,6 +687,14 @@
                                 <td colspan="9" style="text-align:center;padding:60px 20px;color:var(--text-sub)"><i class="fas fa-folder-open" style="font-size:32px;margin-bottom:12px;display:block;opacity:.3"></i>Belum ada data kerjasama.</td>
                             </tr>
                         @endforelse
+                        @if($kerjasamaList->isNotEmpty())
+                            <tr x-show="totalFiltered === 0" x-cloak>
+                                <td colspan="9" style="text-align:center;padding:50px 20px;color:var(--text-sub)">
+                                    <i class="fas fa-filter-circle-xmark" style="font-size:28px;margin-bottom:10px;display:block;opacity:.3"></i>
+                                    Tidak ada data kerjasama yang sesuai dengan filter atau pencarian.
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
