@@ -311,6 +311,7 @@
             if (input) {
                 input.value = '';
                 wrapper.classList.remove('has-value');
+                input.dispatchEvent(new Event('input', { bubbles: true }));
             }
 
             if (clearBtn) {

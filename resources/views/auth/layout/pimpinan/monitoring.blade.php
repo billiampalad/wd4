@@ -440,10 +440,12 @@
 
             {{-- ═══ FILTER TOOLBAR ═══ --}}
             <div class="mn-filter-toolbar">
-                <div class="mn-search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" class="mn-search-input" x-model="search" placeholder="Cari nama mitra, judul, dokumen/PKS, status...">
-                </div>
+                <x-search 
+                    id="monitoringSearchInput"
+                    placeholder="Cari nama mitra, judul, dokumen/PKS, status..."
+                    model="search"
+                    style="flex: 1; min-width: 240px;"
+                />
 
                 {{-- 1. Filter Periode / Tahun --}}
                 <div class="mn-filter-item" x-data="{

@@ -6,6 +6,7 @@
     'size' => 'md', // sm, md, lg
     'variant' => 'default', // default, filled, glass, pill, outline, table
     'width' => '200px', // default width 200px
+    'model' => null, // Alpine.js x-model binding name
     'target' => null, // CSS selector untuk live filter (misal: '.um-table tbody tr')
     'emptyTarget' => null, // Selector / ID pesan data kosong (misal: '#userSearchEmptyRow')
     'querySpan' => null, // Selector / ID elemen teks kata kunci (misal: '#userSearchQueryText')
@@ -50,7 +51,7 @@
         'has-value' => !empty($value),
         'has-button' => !empty($button),
     ]) }}
-    style="width: {{ $width }};"
+    @if($width && !$attributes->has('style')) style="width: {{ $width }};" @endif
     data-custom-search
     data-search-id="{{ $id }}"
     @if($target) data-search-target="{{ $target }}" @endif
@@ -75,6 +76,7 @@
             class="custom-search-input"
             placeholder="{{ $placeholder }}"
             autocomplete="{{ $autocomplete }}"
+            @if($model) x-model="{{ $model }}" @endif
             @if($autofocus) autofocus @endif
             @if($disabled) disabled @endif
             aria-label="{{ $placeholder }}"
