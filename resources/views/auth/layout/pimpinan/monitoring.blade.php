@@ -576,35 +576,8 @@
                 </button>
             </div>
 
-            <div class="mn-table-controls">
-                <div class="mn-table-entries">
-                    <span>Tampilkan</span>
-                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false">
-                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
-                            :class="{ 'is-open': perPageOpen }" aria-haspopup="listbox"
-                            :aria-expanded="perPageOpen.toString()">
-                            <span x-text="perPage">10</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="mn-entry-menu" x-show="perPageOpen" x-transition.origin.top x-cloak role="listbox">
-                            <template x-for="option in perPageOptions" :key="option">
-                                <button type="button" class="mn-entry-option"
-                                    :class="{ 'is-selected': option === perPage }"
-                                    @click="setPerPage(option)" role="option"
-                                    :aria-selected="(option === perPage).toString()">
-                                    <span x-text="option"></span>
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-                    <span>data</span>
-                </div>
-
-                <div class="mn-table-showing">
-                    Menampilkan <strong x-text="startEntry">0</strong> sampai <strong x-text="endEntry">0</strong> dari
-                    <strong x-text="totalFiltered">{{ $kerjasamaList->count() }}</strong> data
-                </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <x-paginav-entries id="monitoringEntriesTop" :perPage="10" :options="[5, 10, 25, 50]" onChange="setPerPage(val)" />
             </div>
 
             <div class="mn-table-wrap">
@@ -708,28 +681,7 @@
                 </table>
             </div>
 
-            <div class="mn-table-pagination" x-show="totalFiltered > 0" x-cloak>
-                <div class="mn-table-page-info">
-                    Halaman <strong x-text="currentPage">1</strong> dari <strong x-text="totalPages">1</strong>
-                </div>
-                <div class="mn-table-page-buttons" aria-label="Pindah halaman tabel monitoring">
-                    <button type="button" class="mn-page-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
-                        <i class="fas fa-angles-left"></i>
-                    </button>
-                    <button type="button" class="mn-page-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <template x-for="page in pageNumbers()" :key="page">
-                        <button type="button" class="mn-page-btn" :class="{ 'is-active': page === currentPage }" @click="goToPage(page)" x-text="page"></button>
-                    </template>
-                    <button type="button" class="mn-page-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button type="button" class="mn-page-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
-                        <i class="fas fa-angles-right"></i>
-                    </button>
-                </div>
-            </div>
+            <x-paginav id="monitoringTablePaginav" :alpine="true" :perPage="10" :showInfo="true" :showPerPage="false" />
         </div>
     </div>
 

@@ -11,6 +11,7 @@
     'size' => 'md',             // sm, md, lg
     'variant' => 'default',     // default, glass, rounded, minimal
     'emptyNotice' => 'Tidak ada data untuk ditampilkan',
+    'alpine' => false,          // Mode integrasi Alpine.js (true jika dikontrol oleh Alpine state parent)
 ])
 
 @php
@@ -33,7 +34,10 @@
     'paginav-' . $variant,
     'is-serverside' => $isServerSide,
     'is-clientside' => !$isServerSide,
-]) }} id="{{ $id }}" data-custom-paginav
+    'is-alpine' => $alpine,
+]) }} id="{{ $id }}"
+    @if(!$alpine) data-custom-paginav @endif
+    @if($alpine) x-show="totalFiltered > 0" x-cloak @endif
     @if($target) data-paginav-target="{{ $target }}" @endif 
     data-paginav-per-page="{{ $currentPerPage }}"
     data-paginav-current-page="{{ $currentPage }}" 
@@ -52,11 +56,19 @@
                     <span class="paginav-info-text">
                         Menampilkan
                         <span class="paginav-badge-highlight">
-                            <span class="paginav-count-from">{{ $from }}</span>–<span class="paginav-count-to">{{ $to }}</span>
+                            @if($alpine)
+                                <span class="paginav-count-from" x-text="startEntry">{{ $from }}</span>–<span class="paginav-count-to" x-text="endEntry">{{ $to }}</span>
+                            @else
+                                <span class="paginav-count-from">{{ $from }}</span>–<span class="paginav-count-to">{{ $to }}</span>
+                            @endif
                         </span>
                         dari
                         <span class="paginav-badge-highlight total">
-                            <span class="paginav-count-total">{{ $total }}</span>
+                            @if($alpine)
+                                <span class="paginav-count-total" x-text="totalFiltered">{{ $total }}</span>
+                            @else
+                                <span class="paginav-count-total">{{ $total }}</span>
+                            @endif
                         </span>
                         data
                     </span>
@@ -130,20 +142,37 @@
     <div class="paginav-controls-section">
         {{-- Tombol First / Awal --}}
         <button type="button" class="paginav-btn paginav-btn-first" title="Halaman Pertama" aria-label="Halaman Pertama"
-            data-page-action="first" {{ $currentPage <= 1 ? 'disabled' : '' }}>
+            data-page-action="first" 
+            @if($alpine)
+                @click="goToPage(1)" :disabled="currentPage === 1"
+            @else
+                {{ $currentPage <= 1 ? 'disabled' : '' }}
+            @endif
+        >
             <i class="fas fa-angles-left" aria-hidden="true"></i>
         </button>
 
         {{-- Tombol Previous / Sebelumnya --}}
         <button type="button" class="paginav-btn paginav-btn-prev" title="Halaman Sebelumnya"
-            aria-label="Halaman Sebelumnya" data-page-action="prev" {{ $currentPage <= 1 ? 'disabled' : '' }}>
+            aria-label="Halaman Sebelumnya" data-page-action="prev" 
+            @if($alpine)
+                @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+            @else
+                {{ $currentPage <= 1 ? 'disabled' : '' }}
+            @endif
+        >
             <i class="fas fa-chevron-left" aria-hidden="true"></i>
             <span class="paginav-btn-label">Prev</span>
         </button>
 
         {{-- Container Nomor Halaman Dinamis (Smart Truncation Ellipsis) --}}
         <div class="paginav-pages-container" role="list">
-            @if($isServerSide)
+            @if($alpine)
+                <template x-for="page in pageNumbers()" :key="page">
+                    <button type="button" class="paginav-page-item" :class="{ 'is-active': page === currentPage }"
+                        @click="goToPage(page)" x-text="page"></button>
+                </template>
+            @elseif($isServerSide)
                 {{-- Server-side render link Laravel --}}
                 @for($p = 1; $p <= $lastPage; $p++)
                     @if($p == 1 || $p == $lastPage || ($p >= $currentPage - 1 && $p <= $currentPage + 1))
@@ -163,14 +192,26 @@
 
         {{-- Tombol Next / Selanjutnya --}}
         <button type="button" class="paginav-btn paginav-btn-next" title="Halaman Selanjutnya"
-            aria-label="Halaman Selanjutnya" data-page-action="next" {{ $currentPage >= $lastPage ? 'disabled' : '' }}>
+            aria-label="Halaman Selanjutnya" data-page-action="next" 
+            @if($alpine)
+                @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages"
+            @else
+                {{ $currentPage >= $lastPage ? 'disabled' : '' }}
+            @endif
+        >
             <span class="paginav-btn-label">Next</span>
             <i class="fas fa-chevron-right" aria-hidden="true"></i>
         </button>
 
         {{-- Tombol Last / Terakhir --}}
         <button type="button" class="paginav-btn paginav-btn-last" title="Halaman Terakhir"
-            aria-label="Halaman Terakhir" data-page-action="last" {{ $currentPage >= $lastPage ? 'disabled' : '' }}>
+            aria-label="Halaman Terakhir" data-page-action="last" 
+            @if($alpine)
+                @click="goToPage(totalPages)" :disabled="currentPage === totalPages"
+            @else
+                {{ $currentPage >= $lastPage ? 'disabled' : '' }}
+            @endif
+        >
             <i class="fas fa-angles-right" aria-hidden="true"></i>
         </button>
 

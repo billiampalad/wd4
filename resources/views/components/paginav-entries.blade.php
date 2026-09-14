@@ -7,6 +7,8 @@
     'labelAfter' => 'data',
     'size' => 'md',             // sm, md, lg
     'direction' => 'down',      // down (buka ke bawah jika di header), up (buka ke atas)
+    'model' => null,            // Alpine property name to sync (e.g. 'perPage')
+    'onChange' => null,         // Alpine statement to execute on change (e.g. 'setPerPage(val)')
 ])
 
 @php
@@ -32,6 +34,11 @@
                 selectEl.value = val;
                 selectEl.dispatchEvent(new Event('change', { bubbles: true }));
             }
+            @if($onChange)
+                {{ $onChange }};
+            @elseif($model)
+                {{ $model }} = val;
+            @endif
         }
     }"
 >
