@@ -78,12 +78,32 @@
                         detail: { query: input.value, searchId: wrapper.getAttribute('data-search-id') },
                     })
                 );
+
+                // Global events for dashboard synchronization
+                window.dispatchEvent(
+                    new CustomEvent('unit-dashboard-global-search', {
+                        detail: query,
+                    })
+                );
+                window.dispatchEvent(
+                    new CustomEvent('pimpinan-global-search', {
+                        detail: query,
+                    })
+                );
             };
 
             // Input Listener with Debounce
             input.addEventListener('input', () => {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(handleFilter, debounceMs);
+            });
+
+            // Keydown Listener (Escape to clear)
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.clear(wrapper);
+                    input.blur();
+                }
             });
 
             // Clear Button Click
@@ -348,6 +368,18 @@
                 new CustomEvent('search:clear', {
                     bubbles: true,
                     detail: { searchId: wrapper.getAttribute('data-search-id') },
+                })
+            );
+
+            // Global events for dashboard synchronization
+            window.dispatchEvent(
+                new CustomEvent('unit-dashboard-global-search', {
+                    detail: '',
+                })
+            );
+            window.dispatchEvent(
+                new CustomEvent('pimpinan-global-search', {
+                    detail: '',
                 })
             );
         },

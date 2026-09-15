@@ -249,58 +249,6 @@ function initDashboard() {
     initSidebarSubmenus();
     document.addEventListener('turbo:load', initSidebarSubmenus);
 
-    /* ─ Show navSearch on wider screens ─ */
-    const navSearch = document.getElementById('navSearch');
-    const searchInput = document.getElementById('navSearchInput');
-    const searchClear = document.getElementById('navSearchClear');
-
-    if (navSearch) {
-        function checkSearch() {
-            navSearch.style.display = window.innerWidth >= 1024 ? 'flex' : 'none';
-        }
-        checkSearch();
-        window.onresize = checkSearch;
-    }
-
-    if (searchInput) {
-        let searchTimeout;
-
-        function handleGlobalSearch() {
-            const q = (searchInput.value || '').trim().toLowerCase();
-
-            if (searchClear) {
-                searchClear.style.display = q ? 'flex' : 'none';
-            }
-
-            window.dispatchEvent(new CustomEvent('pimpinan-global-search', {
-                detail: q
-            }));
-            window.dispatchEvent(new CustomEvent('unit-dashboard-global-search', {
-                detail: q
-            }));
-        }
-
-        searchInput.addEventListener('input', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(handleGlobalSearch, 200);
-        });
-
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                searchInput.value = '';
-                handleGlobalSearch();
-                searchInput.blur();
-            }
-        });
-
-        if (searchClear) {
-            searchClear.onclick = () => {
-                searchInput.value = '';
-                handleGlobalSearch();
-                searchInput.focus();
-            };
-        }
-    }
 
     /* ─ Logout confirm ─ */
     const logoutBtn = document.getElementById('logoutBtn');

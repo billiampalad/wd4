@@ -759,28 +759,6 @@ tbody td {
     margin-top: 3px;
 }
 
-/* ─── SEARCH BAR ─────────────────────────────────────── */
-.search-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px 14px;
-    font-size: 13px;
-    color: var(--text-sub);
-    cursor: text;
-    transition: all var(--transition);
-}
-
-.search-bar:hover {
-    border-color: var(--accent);
-}
-
-.search-bar i {
-    font-size: 13px;
-}
 
 /* ─── SIDEBAR OVERLAY (mobile) ───────────────────────── */
 #sidebarOverlay {
