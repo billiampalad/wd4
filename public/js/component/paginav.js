@@ -223,6 +223,9 @@
             allItems.forEach(item => {
                 item.style.display = 'none';
                 item.classList.remove('paginav-row-transition');
+                if (item.nextElementSibling && item.nextElementSibling.classList.contains('dk-row-detail')) {
+                    item.nextElementSibling.style.display = 'none';
+                }
             });
 
             // Tampilkan hanya baris yang cocok pada halaman aktif
@@ -230,8 +233,14 @@
                 if (index >= startIndex && index < endIndex) {
                     item.style.display = '';
                     item.classList.add('paginav-row-transition');
+                    if (item.nextElementSibling && item.nextElementSibling.classList.contains('dk-row-detail')) {
+                        item.nextElementSibling.style.display = '';
+                    }
                 } else {
                     item.style.display = 'none';
+                    if (item.nextElementSibling && item.nextElementSibling.classList.contains('dk-row-detail')) {
+                        item.nextElementSibling.style.display = 'none';
+                    }
                 }
             });
 
