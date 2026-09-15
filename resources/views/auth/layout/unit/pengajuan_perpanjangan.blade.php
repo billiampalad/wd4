@@ -60,7 +60,7 @@
 
     {{-- Table & Management Card (Identical structure & styling to dkerjasama.blade.php) --}}
     <div class="card um-card dk-card">
-        <div class="card-header um-header dk-card-header">
+        <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
                 <span>
@@ -69,7 +69,13 @@
                 </span>
             </div>
 
-            <div class="dk-card-tools">
+            <div class="dk-card-tools" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
+
                 <form method="GET" action="{{ route('unit.pengajuan_perpanjangan') }}" id="filterFormPerpanjangan">
                     <div class="submission-filter-dropdown" x-data="{
                         open: false,
@@ -228,6 +234,13 @@
                     </tbody>
                 </table>
             </div>
+            <x-paginav 
+                id="pengajuanPerpanjanganTablePaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 </main>
