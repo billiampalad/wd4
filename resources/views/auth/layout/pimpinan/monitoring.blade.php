@@ -370,7 +370,16 @@
         perPageOptions: [5, 10, 25, 50],
         init() {
             ['search', 'filterTahun', 'filterKategori', 'filterJenis', 'filterStatus'].forEach(key => {
-                this.$watch(key, () => this.currentPage = 1);
+                this.$watch(key, () => {
+                    this.currentPage = 1;
+                    if (key === 'search' && window.CustomSearch) {
+                        this.$nextTick(() => {
+                            this.rows.forEach(row => {
+                                window.CustomSearch.highlight(row, this.search);
+                            });
+                        });
+                    }
+                });
             });
         },
         resetFilters() {

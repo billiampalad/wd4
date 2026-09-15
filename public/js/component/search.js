@@ -152,6 +152,20 @@
         },
 
         /**
+         * Public method to highlight matching text inside container
+         * @param {HTMLElement} container
+         * @param {string} query
+         */
+        highlight: function (container, query) {
+            if (!container) return;
+            this.removeHighlights(container);
+            const rawQuery = String(query || '').trim();
+            if (!rawQuery) return;
+            const regex = new RegExp(this.escapeRegExp(rawQuery), 'gi');
+            this.applyHighlightToNode(container, regex);
+        },
+
+        /**
          * Safely apply text highlight to text nodes inside element
          * @param {Node} node
          * @param {RegExp} regex

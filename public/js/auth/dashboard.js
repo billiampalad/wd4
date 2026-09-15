@@ -18,12 +18,23 @@ function initUnitDashboard() {
         let visibleCount = 0;
 
         rows.forEach(function(row) {
+            // Remove previous highlights
+            if (window.CustomSearch && typeof window.CustomSearch.removeHighlights === 'function') {
+                window.CustomSearch.removeHighlights(row);
+            }
+
             const matchesTab = activeDocFilter === 'all' || row.dataset.docType === activeDocFilter;
             const matchesSearch = !dashboardSearchQuery || row.textContent.toLowerCase().includes(dashboardSearchQuery);
             const isVisible = matchesTab && matchesSearch;
 
             row.style.display = isVisible ? '' : 'none';
-            if (isVisible) visibleCount += 1;
+            if (isVisible) {
+                visibleCount += 1;
+                // Apply highlight to matching row
+                if (dashboardSearchQuery && window.CustomSearch && typeof window.CustomSearch.highlight === 'function') {
+                    window.CustomSearch.highlight(row, dashboardSearchQuery);
+                }
+            }
         });
 
         if (noResult) {
