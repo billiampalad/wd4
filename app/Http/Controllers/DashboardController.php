@@ -74,7 +74,7 @@ class DashboardController
             ->get();
 
         $dalamPerpanjangan = Cooperation::with('mitra')
-            ->where('status_berlaku', 'Diperpanjang')
+            ->whereIn('status_berlaku', ['Dalam Perpanjangan', 'Diperpanjang'])
             ->get();
 
         $dokumenTanpaLink = Cooperation::with('mitra')

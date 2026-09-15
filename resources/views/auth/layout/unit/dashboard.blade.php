@@ -144,17 +144,14 @@
                                 'IA'  => 'Implementation Arrangement (IA)',
                                 default => $item?->jenis ?? '-',
                             };
-                            $statusRaw = strtolower(trim($item?->status ?? ''));
+                            $statusRaw = strtolower(trim($item?->status_berlaku ?? ''));
                             $statusMap = [
                                 'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
-                                'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
-                                'kadarluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
                                 'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
-                                'kedaluwarsa' => ['label' => 'Kadaluarsa', 'class' => 'is-expired', 'icon' => 'fa-triangle-exclamation'],
+                                'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
                                 'tidak aktif' => ['label' => 'Tidak Aktif', 'class' => 'is-inactive', 'icon' => 'fa-circle-xmark'],
-                                'proses' => ['label' => 'Proses', 'class' => 'is-pending', 'icon' => 'fa-spinner'],
                             ];
-                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item?->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
+                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => $item?->status_berlaku ?: '-', 'class' => '', 'icon' => 'fa-circle-question'];
                             $deadlineLabel = $item?->end_date ? $item?->end_date->format('d M Y') : '-';
                             $pjInternal = $item?->pjInternal?->nama ?? '-';
                         @endphp
