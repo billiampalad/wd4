@@ -13,6 +13,8 @@ use App\Models\Mitra;
 use App\Models\KegiatanMahasiswa;
 use App\Models\AlumniMitra;
 use App\Models\Alumni;
+use App\Models\Jurusan;
+use App\Models\JenisKerjasama;
 use App\Support\CooperationAccess;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -481,6 +483,111 @@ class DashboardController
         $laporanBelumDiunggah = $kerjasamaUnit->filter(fn ($item) => blank($item->document_link))->count();
 
         $totalNilaiKontrak = DetailKegiatan::whereIn('cooperation_id', $cooperationIds)->sum('nilai_kontrak');
+        $totalPendapatan = DetailKegiatan::sum('nilai_kontrak') ?? 0;
+
+        $mitraNasional = Mitra::nasional()->count() ?? 0;
+        $mitraInternasional = Mitra::internasional()->count() ?? 0;
+
+        $totalMoU = Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
+        $totalMoA = Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
+        $totalIA = Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
+
+        $jurusans = Jurusan::with('prodis')->get();
+
+        $jurusanCounts = DB::table('kerjasama_jurusan')
+            ->select('jurusan_id', DB::raw('count(*) as total'))
+            ->groupBy('jurusan_id')
+            ->pluck('total', 'jurusan_id')
+            ->toArray();
+
+        $prodiCounts = DB::table('kerjasama_prodi')
+            ->select('prodi_id', DB::raw('count(*) as total'))
+            ->groupBy('prodi_id')
+            ->pluck('total', 'prodi_id')
+            ->toArray();
+
+        $chartDataJurusan = [];
+        $chartDataProdi = [];
+        foreach ($jurusans as $jurusan) {
+            $jCount = $jurusanCounts[$jurusan->id] ?? 0;
+            $chartDataJurusan[] = [
+                'id' => $jurusan->id,
+                'name' => $jurusan->nama_jurusan,
+                'count' => $jCount,
+            ];
+
+            foreach ($jurusan->prodis as $prodi) {
+                $pCount = $prodiCounts[$prodi->id] ?? 0;
+                $chartDataProdi[] = [
+                    'id' => $prodi->id,
+                    'jurusan_id' => $jurusan->id,
+                    'name' => $prodi->nama_prodi,
+                    'count' => $pCount,
+                ];
+            }
+        }
+
+        $ruangLingkupKerjasama = DB::table('detail_kegiatans')
+            ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
+            ->select(
+                'jenis_kerjasamas.nama_kerjasama',
+                DB::raw('COUNT(DISTINCT detail_kegiatans.cooperation_id) as total_kerjasama')
+            )
+            ->whereNotNull('detail_kegiatans.jenis_kerjasama_id')
+            ->groupBy('jenis_kerjasamas.id', 'jenis_kerjasamas.nama_kerjasama')
+            ->having('total_kerjasama', '>', 0)
+            ->orderByDesc('total_kerjasama')
+            ->orderBy('jenis_kerjasamas.nama_kerjasama')
+            ->get();
+
+        $now = now();
+
+        $weeklyRaw = Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
+            ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
+            ->groupBy('date_label')
+            ->pluck('total', 'date_label')
+            ->toArray();
+
+        $trendWeekly = ['labels' => [], 'data' => []];
+        for ($i = 6; $i >= 0; $i--) {
+            $dateStr = $now->copy()->subDays($i)->format('Y-m-d');
+            $display = $now->copy()->subDays($i)->format('d M');
+            $trendWeekly['labels'][] = $display;
+            $trendWeekly['data'][] = $weeklyRaw[$dateStr] ?? 0;
+        }
+
+        $monthlyRaw = Cooperation::selectRaw('MONTH(created_at) as month_label, count(*) as total')
+            ->whereYear('created_at', $now->year)
+            ->groupBy('month_label')
+            ->pluck('total', 'month_label')
+            ->toArray();
+
+        $trendMonthly = ['labels' => [], 'data' => []];
+        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+        for ($i = 1; $i <= 12; $i++) {
+            $trendMonthly['labels'][] = $months[$i - 1];
+            $trendMonthly['data'][] = $monthlyRaw[$i] ?? 0;
+        }
+
+        $yearlyRaw = Cooperation::selectRaw('YEAR(created_at) as year_label, count(*) as total')
+            ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
+            ->groupBy('year_label')
+            ->pluck('total', 'year_label')
+            ->toArray();
+
+        $trendYearly = ['labels' => [], 'data' => []];
+        for ($i = 4; $i >= 0; $i--) {
+            $yr = $now->copy()->subYears($i)->year;
+            $trendYearly['labels'][] = (string) $yr;
+            $trendYearly['data'][] = $yearlyRaw[$yr] ?? 0;
+        }
+
+        $trendData = [
+            'weekly' => $trendWeekly,
+            'monthly' => $trendMonthly,
+            'yearly' => $trendYearly,
+        ];
+
         $iaDetails = DetailKegiatan::whereIn('cooperation_id', $iaIds)->get();
         $tujuanCount = $iaDetails->filter(fn ($detail) => filled($detail->tujuan))->count();
         $volumeCount = $iaDetails->filter(fn ($detail) => filled($detail->volume_luaran))->count();
@@ -510,6 +617,16 @@ class DashboardController
             'dokumenKadaluarsa',
             'laporanBelumDiunggah',
             'totalNilaiKontrak',
+            'totalPendapatan',
+            'mitraNasional',
+            'mitraInternasional',
+            'totalMoU',
+            'totalMoA',
+            'totalIA',
+            'chartDataJurusan',
+            'chartDataProdi',
+            'ruangLingkupKerjasama',
+            'trendData',
             'tujuanCount',
             'volumeCount',
             'volumeLuaranTotal',

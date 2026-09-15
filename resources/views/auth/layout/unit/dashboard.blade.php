@@ -1,115 +1,21 @@
 @php
-    $totalPendapatan = \App\Models\DetailKegiatan::sum('nilai_kontrak') ?? 0;
+    /** @var \Illuminate\Support\Collection<int, \App\Models\Cooperation>|array $kerjasamaTable */
+    /** @var \Illuminate\Support\Collection<int, \App\Models\Cooperation>|array $upcomingDeadlines */
+    /** @var \Illuminate\Support\Collection<int, object> $ruangLingkupKerjasama */
 
-    $mitraNasional = \App\Models\Mitra::nasional()->count() ?? 0;
-    $mitraInternasional = \App\Models\Mitra::internasional()->count() ?? 0;
-
-    $totalMoU = \App\Models\Cooperation::where('jenis', 'like', '%MoU%')->count() ?? 0;
-    $totalMoA = \App\Models\Cooperation::where('jenis', 'like', '%MoA%')->count() ?? 0;
-    $totalIA = \App\Models\Cooperation::where('jenis', 'like', '%IA%')->count() ?? 0;
-
-    $jurusans = \App\Models\Jurusan::with('prodis')->get();
-
-    // Count dari pivot table (kerjasama_jurusan)
-    $jurusanCounts = \Illuminate\Support\Facades\DB::table('kerjasama_jurusan')
-        ->select('jurusan_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-        ->groupBy('jurusan_id')
-        ->pluck('total', 'jurusan_id')
-        ->toArray();
-
-    // Count dari pivot table (kerjasama_prodi)
-    $prodiCounts = \Illuminate\Support\Facades\DB::table('kerjasama_prodi')
-        ->select('prodi_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-        ->groupBy('prodi_id')
-        ->pluck('total', 'prodi_id')
-        ->toArray();
-
-    $ruangLingkupKerjasama = \Illuminate\Support\Facades\DB::table('detail_kegiatans')
-        ->join('jenis_kerjasamas', 'detail_kegiatans.jenis_kerjasama_id', '=', 'jenis_kerjasamas.id')
-        ->select(
-            'jenis_kerjasamas.nama_kerjasama',
-            \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT detail_kegiatans.cooperation_id) as total_kerjasama'),
-        )
-        ->whereNotNull('detail_kegiatans.jenis_kerjasama_id')
-        ->groupBy('jenis_kerjasamas.id', 'jenis_kerjasamas.nama_kerjasama')
-        ->having('total_kerjasama', '>', 0)
-        ->orderByDesc('total_kerjasama')
-        ->orderBy('jenis_kerjasamas.nama_kerjasama')
-        ->get();
-
-    $chartDataJurusan = [];
-    $chartDataProdi = [];
-
-    foreach ($jurusans as $jurusan) {
-        $jCount = $jurusanCounts[$jurusan->id] ?? 0;
-
-        $chartDataJurusan[] = [
-            'id' => $jurusan->id,
-            'name' => $jurusan->nama_jurusan,
-            'count' => $jCount,
-        ];
-
-        foreach ($jurusan->prodis as $prodi) {
-            $pCount = $prodiCounts[$prodi->id] ?? 0;
-            $chartDataProdi[] = [
-                'id' => $prodi->id,
-                'jurusan_id' => $jurusan->id,
-                'name' => $prodi->nama_prodi,
-                'count' => $pCount,
-            ];
-        }
-    }
-
-    // --- STATISTIK PERIODE KERJASAMA (TREND CHART) ---
-    $now = now();
-
-    // 1. Mingguan (7 Hari Terakhir)
-    $weeklyRaw = \App\Models\Cooperation::selectRaw('DATE(created_at) as date_label, count(*) as total')
-        ->where('created_at', '>=', $now->copy()->subDays(6)->startOfDay())
-        ->groupBy('date_label')
-        ->pluck('total', 'date_label')
-        ->toArray();
-
-    $trendWeekly = ['labels' => [], 'data' => []];
-    for ($i = 6; $i >= 0; $i--) {
-        $dateStr = $now->copy()->subDays($i)->format('Y-m-d');
-        $display = $now->copy()->subDays($i)->format('d M');
-        $trendWeekly['labels'][] = $display;
-        $trendWeekly['data'][] = $weeklyRaw[$dateStr] ?? 0;
-    }
-
-    // 2. Bulanan (12 Bulan di Tahun Ini)
-    $monthlyRaw = \App\Models\Cooperation::selectRaw('MONTH(created_at) as month_label, count(*) as total')
-        ->whereYear('created_at', $now->year)
-        ->groupBy('month_label')
-        ->pluck('total', 'month_label')
-        ->toArray();
-
-    $trendMonthly = ['labels' => [], 'data' => []];
-    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-    for ($i = 1; $i <= 12; $i++) {
-        $trendMonthly['labels'][] = $months[$i - 1];
-        $trendMonthly['data'][] = $monthlyRaw[$i] ?? 0;
-    }
-
-    // 3. Tahunan (5 Tahun Terakhir)
-    $yearlyRaw = \App\Models\Cooperation::selectRaw('YEAR(created_at) as year_label, count(*) as total')
-        ->where('created_at', '>=', $now->copy()->subYears(4)->startOfYear())
-        ->groupBy('year_label')
-        ->pluck('total', 'year_label')
-        ->toArray();
-
-    $trendYearly = ['labels' => [], 'data' => []];
-    for ($i = 4; $i >= 0; $i--) {
-        $yr = $now->copy()->subYears($i)->year;
-        $trendYearly['labels'][] = (string) $yr;
-        $trendYearly['data'][] = $yearlyRaw[$yr] ?? 0;
-    }
-
-    $trendData = [
-        'weekly' => $trendWeekly,
-        'monthly' => $trendMonthly,
-        'yearly' => $trendYearly,
+    $totalPendapatan = $totalPendapatan ?? 0;
+    $mitraNasional = $mitraNasional ?? 0;
+    $mitraInternasional = $mitraInternasional ?? 0;
+    $totalMoU = $totalMoU ?? 0;
+    $totalMoA = $totalMoA ?? 0;
+    $totalIA = $totalIA ?? 0;
+    $chartDataJurusan = $chartDataJurusan ?? [];
+    $chartDataProdi = $chartDataProdi ?? [];
+    $ruangLingkupKerjasama = $ruangLingkupKerjasama ?? collect();
+    $trendData = $trendData ?? [
+        'weekly' => ['labels' => [], 'data' => []],
+        'monthly' => ['labels' => [], 'data' => []],
+        'yearly' => ['labels' => [], 'data' => []],
     ];
 
     $summaryCards = [
@@ -134,10 +40,9 @@
             'icon' => 'fa-globe',
             'tone' => 'indigo',
         ],
-
         [
             'label' => 'Total Pendapatan',
-            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.') . '.000',
+            'value' => 'Rp ' . number_format($totalPendapatan, 0, ',', '.'),
             'hint' => 'Dari nilai kontrak kerjasama',
             'icon' => 'fa-wallet',
             'tone' => 'emerald',
@@ -224,7 +129,8 @@
                 <tbody>
                     @forelse($kerjasamaTable ?? [] as $item)
                         @php
-                            $jenisLower = strtolower($item->jenis ?? '');
+                            /** @var \App\Models\Cooperation $item */
+                            $jenisLower = strtolower($item?->jenis ?? '');
                             $jenisShort = str_contains($jenisLower, 'mou')
                                 ? 'MoU'
                                 : (str_contains($jenisLower, 'moa')
@@ -236,9 +142,9 @@
                                 'MoU' => 'Memorandum of Understanding (MoU)',
                                 'MoA' => 'Memorandum of Agreement (MoA)',
                                 'IA'  => 'Implementation Arrangement (IA)',
-                                default => $item->jenis ?? '-',
+                                default => $item?->jenis ?? '-',
                             };
-                            $statusRaw = strtolower(trim($item->status ?? ''));
+                            $statusRaw = strtolower(trim($item?->status ?? ''));
                             $statusMap = [
                                 'aktif' => ['label' => 'Aktif', 'class' => 'is-active', 'icon' => 'fa-circle-check'],
                                 'dalam perpanjangan' => ['label' => 'Dalam Perpanjangan', 'class' => 'is-pending', 'icon' => 'fa-clock-rotate-left'],
@@ -248,23 +154,23 @@
                                 'tidak aktif' => ['label' => 'Tidak Aktif', 'class' => 'is-inactive', 'icon' => 'fa-circle-xmark'],
                                 'proses' => ['label' => 'Proses', 'class' => 'is-pending', 'icon' => 'fa-spinner'],
                             ];
-                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
-                            $deadlineLabel = $item->end_date ? $item->end_date->format('d M Y') : '-';
-                            $pjInternal = $item->pjInternal?->nama ?? '-';
+                            $statusInfo = $statusMap[$statusRaw] ?? ['label' => ucfirst($item?->status ?? '-'), 'class' => '', 'icon' => 'fa-circle-question'];
+                            $deadlineLabel = $item?->end_date ? $item?->end_date->format('d M Y') : '-';
+                            $pjInternal = $item?->pjInternal?->nama ?? '-';
                         @endphp
                         <tr data-kerjasama-row data-doc-type="{{ $jenisShort }}">
                             <td>
                                 <strong>{{ $loop->iteration }}</strong>
                             </td>
                             <td>
-                                <div class="ud-small">No. {{ $item->doc_number ?: ($item->pks_number ?: '-') }}</div>
-                                <div class="ud-doc-title">{{ $item->title ?? '-' }}</div>
+                                <div class="ud-small">No. {{ $item?->doc_number ?: ($item?->pks_number ?: '-') }}</div>
+                                <div class="ud-doc-title">{{ $item?->title ?? '-' }}</div>
                                 <span class="ud-type-badge">{{ $jenisLabel }}</span>
                             </td>
                             <td>
                                 <span class="ud-mitra">
                                     <i class="fas fa-building"></i>
-                                    {{ $item->mitra?->nama_mitra ?? '-' }}
+                                    {{ $item?->mitra?->nama_mitra ?? '-' }}
                                     <span class="ud-tooltip">PJ Internal: {{ $pjInternal }}</span>
                                 </span>
                             </td>
@@ -277,20 +183,20 @@
                             <td>
                                 <strong>{{ $deadlineLabel }}</strong>
                                 <div class="ud-small">
-                                    {{ $item->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
+                                    {{ $item?->end_date ? 'Masa berlaku dokumen' : 'Belum ada tanggal' }}</div>
                             </td>
                             <td>
                                 <div class="ud-link-editor" data-link-editor>
-                                    <input class="ud-link-input" type="text" value="{{ $item->document_link }}"
+                                    <input class="ud-link-input" type="text" value="{{ $item?->document_link }}"
                                         placeholder="Paste link Drive..." data-document-link-input>
                                     <button class="ud-save-btn" type="button" data-save-document-link
-                                        data-update-url="{{ route('unit.kerjasama.document-link.update', $item->id) }}"
+                                        data-update-url="{{ route('unit.kerjasama.document-link.update', $item?->id) }}"
                                         title="Simpan link">
                                         <i class="fas fa-floppy-disk"></i>
                                     </button>
                                 </div>
                                 <span class="ud-save-state"
-                                    data-save-state>{{ $item->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
+                                    data-save-state>{{ $item?->document_link ? 'Link tersimpan' : 'Belum ada link' }}</span>
                             </td>
                         </tr>
                     @empty
@@ -340,10 +246,10 @@
                                 @forelse($ruangLingkupKerjasama as $ruangLingkup)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $ruangLingkup->nama_kerjasama }}</td>
+                                        <td>{{ $ruangLingkup?->nama_kerjasama ?? '-' }}</td>
                                         <td>
                                             <span class="dashboard-cooperation-layout__count">
-                                                {{ number_format($ruangLingkup->total_kerjasama) }}
+                                                {{ number_format((float) ($ruangLingkup?->total_kerjasama ?? 0)) }}
                                             </span>
                                         </td>
                                     </tr>
@@ -462,20 +368,21 @@
             <div class="ud-deadlines">
                 @forelse($upcomingDeadlines ?? [] as $deadline)
                     @php
-                        $daysLeft = now()
-                            ->startOfDay()
-                            ->diffInDays($deadline->end_date->copy()->startOfDay());
+                        /** @var \App\Models\Cooperation $deadline */
+                        $daysLeft = $deadline?->end_date
+                            ? now()->startOfDay()->diffInDays($deadline->end_date->copy()->startOfDay())
+                            : 0;
                     @endphp
                     <div class="ud-deadline-item">
                         <div class="ud-daybox">{{ $daysLeft }}</div>
                         <div style="min-width:0;">
-                            <div class="ud-deadline-title">{{ $deadline->title ?? '-' }}</div>
+                            <div class="ud-deadline-title">{{ $deadline?->title ?? '-' }}</div>
                             <div class="ud-deadline-meta">
-                                {{ $deadline->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
-                                {{ $deadline->end_date?->format('d M Y') }}
+                                {{ $deadline?->mitra?->nama_mitra ?? 'Mitra belum diisi' }} - berakhir
+                                {{ $deadline?->end_date?->format('d M Y') ?? '-' }}
                             </div>
                         </div>
-                        <a class="ud-link-btn" href="{{ route('unit.kerjasama.show', $deadline->id) }}" title="Detail">
+                        <a class="ud-link-btn" href="{{ route('unit.kerjasama.show', $deadline?->id) }}" title="Detail">
                             <i class="fas fa-arrow-up-right-from-square"></i>
                         </a>
                     </div>
