@@ -4391,7 +4391,7 @@ body {
     white-space: nowrap;
 }
 
-.sasaran-indikator-grid .ad-item > span {
+.sasaran-indikator-grid .ad-item>span {
     display: block;
     max-width: 100%;
     min-width: 0;
@@ -4689,32 +4689,7 @@ body {
     padding: 0 4px;
 }
 
-/* ─── TABLE ENTRIES ─── */
-.table-entries-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-sub);
-    font-weight: 500;
-}
 
-.entries-select {
-    padding: 4px 8px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    border-radius: 6px;
-    outline: none;
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
-    transition: border-color var(--transition);
-}
-
-.entries-select:focus {
-    border-color: var(--accent);
-}
 
 /* ─── DETAIL EVALUASI MODERN UI ─── */
 .eval-card {
@@ -5539,9 +5514,7 @@ body {
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
-.dk-card .table-entries-wrap {
-    margin-left: auto;
-}
+
 
 .dk-search-note {
     display: inline-flex;
@@ -5897,10 +5870,6 @@ body {
 
     .dk-card-tools {
         flex-wrap: wrap;
-        margin-left: 0;
-    }
-
-    .dk-card .table-entries-wrap {
         margin-left: 0;
     }
 
@@ -9100,7 +9069,7 @@ body.sidebar-collapsed .dk-container {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 50;
     overflow: hidden;
 }
@@ -9118,7 +9087,7 @@ body.sidebar-collapsed .dk-container {
 }
 
 .custom-select-option.active {
-    background: rgba(79,70,229,0.1);
+    background: rgba(79, 70, 229, 0.1);
     color: var(--accent);
     font-weight: 700;
 }
@@ -9938,8 +9907,15 @@ nav {
 
 /* ── Animation ───────────────────────────────────────────────── */
 @keyframes ppModalIn {
-    from { opacity: 0; transform: translateY(16px) scale(.98); }
-    to   { opacity: 1; transform: translateY(0)   scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 /* ── Dark mode overrides ─────────────────────────────────────── */
@@ -10099,4 +10075,3 @@ nav {
         flex-wrap: wrap;
     }
 }
-

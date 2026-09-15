@@ -252,6 +252,8 @@ function initDashboard() {
     /* ─ Show navSearch on wider screens ─ */
     const navSearch = document.getElementById('navSearch');
     const searchInput = document.getElementById('navSearchInput');
+    const searchClear = document.getElementById('navSearchClear');
+
     if (navSearch) {
         function checkSearch() {
             navSearch.style.display = window.innerWidth >= 1024 ? 'flex' : 'none';
@@ -260,197 +262,12 @@ function initDashboard() {
         window.onresize = checkSearch;
     }
 
-    /* ─ Global search: filter tabel Data Kerjasama & Laporan ─ */
-    const searchClear = document.getElementById('navSearchClear');
-
-    function updatePagination(tbody) {
-        const table = tbody.closest('table');
-        if (!table || table.classList.contains('no-pagination')) return;
-
-        const pageSize = parseInt(table.getAttribute('data-page-size') || '10');
-        const currentPage = parseInt(table.getAttribute('data-current-page') || '1');
-
-        // Get all rows that are NOT the "no results" row and are NOT hidden by search
-        const allRows = Array.from(tbody.querySelectorAll('tr.um-row'));
-        const visibleRows = allRows.filter(row => row.getAttribute('data-search-hidden') !== '1');
-
-        const totalRows = visibleRows.length;
-        const totalPages = Math.ceil(totalRows / pageSize) || 1;
-
-        // Ensure current page is within bounds
-        let page = currentPage;
-        if (page > totalPages) page = totalPages;
-        if (page < 1) page = 1;
-        table.setAttribute('data-current-page', page);
-
-        // Show/hide rows based on current page
-        const start = (page - 1) * pageSize;
-        const end = start + pageSize;
-
-        visibleRows.forEach((row, index) => {
-            if (index >= start && index < end) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Update pagination controls UI
-        renderPaginationControls(table, totalRows, page, totalPages, pageSize);
-    }
-
-    function renderPaginationControls(table, totalRows, currentPage, totalPages, pageSize) {
-        const container = table.closest('.table-wrap') || table;
-        let controls = container.parentNode.querySelector('.table-pagination-controls');
-        if (!controls) {
-            controls = document.createElement('div');
-            controls.className = 'table-pagination-controls';
-            container.parentNode.insertBefore(controls, container.nextSibling);
-        }
-
-        const startIdx = totalRows === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-        const endIdx = Math.min(currentPage * pageSize, totalRows);
-
-        let paginationHtml = `
-            <div class="pagination-info">
-                Menampilkan ${startIdx} sampai ${endIdx} dari ${totalRows} data
-            </div>
-            <div class="pagination-buttons">
-                <button class="pag-btn prev" ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-        `;
-
-        // Page numbers
-        let startPage = Math.max(1, currentPage - 1);
-        let endPage = Math.min(totalPages, startPage + 2);
-        if (endPage - startPage < 2) startPage = Math.max(1, endPage - 2);
-
-        if (startPage > 1) {
-            paginationHtml += `<button class="pag-btn" data-page="1">1</button>`;
-            if (startPage > 2) paginationHtml += `<span class="pag-dots">...</span>`;
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            paginationHtml += `
-                <button class="pag-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
-            `;
-        }
-
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) paginationHtml += `<span class="pag-dots">...</span>`;
-            paginationHtml += `<button class="pag-btn" data-page="${totalPages}">${totalPages}</button>`;
-        }
-
-        paginationHtml += `
-                <button class="pag-btn next" ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        `;
-
-        controls.innerHTML = paginationHtml;
-
-        // Add event listeners to buttons
-        controls.querySelectorAll('.pag-btn:not([disabled])').forEach(btn => {
-            btn.onclick = () => {
-                const newPage = parseInt(btn.getAttribute('data-page'));
-                table.setAttribute('data-current-page', newPage);
-                updatePagination(table.querySelector('tbody'));
-            };
-        });
-    }
-
-    function initTableFeatures() {
-        const tables = document.querySelectorAll('#mainContent .um-table');
-        tables.forEach(table => {
-            if (table.classList.contains('no-pagination') || table.getAttribute('data-paginated')) return;
-
-            table.setAttribute('data-paginated', '1');
-            table.setAttribute('data-current-page', '1');
-            table.setAttribute('data-page-size', '10');
-
-            // Add "Show Entries" dropdown
-            const header = table.closest('.card')?.querySelector('.card-header');
-            if (header) {
-                const entriesWrap = document.createElement('div');
-                entriesWrap.className = 'table-entries-wrap';
-                entriesWrap.innerHTML = `
-                    <div class="custom-entries-wrap" x-data="{ 
-                            open: false, 
-                            selected: 10,
-                            options: [10, 25, 50, 100],
-                            selectOption(opt) {
-                                this.selected = opt;
-                                this.open = false;
-                                this.$el.dispatchEvent(new CustomEvent('change-entries', { detail: opt, bubbles: true }));
-                            }
-                        }">
-                        <span class="entries-label">Tampilkan</span>
-                        <div class="custom-select-container" @click.away="open = false">
-                            <button type="button" class="custom-select-button" @click="open = !open">
-                                <span x-text="selected"></span>
-                                <i class="fas fa-chevron-down custom-select-icon" :class="{'rotate': open}"></i>
-                            </button>
-                            <div class="custom-select-dropdown" x-show="open" x-transition.opacity.duration.200ms style="display: none;">
-                                <template x-for="opt in options" :key="opt">
-                                    <div class="custom-select-option" :class="{'active': selected === opt}" @click="selectOption(opt)" x-text="opt"></div>
-                                </template>
-                            </div>
-                        </div>
-                        <span class="entries-label">data</span>
-                    </div>
-                `;
-
-                // Find where to insert in header
-                const title = header.querySelector('.um-title, .card-title');
-                if (title && title.nextSibling) {
-                    header.insertBefore(entriesWrap, title.nextSibling);
-                } else {
-                    header.appendChild(entriesWrap);
-                }
-
-                entriesWrap.addEventListener('change-entries', (e) => {
-                    table.setAttribute('data-page-size', e.detail);
-                    table.setAttribute('data-current-page', '1');
-                    updatePagination(table.querySelector('tbody'));
-                });
-            }
-
-            updatePagination(table.querySelector('tbody'));
-        });
-    }
-
     if (searchInput) {
         let searchTimeout;
 
-        function highlightText(element, query) {
-            if (!query) return;
-
-            // Recursive function to highlight text nodes
-            function innerHighlight(node) {
-                if (node.nodeType === 3) { // Text node
-                    const text = node.nodeValue;
-                    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-
-                    if (text.match(regex)) {
-                        const span = document.createElement('span');
-                        span.innerHTML = text.replace(regex, '<mark class="search-highlight">$1</mark>');
-                        node.parentNode.replaceChild(span, node);
-                    }
-                } else if (node.nodeType === 1 && node.childNodes && !/(script|style)/i.test(node.tagName) && node.className !== 'search-highlight') {
-                    for (let i = 0; i < node.childNodes.length; i++) {
-                        innerHighlight(node.childNodes[i]);
-                    }
-                }
-            }
-            innerHighlight(element);
-        }
-
-        function filterTableBySearch() {
+        function handleGlobalSearch() {
             const q = (searchInput.value || '').trim().toLowerCase();
 
-            // Toggle clear button visibility
             if (searchClear) {
                 searchClear.style.display = q ? 'flex' : 'none';
             }
@@ -461,157 +278,17 @@ function initDashboard() {
             window.dispatchEvent(new CustomEvent('unit-dashboard-global-search', {
                 detail: q
             }));
-
-            // Select all relevant table bodies
-            const tables = Array.from(document.querySelectorAll('#mainContent .um-table tbody'));
-            const previewBody = document.getElementById('previewBody');
-            if (previewBody) tables.push(previewBody);
-
-            tables.forEach(tbody => {
-                if (!tbody) return;
-
-                // Reset to first page when searching
-                const table = tbody.closest('table');
-                if (table) table.setAttribute('data-current-page', '1');
-
-                const rows = tbody.querySelectorAll('tr.um-row');
-                const emptyRow = tbody.querySelector('tr.um-empty, tr[data-empty]');
-                let visibleCount = 0;
-
-                rows.forEach(row => {
-                    // Save original HTML if not already saved
-                    if (!row.hasAttribute('data-original-html')) {
-                        row.setAttribute('data-original-html', row.innerHTML);
-                    }
-
-                    // Restore original HTML before search and highlight
-                    row.innerHTML = row.getAttribute('data-original-html');
-
-                    const cells = row.querySelectorAll('td');
-                    let rowMatch = false;
-
-                    cells.forEach(cell => {
-                        const cellText = cell.textContent || '';
-                        if (!q || cellText.toLowerCase().includes(q)) {
-                            rowMatch = true;
-                        }
-                    });
-
-                    // Set temporary attribute for search visibility
-                    if (rowMatch) {
-                        row.removeAttribute('data-search-hidden');
-                        row.style.display = '';
-                        visibleCount++;
-                        if (q) {
-                            cells.forEach(cell => highlightText(cell, q));
-                        }
-                    } else {
-                        row.setAttribute('data-search-hidden', '1');
-                        row.style.display = 'none';
-                    }
-                });
-
-                // Update pagination after search
-                updatePagination(tbody);
-
-                // Tampilkan pesan "tidak ditemukan" saat search aktif dan tidak ada yang cocok
-                let noResultsRow = tbody.querySelector('tr[data-search-no-results]');
-                if (q && visibleCount === 0 && rows.length > 0) {
-                    const table = tbody.closest('table');
-                    const colCount = table ? table.querySelectorAll('thead th').length : 7;
-                    if (!noResultsRow) {
-                        noResultsRow = document.createElement('tr');
-                        noResultsRow.setAttribute('data-search-no-results', '1');
-                        noResultsRow.innerHTML = `
-                            <td colspan="${colCount}" class="um-empty" style="padding: 24px; text-align: center;">
-                                <div style="color: var(--text-sub);">
-                                    <i class="fas fa-search" style="font-size: 24px; opacity: 0.5; margin-bottom: 8px;"></i>
-                                    <p style="font-weight: 600; margin: 0;">Tidak ada hasil untuk "<span data-query></span>"</p>
-                                    <p style="font-size: 12px; margin-top: 4px;">Coba kata kunci lain</p>
-                                </div>
-                            </td>
-                        `;
-                        tbody.appendChild(noResultsRow);
-                    }
-                    const span = noResultsRow.querySelector('[data-query]');
-                    if (span) span.textContent = q;
-                    noResultsRow.style.display = '';
-                    if (emptyRow) emptyRow.style.display = 'none';
-
-                    // Hide pagination if no results
-                    const controls = table.parentNode.querySelector('.table-pagination-controls');
-                    if (controls) controls.style.display = 'none';
-                } else {
-                    if (noResultsRow) noResultsRow.style.display = 'none';
-                    if (emptyRow && !q) emptyRow.style.display = '';
-
-                    const table = tbody.closest('table');
-                    const controls = table?.parentNode.querySelector('.table-pagination-controls');
-                    if (controls) controls.style.display = '';
-                }
-            });
-
-            filterPimpinanSummaryTables(q);
-        }
-
-        function filterPimpinanSummaryTables(q) {
-            document.querySelectorAll('#mainContent .pimpinan-table tbody').forEach(tbody => {
-                const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => !row.hasAttribute('data-search-no-results'));
-                const dataRows = rows.filter(row => row.querySelectorAll('td').length > 1);
-                let visibleCount = 0;
-
-                dataRows.forEach(row => {
-                    if (!row.hasAttribute('data-original-html')) {
-                        row.setAttribute('data-original-html', row.innerHTML);
-                    }
-
-                    row.innerHTML = row.getAttribute('data-original-html');
-
-                    const rowMatch = !q || row.textContent.toLowerCase().includes(q);
-                    row.style.display = rowMatch ? '' : 'none';
-
-                    if (rowMatch) {
-                        visibleCount++;
-                        if (q) {
-                            row.querySelectorAll('td').forEach(cell => highlightText(cell, q));
-                        }
-                    }
-                });
-
-                let noResultsRow = tbody.querySelector('tr[data-search-no-results]');
-                if (q && visibleCount === 0 && dataRows.length > 0) {
-                    const table = tbody.closest('table');
-                    const colCount = table ? table.querySelectorAll('thead th').length : 1;
-
-                    if (!noResultsRow) {
-                        noResultsRow = document.createElement('tr');
-                        noResultsRow.setAttribute('data-search-no-results', '1');
-                        noResultsRow.innerHTML = `
-                            <td colspan="${colCount}" class="pimpinan-table-empty">
-                                Tidak ada hasil untuk "<span data-query></span>"
-                            </td>
-                        `;
-                        tbody.appendChild(noResultsRow);
-                    }
-
-                    const queryLabel = noResultsRow.querySelector('[data-query]');
-                    if (queryLabel) queryLabel.textContent = q;
-                    noResultsRow.style.display = '';
-                } else if (noResultsRow) {
-                    noResultsRow.style.display = 'none';
-                }
-            });
         }
 
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(filterTableBySearch, 200);
+            searchTimeout = setTimeout(handleGlobalSearch, 200);
         });
 
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
-                filterTableBySearch();
+                handleGlobalSearch();
                 searchInput.blur();
             }
         });
@@ -619,12 +296,10 @@ function initDashboard() {
         if (searchClear) {
             searchClear.onclick = () => {
                 searchInput.value = '';
-                filterTableBySearch();
+                handleGlobalSearch();
                 searchInput.focus();
             };
         }
-
-        initTableFeatures();
     }
 
     /* ─ Logout confirm ─ */
