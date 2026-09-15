@@ -44,11 +44,14 @@
         function showAll() {
             var idx = 0;
             rows.forEach(function (row) {
-                row.style.display = '';
+                row.removeAttribute('data-filtered-out');
                 idx++;
                 renumber(row, idx);
             });
             if (emptyRow) emptyRow.style.display = rows.length === 0 ? '' : 'none';
+            if (window.CustomPaginav) {
+                CustomPaginav.init();
+            }
         }
 
         function applyFilter(filter) {
@@ -56,14 +59,19 @@
 
             rows.forEach(function (row) {
                 var visible = matchFilter(row, filter);
-                row.style.display = visible ? '' : 'none';
                 if (visible) {
+                    row.removeAttribute('data-filtered-out');
                     idx++;
                     renumber(row, idx);
+                } else {
+                    row.setAttribute('data-filtered-out', 'true');
                 }
             });
 
             if (emptyRow) emptyRow.style.display = idx === 0 ? '' : 'none';
+            if (window.CustomPaginav) {
+                CustomPaginav.init();
+            }
         }
 
         function matchFilter(row, filter) {

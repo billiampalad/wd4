@@ -171,10 +171,12 @@
             if (!this.targetSelector) return [];
             const allItems = Array.from(document.querySelectorAll(this.targetSelector));
             
-            // Kecualikan baris empty-state
+            // Kecualikan baris empty-state dan baris yang difilter oleh kartu stat (data-filtered-out)
             const validItems = allItems.filter(el => {
                 return !el.classList.contains('um-search-empty') && 
                        !el.classList.contains('empty-state-row') &&
+                       !el.hasAttribute('data-empty') &&
+                       el.getAttribute('data-filtered-out') !== 'true' &&
                        el.id !== 'userSearchEmptyRow' &&
                        el.id !== 'demoEmptyRow';
             });
@@ -196,6 +198,7 @@
             const allItems = Array.from(document.querySelectorAll(this.targetSelector)).filter(el => {
                 return !el.classList.contains('um-search-empty') && 
                        !el.classList.contains('empty-state-row') &&
+                       !el.hasAttribute('data-empty') &&
                        el.id !== 'userSearchEmptyRow' &&
                        el.id !== 'demoEmptyRow';
             });
