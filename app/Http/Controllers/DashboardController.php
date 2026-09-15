@@ -472,7 +472,8 @@ class DashboardController
             ->pluck('id');
 
         $totalKerjasama = $kerjasamaUnit->count();
-        $menungguValidasi = $kerjasamaUnit->where('status_dokumen', 'Menunggu Evaluasi')->count();
+        $menungguEvaluasi = $kerjasamaUnit->where('status_dokumen', 'Menunggu Evaluasi')->count();
+        $menungguValidasi = $menungguEvaluasi;
         $dokumenKadaluarsa = $kerjasamaUnit->filter(function ($item) use ($today) {
             $status = strtolower($item->status ?? '');
             $statusExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
@@ -613,6 +614,7 @@ class DashboardController
 
         return compact(
             'totalKerjasama',
+            'menungguEvaluasi',
             'menungguValidasi',
             'dokumenKadaluarsa',
             'laporanBelumDiunggah',

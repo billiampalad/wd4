@@ -284,7 +284,6 @@ class Cooperation extends Model
     {
         return match ($this->status_dokumen) {
             'Menunggu Evaluasi' => 'tag-blue',
-            'Menunggu Validasi' => 'tag-purple',
             'Disahkan' => 'tag-green',
             'Revisi' => 'tag-red',
             default => 'tag-orange',
