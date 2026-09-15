@@ -20,8 +20,8 @@ class DkerjasamaPageTest extends TestCase
 
     public function test_unit_can_access_dkerjasama_page_and_preview_ajax()
     {
-        $roleUnit = Role::firstOrCreate(['name' => 'unit_kerja'], ['guard_name' => 'web']);
-        $userUnit = User::factory()->create(['role_id' => $roleUnit->id]);
+        $roleUnit = Role::firstOrCreate(['role_name' => 'unit_kerja']);
+        $userUnit = User::factory()->create(['role_id' => $roleUnit->id, 'is_active' => true]);
         $unitKerja = UnitKerja::firstOrCreate(['nama_unit_pelaksana' => 'Humas']);
         Profile::create(['user_id' => $userUnit->id, 'unit_kerja_id' => $unitKerja->id]);
 
@@ -53,8 +53,8 @@ class DkerjasamaPageTest extends TestCase
 
     public function test_jurusan_can_access_dkerjasama_page_and_preview_ajax()
     {
-        $roleJurusan = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
-        $userJurusan = User::factory()->create(['role_id' => $roleJurusan->id]);
+        $roleJurusan = Role::firstOrCreate(['role_name' => 'jurusan']);
+        $userJurusan = User::factory()->create(['role_id' => $roleJurusan->id, 'is_active' => true]);
         $jurusan = Jurusan::firstOrCreate(['nama_jurusan' => 'Teknik Elektro']);
         Profile::create(['user_id' => $userJurusan->id, 'jurusan_id' => $jurusan->id]);
 
@@ -87,8 +87,8 @@ class DkerjasamaPageTest extends TestCase
 
     public function test_upa_can_access_dkerjasama_page_and_preview_ajax()
     {
-        $roleUpa = Role::firstOrCreate(['name' => 'upa'], ['guard_name' => 'web']);
-        $userUpa = User::factory()->create(['role_id' => $roleUpa->id]);
+        $roleUpa = Role::firstOrCreate(['role_name' => 'upa']);
+        $userUpa = User::factory()->create(['role_id' => $roleUpa->id, 'is_active' => true]);
         $upa = Upa::firstOrCreate(['nama_upa' => 'UPA Perpustakaan']);
         Profile::create(['user_id' => $userUpa->id, 'upa_id' => $upa->id]);
 
@@ -121,8 +121,8 @@ class DkerjasamaPageTest extends TestCase
 
     public function test_pusat_can_access_dkerjasama_page_and_preview_ajax()
     {
-        $rolePusat = Role::firstOrCreate(['name' => 'pusat'], ['guard_name' => 'web']);
-        $userPusat = User::factory()->create(['role_id' => $rolePusat->id]);
+        $rolePusat = Role::firstOrCreate(['role_name' => 'pusat']);
+        $userPusat = User::factory()->create(['role_id' => $rolePusat->id, 'is_active' => true]);
         $pusat = Pusat::firstOrCreate(['nama_pusat' => 'Pusat Karir']);
         Profile::create(['user_id' => $userPusat->id, 'pusat_id' => $pusat->id]);
 

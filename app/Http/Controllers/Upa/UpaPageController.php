@@ -1377,7 +1377,24 @@ class UpaPageController extends Controller
         }
         // Filter status cocok dengan nilai ENUM DB: aktif | proses | dalam perpanjangan | kadarluarsa | tidak aktif
         if ($request->filled('status') && $request->status !== 'all') {
-            $query->where('status', $request->status);
+            $statusInput = strtolower(trim((string) $request->status));
+            $query->where(function ($statusQuery) use ($statusInput) {
+                if ($statusInput === 'aktif') {
+                    $statusQuery->whereRaw("LOWER(status_berlaku) = 'aktif'");
+                } elseif ($statusInput === 'proses') {
+                    $statusQuery->whereIn(DB::raw("LOWER(status_dokumen)"), ['draft', 'menunggu evaluasi', 'menunggu validasi', 'revisi'])
+                        ->orWhereRaw("LOWER(COALESCE(status_berlaku, '')) = 'proses'");
+                } elseif (in_array($statusInput, ['dalam perpanjangan', 'perpanjangan', 'diperpanjang'], true)) {
+                    $statusQuery->whereIn(DB::raw("LOWER(status_berlaku)"), ['dalam perpanjangan', 'diperpanjang']);
+                } elseif (in_array($statusInput, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true)) {
+                    $statusQuery->whereIn(DB::raw("LOWER(status_berlaku)"), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa', 'akan berakhir']);
+                } elseif (in_array($statusInput, ['tidak aktif', 'nonaktif'], true)) {
+                    $statusQuery->whereIn(DB::raw("LOWER(status_berlaku)"), ['tidak aktif', 'nonaktif', 'non aktif']);
+                } else {
+                    $statusQuery->whereRaw("LOWER(status_berlaku) = ?", [$statusInput])
+                        ->orWhereRaw("LOWER(status_dokumen) = ?", [$statusInput]);
+                }
+            });
         }
 
         return $query;
