@@ -109,7 +109,6 @@
         },
 
         resetFilters() {
-            this.searchQuery = '';
             this.statusFilter = 'all';
             this.mitraFilter = 'all';
             this.tahunFilter = 'all';
@@ -151,13 +150,10 @@
 
         matchesRow(r) {
             if (!r || !r.dataset) return true;
-            const q = (this.searchQuery || '').toLowerCase().trim();
-            const searchCorpus = (r.dataset.search || '').toLowerCase();
-            const matchSearch = q === '' || searchCorpus.includes(q);
             const matchStatus = this.statusFilter === 'all' || (r.dataset.status && r.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
             const matchMitra = this.mitraFilter === 'all' || (r.dataset.mitra && r.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
             const matchTahun = this.tahunFilter === 'all' || (r.dataset.tahun && r.dataset.tahun.toLowerCase() === this.tahunFilter.toLowerCase());
-            return matchSearch && matchStatus && matchMitra && matchTahun;
+            return matchStatus && matchMitra && matchTahun;
         },
 
         isRowVisible(el) {
@@ -200,13 +196,13 @@
                     <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
                     <div class="rfc-text">
                         <h3>Filter Data Alumni &amp; Tracking Lulusan</h3>
-                        <p>Saring data alumni berdasarkan kata kunci pencarian, status penyerapan, mitra industri, atau tahun kelulusan</p>
+                        <p>Saring data alumni berdasarkan status penyerapan, mitra industri, atau tahun kelulusan</p>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="dk-badge-tag"
                         style="font-size: 11px; padding: 3px 10px; background: rgba(79,70,229,0.08); color: #4f46e5; font-weight: 700;"
-                        x-show="searchQuery || statusFilter !== 'all' || mitraFilter !== 'all' || tahunFilter !== 'all'"
+                        x-show="statusFilter !== 'all' || mitraFilter !== 'all' || tahunFilter !== 'all'"
                         x-cloak>
                         <i class="fas fa-filter"></i> Filter Aktif
                     </span>
@@ -225,17 +221,7 @@
                 x-transition:leave-end="opacity-0 transform -translate-y-4" style="overflow: visible !important;">
 
                 <div class="rfc-grid" style="overflow: visible !important;">
-                    {{-- 1. Pencarian Kata Kunci --}}
-                    <div class="rfc-group" style="position: relative; z-index: 10;">
-                        <label>Pencarian Alumni / Mitra</label>
-                        <div class="rfc-input-wrap">
-                            <i class="fas fa-search rfc-input-icon"></i>
-                            <input type="text" x-model="searchQuery" placeholder="Cari nama alumni, NIM, mitra, posisi..."
-                                class="rfc-input">
-                        </div>
-                    </div>
-
-                    {{-- 2. Filter Status Penyerapan --}}
+                    {{-- 1. Filter Status Penyerapan --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 30;'" x-data="{
                         open: false,
@@ -265,7 +251,7 @@
                         </div>
                     </div>
 
-                    {{-- 3. Filter Mitra Industri --}}
+                    {{-- 2. Filter Mitra Industri --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 20;'" x-data="{
                         open: false,
@@ -295,7 +281,7 @@
                         </div>
                     </div>
 
-                    {{-- 4. Filter Tahun Lulus --}}
+                    {{-- 3. Filter Tahun Lulus --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 10;'" x-data="{
                         open: false,
@@ -397,10 +383,8 @@
                                     $mName = $mitraRelation->mitra->nama_mitra ?? '-';
                                     $statusVal = $mitraRelation->status ?? 'Aktif';
                                     $initials = collect(explode(' ', $alumni->nama))->map(fn($w) => mb_substr($w, 0, 1))->take(2)->join('');
-                                    $searchBlob = strtolower($alumni->nama . ' ' . $alumni->nim . ' ' . $mName . ' ' . ($mitraRelation->posisi ?? ''));
                                 @endphp
                                 <tr class="um-row dk-row" data-row
-                                    data-search="{{ $searchBlob }}"
                                     data-status="{{ strtolower($statusVal) }}"
                                     data-mitra="{{ strtolower($mName) }}"
                                     data-tahun="{{ strtolower((string)$alumni->tahun_lulus) }}"
