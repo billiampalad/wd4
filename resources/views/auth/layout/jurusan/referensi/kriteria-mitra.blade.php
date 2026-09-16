@@ -83,13 +83,20 @@
     </section>
 
     <div class="card dk-card">
-        <div class="card-header um-header dk-card-header">
+        <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
             <div class="dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-list-ul"></i></span>
                 <span>
                     <strong>Daftar Kriteria Mitra</strong>
                     <small>Referensi kriteria kualifikasi mitra kerjasama</small>
                 </span>
+            </div>
+            <div class="um-header-actions">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
             </div>
         </div>
 
@@ -142,6 +149,13 @@
                     </tbody>
                 </table>
             </div>
+            <x-paginav 
+                id="kriteriaMitraTablePaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 </main>
