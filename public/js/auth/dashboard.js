@@ -8,13 +8,13 @@ function initUnitDashboard() {
     try { initTrendChart(); } catch (e) { console.warn('Trend chart error:', e); }
 
     const tabs = document.querySelectorAll('[data-filter-tab]');
-    const rows = document.querySelectorAll('[data-kerjasama-row]');
     const noResult = document.getElementById('unitDashNoResult');
     const navSearchInput = document.getElementById('navSearchInput');
     let activeDocFilter = 'all';
     let dashboardSearchQuery = (navSearchInput?.value || '').trim().toLowerCase();
 
     function applyDashboardTableFilter() {
+        const rows = document.querySelectorAll('[data-kerjasama-row]');
         let visibleCount = 0;
 
         rows.forEach(function(row) {
@@ -60,10 +60,16 @@ function initUnitDashboard() {
         });
     });
 
-    window.addEventListener('unit-dashboard-global-search', function(event) {
-        dashboardSearchQuery = String(event.detail || '').trim().toLowerCase();
+    const handleGlobalSearch = function(event) {
+        dashboardSearchQuery = String(event.detail?.query !== undefined ? event.detail.query : event.detail || '').trim().toLowerCase();
         applyDashboardTableFilter();
-    });
+    };
+
+    window.removeEventListener('unit-dashboard-global-search', handleGlobalSearch);
+    window.addEventListener('unit-dashboard-global-search', handleGlobalSearch);
+
+    document.removeEventListener('search:filter', handleGlobalSearch);
+    document.addEventListener('search:filter', handleGlobalSearch);
 
     applyDashboardTableFilter();
 

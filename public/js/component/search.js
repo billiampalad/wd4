@@ -57,8 +57,11 @@
                     if (clearBtn) clearBtn.style.display = 'none';
                 }
 
-                // If live filtering target is specified
-                if (targetSelector) {
+                // Perform filtering on targetSelector or auto fallback if mainContent exists
+                const hasExplicitTarget = Boolean(targetSelector);
+                const isDashboard = Boolean(document.getElementById('mainContent')?.classList.contains('unitdash'));
+                
+                if (hasExplicitTarget || !isDashboard) {
                     this.executeClientFilter({
                         wrapper,
                         input,
@@ -144,6 +147,35 @@
         },
 
         /**
+         * Get target elements by selector or smart auto fallback
+         * @param {string|null} targetSelector
+         * @returns {NodeList|Array}
+         */
+        getEffectiveTargets: function (targetSelector) {
+            if (targetSelector) {
+                return document.querySelectorAll(targetSelector);
+            }
+            const fallbackSelectors = [
+                '#mainContent [data-kerjasama-row]',
+                '#mainContent .dk-table tbody tr.um-row',
+                '#mainContent .dk-table tbody tr.dk-row',
+                '#mainContent .um-table tbody tr.um-row',
+                '#mainContent .mitra-table tbody tr',
+                '#mainContent .table-responsive tbody tr:not([data-empty]):not(.empty-state-row)',
+                '#mainContent table.ud-table tbody tr',
+                '#mainContent table tbody tr:not([data-empty]):not(.empty-state-row):not(.um-search-empty)'
+            ];
+
+            for (let i = 0; i < fallbackSelectors.length; i++) {
+                const found = document.querySelectorAll(fallbackSelectors[i]);
+                if (found && found.length > 0) {
+                    return found;
+                }
+            }
+            return [];
+        },
+
+        /**
          * Remove all active highlights inside container
          * @param {HTMLElement|Document} container
          */
@@ -157,6 +189,9 @@
                     parent.normalize();
                 }
             });
+            if (typeof container.normalize === 'function') {
+                container.normalize();
+            }
         },
 
         /**
@@ -193,11 +228,15 @@
                     tagName === 'style' ||
                     tagName === 'select' ||
                     tagName === 'option' ||
+                    tagName === 'input' ||
+                    tagName === 'textarea' ||
                     (classList && (
                         classList.contains('actions') ||
                         classList.contains('btn-action') ||
                         classList.contains('um-actions') ||
-                        classList.contains('search-highlight')
+                        classList.contains('search-highlight') ||
+                        classList.contains('custom-search-wrapper') ||
+                        classList.contains('custom-search-inner')
                     )) ||
                     node.hasAttribute('data-no-highlight')
                 ) {
@@ -261,7 +300,7 @@
                 enableHighlight = true,
             } = params;
 
-            const targets = document.querySelectorAll(targetSelector);
+            const targets = this.getEffectiveTargets(targetSelector);
             let visibleCount = 0;
             let totalCount = 0;
 
@@ -272,7 +311,7 @@
                 : null;
 
             targets.forEach((el) => {
-                if (el.classList.contains('um-search-empty') || el.classList.contains('empty-state-row')) {
+                if (el.classList.contains('um-search-empty') || el.classList.contains('empty-state-row') || el.hasAttribute('data-empty')) {
                     return;
                 }
 
@@ -373,13 +412,11 @@
             const emptySelector = wrapper.getAttribute('data-search-empty');
             const countTargetSelector = wrapper.getAttribute('data-search-count-target');
 
-            if (targetSelector) {
-                const targets = document.querySelectorAll(targetSelector);
-                targets.forEach((el) => {
-                    this.removeHighlights(el);
-                    el.style.display = '';
-                });
-            }
+            const targets = this.getEffectiveTargets(targetSelector);
+            targets.forEach((el) => {
+                this.removeHighlights(el);
+                el.style.display = '';
+            });
 
             if (emptySelector) {
                 const emptyEl = document.querySelector(emptySelector) || document.getElementById(emptySelector.replace(/^#/, ''));
@@ -389,7 +426,7 @@
             if (countTargetSelector) {
                 const countTarget = document.querySelector(countTargetSelector) || document.getElementById(countTargetSelector.replace(/^#/, ''));
                 if (countTarget) {
-                    countTarget.textContent = targetSelector ? document.querySelectorAll(targetSelector).length : '';
+                    countTarget.textContent = targets.length;
                     countTarget.classList.remove('no-results', 'has-results');
                 }
             }
