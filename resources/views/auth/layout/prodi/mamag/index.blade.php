@@ -87,7 +87,6 @@
 
     <div x-data="{
         showFilters: false,
-        searchQuery: '',
         statusFilter: 'all',
         mitraFilter: 'all',
         nilaiFilter: 'all',
@@ -98,7 +97,6 @@
         showModal: false,
 
         resetFilters() {
-            this.searchQuery = '';
             this.statusFilter = 'all';
             this.mitraFilter = 'all';
             this.nilaiFilter = 'all';
@@ -140,13 +138,10 @@
 
         matchesRow(r) {
             if (!r || !r.dataset) return true;
-            const q = (this.searchQuery || '').toLowerCase().trim();
-            const searchCorpus = (r.dataset.search || '').toLowerCase();
-            const matchSearch = q === '' || searchCorpus.includes(q);
             const matchStatus = this.statusFilter === 'all' || (r.dataset.status && r.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
             const matchMitra = this.mitraFilter === 'all' || (r.dataset.mitra && r.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
             const matchNilai = this.nilaiFilter === 'all' || (r.dataset.nilai && r.dataset.nilai.toLowerCase() === this.nilaiFilter.toLowerCase());
-            return matchSearch && matchStatus && matchMitra && matchNilai;
+            return matchStatus && matchMitra && matchNilai;
         },
 
         isRowVisible(el) {
@@ -183,13 +178,13 @@
                     <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
                     <div class="rfc-text">
                         <h3>Filter Data Kegiatan Mahasiswa &amp; Magang</h3>
-                        <p>Saring data penempatan berdasarkan kata kunci pencarian, status kegiatan, mitra industri, atau status penilaian mitra</p>
+                        <p>Saring data penempatan berdasarkan status kegiatan, mitra industri, atau status penilaian mitra</p>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="dk-badge-tag"
                         style="font-size: 11px; padding: 3px 10px; background: rgba(79,70,229,0.08); color: #4f46e5; font-weight: 700;"
-                        x-show="searchQuery || statusFilter !== 'all' || mitraFilter !== 'all' || nilaiFilter !== 'all'"
+                        x-show="statusFilter !== 'all' || mitraFilter !== 'all' || nilaiFilter !== 'all'"
                         x-cloak>
                         <i class="fas fa-filter"></i> Filter Aktif
                     </span>
@@ -208,17 +203,7 @@
                 x-transition:leave-end="opacity-0 transform -translate-y-4" style="overflow: visible !important;">
 
                 <div class="rfc-grid" style="overflow: visible !important;">
-                    {{-- 1. Pencarian Kata Kunci --}}
-                    <div class="rfc-group" style="position: relative; z-index: 10;">
-                        <label>Pencarian Mahasiswa / Mitra</label>
-                        <div class="rfc-input-wrap">
-                            <i class="fas fa-search rfc-input-icon"></i>
-                            <input type="text" x-model="searchQuery" placeholder="Cari nama mahasiswa, NIM, mitra..."
-                                class="rfc-input">
-                        </div>
-                    </div>
-
-                    {{-- 2. Filter Status Kegiatan --}}
+                    {{-- 1. Filter Status Kegiatan --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 30;'" x-data="{
                         open: false,
@@ -256,7 +241,7 @@
                         </div>
                     </div>
 
-                    {{-- 3. Filter Mitra Industri --}}
+                    {{-- 2. Filter Mitra Industri --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 20;'" x-data="{
                         open: false,
@@ -294,7 +279,7 @@
                         </div>
                     </div>
 
-                    {{-- 4. Filter Status Penilaian Mitra --}}
+                    {{-- 3. Filter Status Penilaian Mitra --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 10;'" x-data="{
                         open: false,
@@ -527,13 +512,10 @@
 
                                     $pembimbingInternal = $item->pembimbings?->where('tipe', 'Internal')->first();
                                     $pembimbingEksternal = $item->pembimbings?->where('tipe', 'Eksternal')->first();
-
-                                    $searchCorpus = strtolower($mhsName . ' ' . $mhsNim . ' ' . $mitraName . ' ' . $kegiatanName . ' ' . $status);
                                 @endphp
                                 <tr class="um-row dk-row"
                                     data-row="true"
                                     data-row-id="{{ $item->id }}"
-                                    data-search="{{ $searchCorpus }}"
                                     data-status="{{ $status }}"
                                     data-mitra="{{ $mitraName }}"
                                     data-nilai="{{ $nilaiStatus }}"
