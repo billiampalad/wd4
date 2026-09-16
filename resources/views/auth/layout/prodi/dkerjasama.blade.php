@@ -85,12 +85,10 @@
 
     <div x-data="{
         showFilters: false,
-        searchQuery: '',
         statusFilter: 'all',
         jenisFilter: 'all',
         tingkatFilter: 'all',
         resetFilters() {
-            this.searchQuery = '';
             this.statusFilter = 'all';
             this.jenisFilter = 'all';
             this.tingkatFilter = 'all';
@@ -106,14 +104,13 @@
                     <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
                     <div class="rfc-text">
                         <h3>Filter Data Kegiatan Kerja Sama</h3>
-                        <p>Saring data kerja sama berdasarkan kata kunci pencarian, jenis dokumen, tingkat perikatan,
-                            atau status berlaku</p>
+                        <p>Saring data kerja sama berdasarkan jenis dokumen, tingkat perikatan, atau status berlaku</p>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="dk-badge-tag"
                         style="font-size: 11px; padding: 3px 10px; background: rgba(79,70,229,0.08); color: #4f46e5; font-weight: 700;"
-                        x-show="searchQuery || statusFilter !== 'all' || jenisFilter !== 'all' || tingkatFilter !== 'all'"
+                        x-show="statusFilter !== 'all' || jenisFilter !== 'all' || tingkatFilter !== 'all'"
                         x-cloak>
                         <i class="fas fa-filter"></i> Filter Aktif
                     </span>
@@ -132,17 +129,7 @@
                 x-transition:leave-end="opacity-0 transform -translate-y-4" style="overflow: visible !important;">
 
                 <div class="rfc-grid" style="overflow: visible !important;">
-                    {{-- 1. Pencarian Kata Kunci --}}
-                    <div class="rfc-group" style="position: relative; z-index: 10;">
-                        <label>Pencarian Dokumen / Mitra</label>
-                        <div class="rfc-input-wrap">
-                            <i class="fas fa-search rfc-input-icon"></i>
-                            <input type="text" x-model="searchQuery" placeholder="Cari judul, nomor, mitra..."
-                                class="rfc-input">
-                        </div>
-                    </div>
-
-                    {{-- 2. Filter Jenis Dokumen --}}
+                    {{-- 1. Filter Jenis Dokumen --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 30;'" x-data="{
                         open: false,
@@ -180,7 +167,7 @@
                         </div>
                     </div>
 
-                    {{-- 3. Filter Status Berlaku --}}
+                    {{-- 2. Filter Status Berlaku --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 20;'" x-data="{
                         open: false,
@@ -218,7 +205,7 @@
                         </div>
                     </div>
 
-                    {{-- 4. Filter Tingkat --}}
+                    {{-- 3. Filter Tingkat --}}
                     <div class="rfc-group"
                         :style="open ? 'position: relative; z-index: 100;' : 'position: relative; z-index: 10;'" x-data="{
                         open: false,
@@ -342,13 +329,10 @@
                                     $pjInternalJabatan = $item->pjInternal?->jabatan ?? '-';
                                     $pjMitraName = $item->pjMitra?->nama ?? '-';
                                     $pjMitraJabatan = $item->pjMitra?->jabatan ?? '-';
-
-                                    $searchCorpus = strtolower($title . ' ' . $docNum . ' ' . $mitraName . ' ' . $jenisDoc);
                                 @endphp
-                                <tr class="um-row dk-row" data-row-id="{{ $item->id }}" data-search="{{ $searchCorpus }}"
+                                <tr class="um-row dk-row" data-row-id="{{ $item->id }}"
                                     data-status="{{ $filterCategory }}" data-jenis="{{ $jenisDoc }}"
-                                    data-tingkat="{{ $item->tingkat ?? 'Institusi' }}" x-show="(!searchQuery || $el.dataset.search.includes(searchQuery.toLowerCase())) &&
-                                                (statusFilter === 'all' || $el.dataset.status === statusFilter) &&
+                                    data-tingkat="{{ $item->tingkat ?? 'Institusi' }}" x-show="(statusFilter === 'all' || $el.dataset.status === statusFilter) &&
                                                 (jenisFilter === 'all' || $el.dataset.jenis === jenisFilter) &&
                                                 (tingkatFilter === 'all' || $el.dataset.tingkat === tingkatFilter)">
                                     <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 14px;">
