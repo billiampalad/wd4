@@ -62,7 +62,7 @@
             @endif
         </div>
         <div class="card-body dk-card-body" style="padding: 0;">
-            <div class="table-wrap um-table-wrap dk-table-wrap">
+            <div class="table-wrap um-table-wrap dk-table-wrap {{ (isset($draftList) && $draftList->count() >= 10) ? 'table-scrollable-10' : '' }}">
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
@@ -162,7 +162,7 @@
             @endif
         </div>
         <div class="card-body dk-card-body" style="padding: 0;">
-            <div class="table-wrap um-table-wrap dk-table-wrap">
+            <div class="table-wrap um-table-wrap dk-table-wrap {{ (isset($revisiList) && $revisiList->count() >= 10) ? 'table-scrollable-10' : '' }}">
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
@@ -277,7 +277,7 @@
             @endif
         </div>
         <div class="card-body dk-card-body" style="padding: 0;">
-            <div class="table-wrap um-table-wrap dk-table-wrap">
+            <div class="table-wrap um-table-wrap dk-table-wrap {{ (isset($belumEvaluasi) && $belumEvaluasi->count() >= 10) ? 'table-scrollable-10' : '' }}">
                 <table class="um-table dk-table">
                     <thead>
                         <tr>
@@ -372,7 +372,7 @@
             </div>
         </div>
         <div class="card-body dk-card-body" style="padding: 0;">
-            <div class="table-wrap um-table-wrap dk-table-wrap">
+            <div class="table-wrap um-table-wrap dk-table-wrap {{ (isset($evaluasiList) && $evaluasiList->count() >= 10) ? 'table-scrollable-10' : '' }}">
                 <table class="um-table dk-table">
                     <thead>
                         <tr>

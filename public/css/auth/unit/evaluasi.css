@@ -164,3 +164,28 @@ body.evaluasi-kinerja-page *::-webkit-scrollbar-corner {
         margin-bottom: 8px;
     }
 }
+
+/* ═══════════════════════════════════════════════════
+   Vertical Scrollable Table for >= 10 Data Rows
+═══════════════════════════════════════════════════ */
+.table-wrap.dk-table-wrap.table-scrollable-10 {
+    max-height: 560px;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0 0 16px 16px;
+    position: relative;
+}
+
+.table-wrap.dk-table-wrap.table-scrollable-10 thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface2, #f8fafc);
+    box-shadow: 0 1px 0 var(--border, rgba(0, 0, 0, 0.08));
+}
+
+[data-theme="dark"] .table-wrap.dk-table-wrap.table-scrollable-10 thead th {
+    background: var(--surface2, #1e293b);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
