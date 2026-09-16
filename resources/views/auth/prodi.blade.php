@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{ asset('css/auth/user.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/component/search.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/component/paginav.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/kerjasama/repositori.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/dashboard.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}" data-turbo-track="reload">
@@ -27,6 +29,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/component/search.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/component/paginav.js') }}" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="turbo-cache-control" content="no-preview">
 </head>
@@ -111,6 +115,12 @@
             </div>
 
             <div class="nav-actions">
+                <x-search 
+                    id="navSearchInput"
+                    placeholder="Cari data..."
+                    width="200px"
+                />
+
                 <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
