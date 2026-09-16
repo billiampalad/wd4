@@ -79,6 +79,14 @@
                     })
                 );
 
+                // Document-level event for paginav and global listeners
+                document.dispatchEvent(
+                    new CustomEvent('search:filter', {
+                        bubbles: true,
+                        detail: { query: input.value, searchId: wrapper.getAttribute('data-search-id') },
+                    })
+                );
+
                 // Global events for dashboard synchronization
                 window.dispatchEvent(
                     new CustomEvent('unit-dashboard-global-search', {
@@ -171,11 +179,12 @@
          * @param {RegExp} regex
          */
         applyHighlightToNode: function (node, regex) {
-            if (!node) return;
+            if (!node || !regex) return;
 
             // Skip non-text or excluded elements (buttons, actions, svgs, icons)
             if (node.nodeType === Node.ELEMENT_NODE) {
-                const tagName = node.tagName.toLowerCase();
+                const tagName = (node.tagName || '').toLowerCase();
+                const classList = node.classList;
                 if (
                     tagName === 'button' ||
                     tagName === 'svg' ||
@@ -184,9 +193,12 @@
                     tagName === 'style' ||
                     tagName === 'select' ||
                     tagName === 'option' ||
-                    node.classList.contains('actions') ||
-                    node.classList.contains('btn-action') ||
-                    node.classList.contains('um-actions') ||
+                    (classList && (
+                        classList.contains('actions') ||
+                        classList.contains('btn-action') ||
+                        classList.contains('um-actions') ||
+                        classList.contains('search-highlight')
+                    )) ||
                     node.hasAttribute('data-no-highlight')
                 ) {
                     return;
@@ -195,7 +207,10 @@
 
             if (node.nodeType === Node.TEXT_NODE) {
                 const text = node.nodeValue;
-                if (!text || !regex.test(text)) return;
+                if (!text || text.trim().length === 0) return;
+
+                regex.lastIndex = 0;
+                if (!regex.test(text)) return;
 
                 const fragment = document.createDocumentFragment();
                 let lastIndex = 0;
@@ -222,6 +237,7 @@
                     fragment.appendChild(document.createTextNode(text.slice(lastIndex)));
                 }
 
+                regex.lastIndex = 0;
                 node.replaceWith(fragment);
             } else if (node.nodeType === Node.ELEMENT_NODE && node.childNodes) {
                 // Clone childNodes array because modifying DOM changes live NodeList
@@ -382,6 +398,14 @@
                 new CustomEvent('search:clear', {
                     bubbles: true,
                     detail: { searchId: wrapper.getAttribute('data-search-id') },
+                })
+            );
+
+            // Document-level clear for paginav and global listeners
+            document.dispatchEvent(
+                new CustomEvent('search:filter', {
+                    bubbles: true,
+                    detail: { query: '', searchId: wrapper.getAttribute('data-search-id') },
                 })
             );
 

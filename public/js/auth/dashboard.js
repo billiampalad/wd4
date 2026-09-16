@@ -2,10 +2,10 @@ function initUnitDashboard() {
     const mainContent = document.getElementById('mainContent');
     if (!mainContent || !mainContent.classList.contains('unitdash')) return;
 
-    initUnitChart();
-    initJurusanProdiChart();
-    initUpaPusatChart();
-    initTrendChart();
+    try { initUnitChart(); } catch (e) { console.warn('Unit chart error:', e); }
+    try { initJurusanProdiChart(); } catch (e) { console.warn('Jurusan/Prodi chart error:', e); }
+    try { initUpaPusatChart(); } catch (e) { console.warn('UPA/Pusat chart error:', e); }
+    try { initTrendChart(); } catch (e) { console.warn('Trend chart error:', e); }
 
     const tabs = document.querySelectorAll('[data-filter-tab]');
     const rows = document.querySelectorAll('[data-kerjasama-row]');
