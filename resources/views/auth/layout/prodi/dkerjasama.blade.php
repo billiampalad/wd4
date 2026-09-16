@@ -146,7 +146,7 @@
                     }">
                         <label>Jenis Perikatan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-file-contract" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -184,7 +184,7 @@
                     }">
                         <label>Status Kerja Sama</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-circle-notch" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -222,7 +222,7 @@
                     }">
                         <label>Tingkat Cakupan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-layer-group" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>

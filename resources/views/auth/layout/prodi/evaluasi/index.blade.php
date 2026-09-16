@@ -212,7 +212,7 @@
                     }">
                         <label>Status Pelaksanaan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-circle-check" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -250,7 +250,7 @@
                     }">
                         <label>Mitra Industri (DUDIKA)</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
                                     <i class="fas fa-building" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
                                     <span x-text="selectedLabel" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;"></span>
@@ -288,7 +288,7 @@
                     }">
                         <label>Tingkat Kerja Sama</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-layer-group" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>

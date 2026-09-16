@@ -238,7 +238,7 @@
                     }">
                         <label>Status Penyerapan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-user-check" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -276,7 +276,7 @@
                     }">
                         <label>Mitra Industri (DUDIKA)</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
                                     <i class="fas fa-building" style="color: #9ca3af; font-size: 13px; flex-shrink: 0;"></i>
                                     <span x-text="selectedLabel" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;"></span>
@@ -314,7 +314,7 @@
                     }">
                         <label>Tahun Kelulusan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{'active': open}" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{'active': open}" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-graduation-cap" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -325,7 +325,7 @@
                                 style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 9999; max-height: 240px; overflow-y: auto; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.1);">
                                 <template x-for="item in items" :key="item.id">
                                     <div class="ad-item" :class="{'selected': tahunFilter === item.id}"
-                                        @click="tahunFilter = item.id; open = false;" x-text="item.label">
+                                        @click="tahunFilter = item.id; open = false;">
                                         <span x-text="item.label"></span>
                                         <i class="fas fa-check" style="font-size: 11px; color: #4f46e5;"
                                             x-show="tahunFilter === item.id"></i>

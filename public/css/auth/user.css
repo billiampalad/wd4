@@ -4114,7 +4114,8 @@ body {
     user-select: none;
 }
 
-.ad-trigger.no-icon {
+.ad-trigger.no-icon,
+.rfc-group .ad-trigger {
     padding-left: 14px;
 }
 

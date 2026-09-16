@@ -220,7 +220,7 @@
                     }">
                         <label>Status Kegiatan</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-circle-notch" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -258,7 +258,7 @@
                     }">
                         <label>Mitra Industri (DUDIKA)</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-building" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
@@ -295,7 +295,7 @@
                     }">
                         <label>Status Penilaian</label>
                         <div class="alpine-dropdown" @click.outside="open = false">
-                            <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                            <div class="ad-trigger no-icon" :class="{ 'active': open }" @click="open = !open">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <i class="fas fa-star" style="color: #9ca3af; font-size: 13px;"></i>
                                     <span x-text="selectedLabel"></span>
