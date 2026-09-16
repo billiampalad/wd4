@@ -166,9 +166,9 @@ body.evaluasi-kinerja-page *::-webkit-scrollbar-corner {
 }
 
 /* ═══════════════════════════════════════════════════
-   Vertical Scrollable Table for >= 10 Data Rows
+   Vertical Scrollable Table with Max-Height Limit
 ═══════════════════════════════════════════════════ */
-.table-wrap.dk-table-wrap.table-scrollable-10 {
+.table-wrap.dk-table-wrap {
     max-height: 560px;
     overflow-y: auto !important;
     overflow-x: auto !important;
@@ -177,7 +177,7 @@ body.evaluasi-kinerja-page *::-webkit-scrollbar-corner {
     position: relative;
 }
 
-.table-wrap.dk-table-wrap.table-scrollable-10 thead th {
+.table-wrap.dk-table-wrap thead th {
     position: sticky;
     top: 0;
     z-index: 5;
@@ -185,7 +185,8 @@ body.evaluasi-kinerja-page *::-webkit-scrollbar-corner {
     box-shadow: 0 1px 0 var(--border, rgba(0, 0, 0, 0.08));
 }
 
-[data-theme="dark"] .table-wrap.dk-table-wrap.table-scrollable-10 thead th {
+[data-theme="dark"] .table-wrap.dk-table-wrap thead th {
     background: var(--surface2, #1e293b);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
 }
+
