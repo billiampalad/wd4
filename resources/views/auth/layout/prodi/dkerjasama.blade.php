@@ -92,6 +92,36 @@
             this.statusFilter = 'all';
             this.jenisFilter = 'all';
             this.tingkatFilter = 'all';
+            this.applyFilter();
+        },
+        applyFilter() {
+            this.$nextTick(() => {
+                const rows = document.querySelectorAll('.dk-table tbody tr.um-row');
+                let count = 0;
+                rows.forEach(row => {
+                    const statusMatch = this.statusFilter === 'all' || row.dataset.status === this.statusFilter;
+                    const jenisMatch = this.jenisFilter === 'all' || row.dataset.jenis === this.jenisFilter;
+                    const tingkatMatch = this.tingkatFilter === 'all' || row.dataset.tingkat === this.tingkatFilter;
+                    if (statusMatch && jenisMatch && tingkatMatch) {
+                        row.removeAttribute('data-filtered-out');
+                        count++;
+                    } else {
+                        row.setAttribute('data-filtered-out', 'true');
+                    }
+                });
+                const countEl = document.getElementById('dkerjasamaCount');
+                if (countEl) countEl.textContent = count + ' dokumen ditemukan';
+                const emptyRow = document.querySelector('.dk-table tbody tr[data-empty]');
+                if (emptyRow) emptyRow.style.display = count === 0 ? '' : 'none';
+                if (window.CustomPaginav) {
+                    CustomPaginav.init();
+                }
+            });
+        },
+        init() {
+            this.$watch('statusFilter', () => this.applyFilter());
+            this.$watch('jenisFilter', () => this.applyFilter());
+            this.$watch('tingkatFilter', () => this.applyFilter());
         }
     }">
         {{-- ═══ FILTER DATA KERJASAMA ACCORDION (STANDAR PROYEK) ═══ --}}
@@ -255,13 +285,21 @@
 
         {{-- ── DATA TABLE CARD ───────────────────────────────────────── --}}
         <div class="card um-card dk-card">
-            <div class="card-header um-header dk-card-header">
+            <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
                 <div class="um-title dk-card-title">
                     <span class="dk-title-icon"><i class="fas fa-handshake"></i></span>
                     <span>
                         <strong>Daftar Dokumen Kerja Sama Terkait</strong>
                         <small id="dkerjasamaCount">{{ $list->count() }} dokumen ditemukan</small>
                     </span>
+                </div>
+
+                <div class="um-header-actions">
+                    <x-paginav-entries 
+                        target=".dk-table tbody tr.um-row"
+                        :perPage="10"
+                        :options="[5, 10, 25, 50, 100]"
+                    />
                 </div>
             </div>
 
@@ -332,9 +370,7 @@
                                 @endphp
                                 <tr class="um-row dk-row" data-row-id="{{ $item->id }}"
                                     data-status="{{ $filterCategory }}" data-jenis="{{ $jenisDoc }}"
-                                    data-tingkat="{{ $item->tingkat ?? 'Institusi' }}" x-show="(statusFilter === 'all' || $el.dataset.status === statusFilter) &&
-                                                (jenisFilter === 'all' || $el.dataset.jenis === jenisFilter) &&
-                                                (tingkatFilter === 'all' || $el.dataset.tingkat === tingkatFilter)">
+                                    data-tingkat="{{ $item->tingkat ?? 'Institusi' }}">
                                     <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 14px;">
                                         <button type="button" class="dk-expand-toggle" aria-expanded="false"
                                             aria-controls="dk-detail-{{ $item->id }}" title="Lihat rincian kerjasama">
@@ -490,6 +526,13 @@
                         </tbody>
                     </table>
                 </div>
+                <x-paginav 
+                    id="prodiDkerjasamaTablePaginav"
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :showInfo="true"
+                    :showPerPage="false"
+                />
             </div>
         </div>
     </div>
