@@ -168,23 +168,23 @@
                                         {{-- 1. Mahasiswa (Searchable Alpine Dropdown) --}}
                                         <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;"
                                             x-data="{
-                                                    open: false,
-                                                    search: '',
-                                                    selectedId: '{{ old('mahasiswa_id') }}',
-                                                    items: [
-                                                        @foreach($mahasiswas as $mhs)
-                                                            { id: '{{ $mhs->id }}', name: '{{ addslashes($mhs->nama) }}', nim: '{{ addslashes($mhs->nim) }}' },
-                                                        @endforeach
-                                                    ],
-                                                    get filteredItems() {
-                                                        if (!this.search) return this.items;
-                                                        const q = this.search.toLowerCase();
-                                                        return this.items.filter(i => i.name.toLowerCase().includes(q) || i.nim.toLowerCase().includes(q));
-                                                    },
-                                                    get selectedItem() {
-                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
-                                                    }
-                                                }">
+                                                        open: false,
+                                                        search: '',
+                                                        selectedId: '{{ old('mahasiswa_id') }}',
+                                                        items: [
+                                                            @foreach($mahasiswas as $mhs)
+                                                                { id: '{{ $mhs->id }}', name: '{{ addslashes($mhs->nama) }}', nim: '{{ addslashes($mhs->nim) }}' },
+                                                            @endforeach
+                                                        ],
+                                                        get filteredItems() {
+                                                            if (!this.search) return this.items;
+                                                            const q = this.search.toLowerCase();
+                                                            return this.items.filter(i => i.name.toLowerCase().includes(q) || i.nim.toLowerCase().includes(q));
+                                                        },
+                                                        get selectedItem() {
+                                                            return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                        }
+                                                    }">
                                             <label class="mc-label">Pilih Mahasiswa <span class="mc-req">*</span></label>
                                             <input type="hidden" name="mahasiswa_id" :value="selectedId" required>
 
@@ -253,23 +253,23 @@
                                         {{-- 2. Kegiatan Kerja Sama (Searchable Alpine Dropdown) --}}
                                         <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;"
                                             x-data="{
-                                                    open: false,
-                                                    search: '',
-                                                    selectedId: '{{ old('kegiatan_id') }}',
-                                                    items: [
-                                                        @foreach($kegiatans as $keg)
-                                                            { id: '{{ $keg->id }}', name: '{{ addslashes($keg->nama_kegiatan) }}', jenis: '{{ addslashes($keg->jenis ?? 'Kerjasama') }}' },
-                                                        @endforeach
-                                                    ],
-                                                    get filteredItems() {
-                                                        if (!this.search) return this.items;
-                                                        const q = this.search.toLowerCase();
-                                                        return this.items.filter(i => i.name.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q));
-                                                    },
-                                                    get selectedItem() {
-                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
-                                                    }
-                                                }">
+                                                        open: false,
+                                                        search: '',
+                                                        selectedId: '{{ old('kegiatan_id') }}',
+                                                        items: [
+                                                            @foreach($kegiatans as $keg)
+                                                                { id: '{{ $keg->id }}', name: '{{ addslashes($keg->nama_kegiatan) }}', jenis: '{{ addslashes($keg->jenis ?? 'Kerjasama') }}' },
+                                                            @endforeach
+                                                        ],
+                                                        get filteredItems() {
+                                                            if (!this.search) return this.items;
+                                                            const q = this.search.toLowerCase();
+                                                            return this.items.filter(i => i.name.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q));
+                                                        },
+                                                        get selectedItem() {
+                                                            return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                        }
+                                                    }">
                                             <label class="mc-label">Kegiatan Kerja Sama <span
                                                     class="mc-req">*</span></label>
                                             <input type="hidden" name="kegiatan_id" :value="selectedId" required>
@@ -339,23 +339,23 @@
                                         <div class="mc-group"
                                             style="grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box;"
                                             x-data="{
-                                                    open: false,
-                                                    search: '',
-                                                    selectedId: '{{ old('mitra_id') }}',
-                                                    items: [
-                                                        @foreach($mitras as $mitra)
-                                                            { id: '{{ $mitra->id }}', name: '{{ addslashes($mitra->nama_mitra) }}' },
-                                                        @endforeach
-                                                    ],
-                                                    get filteredItems() {
-                                                        if (!this.search) return this.items;
-                                                        const q = this.search.toLowerCase();
-                                                        return this.items.filter(i => i.name.toLowerCase().includes(q));
-                                                    },
-                                                    get selectedItem() {
-                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
-                                                    }
-                                                }">
+                                                        open: false,
+                                                        search: '',
+                                                        selectedId: '{{ old('mitra_id') }}',
+                                                        items: [
+                                                            @foreach($mitras as $mitra)
+                                                                { id: '{{ $mitra->id }}', name: '{{ addslashes($mitra->nama_mitra) }}' },
+                                                            @endforeach
+                                                        ],
+                                                        get filteredItems() {
+                                                            if (!this.search) return this.items;
+                                                            const q = this.search.toLowerCase();
+                                                            return this.items.filter(i => i.name.toLowerCase().includes(q));
+                                                        },
+                                                        get selectedItem() {
+                                                            return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                        }
+                                                    }">
                                             <label class="mc-label">Mitra Industri (DUDIKA) <span
                                                     class="mc-req">*</span></label>
                                             <input type="hidden" name="mitra_id" :value="selectedId" required>
@@ -516,7 +516,7 @@
                                     </a>
                                     <button type="submit" class="rfc-btn rfc-btn-primary"
                                         style="padding: 10px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-save"></i> Tambah Penempatan
+                                        <i class="fas fa-save"></i> Simpan Penempatan
                                     </button>
                                 </div>
 
