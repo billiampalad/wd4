@@ -539,7 +539,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr class="dk-row-detail" id="dk-detail-{{ $item->id }}" aria-hidden="true">
+                                <tr class="dk-row-detail" id="dk-detail-{{ $item->id }}" aria-hidden="true" style="display: none;">
                                     <td colspan="8" class="dk-detail-cell">
                                         <div class="dk-detail-content">
                                             <div class="dk-audit-grid">
@@ -607,4 +607,54 @@
         </div>
     </div>
 </main>
+
+{{-- ── ACCORDION EXPAND TOGGLE SCRIPT ────────────────────────── --}}
+<script>
+    document.addEventListener('turbo:load', initProdiMamagAccordion);
+    document.addEventListener('DOMContentLoaded', initProdiMamagAccordion);
+
+    function initProdiMamagAccordion() {
+        const toggleButtons = document.querySelectorAll('.dk-expand-toggle');
+        toggleButtons.forEach(btn => {
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener('click', function () {
+                const detailRowId = this.getAttribute('aria-controls');
+                const detailRow = document.getElementById(detailRowId);
+                const parentRow = this.closest('.dk-row');
+                if (!detailRow) return;
+
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                if (isExpanded) {
+                    this.setAttribute('aria-expanded', 'false');
+                    if (parentRow) parentRow.classList.remove('is-expanded');
+                    detailRow.classList.remove('is-open', 'is-settled', 'open');
+                    setTimeout(() => {
+                        detailRow.style.display = 'none';
+                    }, 200);
+                } else {
+                    // Tutup detail lain yang terbuka
+                    document.querySelectorAll('.dk-row.is-expanded').forEach(r => {
+                        r.classList.remove('is-expanded');
+                        const toggle = r.querySelector('.dk-expand-toggle');
+                        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+                    });
+                    document.querySelectorAll('.dk-row-detail.is-open, .dk-row-detail.open').forEach(row => {
+                        row.classList.remove('is-open', 'is-settled', 'open');
+                        setTimeout(() => row.style.display = 'none', 200);
+                    });
+
+                    this.setAttribute('aria-expanded', 'true');
+                    if (parentRow) parentRow.classList.add('is-expanded');
+                    detailRow.style.display = 'table-row';
+                    setTimeout(() => {
+                        detailRow.classList.add('is-open', 'is-settled');
+                    }, 10);
+                }
+            });
+        });
+    }
+</script>
 @endsection
