@@ -219,6 +219,7 @@
                                         {{-- Mitra Industri (Searchable Alpine Dropdown) --}}
                                         <div class="mc-group" style="grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
                                             open: false,
+                                            dropUp: false,
                                             search: '',
                                             selectedId: '{{ old('mitra_id') }}',
                                             items: [
@@ -226,6 +227,13 @@
                                                     { id: '{{ $mitra->id }}', name: '{{ addslashes($mitra->nama_mitra) }}' },
                                                 @endforeach
                                             ],
+                                            toggle() {
+                                                if (!this.open) {
+                                                    const rect = this.$refs.dropdownRoot.getBoundingClientRect();
+                                                    this.dropUp = (window.innerHeight - rect.bottom) < 270 && rect.top > 250;
+                                                }
+                                                this.open = !this.open;
+                                            },
                                             get filteredItems() {
                                                 if (!this.search) return this.items;
                                                 const q = this.search.toLowerCase();
@@ -238,9 +246,9 @@
                                             <label class="mc-label">Perusahaan / Instansi Mitra <span class="mc-req">*</span></label>
                                             <input type="hidden" name="mitra_id" :value="selectedId" required>
 
-                                            <div class="alpine-dropdown" @click.outside="open = false"
+                                            <div class="alpine-dropdown" x-ref="dropdownRoot" @click.outside="open = false"
                                                 style="position: relative; width: 100%; box-sizing: border-box;">
-                                                <div class="ad-trigger" :class="{'active': open}" @click="open = !open"
+                                                <div class="ad-trigger no-icon" :class="{'active': open}" @click="toggle()"
                                                     style="min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; width: 100%; box-sizing: border-box;">
                                                     <div
                                                         style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden;">
@@ -259,8 +267,9 @@
                                                         :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                                 </div>
 
-                                                <div class="ad-menu" x-show="open" x-transition
-                                                    style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 100%; box-sizing: border-box;">
+                                                <div class="ad-menu" :class="{'drop-up': dropUp}" x-show="open" x-transition
+                                                    style="position: absolute; left: 0; right: 0; z-index: 120; max-height: 250px; overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 100%; box-sizing: border-box;"
+                                                    :style="dropUp ? 'bottom: calc(100% + 6px); top: auto;' : 'top: calc(100% + 6px); bottom: auto;'">
                                                     <div
                                                         style="padding: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--surface); z-index: 2;">
                                                         <input type="text" x-model="search"
