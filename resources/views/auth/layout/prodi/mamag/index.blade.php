@@ -582,15 +582,20 @@
                                                 title="Edit Penempatan">
                                                 <i class="fas fa-pen-to-square"></i>
                                             </a>
-                                            <form action="{{ route('prodi.penempatan.destroy', $item->id) }}" method="POST"
-                                                class="dk-delete-form" style="display: inline;"
-                                                onsubmit="return confirm('Yakin ingin menghapus data penempatan mahasiswa ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dk-action-btn delete" title="Hapus">
-                                                    <i class="fas fa-trash-can"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="dk-action-btn delete" title="Hapus Data"
+                                                data-alert-target="modalDeletePenempatan-{{ $item->id }}">
+                                                <i class="fas fa-trash-can"></i>
+                                            </button>
+                                            <x-alert
+                                                id="modalDeletePenempatan-{{ $item->id }}"
+                                                type="danger"
+                                                title="Hapus Penempatan Mahasiswa"
+                                                message="Apakah Anda yakin ingin menghapus data penempatan mahasiswa <span class='custom-alert-highlight'>{{ $mhsName }} ({{ $mhsNim }})</span> di <span class='custom-alert-highlight'>{{ $mitraName }}</span>?"
+                                                confirmText="Ya, Hapus"
+                                                cancelText="Batal"
+                                                action="{{ route('prodi.penempatan.destroy', $item->id) }}"
+                                                method="DELETE"
+                                            />
                                         </div>
                                     </td>
                                 </tr>
