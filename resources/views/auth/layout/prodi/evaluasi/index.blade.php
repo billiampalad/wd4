@@ -76,87 +76,49 @@
         </div>
     </section>
 
-    {{-- Root Alpine.js Controller (Identik dengan mamag/index & alumni/index) --}}
+    {{-- Root Alpine.js Controller --}}
     <div x-data="{
         showFilters: false,
         statusFilter: 'all',
         mitraFilter: 'all',
         tingkatFilter: 'all',
-        currentPage: 1,
-        perPage: 10,
-        perPageOpen: false,
-        perPageOptions: [5, 10, 25, 50],
 
         resetFilters() {
             this.statusFilter = 'all';
             this.mitraFilter = 'all';
             this.tingkatFilter = 'all';
-            this.currentPage = 1;
+            this.applyFilter();
         },
 
-        setPerPage(val) {
-            this.perPage = val;
-            this.currentPage = 1;
-            this.perPageOpen = false;
+        applyFilter() {
+            this.$nextTick(() => {
+                const rows = document.querySelectorAll('.dk-table tbody tr.um-row');
+                let count = 0;
+                rows.forEach(row => {
+                    const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
+                    const matchMitra = this.mitraFilter === 'all' || (row.dataset.mitra && row.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
+                    const matchTingkat = this.tingkatFilter === 'all' || (row.dataset.tingkat && row.dataset.tingkat.toLowerCase() === this.tingkatFilter.toLowerCase());
+                    if (matchStatus && matchMitra && matchTingkat) {
+                        row.removeAttribute('data-filtered-out');
+                        count++;
+                    } else {
+                        row.setAttribute('data-filtered-out', 'true');
+                    }
+                });
+                const countEl = document.getElementById('evalCount');
+                if (countEl) countEl.textContent = count + ' dokumen ditemukan';
+                const emptyRow = document.querySelector('.dk-table tbody tr[data-empty]');
+                if (emptyRow) emptyRow.style.display = count === 0 ? '' : 'none';
+                if (window.CustomPaginav) {
+                    CustomPaginav.init();
+                }
+            });
         },
 
-        get rows() {
-            const tbody = this.$refs.rows || document.querySelector('tbody[x-ref=\'rows\']') || document.querySelector('#mainContent table.dk-table tbody');
-            return tbody ? Array.from(tbody.querySelectorAll('tr.dk-row[data-row]')) : [];
-        },
-
-        get filteredRows() {
-            const allRows = this.rows;
-            if (!allRows.length) return [];
-            return allRows.filter(r => this.matchesRow(r));
-        },
-
-        get totalFiltered() {
-            return this.filteredRows.length;
-        },
-
-        get totalPages() {
-            return Math.max(1, Math.ceil(this.totalFiltered / this.perPage));
-        },
-
-        get startRange() {
-            return this.totalFiltered === 0 ? 0 : ((this.currentPage - 1) * this.perPage) + 1;
-        },
-
-        get endRange() {
-            return Math.min(this.currentPage * this.perPage, this.totalFiltered);
-        },
-
-        matchesRow(r) {
-            if (!r || !r.dataset) return true;
-            const matchStatus = this.statusFilter === 'all' || (r.dataset.status && r.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
-            const matchMitra = this.mitraFilter === 'all' || (r.dataset.mitra && r.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
-            const matchTingkat = this.tingkatFilter === 'all' || (r.dataset.tingkat && r.dataset.tingkat.toLowerCase() === this.tingkatFilter.toLowerCase());
-            return matchStatus && matchMitra && matchTingkat;
-        },
-
-        isRowVisible(el) {
-            const tr = el.tagName === 'TR' ? el : el.closest('tr');
-            if (!tr) return true;
-            if (!this.matchesRow(tr)) return false;
-            const fRows = this.filteredRows;
-            if (!fRows.length) return true;
-            const index = fRows.indexOf(tr);
-            if (index === -1) return false;
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = start + this.perPage;
-            return index >= start && index < end;
-        },
-
-        pageNumbers() {
-            const total = this.totalPages;
-            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
-            return Array.from(pages).filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
-        },
-
-        goToPage(p) {
-            this.currentPage = Math.min(Math.max(p, 1), this.totalPages);
+        init() {
+            this.$watch('statusFilter', () => this.applyFilter());
+            this.$watch('mitraFilter', () => this.applyFilter());
+            this.$watch('tingkatFilter', () => this.applyFilter());
         }
     }">
 
@@ -321,34 +283,21 @@
 
         <!-- Main Table Card -->
         <div class="card um-card dk-card">
-            <div class="card-header um-header dk-card-header">
+            <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
                 <div class="um-title dk-card-title">
                     <span class="dk-title-icon"><i class="fas fa-chart-line"></i></span>
                     <div>
                         <strong>Rekapitulasi Evaluasi &amp; Capaian Pelaksanaan</strong>
-                        <small id="evalCount"
-                            x-text="totalFiltered === {{ $totalCoop }} ? '{{ $totalCoop }} dokumen kerja sama terdata' : totalFiltered + ' dari {{ $totalCoop }} dokumen difilter'">
-                            {{ $totalCoop }} dokumen kerja sama terdata
-                        </small>
+                        <small id="evalCount">{{ $totalCoop }} dokumen kerja sama terdata</small>
                     </div>
                 </div>
 
-                <div class="dk-card-actions" style="display: flex; align-items: center; gap: 12px;">
-                    {{-- Dropdown Per Page --}}
-                    <div class="alpine-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
-                        <button type="button" class="rfc-btn" @click="perPageOpen = !perPageOpen"
-                            style="font-size: 12px; padding: 6px 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; gap: 6px;">
-                            <span x-text="perPage + ' baris'"></span>
-                            <i class="fas fa-chevron-down" style="font-size: 10px;"></i>
-                        </button>
-                        <div class="ad-menu" x-show="perPageOpen" x-transition
-                            style="position: absolute; right: 0; top: calc(100% + 4px); min-width: 100px; z-index: 50;">
-                            <template x-for="opt in perPageOptions" :key="opt">
-                                <div class="ad-item" :class="{'selected': perPage === opt}" @click="setPerPage(opt)"
-                                    x-text="opt + ' baris'"></div>
-                            </template>
-                        </div>
-                    </div>
+                <div class="dk-card-actions" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <x-paginav-entries 
+                        target=".dk-table tbody tr.um-row"
+                        :perPage="10"
+                        :options="[5, 10, 25, 50, 100]"
+                    />
 
                     {{-- Tombol Cetak / Ekspor Laporan --}}
                     <button type="button" class="dk-primary-btn" onclick="window.print()"
@@ -391,8 +340,7 @@
                                 <tr class="um-row dk-row" data-row
                                     data-status="{{ $statusVal }}"
                                     data-mitra="{{ strtolower($mName) }}"
-                                    data-tingkat="{{ $tingkatVal }}"
-                                    x-show="isRowVisible($el)" x-cloak>
+                                    data-tingkat="{{ $tingkatVal }}">
 
                                     {{-- 1. Nomor --}}
                                     <td class="um-td um-td-num" style="text-align: center; vertical-align: middle;">
@@ -494,52 +442,17 @@
                                     </td>
                                 </tr>
                             @endforelse
-
-                            {{-- Empty state when filter has no matches --}}
-                            <tr x-show="totalFiltered === 0 && {{ $totalCoop }} > 0" x-cloak>
-                                <td colspan="8" class="um-empty">
-                                    <div class="um-empty-state dk-empty-state" style="padding: 48px 24px; text-align: center;">
-                                        <div class="um-empty-icon dk-empty-icon" style="width: 56px; height: 56px; border-radius: 16px; background: rgba(239,68,68,0.1); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px;">
-                                            <i class="fas fa-filter-circle-xmark"></i>
-                                        </div>
-                                        <p class="um-empty-title" style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Data Tidak Ditemukan</p>
-                                        <p class="um-empty-sub" style="font-size: 13px; color: var(--text-sub);">Tidak ada dokumen kerja sama yang cocok dengan kriteria filter yang dipilih.</p>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                {{-- ═══ PAGINATION CONTROLS (Identik dengan mamag/index & alumni/index) ═══ --}}
-                <div class="table-pagination-controls" x-show="totalFiltered > 0" x-cloak>
-                    <div class="pagination-info">
-                        Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
-                        <strong x-text="totalFiltered">{{ $totalCoop }}</strong> data
-                    </div>
-                    <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                        <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
-                            title="Halaman pertama">
-                            <i class="fas fa-angles-left"></i>
-                        </button>
-                        <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
-                            :disabled="currentPage === 1" title="Halaman sebelumnya">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <template x-for="page in pageNumbers()" :key="page">
-                            <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
-                                @click="goToPage(page)" x-text="page"></button>
-                        </template>
-                        <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
-                            :disabled="currentPage === totalPages" title="Halaman berikutnya">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <button type="button" class="pag-btn" @click="goToPage(totalPages)"
-                            :disabled="currentPage === totalPages" title="Halaman terakhir">
-                            <i class="fas fa-angles-right"></i>
-                        </button>
-                    </div>
-                </div>
+                <x-paginav 
+                    id="prodiEvaluasiTablePaginav"
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :showInfo="true"
+                    :showPerPage="false"
+                />
             </div>
         </div>
 
