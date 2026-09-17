@@ -47,7 +47,8 @@
             </div>
         @endif
 
-        <div class="card um-card dk-card" style="width: 100%; max-width: 100%; box-sizing: border-box; border-radius: 16px; overflow: visible;">
+        <div class="card um-card dk-card"
+            style="width: 100%; max-width: 100%; box-sizing: border-box; border-radius: 16px; overflow: visible;">
             <div class="card-header um-header dk-card-header">
                 <div class="um-title dk-card-title">
                     <span class="dk-title-icon"><i class="fas fa-file-pen"></i></span>
@@ -59,14 +60,17 @@
             </div>
 
             <div class="card-body dk-card-body" style="padding: 0; width: 100%; box-sizing: border-box; overflow: visible;">
-                <form action="{{ route('prodi.penempatan.store') }}" method="POST" style="width: 100%; box-sizing: border-box;">
+                <form action="{{ route('prodi.penempatan.store') }}" method="POST"
+                    style="width: 100%; box-sizing: border-box;">
                     @csrf
 
                     {{-- ═══ TWO-COLUMN TOP LAYOUT (Width Constrained & Non-Overflowing) ═══ --}}
-                    <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; padding: 24px; width: 100%; max-width: 100%; box-sizing: border-box;">
+                    <div
+                        style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; padding: 24px; width: 100%; max-width: 100%; box-sizing: border-box;">
 
                         {{-- ══ LEFT COLUMN: Masa Berlaku (Sticky) ══ --}}
-                        <div style="position: sticky; top: 24px; align-self: start; min-width: 0; max-width: 100%; box-sizing: border-box;">
+                        <div
+                            style="position: sticky; top: 24px; align-self: start; min-width: 0; max-width: 100%; box-sizing: border-box;">
                             <div
                                 style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; width: 100%; box-sizing: border-box;">
                                 <div x-data="{ showMasaBerlaku: true }">
@@ -89,7 +93,8 @@
                                     </div>
 
                                     {{-- Card Body --}}
-                                    <div x-show="showMasaBerlaku" x-collapse.duration.300ms style="padding: 18px; width: 100%; box-sizing: border-box;">
+                                    <div x-show="showMasaBerlaku" x-collapse.duration.300ms
+                                        style="padding: 18px; width: 100%; box-sizing: border-box;">
 
                                         {{-- ── Periode Mulai ── --}}
                                         <div style="margin-bottom: 16px;">
@@ -113,7 +118,8 @@
                                                     <i class="fas fa-calendar-check mc-icon-left"
                                                         style="color: #4f46e5;"></i>
                                                     <input type="date" name="periode_selesai"
-                                                        value="{{ old('periode_selesai') }}" class="mc-input" style="width: 100%; box-sizing: border-box;" />
+                                                        value="{{ old('periode_selesai') }}" class="mc-input"
+                                                        style="width: 100%; box-sizing: border-box;" />
                                                 </div>
                                             </div>
                                         </div>
@@ -157,26 +163,28 @@
                                         </span>
                                     </div>
 
-                                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%; box-sizing: border-box;">
+                                    <div
+                                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%; box-sizing: border-box;">
                                         {{-- 1. Mahasiswa (Searchable Alpine Dropdown) --}}
-                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
-                                            open: false,
-                                            search: '',
-                                            selectedId: '{{ old('mahasiswa_id') }}',
-                                            items: [
-                                                @foreach($mahasiswas as $mhs)
-                                                    { id: '{{ $mhs->id }}', name: '{{ addslashes($mhs->nama) }}', nim: '{{ addslashes($mhs->nim) }}' },
-                                                @endforeach
-                                            ],
-                                            get filteredItems() {
-                                                if (!this.search) return this.items;
-                                                const q = this.search.toLowerCase();
-                                                return this.items.filter(i => i.name.toLowerCase().includes(q) || i.nim.toLowerCase().includes(q));
-                                            },
-                                            get selectedItem() {
-                                                return this.items.find(i => String(i.id) === String(this.selectedId));
-                                            }
-                                        }">
+                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;"
+                                            x-data="{
+                                                    open: false,
+                                                    search: '',
+                                                    selectedId: '{{ old('mahasiswa_id') }}',
+                                                    items: [
+                                                        @foreach($mahasiswas as $mhs)
+                                                            { id: '{{ $mhs->id }}', name: '{{ addslashes($mhs->nama) }}', nim: '{{ addslashes($mhs->nim) }}' },
+                                                        @endforeach
+                                                    ],
+                                                    get filteredItems() {
+                                                        if (!this.search) return this.items;
+                                                        const q = this.search.toLowerCase();
+                                                        return this.items.filter(i => i.name.toLowerCase().includes(q) || i.nim.toLowerCase().includes(q));
+                                                    },
+                                                    get selectedItem() {
+                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                    }
+                                                }">
                                             <label class="mc-label">Pilih Mahasiswa <span class="mc-req">*</span></label>
                                             <input type="hidden" name="mahasiswa_id" :value="selectedId" required>
 
@@ -222,13 +230,15 @@
                                                             :class="{'selected': String(selectedId) === String(item.id)}"
                                                             @click="selectedId = item.id; open = false;"
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
-                                                            <div style="min-width: 0; overflow: hidden; padding-right: 8px;">
+                                                            <div
+                                                                style="min-width: 0; overflow: hidden; padding-right: 8px;">
                                                                 <strong x-text="item.name"
                                                                     style="display: block; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></strong>
                                                                 <small x-text="'NIM: ' + item.nim"
                                                                     style="color: var(--text-sub); font-size: 11px;"></small>
                                                             </div>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
+                                                            <i class="fas fa-check"
+                                                                style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -241,24 +251,25 @@
                                         </div>
 
                                         {{-- 2. Kegiatan Kerja Sama (Searchable Alpine Dropdown) --}}
-                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
-                                            open: false,
-                                            search: '',
-                                            selectedId: '{{ old('kegiatan_id') }}',
-                                            items: [
-                                                @foreach($kegiatans as $keg)
-                                                    { id: '{{ $keg->id }}', name: '{{ addslashes($keg->nama_kegiatan) }}', jenis: '{{ addslashes($keg->jenis ?? 'Kerjasama') }}' },
-                                                @endforeach
-                                            ],
-                                            get filteredItems() {
-                                                if (!this.search) return this.items;
-                                                const q = this.search.toLowerCase();
-                                                return this.items.filter(i => i.name.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q));
-                                            },
-                                            get selectedItem() {
-                                                return this.items.find(i => String(i.id) === String(this.selectedId));
-                                            }
-                                        }">
+                                        <div class="mc-group" style="min-width: 0; width: 100%; box-sizing: border-box;"
+                                            x-data="{
+                                                    open: false,
+                                                    search: '',
+                                                    selectedId: '{{ old('kegiatan_id') }}',
+                                                    items: [
+                                                        @foreach($kegiatans as $keg)
+                                                            { id: '{{ $keg->id }}', name: '{{ addslashes($keg->nama_kegiatan) }}', jenis: '{{ addslashes($keg->jenis ?? 'Kerjasama') }}' },
+                                                        @endforeach
+                                                    ],
+                                                    get filteredItems() {
+                                                        if (!this.search) return this.items;
+                                                        const q = this.search.toLowerCase();
+                                                        return this.items.filter(i => i.name.toLowerCase().includes(q) || i.jenis.toLowerCase().includes(q));
+                                                    },
+                                                    get selectedItem() {
+                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                    }
+                                                }">
                                             <label class="mc-label">Kegiatan Kerja Sama <span
                                                     class="mc-req">*</span></label>
                                             <input type="hidden" name="kegiatan_id" :value="selectedId" required>
@@ -304,13 +315,15 @@
                                                             :class="{'selected': String(selectedId) === String(item.id)}"
                                                             @click="selectedId = item.id; open = false;"
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
-                                                            <div style="min-width: 0; overflow: hidden; padding-right: 8px;">
+                                                            <div
+                                                                style="min-width: 0; overflow: hidden; padding-right: 8px;">
                                                                 <strong x-text="item.name"
                                                                     style="display: block; font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></strong>
                                                                 <small x-text="'Jenis: ' + item.jenis"
                                                                     style="color: var(--text-sub); font-size: 11px;"></small>
                                                             </div>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
+                                                            <i class="fas fa-check"
+                                                                style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -323,24 +336,26 @@
                                         </div>
 
                                         {{-- 3. Mitra Penempatan (DUDIKA) --}}
-                                        <div class="mc-group" style="grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box;" x-data="{
-                                            open: false,
-                                            search: '',
-                                            selectedId: '{{ old('mitra_id') }}',
-                                            items: [
-                                                @foreach($mitras as $mitra)
-                                                    { id: '{{ $mitra->id }}', name: '{{ addslashes($mitra->nama_mitra) }}' },
-                                                @endforeach
-                                            ],
-                                            get filteredItems() {
-                                                if (!this.search) return this.items;
-                                                const q = this.search.toLowerCase();
-                                                return this.items.filter(i => i.name.toLowerCase().includes(q));
-                                            },
-                                            get selectedItem() {
-                                                return this.items.find(i => String(i.id) === String(this.selectedId));
-                                            }
-                                        }">
+                                        <div class="mc-group"
+                                            style="grid-column: 1 / -1; min-width: 0; width: 100%; box-sizing: border-box;"
+                                            x-data="{
+                                                    open: false,
+                                                    search: '',
+                                                    selectedId: '{{ old('mitra_id') }}',
+                                                    items: [
+                                                        @foreach($mitras as $mitra)
+                                                            { id: '{{ $mitra->id }}', name: '{{ addslashes($mitra->nama_mitra) }}' },
+                                                        @endforeach
+                                                    ],
+                                                    get filteredItems() {
+                                                        if (!this.search) return this.items;
+                                                        const q = this.search.toLowerCase();
+                                                        return this.items.filter(i => i.name.toLowerCase().includes(q));
+                                                    },
+                                                    get selectedItem() {
+                                                        return this.items.find(i => String(i.id) === String(this.selectedId));
+                                                    }
+                                                }">
                                             <label class="mc-label">Mitra Industri (DUDIKA) <span
                                                     class="mc-req">*</span></label>
                                             <input type="hidden" name="mitra_id" :value="selectedId" required>
@@ -383,7 +398,8 @@
                                                             style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer;">
                                                             <strong x-text="item.name"
                                                                 style="font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;"></strong>
-                                                            <i class="fas fa-check" style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
+                                                            <i class="fas fa-check"
+                                                                style="color: #4f46e5; font-size: 11px; flex-shrink: 0;"
                                                                 x-show="String(selectedId) === String(item.id)"></i>
                                                         </div>
                                                     </template>
@@ -415,7 +431,8 @@
                                         </div>
                                     </div>
 
-                                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; box-sizing: border-box;">
+                                    <div
+                                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; box-sizing: border-box;">
                                         {{-- Pembimbing Internal (Dosen) --}}
                                         <div
                                             style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; width: 100%; box-sizing: border-box;">
@@ -427,14 +444,16 @@
                                                     Internal (Dosen)</span>
                                             </div>
 
-                                            <div class="mc-group" style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
+                                            <div class="mc-group"
+                                                style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Nama Dosen Pembimbing <span
                                                         class="mc-req">*</span></label>
                                                 <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-user-tie mc-icon-left"></i>
                                                     <input type="text" name="nama_pembimbing_internal"
                                                         value="{{ old('nama_pembimbing_internal') }}" required
-                                                        placeholder="Contoh: Dr. Ir. Nama Dosen, M.T." class="mc-input" style="width: 100%; box-sizing: border-box;">
+                                                        placeholder="Contoh: Dr. Ir. Nama Dosen, M.T." class="mc-input"
+                                                        style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
 
@@ -444,7 +463,8 @@
                                                     <i class="fab fa-whatsapp mc-icon-left" style="color: #10b981;"></i>
                                                     <input type="text" name="kontak_pembimbing_internal"
                                                         value="{{ old('kontak_pembimbing_internal') }}"
-                                                        placeholder="08xxxxxxxxxx" class="mc-input" style="width: 100%; box-sizing: border-box;">
+                                                        placeholder="08xxxxxxxxxx" class="mc-input"
+                                                        style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
                                         </div>
@@ -460,14 +480,16 @@
                                                     Eksternal (Mitra)</span>
                                             </div>
 
-                                            <div class="mc-group" style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
+                                            <div class="mc-group"
+                                                style="margin-bottom: 12px; width: 100%; box-sizing: border-box;">
                                                 <label class="mc-label">Nama Pembimbing Mitra <span
                                                         class="mc-req">*</span></label>
                                                 <div class="mc-input-wrap" style="width: 100%; box-sizing: border-box;">
                                                     <i class="fas fa-user-check mc-icon-left"></i>
                                                     <input type="text" name="nama_pembimbing_eksternal"
                                                         value="{{ old('nama_pembimbing_eksternal') }}" required
-                                                        placeholder="Nama Pembimbing di Instansi/Mitra" class="mc-input" style="width: 100%; box-sizing: border-box;">
+                                                        placeholder="Nama Pembimbing di Instansi/Mitra" class="mc-input"
+                                                        style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
 
@@ -477,7 +499,8 @@
                                                     <i class="fas fa-envelope mc-icon-left" style="color: #6366f1;"></i>
                                                     <input type="text" name="kontak_pembimbing_eksternal"
                                                         value="{{ old('kontak_pembimbing_eksternal') }}"
-                                                        placeholder="Email / No. Telp" class="mc-input" style="width: 100%; box-sizing: border-box;">
+                                                        placeholder="Email / No. Telp" class="mc-input"
+                                                        style="width: 100%; box-sizing: border-box;">
                                                 </div>
                                             </div>
                                         </div>
@@ -493,7 +516,7 @@
                                     </a>
                                     <button type="submit" class="rfc-btn rfc-btn-primary"
                                         style="padding: 10px 24px; border-radius: 10px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
-                                        <i class="fas fa-save"></i> Simpan Penempatan
+                                        <i class="fas fa-save"></i> Tambah Penempatan
                                     </button>
                                 </div>
 
