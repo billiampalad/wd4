@@ -397,7 +397,7 @@
                                 <th class="um-th" style="min-width: 220px;">Mitra Tempat Bekerja</th>
                                 <th class="um-th" style="min-width: 180px;">Posisi &amp; Masa Kerja</th>
                                 <th class="um-th" style="text-align: center; width: 130px;">Status</th>
-                                <th class="um-th" style="text-align: center; width: 90px;">Aksi</th>
+                                <th class="um-th" style="text-align: center; width: 110px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody x-ref="rows">
@@ -518,23 +518,41 @@
 
                                     {{-- 8. Aksi --}}
                                     <td class="um-td" style="text-align: center; vertical-align: middle;">
-                                        <button type="button" class="rfc-btn"
-                                            @click="openDetail({
-                                                nama: '{{ addslashes($alumni->nama) }}',
-                                                nim: '{{ addslashes($alumni->nim) }}',
-                                                tahunLulus: '{{ $alumni->tahun_lulus }}',
-                                                telepon: '{{ addslashes($alumni->telepon ?? '-') }}',
-                                                email: '{{ addslashes($alumni->email ?? '-') }}',
-                                                mitra: '{{ addslashes($mName) }}',
-                                                posisi: '{{ addslashes($mitraRelation->posisi ?? '-') }}',
-                                                tahunMulai: '{{ $mitraRelation->tahun_mulai ?? '-' }}',
-                                                status: '{{ $statusVal }}',
-                                                sumberData: '{{ $mitraRelation->sumber_data ?? 'Prodi' }}'
-                                            })"
-                                            title="Lihat Detail Alumni"
-                                            style="padding: 6px 12px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); cursor: pointer;">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                            <button type="button" class="rfc-btn"
+                                                @click="openDetail({
+                                                    nama: '{{ addslashes($alumni->nama) }}',
+                                                    nim: '{{ addslashes($alumni->nim) }}',
+                                                    tahunLulus: '{{ $alumni->tahun_lulus }}',
+                                                    telepon: '{{ addslashes($alumni->telepon ?? '-') }}',
+                                                    email: '{{ addslashes($alumni->email ?? '-') }}',
+                                                    mitra: '{{ addslashes($mName) }}',
+                                                    posisi: '{{ addslashes($mitraRelation->posisi ?? '-') }}',
+                                                    tahunMulai: '{{ $mitraRelation->tahun_mulai ?? '-' }}',
+                                                    status: '{{ $statusVal }}',
+                                                    sumberData: '{{ $mitraRelation->sumber_data ?? 'Prodi' }}'
+                                                })"
+                                                title="Lihat Detail Alumni"
+                                                style="padding: 6px 10px; border-radius: 8px; font-size: 12px; background: var(--surface2); color: var(--text); border: 1px solid var(--border); cursor: pointer;">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="rfc-btn"
+                                                title="Hapus Data Alumni"
+                                                data-alert-target="modalDeleteAlumni-{{ $alumni->id }}"
+                                                style="padding: 6px 10px; border-radius: 8px; font-size: 12px; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); cursor: pointer;">
+                                                <i class="fas fa-trash-can"></i>
+                                            </button>
+                                            <x-alert
+                                                id="modalDeleteAlumni-{{ $alumni->id }}"
+                                                type="danger"
+                                                title="Hapus Data Alumni"
+                                                message="Apakah Anda yakin ingin menghapus data alumni <span class='custom-alert-highlight'>{{ $alumni->nama }} ({{ $alumni->nim }})</span>?"
+                                                confirmText="Ya, Hapus"
+                                                cancelText="Batal"
+                                                action="{{ route('prodi.alumni.destroy', $alumni->id) }}"
+                                                method="DELETE"
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

@@ -85,4 +85,23 @@ class AlumniMitraController extends Controller
 
         return redirect()->route('prodi.alumni.index')->with('success', 'Data alumni dan penempatan berhasil ditambahkan.');
     }
+
+    /**
+     * Remove the specified alumni record and its placements from storage.
+     */
+    public function destroy(string $id)
+    {
+        $alumni = Alumni::findOrFail($id);
+
+        $user = Auth::user();
+        if ($user->profile && $user->profile->prodi_id && $alumni->prodi_id != $user->profile->prodi_id) {
+            return redirect()->route('prodi.alumni.index')->with('error', 'Anda tidak memiliki akses untuk menghapus data ini.');
+        }
+
+        // Hapus relasi penempatan alumni terlebih dahulu
+        $alumni->alumniMitras()->delete();
+        $alumni->delete();
+
+        return redirect()->route('prodi.alumni.index')->with('success', 'Data alumni berhasil dihapus.');
+    }
 }
