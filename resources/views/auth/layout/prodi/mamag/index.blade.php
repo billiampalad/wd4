@@ -90,82 +90,44 @@
         statusFilter: 'all',
         mitraFilter: 'all',
         nilaiFilter: 'all',
-        currentPage: 1,
-        perPage: 10,
-        perPageOpen: false,
-        perPageOptions: [5, 10, 25, 50],
         showModal: false,
 
         resetFilters() {
             this.statusFilter = 'all';
             this.mitraFilter = 'all';
             this.nilaiFilter = 'all';
-            this.currentPage = 1;
+            this.applyFilter();
         },
 
-        setPerPage(val) {
-            this.perPage = val;
-            this.currentPage = 1;
-            this.perPageOpen = false;
+        applyFilter() {
+            this.$nextTick(() => {
+                const rows = document.querySelectorAll('.dk-table tbody tr.um-row');
+                let count = 0;
+                rows.forEach(row => {
+                    const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
+                    const matchMitra = this.mitraFilter === 'all' || (row.dataset.mitra && row.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
+                    const matchNilai = this.nilaiFilter === 'all' || (row.dataset.nilai && row.dataset.nilai.toLowerCase() === this.nilaiFilter.toLowerCase());
+                    if (matchStatus && matchMitra && matchNilai) {
+                        row.removeAttribute('data-filtered-out');
+                        count++;
+                    } else {
+                        row.setAttribute('data-filtered-out', 'true');
+                    }
+                });
+                const countEl = document.getElementById('penempatanCount');
+                if (countEl) countEl.textContent = count + ' data ditemukan';
+                const emptyRow = document.querySelector('.dk-table tbody tr[data-empty]');
+                if (emptyRow) emptyRow.style.display = count === 0 ? '' : 'none';
+                if (window.CustomPaginav) {
+                    CustomPaginav.init();
+                }
+            });
         },
 
-        get rows() {
-            const tbody = this.$refs.rows || document.querySelector('tbody[x-ref=\'rows\']') || document.querySelector('#mainContent table.dk-table tbody');
-            return tbody ? Array.from(tbody.querySelectorAll('tr.dk-row[data-row]')) : [];
-        },
-
-        get filteredRows() {
-            const allRows = this.rows;
-            if (!allRows.length) return [];
-            return allRows.filter(r => this.matchesRow(r));
-        },
-
-        get totalFiltered() {
-            return this.filteredRows.length;
-        },
-
-        get totalPages() {
-            return Math.max(1, Math.ceil(this.totalFiltered / this.perPage));
-        },
-
-        get startRange() {
-            return this.totalFiltered === 0 ? 0 : ((this.currentPage - 1) * this.perPage) + 1;
-        },
-
-        get endRange() {
-            return Math.min(this.currentPage * this.perPage, this.totalFiltered);
-        },
-
-        matchesRow(r) {
-            if (!r || !r.dataset) return true;
-            const matchStatus = this.statusFilter === 'all' || (r.dataset.status && r.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
-            const matchMitra = this.mitraFilter === 'all' || (r.dataset.mitra && r.dataset.mitra.toLowerCase() === this.mitraFilter.toLowerCase());
-            const matchNilai = this.nilaiFilter === 'all' || (r.dataset.nilai && r.dataset.nilai.toLowerCase() === this.nilaiFilter.toLowerCase());
-            return matchStatus && matchMitra && matchNilai;
-        },
-
-        isRowVisible(el) {
-            const tr = el.tagName === 'TR' ? el : el.closest('tr');
-            if (!tr) return true;
-            if (!this.matchesRow(tr)) return false;
-            const fRows = this.filteredRows;
-            if (!fRows.length) return true;
-            const index = fRows.indexOf(tr);
-            if (index === -1) return false;
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = start + this.perPage;
-            return index >= start && index < end;
-        },
-
-        pageNumbers() {
-            const total = this.totalPages;
-            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
-            return Array.from(pages).filter(p => p >= 1 && p <= total).sort((a, b) => a - b);
-        },
-
-        goToPage(p) {
-            this.currentPage = Math.min(Math.max(p, 1), this.totalPages);
+        init() {
+            this.$watch('statusFilter', () => this.applyFilter());
+            this.$watch('mitraFilter', () => this.applyFilter());
+            this.$watch('nilaiFilter', () => this.applyFilter());
         }
     }">
         {{-- ═══ FILTER DATA PENEMPATAN MAHASISWA ACCORDION ═══ --}}
@@ -329,43 +291,22 @@
 
         <!-- Data Table Card -->
         <div class="card um-card dk-card">
-            <div class="card-header um-header dk-card-header">
+            <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
                 <div class="um-title dk-card-title">
                     <span class="dk-title-icon"><i class="fas fa-user-graduate"></i></span>
                     <span>
                         <strong>Daftar Penempatan Mahasiswa</strong>
-                        <small id="penempatanCount"><span x-text="totalFiltered">{{ $penempatanList->count() }}</span> data ditemukan</small>
+                        <small id="penempatanCount">{{ $penempatanList->count() }} data ditemukan</small>
                     </span>
                 </div>
 
-                <div class="mn-table-controls" style="display: flex; gap: 16px; align-items: center; margin: 0 auto;">
-                    <div class="mn-table-entries"
-                        style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
-                        <span>Tampilkan</span>
-                        <div class="mn-entry-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
-                            <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
-                                style="display: flex; align-items: center; justify-content: space-between; min-width: 64px; padding: 8px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; transition: all 0.2s;">
-                                <span x-text="perPage">10</span>
-                                <i class="fas fa-chevron-down"
-                                    style="font-size: 10px; margin-left: 8px; color: var(--text-sub);"></i>
-                            </button>
-                            <div class="mn-entry-menu" x-show="perPageOpen" x-cloak x-transition.opacity
-                                style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 50; overflow: hidden; display: flex; flex-direction: column;">
-                                <template x-for="option in perPageOptions" :key="option">
-                                    <button type="button" class="mn-entry-option" @click="setPerPage(option)"
-                                        style="width: 100%; padding: 8px 12px; text-align: left; background: transparent; border: none; cursor: pointer; font-size: 13px; color: var(--text); transition: 0.2s; font-weight: 500;"
-                                        onmouseover="this.style.background='var(--surface2)'"
-                                        onmouseout="this.style.background='transparent'">
-                                        <span x-text="option"></span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-                        <span>data</span>
-                    </div>
-                </div>
+                <div class="dk-card-tools" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <x-paginav-entries 
+                        target=".dk-table tbody tr.um-row"
+                        :perPage="10"
+                        :options="[5, 10, 25, 50, 100]"
+                    />
 
-                <div class="dk-card-tools">
                     <button @click="showModal = true" class="dk-primary-btn" type="button">
                         <i class="fas fa-plus"></i>
                         <span>Tindakan Baru</span>
@@ -518,8 +459,7 @@
                                     data-row-id="{{ $item->id }}"
                                     data-status="{{ $status }}"
                                     data-mitra="{{ $mitraName }}"
-                                    data-nilai="{{ $nilaiStatus }}"
-                                    x-show="isRowVisible($el)">
+                                    data-nilai="{{ $nilaiStatus }}">
                                     <td class="um-td dk-td-expand" style="vertical-align: top; padding-top: 12px;">
                                         <button type="button" class="dk-expand-toggle" aria-expanded="false"
                                             aria-controls="dk-detail-{{ $item->id }}" title="Lihat rincian pembimbing &amp; nilai">
@@ -652,51 +592,17 @@
                                 </tr>
                             @endforelse
 
-                            {{-- Empty state when filter has no matches --}}
-                            <tr x-show="totalFiltered === 0 && {{ $penempatanList->count() }} > 0" x-cloak>
-                                <td colspan="8" class="um-empty">
-                                    <div class="um-empty-state dk-empty-state">
-                                        <div class="um-empty-icon dk-empty-icon">
-                                            <i class="fas fa-filter-circle-xmark"></i>
-                                        </div>
-                                        <p class="um-empty-title">Data tidak ditemukan</p>
-                                        <p class="um-empty-sub">Tidak ada penempatan mahasiswa yang cocok dengan filter yang dipilih.</p>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                {{-- ═══ PAGINATION CONTROLS ═══ --}}
-                <div class="table-pagination-controls" x-show="totalFiltered > 0" x-cloak>
-                    <div class="pagination-info">
-                        Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
-                        <strong x-text="totalFiltered">{{ $penempatanList->count() }}</strong> data
-                    </div>
-                    <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                        <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
-                            title="Halaman pertama">
-                            <i class="fas fa-angles-left"></i>
-                        </button>
-                        <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
-                            :disabled="currentPage === 1" title="Halaman sebelumnya">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <template x-for="page in pageNumbers()" :key="page">
-                            <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
-                                @click="goToPage(page)" x-text="page"></button>
-                        </template>
-                        <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
-                            :disabled="currentPage === totalPages" title="Halaman berikutnya">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <button type="button" class="pag-btn" @click="goToPage(totalPages)"
-                            :disabled="currentPage === totalPages" title="Halaman terakhir">
-                            <i class="fas fa-angles-right"></i>
-                        </button>
-                    </div>
-                </div>
+                <x-paginav 
+                    id="prodiMamagTablePaginav"
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :showInfo="true"
+                    :showPerPage="false"
+                />
             </div>
         </div>
     </div>
