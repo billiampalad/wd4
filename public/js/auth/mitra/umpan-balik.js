@@ -224,34 +224,32 @@ function mitraUmpanBalikApp() {
         },
 
         submitFeedback(event) {
+            const form = event.target;
             const title = this.isEditMode ? 'Perbarui Umpan Balik?' : 'Kirim Umpan Balik?';
             const text = this.isEditMode
                 ? 'Ulasan dan penilaian kepuasan kerja sama akan diperbarui.'
                 : 'Ulasan dan penilaian kepuasan Anda akan dikirimkan ke pihak Politeknik Negeri Manado.';
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
                     title: title,
-                    text: text,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Kirim',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#059669',
-                    cancelButtonColor: '#64748b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    message: text,
+                    type: 'primary',
+                    confirmText: 'Ya, Kirim',
+                    cancelText: 'Batal',
+                    confirmColor: 'success',
+                    onConfirm: () => {
                         this.isSubmitting = true;
-                        event.target.submit();
+                        form.submit();
                     }
                 });
             } else {
                 if (confirm(`${title}\n${text}`)) {
                     this.isSubmitting = true;
-                    event.target.submit();
+                    form.submit();
                 }
             }
-        }
+        },
     };
 }
 

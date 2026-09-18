@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/component/search.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/component/paginav.css') }}" data-turbo-track="reload">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/component/search.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/component/paginav.js') }}" data-turbo-track="reload"></script>

@@ -486,13 +486,8 @@
                     activeModalConfig.catatan.classList.add('is-required');
                 }
 
-                if (window.Swal) {
-                    window.Swal.fire({
-                        icon: 'warning',
-                        title: 'Catatan wajib diisi',
-                        text: 'Tambahkan alasan penolakan pada kolom catatan di detail modal.',
-                        confirmButtonText: 'Baik'
-                    });
+                if (window.CustomAlert) {
+                    CustomAlert.warning('Tambahkan alasan penolakan pada kolom catatan di detail modal.', 'Catatan Wajib Diisi');
                 }
                 return;
             }
@@ -517,13 +512,8 @@
                     config.catatan?.classList.add('is-required');
                     config.catatan?.focus();
 
-                    if (window.Swal) {
-                        window.Swal.fire({
-                            icon: 'warning',
-                            title: 'Catatan wajib diisi',
-                            text: 'Tambahkan alasan penolakan agar mitra memahami hasil validasi.',
-                            confirmButtonText: 'Baik'
-                        });
+                    if (window.CustomAlert) {
+                        CustomAlert.warning('Tambahkan alasan penolakan agar mitra memahami hasil validasi.', 'Catatan Wajib Diisi');
                     }
                     return;
                 }

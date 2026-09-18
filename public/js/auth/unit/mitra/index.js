@@ -55,52 +55,51 @@
     async function deleteMitra(form) {
         const message = form.dataset.confirmMessage || 'Apakah Anda yakin ingin menghapus mitra ini?';
 
-        const result = await Swal.fire({
-            title: 'Konfirmasi',
-            text: message,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#7c3aed',
-            cancelButtonColor: '#ef4444',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-        });
+        const doDelete = async () => {
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new FormData(form)
+                });
 
-        if (!result.isConfirmed) {
-            return;
-        }
+                const data = await response.json();
 
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: new FormData(form)
-            });
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Mitra gagal dihapus.');
+                }
 
-            const data = await response.json();
+                if (window.CustomAlert) {
+                    CustomAlert.success(data.message || 'Mitra berhasil dihapus.');
+                }
 
-            if (!response.ok || !data.success) {
-                throw new Error(data.message || 'Mitra gagal dihapus.');
+                refreshMitraIndex();
+            } catch (error) {
+                if (window.CustomAlert) {
+                    CustomAlert.error(error.message || 'Terjadi kesalahan saat menghapus data.');
+                } else {
+                    alert(error.message || 'Terjadi kesalahan saat menghapus data.');
+                }
             }
+        };
 
-            await Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: data.message || 'Mitra berhasil dihapus.',
-                showConfirmButton: false,
-                timer: 1500
+        if (window.CustomAlert) {
+            CustomAlert.confirm({
+                title: 'Konfirmasi Hapus Mitra',
+                message: message,
+                type: 'danger',
+                confirmText: 'Ya, Hapus!',
+                cancelText: 'Batal',
+                confirmColor: 'danger',
+                onConfirm: doDelete
             });
-
-            refreshMitraIndex();
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error.message || 'Terjadi kesalahan saat menghapus data.'
-            });
+        } else {
+            if (confirm(message)) {
+                doDelete();
+            }
         }
     }
 

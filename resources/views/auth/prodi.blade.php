@@ -31,7 +31,6 @@
     <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/component/search.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/component/paginav.js') }}" data-turbo-track="reload"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="turbo-cache-control" content="no-preview">
 </head>
 

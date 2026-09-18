@@ -49,14 +49,7 @@
     }
 
     function swal(title, text) {
-        if (!window.Swal) return;
-        window.Swal.fire({
-            title: title || 'Memproses Data',
-            html: html({ text: text || 'Mohon tunggu...', size: 46 }),
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false
-        });
+        showPage(text || title || 'Memproses...');
     }
 
     function showPage(text) {

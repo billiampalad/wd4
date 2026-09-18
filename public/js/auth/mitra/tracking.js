@@ -150,68 +150,61 @@ function mitraTrackingApp() {
         },
 
         submitCreate(event) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            const form = event.target;
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
                     title: 'Simpan Data Alumni?',
-                    text: 'Data alumni akan ditambahkan dan dihubungkan ke instansi Anda.',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Simpan',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#4f46e5',
-                    cancelButtonColor: '#64748b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    message: 'Data alumni akan ditambahkan dan dihubungkan ke instansi Anda.',
+                    type: 'primary',
+                    confirmText: 'Ya, Simpan',
+                    cancelText: 'Batal',
+                    confirmColor: 'primary',
+                    onConfirm: () => {
                         this.isSubmitting = true;
-                        event.target.submit();
+                        form.submit();
                     }
                 });
             } else {
                 if (confirm('Simpan data alumni ini?')) {
                     this.isSubmitting = true;
-                    event.target.submit();
+                    form.submit();
                 }
             }
         },
 
         submitEdit(event) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            const form = event.target;
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
                     title: 'Perbarui Informasi Karir?',
-                    text: `Anda akan memperbarui data karir untuk alumni ${this.editItem.nama}.`,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Perbarui',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#d97706',
-                    cancelButtonColor: '#64748b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    message: `Anda akan memperbarui data karir untuk alumni <span class="custom-alert-highlight">${this.editItem.nama}</span>.`,
+                    type: 'warning',
+                    confirmText: 'Ya, Perbarui',
+                    cancelText: 'Batal',
+                    confirmColor: 'warning',
+                    onConfirm: () => {
                         this.isSubmitting = true;
-                        event.target.submit();
+                        form.submit();
                     }
                 });
             } else {
                 if (confirm(`Perbarui informasi karir alumni ${this.editItem.nama}?`)) {
                     this.isSubmitting = true;
-                    event.target.submit();
+                    form.submit();
                 }
             }
         },
 
         confirmDelete(deleteUrl, nama) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
                     title: 'Hapus Data Alumni?',
-                    text: `Apakah Anda yakin ingin menghapus data alumni ${nama} dari instansi Anda?`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Hapus',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#64748b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    message: `Apakah Anda yakin ingin menghapus data alumni <span class="custom-alert-highlight">${nama}</span> dari instansi Anda?`,
+                    type: 'danger',
+                    confirmText: 'Ya, Hapus',
+                    cancelText: 'Batal',
+                    confirmColor: 'danger',
+                    onConfirm: () => {
                         const form = document.createElement('form');
                         form.method = 'POST';
                         form.action = deleteUrl;
@@ -224,7 +217,7 @@ function mitraTrackingApp() {
                             csrfInput.value = csrfToken;
                             form.appendChild(csrfInput);
                         }
-
+                        
                         const methodInput = document.createElement('input');
                         methodInput.type = 'hidden';
                         methodInput.name = '_method';
@@ -240,7 +233,7 @@ function mitraTrackingApp() {
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = deleteUrl;
-
+                    
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                     if (csrfToken) {
                         const csrfInput = document.createElement('input');
@@ -249,7 +242,7 @@ function mitraTrackingApp() {
                         csrfInput.value = csrfToken;
                         form.appendChild(csrfInput);
                     }
-
+                    
                     const methodInput = document.createElement('input');
                     methodInput.type = 'hidden';
                     methodInput.name = '_method';

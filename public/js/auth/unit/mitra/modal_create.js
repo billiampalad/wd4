@@ -140,13 +140,9 @@
                             detail: result.data
                         }));
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Mitra baru berhasil ditambahkan.',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        if (window.CustomAlert) {
+                            CustomAlert.success('Mitra baru berhasil ditambahkan.');
+                        }
 
                         if (document.querySelector('[data-mitra-index]') && typeof window.refreshMitraIndex === 'function') {
                             window.refreshMitraIndex();
@@ -161,11 +157,11 @@
 
                     throw new Error('Unexpected response');
                 } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menyimpan data.'
-                    });
+                    if (window.CustomAlert) {
+                        CustomAlert.error('Terjadi kesalahan saat menyimpan data.');
+                    } else {
+                        alert('Terjadi kesalahan saat menyimpan data.');
+                    }
                     this.submitting = false;
                 }
             }

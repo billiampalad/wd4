@@ -1793,11 +1793,6 @@
     }
 }
 
-/* Ensure SweetAlert overlay is above all modal dialogs */
-.swal2-container {
-    z-index: 99999 !important;
-}
-
 /* Pagination Styling */
 .dk-pagination-footer {
     padding: 16px 24px;

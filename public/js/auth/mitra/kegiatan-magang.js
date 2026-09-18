@@ -159,26 +159,26 @@ function mitraPenilaianApp() {
         },
 
         submitGrading(event) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
+            const form = event.target;
+            const message = `Anda akan memberikan nilai <span class="custom-alert-highlight">${this.calculatedScore.toFixed(1)} (${this.calculatedGrade})</span> untuk mahasiswa <span class="custom-alert-highlight">${this.activeItem.nama}</span>.`;
+            
+            if (window.CustomAlert) {
+                CustomAlert.confirm({
                     title: 'Simpan Penilaian?',
-                    text: `Anda akan memberikan nilai ${this.calculatedScore.toFixed(1)} (${this.calculatedGrade}) untuk mahasiswa ${this.activeItem.nama}.`,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Ya, Simpan',
-                    cancelButtonText: 'Batal',
-                    confirmButtonColor: '#059669',
-                    cancelButtonColor: '#64748b'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                    message: message,
+                    type: 'primary',
+                    confirmText: 'Ya, Simpan',
+                    cancelText: 'Batal',
+                    confirmColor: 'success',
+                    onConfirm: () => {
                         this.isSubmitting = true;
-                        event.target.submit();
+                        form.submit();
                     }
                 });
             } else {
                 if (confirm(`Simpan penilaian untuk mahasiswa ${this.activeItem.nama}?`)) {
                     this.isSubmitting = true;
-                    event.target.submit();
+                    form.submit();
                 }
             }
         }

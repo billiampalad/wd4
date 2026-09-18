@@ -159,13 +159,9 @@
 
                     if (response.ok || response.status === 302 || response.status === 200) {
                         closeMitraEditModal();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Data mitra berhasil diperbarui.',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
+                        if (window.CustomAlert) {
+                            CustomAlert.success('Data mitra berhasil diperbarui.');
+                        }
 
                         if (typeof window.refreshMitraIndex === 'function') {
                             window.refreshMitraIndex();
@@ -175,11 +171,11 @@
 
                     throw new Error('Unexpected response');
                 } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Terjadi kesalahan saat menyimpan data.'
-                    });
+                    if (window.CustomAlert) {
+                        CustomAlert.error('Terjadi kesalahan saat menyimpan data.');
+                    } else {
+                        alert('Terjadi kesalahan saat menyimpan data.');
+                    }
                     this.submitting = false;
                 }
             }

@@ -113,10 +113,6 @@
     }
 })();
 function initDashboard() {
-    function swalAvailable() {
-        return typeof Swal !== 'undefined';
-    }
-
     function normalizeMessage(message, fallback) {
         const value = String(message || '').replace(/\s+/g, ' ').trim();
         return value || fallback;
@@ -132,19 +128,21 @@ function initDashboard() {
         if (!el || el.dataset.shown === '1') return;
 
         const message = normalizeMessage(el.dataset.message, options.fallbackText || 'Terjadi kesalahan.');
-        if (!message || !swalAvailable()) return;
+        if (!message) return;
 
         el.dataset.shown = '1';
         removeLegacyFlashAlerts(options.icon);
-        Swal.fire({
-            icon: options.icon,
-            title: options.title,
-            text: message,
-            width: options.width || 560,
-            confirmButtonColor: options.confirmButtonColor || '#7c3aed',
-        }).then(() => {
-            el.remove();
-        });
+
+        if (window.CustomAlert) {
+            if (options.icon === 'success') {
+                CustomAlert.success(message, options.title);
+            } else if (options.icon === 'warning') {
+                CustomAlert.warning(message, options.title);
+            } else {
+                CustomAlert.error(message, options.title);
+            }
+        }
+        el.remove();
     }
 
     showFlashAlert('swal-flash-success', {
@@ -155,13 +153,11 @@ function initDashboard() {
         icon: 'error',
         title: 'Gagal Memproses Data',
         fallbackText: 'Data belum berhasil diproses. Periksa kembali isian Anda.',
-        confirmButtonColor: '#ef4444',
     });
     showFlashAlert('swal-flash-validation', {
         icon: 'warning',
         title: 'Data Tidak Valid',
         fallbackText: 'Periksa kembali data yang wajib diisi atau format yang belum sesuai.',
-        confirmButtonColor: '#f59e0b',
     });
 
     /* ─ Dark Mode ─ */
@@ -186,9 +182,6 @@ function initDashboard() {
 
         dmBtn.onclick = () => {
             applyTheme(localStorage.getItem('theme') === 'dark' ? 'light' : 'dark');
-            if (window.Swal && Swal.isVisible()) {
-                Swal.close();
-            }
         };
     }
 
@@ -258,19 +251,15 @@ function initDashboard() {
             const form = logoutBtn.closest('form');
             if (!form) return;
 
-            Swal.fire({
-                title: 'Apakah anda ingin keluar?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#7c3aed',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Ya, Keluar!',
-                cancelButtonText: 'Batal',
-            }).then((result) => {
-                if (result.isConfirmed) {
+            if (window.CustomAlert && typeof CustomAlert.showLogout === 'function') {
+                CustomAlert.showLogout({
+                    onConfirm: () => form.submit()
+                });
+            } else {
+                if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
                     form.submit();
                 }
-            });
+            }
         };
     }
 
@@ -303,8 +292,8 @@ function initDashboard() {
     }
 
     function bindFormConfirmation(form) {
-        if (!form || form.dataset.swalConfirmBound === '1' || form.hasAttribute('data-mitra-delete-form')) return;
-        form.dataset.swalConfirmBound = '1';
+        if (!form || form.dataset.confirmBound === '1' || form.hasAttribute('data-mitra-delete-form') || form.hasAttribute('data-no-confirm')) return;
+        form.dataset.confirmBound = '1';
 
         const originalOnSubmit = form.getAttribute('onsubmit');
         if (originalOnSubmit && originalOnSubmit.includes('confirm')) {
@@ -312,41 +301,42 @@ function initDashboard() {
         }
 
         form.addEventListener('submit', function (e) {
-            if (form.dataset.swalConfirmed === '1') {
+            if (form.dataset.isConfirmed === '1') {
                 markSubmitting(form);
                 return;
             }
 
             e.preventDefault();
 
-            if (!swalAvailable()) {
-                form.dataset.swalConfirmed = '1';
-                markSubmitting(form);
-                form.submit();
-                return;
-            }
-
             const message = normalizeMessage(getFormConfirmMessage(form), 'Yakin ingin melanjutkan proses ini?');
-            Swal.fire({
-                title: getFormConfirmTitle(form),
-                text: message,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#7c3aed',
-                cancelButtonColor: '#ef4444',
-                confirmButtonText: 'Ya, Lanjutkan',
-                cancelButtonText: 'Batal',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.dataset.swalConfirmed = '1';
+            const title = getFormConfirmTitle(form);
+            const isDanger = title.toLowerCase().includes('hapus');
+
+            if (window.CustomAlert && typeof CustomAlert.confirm === 'function') {
+                CustomAlert.confirm({
+                    title: title,
+                    message: message,
+                    type: isDanger ? 'danger' : 'warning',
+                    confirmText: 'Ya, Lanjutkan',
+                    cancelText: 'Batal',
+                    confirmColor: isDanger ? 'danger' : 'warning',
+                    onConfirm: () => {
+                        form.dataset.isConfirmed = '1';
+                        markSubmitting(form);
+                        form.submit();
+                    }
+                });
+            } else {
+                if (confirm(message)) {
+                    form.dataset.isConfirmed = '1';
                     markSubmitting(form);
                     form.submit();
                 }
-            });
+            }
         });
     }
 
-    /* ─ Global form confirmation with SweetAlert ─ */
+    /* ─ Global form validation ─ */
     function getTrimmedFieldValue(form, selector) {
         const field = form.querySelector(selector);
         return field ? String(field.value || '').trim() : '';
@@ -403,13 +393,8 @@ function initDashboard() {
             setTimeout(() => target.focus({ preventScroll: false }), 80);
         }
 
-        if (swalAvailable()) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Kolom Wajib Diisi',
-                text: message,
-                confirmButtonColor: '#7c3aed'
-            });
+        if (window.CustomAlert && typeof CustomAlert.warning === 'function') {
+            CustomAlert.warning(message, 'Kolom Wajib Diisi');
             return;
         }
 
@@ -513,7 +498,7 @@ function initDashboard() {
 
     document.addEventListener('submit', function (event) {
         const form = event.target.closest('form[onsubmit*="confirm"], form[data-confirm-message]');
-        if (!form || form.dataset.swalConfirmBound === '1' || form.hasAttribute('data-mitra-delete-form')) return;
+        if (!form || form.dataset.confirmBound === '1' || form.hasAttribute('data-mitra-delete-form')) return;
 
         bindFormConfirmation(form);
         event.preventDefault();
@@ -522,7 +507,7 @@ function initDashboard() {
 
     /* ─ Prevent double submit on create/edit forms ─ */
     document.querySelectorAll('form[method="POST"]:not([data-no-submit-lock]):not([data-mitra-delete-form])').forEach(form => {
-        if (form.dataset.submitLockBound === '1' || form.dataset.swalConfirmBound === '1') return;
+        if (form.dataset.submitLockBound === '1' || form.dataset.confirmBound === '1') return;
         form.dataset.submitLockBound = '1';
 
         form.addEventListener('submit', function (e) {
@@ -537,8 +522,8 @@ function initDashboard() {
 
             markSubmitting(form);
 
-            if (swalAvailable() && !form.closest('.swal2-container')) {
-                AppLoading.swal('Memproses Data', 'Mohon tunggu, data sedang disimpan.');
+            if (window.AppLoading && typeof AppLoading.showPage === 'function') {
+                AppLoading.showPage('Memproses data...');
             }
         });
     });

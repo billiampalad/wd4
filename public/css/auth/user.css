@@ -4523,35 +4523,6 @@ body {
     grid-template-columns: repeat(4, 1fr);
 }
 
-/* ─── SWEETALERT DARK MODE ─── */
-[data-theme="dark"] .swal2-popup {
-    background: var(--surface) !important;
-    color: var(--text) !important;
-    box-shadow: var(--shadow-lg) !important;
-    border: 1px solid var(--border) !important;
-}
-
-[data-theme="dark"] .swal2-title,
-[data-theme="dark"] .swal2-html-container,
-[data-theme="dark"] .swal2-content {
-    color: var(--text) !important;
-}
-
-[data-theme="dark"] .swal2-footer {
-    border-top: 1px solid var(--border) !important;
-    color: var(--text-sub) !important;
-}
-
-[data-theme="dark"] .swal2-close:hover {
-    color: var(--accent) !important;
-}
-
-[data-theme="dark"] .swal2-success-circular-line-left,
-[data-theme="dark"] .swal2-success-circular-line-right,
-[data-theme="dark"] .swal2-success-fix {
-    background-color: var(--surface) !important;
-}
-
 /* ─── TABLE PAGINATION ─── */
 .table-pagination-controls {
     display: flex;

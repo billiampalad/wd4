@@ -551,25 +551,27 @@
 
     function confirmSubmitEval(event) {
         event.preventDefault();
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
+        const form = document.getElementById('formEvaluasi');
+        if (window.CustomAlert) {
+            CustomAlert.confirm({
                 title: 'Kirim Evaluasi ke Pimpinan?',
-                html: '<div style="font-size:14px; color:#64748b; line-height:1.7;">Setelah dikirim, evaluasi tidak dapat diubah dan status akan menjadi <strong>Menunggu Validasi Pimpinan</strong>.</div>',
-                icon: 'question', showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-paper-plane"></i>&nbsp; Kirim',
-                cancelButtonText: '<i class="fas fa-times"></i>&nbsp; Batal',
-                confirmButtonColor: '#4f46e5', cancelButtonColor: '#6b7280', reverseButtons: true,
-            }).then(function (result) {
-                if (result.isConfirmed) {
-                    AppLoading.swal('Mengirim...', 'Sedang mengirim evaluasi ke Pimpinan');
-                    document.getElementById('formEvaluasi').removeAttribute('onsubmit');
-                    document.getElementById('formEvaluasi').submit();
+                message: 'Setelah dikirim, evaluasi tidak dapat diubah dan status akan menjadi <span class="custom-alert-highlight">Menunggu Validasi Pimpinan</span>.',
+                type: 'primary',
+                confirmText: 'Kirim Sekarang',
+                cancelText: 'Batal',
+                confirmColor: 'primary',
+                onConfirm: function () {
+                    if (window.AppLoading && typeof AppLoading.show === 'function') {
+                        AppLoading.show('Sedang mengirim evaluasi ke Pimpinan...');
+                    }
+                    form.removeAttribute('onsubmit');
+                    form.submit();
                 }
             });
         } else {
             if (confirm('Kirim evaluasi ke Pimpinan? Setelah dikirim, evaluasi tidak dapat diubah.')) {
-                document.getElementById('formEvaluasi').removeAttribute('onsubmit');
-                document.getElementById('formEvaluasi').submit();
+                form.removeAttribute('onsubmit');
+                form.submit();
             }
         }
         return false;
