@@ -240,31 +240,12 @@
                 </span>
             </div>
 
-            <div class="mn-table-controls" style="display: flex; gap: 16px; align-items: center; margin-left: auto;">
-                <div class="mn-table-entries"
-                    style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
-                    <span>Tampilkan</span>
-                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
-                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
-                            style="display: flex; align-items: center; justify-content: space-between; min-width: 64px; padding: 8px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; transition: all 0.2s;">
-                            <span x-text="perPage">10</span>
-                            <i class="fas fa-chevron-down"
-                                style="font-size: 10px; margin-left: 8px; color: var(--text-sub);"></i>
-                        </button>
-                        <div class="mn-entry-menu" x-show="perPageOpen" x-cloak x-transition.opacity
-                            style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 50; overflow: hidden; display: flex; flex-direction: column;">
-                            <template x-for="option in perPageOptions" :key="option">
-                                <button type="button" class="mn-entry-option" @click="setPerPage(option)"
-                                    style="width: 100%; padding: 8px 12px; text-align: left; background: transparent; border: none; cursor: pointer; font-size: 13px; color: var(--text); transition: 0.2s; font-weight: 500;"
-                                    onmouseover="this.style.background='var(--surface2)'"
-                                    onmouseout="this.style.background='transparent'">
-                                    <span x-text="option"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-                    <span>data</span>
-                </div>
+            <div class="um-header-actions" style="margin-left: auto;">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
             </div>
         </div>
 
@@ -308,7 +289,7 @@
                                 data-jenis="{{ strtolower($c->jenis ?? '') }}"
                                 data-status="{{ $statusFeedbackStr }}"
                                 data-tahun="{{ $docYear }}"
-                                x-show="isRowVisible($el)">
+                                x-show="matchesRow($el)">
 
                                 {{-- Col 1: Index Number --}}
                                 <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
@@ -472,31 +453,13 @@
                 </table>
             </div>
 
-            {{-- Table Pagination Footer --}}
-            <div class="table-pagination-controls" x-show="totalFiltered > 0" x-cloak>
-                <div class="pagination-info">
-                    Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
-                    <strong x-text="totalFiltered">{{ $cooperations->count() }}</strong> data
-                </div>
-
-                <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1" title="Halaman pertama">
-                        <i class="fas fa-angles-left"></i>
-                    </button>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" title="Halaman sebelumnya">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <template x-for="page in pageNumbers()" :key="page">
-                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }" @click="goToPage(page)" x-text="page"></button>
-                    </template>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" title="Halaman berikutnya">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button type="button" class="pag-btn" @click="goToPage(totalPages)" :disabled="currentPage === totalPages" title="Halaman terakhir">
-                        <i class="fas fa-angles-right"></i>
-                    </button>
-                </div>
-            </div>
+            <x-paginav 
+                id="mitraUmpanBalikTablePaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 

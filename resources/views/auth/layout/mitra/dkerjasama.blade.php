@@ -320,34 +320,7 @@
         </div>
     </div>
 
-    <div class="card um-card dk-card" x-data="{ 
-        currentPage: 1, 
-        perPage: 10,
-        perPageOpen: false,
-        perPageOptions: [5, 10, 25, 50],
-        totalRows: {{ $kerjasamaList->count() }},
-        get totalPages() { return Math.max(1, Math.ceil(this.totalRows / this.perPage)); },
-        get startRange() { return this.totalRows === 0 ? 0 : (this.currentPage - 1) * this.perPage + 1; },
-        get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); },
-        setPerPage(value) {
-            this.perPage = value;
-            this.currentPage = 1;
-            this.perPageOpen = false;
-        },
-        pageNumbers() {
-            const total = this.totalPages;
-            if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-            const pages = new Set([1, total, this.currentPage - 1, this.currentPage, this.currentPage + 1]);
-            return Array.from(pages).filter(page => page >= 1 && page <= total).sort((a, b) => a - b);
-        },
-        goToPage(page) {
-            this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
-        },
-        clampPage() {
-            if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-            if (this.currentPage < 1) this.currentPage = 1;
-        }
-    }" x-effect="clampPage()">
+    <div class="card um-card dk-card">
         <div class="card-header um-header dk-card-header">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
@@ -357,31 +330,12 @@
                 </span>
             </div>
 
-            <div class="mn-table-controls" style="display: flex; gap: 16px; align-items: center; margin: 0 auto;">
-                <div class="mn-table-entries"
-                    style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-sub);">
-                    <span>Tampilkan</span>
-                    <div class="mn-entry-dropdown" @click.outside="perPageOpen = false" style="position: relative;">
-                        <button type="button" class="mn-entry-trigger" @click="perPageOpen = !perPageOpen"
-                            style="display: flex; align-items: center; justify-content: space-between; min-width: 64px; padding: 8px 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text); font-weight: 600; font-size: 13px; transition: all 0.2s;">
-                            <span x-text="perPage">10</span>
-                            <i class="fas fa-chevron-down"
-                                style="font-size: 10px; margin-left: 8px; color: var(--text-sub);"></i>
-                        </button>
-                        <div class="mn-entry-menu" x-show="perPageOpen" x-cloak x-transition.opacity
-                            style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 50; overflow: hidden; display: flex; flex-direction: column;">
-                            <template x-for="option in perPageOptions" :key="option">
-                                <button type="button" class="mn-entry-option" @click="setPerPage(option)"
-                                    style="width: 100%; padding: 8px 12px; text-align: left; background: transparent; border: none; cursor: pointer; font-size: 13px; color: var(--text); transition: 0.2s; font-weight: 500;"
-                                    onmouseover="this.style.background='var(--surface2)'"
-                                    onmouseout="this.style.background='transparent'">
-                                    <span x-text="option"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-                    <span>data</span>
-                </div>
+            <div class="um-header-actions" style="margin: 0 auto;">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
             </div>
 
             <div class="dk-card-tools" x-data="{ showModal: false }">
@@ -658,34 +612,13 @@
                 </table>
             </div>
 
-            <div class="table-pagination-controls" x-show="totalRows > 0" x-cloak>
-                <div class="pagination-info">
-                    Menampilkan <strong x-text="startRange">0</strong> sampai <strong x-text="endRange">0</strong> dari
-                    <strong x-text="totalRows">0</strong> data
-                </div>
-                <div class="pagination-buttons" aria-label="Navigasi Halaman">
-                    <button type="button" class="pag-btn" @click="goToPage(1)" :disabled="currentPage === 1"
-                        title="Halaman pertama">
-                        <i class="fas fa-angles-left"></i>
-                    </button>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage - 1)"
-                        :disabled="currentPage === 1" title="Halaman sebelumnya">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <template x-for="page in pageNumbers()" :key="page">
-                        <button type="button" class="pag-btn" :class="{ 'active': page === currentPage }"
-                            @click="goToPage(page)" x-text="page"></button>
-                    </template>
-                    <button type="button" class="pag-btn" @click="goToPage(currentPage + 1)"
-                        :disabled="currentPage === totalPages" title="Halaman berikutnya">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    <button type="button" class="pag-btn" @click="goToPage(totalPages)"
-                        :disabled="currentPage === totalPages" title="Halaman terakhir">
-                        <i class="fas fa-angles-right"></i>
-                    </button>
-                </div>
-            </div>
+            <x-paginav 
+                id="mitraDkerjasamaTablePaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
     <!-- Review Modal UC13 -->

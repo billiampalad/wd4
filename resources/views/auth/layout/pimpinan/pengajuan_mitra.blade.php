@@ -490,14 +490,12 @@
                         </table>
                     </div>
                     @if ($reviewedBaru->hasPages())
-                        <div class="dk-pagination-footer">
-                            <div class="dk-pagination-info">
-                                Menampilkan <strong>{{ $reviewedBaru->firstItem() ?? 0 }}</strong> - <strong>{{ $reviewedBaru->lastItem() ?? 0 }}</strong> dari <strong>{{ $reviewedBaru->total() }}</strong> riwayat pengajuan baru
-                            </div>
-                            <div class="dk-pagination-links">
-                                {{ $reviewedBaru->appends(['history_tab' => 'baru', 'perp_page' => request('perp_page')])->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
+                        <x-paginav 
+                            id="pengajuanBaruPaginav"
+                            :paginator="$reviewedBaru->appends(['history_tab' => 'baru', 'perp_page' => request('perp_page')])"
+                            :showInfo="true"
+                            :showPerPage="false"
+                        />
                     @endif
                 @endif
             </div>
@@ -608,14 +606,12 @@
                         </table>
                     </div>
                     @if ($reviewedPerpanjangan->hasPages())
-                        <div class="dk-pagination-footer">
-                            <div class="dk-pagination-info">
-                                Menampilkan <strong>{{ $reviewedPerpanjangan->firstItem() ?? 0 }}</strong> - <strong>{{ $reviewedPerpanjangan->lastItem() ?? 0 }}</strong> dari <strong>{{ $reviewedPerpanjangan->total() }}</strong> riwayat perpanjangan
-                            </div>
-                            <div class="dk-pagination-links">
-                                {{ $reviewedPerpanjangan->appends(['history_tab' => 'perpanjangan', 'baru_page' => request('baru_page')])->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
+                        <x-paginav 
+                            id="pengajuanPerpanjanganPaginav"
+                            :paginator="$reviewedPerpanjangan->appends(['history_tab' => 'perpanjangan', 'baru_page' => request('baru_page')])"
+                            :showInfo="true"
+                            :showPerPage="false"
+                        />
                     @endif
                 @endif
             </div>
