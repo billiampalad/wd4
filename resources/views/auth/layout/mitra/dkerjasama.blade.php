@@ -187,7 +187,7 @@
                 <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
                 <div class="rfc-text">
                     <h3>Filter Data Kerjasama</h3>
-                    <p>Saring dokumen kerjasama berdasarkan jenis, periode tahun, status, atau kata kunci pencarian</p>
+                    <p>Saring dokumen kerjasama berdasarkan jenis, periode tahun, atau status</p>
                 </div>
             </div>
             <div style="color: var(--text-sub); font-size: 16px; transition: transform 0.3s;"
@@ -302,16 +302,6 @@
                                     @click="statusFilter = item.id; open = false" x-text="item.label"></div>
                             </template>
                         </div>
-                    </div>
-                </div>
-
-                {{-- 4. Pencarian Teks --}}
-                <div class="rfc-group">
-                    <label>Cari Dokumen</label>
-                    <div class="rfc-input-wrap">
-                        <i class="fas fa-search rfc-input-icon"></i>
-                        <input type="text" x-model="searchFilter" placeholder="Cari judul / no. dokumen..."
-                            class="rfc-input">
                     </div>
                 </div>
             </div>
@@ -556,7 +546,7 @@
                                 $docTahun = $kegiatan->start_date?->format('Y') ?? '';
                             @endphp
                             <tr class="um-row dk-row" data-row-id="{{ $kegiatan->id }}"
-                                x-show="(statusFilter === 'all' || statusFilter === '{{ $tabCategory }}' || statusFilter === '{{ $status }}') && (jenisFilter === 'all' || jenisFilter === '{{ $docJenis }}') && (periodeFilter === 'all' || String(periodeFilter) === '{{ $docTahun }}') && (searchFilter === '' || '{{ strtolower(addslashes($title . ' ' . $docNumber)) }}'.includes(searchFilter.toLowerCase()))">
+                                x-show="(statusFilter === 'all' || statusFilter === '{{ $tabCategory }}' || statusFilter === '{{ $status }}') && (jenisFilter === 'all' || jenisFilter === '{{ $docJenis }}') && (periodeFilter === 'all' || String(periodeFilter) === '{{ $docTahun }}')">
                                 <td class="um-td um-td-num" style="vertical-align: top; padding-top: 15px;">
                                     <span class="um-num dk-num">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -832,7 +822,6 @@
                 jenisFilter: 'all',
                 periodeFilter: 'all',
                 statusFilter: 'all',
-                searchFilter: '',
                 showReviewModal: false,
                 reviewDocId: null,
                 reviewDocNumber: '',
@@ -843,7 +832,6 @@
                     this.jenisFilter = 'all';
                     this.periodeFilter = 'all';
                     this.statusFilter = 'all';
-                    this.searchFilter = '';
                 },
 
                 openReview(id, docNumber, title, pdfUrl) {

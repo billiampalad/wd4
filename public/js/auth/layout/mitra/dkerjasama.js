@@ -5,7 +5,6 @@
                 jenisFilter: 'all',
                 periodeFilter: 'all',
                 statusFilter: 'all',
-                searchFilter: '',
                 showReviewModal: false,
                 reviewDocId: null,
                 reviewDocNumber: '',
@@ -16,7 +15,6 @@
                     this.jenisFilter = 'all';
                     this.periodeFilter = 'all';
                     this.statusFilter = 'all';
-                    this.searchFilter = '';
                 },
 
                 openReview(id, docNumber, title, pdfUrl) {
