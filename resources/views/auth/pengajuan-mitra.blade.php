@@ -38,10 +38,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/component/alert.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/public-submission.css') }}" data-turbo-track="reload">
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <!-- Theme Sync Script (Prevents FOUC) -->
     <script>
         (function() {
@@ -124,39 +126,54 @@
 
             <section class="partner-form-card">
                 @if (session('success'))
-                    <div class="partner-alert partner-alert-success">
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
-                    </div>
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            const isDark = document.documentElement.dataset.theme === 'dark';
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Pengajuan Berhasil Dikirim!',
-                                html: `<div style="font-size: 14.5px; color: ${isDark ? '#cbd5e1' : '#475569'}; line-height: 1.65; margin-bottom: 16px;">{{ session('success') }}</div><div style="display:inline-flex; align-items:center; gap:8px; padding: 8px 18px; border-radius: 99px; background: rgba(245, 158, 11, 0.12); color: #d97706; font-weight: 750; font-size: 13px; border: 1px solid rgba(245, 158, 11, 0.3);"><i class="fas fa-hourglass-half"></i> Status: Dalam Proses Validasi Pimpinan</div>`,
-                                background: isDark ? '#1e293b' : '#ffffff',
-                                color: isDark ? '#f8fafc' : '#0f172a',
-                                confirmButtonText: 'Saya Mengerti',
-                                confirmButtonColor: '#10b981',
-                                customClass: {
-                                    popup: 'partner-swal-popup'
+                        (function () {
+                            function showToast() {
+                                if (window.CustomAlert) {
+                                    CustomAlert.success(@json(session('success')), 'Pengajuan Berhasil Dikirim!');
                                 }
-                            });
-                        });
+                            }
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                            } else {
+                                showToast();
+                            }
+                        })();
                     </script>
                 @endif
 
                 @if (session('error'))
-                    <div class="partner-alert partner-alert-error">
-                        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                    </div>
+                    <script>
+                        (function () {
+                            function showToast() {
+                                if (window.CustomAlert) {
+                                    CustomAlert.error(@json(session('error')), 'Pengajuan Gagal');
+                                }
+                            }
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                            } else {
+                                showToast();
+                            }
+                        })();
+                    </script>
                 @endif
 
                 @if ($errors->any())
-                    <div class="partner-alert partner-alert-error">
-                        <i class="fas fa-exclamation-triangle"></i> Mohon periksa kembali formulir. Masih ada data yang perlu diperbaiki.
-                    </div>
+                    <script>
+                        (function () {
+                            function showToast() {
+                                if (window.CustomAlert) {
+                                    CustomAlert.error(@json($errors->first()), 'Kesalahan Input');
+                                }
+                            }
+                            if (document.readyState === 'loading') {
+                                document.addEventListener('DOMContentLoaded', showToast, { once: true });
+                            } else {
+                                showToast();
+                            }
+                        })();
+                    </script>
                 @endif
 
                 <!-- Stepper Progress Tracker -->
