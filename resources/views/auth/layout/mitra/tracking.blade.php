@@ -100,7 +100,7 @@
                 <div class="rfc-icon"><i class="fas fa-sliders-h"></i></div>
                 <div class="rfc-text">
                     <h3>Filter Data Alumni</h3>
-                    <p>Saring data alumni berdasarkan program studi asal, status kerja, periode kelulusan, atau pencarian nama</p>
+                    <p>Saring data alumni berdasarkan program studi asal, status kerja, atau periode kelulusan</p>
                 </div>
             </div>
             <div style="color: var(--text-sub); font-size: 16px; transition: transform 0.3s;"
@@ -214,16 +214,6 @@
                                     @click="tahunFilter = item.id; open = false" x-text="item.label"></div>
                             </template>
                         </div>
-                    </div>
-                </div>
-
-                {{-- 4. Pencarian Teks --}}
-                <div class="rfc-group">
-                    <label>Cari Alumni</label>
-                    <div class="rfc-input-wrap">
-                        <i class="fas fa-search rfc-input-icon"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Cari nama / NIM / posisi..."
-                            class="rfc-input">
                     </div>
                 </div>
             </div>

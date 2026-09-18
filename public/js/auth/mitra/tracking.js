@@ -6,7 +6,6 @@
 
 function mitraTrackingApp() {
     return {
-        searchQuery: '',
         prodiFilter: 'all',
         statusFilter: 'all',
         tahunFilter: 'all',
@@ -36,7 +35,6 @@ function mitraTrackingApp() {
         },
 
         init() {
-            this.$watch('searchQuery', () => this.currentPage = 1);
             this.$watch('prodiFilter', () => this.currentPage = 1);
             this.$watch('statusFilter', () => this.currentPage = 1);
             this.$watch('tahunFilter', () => this.currentPage = 1);
@@ -44,7 +42,6 @@ function mitraTrackingApp() {
         },
 
         resetFilters() {
-            this.searchQuery = '';
             this.prodiFilter = 'all';
             this.statusFilter = 'all';
             this.tahunFilter = 'all';
@@ -80,18 +77,11 @@ function mitraTrackingApp() {
 
         matchesRow(row) {
             if (!row || !row.dataset) return true;
-            const q = (this.searchQuery || '').toLowerCase().trim();
-            const matchSearch = q === '' ||
-                (row.dataset.nim && row.dataset.nim.includes(q)) ||
-                (row.dataset.nama && row.dataset.nama.includes(q)) ||
-                (row.dataset.prodi && row.dataset.prodi.includes(q)) ||
-                (row.dataset.posisi && row.dataset.posisi.includes(q));
-
             const matchProdi = this.prodiFilter === 'all' || (row.dataset.prodi && row.dataset.prodi === this.prodiFilter.toLowerCase());
             const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
             const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && String(row.dataset.tahun) === String(this.tahunFilter));
 
-            return matchSearch && matchProdi && matchStatus && matchTahun;
+            return matchProdi && matchStatus && matchTahun;
         },
 
         isRowVisible(el) {
