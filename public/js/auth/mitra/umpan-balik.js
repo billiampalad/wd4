@@ -6,7 +6,6 @@
 
 function mitraUmpanBalikApp() {
     return {
-        searchQuery: '',
         jenisFilter: 'all',
         statusFilter: 'all', // 'all' | 'sudah' | 'belum'
         tahunFilter: 'all',
@@ -49,7 +48,6 @@ function mitraUmpanBalikApp() {
         },
 
         init() {
-            this.$watch('searchQuery', () => this.currentPage = 1);
             this.$watch('jenisFilter', () => this.currentPage = 1);
             this.$watch('statusFilter', () => this.currentPage = 1);
             this.$watch('tahunFilter', () => this.currentPage = 1);
@@ -57,7 +55,6 @@ function mitraUmpanBalikApp() {
         },
 
         resetFilters() {
-            this.searchQuery = '';
             this.jenisFilter = 'all';
             this.statusFilter = 'all';
             this.tahunFilter = 'all';
@@ -93,17 +90,11 @@ function mitraUmpanBalikApp() {
 
         matchesRow(row) {
             if (!row || !row.dataset) return true;
-            const q = (this.searchQuery || '').toLowerCase().trim();
-            const matchSearch = q === '' ||
-                (row.dataset.judul && row.dataset.judul.includes(q)) ||
-                (row.dataset.nomor && row.dataset.nomor.includes(q)) ||
-                (row.dataset.jenis && row.dataset.jenis.includes(q));
-
             const matchJenis = this.jenisFilter === 'all' || (row.dataset.jenis && row.dataset.jenis.toLowerCase() === this.jenisFilter.toLowerCase());
             const matchStatus = this.statusFilter === 'all' || (row.dataset.status && row.dataset.status.toLowerCase() === this.statusFilter.toLowerCase());
             const matchTahun = this.tahunFilter === 'all' || (row.dataset.tahun && String(row.dataset.tahun) === String(this.tahunFilter));
 
-            return matchSearch && matchJenis && matchStatus && matchTahun;
+            return matchJenis && matchStatus && matchTahun;
         },
 
         isRowVisible(el) {
