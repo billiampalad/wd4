@@ -155,22 +155,20 @@
                             }
                             return rows;
                         },
-                        get pageCount() {
+                        get totalFiltered() {
+                            return this.filteredRows.length;
+                        },
+                        get totalPages() {
                             return Math.max(1, Math.ceil(this.filteredRows.length / this.itemsPerPage));
                         },
-                        get pagesToShow() {
+                        pageNumbers() {
+                            const total = this.totalPages;
                             const current = this.currentPage;
-                            const total = this.pageCount;
                             const pages = [];
-
-                            if (current === total) {
-                                pages.push(total);
-                            } else if (current < total) {
-                                pages.push(current);
-                                if (current + 1 < total) {
-                                    pages.push('...');
+                            for (let i = 1; i <= total; i++) {
+                                if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) {
+                                    pages.push(i);
                                 }
-                                pages.push(total);
                             }
                             return pages;
                         },
@@ -179,11 +177,11 @@
                             const end = start + this.itemsPerPage;
                             return this.filteredRows.slice(start, end);
                         },
-                        get showingStart() {
+                        get startEntry() {
                             if (this.filteredRows.length === 0) return 0;
                             return ((this.currentPage - 1) * this.itemsPerPage) + 1;
                         },
-                        get showingEnd() {
+                        get endEntry() {
                             return Math.min(this.currentPage * this.itemsPerPage, this.filteredRows.length);
                         },
                         filterByDate(dateLabel) {
@@ -195,7 +193,7 @@
                             this.currentPage = 1;
                         },
                         goToPage(page) {
-                            if (page >= 1 && page <= this.pageCount) {
+                            if (page >= 1 && page <= this.totalPages) {
                                 this.currentPage = page;
                             }
                         },
@@ -349,7 +347,7 @@
                                 <tbody>
                                     <template x-for="(row, index) in paginatedRows" :key="row.id">
                                         <tr>
-                                            <td x-text="showingStart + index" class="sk-col-no"></td>
+                                            <td x-text="startEntry + index" class="sk-col-no"></td>
                                             <td>
                                                 <div class="sk-due-doc" x-text="row.doc_number"></div>
                                                 <div class="sk-due-row-title" x-text="row.title"></div>
@@ -379,23 +377,7 @@
                             </table>
                         </div>
 
-                        <div class="sk-due-footer">
-                            <span
-                                x-text="`Showing ${showingStart} to ${showingEnd} of ${filteredRows.length} entries`"></span>
-                            <div class="sk-due-pages" aria-label="Pagination due date">
-                                <button type="button" :disabled="currentPage === 1"
-                                    @click="goToPage(currentPage - 1)">Previous</button>
-                                <template x-for="(page, idx) in pagesToShow" :key="idx">
-                                    <button type="button" 
-                                        :class="{ 'is-active': page === currentPage, 'sk-due-ellipsis': page === '...' }"
-                                        :disabled="page === '...'"
-                                        @click="page !== '...' ? goToPage(page) : null" 
-                                        x-text="page"></button>
-                                </template>
-                                <button type="button" :disabled="currentPage === pageCount || pageCount === 0"
-                                    @click="goToPage(currentPage + 1)">Next</button>
-                            </div>
-                        </div>
+                        <x-paginav id="unitDueDatePaginav" alpine="true" size="sm" />
                     </div>
                 </div>
             </div>

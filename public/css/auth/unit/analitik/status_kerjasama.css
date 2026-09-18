@@ -1274,54 +1274,7 @@ button.sk-due-cell:focus-visible {
     font-weight: 500;
 }
 
-.sk-due-pages {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
 
-.sk-due-pages button {
-    min-width: 36px;
-    height: 36px;
-    padding: 0 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    color: var(--text);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.sk-due-pages button.sk-due-ellipsis,
-.sk-due-pages button.sk-due-ellipsis:disabled,
-.sk-due-pages button.sk-due-ellipsis:hover {
-    background: transparent !important;
-    border: none !important;
-    color: var(--text-sub) !important;
-    cursor: default !important;
-    opacity: 1 !important;
-    min-width: unset !important;
-    padding: 0 4px !important;
-}
-
-.sk-due-pages button.is-active {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #fff;
-}
-
-.sk-due-pages button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--surface2);
-}
-
-.sk-due-pages button:not(:disabled):hover:not(.is-active) {
-    background: var(--surface2);
-    border-color: #94a3b8;
-}
 
 button.sk-due-cell.is-selected {
     box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent);
@@ -1625,16 +1578,7 @@ button.sk-due-cell.is-selected {
     color: #cbd5e1;
 }
 
-[data-theme="dark"] .sk-due-pages button {
-    border-color: #334155;
-    background: #1e2333;
-    color: #cbd5e1;
-}
 
-[data-theme="dark"] .sk-due-pages button.is-active,
-[data-theme="dark"] .sk-due-pages button:disabled {
-    background: #111827;
-}
 
 [data-theme="dark"] .sk-due-scrollbar {
     background: #111827;

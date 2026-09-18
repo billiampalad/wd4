@@ -305,7 +305,7 @@ $auditUserLabel = function ($user = null) {
     @endif
 
     <div class="card um-card dk-card">
-        <div class="card-header um-header dk-card-header">
+        <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-folder-open"></i></span>
                 <span>
@@ -314,7 +314,13 @@ $auditUserLabel = function ($user = null) {
                 </span>
             </div>
 
-            <div class="dk-card-tools" x-data="{ showModal: false }">
+            <div class="dk-card-tools" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;" x-data="{ showModal: false }">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
+
                 <button @click="showModal = true" class="dk-primary-btn">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Data</span>
@@ -401,14 +407,7 @@ $auditUserLabel = function ($user = null) {
             </div>
         </div>
 
-        <div class="card-body dk-card-body" x-data="{ 
-            currentPage: 1, 
-            perPage: 10,
-            totalRows: {{ $kerjasamaList->count() }},
-            get totalPages() { return Math.ceil(this.totalRows / this.perPage); },
-            get startRange() { return (this.currentPage - 1) * this.perPage + 1; },
-            get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); }
-        }">
+        <div class="card-body dk-card-body" style="padding: 0;">
             <div class="table-wrap um-table-wrap dk-table-wrap">
                 <table class="um-table dk-table">
                     <thead>
@@ -612,6 +611,14 @@ $auditUserLabel = function ($user = null) {
                     </tbody>
                 </table>
             </div>
+
+            <x-paginav 
+                id="upaDkerjasamaPaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 </main>
@@ -818,6 +825,9 @@ $auditUserLabel = function ($user = null) {
                     });
                     previewBody.innerHTML = '';
                     previewBody.appendChild(fragment);
+                    if (window.CustomPaginav) {
+                        CustomPaginav.init();
+                    }
                 })
                 .catch(function(err) {
                     console.error(err);

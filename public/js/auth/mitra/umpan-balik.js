@@ -1,7 +1,7 @@
 /**
  * Mitra Portal - Umpan Balik & Evaluasi Kemitraan (UC26 / CSAT Survey)
  * File: public/js/auth/mitra/umpan-balik.js
- * Logic handler for interactive star rating, CSAT evaluation, filtering, pagination, and solid modals.
+ * Logic handler for interactive star rating, CSAT evaluation, filtering, and solid modals.
  */
 
 function mitraUmpanBalikApp() {

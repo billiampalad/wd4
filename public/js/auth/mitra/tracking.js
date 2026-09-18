@@ -1,7 +1,7 @@
 /**
  * Mitra Portal - Tracking Lulusan & Penyerapan Alumni POLIMDO (IKU 1)
  * File: public/js/auth/mitra/tracking.js
- * Logic handler for filtering, pagination, search, modal operations, and CRUD submission.
+ * Logic handler for filtering, search, modal operations, and CRUD submission.
  */
 
 function mitraTrackingApp() {

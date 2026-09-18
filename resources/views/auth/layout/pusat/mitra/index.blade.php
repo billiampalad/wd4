@@ -56,7 +56,7 @@
     </section>
 
     <div class="card um-card dk-card">
-        <div class="card-header um-header dk-card-header">
+        <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
             <div class="um-title dk-card-title">
                 <span class="dk-title-icon"><i class="fas fa-list-ul"></i></span>
                 <span>
@@ -65,7 +65,13 @@
                 </span>
             </div>
 
-            <div class="dk-card-tools">
+            <div class="dk-card-tools" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <x-paginav-entries 
+                    target=".dk-table tbody tr.um-row"
+                    :perPage="10"
+                    :options="[5, 10, 25, 50, 100]"
+                />
+
                 <button onclick="openMitraModal()" class="dk-primary-btn">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Mitra</span>
@@ -73,14 +79,7 @@
             </div>
         </div>
 
-        <div class="card-body dk-card-body" style="padding: 0;" x-data="{ 
-            currentPage: 1, 
-            perPage: 10,
-            totalRows: {{ ($mitras ?? collect())->count() }},
-            get totalPages() { return Math.ceil(this.totalRows / this.perPage); },
-            get startRange() { return (this.currentPage - 1) * this.perPage + 1; },
-            get endRange() { return Math.min(this.currentPage * this.perPage, this.totalRows); }
-        }">
+        <div class="card-body dk-card-body" style="padding: 0;">
             <div class="table-wrap um-table-wrap dk-table-wrap">
                 <table class="um-table dk-table">
                     <thead>
@@ -94,7 +93,7 @@
                     </thead>
                     <tbody>
                         @forelse(($mitras ?? collect()) as $index => $mitra)
-                            <tr class="um-row dk-row" x-show="Math.ceil(({{ $index }} + 1) / perPage) === currentPage" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2">
+                            <tr class="um-row dk-row">
                                 <td class="um-td um-td-num">
                                     <span class="um-num dk-num">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                                 </td>
@@ -158,6 +157,14 @@
                     </tbody>
                 </table>
             </div>
+
+            <x-paginav 
+                id="pusatMitraTablePaginav"
+                target=".dk-table tbody tr.um-row"
+                :perPage="10"
+                :showInfo="true"
+                :showPerPage="false"
+            />
         </div>
     </div>
 </main>

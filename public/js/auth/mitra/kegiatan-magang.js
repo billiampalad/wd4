@@ -1,6 +1,6 @@
 /**
  * Mitra Portal - Kegiatan & Penilaian Mahasiswa Magang (UC21 & UC22)
- * Script handler for filtering, pagination, grading modal calculation, and submission.
+ * Script handler for filtering, grading modal calculation, and submission.
  */
 
 function mitraPenilaianApp() {
