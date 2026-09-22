@@ -145,8 +145,6 @@
                 <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
             </div>
             <div class="um-header-actions">
-                <x-search id="prodiSearchInput" placeholder="Cari program studi..." target=".um-table tbody tr.um-row"
-                    emptyTarget="#prodiSearchEmptyRow" querySpan="#prodiSearchQueryText" />
                 <button type="button" class="um-btn-add" onclick="openCreateProdiModal()">
                     <i class="fas fa-plus"></i> Tambah Prodi
                 </button>
