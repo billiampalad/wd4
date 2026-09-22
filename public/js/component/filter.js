@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * Custom Filter Component JS
+ * Custom Filter Component JS (Panel Card Expandable)
  * Premium Filter Management Engine with Live Table/Card Filtering,
  * Presets, Dynamic Active Filter Badges, Smooth Transitions, and Export Handlers.
  * ============================================================================
@@ -39,14 +39,11 @@
             const emptySelector = filterEl.getAttribute('data-filter-empty');
             const countSelector = filterEl.getAttribute('data-filter-count');
             const autoApply = filterEl.getAttribute('data-filter-auto-apply') === 'true';
-            const presetPills = filterEl.querySelectorAll('.custom-filter-preset-pill, .custom-filter-chip-item');
-            const activeTagsBar = filterEl.querySelector('.custom-filter-active-tags-bar');
-            const activeTagsContainer = filterEl.querySelector('.active-tags-container');
-            const clearAllTagsBtn = filterEl.querySelector('.btn-clear-all-tags');
+            const presetPills = filterEl.querySelectorAll('.custom-filter-preset-pill');
             const resetBtn = filterEl.querySelector('[data-filter-reset]');
+            const clearAllTagsBtn = filterEl.querySelector('.btn-clear-all-tags');
             const exportPdfBtn = filterEl.querySelector('[data-filter-export="pdf"]');
             const exportExcelBtn = filterEl.querySelector('[data-filter-export="excel"]');
-            const activeBadgeEl = filterEl.querySelector('.custom-filter-active-count');
 
             const state = {
                 filterEl,
@@ -63,7 +60,6 @@
             // 1. Toggle Collapse / Expand
             if (toggleHeader && bodyWrapper) {
                 const handleToggle = (e) => {
-                    // Prevent toggle if clicking inside header actions
                     if (e.target.closest('.custom-filter-header-actions') && !e.target.closest('.custom-filter-collapse-btn')) {
                         return;
                     }
@@ -103,7 +99,7 @@
                         }
                         pill.classList.add('is-active');
 
-                        // Set corresponding form hidden input or select if exists
+                        // Update matching input in form
                         const matchingInput = form ? form.querySelector(`[name="${groupName}"]`) : null;
                         if (matchingInput) {
                             matchingInput.value = val;
@@ -112,7 +108,7 @@
 
                         this.updateActiveTags(state);
 
-                        // Trigger auto apply if enabled or if client-side target exists
+                        // Trigger filter if auto apply is on or client target exists
                         if (autoApply || targetSelector) {
                             this.applyFilter(filterId);
                         }
@@ -145,7 +141,6 @@
                 // Form Submit Handling
                 form.addEventListener('submit', (e) => {
                     const actionUrl = form.getAttribute('action');
-                    // If targetSelector is defined and action is '#' or empty, handle via client-side filtering
                     if (targetSelector && (!actionUrl || actionUrl === '#' || actionUrl === window.location.href)) {
                         e.preventDefault();
                         this.applyFilter(filterId);
@@ -156,7 +151,7 @@
                 });
             }
 
-            // 4. Reset Button Handler
+            // 4. Reset & Clear Tags Buttons
             if (resetBtn) {
                 resetBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -164,7 +159,6 @@
                 });
             }
 
-            // 5. Clear All Tags Handler
             if (clearAllTagsBtn) {
                 clearAllTagsBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -172,7 +166,7 @@
                 });
             }
 
-            // 6. Export Buttons (PDF & Excel)
+            // 5. Export Handlers
             if (exportPdfBtn) {
                 exportPdfBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -213,12 +207,10 @@
 
             formData.forEach((val, key) => {
                 const strVal = String(val).trim();
-                // Filter out tokens, empty values, 'all', default select values
                 if (key === '_token' || strVal === '' || strVal.toLowerCase() === 'all' || strVal === '0') {
                     return;
                 }
 
-                // Find element for label
                 const inputEl = form.querySelector(`[name="${key}"]`);
                 let label = key;
                 if (inputEl) {
@@ -242,7 +234,7 @@
                 }
             }
 
-            // Render Tags
+            // Render Active Chips
             if (activeTagsContainer && activeTagsBar) {
                 if (activeEntries.length === 0) {
                     activeTagsBar.style.display = 'none';
@@ -262,7 +254,6 @@
                             </button>
                         `;
 
-                        // Remove individual filter
                         const removeBtn = chip.querySelector('.chip-remove-btn');
                         removeBtn.addEventListener('click', () => {
                             this.removeSingleFilter(state, entry.key);
@@ -324,18 +315,15 @@
 
             state.form.reset();
 
-            // Clear text/date inputs
             state.form.querySelectorAll('input[type="text"], input[type="date"], input[type="search"]').forEach((input) => {
                 input.value = '';
             });
 
-            // Reset select dropdowns
             state.form.querySelectorAll('select').forEach((sel) => {
                 sel.selectedIndex = 0;
             });
 
-            // Reset presets pills
-            state.filterEl.querySelectorAll('.custom-filter-preset-pill, .custom-filter-chip-item').forEach((pill) => {
+            state.filterEl.querySelectorAll('.custom-filter-preset-pill').forEach((pill) => {
                 const val = pill.getAttribute('data-preset-value');
                 if (val === 'all' || val === '') {
                     pill.classList.add('is-active');
@@ -361,7 +349,7 @@
             const state = this.instances.get(filterId);
             if (!state) return;
 
-            const { form, targetSelector, emptySelector, countSelector, filterEl } = state;
+            const { form, targetSelector, filterEl } = state;
             const formData = form ? new FormData(form) : new FormData();
             const criteria = {};
 
@@ -371,12 +359,10 @@
                 }
             });
 
-            // Perform client-side table/card filtering if targetSelector is present
             if (targetSelector) {
                 this.executeClientFilter(state, criteria);
             }
 
-            // Dispatch global & instance level event
             const eventDetail = { filterId, criteria, formData };
             filterEl.dispatchEvent(new CustomEvent('filter:apply', { bubbles: true, detail: eventDetail }));
             document.dispatchEvent(new CustomEvent('filter:change', { bubbles: true, detail: eventDetail }));
@@ -397,11 +383,9 @@
             items.forEach((item) => {
                 let matches = true;
 
-                // Check against each active filter criteria
                 for (const [key, filterVal] of Object.entries(criteria)) {
                     if (filterVal === 'all') continue;
 
-                    // 1. Check data-filter-* attributes on item (e.g. data-filter-status="aktif")
                     const attrMatch = item.getAttribute(`data-filter-${key}`) || item.getAttribute(`data-${key}`);
                     if (attrMatch) {
                         if (!attrMatch.toLowerCase().includes(filterVal)) {
@@ -409,7 +393,6 @@
                             break;
                         }
                     } else {
-                        // 2. Search anywhere inside item text content
                         const itemText = item.textContent.toLowerCase();
                         if (!itemText.includes(filterVal)) {
                             matches = false;
@@ -426,7 +409,6 @@
                 }
             });
 
-            // Handle empty state
             if (emptySelector) {
                 const emptyEl = document.querySelector(emptySelector);
                 if (emptyEl) {
@@ -434,7 +416,6 @@
                 }
             }
 
-            // Handle count target indicator
             if (countSelector) {
                 const countEl = document.querySelector(countSelector);
                 if (countEl) {
@@ -469,7 +450,7 @@
             window.open(targetUrl, '_blank');
         },
 
-        /* Animation Helpers */
+        /* Smooth Animation Helpers */
         slideUp: function (target, duration = 250) {
             target.style.transitionProperty = 'height, margin, padding, opacity';
             target.style.transitionDuration = duration + 'ms';
@@ -542,7 +523,6 @@
         }
     };
 
-    // Auto Init on DOM Ready & Turbo/Turbolinks load
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => CustomFilter.init());
     } else {

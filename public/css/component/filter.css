@@ -1,14 +1,13 @@
 /* ==========================================================================
-   CUSTOM FILTER COMPONENT CSS
-   Premium, Modern, and Responsive Filter UI System
-   Supports: Light/Dark Mode, Glassmorphism, Quick Chips, Dynamic Tags,
-   Collapsible Panels, Horizontal Toolbar, and Mobile Responsiveness.
+   CUSTOM FILTER COMPONENT CSS (PANEL CARD EXPANDABLE)
+   Ultra-Premium, Modern, and Responsive Filter UI System
+   Supports: Light/Dark Mode, Glassmorphism, Quick Presets Pills,
+   Dynamic Active Tags, Collapsible Header, and Multi-Column Grid.
    ========================================================================== */
 
 :root {
     --filter-bg: var(--surface, #ffffff);
     --filter-bg-subtle: var(--surface2, #f8fafc);
-    --filter-bg-card: #ffffff;
     --filter-border: var(--border, #e2e8f0);
     --filter-border-hover: #cbd5e1;
     --filter-border-focus: var(--accent, #4f46e5);
@@ -26,8 +25,6 @@
     --filter-success-light: rgba(16, 185, 129, 0.1);
     --filter-danger: #ef4444;
     --filter-danger-light: rgba(239, 68, 68, 0.1);
-    --filter-warning: #f59e0b;
-    --filter-warning-light: rgba(245, 158, 11, 0.1);
     
     --filter-radius-xl: 18px;
     --filter-radius-lg: 12px;
@@ -37,20 +34,20 @@
     
     --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
     --filter-shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-    --filter-shadow-lg: 0 20px 35px -8px rgba(79, 70, 229, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-    --filter-shadow-glow: 0 0 0 3px var(--filter-primary-glow);
+    --filter-shadow-glow: 0 0 0 3.5px var(--filter-primary-glow);
     
     --filter-transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
     --filter-transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Dark Mode Tokens */
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE OVERRIDES
+   ───────────────────────────────────────────────────────────── */
 [data-theme="dark"],
 body.dark-mode,
 html.dark {
     --filter-bg: var(--surface, #131620);
     --filter-bg-subtle: var(--surface2, #1a1e2d);
-    --filter-bg-card: #141824;
     --filter-border: var(--border, #262c3f);
     --filter-border-hover: #38425d;
     --filter-border-focus: var(--accent, #6366f1);
@@ -66,11 +63,10 @@ html.dark {
     
     --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
     --filter-shadow-md: 0 12px 30px -5px rgba(0, 0, 0, 0.5);
-    --filter-shadow-lg: 0 22px 40px -10px rgba(0, 0, 0, 0.65);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   1. ROOT CONTAINER & SHARED UTILITIES
+   1. ROOT WRAPPER & CARD CONTAINER
    ───────────────────────────────────────────────────────────── */
 .custom-filter-wrapper {
     width: 100%;
@@ -84,9 +80,6 @@ html.dark {
     box-sizing: border-box;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   2. VARIANT: PANEL (Card with Gradient Header & Smooth Collapse)
-   ───────────────────────────────────────────────────────────── */
 .custom-filter-card {
     background: var(--filter-bg);
     border: 1px solid var(--filter-border);
@@ -95,15 +88,17 @@ html.dark {
     overflow: hidden;
     transition: var(--filter-transition);
     position: relative;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 }
 
 .custom-filter-card:hover {
     border-color: var(--filter-border-hover);
 }
 
-/* Header */
+/* ─────────────────────────────────────────────────────────────
+   2. PANEL HEADER
+   ───────────────────────────────────────────────────────────── */
 .custom-filter-header {
     display: flex;
     align-items: center;
@@ -243,7 +238,7 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   3. QUICK PRESET PILLS / TABS
+   3. QUICK PRESET PILLS BAR
    ───────────────────────────────────────────────────────────── */
 .custom-filter-presets-bar {
     display: flex;
@@ -286,6 +281,7 @@ html.dark {
     padding: 6px 14px;
     font-size: 12.5px;
     font-weight: 600;
+    font-family: inherit;
     color: var(--filter-text-muted);
     background: var(--filter-bg);
     border: 1px solid var(--filter-border);
@@ -321,7 +317,7 @@ html.dark {
     font-size: 10.5px;
     font-weight: 700;
     border-radius: var(--filter-radius-pill);
-    background: rgba(0, 0, 0, 0.07);
+    background: rgba(0, 0, 0, 0.08);
     color: inherit;
 }
 
@@ -331,7 +327,7 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   4. FILTER FORM & GRID LAYOUT
+   4. PANEL BODY & FORM GRID
    ───────────────────────────────────────────────────────────── */
 .custom-filter-body-wrapper {
     transition: var(--filter-transition);
@@ -351,12 +347,10 @@ html.dark {
     align-items: end;
 }
 
-/* Specific span helpers */
 .custom-filter-col-2 { grid-column: span 2; }
 .custom-filter-col-3 { grid-column: span 3; }
 .custom-filter-col-full { grid-column: 1 / -1; }
 
-/* Filter Group / Control */
 .custom-filter-group {
     display: flex;
     flex-direction: column;
@@ -380,7 +374,7 @@ html.dark {
     color: var(--filter-primary);
 }
 
-/* Input & Select Controls */
+/* Inputs & Controls */
 .custom-filter-control-wrap {
     position: relative;
     display: flex;
@@ -446,7 +440,6 @@ html.dark {
     color: var(--filter-text-dim);
 }
 
-/* Custom Styled Select dropdown arrow */
 .custom-filter-select {
     appearance: none;
     -webkit-appearance: none;
@@ -458,7 +451,7 @@ html.dark {
     cursor: pointer;
 }
 
-/* Date Range Compact Container */
+/* Date Range Container */
 .custom-filter-daterange {
     display: flex;
     align-items: center;
@@ -477,7 +470,7 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   5. APPLIED / ACTIVE TAGS BAR
+   5. APPLIED ACTIVE TAGS BAR
    ───────────────────────────────────────────────────────────── */
 .custom-filter-active-tags-bar {
     display: flex;
@@ -595,7 +588,6 @@ html.dark {
     gap: 10px;
 }
 
-/* Button System */
 .custom-filter-btn {
     display: inline-flex;
     align-items: center;
@@ -668,159 +660,8 @@ html.dark {
     box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
 }
 
-.custom-filter-btn-icon-only {
-    width: 40px;
-    padding: 0;
-}
-
 /* ─────────────────────────────────────────────────────────────
-   7. VARIANT: HORIZONTAL TOOLBAR (BAR)
-   ───────────────────────────────────────────────────────────── */
-.custom-filter-bar-container {
-    background: var(--filter-bg);
-    border: 1px solid var(--filter-border);
-    border-radius: var(--filter-radius-xl);
-    padding: 12px 18px;
-    box-shadow: var(--filter-shadow-sm);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.custom-filter-bar-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.custom-filter-bar-content {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-.custom-filter-bar-lead {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--filter-text);
-    padding-right: 12px;
-    border-right: 1px solid var(--filter-border);
-}
-
-.custom-filter-bar-lead .custom-filter-bar-icon {
-    color: var(--filter-primary);
-}
-
-.custom-filter-bar-fields {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    flex-wrap: wrap;
-}
-
-.custom-filter-bar-fields .custom-filter-input,
-.custom-filter-bar-fields .custom-filter-select {
-    height: 38px;
-    font-size: 13px;
-}
-
-.custom-filter-bar-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.custom-filter-bar-tags {
-    margin-top: 4px;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   8. VARIANT: CHIPS QUICK SELECTOR
-   ───────────────────────────────────────────────────────────── */
-.custom-filter-chips-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 10px 16px;
-    background: var(--filter-bg);
-    border: 1px solid var(--filter-border);
-    border-radius: var(--filter-radius-pill);
-    box-shadow: var(--filter-shadow-sm);
-    overflow-x: auto;
-}
-
-.custom-filter-chips-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--filter-text-muted);
-    white-space: nowrap;
-}
-
-.custom-filter-chips-lead-icon {
-    color: var(--filter-primary);
-}
-
-.custom-filter-chips-list {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.custom-filter-chip-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: inherit;
-    color: var(--filter-text-muted);
-    background: var(--filter-bg-subtle);
-    border: 1px solid var(--filter-border);
-    border-radius: var(--filter-radius-pill);
-    cursor: pointer;
-    transition: var(--filter-transition-bounce);
-    white-space: nowrap;
-}
-
-.custom-filter-chip-item:hover {
-    border-color: var(--filter-primary);
-    color: var(--filter-primary);
-    background: var(--filter-primary-light);
-}
-
-.custom-filter-chip-item.is-active {
-    background: var(--filter-primary);
-    color: #ffffff;
-    border-color: var(--filter-primary);
-    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
-}
-
-.custom-filter-chip-item .chip-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1px 6px;
-    font-size: 10.5px;
-    font-weight: 700;
-    border-radius: var(--filter-radius-pill);
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.custom-filter-chip-item.is-active .chip-count {
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-}
-
-/* ─────────────────────────────────────────────────────────────
-   9. RESPONSIVE BREAKPOINTS
+   7. RESPONSIVE BREAKPOINTS
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .custom-filter-header {
@@ -853,16 +694,5 @@ html.dark {
     
     .custom-filter-footer-right .custom-filter-btn {
         flex: 1;
-    }
-    
-    .custom-filter-bar-lead {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--filter-border);
-        padding-bottom: 8px;
-    }
-    
-    .custom-filter-bar-fields {
-        width: 100%;
     }
 }
