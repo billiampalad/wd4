@@ -84,6 +84,17 @@ class NotifikasiController extends Controller
                 } elseif ($notifikasi->type === 'pengajuan_mitra') {
                     $notifikasi->link = route('pimpinan.pengajuan_mitra');
                 }
+                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
+            });
+        } elseif ($roleName === 'admin') {
+            $notifikasis->each(function ($notifikasi) {
+                $notifikasi->link = $notifikasi->url ?: route('mitra.index');
+                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
+            });
+        } else {
+            $notifikasis->each(function ($notifikasi) {
+                $notifikasi->link = $notifikasi->url ?: '#';
+                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
             });
         }
 

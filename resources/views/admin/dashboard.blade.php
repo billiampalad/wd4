@@ -26,11 +26,16 @@
     <script src="{{ asset('js/component/filter.js') }}" data-turbo-track="reload"></script>
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="turbo-cache-control" content="no-preview">
     @yield('styles')
 </head>
 
 <body class="admin-dashboard-page">
+    @php
+        $adminUser = auth()->user();
+        $adminUnreadNotifs = $adminUser ? \App\Models\Notifikasi::where('user_id', $adminUser->id)->where('is_read', 0)->count() : 0;
+    @endphp
     @if(session('success'))
         <script>
             (function () {
@@ -98,10 +103,28 @@
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
 
-                <button class="icon-btn" id="notificationBtn" title="Notifications">
-                    <i class="fas fa-bell" id="notificationIcon"></i>
-                    <span class="notification-badge">3</span>
-                </button>
+                <div class="notification-container">
+                    <button class="icon-btn" id="notificationBtn" title="Notifications">
+                        <i class="fas fa-bell" id="notificationIcon"></i>
+                        <span class="notification-badge" id="notifBadge"
+                            style="{{ $adminUnreadNotifs > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $adminUnreadNotifs > 9 ? '9+' : $adminUnreadNotifs }}
+                        </span>
+                    </button>
+
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notification-header">
+                            <h3>Notifikasi</h3>
+                            <button id="markAllRead" class="notification-mark-read" style="display: none;">Tandai semua dibaca</button>
+                        </div>
+                        <div class="notification-list" id="notifList">
+                            <div class="notification-loading">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                                <span>Memuat notifikasi...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"
                     data-alert-target="modalLogout">

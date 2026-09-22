@@ -99,12 +99,30 @@ class PublicPengajuanKerjasamaController extends Controller
             foreach ($pimpinans as $pimpinan) {
                 Notifikasi::send(
                     $pimpinan->id,
-                    null,
+                    $user?->id,
                     $submission->id,
                     'pengajuan_mitra',
                     'Pengajuan Mitra Baru',
                     "Pengajuan {$submission->kode_pengajuan} dari {$submission->nama_mitra} menunggu validasi Anda.",
                     route('pimpinan.pengajuan_mitra'),
+                    'pengajuan_kerjasama_baru'
+                );
+            }
+
+            // Notifikasi untuk Admin
+            $admins = User::whereHas('role', function ($query) {
+                $query->where('role_name', 'admin');
+            })->get();
+
+            foreach ($admins as $admin) {
+                Notifikasi::send(
+                    $admin->id,
+                    $user?->id,
+                    $submission->id,
+                    'pengajuan_mitra',
+                    'Pengajuan Kerjasama Baru',
+                    "Mitra {$submission->nama_mitra} telah mengajukan kerja sama baru ({$submission->kode_pengajuan}).",
+                    route('mitra.index'),
                     'pengajuan_kerjasama_baru'
                 );
             }

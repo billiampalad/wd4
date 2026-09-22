@@ -115,6 +115,9 @@ function initDashboard() {
 
     /* User Detail Tab Auto-Restore */
     initUserDetail();
+
+    /* Dynamic Notifications */
+    initNotifikasi();
 }
 
 /**
@@ -704,4 +707,160 @@ function initUserDetail() {
             switchTab(savedTab, btn);
         }
     }
+}
+
+/* ── Admin Dynamic Notifications ── */
+function initNotifikasi() {
+    const notifBtn = document.getElementById('notificationBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifList = document.getElementById('notifList');
+    const notifBadge = document.getElementById('notifBadge');
+    const markAllReadBtn = document.getElementById('markAllRead');
+
+    if (!notifBtn || !notifDropdown) return;
+
+    // Prevent double initialization
+    if (notifBtn.dataset.initialized === 'true') return;
+    notifBtn.dataset.initialized = 'true';
+
+    // Toggle dropdown
+    notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('show');
+        if (notifDropdown.classList.contains('show')) {
+            fetchNotifications();
+        }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!notifDropdown.contains(e.target) && e.target !== notifBtn) {
+            notifDropdown.classList.remove('show');
+        }
+    });
+
+    // Mark all as read
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fetch('/api/notifikasi/mark-all-read', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    renderNotifications([]);
+                    updateBadge(0);
+                    fetchNotifications();
+                }
+            })
+            .catch(err => console.error('Gagal menandai semua notifikasi dibaca:', err));
+        });
+    }
+
+    // Fetch and render notifications
+    function fetchNotifications() {
+        fetch('/api/notifikasi', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                renderNotifications(res.data);
+                updateBadge(res.unread_count);
+            }
+        })
+        .catch(err => console.error('Gagal mengambil notifikasi:', err));
+    }
+
+    function updateBadge(count) {
+        const totalCount = Number(count || 0);
+        if (notifBadge) {
+            if (totalCount > 0) {
+                notifBadge.textContent = totalCount > 9 ? '9+' : totalCount;
+                notifBadge.style.display = 'flex';
+                if (markAllReadBtn) markAllReadBtn.style.display = 'block';
+            } else {
+                notifBadge.style.display = 'none';
+                if (markAllReadBtn) markAllReadBtn.style.display = 'none';
+            }
+        }
+    }
+
+    function escapeNotifHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderNotifications(data) {
+        if (!notifList) return;
+        const items = Array.isArray(data) ? data : [];
+
+        if (items.length === 0) {
+            notifList.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>Tidak ada notifikasi baru</p>
+                </div>
+            `;
+            return;
+        }
+
+        notifList.innerHTML = items.map(item => {
+            const senderName = item.sender ? (item.sender.name || item.sender.email) : 'Sistem Kerjasama';
+            const unreadClass = item.is_read ? '' : 'unread';
+            const timeAgo = item.time_ago || (item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : 'Baru saja');
+            const targetUrl = item.link || item.url || '/admin/mitra';
+            const itemTitle = item.title || 'Pengajuan Kerjasama Baru';
+            const itemMsg = item.message || '';
+
+            return `
+                <a href="${escapeNotifHtml(targetUrl)}" class="notification-item ${unreadClass}" data-id="${item.id}">
+                    <div class="notification-icon-wrapper icon-pengajuan">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="notification-content">
+                        <span class="notification-sender">${escapeNotifHtml(senderName)}</span>
+                        <span class="notification-message">${escapeNotifHtml(itemMsg)}</span>
+                        <div class="notification-meta">
+                            <span class="notification-time">${escapeNotifHtml(timeAgo)}</span>
+                            <span class="notification-badge-type">Pengajuan</span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        // Event listener saat item notifikasi diklik
+        notifList.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const notifId = this.dataset.id;
+                if (notifId) {
+                    fetch(`/api/notifikasi/${notifId}/read`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    }).catch(err => console.error('Gagal update status dibaca:', err));
+                }
+            });
+        });
+    }
+
+    // Initial fetch on load
+    fetchNotifications();
 }
