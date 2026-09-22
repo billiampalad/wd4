@@ -57,29 +57,77 @@
             </div>
         </div>
 
-        <!-- Field 2: Status Akun Mitra -->
-        <div class="custom-filter-group">
+        <!-- Field 2: Status Akun Mitra (Alpine.js Dropdown) -->
+        <div class="custom-filter-group" x-data="{
+            open: false,
+            selected: 'all',
+            items: [
+                { id: 'all', label: 'Semua Status Akun' },
+                { id: 'terdaftar', label: 'Sudah Terdaftar (Punya Akun)' },
+                { id: 'belum', label: 'Belum Punya Akun' }
+            ],
+            get selectedLabel() {
+                const found = this.items.find(i => i.id === this.selected);
+                return found ? found.label : 'Semua Status Akun';
+            }
+        }">
             <label class="custom-filter-label"><i class="fas fa-user-shield"></i> Status Akun Login</label>
-            <div class="custom-filter-control-wrap has-left-icon">
-                <select name="status_akun" class="custom-filter-select">
-                    <option value="all">Semua Status Akun</option>
-                    <option value="terdaftar">Sudah Terdaftar (Punya Akun)</option>
-                    <option value="belum">Belum Punya Akun</option>
-                </select>
-                <span class="custom-filter-input-icon"><i class="fas fa-id-badge"></i></span>
+            <input type="hidden" name="status_akun" :value="selected">
+            
+            <div class="alpine-dropdown" @click.outside="open = false">
+                <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                    <div class="ad-trigger-content">
+                        <i class="fas fa-id-badge ad-trigger-icon"></i>
+                        <span x-text="selectedLabel"></span>
+                    </div>
+                    <i class="fas fa-chevron-down ad-trigger-chevron"></i>
+                </div>
+                <div class="ad-menu" x-show="open" x-transition>
+                    <template x-for="item in items" :key="item.id">
+                        <div class="ad-item" :class="{ 'selected': selected === item.id }"
+                            @click="selected = item.id; open = false; $nextTick(() => { document.querySelector('input[name=status_akun]').dispatchEvent(new Event('change', { bubbles: true })); })">
+                            <span x-text="item.label"></span>
+                            <i class="fas fa-check ad-item-check"></i>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
 
-        <!-- Field 3: Status Kegiatan -->
-        <div class="custom-filter-group">
+        <!-- Field 3: Status Kegiatan (Alpine.js Dropdown) -->
+        <div class="custom-filter-group" x-data="{
+            open: false,
+            selected: 'all',
+            items: [
+                { id: 'all', label: 'Semua Kegiatan' },
+                { id: 'aktif', label: 'Ada Kegiatan Aktif' },
+                { id: 'selesai', label: 'Selesai / Tanpa Kegiatan' }
+            ],
+            get selectedLabel() {
+                const found = this.items.find(i => i.id === this.selected);
+                return found ? found.label : 'Semua Kegiatan';
+            }
+        }">
             <label class="custom-filter-label"><i class="fas fa-handshake-simple"></i> Status Kegiatan</label>
-            <div class="custom-filter-control-wrap has-left-icon">
-                <select name="status_kegiatan" class="custom-filter-select">
-                    <option value="all">Semua Kegiatan</option>
-                    <option value="aktif">Ada Kegiatan Aktif</option>
-                    <option value="selesai">Selesai / Tanpa Kegiatan</option>
-                </select>
-                <span class="custom-filter-input-icon"><i class="fas fa-chart-pie"></i></span>
+            <input type="hidden" name="status_kegiatan" :value="selected">
+            
+            <div class="alpine-dropdown" @click.outside="open = false">
+                <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                    <div class="ad-trigger-content">
+                        <i class="fas fa-chart-pie ad-trigger-icon"></i>
+                        <span x-text="selectedLabel"></span>
+                    </div>
+                    <i class="fas fa-chevron-down ad-trigger-chevron"></i>
+                </div>
+                <div class="ad-menu" x-show="open" x-transition>
+                    <template x-for="item in items" :key="item.id">
+                        <div class="ad-item" :class="{ 'selected': selected === item.id }"
+                            @click="selected = item.id; open = false; $nextTick(() => { document.querySelector('input[name=status_kegiatan]').dispatchEvent(new Event('change', { bubbles: true })); })">
+                            <span x-text="item.label"></span>
+                            <i class="fas fa-check ad-item-check"></i>
+                        </div>
+                    </template>
+                </div>
             </div>
         </div>
     </x-filter>

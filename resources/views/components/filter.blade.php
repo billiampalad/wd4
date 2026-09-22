@@ -12,13 +12,10 @@
     'countTarget' => null, // CSS selector label jumlah data (misal: '#resultCount')
     'autoApply' => false, // Jika true, filter langsung diaplikasikan saat ada perubahan input
     'showActiveChips' => true, // Menampilkan bar chip filter yang sedang aktif
-    'showReset' => true, // Menampilkan tombol Reset
-    'showApply' => true, // Menampilkan tombol Terapkan Filter
+    'showReset' => true, // Menampilkan tombol Reset (Warna Merah)
+    'showApply' => true, // Menampilkan tombol Terapkan Filter (Warna Indigo)
     'applyText' => 'Terapkan Filter',
     'resetText' => 'Reset Filter',
-    'exportPdf' => null, // URL cetak PDF
-    'exportExcel' => null, // URL ekspor Excel
-    'previewUrl' => null, // URL preview dokumen
     'presets' => [], // Array preset tombol [ ['label' => 'Semua', 'value' => 'all', 'icon' => '...', 'count' => 10], ... ]
     'presetName' => 'status', // Nama parameter/field yang dikontrol oleh presets
     'activePreset' => 'all', // Preset awal yang aktif
@@ -43,9 +40,6 @@
     @if($emptyTarget) data-filter-empty="{{ $emptyTarget }}" @endif
     @if($countTarget) data-filter-count="{{ $countTarget }}" @endif
     @if($autoApply) data-filter-auto-apply="true" @endif
-    @if($exportPdf) data-pdf-url="{{ $exportPdf }}" @endif
-    @if($exportExcel) data-excel-url="{{ $exportExcel }}" @endif
-    @if($previewUrl) data-preview-url="{{ $previewUrl }}" @endif
 >
     <div class="custom-filter-card">
         {{-- ═══ 1. PANEL HEADER ═══ --}}
@@ -160,23 +154,9 @@
 
                     <div class="custom-filter-footer-right">
                         @if($showReset)
-                            <button type="button" class="custom-filter-btn custom-filter-btn-reset" data-filter-reset>
+                            <button type="button" class="custom-filter-btn custom-filter-btn-reset" data-filter-reset title="Reset semua input filter">
                                 <i class="fas fa-rotate-left"></i>
                                 <span>{{ $resetText }}</span>
-                            </button>
-                        @endif
-
-                        @if($exportPdf)
-                            <button type="button" class="custom-filter-btn custom-filter-btn-pdf" data-filter-export="pdf" title="Cetak / Unduh berkas format PDF">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>Cetak PDF</span>
-                            </button>
-                        @endif
-
-                        @if($exportExcel)
-                            <button type="button" class="custom-filter-btn custom-filter-btn-excel" data-filter-export="excel" title="Ekspor data ke spreadsheet Excel">
-                                <i class="fas fa-file-excel"></i>
-                                <span>Ekspor Excel</span>
                             </button>
                         @endif
 

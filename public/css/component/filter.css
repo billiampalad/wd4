@@ -2,7 +2,7 @@
    CUSTOM FILTER COMPONENT CSS (PANEL CARD EXPANDABLE)
    Ultra-Premium, Modern, and Responsive Filter UI System
    Supports: Light/Dark Mode, Glassmorphism, Quick Presets Pills,
-   Dynamic Active Tags, Collapsible Header, and Multi-Column Grid.
+   Dynamic Active Tags, Alpine.js Custom Dropdowns, and Multi-Column Grid.
    ========================================================================== */
 
 :root {
@@ -24,7 +24,10 @@
     --filter-success: #10b981;
     --filter-success-light: rgba(16, 185, 129, 0.1);
     --filter-danger: #ef4444;
-    --filter-danger-light: rgba(239, 68, 68, 0.1);
+    --filter-danger-hover: #dc2626;
+    --filter-danger-light: rgba(239, 68, 68, 0.08);
+    --filter-danger-border: rgba(239, 68, 68, 0.25);
+    --filter-danger-glow: rgba(239, 68, 68, 0.3);
     
     --filter-radius-xl: 18px;
     --filter-radius-lg: 12px;
@@ -34,6 +37,7 @@
     
     --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
     --filter-shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    --filter-shadow-popover: 0 14px 34px -4px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
     --filter-shadow-glow: 0 0 0 3.5px var(--filter-primary-glow);
     
     --filter-transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,8 +65,12 @@ html.dark {
     --filter-primary-light: rgba(99, 102, 241, 0.16);
     --filter-primary-glow: rgba(99, 102, 241, 0.28);
     
+    --filter-danger-light: rgba(239, 68, 68, 0.15);
+    --filter-danger-border: rgba(239, 68, 68, 0.35);
+    
     --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
     --filter-shadow-md: 0 12px 30px -5px rgba(0, 0, 0, 0.5);
+    --filter-shadow-popover: 0 18px 40px -4px rgba(0, 0, 0, 0.7), 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -85,7 +93,7 @@ html.dark {
     border: 1px solid var(--filter-border);
     border-radius: var(--filter-radius-xl);
     box-shadow: var(--filter-shadow-md);
-    overflow: hidden;
+    overflow: visible;
     transition: var(--filter-transition);
     position: relative;
     backdrop-filter: blur(14px);
@@ -107,6 +115,8 @@ html.dark {
     padding: 18px 24px;
     background: linear-gradient(135deg, var(--filter-bg) 0%, var(--filter-bg-subtle) 100%);
     border-bottom: 1px solid var(--filter-border);
+    border-top-left-radius: var(--filter-radius-xl);
+    border-top-right-radius: var(--filter-radius-xl);
     cursor: pointer;
     user-select: none;
     transition: var(--filter-transition);
@@ -114,6 +124,7 @@ html.dark {
 
 .custom-filter-wrapper.is-collapsed .custom-filter-header {
     border-bottom-color: transparent;
+    border-radius: var(--filter-radius-xl);
 }
 
 .custom-filter-title-group {
@@ -403,11 +414,6 @@ html.dark {
     padding-left: 38px;
 }
 
-.custom-filter-control-wrap.has-right-icon .custom-filter-input,
-.custom-filter-control-wrap.has-right-icon .custom-filter-select {
-    padding-right: 38px;
-}
-
 .custom-filter-input-icon {
     position: absolute;
     left: 13px;
@@ -418,7 +424,6 @@ html.dark {
 }
 
 .custom-filter-input:focus ~ .custom-filter-input-icon,
-.custom-filter-select:focus ~ .custom-filter-input-icon,
 .custom-filter-control-wrap:focus-within .custom-filter-input-icon {
     color: var(--filter-primary);
 }
@@ -440,17 +445,6 @@ html.dark {
     color: var(--filter-text-dim);
 }
 
-.custom-filter-select {
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 18px 18px;
-    padding-right: 32px;
-    cursor: pointer;
-}
-
 /* Date Range Container */
 .custom-filter-daterange {
     display: flex;
@@ -470,7 +464,150 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   5. APPLIED ACTIVE TAGS BAR
+   5. ALPINE.JS CUSTOM DROPDOWN SYSTEM
+   ───────────────────────────────────────────────────────────── */
+.alpine-dropdown,
+.custom-filter-dropdown {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.ad-trigger,
+.cfd-trigger {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--filter-bg-subtle);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-md);
+    color: var(--filter-text);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: var(--filter-transition);
+    gap: 8px;
+}
+
+.ad-trigger:hover,
+.cfd-trigger:hover {
+    border-color: var(--filter-border-hover);
+    background: var(--filter-bg);
+}
+
+.ad-trigger.active,
+.cfd-trigger.active {
+    border-color: var(--filter-border-focus);
+    background: var(--filter-bg);
+    box-shadow: var(--filter-shadow-glow);
+}
+
+.ad-trigger-content,
+.cfd-trigger-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ad-trigger-icon,
+.cfd-trigger-icon {
+    color: var(--filter-text-dim);
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: var(--filter-transition);
+}
+
+.ad-trigger.active .ad-trigger-icon,
+.cfd-trigger.active .cfd-trigger-icon {
+    color: var(--filter-primary);
+}
+
+.ad-trigger-chevron,
+.cfd-trigger-chevron {
+    color: var(--filter-text-dim);
+    font-size: 11px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.ad-trigger.active .ad-trigger-chevron,
+.cfd-trigger.active .cfd-trigger-chevron {
+    transform: rotate(180deg);
+    color: var(--filter-primary);
+}
+
+/* Dropdown Menu Box */
+.ad-menu,
+.cfd-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    min-width: 180px;
+    background: var(--filter-bg);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-lg);
+    box-shadow: var(--filter-shadow-popover);
+    z-index: 999;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 6px;
+    scrollbar-width: thin;
+    animation: cfdDropdownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cfdDropdownFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ad-item,
+.cfd-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--filter-text);
+    border-radius: var(--filter-radius-sm);
+    cursor: pointer;
+    transition: var(--filter-transition);
+}
+
+.ad-item:hover,
+.cfd-item:hover {
+    background: var(--filter-primary-light);
+    color: var(--filter-primary);
+}
+
+.ad-item.selected,
+.cfd-item.selected {
+    background: var(--filter-primary);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.ad-item-check,
+.cfd-item-check {
+    font-size: 11px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.ad-item.selected .ad-item-check,
+.cfd-item.selected .cfd-item-check {
+    opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. APPLIED ACTIVE TAGS BAR
    ───────────────────────────────────────────────────────────── */
 .custom-filter-active-tags-bar {
     display: flex;
@@ -568,7 +705,7 @@ html.dark {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   6. FOOTER ACTIONS & BUTTONS
+   7. FOOTER ACTIONS & BUTTONS (RED RESET & PRIMARY APPLY)
    ───────────────────────────────────────────────────────────── */
 .custom-filter-footer {
     display: flex;
@@ -594,7 +731,7 @@ html.dark {
     justify-content: center;
     gap: 8px;
     height: 40px;
-    padding: 0 18px;
+    padding: 0 20px;
     font-size: 13.5px;
     font-weight: 600;
     font-family: inherit;
@@ -611,6 +748,7 @@ html.dark {
     transform: scale(0.97);
 }
 
+/* Tombol Terapkan (Primary Indigo Gradient) */
 .custom-filter-btn-primary {
     background: linear-gradient(135deg, var(--filter-primary) 0%, #6366f1 100%);
     color: #ffffff;
@@ -623,45 +761,23 @@ html.dark {
     transform: translateY(-1px);
 }
 
+/* Tombol Reset (Red / Danger) */
 .custom-filter-btn-reset {
-    background: var(--filter-bg);
-    border-color: var(--filter-border);
-    color: var(--filter-text-muted);
+    background: var(--filter-danger-light);
+    border: 1px solid var(--filter-danger-border);
+    color: var(--filter-danger);
 }
 
 .custom-filter-btn-reset:hover {
-    background: var(--filter-bg-subtle);
-    border-color: var(--filter-border-hover);
-    color: var(--filter-text);
-    transform: translateY(-1px);
-}
-
-.custom-filter-btn-pdf {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    background: var(--filter-danger);
+    border-color: var(--filter-danger);
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
-}
-
-.custom-filter-btn-pdf:hover {
-    background: #dc2626;
+    box-shadow: 0 4px 14px var(--filter-danger-glow);
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.3);
-}
-
-.custom-filter-btn-excel {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
-}
-
-.custom-filter-btn-excel:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   7. RESPONSIVE BREAKPOINTS
+   8. RESPONSIVE BREAKPOINTS
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .custom-filter-header {
