@@ -19,7 +19,7 @@ class UpelaksanaController extends Controller
 
     public function create()
     {
-        return view('admin.upelaksana.create');
+        return redirect()->route('upelaksana.index');
     }
 
     public function store(Request $request)
@@ -37,8 +37,7 @@ class UpelaksanaController extends Controller
 
     public function edit($id)
     {
-        $upelaksana = UnitKerja::findOrFail($id);
-        return view('admin.upelaksana.edit', compact('upelaksana'));
+        return redirect()->route('upelaksana.index');
     }
 
     public function update(Request $request, $id)

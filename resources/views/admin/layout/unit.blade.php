@@ -32,9 +32,9 @@
             <div class="um-header-actions">
                 <x-search id="unitSearchInput" placeholder="Cari data humas..." target=".um-table tbody tr.um-row"
                     emptyTarget="#unitSearchEmptyRow" querySpan="#unitSearchQueryText" />
-                <a href="{{ route('upelaksana.create') }}" class="um-btn-add">
+                <button type="button" class="um-btn-add" onclick="openCreateUnitModal()">
                     <i class="fas fa-plus"></i> Tambah Humas
-                </a>
+                </button>
             </div>
         </div>
 
@@ -72,9 +72,10 @@
                             </td>
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
-                                    <a href="{{ route('upelaksana.edit', $upelaksana->id) }}" class="btn-action edit um-btn-edit" title="Edit">
+                                    <button type="button" class="btn-action edit um-btn-edit" title="Edit"
+                                        onclick="openEditUnitModal({{ $upelaksana->id }}, '{{ addslashes($upelaksana->nama_unit_pelaksana) }}')">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
                                     <form id="form-delete-upelaksana-{{ $upelaksana->id }}" action="{{ route('upelaksana.destroy', $upelaksana->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -100,7 +101,7 @@
                                         <i class="fas fa-sitemap"></i>
                                     </div>
                                     <p class="um-empty-title">Belum ada data unit pelaksana</p>
-                                    <p class="um-empty-sub">Klik tombol <strong>Tambah Unit</strong> untuk memulai.</p>
+                                    <p class="um-empty-sub">Klik tombol <strong>Tambah Humas</strong> untuk memulai.</p>
                                 </div>
                             </td>
                         </tr>
@@ -124,5 +125,108 @@
         <x-paginav id="unitTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
             :showPerPage="false" />
     </div>
+
+    {{-- Modal Tambah Humas / Unit Pelaksana --}}
+    <div id="createUnitModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'createUnitModal')">
+        <div class="adm-modal-container adm-modal-sm">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-indigo">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Tambah Humas</h3>
+                        <p class="adm-modal-subtitle">Isi formulir untuk menambahkan unit pelaksana humas baru.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('createUnitModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('upelaksana.store') }}" method="POST" id="createUnitForm">
+                @csrf
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_nama_unit_pelaksana">
+                            <i class="fas fa-building"></i> Nama Unit Pelaksana Humas <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="create_nama_unit_pelaksana" name="nama_unit_pelaksana" class="adm-form-input"
+                            placeholder="Contoh: Humas dan Kerjasama, dsb" required maxlength="255">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createUnitModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Unit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Edit Humas / Unit Pelaksana --}}
+    <div id="editUnitModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'editUnitModal')">
+        <div class="adm-modal-container adm-modal-sm">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-emerald">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Edit Humas</h3>
+                        <p class="adm-modal-subtitle">Ubah nama unit pelaksana humas yang sudah ada.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('editUnitModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="editUnitForm">
+                @csrf
+                @method('PUT')
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_nama_unit_pelaksana">
+                            <i class="fas fa-building"></i> Nama Unit Pelaksana Humas <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="edit_nama_unit_pelaksana" name="nama_unit_pelaksana" class="adm-form-input"
+                            placeholder="Ubah nama unit pelaksana humas" required maxlength="255">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('editUnitModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
+
+<script>
+    function openCreateUnitModal() {
+        AdminModal.open('createUnitModal', {
+            focusSelector: '#create_nama_unit_pelaksana',
+            resetForm: true
+        });
+    }
+
+    function openEditUnitModal(id, namaUnit) {
+        const form = document.getElementById('editUnitForm');
+        if (form) {
+            form.action = "{{ route('upelaksana.update', ':id') }}".replace(':id', id);
+        }
+        const nameInput = document.getElementById('edit_nama_unit_pelaksana');
+        if (nameInput) nameInput.value = namaUnit;
+
+        AdminModal.open('editUnitModal', {
+            focusSelector: '#edit_nama_unit_pelaksana'
+        });
+    }
+</script>
 @endsection
