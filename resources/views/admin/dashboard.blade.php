@@ -93,11 +93,7 @@
             </div>
 
             <div class="nav-actions">
-                <x-search 
-                    id="navSearchInput"
-                    placeholder="Cari data..."
-                    width="200px"
-                />
+                <x-search id="navSearchInput" placeholder="Cari data..." width="200px" />
 
                 <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
@@ -115,7 +111,8 @@
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
-                            <button id="markAllRead" class="notification-mark-read" style="display: none;">Tandai semua dibaca</button>
+                            <button id="markAllRead" class="notification-mark-read" style="display: none;">Tandai semua
+                                dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
                             <div class="notification-loading">
