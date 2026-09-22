@@ -32,9 +32,9 @@
             <div class="um-header-actions">
                 <x-search id="upaSearchInput" placeholder="Cari data UPA..." target=".um-table tbody tr.um-row"
                     emptyTarget="#upaSearchEmptyRow" querySpan="#upaSearchQueryText" />
-                <a href="{{ route('upa.create') }}" class="um-btn-add">
+                <button type="button" class="um-btn-add" onclick="openCreateUpaModal()">
                     <i class="fas fa-plus"></i> Tambah UPA
-                </a>
+                </button>
             </div>
         </div>
 
@@ -72,9 +72,10 @@
                             </td>
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
-                                    <a href="{{ route('upa.edit', $upa->id) }}" class="btn-action edit um-btn-edit" title="Edit">
+                                    <button type="button" class="btn-action edit um-btn-edit" title="Edit"
+                                        onclick="openEditUpaModal({{ $upa->id }}, '{{ addslashes($upa->nama_upa) }}')">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
                                     <form id="form-delete-upa-{{ $upa->id }}" action="{{ route('upa.destroy', $upa->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -124,5 +125,110 @@
         <x-paginav id="upaTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
             :showPerPage="false" />
     </div>
+
+    {{-- Modal Tambah UPA --}}
+    <div id="createUpaModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'createUpaModal')">
+        <div class="adm-modal-container adm-modal-sm">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-indigo">
+                        <i class="fas fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Tambah UPA</h3>
+                        <p class="adm-modal-subtitle">Isi formulir untuk menambahkan data UPA baru.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('createUpaModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('upa.store') }}" method="POST" id="createUpaForm">
+                @csrf
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_nama_upa">
+                            <i class="fas fa-building-columns"></i> Nama UPA <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="create_nama_upa" name="nama_upa" class="adm-form-input"
+                            placeholder="Contoh: UPA Perpustakaan" required maxlength="150">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createUpaModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan UPA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Edit UPA --}}
+    <div id="editUpaModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'editUpaModal')">
+        <div class="adm-modal-container adm-modal-sm">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-emerald">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Edit UPA</h3>
+                        <p class="adm-modal-subtitle">Ubah data UPA yang sudah ada.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('editUpaModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="editUpaForm">
+                @csrf
+                @method('PUT')
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_nama_upa">
+                            <i class="fas fa-building-columns"></i> Nama UPA <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="edit_nama_upa" name="nama_upa" class="adm-form-input"
+                            placeholder="Ubah nama UPA" required maxlength="150">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('editUpaModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
+
+<script>
+    function openCreateUpaModal() {
+        AdminModal.open('createUpaModal', {
+            focusSelector: '#create_nama_upa',
+            resetForm: true
+        });
+    }
+
+    function openEditUpaModal(id, namaUpa) {
+        const form = document.getElementById('editUpaForm');
+        if (form) {
+            form.action = "{{ route('upa.update', ':id') }}".replace(':id', id);
+        }
+        const namaInput = document.getElementById('edit_nama_upa');
+        if (namaInput) {
+            namaInput.value = namaUpa || '';
+        }
+
+        AdminModal.open('editUpaModal', {
+            focusSelector: '#edit_nama_upa'
+        });
+    }
+</script>
 @endsection

@@ -19,7 +19,7 @@ class UpaController extends Controller
 
     public function create()
     {
-        return view('admin.upa.create');
+        return redirect()->route('upa.index');
     }
 
     public function store(Request $request)
@@ -37,8 +37,7 @@ class UpaController extends Controller
 
     public function edit($id)
     {
-        $upa = Upa::findOrFail($id);
-        return view('admin.upa.edit', compact('upa'));
+        return redirect()->route('upa.index');
     }
 
     public function update(Request $request, $id)
