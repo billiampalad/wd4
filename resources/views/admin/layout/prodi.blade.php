@@ -133,8 +133,8 @@
 
     {{-- Modal Tambah Prodi --}}
     <div id="createProdiModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'createProdiModal')">
-        <div class="adm-modal-container adm-modal-md">
-            <div class="adm-modal-header">
+        <div class="adm-modal-container adm-modal-md" style="overflow: visible;">
+            <div class="adm-modal-header" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
                 <div class="adm-modal-title-wrap">
                     <div class="adm-modal-icon-badge adm-modal-icon-indigo">
                         <i class="fas fa-graduation-cap"></i>
@@ -151,17 +151,67 @@
             <form action="{{ route('prodi.store') }}" method="POST" id="createProdiForm">
                 @csrf
                 <div class="adm-modal-body">
+                    {{-- Dropdown Jurusan dengan Alpine.js --}}
                     <div class="adm-form-group">
                         <label class="adm-form-label" for="create_jurusan_id">
                             <i class="fas fa-microchip"></i> Jurusan <span class="adm-required">*</span>
                         </label>
-                        <select id="create_jurusan_id" name="jurusan_id" class="adm-form-input" required>
-                            <option value="">-- Pilih Jurusan --</option>
-                            @foreach($jurusans as $jurusan)
-                                <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
-                            @endforeach
-                        </select>
+                        <div
+                            class="uc-alpine-select"
+                            x-data="adminUserSelect({
+                                placeholder: '-- Pilih Jurusan --',
+                                selectedValue: '',
+                                items: @js($jurusans->map(fn ($jurusan) => [
+                                    'value' => (string) $jurusan->id,
+                                    'label' => $jurusan->nama_jurusan,
+                                ])->values())
+                            })"
+                            x-init="init()"
+                            :class="{ 'is-open': open }"
+                            @click.outside="open = false"
+                        >
+                            <select
+                                id="create_jurusan_id"
+                                name="jurusan_id"
+                                class="uc-native-select"
+                                x-model="selectedValue"
+                                @change="syncFromNative()"
+                                tabindex="-1"
+                                aria-hidden="true"
+                                required
+                            >
+                                <option value="">-- Pilih Jurusan --</option>
+                                @foreach($jurusans as $jurusan)
+                                    <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                                @endforeach
+                            </select>
+                            <button
+                                type="button"
+                                class="uc-select-trigger"
+                                :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                @click="toggle()"
+                                :disabled="disabled"
+                            >
+                                <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                <i class="fas fa-chevron-down uc-select-chevron"></i>
+                            </button>
+                            <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                <template x-for="item in items" :key="item.value">
+                                    <button
+                                        type="button"
+                                        class="uc-select-option"
+                                        :class="{ 'is-selected': selectedValue === item.value }"
+                                        @click="choose(item)"
+                                    >
+                                        <span x-text="item.label"></span>
+                                        <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
+
+                    {{-- Nama Program Studi --}}
                     <div class="adm-form-group">
                         <label class="adm-form-label" for="create_nama_prodi">
                             <i class="fas fa-graduation-cap"></i> Nama Program Studi <span class="adm-required">*</span>
@@ -169,6 +219,8 @@
                         <input type="text" id="create_nama_prodi" name="nama_prodi" class="adm-form-input"
                             placeholder="Contoh: Teknik Informatika" required maxlength="150">
                     </div>
+
+                    {{-- Grid Kode & Jenjang --}}
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <div class="adm-form-group">
                             <label class="adm-form-label" for="create_kode_prodi">
@@ -177,21 +229,71 @@
                             <input type="text" id="create_kode_prodi" name="kode_prodi" class="adm-form-input"
                                 placeholder="Contoh: TI01 (opsional)" maxlength="20">
                         </div>
+
+                        {{-- Dropdown Jenjang dengan Alpine.js --}}
                         <div class="adm-form-group">
                             <label class="adm-form-label" for="create_jenjang">
                                 <i class="fas fa-layer-group"></i> Jenjang <span class="adm-required">*</span>
                             </label>
-                            <select id="create_jenjang" name="jenjang" class="adm-form-input" required>
-                                <option value="">-- Pilih --</option>
-                                <option value="D3">D3</option>
-                                <option value="D4" selected>D4</option>
-                                <option value="S1">S1</option>
-                                <option value="S2">S2</option>
-                            </select>
+                            <div
+                                class="uc-alpine-select"
+                                x-data="adminUserSelect({
+                                    placeholder: '-- Pilih Jenjang --',
+                                    selectedValue: 'D4',
+                                    items: [
+                                        { value: 'D3', label: 'D3' },
+                                        { value: 'D4', label: 'D4' },
+                                        { value: 'S1', label: 'S1' },
+                                        { value: 'S2', label: 'S2' }
+                                    ]
+                                })"
+                                x-init="init()"
+                                :class="{ 'is-open': open }"
+                                @click.outside="open = false"
+                            >
+                                <select
+                                    id="create_jenjang"
+                                    name="jenjang"
+                                    class="uc-native-select"
+                                    x-model="selectedValue"
+                                    @change="syncFromNative()"
+                                    tabindex="-1"
+                                    aria-hidden="true"
+                                    required
+                                >
+                                    <option value="D3">D3</option>
+                                    <option value="D4" selected>D4</option>
+                                    <option value="S1">S1</option>
+                                    <option value="S2">S2</option>
+                                </select>
+                                <button
+                                    type="button"
+                                    class="uc-select-trigger"
+                                    :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                    @click="toggle()"
+                                    :disabled="disabled"
+                                >
+                                    <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                    <i class="fas fa-chevron-down uc-select-chevron"></i>
+                                </button>
+                                <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                    <template x-for="item in items" :key="item.value">
+                                        <button
+                                            type="button"
+                                            class="uc-select-option"
+                                            :class="{ 'is-selected': selectedValue === item.value }"
+                                            @click="choose(item)"
+                                        >
+                                            <span x-text="item.label"></span>
+                                            <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="adm-modal-footer">
+                <div class="adm-modal-footer" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
                     <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createProdiModal')">
                         <i class="fas fa-arrow-left"></i> Batal
                     </button>
@@ -205,8 +307,8 @@
 
     {{-- Modal Edit Prodi --}}
     <div id="editProdiModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'editProdiModal')">
-        <div class="adm-modal-container adm-modal-md">
-            <div class="adm-modal-header">
+        <div class="adm-modal-container adm-modal-md" style="overflow: visible;">
+            <div class="adm-modal-header" style="border-top-left-radius: 16px; border-top-right-radius: 16px;">
                 <div class="adm-modal-title-wrap">
                     <div class="adm-modal-icon-badge adm-modal-icon-emerald">
                         <i class="fas fa-edit"></i>
@@ -224,17 +326,67 @@
                 @csrf
                 @method('PUT')
                 <div class="adm-modal-body">
+                    {{-- Dropdown Jurusan Edit dengan Alpine.js --}}
                     <div class="adm-form-group">
                         <label class="adm-form-label" for="edit_jurusan_id">
                             <i class="fas fa-microchip"></i> Jurusan <span class="adm-required">*</span>
                         </label>
-                        <select id="edit_jurusan_id" name="jurusan_id" class="adm-form-input" required>
-                            <option value="">-- Pilih Jurusan --</option>
-                            @foreach($jurusans as $jurusan)
-                                <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
-                            @endforeach
-                        </select>
+                        <div
+                            class="uc-alpine-select"
+                            x-data="adminUserSelect({
+                                placeholder: '-- Pilih Jurusan --',
+                                selectedValue: '',
+                                items: @js($jurusans->map(fn ($jurusan) => [
+                                    'value' => (string) $jurusan->id,
+                                    'label' => $jurusan->nama_jurusan,
+                                ])->values())
+                            })"
+                            x-init="init()"
+                            :class="{ 'is-open': open }"
+                            @click.outside="open = false"
+                        >
+                            <select
+                                id="edit_jurusan_id"
+                                name="jurusan_id"
+                                class="uc-native-select"
+                                x-model="selectedValue"
+                                @change="syncFromNative()"
+                                tabindex="-1"
+                                aria-hidden="true"
+                                required
+                            >
+                                <option value="">-- Pilih Jurusan --</option>
+                                @foreach($jurusans as $jurusan)
+                                    <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                                @endforeach
+                            </select>
+                            <button
+                                type="button"
+                                class="uc-select-trigger"
+                                :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                @click="toggle()"
+                                :disabled="disabled"
+                            >
+                                <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                <i class="fas fa-chevron-down uc-select-chevron"></i>
+                            </button>
+                            <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                <template x-for="item in items" :key="item.value">
+                                    <button
+                                        type="button"
+                                        class="uc-select-option"
+                                        :class="{ 'is-selected': selectedValue === item.value }"
+                                        @click="choose(item)"
+                                    >
+                                        <span x-text="item.label"></span>
+                                        <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
+
+                    {{-- Nama Program Studi --}}
                     <div class="adm-form-group">
                         <label class="adm-form-label" for="edit_nama_prodi">
                             <i class="fas fa-graduation-cap"></i> Nama Program Studi <span class="adm-required">*</span>
@@ -242,6 +394,8 @@
                         <input type="text" id="edit_nama_prodi" name="nama_prodi" class="adm-form-input"
                             placeholder="Ubah nama program studi" required maxlength="150">
                     </div>
+
+                    {{-- Grid Kode & Jenjang --}}
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                         <div class="adm-form-group">
                             <label class="adm-form-label" for="edit_kode_prodi">
@@ -250,21 +404,72 @@
                             <input type="text" id="edit_kode_prodi" name="kode_prodi" class="adm-form-input"
                                 placeholder="Contoh: TI01 (opsional)" maxlength="20">
                         </div>
+
+                        {{-- Dropdown Jenjang Edit dengan Alpine.js --}}
                         <div class="adm-form-group">
                             <label class="adm-form-label" for="edit_jenjang">
                                 <i class="fas fa-layer-group"></i> Jenjang <span class="adm-required">*</span>
                             </label>
-                            <select id="edit_jenjang" name="jenjang" class="adm-form-input" required>
-                                <option value="">-- Pilih --</option>
-                                <option value="D3">D3</option>
-                                <option value="D4">D4</option>
-                                <option value="S1">S1</option>
-                                <option value="S2">S2</option>
-                            </select>
+                            <div
+                                class="uc-alpine-select"
+                                x-data="adminUserSelect({
+                                    placeholder: '-- Pilih Jenjang --',
+                                    selectedValue: '',
+                                    items: [
+                                        { value: 'D3', label: 'D3' },
+                                        { value: 'D4', label: 'D4' },
+                                        { value: 'S1', label: 'S1' },
+                                        { value: 'S2', label: 'S2' }
+                                    ]
+                                })"
+                                x-init="init()"
+                                :class="{ 'is-open': open }"
+                                @click.outside="open = false"
+                            >
+                                <select
+                                    id="edit_jenjang"
+                                    name="jenjang"
+                                    class="uc-native-select"
+                                    x-model="selectedValue"
+                                    @change="syncFromNative()"
+                                    tabindex="-1"
+                                    aria-hidden="true"
+                                    required
+                                >
+                                    <option value="">-- Pilih --</option>
+                                    <option value="D3">D3</option>
+                                    <option value="D4">D4</option>
+                                    <option value="S1">S1</option>
+                                    <option value="S2">S2</option>
+                                </select>
+                                <button
+                                    type="button"
+                                    class="uc-select-trigger"
+                                    :class="{ 'is-open': open, 'is-empty': !selectedValue, 'is-disabled': disabled }"
+                                    @click="toggle()"
+                                    :disabled="disabled"
+                                >
+                                    <span class="uc-select-text" x-text="selectedLabel || placeholder"></span>
+                                    <i class="fas fa-chevron-down uc-select-chevron"></i>
+                                </button>
+                                <div class="uc-select-menu" x-show="open" x-transition x-cloak>
+                                    <template x-for="item in items" :key="item.value">
+                                        <button
+                                            type="button"
+                                            class="uc-select-option"
+                                            :class="{ 'is-selected': selectedValue === item.value }"
+                                            @click="choose(item)"
+                                        >
+                                            <span x-text="item.label"></span>
+                                            <i class="fas fa-check" x-show="selectedValue === item.value"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="adm-modal-footer">
+                <div class="adm-modal-footer" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
                     <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('editProdiModal')">
                         <i class="fas fa-arrow-left"></i> Batal
                     </button>
@@ -279,8 +484,19 @@
 
 <script>
     function openCreateProdiModal() {
+        const createJurusanSelect = document.getElementById('create_jurusan_id');
+        if (createJurusanSelect) {
+            createJurusanSelect.value = '';
+            createJurusanSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        const createJenjangSelect = document.getElementById('create_jenjang');
+        if (createJenjangSelect) {
+            createJenjangSelect.value = 'D4';
+            createJenjangSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
         AdminModal.open('createProdiModal', {
-            focusSelector: '#create_jurusan_id',
+            focusSelector: '#create_nama_prodi',
             resetForm: true
         });
     }
@@ -290,15 +506,22 @@
         if (form) {
             form.action = "{{ route('prodi.update', ':id') }}".replace(':id', id);
         }
-        const jurusanSelect = document.getElementById('edit_jurusan_id');
         const kodeInput = document.getElementById('edit_kode_prodi');
         const namaInput = document.getElementById('edit_nama_prodi');
-        const jenjangSelect = document.getElementById('edit_jenjang');
-
-        if (jurusanSelect) jurusanSelect.value = jurusanId || '';
         if (kodeInput) kodeInput.value = kodeProdi || '';
         if (namaInput) namaInput.value = namaProdi || '';
-        if (jenjangSelect) jenjangSelect.value = jenjang || '';
+
+        const jurusanSelect = document.getElementById('edit_jurusan_id');
+        if (jurusanSelect) {
+            jurusanSelect.value = String(jurusanId || '');
+            jurusanSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        const jenjangSelect = document.getElementById('edit_jenjang');
+        if (jenjangSelect) {
+            jenjangSelect.value = jenjang || 'D4';
+            jenjangSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
 
         AdminModal.open('editProdiModal', {
             focusSelector: '#edit_nama_prodi'
