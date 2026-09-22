@@ -35,7 +35,7 @@
                         <div class="uc-avatar-lg" id="previewAvatar">??</div>
                     </div>
                     <div class="uc-preview-name" id="previewName">Nama Pengguna</div>
-                    <div class="uc-preview-nik" id="previewNik">NIK: —</div>
+                    <div class="uc-preview-nik" id="previewNik">NIK/NIP: —</div>
                     <div class="uc-preview-badge" id="previewRole">Role Belum Dipilih</div>
                 </div>
                 <div class="uc-preview-divider"></div>
@@ -93,7 +93,7 @@
                 <div class="uc-steps-title"><i class="fas fa-list-check"></i> Panduan Pengisian</div>
                 <div class="uc-step" id="step1">
                     <div class="uc-step-dot">1</div>
-                    <div class="uc-step-text">Isi identitas (Nama & NIK)</div>
+                    <div class="uc-step-text">Isi identitas</div>
                 </div>
                 <div class="uc-step" id="step2">
                     <div class="uc-step-dot">2</div>
@@ -150,7 +150,7 @@
                             <div class="uc-form-group">
                                 <label class="uc-label" for="nik">
                                     <i class="fas fa-id-card uc-label-icon"></i>
-                                    NIK
+                                    NIK/NIP
                                     <span class="uc-required">*</span>
                                 </label>
                                 <input
