@@ -32,9 +32,9 @@
             <div class="um-header-actions">
                 <x-search id="jurusanSearchInput" placeholder="Cari data jurusan..." target=".um-table tbody tr.um-row"
                     emptyTarget="#jurusanSearchEmptyRow" querySpan="#jurusanSearchQueryText" />
-                <a href="{{ route('jurusan.create') }}" class="um-btn-add">
+                <button type="button" class="um-btn-add" onclick="openCreateJurusanModal()">
                     <i class="fas fa-plus"></i> Tambah Jurusan
-                </a>
+                </button>
             </div>
         </div>
 
@@ -76,9 +76,10 @@
                             </td>
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
-                                    <a href="{{ route('jurusan.edit', $jurusan->id) }}" class="btn-action edit um-btn-edit" title="Edit">
+                                    <button type="button" class="btn-action edit um-btn-edit" title="Edit"
+                                        onclick="openEditJurusanModal({{ $jurusan->id }}, '{{ addslashes($jurusan->kode_jurusan ?? '') }}', '{{ addslashes($jurusan->nama_jurusan) }}')">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
                                     <form id="form-delete-jurusan-{{ $jurusan->id }}" action="{{ route('jurusan.destroy', $jurusan->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -128,5 +129,124 @@
         <x-paginav id="jurusanTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
             :showPerPage="false" />
     </div>
+
+    {{-- Modal Tambah Jurusan --}}
+    <div id="createJurusanModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'createJurusanModal')">
+        <div class="adm-modal-container adm-modal-md">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-indigo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Tambah Jurusan</h3>
+                        <p class="adm-modal-subtitle">Isi formulir untuk menambahkan data jurusan baru.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('createJurusanModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('jurusan.store') }}" method="POST" id="createJurusanForm">
+                @csrf
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_kode_jurusan">
+                            <i class="fas fa-barcode"></i> Kode Jurusan
+                        </label>
+                        <input type="text" id="create_kode_jurusan" name="kode_jurusan" class="adm-form-input"
+                            placeholder="Contoh: JUR01 (opsional)" maxlength="20">
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_nama_jurusan">
+                            <i class="fas fa-microchip"></i> Nama Jurusan <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="create_nama_jurusan" name="nama_jurusan" class="adm-form-input"
+                            placeholder="Contoh: Teknik Elektro" required maxlength="150">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createJurusanModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Jurusan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Edit Jurusan --}}
+    <div id="editJurusanModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'editJurusanModal')">
+        <div class="adm-modal-container adm-modal-md">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-emerald">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Edit Jurusan</h3>
+                        <p class="adm-modal-subtitle">Ubah data jurusan yang sudah ada.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('editJurusanModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="editJurusanForm">
+                @csrf
+                @method('PUT')
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_kode_jurusan">
+                            <i class="fas fa-barcode"></i> Kode Jurusan
+                        </label>
+                        <input type="text" id="edit_kode_jurusan" name="kode_jurusan" class="adm-form-input"
+                            placeholder="Contoh: JUR01 (opsional)" maxlength="20">
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_nama_jurusan">
+                            <i class="fas fa-microchip"></i> Nama Jurusan <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="edit_nama_jurusan" name="nama_jurusan" class="adm-form-input"
+                            placeholder="Ubah nama jurusan" required maxlength="150">
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('editJurusanModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
+
+<script>
+    function openCreateJurusanModal() {
+        AdminModal.open('createJurusanModal', {
+            focusSelector: '#create_kode_jurusan',
+            resetForm: true
+        });
+    }
+
+    function openEditJurusanModal(id, kodeJurusan, namaJurusan) {
+        const form = document.getElementById('editJurusanForm');
+        if (form) {
+            form.action = "{{ route('jurusan.update', ':id') }}".replace(':id', id);
+        }
+        const kodeInput = document.getElementById('edit_kode_jurusan');
+        const namaInput = document.getElementById('edit_nama_jurusan');
+        if (kodeInput) kodeInput.value = kodeJurusan || '';
+        if (namaInput) namaInput.value = namaJurusan || '';
+
+        AdminModal.open('editJurusanModal', {
+            focusSelector: '#edit_nama_jurusan'
+        });
+    }
+</script>
 @endsection

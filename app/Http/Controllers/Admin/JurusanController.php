@@ -19,7 +19,7 @@ class JurusanController extends Controller
 
     public function create()
     {
-        return view('admin.jurusan.create');
+        return redirect()->route('jurusan.index');
     }
 
     public function store(Request $request)
@@ -38,8 +38,7 @@ class JurusanController extends Controller
 
     public function edit($id)
     {
-        $jurusan = Jurusan::findOrFail($id);
-        return view('admin.jurusan.edit', compact('jurusan'));
+        return redirect()->route('jurusan.index');
     }
 
     public function update(Request $request, $id)
