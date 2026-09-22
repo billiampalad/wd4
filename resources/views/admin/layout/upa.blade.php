@@ -30,8 +30,6 @@
                 <x-paginav-entries target=".um-table tbody tr.um-row" :perPage="10" :options="[5, 10, 25, 50]" />
             </div>
             <div class="um-header-actions">
-                <x-search id="upaSearchInput" placeholder="Cari data UPA..." target=".um-table tbody tr.um-row"
-                    emptyTarget="#upaSearchEmptyRow" querySpan="#upaSearchQueryText" />
                 <button type="button" class="um-btn-add" onclick="openCreateUpaModal()">
                     <i class="fas fa-plus"></i> Tambah UPA
                 </button>
