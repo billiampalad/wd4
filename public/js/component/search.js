@@ -163,7 +163,24 @@
                 '#mainContent .mitra-table tbody tr',
                 '#mainContent .table-responsive tbody tr:not([data-empty]):not(.empty-state-row)',
                 '#mainContent table.ud-table tbody tr',
-                '#mainContent table tbody tr:not([data-empty]):not(.empty-state-row):not(.um-search-empty)'
+                '#mainContent table tbody tr:not([data-empty]):not(.empty-state-row):not(.um-search-empty)',
+                // Fallbacks without #mainContent (e.g. Admin layout & views)
+                '.main-content [data-kerjasama-row]',
+                '.main-content .dk-table tbody tr.um-row',
+                '.main-content .dk-table tbody tr.dk-row',
+                '.main-content .um-table tbody tr.um-row',
+                '.main-content .mitra-table tbody tr',
+                '.main-content .table-responsive tbody tr:not([data-empty]):not(.empty-state-row)',
+                '.main-content table.ud-table tbody tr',
+                '.main-content table tbody tr:not([data-empty]):not(.empty-state-row):not(.um-search-empty)',
+                'main .um-table tbody tr.um-row',
+                'main .dk-table tbody tr',
+                'main .mitra-table tbody tr',
+                'main .table-responsive tbody tr:not([data-empty]):not(.empty-state-row)',
+                'main table tbody tr:not([data-empty]):not(.empty-state-row):not(.um-search-empty)',
+                '.um-table tbody tr.um-row',
+                '.dk-table tbody tr.dk-row',
+                '.table-responsive tbody tr:not([data-empty]):not(.empty-state-row)'
             ];
 
             for (let i = 0; i < fallbackSelectors.length; i++) {

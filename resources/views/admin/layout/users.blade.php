@@ -13,7 +13,7 @@
             'admin' => 'Admin',
         ];
     @endphp
-    <main class="main-content admin-dashboard">
+    <main class="main-content admin-dashboard" id="mainContent">
         <section class="ud-topbar">
             <div class="ud-hero-copy">
                 <div class="ud-breadcrumb">
