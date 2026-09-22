@@ -45,7 +45,6 @@
         ]"
         target=".um-table tbody tr.um-row"
         emptyTarget="#mitraSearchEmptyRow"
-        applyText="Terapkan Filter"
         resetText="Reset"
     >
         <!-- Field 1: Negara Asal Mitra -->

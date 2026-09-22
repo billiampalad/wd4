@@ -126,14 +126,14 @@
             if (form) {
                 form.addEventListener('input', () => {
                     this.updateActiveTags(state);
-                    if (autoApply && targetSelector) {
+                    if (targetSelector || autoApply) {
                         this.applyFilter(filterId);
                     }
                 });
 
                 form.addEventListener('change', () => {
                     this.updateActiveTags(state);
-                    if (autoApply && targetSelector) {
+                    if (targetSelector || autoApply) {
                         this.applyFilter(filterId);
                     }
                 });

@@ -13,7 +13,7 @@
     'autoApply' => false, // Jika true, filter langsung diaplikasikan saat ada perubahan input
     'showActiveChips' => true, // Menampilkan bar chip filter yang sedang aktif
     'showReset' => true, // Menampilkan tombol Reset (Warna Merah)
-    'showApply' => true, // Menampilkan tombol Terapkan Filter (Warna Indigo)
+    'showApply' => false, // Default false (live auto-filter)
     'applyText' => 'Terapkan Filter',
     'resetText' => 'Reset Filter',
     'presets' => [], // Array preset tombol [ ['label' => 'Semua', 'value' => 'all', 'icon' => '...', 'count' => 10], ... ]
