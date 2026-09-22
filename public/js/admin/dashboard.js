@@ -512,6 +512,92 @@ function updatePreview() {
             badge.style.color = '#64748b';
         }
     }
+
+    updateStepsGuide();
+}
+
+function updateStepsGuide() {
+    const stepsCard = document.querySelector('.uc-steps-card');
+    if (!stepsCard) return;
+
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const step4 = document.getElementById('step4');
+
+    if (!step1 || !step2 || !step3 || !step4) return;
+
+    // 1. Identitas (Nama & NIK, dan Email)
+    const nameVal = document.getElementById('name')?.value.trim() || '';
+    const nikVal = document.getElementById('nik')?.value.trim() || '';
+    const emailVal = document.getElementById('email')?.value.trim() || '';
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+    const isStep1Done = (nameVal.length >= 2) && (nikVal.length >= 3) && (emailVal.length > 0 ? isEmailValid : false);
+
+    // 2. Role
+    const roleEl = document.getElementById('role_id');
+    const isStep2Done = Boolean(roleEl && roleEl.value);
+
+    // 3. Password
+    const passVal = document.getElementById('password')?.value || '';
+    const isStep3Done = passVal.length >= 8;
+
+    // 4. Data Profil
+    let isStep4Done = false;
+    if (isStep2Done) {
+        const roleName = getSelectedRoleName();
+        switch (roleName) {
+            case 'jurusan':
+                isStep4Done = Boolean(document.getElementById('jurusan_id')?.value);
+                break;
+            case 'prodi':
+                isStep4Done = Boolean(document.getElementById('jurusan_id')?.value && document.getElementById('prodi_id')?.value);
+                break;
+            case 'unit_kerja':
+                isStep4Done = Boolean(document.getElementById('unit_kerja_id')?.value);
+                break;
+            case 'upa':
+                isStep4Done = Boolean(document.getElementById('upa_id')?.value);
+                break;
+            case 'pusat':
+                isStep4Done = Boolean(document.getElementById('pusat_id')?.value);
+                break;
+            case 'pimpinan':
+            case 'admin':
+            case 'mitra':
+            default:
+                isStep4Done = true;
+                break;
+        }
+    }
+
+    const steps = [
+        { el: step1, done: isStep1Done, num: 1 },
+        { el: step2, done: isStep2Done, num: 2 },
+        { el: step3, done: isStep3Done, num: 3 },
+        { el: step4, done: isStep4Done, num: 4 },
+    ];
+
+    let activeFound = false;
+    steps.forEach(step => {
+        const dot = step.el.querySelector('.uc-step-dot');
+        step.el.classList.remove('uc-step-done', 'uc-step-active');
+
+        if (step.done) {
+            step.el.classList.add('uc-step-done');
+            if (dot && dot.innerHTML !== '<i class="fas fa-check"></i>') {
+                dot.innerHTML = '<i class="fas fa-check"></i>';
+            }
+        } else {
+            if (!activeFound) {
+                step.el.classList.add('uc-step-active');
+                activeFound = true;
+            }
+            if (dot && dot.textContent !== String(step.num)) {
+                dot.textContent = step.num;
+            }
+        }
+    });
 }
 
 function checkStrength(val) {

@@ -2667,15 +2667,19 @@ aside,
 .uc-step {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 7px 0;
+    gap: 12px;
+    padding: 8px 0;
     border-bottom: 1px solid var(--border, #f1f5f9);
     opacity: .45;
-    transition: opacity .2s;
+    transition: all .25s ease;
 }
 
 .uc-step:last-child {
     border-bottom: none;
+}
+
+.uc-step.uc-step-active {
+    opacity: 1;
 }
 
 .uc-step.uc-step-done {
@@ -2683,29 +2687,83 @@ aside,
 }
 
 .uc-step-dot {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--bg, #f1f5f9);
+    background: var(--surface2, #f1f5f9);
     color: var(--text-sub, #64748b);
+    border: 1.5px solid var(--border, #e2e8f0);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
     flex-shrink: 0;
-    transition: background .2s, color .2s;
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.uc-step.uc-step-active .uc-step-dot {
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--accent, #6366f1);
+    border-color: var(--accent, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+    transform: scale(1.05);
 }
 
 .uc-step.uc-step-done .uc-step-dot {
-    background: var(--accent, #4f46e5);
+    background: #10b981;
     color: #fff;
+    border-color: #10b981;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28);
 }
 
 .uc-step-text {
     font-size: 12.5px;
+    color: var(--text-sub, #64748b);
+    font-weight: 500;
+    transition: color .2s, font-weight .2s;
+}
+
+.uc-step.uc-step-active .uc-step-text {
+    color: var(--text, #0f172a);
+    font-weight: 600;
+}
+
+.uc-step.uc-step-done .uc-step-text {
     color: var(--text, #334155);
     font-weight: 500;
+}
+
+[data-theme="dark"] .uc-step {
+    border-bottom-color: var(--border, #2a2f45);
+}
+
+[data-theme="dark"] .uc-step-dot {
+    background: var(--surface2, #1e2333);
+    border-color: var(--border, #2a2f45);
+    color: var(--text-sub, #8b92a8);
+}
+
+[data-theme="dark"] .uc-step.uc-step-active .uc-step-dot {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #818cf8;
+    color: #a5b4fc;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25);
+}
+
+[data-theme="dark"] .uc-step.uc-step-done .uc-step-dot {
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="dark"] .uc-step.uc-step-active .uc-step-text {
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .uc-step.uc-step-done .uc-step-text {
+    color: #cbd5e1;
 }
 
 /* ── Form card ───────────────────────────────────────────────── */

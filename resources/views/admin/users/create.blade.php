@@ -91,7 +91,7 @@
             {{-- Step guide --}}
             <div class="card uc-steps-card">
                 <div class="uc-steps-title"><i class="fas fa-list-check"></i> Panduan Pengisian</div>
-                <div class="uc-step uc-step-done" id="step1">
+                <div class="uc-step" id="step1">
                     <div class="uc-step-dot">1</div>
                     <div class="uc-step-text">Isi identitas (Nama & NIK)</div>
                 </div>
@@ -178,6 +178,7 @@
                                     placeholder="nama@institusi.ac.id"
                                     value="{{ old('email') }}"
                                     autocomplete="email"
+                                    oninput="updatePreview()"
                                     required
                                 />
                                 @error('email')
