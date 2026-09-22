@@ -15,13 +15,13 @@ class ProdiController extends Controller
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc')
             ->get();
-        return view('admin.layout.prodi', compact('prodis'));
+        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
+        return view('admin.layout.prodi', compact('prodis', 'jurusans'));
     }
 
     public function create()
     {
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        return view('admin.prodi.create', compact('jurusans'));
+        return redirect()->route('prodi.index');
     }
 
     public function store(Request $request)
@@ -42,9 +42,7 @@ class ProdiController extends Controller
 
     public function edit($id)
     {
-        $prodi = Prodi::findOrFail($id);
-        $jurusans = Jurusan::orderBy('nama_jurusan')->get();
-        return view('admin.prodi.edit', compact('prodi', 'jurusans'));
+        return redirect()->route('prodi.index');
     }
 
     public function update(Request $request, $id)

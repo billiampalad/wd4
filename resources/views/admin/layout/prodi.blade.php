@@ -32,9 +32,9 @@
             <div class="um-header-actions">
                 <x-search id="prodiSearchInput" placeholder="Cari program studi..." target=".um-table tbody tr.um-row"
                     emptyTarget="#prodiSearchEmptyRow" querySpan="#prodiSearchQueryText" />
-                <a href="{{ route('prodi.create') }}" class="um-btn-add">
+                <button type="button" class="um-btn-add" onclick="openCreateProdiModal()">
                     <i class="fas fa-plus"></i> Tambah Prodi
-                </a>
+                </button>
             </div>
         </div>
 
@@ -77,9 +77,10 @@
                             </td>
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
-                                    <a href="{{ route('prodi.edit', $prodi->id) }}" class="btn-action edit um-btn-edit" title="Edit">
+                                    <button type="button" class="btn-action edit um-btn-edit" title="Edit"
+                                        onclick="openEditProdiModal({{ $prodi->id }}, '{{ $prodi->jurusan_id }}', '{{ addslashes($prodi->kode_prodi ?? '') }}', '{{ addslashes($prodi->nama_prodi) }}', '{{ addslashes($prodi->jenjang) }}')">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
                                     <form id="form-delete-prodi-{{ $prodi->id }}" action="{{ route('prodi.destroy', $prodi->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -129,5 +130,179 @@
         <x-paginav id="prodiTablePaginav" target=".um-table tbody tr.um-row" :perPage="10" :showInfo="true"
             :showPerPage="false" />
     </div>
+
+    {{-- Modal Tambah Prodi --}}
+    <div id="createProdiModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'createProdiModal')">
+        <div class="adm-modal-container adm-modal-md">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-indigo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Tambah Program Studi</h3>
+                        <p class="adm-modal-subtitle">Isi formulir untuk menambahkan program studi baru.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('createProdiModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('prodi.store') }}" method="POST" id="createProdiForm">
+                @csrf
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_jurusan_id">
+                            <i class="fas fa-microchip"></i> Jurusan <span class="adm-required">*</span>
+                        </label>
+                        <select id="create_jurusan_id" name="jurusan_id" class="adm-form-input" required>
+                            <option value="">-- Pilih Jurusan --</option>
+                            @foreach($jurusans as $jurusan)
+                                <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_nama_prodi">
+                            <i class="fas fa-graduation-cap"></i> Nama Program Studi <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="create_nama_prodi" name="nama_prodi" class="adm-form-input"
+                            placeholder="Contoh: Teknik Informatika" required maxlength="150">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div class="adm-form-group">
+                            <label class="adm-form-label" for="create_kode_prodi">
+                                <i class="fas fa-barcode"></i> Kode Prodi
+                            </label>
+                            <input type="text" id="create_kode_prodi" name="kode_prodi" class="adm-form-input"
+                                placeholder="Contoh: TI01 (opsional)" maxlength="20">
+                        </div>
+                        <div class="adm-form-group">
+                            <label class="adm-form-label" for="create_jenjang">
+                                <i class="fas fa-layer-group"></i> Jenjang <span class="adm-required">*</span>
+                            </label>
+                            <select id="create_jenjang" name="jenjang" class="adm-form-input" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="D3">D3</option>
+                                <option value="D4" selected>D4</option>
+                                <option value="S1">S1</option>
+                                <option value="S2">S2</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createProdiModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Prodi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal Edit Prodi --}}
+    <div id="editProdiModal" class="adm-modal-overlay" style="display: none;" onclick="AdminModal.handleOverlayClick(event, 'editProdiModal')">
+        <div class="adm-modal-container adm-modal-md">
+            <div class="adm-modal-header">
+                <div class="adm-modal-title-wrap">
+                    <div class="adm-modal-icon-badge adm-modal-icon-emerald">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <h3 class="adm-modal-title">Edit Program Studi</h3>
+                        <p class="adm-modal-subtitle">Ubah data program studi yang sudah ada.</p>
+                    </div>
+                </div>
+                <button type="button" class="adm-modal-close" onclick="AdminModal.close('editProdiModal')" title="Tutup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="" method="POST" id="editProdiForm">
+                @csrf
+                @method('PUT')
+                <div class="adm-modal-body">
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_jurusan_id">
+                            <i class="fas fa-microchip"></i> Jurusan <span class="adm-required">*</span>
+                        </label>
+                        <select id="edit_jurusan_id" name="jurusan_id" class="adm-form-input" required>
+                            <option value="">-- Pilih Jurusan --</option>
+                            @foreach($jurusans as $jurusan)
+                                <option value="{{ $jurusan->id }}">{{ $jurusan->nama_jurusan }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_nama_prodi">
+                            <i class="fas fa-graduation-cap"></i> Nama Program Studi <span class="adm-required">*</span>
+                        </label>
+                        <input type="text" id="edit_nama_prodi" name="nama_prodi" class="adm-form-input"
+                            placeholder="Ubah nama program studi" required maxlength="150">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div class="adm-form-group">
+                            <label class="adm-form-label" for="edit_kode_prodi">
+                                <i class="fas fa-barcode"></i> Kode Prodi
+                            </label>
+                            <input type="text" id="edit_kode_prodi" name="kode_prodi" class="adm-form-input"
+                                placeholder="Contoh: TI01 (opsional)" maxlength="20">
+                        </div>
+                        <div class="adm-form-group">
+                            <label class="adm-form-label" for="edit_jenjang">
+                                <i class="fas fa-layer-group"></i> Jenjang <span class="adm-required">*</span>
+                            </label>
+                            <select id="edit_jenjang" name="jenjang" class="adm-form-input" required>
+                                <option value="">-- Pilih --</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                                <option value="S1">S1</option>
+                                <option value="S2">S2</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="adm-modal-footer">
+                    <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('editProdiModal')">
+                        <i class="fas fa-arrow-left"></i> Batal
+                    </button>
+                    <button type="submit" class="adm-btn-submit">
+                        <i class="fas fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
+
+<script>
+    function openCreateProdiModal() {
+        AdminModal.open('createProdiModal', {
+            focusSelector: '#create_jurusan_id',
+            resetForm: true
+        });
+    }
+
+    function openEditProdiModal(id, jurusanId, kodeProdi, namaProdi, jenjang) {
+        const form = document.getElementById('editProdiForm');
+        if (form) {
+            form.action = "{{ route('prodi.update', ':id') }}".replace(':id', id);
+        }
+        const jurusanSelect = document.getElementById('edit_jurusan_id');
+        const kodeInput = document.getElementById('edit_kode_prodi');
+        const namaInput = document.getElementById('edit_nama_prodi');
+        const jenjangSelect = document.getElementById('edit_jenjang');
+
+        if (jurusanSelect) jurusanSelect.value = jurusanId || '';
+        if (kodeInput) kodeInput.value = kodeProdi || '';
+        if (namaInput) namaInput.value = namaProdi || '';
+        if (jenjangSelect) jenjangSelect.value = jenjang || '';
+
+        AdminModal.open('editProdiModal', {
+            focusSelector: '#edit_nama_prodi'
+        });
+    }
+</script>
 @endsection
