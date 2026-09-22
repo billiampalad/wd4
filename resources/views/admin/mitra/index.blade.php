@@ -23,6 +23,67 @@
         </div>
     </section>
 
+    @php
+        $totalMitra = $mitras->count();
+        $nasionalCount = $mitras->where('kategori', 'nasional')->count();
+        $internasionalCount = $mitras->where('kategori', 'internasional')->count();
+    @endphp
+
+    <x-filter 
+        id="mitraFilter"
+        title="Filter Data Mitra"
+        subtitle="Saring data mitra berdasarkan kategori, asal negara, status akun login, dan keaktifan kegiatan"
+        icon="fas fa-sliders-h"
+        variant="panel"
+        :collapsible="true"
+        :collapsed="false"
+        presetName="kategori"
+        :presets="[
+            ['label' => 'Semua Kategori', 'value' => 'all', 'icon' => 'fas fa-layer-group', 'count' => $totalMitra],
+            ['label' => 'Nasional', 'value' => 'nasional', 'icon' => 'fas fa-flag', 'count' => $nasionalCount],
+            ['label' => 'Internasional', 'value' => 'internasional', 'icon' => 'fas fa-globe', 'count' => $internasionalCount],
+        ]"
+        target=".um-table tbody tr.um-row"
+        emptyTarget="#mitraSearchEmptyRow"
+        applyText="Terapkan Filter"
+        resetText="Reset"
+    >
+        <!-- Field 1: Negara Asal Mitra -->
+        <div class="custom-filter-group">
+            <label class="custom-filter-label"><i class="fas fa-earth-americas"></i> Negara Asal</label>
+            <div class="custom-filter-control-wrap has-left-icon">
+                <input type="text" name="negara" class="custom-filter-input" placeholder="Cari negara (misal: Indonesia)...">
+                <span class="custom-filter-input-icon"><i class="fas fa-location-dot"></i></span>
+            </div>
+        </div>
+
+        <!-- Field 2: Status Akun Mitra -->
+        <div class="custom-filter-group">
+            <label class="custom-filter-label"><i class="fas fa-user-shield"></i> Status Akun Login</label>
+            <div class="custom-filter-control-wrap has-left-icon">
+                <select name="status_akun" class="custom-filter-select">
+                    <option value="all">Semua Status Akun</option>
+                    <option value="terdaftar">Sudah Terdaftar (Punya Akun)</option>
+                    <option value="belum">Belum Punya Akun</option>
+                </select>
+                <span class="custom-filter-input-icon"><i class="fas fa-id-badge"></i></span>
+            </div>
+        </div>
+
+        <!-- Field 3: Status Kegiatan -->
+        <div class="custom-filter-group">
+            <label class="custom-filter-label"><i class="fas fa-handshake-simple"></i> Status Kegiatan</label>
+            <div class="custom-filter-control-wrap has-left-icon">
+                <select name="status_kegiatan" class="custom-filter-select">
+                    <option value="all">Semua Kegiatan</option>
+                    <option value="aktif">Ada Kegiatan Aktif</option>
+                    <option value="selesai">Selesai / Tanpa Kegiatan</option>
+                </select>
+                <span class="custom-filter-input-icon"><i class="fas fa-chart-pie"></i></span>
+            </div>
+        </div>
+    </x-filter>
+
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -53,7 +114,19 @@
                 </thead>
                 <tbody>
                     @forelse($mitras as $i => $mitra)
-                    <tr class="um-row">
+                    @php
+                        $kegiatanAktif = $mitra->cooperations
+                            ->filter(fn($cooperation) => !$cooperation->end_date || now()->isBefore($cooperation->end_date))
+                            ->count();
+                        $statusKegiatanVal = $mitra->cooperations->count() > 0 ? ($kegiatanAktif > 0 ? 'aktif' : 'selesai') : 'selesai';
+                        $statusAkunVal = $mitra->users->count() > 0 ? 'terdaftar' : 'belum';
+                    @endphp
+                    <tr class="um-row"
+                        data-filter-kategori="{{ strtolower($mitra->kategori ?? '') }}"
+                        data-filter-negara="{{ strtolower($mitra->negara ?? '') }}"
+                        data-filter-status_akun="{{ $statusAkunVal }}"
+                        data-filter-status_kegiatan="{{ $statusKegiatanVal }}"
+                    >
                         <td class="um-td um-td-num">
                             <span class="um-num">{{ $i + 1 }}</span>
                         </td>
@@ -74,11 +147,6 @@
                             </span>
                         </td>
                         <td class="um-td">
-                            @php
-                                $kegiatanAktif = $mitra->cooperations
-                                    ->filter(fn($cooperation) => !$cooperation->end_date || now()->isBefore($cooperation->end_date))
-                                    ->count();
-                            @endphp
                             @if($mitra->cooperations->count() > 0)
                                 @if($kegiatanAktif > 0)
                                     <span class="tag tag-green"><i class="fas fa-check-circle" style="margin-right: 4px;"></i> {{ $kegiatanAktif }} Aktif</span>
