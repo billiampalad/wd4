@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Komponen Filter Premium - Light & Dark Mode</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- Component CSS -->
+    <link rel="stylesheet" href="css/component/filter.css">
+
+    <style>
+        :root {
+            --bg: #f3f5fa;
+            --surface: #ffffff;
+            --surface2: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-sub: #64748b;
+            --accent: #4f46e5;
+            --radius: 18px;
+            --shadow: 0 16px 48px rgba(79, 70, 229, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0b0e17;
+            --surface: #131724;
+            --surface2: #1b2030;
+            --border: #262e45;
+            --text: #f1f5f9;
+            --text-sub: #8e9bb2;
+            --accent: #6366f1;
+            --shadow: 0 20px 52px rgba(0, 0, 0, 0.65);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        .showcase-container {
+            width: 100%;
+            max-width: 1060px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Top Header */
+        .showcase-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .showcase-title-area h1 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .showcase-title-area h1 i {
+            color: var(--accent);
+        }
+
+        .showcase-title-area p {
+            font-size: 13.5px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .theme-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Section Cards */
+        .showcase-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label span {
+            background: var(--accent);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        /* Sample Table */
+        .demo-table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        .demo-table th {
+            background: var(--surface2);
+            color: var(--text-sub);
+            font-weight: 700;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .demo-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .demo-table tr:hover td {
+            background: var(--surface2);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+        }
+
+        .status-aktif { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+        .status-proses { background: rgba(59, 130, 246, 0.12); color: #3b82f6; }
+        .status-perpanjangan { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+        .status-kadaluarsa { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+
+        .empty-row-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-sub);
+        }
+    </style>
+</head>
+<body>
+
+<div class="showcase-container">
+    <!-- Top Bar -->
+    <header class="showcase-header">
+        <div class="showcase-title-area">
+            <h1><i class="fas fa-sliders"></i> Preview Komponen Filter Premium</h1>
+            <p>Eksplorasi tampilan filter modern dengan dukungan preset instan, dynamic chips, live search filter, dan multi-format export.</p>
+        </div>
+        <button type="button" class="theme-toggle-btn" id="themeToggle">
+            <i class="fas fa-moon"></i> <span>Ganti Tema</span>
+        </button>
+    </header>
+
+    <!-- 1. VARIANT PANEL (EXPANDABLE) -->
+    <section class="showcase-section">
+        <div class="section-label">
+            <span>Variant 1</span> Panel Filter Utama (Card Expandable dengan Filter Cepat)
+        </div>
+
+        <div class="custom-filter-wrapper custom-filter-panel has-presets" id="mainFilter" data-custom-filter data-filter-id="mainFilter" data-filter-target=".demo-table tbody tr" data-filter-empty="#emptyStateRow" data-filter-count="#resultCount">
+            <div class="custom-filter-card">
+                <!-- Header -->
+                <div class="custom-filter-header" data-filter-toggle role="button" tabindex="0" aria-expanded="true">
+                    <div class="custom-filter-title-group">
+                        <div class="custom-filter-icon-box">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="custom-filter-text">
+                            <div class="custom-filter-heading-row">
+                                <h3 class="custom-filter-title">Filter Data Kerjasama</h3>
+                                <span class="custom-filter-badge">Premium UI</span>
+                                <span class="custom-filter-active-count" style="display: none;">
+                                    <span class="count-num">0</span> Aktif
+                                </span>
+                            </div>
+                            <p class="custom-filter-subtitle">Saring data berdasarkan rentang tanggal, kategori jenis dokumen, tingkat kerjasama, dan status aktif.</p>
+                        </div>
+                    </div>
+                    <div class="custom-filter-header-actions">
+                        <button type="button" class="custom-filter-collapse-btn" aria-label="Toggle Filter Panel">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Presets Bar -->
+                <div class="custom-filter-presets-bar">
+                    <div class="custom-filter-presets-label">
+                        <i class="fas fa-bolt"></i> <span>Status Cepat:</span>
+                    </div>
+                    <div class="custom-filter-presets-list" data-preset-group="status">
+                        <button type="button" class="custom-filter-preset-pill is-active" data-preset-value="all" data-preset-name="status">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Semua Status</span>
+                            <span class="preset-badge">5</span>
+                        </button>
+                        <button type="button" class="custom-filter-preset-pill" data-preset-value="aktif" data-preset-name="status">
+                            <i class="fas fa-circle-check"></i>
+                            <span>Aktif</span>
+                            <span class="preset-badge">2</span>
+                        </button>
+                        <button type="button" class="custom-filter-preset-pill" data-preset-value="proses" data-preset-name="status">
+                            <i class="fas fa-spinner"></i>
+                            <span>Proses</span>
+                            <span class="preset-badge">1</span>
+                        </button>
+                        <button type="button" class="custom-filter-preset-pill" data-preset-value="perpanjangan" data-preset-name="status">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>Perpanjangan</span>
+                            <span class="preset-badge">1</span>
+                        </button>
+                        <button type="button" class="custom-filter-preset-pill" data-preset-value="kadaluarsa" data-preset-name="status">
+                            <i class="fas fa-calendar-xmark"></i>
+                            <span>Kadaluarsa</span>
+                            <span class="preset-badge">1</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Body / Form -->
+                <div class="custom-filter-body-wrapper">
+                    <form class="custom-filter-form" id="mainFilter_form">
+                        <input type="hidden" name="status" value="all">
+
+                        <div class="custom-filter-grid">
+                            <!-- Field 1: Search Keyword -->
+                            <div class="custom-filter-group">
+                                <label class="custom-filter-label"><i class="fas fa-search"></i> Kata Kunci Mitra / No. Dokumen</label>
+                                <div class="custom-filter-control-wrap has-left-icon">
+                                    <input type="text" name="q" class="custom-filter-input" placeholder="Ketik nama mitra atau judul...">
+                                    <span class="custom-filter-input-icon"><i class="fas fa-search"></i></span>
+                                </div>
+                            </div>
+
+                            <!-- Field 2: Jenis Dokumentasi -->
+                            <div class="custom-filter-group">
+                                <label class="custom-filter-label"><i class="fas fa-file-signature"></i> Jenis Dokumen</label>
+                                <div class="custom-filter-control-wrap has-left-icon">
+                                    <select name="jenis" class="custom-filter-select">
+                                        <option value="all">Semua Jenis Dokumen</option>
+                                        <option value="MoU">Memorandum of Understanding (MoU)</option>
+                                        <option value="MoA">Memorandum of Agreement (MoA)</option>
+                                        <option value="IA">Implementation Agreement (IA)</option>
+                                    </select>
+                                    <span class="custom-filter-input-icon"><i class="fas fa-file-alt"></i></span>
+                                </div>
+                            </div>
+
+                            <!-- Field 3: Tingkat Kerjasama -->
+                            <div class="custom-filter-group">
+                                <label class="custom-filter-label"><i class="fas fa-globe"></i> Tingkat Kerjasama</label>
+                                <div class="custom-filter-control-wrap has-left-icon">
+                                    <select name="tingkat" class="custom-filter-select">
+                                        <option value="all">Semua Tingkat</option>
+                                        <option value="Nasional">Nasional</option>
+                                        <option value="Internasional">Internasional</option>
+                                        <option value="Lokal">Lokal / Wilayah</option>
+                                    </select>
+                                    <span class="custom-filter-input-icon"><i class="fas fa-earth-americas"></i></span>
+                                </div>
+                            </div>
+
+                            <!-- Field 4: Rentang Tanggal -->
+                            <div class="custom-filter-group">
+                                <label class="custom-filter-label"><i class="fas fa-calendar-days"></i> Periode Tahun / Tanggal</label>
+                                <div class="custom-filter-daterange">
+                                    <div class="custom-filter-control-wrap">
+                                        <input type="date" name="tgl_awal" class="custom-filter-input" placeholder="Mulai">
+                                    </div>
+                                    <span class="custom-filter-daterange-sep">s/d</span>
+                                    <div class="custom-filter-control-wrap">
+                                        <input type="date" name="tgl_akhir" class="custom-filter-input" placeholder="Sampai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Tags Bar -->
+                        <div class="custom-filter-active-tags-bar" style="display: none;">
+                            <div class="active-tags-label">
+                                <i class="fas fa-tags"></i> <span>Filter Diterapkan:</span>
+                            </div>
+                            <div class="active-tags-container"></div>
+                            <button type="button" class="btn-clear-all-tags">
+                                <i class="fas fa-rotate-left"></i> Reset Semua
+                            </button>
+                        </div>
+
+                        <!-- Footer Buttons -->
+                        <div class="custom-filter-footer">
+                            <div class="custom-filter-footer-left">
+                                <span style="font-size: 12.5px; color: var(--text-sub);" id="resultCount">5 data ditemukan</span>
+                            </div>
+                            <div class="custom-filter-footer-right">
+                                <button type="button" class="custom-filter-btn custom-filter-btn-reset" data-filter-reset>
+                                    <i class="fas fa-rotate-left"></i> <span>Reset</span>
+                                </button>
+                                <button type="button" class="custom-filter-btn custom-filter-btn-pdf" data-filter-export="pdf">
+                                    <i class="fas fa-file-pdf"></i> <span>Cetak PDF</span>
+                                </button>
+                                <button type="button" class="custom-filter-btn custom-filter-btn-excel" data-filter-export="excel">
+                                    <i class="fas fa-file-excel"></i> <span>Export Excel</span>
+                                </button>
+                                <button type="submit" class="custom-filter-btn custom-filter-btn-primary" data-filter-apply>
+                                    <i class="fas fa-magnifying-glass"></i> <span>Terapkan Filter</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Live Filterable Data Table -->
+        <div class="demo-table-card">
+            <table class="demo-table">
+                <thead>
+                    <tr>
+                        <th>No. Dokumen</th>
+                        <th>Mitra Kerjasama</th>
+                        <th>Jenis</th>
+                        <th>Tingkat</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-filter-status="aktif" data-filter-jenis="MoU" data-filter-tingkat="Internasional">
+                        <td><strong>MOU/2026/001</strong></td>
+                        <td>Google Asia Pacific Pte Ltd</td>
+                        <td><span style="font-weight: 700;">MoU</span></td>
+                        <td>Internasional</td>
+                        <td><span class="status-badge status-aktif"><i class="fas fa-circle-check"></i> Aktif</span></td>
+                    </tr>
+                    <tr data-filter-status="proses" data-filter-jenis="MoA" data-filter-tingkat="Nasional">
+                        <td><strong>MOA/2026/042</strong></td>
+                        <td>PT Telkom Indonesia Tbk</td>
+                        <td><span style="font-weight: 700;">MoA</span></td>
+                        <td>Nasional</td>
+                        <td><span class="status-badge status-proses"><i class="fas fa-spinner"></i> Proses</span></td>
+                    </tr>
+                    <tr data-filter-status="aktif" data-filter-jenis="IA" data-filter-tingkat="Nasional">
+                        <td><strong>IA/2026/109</strong></td>
+                        <td>Bank Mandiri (Persero)</td>
+                        <td><span style="font-weight: 700;">IA</span></td>
+                        <td>Nasional</td>
+                        <td><span class="status-badge status-aktif"><i class="fas fa-circle-check"></i> Aktif</span></td>
+                    </tr>
+                    <tr data-filter-status="perpanjangan" data-filter-jenis="MoU" data-filter-tingkat="Nasional">
+                        <td><strong>MOU/2024/088</strong></td>
+                        <td>Institut Teknologi Bandung</td>
+                        <td><span style="font-weight: 700;">MoU</span></td>
+                        <td>Nasional</td>
+                        <td><span class="status-badge status-perpanjangan"><i class="fas fa-clock"></i> Perpanjangan</span></td>
+                    </tr>
+                    <tr data-filter-status="kadaluarsa" data-filter-jenis="IA" data-filter-tingkat="Lokal">
+                        <td><strong>IA/2023/014</strong></td>
+                        <td>Dinas Kominfo Provinsi</td>
+                        <td><span style="font-weight: 700;">IA</span></td>
+                        <td>Lokal</td>
+                        <td><span class="status-badge status-kadaluarsa"><i class="fas fa-times-circle"></i> Kadaluarsa</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="emptyStateRow" class="empty-row-state" style="display: none;">
+                <i class="fas fa-folder-open" style="font-size: 32px; color: var(--text-sub); margin-bottom: 10px; display: block;"></i>
+                <strong>Tidak ada data yang sesuai dengan kriteria filter</strong>
+                <p style="font-size: 12px; margin-top: 4px;">Coba atur ulang kriteria pencarian Anda</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. VARIANT BAR (HORIZONTAL TOOLBAR) -->
+    <section class="showcase-section">
+        <div class="section-label">
+            <span>Variant 2</span> Horizontal Filter Toolbar (Ringkas & Efisien)
+        </div>
+
+        <div class="custom-filter-wrapper custom-filter-bar" id="barFilter" data-custom-filter data-filter-id="barFilter">
+            <div class="custom-filter-bar-container">
+                <form class="custom-filter-bar-form" id="barFilter_form">
+                    <div class="custom-filter-bar-content">
+                        <div class="custom-filter-bar-lead">
+                            <span class="custom-filter-bar-icon"><i class="fas fa-filter"></i></span>
+                            <span class="custom-filter-bar-label">Quick Filter:</span>
+                        </div>
+                        <div class="custom-filter-bar-fields">
+                            <div class="custom-filter-control-wrap" style="width: 220px;">
+                                <input type="text" name="user_search" class="custom-filter-input" placeholder="Cari nama...">
+                            </div>
+                            <div class="custom-filter-control-wrap" style="width: 170px;">
+                                <select name="role" class="custom-filter-select">
+                                    <option value="all">Semua Role</option>
+                                    <option value="admin">Administrator</option>
+                                    <option value="jurusan">Jurusan</option>
+                                    <option value="unit">Unit Kerja</option>
+                                </select>
+                            </div>
+                            <div class="custom-filter-control-wrap" style="width: 160px;">
+                                <select name="status_akun" class="custom-filter-select">
+                                    <option value="all">Semua Akun</option>
+                                    <option value="aktif">Aktif</option>
+                                    <option value="nonaktif">Non-aktif</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="custom-filter-bar-actions">
+                            <button type="button" class="custom-filter-btn custom-filter-btn-reset custom-filter-btn-icon-only" data-filter-reset title="Reset Filter">
+                                <i class="fas fa-rotate-left"></i>
+                            </button>
+                            <button type="submit" class="custom-filter-btn custom-filter-btn-primary" data-filter-apply>
+                                <i class="fas fa-filter"></i>
+                                <span>Terapkan</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. VARIANT CHIPS (STATUS SELECTOR) -->
+    <section class="showcase-section">
+        <div class="section-label">
+            <span>Variant 3</span> Standalone Chips Bar (Tab Filter Cepat)
+        </div>
+
+        <div class="custom-filter-wrapper custom-filter-chips" id="chipsFilter" data-custom-filter data-filter-id="chipsFilter">
+            <div class="custom-filter-chips-wrapper">
+                <div class="custom-filter-chips-header">
+                    <i class="fas fa-tags custom-filter-chips-lead-icon"></i>
+                    <span class="custom-filter-chips-title">Kategori Mitra:</span>
+                </div>
+                <div class="custom-filter-chips-list" data-preset-group="kategori_mitra">
+                    <button type="button" class="custom-filter-chip-item is-active" data-preset-value="all" data-preset-name="kategori_mitra">
+                        <span>Semua Mitra</span> <span class="chip-count">48</span>
+                    </button>
+                    <button type="button" class="custom-filter-chip-item" data-preset-value="bumn" data-preset-name="kategori_mitra">
+                        <i class="fas fa-building"></i> <span>BUMN / BUMD</span> <span class="chip-count">14</span>
+                    </button>
+                    <button type="button" class="custom-filter-chip-item" data-preset-value="swasta" data-preset-name="kategori_mitra">
+                        <i class="fas fa-briefcase"></i> <span>Perusahaan Swasta</span> <span class="chip-count">22</span>
+                    </button>
+                    <button type="button" class="custom-filter-chip-item" data-preset-value="pendidikan" data-preset-name="kategori_mitra">
+                        <i class="fas fa-graduation-cap"></i> <span>Perguruan Tinggi</span> <span class="chip-count">8</span>
+                    </button>
+                    <button type="button" class="custom-filter-chip-item" data-preset-value="pemerintah" data-preset-name="kategori_mitra">
+                        <i class="fas fa-landmark"></i> <span>Instansi Pemerintah</span> <span class="chip-count">4</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Component Script -->
+<script src="js/component/filter.js"></script>
+
+<script>
+    // Theme toggle handler
+    const themeBtn = document.getElementById('themeToggle');
+    themeBtn.addEventListener('click', () => {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        themeBtn.innerHTML = isDark 
+            ? '<i class="fas fa-moon"></i> <span>Ganti Tema</span>' 
+            : '<i class="fas fa-sun"></i> <span>Mode Terang</span>';
+    });
+</script>
+
+</body>
+</html>

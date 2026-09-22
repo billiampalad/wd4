@@ -1,0 +1,868 @@
+/* ==========================================================================
+   CUSTOM FILTER COMPONENT CSS
+   Premium, Modern, and Responsive Filter UI System
+   Supports: Light/Dark Mode, Glassmorphism, Quick Chips, Dynamic Tags,
+   Collapsible Panels, Horizontal Toolbar, and Mobile Responsiveness.
+   ========================================================================== */
+
+:root {
+    --filter-bg: var(--surface, #ffffff);
+    --filter-bg-subtle: var(--surface2, #f8fafc);
+    --filter-bg-card: #ffffff;
+    --filter-border: var(--border, #e2e8f0);
+    --filter-border-hover: #cbd5e1;
+    --filter-border-focus: var(--accent, #4f46e5);
+    
+    --filter-text: var(--text, #1e293b);
+    --filter-text-muted: var(--text-sub, #64748b);
+    --filter-text-dim: #94a3b8;
+    
+    --filter-primary: var(--accent, #4f46e5);
+    --filter-primary-hover: #4338ca;
+    --filter-primary-light: rgba(79, 70, 229, 0.08);
+    --filter-primary-glow: rgba(79, 70, 229, 0.2);
+    
+    --filter-success: #10b981;
+    --filter-success-light: rgba(16, 185, 129, 0.1);
+    --filter-danger: #ef4444;
+    --filter-danger-light: rgba(239, 68, 68, 0.1);
+    --filter-warning: #f59e0b;
+    --filter-warning-light: rgba(245, 158, 11, 0.1);
+    
+    --filter-radius-xl: 18px;
+    --filter-radius-lg: 12px;
+    --filter-radius-md: 9px;
+    --filter-radius-sm: 6px;
+    --filter-radius-pill: 9999px;
+    
+    --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    --filter-shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    --filter-shadow-lg: 0 20px 35px -8px rgba(79, 70, 229, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --filter-shadow-glow: 0 0 0 3px var(--filter-primary-glow);
+    
+    --filter-transition: all 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+    --filter-transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Dark Mode Tokens */
+[data-theme="dark"],
+body.dark-mode,
+html.dark {
+    --filter-bg: var(--surface, #131620);
+    --filter-bg-subtle: var(--surface2, #1a1e2d);
+    --filter-bg-card: #141824;
+    --filter-border: var(--border, #262c3f);
+    --filter-border-hover: #38425d;
+    --filter-border-focus: var(--accent, #6366f1);
+    
+    --filter-text: var(--text, #f1f5f9);
+    --filter-text-muted: var(--text-sub, #8e99b2);
+    --filter-text-dim: #606b85;
+    
+    --filter-primary: var(--accent, #6366f1);
+    --filter-primary-hover: #4f46e5;
+    --filter-primary-light: rgba(99, 102, 241, 0.16);
+    --filter-primary-glow: rgba(99, 102, 241, 0.28);
+    
+    --filter-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --filter-shadow-md: 0 12px 30px -5px rgba(0, 0, 0, 0.5);
+    --filter-shadow-lg: 0 22px 40px -10px rgba(0, 0, 0, 0.65);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. ROOT CONTAINER & SHARED UTILITIES
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-wrapper {
+    width: 100%;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+    font-family: inherit;
+    position: relative;
+}
+
+.custom-filter-wrapper * {
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   2. VARIANT: PANEL (Card with Gradient Header & Smooth Collapse)
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-card {
+    background: var(--filter-bg);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-xl);
+    box-shadow: var(--filter-shadow-md);
+    overflow: hidden;
+    transition: var(--filter-transition);
+    position: relative;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.custom-filter-card:hover {
+    border-color: var(--filter-border-hover);
+}
+
+/* Header */
+.custom-filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, var(--filter-bg) 0%, var(--filter-bg-subtle) 100%);
+    border-bottom: 1px solid var(--filter-border);
+    cursor: pointer;
+    user-select: none;
+    transition: var(--filter-transition);
+}
+
+.custom-filter-wrapper.is-collapsed .custom-filter-header {
+    border-bottom-color: transparent;
+}
+
+.custom-filter-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.custom-filter-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--filter-radius-lg);
+    background: linear-gradient(135deg, var(--filter-primary-light) 0%, rgba(124, 58, 237, 0.12) 100%);
+    color: var(--filter-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    border: 1px solid var(--filter-primary-light);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    transition: var(--filter-transition-bounce);
+}
+
+.custom-filter-header:hover .custom-filter-icon-box {
+    transform: scale(1.06) rotate(-4deg);
+}
+
+.custom-filter-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.custom-filter-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.custom-filter-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--filter-text);
+    letter-spacing: -0.015em;
+}
+
+.custom-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: var(--filter-radius-pill);
+    background: var(--filter-primary-light);
+    color: var(--filter-primary);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.custom-filter-active-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: var(--filter-radius-pill);
+    background: var(--filter-success-light);
+    color: var(--filter-success);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    animation: filterBadgePulse 2s infinite;
+}
+
+@keyframes filterBadgePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.03); }
+}
+
+.custom-filter-subtitle {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--filter-text-muted);
+    line-height: 1.4;
+}
+
+.custom-filter-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-filter-collapse-btn {
+    background: var(--filter-bg-subtle);
+    border: 1px solid var(--filter-border);
+    color: var(--filter-text-muted);
+    width: 34px;
+    height: 34px;
+    border-radius: var(--filter-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--filter-transition-bounce);
+}
+
+.custom-filter-collapse-btn:hover {
+    color: var(--filter-text);
+    background: var(--filter-bg);
+    border-color: var(--filter-border-hover);
+    transform: translateY(-1px);
+}
+
+.custom-filter-wrapper.is-collapsed .custom-filter-collapse-btn i {
+    transform: rotate(-90deg);
+}
+
+.custom-filter-collapse-btn i {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. QUICK PRESET PILLS / TABS
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-presets-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 24px;
+    background: var(--filter-bg-subtle);
+    border-bottom: 1px dashed var(--filter-border);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.custom-filter-presets-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--filter-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.custom-filter-presets-label i {
+    color: #f59e0b;
+}
+
+.custom-filter-presets-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.custom-filter-preset-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--filter-text-muted);
+    background: var(--filter-bg);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-pill);
+    cursor: pointer;
+    transition: var(--filter-transition);
+    white-space: nowrap;
+    text-decoration: none;
+    box-shadow: var(--filter-shadow-sm);
+}
+
+.custom-filter-preset-pill:hover {
+    color: var(--filter-primary);
+    border-color: var(--filter-primary);
+    background: var(--filter-primary-light);
+    transform: translateY(-1px);
+}
+
+.custom-filter-preset-pill.is-active {
+    background: var(--filter-primary);
+    color: #ffffff;
+    border-color: var(--filter-primary);
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.custom-filter-preset-pill .preset-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: var(--filter-radius-pill);
+    background: rgba(0, 0, 0, 0.07);
+    color: inherit;
+}
+
+.custom-filter-preset-pill.is-active .preset-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. FILTER FORM & GRID LAYOUT
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-body-wrapper {
+    transition: var(--filter-transition);
+}
+
+.custom-filter-form {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.custom-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px 20px;
+    align-items: end;
+}
+
+/* Specific span helpers */
+.custom-filter-col-2 { grid-column: span 2; }
+.custom-filter-col-3 { grid-column: span 3; }
+.custom-filter-col-full { grid-column: 1 / -1; }
+
+/* Filter Group / Control */
+.custom-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    position: relative;
+}
+
+.custom-filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--filter-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.custom-filter-label i {
+    font-size: 12px;
+    color: var(--filter-primary);
+}
+
+/* Input & Select Controls */
+.custom-filter-control-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.custom-filter-input,
+.custom-filter-select {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--filter-text);
+    background: var(--filter-bg-subtle);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-md);
+    transition: var(--filter-transition);
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.custom-filter-control-wrap.has-left-icon .custom-filter-input,
+.custom-filter-control-wrap.has-left-icon .custom-filter-select {
+    padding-left: 38px;
+}
+
+.custom-filter-control-wrap.has-right-icon .custom-filter-input,
+.custom-filter-control-wrap.has-right-icon .custom-filter-select {
+    padding-right: 38px;
+}
+
+.custom-filter-input-icon {
+    position: absolute;
+    left: 13px;
+    color: var(--filter-text-dim);
+    font-size: 14px;
+    pointer-events: none;
+    transition: var(--filter-transition);
+}
+
+.custom-filter-input:focus ~ .custom-filter-input-icon,
+.custom-filter-select:focus ~ .custom-filter-input-icon,
+.custom-filter-control-wrap:focus-within .custom-filter-input-icon {
+    color: var(--filter-primary);
+}
+
+.custom-filter-input:hover,
+.custom-filter-select:hover {
+    border-color: var(--filter-border-hover);
+    background: var(--filter-bg);
+}
+
+.custom-filter-input:focus,
+.custom-filter-select:focus {
+    border-color: var(--filter-border-focus);
+    background: var(--filter-bg);
+    box-shadow: var(--filter-shadow-glow);
+}
+
+.custom-filter-input::placeholder {
+    color: var(--filter-text-dim);
+}
+
+/* Custom Styled Select dropdown arrow */
+.custom-filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    background-size: 18px 18px;
+    padding-right: 32px;
+    cursor: pointer;
+}
+
+/* Date Range Compact Container */
+.custom-filter-daterange {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.custom-filter-daterange .custom-filter-input {
+    flex: 1;
+}
+
+.custom-filter-daterange-sep {
+    color: var(--filter-text-dim);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. APPLIED / ACTIVE TAGS BAR
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-active-tags-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--filter-bg-subtle);
+    border: 1px dashed var(--filter-border);
+    border-radius: var(--filter-radius-lg);
+    animation: fadeInTags 0.3s ease;
+}
+
+@keyframes fadeInTags {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.active-tags-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--filter-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.active-tags-label i {
+    color: var(--filter-primary);
+}
+
+.active-tags-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.filter-active-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--filter-primary);
+    background: var(--filter-primary-light);
+    border: 1px solid rgba(79, 70, 229, 0.2);
+    border-radius: var(--filter-radius-pill);
+    transition: var(--filter-transition);
+}
+
+.filter-active-chip .chip-key {
+    font-weight: 500;
+    color: var(--filter-text-muted);
+}
+
+.filter-active-chip .chip-remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--filter-primary);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 2px 3px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.15s;
+}
+
+.filter-active-chip .chip-remove-btn:hover {
+    background: var(--filter-danger);
+    color: #ffffff;
+}
+
+.btn-clear-all-tags {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--filter-danger);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: var(--filter-radius-sm);
+    transition: var(--filter-transition);
+}
+
+.btn-clear-all-tags:hover {
+    background: var(--filter-danger-light);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. FOOTER ACTIONS & BUTTONS
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--filter-border);
+}
+
+.custom-filter-footer-left,
+.custom-filter-footer-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Button System */
+.custom-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: var(--filter-radius-md);
+    cursor: pointer;
+    transition: var(--filter-transition-bounce);
+    text-decoration: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    box-shadow: var(--filter-shadow-sm);
+}
+
+.custom-filter-btn:active {
+    transform: scale(0.97);
+}
+
+.custom-filter-btn-primary {
+    background: linear-gradient(135deg, var(--filter-primary) 0%, #6366f1 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+}
+
+.custom-filter-btn-primary:hover {
+    background: linear-gradient(135deg, var(--filter-primary-hover) 0%, var(--filter-primary) 100%);
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    transform: translateY(-1px);
+}
+
+.custom-filter-btn-reset {
+    background: var(--filter-bg);
+    border-color: var(--filter-border);
+    color: var(--filter-text-muted);
+}
+
+.custom-filter-btn-reset:hover {
+    background: var(--filter-bg-subtle);
+    border-color: var(--filter-border-hover);
+    color: var(--filter-text);
+    transform: translateY(-1px);
+}
+
+.custom-filter-btn-pdf {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.2);
+}
+
+.custom-filter-btn-pdf:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.3);
+}
+
+.custom-filter-btn-excel {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
+}
+
+.custom-filter-btn-excel:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
+}
+
+.custom-filter-btn-icon-only {
+    width: 40px;
+    padding: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   7. VARIANT: HORIZONTAL TOOLBAR (BAR)
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-bar-container {
+    background: var(--filter-bg);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-xl);
+    padding: 12px 18px;
+    box-shadow: var(--filter-shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.custom-filter-bar-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.custom-filter-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.custom-filter-bar-lead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--filter-text);
+    padding-right: 12px;
+    border-right: 1px solid var(--filter-border);
+}
+
+.custom-filter-bar-lead .custom-filter-bar-icon {
+    color: var(--filter-primary);
+}
+
+.custom-filter-bar-fields {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    flex-wrap: wrap;
+}
+
+.custom-filter-bar-fields .custom-filter-input,
+.custom-filter-bar-fields .custom-filter-select {
+    height: 38px;
+    font-size: 13px;
+}
+
+.custom-filter-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-filter-bar-tags {
+    margin-top: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8. VARIANT: CHIPS QUICK SELECTOR
+   ───────────────────────────────────────────────────────────── */
+.custom-filter-chips-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+    background: var(--filter-bg);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-pill);
+    box-shadow: var(--filter-shadow-sm);
+    overflow-x: auto;
+}
+
+.custom-filter-chips-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--filter-text-muted);
+    white-space: nowrap;
+}
+
+.custom-filter-chips-lead-icon {
+    color: var(--filter-primary);
+}
+
+.custom-filter-chips-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-filter-chip-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--filter-text-muted);
+    background: var(--filter-bg-subtle);
+    border: 1px solid var(--filter-border);
+    border-radius: var(--filter-radius-pill);
+    cursor: pointer;
+    transition: var(--filter-transition-bounce);
+    white-space: nowrap;
+}
+
+.custom-filter-chip-item:hover {
+    border-color: var(--filter-primary);
+    color: var(--filter-primary);
+    background: var(--filter-primary-light);
+}
+
+.custom-filter-chip-item.is-active {
+    background: var(--filter-primary);
+    color: #ffffff;
+    border-color: var(--filter-primary);
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.3);
+}
+
+.custom-filter-chip-item .chip-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: var(--filter-radius-pill);
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.custom-filter-chip-item.is-active .chip-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   9. RESPONSIVE BREAKPOINTS
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .custom-filter-header {
+        padding: 14px 18px;
+    }
+    
+    .custom-filter-form {
+        padding: 18px;
+    }
+    
+    .custom-filter-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .custom-filter-col-2,
+    .custom-filter-col-3 {
+        grid-column: 1 / -1;
+    }
+    
+    .custom-filter-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .custom-filter-footer-left,
+    .custom-filter-footer-right {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .custom-filter-footer-right .custom-filter-btn {
+        flex: 1;
+    }
+    
+    .custom-filter-bar-lead {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--filter-border);
+        padding-bottom: 8px;
+    }
+    
+    .custom-filter-bar-fields {
+        width: 100%;
+    }
+}
