@@ -23,6 +23,121 @@
         </div>
     </section>
 
+    @php
+        $totalProdi = $prodis->count();
+        $d3Count = $prodis->where('jenjang', 'D3')->count();
+        $d4Count = $prodis->where('jenjang', 'D4')->count();
+        $s1Count = $prodis->where('jenjang', 'S1')->count();
+        $s2Count = $prodis->where('jenjang', 'S2')->count();
+
+        $presetItems = [
+            ['label' => 'Semua Jenjang', 'value' => 'all', 'icon' => 'fas fa-layer-group', 'count' => $totalProdi],
+        ];
+        if ($d3Count > 0) $presetItems[] = ['label' => 'D3', 'value' => 'd3', 'icon' => 'fas fa-award', 'count' => $d3Count];
+        if ($d4Count > 0) $presetItems[] = ['label' => 'D4', 'value' => 'd4', 'icon' => 'fas fa-graduation-cap', 'count' => $d4Count];
+        if ($s1Count > 0) $presetItems[] = ['label' => 'S1', 'value' => 's1', 'icon' => 'fas fa-user-graduate', 'count' => $s1Count];
+        if ($s2Count > 0) $presetItems[] = ['label' => 'S2', 'value' => 's2', 'icon' => 'fas fa-book-open-reader', 'count' => $s2Count];
+    @endphp
+
+    <x-filter 
+        id="prodiFilter"
+        title="Filter Data Program Studi"
+        subtitle="Saring data program studi berdasarkan jenjang pendidikan, jurusan terkait, dan kode/nama prodi"
+        icon="fas fa-sliders-h"
+        variant="panel"
+        :collapsible="true"
+        :collapsed="false"
+        presetName="jenjang"
+        :presets="$presetItems"
+        target=".um-table tbody tr.um-row"
+        emptyTarget="#prodiSearchEmptyRow"
+        resetText="Reset"
+    >
+        <!-- Field 1: Jurusan (Alpine.js Dropdown) -->
+        <div class="custom-filter-group" x-data="{
+            open: false,
+            selected: 'all',
+            items: @js($jurusans->map(fn ($jurusan) => [
+                'id' => strtolower($jurusan->nama_jurusan),
+                'label' => $jurusan->nama_jurusan,
+            ])->prepend(['id' => 'all', 'label' => 'Semua Jurusan'])->values()),
+            get selectedLabel() {
+                const found = this.items.find(i => i.id === this.selected);
+                return found ? found.label : 'Semua Jurusan';
+            }
+        }">
+            <label class="custom-filter-label"><i class="fas fa-microchip"></i> Jurusan</label>
+            <input type="hidden" name="jurusan" :value="selected">
+            
+            <div class="alpine-dropdown" @click.outside="open = false">
+                <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                    <div class="ad-trigger-content">
+                        <i class="fas fa-building-columns ad-trigger-icon"></i>
+                        <span x-text="selectedLabel"></span>
+                    </div>
+                    <i class="fas fa-chevron-down ad-trigger-chevron"></i>
+                </div>
+                <div class="ad-menu" x-show="open" x-transition>
+                    <template x-for="item in items" :key="item.id">
+                        <div class="ad-item" :class="{ 'selected': selected === item.id }"
+                            @click="selected = item.id; open = false; $nextTick(() => { document.querySelector('input[name=jurusan]').dispatchEvent(new Event('change', { bubbles: true })); })">
+                            <span x-text="item.label"></span>
+                            <i class="fas fa-check ad-item-check"></i>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field 2: Jenjang Pendidikan (Alpine.js Dropdown) -->
+        <div class="custom-filter-group" x-data="{
+            open: false,
+            selected: 'all',
+            items: [
+                { id: 'all', label: 'Semua Jenjang' },
+                { id: 'd3', label: 'Diploma 3 (D3)' },
+                { id: 'd4', label: 'Diploma 4 (D4 / Sarjana Terapan)' },
+                { id: 's1', label: 'Sarjana (S1)' },
+                { id: 's2', label: 'Magister Terapan (S2)' }
+            ],
+            get selectedLabel() {
+                const found = this.items.find(i => i.id === this.selected);
+                return found ? found.label : 'Semua Jenjang';
+            }
+        }">
+            <label class="custom-filter-label"><i class="fas fa-layer-group"></i> Jenjang Pendidikan</label>
+            <input type="hidden" name="jenjang" :value="selected">
+            
+            <div class="alpine-dropdown" @click.outside="open = false">
+                <div class="ad-trigger" :class="{ 'active': open }" @click="open = !open">
+                    <div class="ad-trigger-content">
+                        <i class="fas fa-graduation-cap ad-trigger-icon"></i>
+                        <span x-text="selectedLabel"></span>
+                    </div>
+                    <i class="fas fa-chevron-down ad-trigger-chevron"></i>
+                </div>
+                <div class="ad-menu" x-show="open" x-transition>
+                    <template x-for="item in items" :key="item.id">
+                        <div class="ad-item" :class="{ 'selected': selected === item.id }"
+                            @click="selected = item.id; open = false; $nextTick(() => { document.querySelector('input[name=jenjang]').dispatchEvent(new Event('change', { bubbles: true })); })">
+                            <span x-text="item.label"></span>
+                            <i class="fas fa-check ad-item-check"></i>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Field 3: Cari Kode / Nama Prodi -->
+        <div class="custom-filter-group">
+            <label class="custom-filter-label"><i class="fas fa-search"></i> Kode / Nama Prodi</label>
+            <div class="custom-filter-control-wrap has-left-icon">
+                <input type="text" name="prodi_query" class="custom-filter-input" placeholder="Ketik kode atau nama prodi...">
+                <span class="custom-filter-input-icon"><i class="fas fa-barcode"></i></span>
+            </div>
+        </div>
+    </x-filter>
+
     <div class="card um-card">
         <div class="card-header um-header">
             <div class="um-header-left" style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -53,7 +168,10 @@
                 </thead>
                 <tbody>
                     @forelse($prodis as $i => $prodi)
-                        <tr class="um-row">
+                        <tr class="um-row"
+                            data-filter-jenjang="{{ strtolower($prodi->jenjang ?? '') }}"
+                            data-filter-jurusan="{{ strtolower($prodi->jurusan?->nama_jurusan ?? '') }}"
+                        >
                             <td class="um-td um-td-num">
                                 <span class="um-num">{{ $i + 1 }}</span>
                             </td>
