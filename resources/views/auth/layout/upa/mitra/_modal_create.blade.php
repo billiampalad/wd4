@@ -120,12 +120,12 @@
                                     <i class="fas fa-map-marked-alt mitra-create-label-icon"></i>Provinsi
                                 </label>
                                 <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
-                                    <div class="ad-trigger" :class="{'active': provinceOpen}"
+                                    <div class="ad-trigger no-icon" :class="{'active': provinceOpen}"
                                         @click="provinceOpen = !provinceOpen; $nextTick(() => { if(provinceOpen) $refs.mkProvinceSearch.focus() })">
                                         <div class="mitra-create-trigger-content is-compact">
                                             <i class="fas fa-map-pin mitra-create-muted-icon"></i>
                                             <span x-show="!provinsi" class="mitra-create-placeholder">- Pilih
-                                                Provinsi-</span>
+                                                Provinsi -</span>
                                             <span x-show="provinsi" x-text="provinsi"
                                                 class="mitra-create-selected is-normal"></span>
                                         </div>
@@ -196,7 +196,7 @@
                                     <i class="fas fa-globe-americas mitra-create-label-icon"></i>Negara
                                 </label>
                                 <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
-                                    <div class="ad-trigger" :class="{'active': countryOpen}"
+                                    <div class="ad-trigger no-icon" :class="{'active': countryOpen}"
                                         @click="countryOpen = !countryOpen; $nextTick(() => { if(countryOpen) $refs.mkCountrySearch.focus() })">
                                         <div class="mitra-create-trigger-content is-compact">
                                             <i class="fas fa-flag mitra-create-muted-icon"></i>

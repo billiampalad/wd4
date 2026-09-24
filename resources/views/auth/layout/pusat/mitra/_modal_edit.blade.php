@@ -120,7 +120,7 @@
                                     <i class="fas fa-map-marked-alt mitra-edit-label-icon"></i>Provinsi
                                 </label>
                                 <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
-                                    <div class="ad-trigger" :class="{'active': provinceOpen}"
+                                    <div class="ad-trigger no-icon" :class="{'active': provinceOpen}"
                                         @click="provinceOpen = !provinceOpen; $nextTick(() => { if(provinceOpen) $refs.mkeProvinceSearch.focus() })">
                                         <div class="mitra-edit-trigger-content is-compact">
                                             <i class="fas fa-map-pin mitra-edit-muted-icon"></i>
@@ -196,7 +196,7 @@
                                     <i class="fas fa-globe-americas mitra-edit-label-icon"></i>Negara
                                 </label>
                                 <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
-                                    <div class="ad-trigger" :class="{'active': countryOpen}"
+                                    <div class="ad-trigger no-icon" :class="{'active': countryOpen}"
                                         @click="countryOpen = !countryOpen; $nextTick(() => { if(countryOpen) $refs.mkeCountrySearch.focus() })">
                                         <div class="mitra-edit-trigger-content is-compact">
                                             <i class="fas fa-flag mitra-edit-muted-icon"></i>

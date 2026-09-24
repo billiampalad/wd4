@@ -130,7 +130,7 @@
                             <div class="mc-group">
                                 <label class="mc-label"><i class="fas fa-globe-americas mitra-create-label-icon"></i>Negara</label>
                                 <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
-                                    <div class="ad-trigger" :class="{'active': countryOpen}" @click="countryOpen = !countryOpen; $nextTick(() => { if (countryOpen) $refs.mkCountrySearch.focus() })">
+                                    <div class="ad-trigger no-icon" :class="{'active': countryOpen}" @click="countryOpen = !countryOpen; $nextTick(() => { if (countryOpen) $refs.mkCountrySearch.focus() })">
                                         <div class="mitra-create-trigger-content is-compact">
                                             <i class="fas fa-flag mitra-create-muted-icon"></i>
                                             <span x-show="!negara" class="mitra-create-placeholder">- Pilih Negara -</span>

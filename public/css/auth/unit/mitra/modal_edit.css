@@ -118,12 +118,17 @@
     margin-bottom: 18px;
 }
 
+.mitra-edit-box .ad-trigger {
+    padding: 8px 14px;
+}
+
 .mitra-edit-trigger-content {
     display: flex;
     align-items: center;
     gap: 12px;
     flex: 1;
     min-width: 0;
+    text-align: left;
 }
 
 .mitra-edit-trigger-content.is-compact {
