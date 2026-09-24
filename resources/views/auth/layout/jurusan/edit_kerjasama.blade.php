@@ -1526,6 +1526,7 @@
                                 {{-- Jenis Kerjasama (Alpine Multi-Select with Dynamic Forms) --}}
                                 <div x-data="{ 
                                     open: false, 
+                                    search: '',
                                     selected: @js($initialJenisIds),
                                     items: @js($jenisOptions),
                                     formData: @js($initialJenisDetail),
@@ -1535,6 +1536,9 @@
                                     indikatorOptions: @js($indikatorOptions),
                                     getIndikatorOptions(id) {
                                         return this.indikatorOptions.filter(o => o.sasaran_id == this.formData[id].sasaran_id);
+                                    },
+                                    get filteredItems() {
+                                        return (this.items || []).filter(item => !this.search || (item.label || '').toLowerCase().includes(this.search.toLowerCase().trim()));
                                     },
                                     toggle(id) {
                                         const idx = this.selected.indexOf(id);
@@ -1572,9 +1576,9 @@
                                         <template x-for="id in selected" :key="id">
                                             <input type="hidden" name="id_jenis[]" :value="id">
                                         </template>
-                                        <div class="alpine-dropdown" @click.outside="open = false">
+                                        <div class="alpine-dropdown" @click.outside="open = false; search = ''">
                                             <div class="ad-trigger no-icon" :class="{'active': open}"
-                                                @click="open = !open">
+                                                @click="open = !open; if(open) { $nextTick(() => { $refs.bentukSearch?.focus(); }); }">
                                                 <div
                                                     style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
                                                     <i class="fas fa-handshake"
@@ -1595,20 +1599,47 @@
                                                     style="font-size: 10px; transition: 0.3s; flex-shrink: 0;"
                                                     :style="open ? 'transform: rotate(180deg)' : ''"></i>
                                             </div>
-                                            <div class="ad-menu" x-show="open" x-transition>
-                                                <template x-for="item in items" :key="item.id">
-                                                    <div class="ad-item" :class="{'selected': isSelected(item.id)}"
-                                                        @click="toggle(item.id); open = false"
-                                                        style="display: flex; align-items: center; gap: 10px;">
-                                                        <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
-                                                            :style="isSelected(item.id) ? 'background: var(--accent); border-color: var(--accent);' : ''">
-                                                            <i class="fas fa-check"
-                                                                style="font-size: 10px; color: #fff;"
-                                                                x-show="isSelected(item.id)"></i>
-                                                        </div>
-                                                        <span x-text="item.label"></span>
+                                            <div class="ad-menu" x-show="open" x-transition
+                                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130; max-height: 250px; overflow-y: auto; padding: 4px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                                <!-- Sticky Search Input Header -->
+                                                <div style="position: sticky; top: 0; z-index: 2; padding: 6px 8px; background: var(--surface, #ffffff); border-bottom: 1px solid var(--border);" @click.stop>
+                                                    <div style="position: relative; display: flex; align-items: center;">
+                                                        <i class="fas fa-search" style="position: absolute; left: 10px; color: #9ca3af; font-size: 11px; pointer-events: none;"></i>
+                                                        <input type="text"
+                                                            x-ref="bentukSearch"
+                                                            x-model="search"
+                                                            placeholder="Cari bentuk kegiatan / ruang lingkup..."
+                                                            style="width: 100%; padding: 6px 28px 6px 28px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2, #f3f4f6); color: var(--text); outline: none; transition: border-color 0.2s;"
+                                                            onfocus="this.style.borderColor='var(--primary, #4f46e5)'"
+                                                            onblur="this.style.borderColor='var(--border)'"
+                                                            @keydown.escape="open = false">
+                                                        <button type="button" x-show="search" @click="search = ''; $refs.bentukSearch?.focus()"
+                                                            style="position: absolute; right: 8px; background: transparent; border: none; color: #9ca3af; cursor: pointer; font-size: 11px; padding: 2px;">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
                                                     </div>
-                                                </template>
+                                                </div>
+                                                <!-- Filtered Items List -->
+                                                <div>
+                                                    <template x-for="item in filteredItems" :key="item.id">
+                                                        <div class="ad-item" :class="{'selected': isSelected(item.id)}"
+                                                            @click="toggle(item.id); open = false; search = ''"
+                                                            style="display: flex; align-items: center; gap: 10px;">
+                                                            <div style="width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s;"
+                                                                :style="isSelected(item.id) ? 'background: var(--accent); border-color: var(--accent);' : ''">
+                                                                <i class="fas fa-check"
+                                                                    style="font-size: 10px; color: #fff;"
+                                                                    x-show="isSelected(item.id)"></i>
+                                                            </div>
+                                                            <span x-text="item.label"></span>
+                                                        </div>
+                                                    </template>
+                                                    <!-- Empty State -->
+                                                    <div x-show="filteredItems.length === 0"
+                                                        style="padding: 12px 16px; font-size: 12px; color: #9ca3af; text-align: center;">
+                                                        <i class="fas fa-search" style="margin-right: 6px; font-size: 11px;"></i> Tidak ada bentuk kegiatan ditemukan
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
