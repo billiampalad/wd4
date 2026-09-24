@@ -26,7 +26,8 @@
         <div class="mitra-create-body"
             data-store-url="{{ route('unit.mitra.store') }}"
             data-klasifikasi-items='@json($modalKlasifikasiItems)'
-            x-data="createMitraModalFromElement($el)">
+            x-data="createMitraModalFromElement($el)"
+            @reset-mitra-create-data.window="resetForm()">
             <form id="mitraModalForm" @submit.prevent="submitMitra()">
                 <div class="mitra-create-content">
                     <div class="mc-group mitra-create-section">

@@ -37,6 +37,8 @@
             return;
         }
 
+        window.dispatchEvent(new CustomEvent('reset-mitra-create-data'));
+
         parts.modal.removeAttribute('hidden');
         parts.modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -84,6 +86,21 @@
             countries: countries,
             submitting: false,
             errors: {},
+            resetForm() {
+                this.kategori = '';
+                this.negara = 'Indonesia';
+                this.klasifikasiOpen = false;
+                this.klasifikasiSearch = '';
+                this.klasifikasiSelected = '';
+                this.countryOpen = false;
+                this.countrySearch = '';
+                this.submitting = false;
+                this.errors = {};
+                const form = document.getElementById('mitraModalForm');
+                if (form) {
+                    form.reset();
+                }
+            },
             get selectedKlasifikasi() {
                 return this.klasifikasiItems.find((item) => item.id === this.klasifikasiSelected);
             },
@@ -128,7 +145,6 @@
                     if (response.status === 422) {
                         const data = await response.json();
                         this.errors = data.errors || {};
-                        this.submitting = false;
                         return;
                     }
 
@@ -163,6 +179,7 @@
                     } else {
                         alert('Terjadi kesalahan saat menyimpan data.');
                     }
+                } finally {
                     this.submitting = false;
                 }
             }

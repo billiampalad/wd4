@@ -125,6 +125,12 @@
                 this.alamat = detail.alamat || '';
                 this.telp = detail.telp || '';
                 this.website = detail.website || '';
+                this.klasifikasiOpen = false;
+                this.klasifikasiSearch = '';
+                this.countryOpen = false;
+                this.countrySearch = '';
+                this.submitting = false;
+                this.errors = {};
             },
             async submitMitra() {
                 this.submitting = true;
@@ -153,7 +159,6 @@
                     if (response.status === 422) {
                         const data = await response.json();
                         this.errors = data.errors || {};
-                        this.submitting = false;
                         return;
                     }
 
@@ -177,6 +182,7 @@
                     } else {
                         alert('Terjadi kesalahan saat menyimpan data.');
                     }
+                } finally {
                     this.submitting = false;
                 }
             }
