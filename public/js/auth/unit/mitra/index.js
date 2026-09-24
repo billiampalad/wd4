@@ -36,6 +36,18 @@
                 window.Alpine.initTree(nextMain);
             }
 
+            if (window.CustomPaginav && typeof window.CustomPaginav.init === 'function') {
+                window.CustomPaginav.init(nextMain);
+            }
+
+            if (window.CustomSearch && typeof window.CustomSearch.init === 'function') {
+                window.CustomSearch.init(nextMain);
+            }
+
+            if (window.CustomFilter && typeof window.CustomFilter.init === 'function') {
+                window.CustomFilter.init(nextMain);
+            }
+
             if (typeof window.initDashboard === 'function') {
                 window.initDashboard();
             }

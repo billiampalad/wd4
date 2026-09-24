@@ -139,12 +139,13 @@
                         window.dispatchEvent(new CustomEvent('mitra-added', {
                             detail: result.data
                         }));
+                        document.dispatchEvent(new CustomEvent('table:updated'));
 
                         if (window.CustomAlert) {
                             CustomAlert.success('Mitra baru berhasil ditambahkan.');
                         }
 
-                        if (document.querySelector('[data-mitra-index]') && typeof window.refreshMitraIndex === 'function') {
+                        if (typeof window.refreshMitraIndex === 'function') {
                             window.refreshMitraIndex();
                         }
                         return;

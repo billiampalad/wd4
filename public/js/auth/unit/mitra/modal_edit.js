@@ -159,6 +159,7 @@
 
                     if (response.ok || response.status === 302 || response.status === 200) {
                         closeMitraEditModal();
+                        document.dispatchEvent(new CustomEvent('table:updated'));
                         if (window.CustomAlert) {
                             CustomAlert.success('Data mitra berhasil diperbarui.');
                         }

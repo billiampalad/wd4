@@ -384,8 +384,18 @@
         instances: new Map(),
 
         init: function (container = document) {
-            const elements = container.querySelectorAll('[data-custom-paginav]');
+            if (!container) return;
+
+            const elements = [];
+            if (container.nodeType === Node.ELEMENT_NODE && container.matches && container.matches('[data-custom-paginav]')) {
+                elements.push(container);
+            }
+            if (container.querySelectorAll) {
+                elements.push(...container.querySelectorAll('[data-custom-paginav]'));
+            }
+
             elements.forEach(el => {
+                // If this is a new DOM node or has no attached controller, create one
                 if (!el._paginavInstance) {
                     const inst = new PaginavController(el);
                     el._paginavInstance = inst;
@@ -404,10 +414,14 @@
         }
     };
 
-    // Auto initialization on DOM ready and Turbo events
+    // Auto initialization on DOM ready, Turbo events, and dynamic table refresh events
     document.addEventListener('DOMContentLoaded', () => CustomPaginav.init());
     document.addEventListener('turbo:load', () => CustomPaginav.init());
     document.addEventListener('turbo:render', () => CustomPaginav.init());
+    document.addEventListener('mitra-index:refreshed', () => CustomPaginav.init());
+    document.addEventListener('table:updated', () => CustomPaginav.init());
+    document.addEventListener('content:refreshed', () => CustomPaginav.init());
+    document.addEventListener('alpine:initialized', () => CustomPaginav.init());
 
     global.CustomPaginav = CustomPaginav;
 
