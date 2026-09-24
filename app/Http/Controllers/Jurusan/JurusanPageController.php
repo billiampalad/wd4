@@ -841,7 +841,7 @@ class JurusanPageController extends Controller
     {
         $request->validate([
             'nama_mitra' => 'required|string|max:255',
-            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'alamat' => 'nullable|string|max:255',
             'kategori' => 'required|string|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
@@ -851,11 +851,11 @@ class JurusanPageController extends Controller
 
         $mitra = \App\Models\Mitra::create([
             'nama_mitra' => $request->nama_mitra,
-            'id_klasifikasi' => $request->id_klasifikasi,
+            'klasifikasi_id' => $request->id_klasifikasi,
             'alamat' => $request->alamat,
             'kategori' => $request->kategori,
             'negara' => $request->negara ?? 'Indonesia',
-            'telp' => $request->telp,
+            'telepon' => $request->telp,
             'website' => $request->website,
         ]);
 
@@ -890,7 +890,7 @@ class JurusanPageController extends Controller
     {
         $request->validate([
             'nama_mitra' => 'required|string|max:255',
-            'id_klasifikasi' => 'nullable|exists:klasifikasi,id',
+            'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'alamat' => 'nullable|string|max:255',
             'kategori' => 'required|string|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
@@ -901,11 +901,11 @@ class JurusanPageController extends Controller
         $mitra = \App\Models\Mitra::findOrFail($id);
         $mitra->update([
             'nama_mitra' => $request->nama_mitra,
-            'id_klasifikasi' => $request->id_klasifikasi,
+            'klasifikasi_id' => $request->id_klasifikasi,
             'alamat' => $request->alamat,
             'kategori' => $request->kategori,
             'negara' => $request->negara ?? 'Indonesia',
-            'telp' => $request->telp,
+            'telepon' => $request->telp,
             'website' => $request->website,
         ]);
 
@@ -957,12 +957,14 @@ class JurusanPageController extends Controller
             'id' => $mitra->id,
             'nama' => $mitra->nama_mitra,
             'nama_mitra' => $mitra->nama_mitra,
-            'id_klasifikasi' => $mitra->id_klasifikasi,
+            'id_klasifikasi' => $mitra->klasifikasi_id ?? $mitra->id_klasifikasi,
+            'klasifikasi_id' => $mitra->klasifikasi_id,
             'klasifikasi' => $mitra->klasifikasi?->nama,
             'kategori' => $mitra->kategori,
             'negara' => $mitra->negara ?? 'Indonesia',
             'alamat' => $mitra->alamat,
-            'telp' => $mitra->telp,
+            'telp' => $mitra->telepon ?? $mitra->telp,
+            'telepon' => $mitra->telepon,
             'website' => $mitra->website,
         ];
     }

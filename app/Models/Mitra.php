@@ -13,6 +13,7 @@ class Mitra extends Model
     protected $fillable = [
         'nama_mitra',
         'klasifikasi_id',
+        'id_klasifikasi',
         'alamat',
         'kota',
         'negara',
@@ -20,9 +21,30 @@ class Mitra extends Model
         'provinsi',
         'province_code',
         'telepon',
+        'telp',
         'website',
         'status_akses',
     ];
+
+    public function getIdKlasifikasiAttribute()
+    {
+        return $this->attributes['klasifikasi_id'] ?? null;
+    }
+
+    public function setIdKlasifikasiAttribute($value)
+    {
+        $this->attributes['klasifikasi_id'] = $value ?: null;
+    }
+
+    public function getTelpAttribute()
+    {
+        return $this->attributes['telepon'] ?? null;
+    }
+
+    public function setTelpAttribute($value)
+    {
+        $this->attributes['telepon'] = $value;
+    }
 
     /**
      * Virtual "kategori" — nasional jika Indonesia, internasional jika luar negeri.
