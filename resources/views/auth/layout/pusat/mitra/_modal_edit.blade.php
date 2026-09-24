@@ -24,7 +24,7 @@
         </div>
 
         <div class="mitra-edit-body"
-            data-base-url="{{ url('unit/mitra') }}"
+            data-base-url="{{ url('pusat/mitra') }}"
             data-klasifikasi-items='@json($modalKlasifikasiItems)'
             x-data="createMitraEditModalFromElement($el)"
             @set-mitra-edit-data.window="setEditData($event.detail)">

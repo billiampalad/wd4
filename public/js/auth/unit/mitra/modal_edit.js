@@ -151,7 +151,9 @@
                     const response = await fetch(`${config.baseUrl}/${this.mitraId}`, {
                         method: 'POST',
                         headers: {
-                            'Accept': 'application/json'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: formData
                     });
@@ -162,17 +164,20 @@
                         return;
                     }
 
-                    if (response.ok || response.status === 302 || response.status === 200) {
-                        closeMitraEditModal();
-                        document.dispatchEvent(new CustomEvent('table:updated'));
-                        if (window.CustomAlert) {
-                            CustomAlert.success('Data mitra berhasil diperbarui.');
-                        }
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            closeMitraEditModal();
+                            document.dispatchEvent(new CustomEvent('table:updated'));
+                            if (window.CustomAlert) {
+                                CustomAlert.success(result.message || 'Data mitra berhasil diperbarui.');
+                            }
 
-                        if (typeof window.refreshMitraIndex === 'function') {
-                            window.refreshMitraIndex();
+                            if (typeof window.refreshMitraIndex === 'function') {
+                                window.refreshMitraIndex();
+                            }
+                            return;
                         }
-                        return;
                     }
 
                     throw new Error('Unexpected response');
