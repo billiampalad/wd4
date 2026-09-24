@@ -123,7 +123,7 @@
                                         <a href="{{ route('upa.mitra.show', $mitra->id) }}" class="dk-action-btn view" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}')" class="dk-action-btn edit" title="Edit">
+                                        <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}', '{{ addslashes($mitra->provinsi ?? '') }}')" class="dk-action-btn edit" title="Edit">
                                             <i class="fas fa-pen-to-square"></i>
                                         </a>
                                         <form action="{{ route('upa.mitra.destroy', $mitra->id) }}" method="POST" style="display: inline-flex;"

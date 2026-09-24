@@ -137,52 +137,73 @@ class GeoNormalizer
         return ['name' => $canonical, 'code' => $code];
     }
 
+    /**
+     * @return array<string>
+     */
+    public static function getIndonesianProvinces(): array
+    {
+        return [
+            'Aceh', 'Bali', 'Banten', 'Bengkulu', 'DI Yogyakarta', 'DKI Jakarta',
+            'Gorontalo', 'Jambi', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur',
+            'Kalimantan Barat', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Timur', 'Kalimantan Utara',
+            'Kepulauan Bangka Belitung', 'Kepulauan Riau', 'Lampung', 'Maluku', 'Maluku Utara',
+            'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Papua Barat Daya',
+            'Papua Pegunungan', 'Papua Selatan', 'Papua Tengah', 'Riau', 'Sulawesi Barat',
+            'Sulawesi Selatan', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Sulawesi Utara',
+            'Sumatera Barat', 'Sumatera Selatan', 'Sumatera Utara'
+        ];
+    }
+
     private static function detectProvinceNameFromText(string $normalizedText): ?string
     {
         $candidates = [
-            'Aceh' => ['aceh', 'nanggroe aceh darussalam', 'nad'],
-            'Sumatera Utara' => ['sumatera utara', 'sumut'],
-            'Sumatera Barat' => ['sumatera barat', 'sumbar'],
-            'Riau' => ['riau'],
-            'Kepulauan Riau' => ['kepulauan riau', 'kepri'],
-            'Jambi' => ['jambi'],
-            'Bengkulu' => ['bengkulu'],
-            'Sumatera Selatan' => ['sumatera selatan', 'sumsel'],
-            'Kepulauan Bangka Belitung' => ['bangka belitung', 'kepulauan bangka belitung', 'babel'],
-            'Lampung' => ['lampung'],
-            'Banten' => ['banten'],
-            'DKI Jakarta' => ['dki jakarta', 'daerah khusus ibukota', 'jakarta', 'jakarta raya'],
-            'Jawa Barat' => ['jawa barat', 'jabar'],
-            'Jawa Tengah' => ['jawa tengah', 'jateng'],
-            'DI Yogyakarta' => ['di yogyakarta', 'd i yogyakarta', 'diy', 'yogyakarta', 'jogja'],
-            'Jawa Timur' => ['jawa timur', 'jatim'],
-            'Bali' => ['bali'],
-            'Nusa Tenggara Barat' => ['nusa tenggara barat', 'ntb'],
-            'Nusa Tenggara Timur' => ['nusa tenggara timur', 'ntt'],
-            'Kalimantan Barat' => ['kalimantan barat', 'kalbar'],
-            'Kalimantan Tengah' => ['kalimantan tengah', 'kalteng'],
-            'Kalimantan Selatan' => ['kalimantan selatan', 'kalsel'],
-            'Kalimantan Timur' => ['kalimantan timur', 'kaltim'],
-            'Kalimantan Utara' => ['kalimantan utara', 'kalut'],
-            'Sulawesi Utara' => ['sulawesi utara', 'sulut'],
-            'Gorontalo' => ['gorontalo'],
-            'Sulawesi Tengah' => ['sulawesi tengah', 'sulteng'],
-            'Sulawesi Barat' => ['sulawesi barat', 'sulbar'],
-            'Sulawesi Selatan' => ['sulawesi selatan', 'sulsel'],
-            'Sulawesi Tenggara' => ['sulawesi tenggara', 'sultra'],
-            'Maluku' => ['maluku'],
-            'Maluku Utara' => ['maluku utara'],
-            'Papua' => ['papua'],
-            'Papua Barat' => ['papua barat', 'irian jaya barat'],
-            'Papua Selatan' => ['papua selatan'],
-            'Papua Tengah' => ['papua tengah'],
-            'Papua Pegunungan' => ['papua pegunungan'],
-            'Papua Barat Daya' => ['papua barat daya'],
+            'Sulawesi Utara' => ['sulawesi utara', 'sulut', 'manado', 'tomohon', 'bitung', 'minahasa', 'kotamobagu', 'sangihe', 'talaud', 'siau', 'bolmong'],
+            'DKI Jakarta' => ['dki jakarta', 'daerah khusus ibukota', 'jakarta', 'jakarta raya', 'jaksel', 'jakpus', 'jaktim', 'jakbar', 'jakut'],
+            'Jawa Barat' => ['jawa barat', 'jabar', 'bandung', 'bogor', 'depok', 'bekasi', 'cirebon', 'sukabumi', 'tasikmalaya', 'cimahi', 'garut', 'karawang'],
+            'Jawa Timur' => ['jawa timur', 'jatim', 'surabaya', 'malang', 'sidoarjo', 'gresik', 'banyuwangi', 'jember', 'kediri', 'madiun', 'probolinggo', 'pasuruan', 'blitar', 'batu'],
+            'Jawa Tengah' => ['jawa tengah', 'jateng', 'semarang', 'surakarta', 'solo', 'salatiga', 'magelang', 'pekalongan', 'tegal', 'purwokerto', 'banyumas', 'kudus'],
+            'DI Yogyakarta' => ['di yogyakarta', 'd i yogyakarta', 'diy', 'yogyakarta', 'jogja', 'jogjakarta', 'sleman', 'bantul', 'gunungkidul', 'kulon progo'],
+            'Banten' => ['banten', 'tangerang', 'serang', 'cilegon', 'tangsel', 'tangerang selatan', 'pandeglang', 'lebak'],
+            'Bali' => ['bali', 'denpasar', 'badung', 'gianyar', 'tabanan', 'buleleng', 'singaraja', 'ubud', 'kuta'],
+            'Sumatera Utara' => ['sumatera utara', 'sumut', 'medan', 'pematangsiantar', 'binjai', 'tebing tinggi', 'deli serdang', 'karo'],
+            'Sumatera Barat' => ['sumatera barat', 'sumbar', 'padang', 'bukittinggi', 'payakumbuh', 'pariaman', 'solok'],
+            'Sumatera Selatan' => ['sumatera selatan', 'sumsel', 'palembang', 'prabumulih', 'lubuklinggau', 'ogankomering'],
+            'Riau' => ['riau', 'pekanbaru', 'dumai', 'kampar', 'siak', 'bengkalis', 'rokan'],
+            'Kepulauan Riau' => ['kepulauan riau', 'kepri', 'batam', 'tanjungpinang', 'bintan', 'karimun', 'natuna', 'anambas'],
+            'Lampung' => ['lampung', 'bandar lampung', 'metro'],
+            'Jambi' => ['jambi', 'sungai penuh', 'muaro jambi'],
+            'Bengkulu' => ['bengkulu', 'rejang lebong', 'curup'],
+            'Kepulauan Bangka Belitung' => ['bangka belitung', 'kepulauan bangka belitung', 'babel', 'pangkalpinang', 'bangka', 'belitung', 'tanjung pandan'],
+            'Aceh' => ['aceh', 'nanggroe aceh darussalam', 'nad', 'banda aceh', 'lhokseumawe', 'langsa', 'sabang', 'meulaboh'],
+            'Kalimantan Timur' => ['kalimantan timur', 'kaltim', 'samarinda', 'balikpapan', 'bontang', 'kutai', 'penajam paser utara', 'nusantara', 'ikn'],
+            'Kalimantan Barat' => ['kalimantan barat', 'kalbar', 'pontianak', 'singkawang', 'sambas', 'ketapang'],
+            'Kalimantan Selatan' => ['kalimantan selatan', 'kalsel', 'banjarmasin', 'banjarbaru', 'martapura'],
+            'Kalimantan Tengah' => ['kalimantan tengah', 'kalteng', 'palangkaraya', 'sampit', 'pangkalan bun'],
+            'Kalimantan Utara' => ['kalimantan utara', 'kalut', 'tarakan', 'tanjung selor', 'nunukan', 'malinau'],
+            'Sulawesi Selatan' => ['sulawesi selatan', 'sulsel', 'makassar', 'palopo', 'parepare', 'maros', 'gowa', 'bone'],
+            'Sulawesi Tengah' => ['sulawesi tengah', 'sulteng', 'palu', 'poso', 'luwuk', 'donggala', 'toli-toli'],
+            'Sulawesi Tenggara' => ['sulawesi tenggara', 'sultra', 'kendari', 'baubau', 'kolaka', 'wakatobi'],
+            'Sulawesi Barat' => ['sulawesi barat', 'sulbar', 'mamuju', 'majene', 'polewali mandar', 'polman'],
+            'Gorontalo' => ['gorontalo', 'limboto', 'boalemo', 'bone bolango'],
+            'Nusa Tenggara Barat' => ['nusa tenggara barat', 'ntb', 'mataram', 'bima', 'lombok', 'sumbawa'],
+            'Nusa Tenggara Timur' => ['nusa tenggara timur', 'ntt', 'kupang', 'labuan bajo', 'flores', 'ende', 'maumere', 'sumba', 'timor'],
+            'Maluku' => ['maluku', 'ambon', 'tual', 'seram', 'buru'],
+            'Maluku Utara' => ['maluku utara', 'ternate', 'tidore', 'sofifi', 'halmahera'],
+            'Papua' => ['papua', 'jayapura', 'sentani', 'biak', 'yapen', 'keerom', 'sarmi'],
+            'Papua Barat' => ['papua barat', 'irian jaya barat', 'manokwari', 'fakfak', 'kaimana', 'teluk bintuni'],
+            'Papua Barat Daya' => ['papua barat daya', 'sorong', 'raja ampat', 'maybrat', 'tambrauw'],
+            'Papua Selatan' => ['papua selatan', 'merauke', 'boven digoel', 'mappi', 'asmat'],
+            'Papua Tengah' => ['papua tengah', 'nabire', 'mimika', 'timika', 'paniai', 'puncak jaya', 'intan jaya'],
+            'Papua Pegunungan' => ['papua pegunungan', 'wamena', 'jayawijaya', 'yahukimo', 'tolikara', 'lanny jaya', 'yalimo'],
         ];
 
         foreach ($candidates as $province => $needles) {
             foreach ($needles as $needle) {
-                if ($needle !== '' && str_contains($normalizedText, $needle)) {
+                if ($needle === '') {
+                    continue;
+                }
+                $pattern = '/\b' . preg_quote($needle, '/') . '\b/u';
+                if (preg_match($pattern, $normalizedText) === 1) {
                     return $province;
                 }
             }

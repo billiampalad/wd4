@@ -25,6 +25,35 @@ class Mitra extends Model
         'status_akses',
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (Mitra $mitra) {
+            $countryCode = \App\Support\GeoNormalizer::normalizeCountryCode($mitra->country_code ?: $mitra->negara);
+            if ($countryCode !== null) {
+                $mitra->country_code = $countryCode;
+            }
+
+            if (($mitra->negara === null || trim((string) $mitra->negara) === '') && $countryCode !== null) {
+                $countryName = \App\Support\GeoNormalizer::countryNameFromCode($countryCode);
+                if ($countryName !== null) {
+                    $mitra->negara = $countryName;
+                }
+            }
+
+            if (\App\Support\GeoNormalizer::isIndonesia($mitra->negara, $mitra->country_code)) {
+                $provinceNorm = \App\Support\GeoNormalizer::normalizeIndonesiaProvince($mitra->provinsi, $mitra->alamat);
+                if ($provinceNorm['name'] !== null) {
+                    $mitra->provinsi = $provinceNorm['name'];
+                }
+                if ($provinceNorm['code'] !== null) {
+                    $mitra->province_code = $provinceNorm['code'];
+                }
+            } else {
+                $mitra->province_code = null;
+            }
+        });
+    }
+
     public function getTelpAttribute()
     {
         return $this->attributes['telepon'] ?? null;

@@ -22,6 +22,17 @@
         'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
     ];
 
+    const provinces = [
+        'Aceh', 'Bali', 'Banten', 'Bengkulu', 'DI Yogyakarta', 'DKI Jakarta',
+        'Gorontalo', 'Jambi', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur',
+        'Kalimantan Barat', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Timur', 'Kalimantan Utara',
+        'Kepulauan Bangka Belitung', 'Kepulauan Riau', 'Lampung', 'Maluku', 'Maluku Utara',
+        'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Papua Barat Daya',
+        'Papua Pegunungan', 'Papua Selatan', 'Papua Tengah', 'Riau', 'Sulawesi Barat',
+        'Sulawesi Selatan', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Sulawesi Utara',
+        'Sumatera Barat', 'Sumatera Selatan', 'Sumatera Utara'
+    ];
+
     function getCreateModalParts() {
         return {
             modal: document.getElementById('mitraModal'),
@@ -77,6 +88,7 @@
         return {
             kategori: '',
             negara: 'Indonesia',
+            provinsi: '',
             klasifikasiOpen: false,
             klasifikasiSearch: '',
             klasifikasiSelected: '',
@@ -84,16 +96,22 @@
             countryOpen: false,
             countrySearch: '',
             countries: countries,
+            provinceOpen: false,
+            provinceSearch: '',
+            provinces: provinces,
             submitting: false,
             errors: {},
             resetForm() {
                 this.kategori = '';
                 this.negara = 'Indonesia';
+                this.provinsi = '';
                 this.klasifikasiOpen = false;
                 this.klasifikasiSearch = '';
                 this.klasifikasiSelected = '';
                 this.countryOpen = false;
                 this.countrySearch = '';
+                this.provinceOpen = false;
+                this.provinceSearch = '';
                 this.submitting = false;
                 this.errors = {};
                 const form = document.getElementById('mitraModalForm');
@@ -120,6 +138,14 @@
                 const query = this.countrySearch.toLowerCase();
                 return this.countries.filter((country) => country.toLowerCase().includes(query));
             },
+            get filteredProvinces() {
+                if (!this.provinceSearch) {
+                    return this.provinces;
+                }
+
+                const query = this.provinceSearch.toLowerCase();
+                return this.provinces.filter((p) => p.toLowerCase().includes(query));
+            },
             async submitMitra() {
                 this.submitting = true;
                 this.errors = {};
@@ -130,6 +156,7 @@
                 formData.set('id_klasifikasi', this.klasifikasiSelected);
                 formData.set('kategori', this.kategori);
                 formData.set('negara', this.kategori === 'internasional' ? this.negara : 'Indonesia');
+                formData.set('provinsi', this.kategori === 'nasional' ? this.provinsi : '');
 
                 try {
                     const response = await fetch(config.storeUrl, {

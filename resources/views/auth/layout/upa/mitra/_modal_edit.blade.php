@@ -102,6 +102,42 @@
                         </div>
                     </div>
 
+                    <div x-show="kategori === 'nasional'" x-transition class="mitra-edit-row">
+                        <div class="mc-group">
+                            <label class="mc-label">
+                                <i class="fas fa-map-marked-alt mitra-edit-label-icon"></i>Provinsi
+                            </label>
+                            <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
+                                <div class="ad-trigger" :class="{'active': provinceOpen}"
+                                    @click="provinceOpen = !provinceOpen; $nextTick(() => { if(provinceOpen) $refs.mkeProvinceSearch.focus() })">
+                                    <div class="mitra-edit-trigger-content is-compact">
+                                        <i class="fas fa-map-pin mitra-edit-muted-icon"></i>
+                                        <span x-show="!provinsi" class="mitra-edit-placeholder">- Pilih Provinsi (Opsional / Otomatis) -</span>
+                                        <span x-show="provinsi" x-text="provinsi" class="mitra-edit-selected is-normal"></span>
+                                    </div>
+                                    <i class="fas fa-chevron-down mitra-edit-chevron is-small" :class="{'is-open': provinceOpen}"></i>
+                                </div>
+                                <div class="ad-menu mitra-edit-menu is-scrollable" x-show="provinceOpen" x-transition>
+                                    <div class="mitra-create-search-wrap">
+                                        <div class="mitra-create-search">
+                                            <i class="fas fa-search"></i>
+                                            <input x-ref="mkeProvinceSearch" x-model="provinceSearch" type="text" placeholder="Cari provinsi..." @click.stop>
+                                        </div>
+                                    </div>
+                                    <div class="mitra-edit-menu-list is-country">
+                                        <div class="ad-item" :class="{'selected': !provinsi}"
+                                            @click="provinsi = ''; provinceOpen = false; provinceSearch = ''">- Otomatis dari Alamat -</div>
+                                        <template x-for="item in filteredProvinces" :key="item">
+                                            <div class="ad-item" :class="{'selected': provinsi === item}"
+                                                @click="provinsi = item; provinceOpen = false; provinceSearch = ''"
+                                                x-text="item"></div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div x-show="kategori === 'internasional'" x-transition class="mitra-edit-row">
                         <div class="mc-group">
                             <label class="mc-label">

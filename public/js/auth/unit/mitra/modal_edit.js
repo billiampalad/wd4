@@ -22,6 +22,17 @@
         'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
     ];
 
+    const provinces = [
+        'Aceh', 'Bali', 'Banten', 'Bengkulu', 'DI Yogyakarta', 'DKI Jakarta',
+        'Gorontalo', 'Jambi', 'Jawa Barat', 'Jawa Tengah', 'Jawa Timur',
+        'Kalimantan Barat', 'Kalimantan Selatan', 'Kalimantan Tengah', 'Kalimantan Timur', 'Kalimantan Utara',
+        'Kepulauan Bangka Belitung', 'Kepulauan Riau', 'Lampung', 'Maluku', 'Maluku Utara',
+        'Nusa Tenggara Barat', 'Nusa Tenggara Timur', 'Papua', 'Papua Barat', 'Papua Barat Daya',
+        'Papua Pegunungan', 'Papua Selatan', 'Papua Tengah', 'Riau', 'Sulawesi Barat',
+        'Sulawesi Selatan', 'Sulawesi Tengah', 'Sulawesi Tenggara', 'Sulawesi Utara',
+        'Sumatera Barat', 'Sumatera Selatan', 'Sumatera Utara'
+    ];
+
     function getEditModalParts() {
         return {
             modal: document.getElementById('mitraEditModal'),
@@ -30,7 +41,7 @@
         };
     }
 
-    window.openMitraEditModal = function (id, namaMitra, idKlasifikasi, kategori, negara, alamat, telp, website) {
+    window.openMitraEditModal = function (id, namaMitra, idKlasifikasi, kategori, negara, alamat, telp, website, provinsi) {
         const parts = getEditModalParts();
 
         if (!parts.modal || !parts.backdrop || !parts.box) {
@@ -44,6 +55,7 @@
                 id_klasifikasi: idKlasifikasi,
                 kategori: kategori,
                 negara: negara,
+                provinsi: provinsi || '',
                 alamat: alamat,
                 telp: telp,
                 website: website
@@ -88,6 +100,7 @@
             website: '',
             kategori: '',
             negara: 'Indonesia',
+            provinsi: '',
             klasifikasiOpen: false,
             klasifikasiSearch: '',
             klasifikasiSelected: '',
@@ -95,6 +108,9 @@
             countryOpen: false,
             countrySearch: '',
             countries: countries,
+            provinceOpen: false,
+            provinceSearch: '',
+            provinces: provinces,
             submitting: false,
             errors: {},
             get selectedKlasifikasi() {
@@ -116,12 +132,21 @@
                 const query = this.countrySearch.toLowerCase();
                 return this.countries.filter((country) => country.toLowerCase().includes(query));
             },
+            get filteredProvinces() {
+                if (!this.provinceSearch) {
+                    return this.provinces;
+                }
+
+                const query = this.provinceSearch.toLowerCase();
+                return this.provinces.filter((p) => p.toLowerCase().includes(query));
+            },
             setEditData(detail) {
                 this.mitraId = detail.id || '';
                 this.nama_mitra = detail.nama_mitra || '';
                 this.klasifikasiSelected = String(detail.id_klasifikasi || '');
                 this.kategori = detail.kategori || '';
                 this.negara = detail.negara || 'Indonesia';
+                this.provinsi = detail.provinsi || '';
                 this.alamat = detail.alamat || '';
                 this.telp = detail.telp || '';
                 this.website = detail.website || '';
@@ -129,6 +154,8 @@
                 this.klasifikasiSearch = '';
                 this.countryOpen = false;
                 this.countrySearch = '';
+                this.provinceOpen = false;
+                this.provinceSearch = '';
                 this.submitting = false;
                 this.errors = {};
             },
@@ -143,6 +170,7 @@
                 formData.set('nama_mitra', this.nama_mitra);
                 formData.set('kategori', this.kategori);
                 formData.set('negara', this.kategori === 'internasional' ? this.negara : 'Indonesia');
+                formData.set('provinsi', this.kategori === 'nasional' ? this.provinsi : '');
                 formData.set('alamat', this.alamat);
                 formData.set('telp', this.telp);
                 formData.set('website', this.website);
