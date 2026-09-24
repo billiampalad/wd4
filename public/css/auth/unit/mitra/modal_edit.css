@@ -122,6 +122,12 @@
     padding: 8px 14px;
 }
 
+.mitra-edit-box .ad-trigger.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--surface2);
+}
+
 .mitra-edit-trigger-content {
     display: flex;
     align-items: center;

@@ -125,6 +125,12 @@
     padding: 8px 14px;
 }
 
+.mitra-create-box .ad-trigger.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--surface2);
+}
+
 .mitra-create-trigger-content,
 .mitra-create-inline {
     display: flex;
