@@ -41,12 +41,16 @@
                         @endif
                         <span style="color: rgba(255,255,255,0.7); font-size: 13px;">
                             <i class="fas fa-location-dot" style="margin-right: 6px;"></i>
-                            {{ $mitra->negara ?: 'Indonesia' }}
+                            @if($mitra->kategori === 'nasional')
+                                {{ implode(', ', array_filter([$mitra->kota, $mitra->provinsi, 'Indonesia'])) }}
+                            @else
+                                {{ implode(', ', array_filter([$mitra->kota, $mitra->negara ?: 'Internasional'])) }}
+                            @endif
                         </span>
                     </div>
                 </div>
                 <div class="dk-hero-action">
-                    <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}')" class="dk-primary-btn" style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; min-height: 40px; padding: 0 18px; border-radius: 10px; font-size: 13px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); border: none;">
+                    <a href="javascript:void(0)" onclick="openMitraEditModal('{{ $mitra->id }}', '{{ addslashes($mitra->nama_mitra) }}', '{{ $mitra->id_klasifikasi }}', '{{ $mitra->kategori }}', '{{ addslashes($mitra->negara) }}', '{{ addslashes($mitra->alamat) }}', '{{ addslashes($mitra->telp) }}', '{{ addslashes($mitra->website) }}', '{{ addslashes($mitra->provinsi ?? '') }}', '{{ addslashes($mitra->kota ?? '') }}', '{{ addslashes($mitra->kecamatan ?? '') }}', '{{ addslashes($mitra->kelurahan ?? '') }}')" class="dk-primary-btn" style="background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; min-height: 40px; padding: 0 18px; border-radius: 10px; font-size: 13px; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); border: none;">
                         <i class="fas fa-pen-to-square"></i>
                         <span>Edit Profil</span>
                     </a>
@@ -79,10 +83,10 @@
             </div>
         </div>
         <div class="dk-stat-card dk-stat-danger">
-            <div class="dk-stat-icon"><i class="fas fa-earth-asia"></i></div>
+            <div class="dk-stat-icon"><i class="fas {{ $mitra->kategori === 'nasional' ? 'fa-map-location-dot' : 'fa-earth-asia' }}"></i></div>
             <div>
-                <span class="dk-stat-label">Negara Asal</span>
-                <div>{{ $mitra->negara ?: 'Indonesia' }}</div>
+                <span class="dk-stat-label">{{ $mitra->kategori === 'nasional' ? 'Provinsi / Kota' : 'Negara Asal' }}</span>
+                <div>{{ $mitra->kategori === 'nasional' ? ($mitra->provinsi ?: ($mitra->kota ?: 'Indonesia')) : ($mitra->negara ?: 'Internasional') }}</div>
             </div>
         </div>
     </section>
@@ -94,44 +98,92 @@
                 <div class="card-header dk-card-header">
                     <div class="dk-card-title">
                         <span class="dk-title-icon"><i class="fas fa-id-card"></i></span>
-                        <span><strong>Informasi Kontak</strong></span>
+                        <span><strong>Informasi Mitra</strong></span>
                     </div>
                 </div>
                 <div class="card-body dk-card-body" style="padding: 24px;">
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        {{-- Alamat Kantor --}}
                         <div class="dk-entity" style="padding: 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border);">
-                            <span class="dk-entity-icon dk-entity-indigo"><i class="fas fa-map-location-dot"></i></span>
-                            <div class="dk-entity-text">
+                            <span class="dk-entity-icon dk-entity-indigo"><i class="fas fa-map-marker-alt"></i></span>
+                            <div class="dk-entity-text" style="padding-top: 0; width: 100%;">
                                 <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Alamat Kantor</small>
                                 <span style="font-size: 13px; font-weight: 600;">{{ $mitra->alamat ?: '-' }}</span>
-                                @php
-                                    $geoParts = array_filter([
-                                        $mitra->kelurahan ? 'Kel. ' . $mitra->kelurahan : null,
-                                        $mitra->kecamatan ? 'Kec. ' . $mitra->kecamatan : null,
-                                        $mitra->kota,
-                                        $mitra->provinsi,
-                                        $mitra->negara
-                                    ]);
-                                @endphp
-                                @if(count($geoParts) > 0)
-                                    <small style="display: block; font-size: 11px; color: var(--text-sub); margin-top: 4px;">
-                                        <i class="fas fa-location-dot" style="font-size: 9px; margin-right: 3px;"></i>{{ implode(', ', $geoParts) }}
-                                    </small>
-                                @endif
                             </div>
                         </div>
 
+                        @if($mitra->kategori === 'nasional')
+                            {{-- Wilayah (Provinsi & Kota) --}}
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-blue" style="color: #2563eb; background: rgba(37, 99, 235, 0.1);"><i class="fas fa-map-marked-alt"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Provinsi</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->provinsi ?: '-' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-emerald"><i class="fas fa-city"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Kota / Kab.</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->kota ?: '-' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Wilayah (Kecamatan & Kelurahan) --}}
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-amber" style="color: #d97706; background: rgba(217, 119, 6, 0.1);"><i class="fas fa-map-location-dot"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Kecamatan</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->kecamatan ?: '-' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-rose" style="color: #e11d48; background: rgba(225, 29, 72, 0.1);"><i class="fas fa-signs-post"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Kelurahan / Desa</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->kelurahan ?: '-' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Wilayah Internasional (Negara & City) --}}
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-blue" style="color: #2563eb; background: rgba(37, 99, 235, 0.1);"><i class="fas fa-globe-americas"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Negara</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->negara ?: '-' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="dk-entity" style="padding: 10px 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border); min-width: 0;">
+                                    <span class="dk-entity-icon dk-entity-emerald"><i class="fas fa-city"></i></span>
+                                    <div class="dk-entity-text" style="padding-top: 0; min-width: 0;">
+                                        <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">City / Kota</small>
+                                        <span style="font-size: 12px; font-weight: 600; word-break: break-word;">{{ $mitra->kota ?: '-' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Telepon / Fax --}}
                         <div class="dk-entity" style="padding: 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border);">
                             <span class="dk-entity-icon dk-entity-cyan"><i class="fas fa-phone-volume"></i></span>
-                            <div class="dk-entity-text">
+                            <div class="dk-entity-text" style="padding-top: 0; width: 100%;">
                                 <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Telepon / Fax</small>
                                 <span style="font-size: 14px; font-weight: 700;">{{ $mitra->telp ?: '-' }}</span>
                             </div>
                         </div>
 
+                        {{-- Website Resmi --}}
                         <div class="dk-entity" style="padding: 12px; background: var(--surface2); border-radius: 12px; border: 1px solid var(--border);">
                             <span class="dk-entity-icon dk-entity-violet"><i class="fas fa-globe"></i></span>
-                            <div class="dk-entity-text">
+                            <div class="dk-entity-text" style="padding-top: 0; width: 100%;">
                                 <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Website Resmi</small>
                                 @if($mitra->website)
                                     <a href="{{ $mitra->website }}" target="_blank" style="font-size: 13px; font-weight: 700; color: var(--accent); text-decoration: none; word-break: break-all;">
