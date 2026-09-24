@@ -121,6 +121,9 @@
         ->values()
         ->all();
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
+    $prodiOptions = isset($prodis) ? collect($prodis)->map(fn ($p) => ['id' => $p->id, 'jurusan_id' => $p->jurusan_id, 'nama' => $p->nama_prodi, 'jenjang' => $p->jenjang])->values()->all() : [];
+    $upaOptions = isset($upas) ? collect($upas)->map(fn ($u) => ['id' => $u->id, 'nama' => $u->nama_upa])->values()->all() : [];
+    $pusatOptions = isset($pusats) ? collect($pusats)->map(fn ($ps) => ['id' => $ps->id, 'nama' => $ps->nama_pusat])->values()->all() : [];
 @endphp
 
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
@@ -562,7 +565,7 @@
                                             <div class="mc-input-wrap" style="margin-top: 8px;">
                                                 <i class="fas fa-file-contract mc-icon-left"></i>
                                                 <input type="text" name="pks_numbers[]" x-model="numbers[index]"
-                                                    placeholder="Masukkan nomor PKS..." class="mc-input @if($errors->has('pks_numbers.*')) is-invalid @endif"
+                                                    placeholder="Masukkan nomor PKS..." class="mc-input @error('pks_numbers.*') is-invalid @enderror"
                                                     style="height: 48px; padding-right: 48px;" />
                                                 <button type="button" @click="remove(index)" x-show="numbers.length > 1"
                                                     title="Hapus nomor PKS"
@@ -571,9 +574,9 @@
                                                 </button>
                                             </div>
                                         </template>
-                                        @if($errors->has('pks_numbers.*'))
-                                        <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $errors->first('pks_numbers.*') }}</span>
-                                        @endif
+                                        @error('pks_numbers.*')
+                                        <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                        @enderror
                                     </div>
 
                                     @error('jenis')
@@ -769,11 +772,7 @@
 
                                             {{-- Prodi data (used by nested x-data scopes) --}}
                                             selectedProdis: {{ \Illuminate\Support\Js::from($selectedProdiIds) }},
-                                            prodiItems: [
-                                                @foreach($prodis ?? [] as $p)
-                                                    { id: {{ $p->id }}, jurusan_id: {{ $p->jurusan_id }}, nama: '{{ addslashes($p->nama_prodi) }}', jenjang: '{{ $p->jenjang }}' },
-                                                @endforeach
-                                            ],
+                                            prodiItems: @js($prodiOptions),
                                             toggleProdi(id) {
                                                 if (this.selectedProdis.includes(id)) {
                                                     this.selectedProdis = this.selectedProdis.filter(i => i !== id);
@@ -789,11 +788,7 @@
                                             {{-- UPA multi-select --}}
                                             upaOpen: false,
                                             selectedUpas: {{ \Illuminate\Support\Js::from($selectedUpaIds) }},
-                                            upaItems: [
-                                                @foreach($upas ?? [] as $u)
-                                                    { id: {{ $u->id }}, nama: '{{ addslashes($u->nama_upa) }}' },
-                                                @endforeach
-                                            ],
+                                            upaItems: @js($upaOptions),
                                             toggleUpa(id) {
                                                 if (this.selectedUpas.includes(id)) { this.selectedUpas = this.selectedUpas.filter(i => i !== id); }
                                                 else { this.selectedUpas.push(id); }
@@ -803,11 +798,7 @@
                                             {{-- Pusat multi-select --}}
                                             pusatOpen: false,
                                             selectedPusats: {{ \Illuminate\Support\Js::from($selectedPusatIds) }},
-                                            pusatItems: [
-                                                @foreach($pusats ?? [] as $ps)
-                                                    { id: {{ $ps->id }}, nama: '{{ addslashes($ps->nama_pusat) }}' },
-                                                @endforeach
-                                            ],
+                                            pusatItems: @js($pusatOptions),
                                             togglePusat(id) {
                                                 if (this.selectedPusats.includes(id)) { this.selectedPusats = this.selectedPusats.filter(i => i !== id); }
                                                 else { this.selectedPusats.push(id); }
