@@ -12,7 +12,6 @@ class Mitra extends Model
 
     protected $fillable = [
         'nama_mitra',
-        'klasifikasi_id',
         'id_klasifikasi',
         'alamat',
         'kota',
@@ -25,16 +24,6 @@ class Mitra extends Model
         'website',
         'status_akses',
     ];
-
-    public function getIdKlasifikasiAttribute()
-    {
-        return $this->attributes['klasifikasi_id'] ?? null;
-    }
-
-    public function setIdKlasifikasiAttribute($value)
-    {
-        $this->attributes['klasifikasi_id'] = $value ?: null;
-    }
 
     public function getTelpAttribute()
     {
@@ -107,6 +96,6 @@ class Mitra extends Model
 
     public function klasifikasi(): BelongsTo
     {
-        return $this->belongsTo(Klasifikasi::class, 'klasifikasi_id');
+        return $this->belongsTo(Klasifikasi::class, 'id_klasifikasi');
     }
 }

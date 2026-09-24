@@ -254,7 +254,7 @@
                                                 <option value="">Pilih klasifikasi</option>
                                                 @foreach ($klasifikasis as $klasifikasi)
                                                     <option value="{{ $klasifikasi->id }}"
-                                                        {{ (string) old('id_klasifikasi', $mitra->klasifikasi_id ?? '') === (string) $klasifikasi->id ? 'selected' : '' }}>
+                                                        {{ (string) old('id_klasifikasi', $mitra->id_klasifikasi ?? '') === (string) $klasifikasi->id ? 'selected' : '' }}>
                                                         {{ $klasifikasi->nama }}
                                                     </option>
                                                 @endforeach

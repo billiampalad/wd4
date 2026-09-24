@@ -168,7 +168,7 @@ class PengajuanKerjasamaMitraController extends Controller
                     if (! $mitra && $submission->nama_mitra) {
                         $mitra = Mitra::create([
                             'nama_mitra' => $submission->nama_mitra,
-                            'klasifikasi_id' => $submission->id_klasifikasi,
+                            'id_klasifikasi' => $submission->id_klasifikasi,
                             'alamat' => $submission->alamat ?: '-',
                             'negara' => $submission->negara,
                             'telepon' => $submission->telp,
@@ -177,7 +177,7 @@ class PengajuanKerjasamaMitraController extends Controller
                         ]);
                     } elseif ($mitra) {
                         $mitra->fill([
-                            'klasifikasi_id' => $mitra->klasifikasi_id ?: $submission->id_klasifikasi,
+                            'id_klasifikasi' => $mitra->id_klasifikasi ?: $submission->id_klasifikasi,
                             'alamat' => $mitra->alamat ?: $submission->alamat,
                             'negara' => $mitra->negara ?: $submission->negara,
                             'telepon' => $mitra->telepon ?: $submission->telp,

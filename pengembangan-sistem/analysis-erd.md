@@ -137,7 +137,7 @@ erDiagram
     mitras {
         bigint id PK
         string nama_mitra
-        bigint klasifikasi_id FK
+        bigint id_klasifikasi FK
         string status_akses
     }
 
@@ -245,7 +245,7 @@ Menyimpan data profil perusahaan/instansi mitra DUDIKA.
 |---|---|---|---|---|---|
 | `id` | BIGINT UNSIGNED | NO | PK | Auto-Increment | Identitas unik mitra |
 | `nama_mitra` | VARCHAR(255) | NO | - | - | Nama resmi perusahaan/instansi |
-| `klasifikasi_id` | BIGINT UNSIGNED | YES | FK | NULL | Relasi ke `klasifikasis.id` |
+| `id_klasifikasi` | BIGINT UNSIGNED | YES | FK | NULL | Relasi ke `klasifikasis.id` |
 | `alamat` | TEXT | YES | - | NULL | Alamat kantor pusat / cabang |
 | `kota` | VARCHAR(100) | YES | - | NULL | Kota / Kabupaten |
 | `provinsi` | VARCHAR(100) | YES | - | NULL | Provinsi |
@@ -585,7 +585,7 @@ Tabel berikut meringkas seluruh relasi antar entitas beserta kardinalitas dan ak
 | `roles` | `users` | 1 : N | `roles.id` | `users.role_id` | `RESTRICT` |
 | `users` | `profiles` | 1 : 1 | `users.id` | `profiles.user_id` | `CASCADE` |
 | `mitras` | `users` | 1 : N | `mitras.id` | `users.mitra_id` | `SET NULL` |
-| `klasifikasis` | `mitras` | 1 : N | `klasifikasis.id` | `mitras.klasifikasi_id` | `SET NULL` |
+| `klasifikasis` | `mitras` | 1 : N | `klasifikasis.id` | `mitras.id_klasifikasi` | `SET NULL` |
 | `jurusans` | `prodis` | 1 : N | `jurusans.id` | `prodis.jurusan_id` | `CASCADE` |
 | `cooperations` | `cooperations` | 1 : N | `cooperations.id` | `cooperations.parent_cooperation_id` | `SET NULL` |
 | `mitras` | `cooperations` | 1 : N | `mitras.id` | `cooperations.mitra_id` | `RESTRICT` |

@@ -39,7 +39,7 @@ class MitraController extends Controller
 
         Mitra::create([
             'nama_mitra' => $request->nama_mitra,
-            'klasifikasi_id' => $request->id_klasifikasi,
+            'id_klasifikasi' => $request->id_klasifikasi,
             'negara' => $request->negara,
             'alamat' => $request->alamat,
             'telepon' => $request->telp,
@@ -70,7 +70,7 @@ class MitraController extends Controller
 
         $mitra->update([
             'nama_mitra' => $request->nama_mitra,
-            'klasifikasi_id' => $request->id_klasifikasi,
+            'id_klasifikasi' => $request->id_klasifikasi,
             'negara' => $request->negara,
             'alamat' => $request->alamat,
             'telepon' => $request->telp,

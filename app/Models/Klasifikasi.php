@@ -18,6 +18,6 @@ class Klasifikasi extends Model
 
     public function mitras(): HasMany
     {
-        return $this->hasMany(Mitra::class, 'klasifikasi_id');
+        return $this->hasMany(Mitra::class, 'id_klasifikasi');
     }
 }

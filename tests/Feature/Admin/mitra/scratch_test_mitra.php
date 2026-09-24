@@ -44,7 +44,7 @@ try {
         echo "       - ID           : {$newMitra->id}\n";
         echo "       - Nama Mitra   : {$newMitra->nama_mitra}\n";
         echo "       - Telepon      : {$newMitra->telepon}\n";
-        echo "       - Klasifikasi  : {$newMitra->klasifikasi_id}\n";
+        echo "       - Klasifikasi  : {$newMitra->id_klasifikasi}\n";
         echo "       - Negara       : {$newMitra->negara}\n";
     } else {
         echo "   [✗] STATUS: GAGAL MENYIMPAN\n";

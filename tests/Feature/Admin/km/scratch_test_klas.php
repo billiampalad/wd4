@@ -66,20 +66,20 @@ try {
     // Buat Mitra dummy yang terikat ke Klasifikasi ini
     $mitra = Mitra::create([
         'nama_mitra' => 'Mitra Klasifikasi Test',
-        'klasifikasi_id' => $newKlas->id,
+        'id_klasifikasi' => $newKlas->id,
         'negara' => 'Indonesia'
     ]);
     
     // Hapus klasifikasi
     $controller->destroy($newKlas);
     
-    // Cek apakah Mitra masih ada dan klasifikasi_id menjadi NULL
+    // Cek apakah Mitra masih ada dan id_klasifikasi menjadi NULL
     $mitra->refresh();
-    if ($mitra && $mitra->klasifikasi_id === null) {
+    if ($mitra && $mitra->id_klasifikasi === null) {
         echo "   [✓] STATUS: BERHASIL!\n";
-        echo "       Klasifikasi terhapus, dan Mitra ID {$mitra->id} kini tidak memiliki klasifikasi (klasifikasi_id = NULL).\n";
+        echo "       Klasifikasi terhapus, dan Mitra ID {$mitra->id} kini tidak memiliki klasifikasi (id_klasifikasi = NULL).\n";
     } else {
-        echo "   [✗] STATUS: GAGAL. (Mitra mungkin terhapus atau klasifikasi_id tidak NULL)\n";
+        echo "   [✗] STATUS: GAGAL. (Mitra mungkin terhapus atau id_klasifikasi tidak NULL)\n";
     }
 
 } catch (\Exception $e) {

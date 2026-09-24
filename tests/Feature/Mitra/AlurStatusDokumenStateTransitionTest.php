@@ -34,9 +34,9 @@ class AlurStatusDokumenStateTransitionTest extends TestCase
     {
         parent::setUp();
 
-        $this->rolePimpinan = Role::firstOrCreate(['name' => 'pimpinan'], ['guard_name' => 'web']);
-        $this->roleJurusan = Role::firstOrCreate(['name' => 'jurusan'], ['guard_name' => 'web']);
-        $this->roleMitra = Role::firstOrCreate(['name' => 'mitra'], ['guard_name' => 'web']);
+        $this->rolePimpinan = Role::firstOrCreate(['role_name' => 'pimpinan'], ['guard_name' => 'web']);
+        $this->roleJurusan = Role::firstOrCreate(['role_name' => 'jurusan'], ['guard_name' => 'web']);
+        $this->roleMitra = Role::firstOrCreate(['role_name' => 'mitra'], ['guard_name' => 'web']);
 
         $klasifikasi = Klasifikasi::firstOrCreate(['nama' => 'Industri Otomasi & Robotika']);
 
@@ -60,7 +60,7 @@ class AlurStatusDokumenStateTransitionTest extends TestCase
         ]);
 
         $this->mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT ABB Sakti Industri'], [
-            'klasifikasi_id' => $klasifikasi->id,
+            'id_klasifikasi' => $klasifikasi->id,
             'status_akses' => 'Aktif',
             'telepon' => '021-888999',
         ]);

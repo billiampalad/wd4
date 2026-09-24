@@ -14,7 +14,7 @@ return new class extends Migration
         DB::statement(<<<SQL
 CREATE TABLE `mitras` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `klasifikasi_id` bigint unsigned DEFAULT NULL,
+  `id_klasifikasi` bigint unsigned DEFAULT NULL,
   `nama_mitra` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `alamat` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `kota` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -30,8 +30,8 @@ CREATE TABLE `mitras` (
   PRIMARY KEY (`id`),
   KEY `mitras_country_code_index` (`country_code`),
   KEY `mitras_province_code_index` (`province_code`),
-  KEY `mitras_klasifikasi_id_foreign` (`klasifikasi_id`),
-  CONSTRAINT `mitras_klasifikasi_id_foreign` FOREIGN KEY (`klasifikasi_id`) REFERENCES `klasifikasis` (`id`) ON DELETE SET NULL
+  KEY `mitras_id_klasifikasi_foreign` (`id_klasifikasi`),
+  CONSTRAINT `mitras_id_klasifikasi_foreign` FOREIGN KEY (`id_klasifikasi`) REFERENCES `klasifikasis` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL
         );

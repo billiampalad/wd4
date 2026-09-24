@@ -804,7 +804,7 @@ class UnitPageController extends Controller
 
         $mitra = Mitra::create([
             'nama_mitra' => $request->nama_mitra,
-            'klasifikasi_id' => $request->id_klasifikasi,
+            'id_klasifikasi' => $request->id_klasifikasi,
             'alamat' => $request->alamat,
             'kategori' => $request->kategori,
             'negara' => $request->negara ?? 'Indonesia',
@@ -859,7 +859,7 @@ class UnitPageController extends Controller
         $mitra = Mitra::findOrFail($id);
         $mitra->update([
             'nama_mitra' => $request->nama_mitra,
-            'klasifikasi_id' => $request->id_klasifikasi,
+            'id_klasifikasi' => $request->id_klasifikasi,
             'alamat' => $request->alamat,
             'kategori' => $request->kategori,
             'negara' => $request->negara ?? 'Indonesia',
@@ -915,8 +915,7 @@ class UnitPageController extends Controller
             'id' => $mitra->id,
             'nama' => $mitra->nama_mitra,
             'nama_mitra' => $mitra->nama_mitra,
-            'id_klasifikasi' => $mitra->klasifikasi_id ?? $mitra->id_klasifikasi,
-            'klasifikasi_id' => $mitra->klasifikasi_id ?? $mitra->id_klasifikasi,
+            'id_klasifikasi' => $mitra->id_klasifikasi,
             'klasifikasi' => $mitra->klasifikasi?->nama,
             'kategori' => $mitra->kategori,
             'negara' => $mitra->negara ?? 'Indonesia',

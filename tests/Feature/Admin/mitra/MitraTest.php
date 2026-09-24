@@ -22,7 +22,7 @@ class MitraTest extends TestCase
     {
         parent::setUp();
         
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole = Role::firstOrCreate(['role_name' => 'admin']);
         $this->adminUser = User::factory()->create([
             'role_id' => $adminRole->id,
             'email' => 'admin_mitra@wd4.com',
@@ -60,7 +60,7 @@ class MitraTest extends TestCase
 
         $this->assertDatabaseHas('mitras', [
             'nama_mitra' => $namaMitra,
-            'klasifikasi_id' => $this->klasifikasi->id,
+            'id_klasifikasi' => $this->klasifikasi->id,
             'telepon' => '081234567890',
         ]);
     }

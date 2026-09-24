@@ -73,7 +73,7 @@ class DashboardJurusanController extends Controller
         // 7. Statistik Tambahan
         $mitraStats = DB::table('mitras')
             ->join('cooperations', 'mitras.id', '=', 'cooperations.mitra_id')
-            ->leftJoin('klasifikasis', 'mitras.klasifikasi_id', '=', 'klasifikasis.id')
+            ->leftJoin('klasifikasis', 'mitras.id_klasifikasi', '=', 'klasifikasis.id')
             ->where('cooperations.jurusan_id', $id_jurusan)
             ->select(DB::raw('COALESCE(klasifikasis.nama, "Lainnya") as kategori'), DB::raw('count(DISTINCT mitras.id) as total'))
             ->groupBy(DB::raw('COALESCE(klasifikasis.nama, "Lainnya")'))
