@@ -841,13 +841,18 @@ class PusatPageController extends Controller
     public function mitraStore(Request $request)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
+            'nama_mitra' => 'required|string|max:255|unique:mitras,nama_mitra',
             'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'alamat' => 'nullable|string|max:255',
             'kategori' => 'required|string|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
-            'telp' => 'nullable|string|max:20',
+            'telp' => 'nullable|string|max:50',
             'website' => 'nullable|string|max:255',
+        ], [
+            'nama_mitra.unique' => 'Nama mitra/instansi ini sudah terdaftar dalam sistem.',
+            'nama_mitra.required' => 'Nama mitra/instansi wajib diisi.',
+            'kategori.required' => 'Kategori mitra wajib dipilih.',
+            'id_klasifikasi.exists' => 'Klasifikasi yang dipilih tidak valid.',
         ]);
 
         $mitra = \App\Models\Mitra::create([
@@ -890,13 +895,18 @@ class PusatPageController extends Controller
     public function mitraUpdate(Request $request, $id)
     {
         $request->validate([
-            'nama_mitra' => 'required|string|max:255',
+            'nama_mitra' => 'required|string|max:255|unique:mitras,nama_mitra,' . $id,
             'id_klasifikasi' => 'nullable|exists:klasifikasis,id',
             'alamat' => 'nullable|string|max:255',
             'kategori' => 'required|string|in:nasional,internasional',
             'negara' => 'nullable|string|max:255',
-            'telp' => 'nullable|string|max:20',
+            'telp' => 'nullable|string|max:50',
             'website' => 'nullable|string|max:255',
+        ], [
+            'nama_mitra.unique' => 'Nama mitra/instansi ini sudah terdaftar dalam sistem.',
+            'nama_mitra.required' => 'Nama mitra/instansi wajib diisi.',
+            'kategori.required' => 'Kategori mitra wajib dipilih.',
+            'id_klasifikasi.exists' => 'Klasifikasi yang dipilih tidak valid.',
         ]);
 
         $mitra = \App\Models\Mitra::findOrFail($id);

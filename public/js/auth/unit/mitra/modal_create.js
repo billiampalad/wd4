@@ -145,6 +145,10 @@
                     if (response.status === 422) {
                         const data = await response.json();
                         this.errors = data.errors || {};
+                        if (window.CustomAlert) {
+                            const firstError = Object.values(this.errors)[0]?.[0] || 'Validasi gagal.';
+                            CustomAlert.error(firstError);
+                        }
                         return;
                     }
 
