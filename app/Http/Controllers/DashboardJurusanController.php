@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cooperation;
+use App\Models\KegiatanKerjasama;
 use App\Models\Notifikasi;
 use App\Models\Profile;
 use Illuminate\Support\Facades\DB;
