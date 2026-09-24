@@ -143,12 +143,11 @@
                                         </div>
                                         <div class="mitra-edit-menu-list is-country">
                                             <div class="ad-item" :class="{'selected': !provinsi}"
-                                                @click="provinsi = ''; provinceOpen = false; provinceSearch = ''">-
-                                                Otomatis dari Alamat -</div>
-                                            <template x-for="item in filteredProvinces" :key="item">
-                                                <div class="ad-item" :class="{'selected': provinsi === item}"
-                                                    @click="provinsi = item; provinceOpen = false; provinceSearch = ''"
-                                                    x-text="item"></div>
+                                                @click="selectProvince(null)">- Pilih Provinsi -</div>
+                                            <template x-for="item in filteredProvinces" :key="item.id || item.name">
+                                                <div class="ad-item" :class="{'selected': provinsi === item.name}"
+                                                    @click="selectProvince(item)"
+                                                    x-text="item.name"></div>
                                             </template>
                                         </div>
                                     </div>
@@ -158,10 +157,43 @@
                                 <label class="mc-label">
                                     <i class="fas fa-city mitra-edit-label-icon"></i>Kota / Kabupaten
                                 </label>
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-city mc-icon-left"></i>
-                                    <input type="text" x-model="kota" placeholder="Contoh: Manado / Minahasa"
-                                        class="mc-input">
+                                <div class="alpine-dropdown" @click.outside="cityOpen = false; citySearch = ''">
+                                    <div class="ad-trigger no-icon" :class="{'active': cityOpen, 'disabled': !provinsi}"
+                                        @click="if(!provinsi) return; cityOpen = !cityOpen; $nextTick(() => { if(cityOpen) $refs.mkeCitySearch.focus() })">
+                                        <div class="mitra-edit-trigger-content is-compact">
+                                            <i class="fas fa-city mitra-edit-muted-icon"></i>
+                                            <span x-show="!kota && !provinsi" class="mitra-edit-placeholder">- Pilih Provinsi Dahulu -</span>
+                                            <span x-show="!kota && provinsi" class="mitra-edit-placeholder">- Pilih Kota / Kabupaten -</span>
+                                            <span x-show="kota" x-text="kota" class="mitra-edit-selected is-normal"></span>
+                                        </div>
+                                        <i class="fas fa-chevron-down mitra-edit-chevron is-small"
+                                            :class="{'is-open': cityOpen}"></i>
+                                    </div>
+                                    <div class="ad-menu mitra-edit-menu is-scrollable" x-show="cityOpen"
+                                        x-transition>
+                                        <div class="mitra-edit-search-wrap">
+                                            <div class="mitra-edit-search">
+                                                <i class="fas fa-search"></i>
+                                                <input x-ref="mkeCitySearch" x-model="citySearch" type="text"
+                                                    placeholder="Cari kota/kabupaten..." @click.stop>
+                                            </div>
+                                        </div>
+                                        <div class="mitra-edit-menu-list is-country">
+                                            <div class="ad-item" :class="{'selected': !kota}"
+                                                @click="selectCity(null)">- Pilih Kota / Kabupaten -</div>
+                                            <div x-show="loadingCities" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                            </div>
+                                            <template x-for="item in filteredCities" :key="item.id || item.name">
+                                                <div class="ad-item" :class="{'selected': kota === item.name}"
+                                                    @click="selectCity(item)"
+                                                    x-text="item.name"></div>
+                                            </template>
+                                            <div x-show="!loadingCities && filteredCities.length === 0 && citySearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                Tidak ada kota/kabupaten ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -170,20 +202,86 @@
                                 <label class="mc-label">
                                     <i class="fas fa-map-location-dot mitra-edit-label-icon"></i>Kecamatan
                                 </label>
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-map-location-dot mc-icon-left"></i>
-                                    <input type="text" x-model="kecamatan" placeholder="Contoh: Tikala (Opsional)"
-                                        class="mc-input">
+                                <div class="alpine-dropdown" @click.outside="districtOpen = false; districtSearch = ''">
+                                    <div class="ad-trigger no-icon" :class="{'active': districtOpen, 'disabled': !kota}"
+                                        @click="if(!kota) return; districtOpen = !districtOpen; $nextTick(() => { if(districtOpen) $refs.mkeDistrictSearch.focus() })">
+                                        <div class="mitra-edit-trigger-content is-compact">
+                                            <i class="fas fa-map-location-dot mitra-edit-muted-icon"></i>
+                                            <span x-show="!kecamatan && !kota" class="mitra-edit-placeholder">- Pilih Kota Dahulu -</span>
+                                            <span x-show="!kecamatan && kota" class="mitra-edit-placeholder">- Pilih Kecamatan (Opsional) -</span>
+                                            <span x-show="kecamatan" x-text="kecamatan" class="mitra-edit-selected is-normal"></span>
+                                        </div>
+                                        <i class="fas fa-chevron-down mitra-edit-chevron is-small"
+                                            :class="{'is-open': districtOpen}"></i>
+                                    </div>
+                                    <div class="ad-menu mitra-edit-menu is-scrollable" x-show="districtOpen"
+                                        x-transition>
+                                        <div class="mitra-edit-search-wrap">
+                                            <div class="mitra-edit-search">
+                                                <i class="fas fa-search"></i>
+                                                <input x-ref="mkeDistrictSearch" x-model="districtSearch" type="text"
+                                                    placeholder="Cari kecamatan..." @click.stop>
+                                            </div>
+                                        </div>
+                                        <div class="mitra-edit-menu-list is-country">
+                                            <div class="ad-item" :class="{'selected': !kecamatan}"
+                                                @click="selectDistrict(null)">- Pilih Kecamatan -</div>
+                                            <div x-show="loadingDistricts" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                            </div>
+                                            <template x-for="item in filteredDistricts" :key="item.id || item.name">
+                                                <div class="ad-item" :class="{'selected': kecamatan === item.name}"
+                                                    @click="selectDistrict(item)"
+                                                    x-text="item.name"></div>
+                                            </template>
+                                            <div x-show="!loadingDistricts && filteredDistricts.length === 0 && districtSearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                Tidak ada kecamatan ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="mc-group">
                                 <label class="mc-label">
                                     <i class="fas fa-signs-post mitra-edit-label-icon"></i>Kelurahan / Desa
                                 </label>
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-signs-post mc-icon-left"></i>
-                                    <input type="text" x-model="kelurahan" placeholder="Contoh: Banjer (Opsional)"
-                                        class="mc-input">
+                                <div class="alpine-dropdown" @click.outside="villageOpen = false; villageSearch = ''">
+                                    <div class="ad-trigger no-icon" :class="{'active': villageOpen, 'disabled': !kecamatan}"
+                                        @click="if(!kecamatan) return; villageOpen = !villageOpen; $nextTick(() => { if(villageOpen) $refs.mkeVillageSearch.focus() })">
+                                        <div class="mitra-edit-trigger-content is-compact">
+                                            <i class="fas fa-signs-post mitra-edit-muted-icon"></i>
+                                            <span x-show="!kelurahan && !kecamatan" class="mitra-edit-placeholder">- Pilih Kecamatan Dahulu -</span>
+                                            <span x-show="!kelurahan && kecamatan" class="mitra-edit-placeholder">- Pilih Kelurahan (Opsional) -</span>
+                                            <span x-show="kelurahan" x-text="kelurahan" class="mitra-edit-selected is-normal"></span>
+                                        </div>
+                                        <i class="fas fa-chevron-down mitra-edit-chevron is-small"
+                                            :class="{'is-open': villageOpen}"></i>
+                                    </div>
+                                    <div class="ad-menu mitra-edit-menu is-scrollable" x-show="villageOpen"
+                                        x-transition>
+                                        <div class="mitra-edit-search-wrap">
+                                            <div class="mitra-edit-search">
+                                                <i class="fas fa-search"></i>
+                                                <input x-ref="mkeVillageSearch" x-model="villageSearch" type="text"
+                                                    placeholder="Cari kelurahan/desa..." @click.stop>
+                                            </div>
+                                        </div>
+                                        <div class="mitra-edit-menu-list is-country">
+                                            <div class="ad-item" :class="{'selected': !kelurahan}"
+                                                @click="selectVillage(null)">- Pilih Kelurahan / Desa -</div>
+                                            <div x-show="loadingVillages" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                            </div>
+                                            <template x-for="item in filteredVillages" :key="item.id || item.name">
+                                                <div class="ad-item" :class="{'selected': kelurahan === item.name}"
+                                                    @click="selectVillage(item)"
+                                                    x-text="item.name"></div>
+                                            </template>
+                                            <div x-show="!loadingVillages && filteredVillages.length === 0 && villageSearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                Tidak ada kelurahan/desa ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -233,7 +331,7 @@
                                 </label>
                                 <div class="mc-input-wrap">
                                     <i class="fas fa-city mc-icon-left"></i>
-                                    <input type="text" x-model="kota" placeholder="Contoh: Tokyo / Munich"
+                                    <input type="text" x-model="kotaInternasional" placeholder="Contoh: Tokyo / Munich"
                                         class="mc-input">
                                 </div>
                             </div>
