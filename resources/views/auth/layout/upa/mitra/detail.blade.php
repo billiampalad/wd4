@@ -104,6 +104,20 @@
                             <div class="dk-entity-text">
                                 <small style="display: block; font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700;">Alamat Kantor</small>
                                 <span style="font-size: 13px; font-weight: 600;">{{ $mitra->alamat ?: '-' }}</span>
+                                @php
+                                    $geoParts = array_filter([
+                                        $mitra->kelurahan ? 'Kel. ' . $mitra->kelurahan : null,
+                                        $mitra->kecamatan ? 'Kec. ' . $mitra->kecamatan : null,
+                                        $mitra->kota,
+                                        $mitra->provinsi,
+                                        $mitra->negara
+                                    ]);
+                                @endphp
+                                @if(count($geoParts) > 0)
+                                    <small style="display: block; font-size: 11px; color: var(--text-sub); margin-top: 4px;">
+                                        <i class="fas fa-location-dot" style="font-size: 9px; margin-right: 3px;"></i>{{ implode(', ', $geoParts) }}
+                                    </small>
+                                @endif
                             </div>
                         </div>
 

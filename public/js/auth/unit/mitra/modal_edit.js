@@ -41,7 +41,7 @@
         };
     }
 
-    window.openMitraEditModal = function (id, namaMitra, idKlasifikasi, kategori, negara, alamat, telp, website, provinsi) {
+    window.openMitraEditModal = function (id, namaMitra, idKlasifikasi, kategori, negara, alamat, telp, website, provinsi, kota, kecamatan, kelurahan) {
         const parts = getEditModalParts();
 
         if (!parts.modal || !parts.backdrop || !parts.box) {
@@ -56,6 +56,9 @@
                 kategori: kategori,
                 negara: negara,
                 provinsi: provinsi || '',
+                kota: kota || '',
+                kecamatan: kecamatan || '',
+                kelurahan: kelurahan || '',
                 alamat: alamat,
                 telp: telp,
                 website: website
@@ -96,6 +99,9 @@
             mitraId: '',
             nama_mitra: '',
             alamat: '',
+            kota: '',
+            kecamatan: '',
+            kelurahan: '',
             telp: '',
             website: '',
             kategori: '',
@@ -147,6 +153,9 @@
                 this.kategori = detail.kategori || '';
                 this.negara = detail.negara || 'Indonesia';
                 this.provinsi = detail.provinsi || '';
+                this.kota = detail.kota || '';
+                this.kecamatan = detail.kecamatan || '';
+                this.kelurahan = detail.kelurahan || '';
                 this.alamat = detail.alamat || '';
                 this.telp = detail.telp || '';
                 this.website = detail.website || '';
@@ -171,6 +180,9 @@
                 formData.set('kategori', this.kategori);
                 formData.set('negara', this.kategori === 'internasional' ? this.negara : 'Indonesia');
                 formData.set('provinsi', this.kategori === 'nasional' ? this.provinsi : '');
+                formData.set('kota', this.kota);
+                formData.set('kecamatan', this.kategori === 'nasional' ? this.kecamatan : '');
+                formData.set('kelurahan', this.kategori === 'nasional' ? this.kelurahan : '');
                 formData.set('alamat', this.alamat);
                 formData.set('telp', this.telp);
                 formData.set('website', this.website);

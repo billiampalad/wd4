@@ -15,6 +15,8 @@ class Mitra extends Model
         'id_klasifikasi',
         'alamat',
         'kota',
+        'kecamatan',
+        'kelurahan',
         'negara',
         'country_code',
         'provinsi',

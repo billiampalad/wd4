@@ -103,70 +103,112 @@
                     </div>
 
                     <div x-show="kategori === 'nasional'" x-transition class="mitra-edit-row">
-                        <div class="mc-group">
-                            <label class="mc-label">
-                                <i class="fas fa-map-marked-alt mitra-edit-label-icon"></i>Provinsi
-                            </label>
-                            <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
-                                <div class="ad-trigger" :class="{'active': provinceOpen}"
-                                    @click="provinceOpen = !provinceOpen; $nextTick(() => { if(provinceOpen) $refs.mkeProvinceSearch.focus() })">
-                                    <div class="mitra-edit-trigger-content is-compact">
-                                        <i class="fas fa-map-pin mitra-edit-muted-icon"></i>
-                                        <span x-show="!provinsi" class="mitra-edit-placeholder">- Pilih Provinsi (Opsional / Otomatis) -</span>
-                                        <span x-show="provinsi" x-text="provinsi" class="mitra-edit-selected is-normal"></span>
+                        <div class="mc-grid-2">
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-map-marked-alt mitra-edit-label-icon"></i>Provinsi
+                                </label>
+                                <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
+                                    <div class="ad-trigger" :class="{'active': provinceOpen}"
+                                        @click="provinceOpen = !provinceOpen; $nextTick(() => { if(provinceOpen) $refs.mkeProvinceSearch.focus() })">
+                                        <div class="mitra-edit-trigger-content is-compact">
+                                            <i class="fas fa-map-pin mitra-edit-muted-icon"></i>
+                                            <span x-show="!provinsi" class="mitra-edit-placeholder">- Pilih Provinsi (Opsional / Otomatis) -</span>
+                                            <span x-show="provinsi" x-text="provinsi" class="mitra-edit-selected is-normal"></span>
+                                        </div>
+                                        <i class="fas fa-chevron-down mitra-edit-chevron is-small" :class="{'is-open': provinceOpen}"></i>
                                     </div>
-                                    <i class="fas fa-chevron-down mitra-edit-chevron is-small" :class="{'is-open': provinceOpen}"></i>
-                                </div>
-                                <div class="ad-menu mitra-edit-menu is-scrollable" x-show="provinceOpen" x-transition>
-                                    <div class="mitra-create-search-wrap">
-                                        <div class="mitra-create-search">
-                                            <i class="fas fa-search"></i>
-                                            <input x-ref="mkeProvinceSearch" x-model="provinceSearch" type="text" placeholder="Cari provinsi..." @click.stop>
+                                    <div class="ad-menu mitra-edit-menu is-scrollable" x-show="provinceOpen" x-transition>
+                                        <div class="mitra-create-search-wrap">
+                                            <div class="mitra-create-search">
+                                                <i class="fas fa-search"></i>
+                                                <input x-ref="mkeProvinceSearch" x-model="provinceSearch" type="text" placeholder="Cari provinsi..." @click.stop>
+                                            </div>
+                                        </div>
+                                        <div class="mitra-edit-menu-list is-country">
+                                            <div class="ad-item" :class="{'selected': !provinsi}"
+                                                @click="provinsi = ''; provinceOpen = false; provinceSearch = ''">- Otomatis dari Alamat -</div>
+                                            <template x-for="item in filteredProvinces" :key="item">
+                                                <div class="ad-item" :class="{'selected': provinsi === item}"
+                                                    @click="provinsi = item; provinceOpen = false; provinceSearch = ''"
+                                                    x-text="item"></div>
+                                            </template>
                                         </div>
                                     </div>
-                                    <div class="mitra-edit-menu-list is-country">
-                                        <div class="ad-item" :class="{'selected': !provinsi}"
-                                            @click="provinsi = ''; provinceOpen = false; provinceSearch = ''">- Otomatis dari Alamat -</div>
-                                        <template x-for="item in filteredProvinces" :key="item">
-                                            <div class="ad-item" :class="{'selected': provinsi === item}"
-                                                @click="provinsi = item; provinceOpen = false; provinceSearch = ''"
-                                                x-text="item"></div>
-                                        </template>
-                                    </div>
+                                </div>
+                            </div>
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-city mitra-edit-label-icon"></i>Kota / Kabupaten
+                                </label>
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-city mc-icon-left"></i>
+                                    <input type="text" x-model="kota" placeholder="Contoh: Manado / Minahasa" class="mc-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mc-grid-2" style="margin-top: 12px;">
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-map-location-dot mitra-edit-label-icon"></i>Kecamatan
+                                </label>
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-map-location-dot mc-icon-left"></i>
+                                    <input type="text" x-model="kecamatan" placeholder="Contoh: Tikala (Opsional)" class="mc-input">
+                                </div>
+                            </div>
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-signs-post mitra-edit-label-icon"></i>Kelurahan / Desa
+                                </label>
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-signs-post mc-icon-left"></i>
+                                    <input type="text" x-model="kelurahan" placeholder="Contoh: Banjer (Opsional)" class="mc-input">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div x-show="kategori === 'internasional'" x-transition class="mitra-edit-row">
-                        <div class="mc-group">
-                            <label class="mc-label">
-                                <i class="fas fa-globe-americas mitra-edit-label-icon"></i>Negara
-                            </label>
-                            <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
-                                <div class="ad-trigger" :class="{'active': countryOpen}"
-                                    @click="countryOpen = !countryOpen; $nextTick(() => { if(countryOpen) $refs.mkeCountrySearch.focus() })">
-                                    <div class="mitra-edit-trigger-content is-compact">
-                                        <i class="fas fa-flag mitra-edit-muted-icon"></i>
-                                        <span x-show="!negara" class="mitra-edit-placeholder">- Pilih Negara -</span>
-                                        <span x-show="negara" x-text="negara" class="mitra-edit-selected is-normal"></span>
+                        <div class="mc-grid-2">
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-globe-americas mitra-edit-label-icon"></i>Negara
+                                </label>
+                                <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
+                                    <div class="ad-trigger" :class="{'active': countryOpen}"
+                                        @click="countryOpen = !countryOpen; $nextTick(() => { if(countryOpen) $refs.mkeCountrySearch.focus() })">
+                                        <div class="mitra-edit-trigger-content is-compact">
+                                            <i class="fas fa-flag mitra-edit-muted-icon"></i>
+                                            <span x-show="!negara" class="mitra-edit-placeholder">- Pilih Negara -</span>
+                                            <span x-show="negara" x-text="negara" class="mitra-edit-selected is-normal"></span>
+                                        </div>
+                                        <i class="fas fa-chevron-down mitra-edit-chevron is-small" :class="{'is-open': countryOpen}"></i>
                                     </div>
-                                    <i class="fas fa-chevron-down mitra-edit-chevron is-small" :class="{'is-open': countryOpen}"></i>
-                                </div>
-                                <div class="ad-menu mitra-edit-menu is-scrollable" x-show="countryOpen" x-transition>
-                                    <div class="mitra-edit-search-wrap">
-                                        <div class="mitra-edit-search">
-                                            <i class="fas fa-search"></i>
-                                            <input x-ref="mkeCountrySearch" x-model="countrySearch" type="text" placeholder="Cari negara..." @click.stop>
+                                    <div class="ad-menu mitra-edit-menu is-scrollable" x-show="countryOpen" x-transition>
+                                        <div class="mitra-edit-search-wrap">
+                                            <div class="mitra-edit-search">
+                                                <i class="fas fa-search"></i>
+                                                <input x-ref="mkeCountrySearch" x-model="countrySearch" type="text" placeholder="Cari negara..." @click.stop>
+                                            </div>
+                                        </div>
+                                        <div class="mitra-edit-menu-list is-country">
+                                            <template x-for="country in filteredCountries" :key="country">
+                                                <div class="ad-item" :class="{'selected': negara === country}"
+                                                    @click="negara = country; countryOpen = false; countrySearch = ''"
+                                                    x-text="country"></div>
+                                            </template>
                                         </div>
                                     </div>
-                                    <div class="mitra-edit-menu-list is-country">
-                                        <template x-for="country in filteredCountries" :key="country">
-                                            <div class="ad-item" :class="{'selected': negara === country}"
-                                                @click="negara = country; countryOpen = false; countrySearch = ''"
-                                                x-text="country"></div>
-                                        </template>
-                                    </div>
+                                </div>
+                            </div>
+                            <div class="mc-group">
+                                <label class="mc-label">
+                                    <i class="fas fa-city mitra-edit-label-icon"></i>City / Kota
+                                </label>
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-city mc-icon-left"></i>
+                                    <input type="text" x-model="kota" placeholder="Contoh: Tokyo / Munich" class="mc-input">
                                 </div>
                             </div>
                         </div>

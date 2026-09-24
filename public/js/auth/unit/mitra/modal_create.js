@@ -157,6 +157,10 @@
                 formData.set('kategori', this.kategori);
                 formData.set('negara', this.kategori === 'internasional' ? this.negara : 'Indonesia');
                 formData.set('provinsi', this.kategori === 'nasional' ? this.provinsi : '');
+                if (this.kategori === 'internasional') {
+                    formData.set('kecamatan', '');
+                    formData.set('kelurahan', '');
+                }
 
                 try {
                     const response = await fetch(config.storeUrl, {
