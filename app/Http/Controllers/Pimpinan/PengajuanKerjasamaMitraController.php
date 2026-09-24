@@ -234,6 +234,7 @@ class PengajuanKerjasamaMitraController extends Controller
                         }
                     }
 
+                    /** @var \App\Models\Cooperation|null $cooperation */
                     $cooperation = Cooperation::where('pengajuan_kerjasama_baru_id', $submission->id)->first();
                     if (! $cooperation) {
                         $cooperation = Cooperation::create([
