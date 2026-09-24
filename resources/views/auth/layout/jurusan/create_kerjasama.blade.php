@@ -121,6 +121,7 @@
         ->values()
         ->all();
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
+    $jurusanOptions = isset($jurusans) ? collect($jurusans)->map(fn ($jur) => ['id' => $jur->id, 'nama' => $jur->nama_jurusan])->values()->all() : [];
     $prodiOptions = isset($prodis) ? collect($prodis)->map(fn ($p) => ['id' => $p->id, 'jurusan_id' => $p->jurusan_id, 'nama' => $p->nama_prodi, 'jenjang' => $p->jenjang])->values()->all() : [];
     $upaOptions = isset($upas) ? collect($upas)->map(fn ($u) => ['id' => $u->id, 'nama' => $u->nama_upa])->values()->all() : [];
     $pusatOptions = isset($pusats) ? collect($pusats)->map(fn ($ps) => ['id' => $ps->id, 'nama' => $ps->nama_pusat])->values()->all() : [];
@@ -751,12 +752,8 @@
 
                                             {{-- Jurusan multi-select --}}
                                             jurusanOpen: false,
-                                            selectedJurusans: {{ \Illuminate\Support\Js::from($selectedJurusanIds) }},
-                                            jurusanItems: [
-                                                @foreach($jurusans ?? [] as $jur)
-                                                    { id: {{ $jur->id }}, nama: '{{ addslashes($jur->nama_jurusan) }}' },
-                                                @endforeach
-                                            ],
+                                            selectedJurusans: @js($selectedJurusanIds),
+                                            jurusanItems: @js($jurusanOptions),
                                             toggleJurusan(id) {
                                                 if (this.selectedJurusans.includes(id)) {
                                                     this.selectedJurusans = this.selectedJurusans.filter(i => i !== id);
