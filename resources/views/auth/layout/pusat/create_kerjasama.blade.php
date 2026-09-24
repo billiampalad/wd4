@@ -79,6 +79,7 @@
                 'showPJ' => filled($penggiat['nama_pj'] ?? null) || filled($penggiat['jabatan_pj'] ?? null),
                 'mitraId' => (string) $mitraId,
                 'mitraOpen' => false,
+                'mitraSearch' => '',
                 'nama_penandatangan' => $penggiat['nama_penandatangan'] ?? '',
                 'jabatan_penandatangan' => $penggiat['jabatan_penandatangan'] ?? '',
                 'nama_pj' => $penggiat['nama_pj'] ?? '',
@@ -92,6 +93,7 @@
             'showPJ' => filled($perpanjanganAsal->pjMitra?->nama) || filled($perpanjanganAsal->pjMitra?->jabatan),
             'mitraId' => (string) $perpanjanganAsal->mitra_id,
             'mitraOpen' => false,
+            'mitraSearch' => '',
             'nama_penandatangan' => $perpanjanganAsal->penandatanganMitra?->nama ?? '',
             'jabatan_penandatangan' => $perpanjanganAsal->penandatanganMitra?->jabatan ?? '',
             'nama_pj' => $perpanjanganAsal->pjMitra?->nama ?? '',
@@ -106,6 +108,7 @@
             'showPJ' => false,
             'mitraId' => '',
             'mitraOpen' => false,
+            'mitraSearch' => '',
             'nama_penandatangan' => '',
             'jabatan_penandatangan' => '',
             'nama_pj' => '',
@@ -628,6 +631,7 @@
                                     showPJ: false, 
                                     mitraId: '', 
                                     mitraOpen: false,
+                                    mitraSearch: '',
                                     nama_penandatangan: '',
                                     jabatan_penandatangan: '',
                                     nama_pj: '',
@@ -1326,14 +1330,14 @@
                                                     <div style="display: flex; gap: 8px; align-items: flex-start;">
                                                         <div style="flex: 1; position: relative;"
                                                             class="alpine-dropdown"
-                                                            @click.outside="pg.mitraOpen = false">
+                                                            @click.outside="pg.mitraOpen = false; pg.mitraSearch = ''">
                                                             <input type="hidden" name="penggiat_mitra_ids[]"
                                                                 :value="pg.mitraId">
                                                             <input type="hidden" name="mitra_nama[]"
-                                                                :value="pg.mitraId ? mitraItems.find(m => m.id == pg.mitraId)?.nama : ''">
+                                                                :value="pg.mitraId ? (mitraItems || []).find(m => m.id == pg.mitraId)?.nama : ''">
                                                             <div class="ad-trigger no-icon"
                                                                 :class="{'active': pg.mitraOpen, 'is-invalid': @error('penggiat_mitra_ids.*') true @else false @enderror}"
-                                                                @click="pg.mitraOpen = !pg.mitraOpen"
+                                                                @click="pg.mitraOpen = !pg.mitraOpen; if(pg.mitraOpen) { $nextTick(() => { $refs['mitraSearch_' + idx]?.focus(); }); }"
                                                                 style="min-height: 40px;">
                                                                 <div
                                                                     style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
@@ -1344,22 +1348,48 @@
                                                                         Mitra —</span>
                                                                     <span x-show="pg.mitraId"
                                                                         style="font-size: 12px; color: var(--text);"
-                                                                        x-text="mitraItems.find(m => m.id == pg.mitraId)?.nama || ''"></span>
+                                                                        x-text="(mitraItems || []).find(m => m.id == pg.mitraId)?.nama || ''"></span>
                                                                 </div>
                                                                 <i class="fas fa-chevron-down"
                                                                     style="font-size: 9px; transition: 0.3s; flex-shrink: 0; color: #9ca3af;"
                                                                     :style="pg.mitraOpen ? 'transform: rotate(180deg)' : ''"></i>
                                                             </div>
                                                             <div class="ad-menu" x-show="pg.mitraOpen" x-transition
-                                                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130; max-height: 180px; overflow-y: auto;">
-                                                                <template x-for="mitra in mitraItems" :key="mitra.id">
-                                                                    <div class="ad-item"
-                                                                        :class="{'selected': pg.mitraId == mitra.id}"
-                                                                        @click="pg.mitraId = mitra.id; pg.mitraOpen = false"
-                                                                        style="font-size: 12px; padding: 8px 12px;">
-                                                                        <span x-text="mitra.nama"></span>
+                                                                style="position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 130; max-height: 220px; overflow-y: auto; padding: 4px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                                                <!-- Sticky Search Input Header -->
+                                                                <div style="position: sticky; top: 0; z-index: 2; padding: 6px 8px; background: var(--surface); border-bottom: 1px solid var(--border);" @click.stop>
+                                                                    <div style="position: relative; display: flex; align-items: center;">
+                                                                        <i class="fas fa-search" style="position: absolute; left: 10px; color: #9ca3af; font-size: 11px; pointer-events: none;"></i>
+                                                                        <input type="text"
+                                                                            :x-ref="'mitraSearch_' + idx"
+                                                                            x-model="pg.mitraSearch"
+                                                                            placeholder="Cari nama mitra..."
+                                                                            style="width: 100%; padding: 6px 28px 6px 28px; font-size: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2, #f3f4f6); color: var(--text); outline: none; transition: border-color 0.2s;"
+                                                                            onfocus="this.style.borderColor='var(--primary, #4f46e5)'"
+                                                                            onblur="this.style.borderColor='var(--border)'"
+                                                                            @keydown.escape="pg.mitraOpen = false">
+                                                                        <button type="button" x-show="pg.mitraSearch" @click="pg.mitraSearch = ''; $refs['mitraSearch_' + idx]?.focus()"
+                                                                            style="position: absolute; right: 8px; background: transparent; border: none; color: #9ca3af; cursor: pointer; font-size: 11px; padding: 2px;">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
                                                                     </div>
-                                                                </template>
+                                                                </div>
+                                                                <!-- Filtered Items List -->
+                                                                <div>
+                                                                    <template x-for="mitra in (mitraItems || []).filter(m => !pg.mitraSearch || (m.nama || '').toLowerCase().includes(pg.mitraSearch.toLowerCase().trim()))" :key="mitra.id">
+                                                                        <div class="ad-item"
+                                                                            :class="{'selected': pg.mitraId == mitra.id}"
+                                                                            @click="pg.mitraId = mitra.id; pg.mitraOpen = false; pg.mitraSearch = ''"
+                                                                            style="font-size: 12px; padding: 8px 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;">
+                                                                            <span x-text="mitra.nama"></span>
+                                                                            <i class="fas fa-check" x-show="pg.mitraId == mitra.id" style="color: var(--primary, #4f46e5); font-size: 11px;"></i>
+                                                                        </div>
+                                                                    </template>
+                                                                    <div x-show="(mitraItems || []).filter(m => !pg.mitraSearch || (m.nama || '').toLowerCase().includes(pg.mitraSearch.toLowerCase().trim())).length === 0"
+                                                                        style="padding: 12px; text-align: center; color: #9ca3af; font-size: 12px;">
+                                                                        <i class="fas fa-search" style="margin-right: 4px; opacity: 0.6;"></i> Mitra tidak ditemukan
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         {{-- Add New Mitra Button --}}
