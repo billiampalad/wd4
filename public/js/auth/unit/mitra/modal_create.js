@@ -462,12 +462,19 @@
                         return;
                     }
 
-                    if (response.status === 302) {
-                        window.location.reload();
-                        return;
-                    }
+                    let errorMsg = 'Terjadi kesalahan saat menyimpan data.';
+                    try {
+                        const errData = await response.json();
+                        if (errData && errData.message) {
+                            errorMsg = errData.message;
+                        }
+                    } catch (e) {}
 
-                    throw new Error('Unexpected response');
+                    if (window.CustomAlert) {
+                        CustomAlert.error(errorMsg);
+                    } else {
+                        alert(errorMsg);
+                    }
                 } catch (error) {
                     if (window.CustomAlert) {
                         CustomAlert.error('Terjadi kesalahan saat menyimpan data.');

@@ -666,12 +666,18 @@
                                     this.mitraItems.push(normalized);
                                 }
 
-                                const targetIndex = this.activePenggiatIndex ?? Math.max(this.penggiatList.length - 1, 0);
+                                const targetIndex = (this.activePenggiatIndex !== null && this.activePenggiatIndex !== undefined)
+                                    ? this.activePenggiatIndex
+                                    : Math.max(this.penggiatList.length - 1, 0);
+
                                 if (this.penggiatList[targetIndex]) {
                                     this.penggiatList[targetIndex].mitraId = normalized.id;
                                     this.penggiatList[targetIndex].mitraOpen = false;
+                                    this.penggiatList[targetIndex].mitraSearch = '';
                                 }
 
+                                this.showPenggiat = true;
+                                this.showPihak2 = true;
                                 this.activePenggiatIndex = null;
                             },
                             mitraItems: @js($mitraOptions)
