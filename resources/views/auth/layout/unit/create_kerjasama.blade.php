@@ -466,13 +466,19 @@
                                             <span
                                                 style="font-weight: 700; font-size: 13px; color: var(--text); letter-spacing: 0.02em;">Dokumentasi</span>
                                         </div>
-                                        <div class="mc-group">
-                                            <label class="mc-label">Link Google Drive</label>
+                                        <div class="mc-group" x-data="{ val: @js(old('document_link')), max: 255 }">
+                                            <div class="mc-label-row">
+                                                <label class="mc-label" style="margin-bottom: 0;">Link Google Drive</label>
+                                                <span class="mc-limit-badge">Maks. 255</span>
+                                            </div>
                                             <div class="mc-input-wrap">
                                                 <i class="fas fa-link mc-icon-left"></i>
                                                 <input type="text" name="document_link"
-                                                    value="{{ old('document_link') }}"
+                                                    x-model="val" maxlength="255"
                                                     placeholder="https://drive.google.com/..." class="mc-input" />
+                                            </div>
+                                            <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -504,7 +510,10 @@
 
                                             }
                         }" x-init="$dispatch('jenis-dokumen-changed', { value: selected })">
-                                    <label class="mc-label">Dokumen Kerjasama <span class="mc-req">*</span></label>
+                                    <div class="mc-label-row">
+                                        <label class="mc-label" style="margin-bottom: 0;">Dokumen Kerjasama <span class="mc-req">*</span></label>
+                                        <span class="mc-limit-badge">Nomor Maks. 255</span>
+                                    </div>
                                     <input type="hidden" name="jenis" :value="selected">
 
                                     <div class="mc-grid-2" style="gap: 16px;">
@@ -561,18 +570,21 @@
                                         </div>
 
                                         {{-- Right: Number Input --}}
-                                        <div class="mc-input-wrap">
+                                        <div class="mc-input-wrap" x-data="{ val: @js(old('doc_number')), max: 255 }">
                                             <i class="fas fa-hashtag mc-icon-left"></i>
-                                            <input type="text" name="doc_number" value="{{ old('doc_number') }}"
+                                            <input type="text" name="doc_number" x-model="val" maxlength="255"
                                                 placeholder="Masukkan nomor dokumen..." class="mc-input"
                                                 style="height: 48px;" />
+                                            <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
+                                            </div>
                                         </div>
                                     </div>
 
                                     {{-- Nomor PKS --}}
                                     <div style="margin-top: 12px;" x-data="pksNumberFields(@js($pksNumberInputs), @error('pks_numbers.*') true @else false @enderror)" x-init="notify()">
                                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px;">
-                                            <label class="mc-label" style="margin: 0;" x-show="visible" x-cloak>Nomor PKS</label>
+                                            <label class="mc-label" style="margin: 0;" x-show="visible" x-cloak>Nomor PKS <span class="mc-limit-badge" style="margin-left: 6px;">Maks. 255 per PKS</span></label>
                                             <button type="button" class="rfc-btn rfc-btn-primary" @click="add()"
                                                 style="padding: 8px 12px; font-size: 12px;">
                                                 <i class="fas fa-plus"></i> <span x-text="visible ? 'Tambah Nomor' : 'Tambah PKS'"></span>
@@ -583,7 +595,7 @@
                                                 <template x-for="(number, index) in numbers" :key="index">
                                                     <div class="mc-input-wrap" style="margin-top: 8px;">
                                                 <i class="fas fa-file-contract mc-icon-left"></i>
-                                                <input type="text" name="pks_numbers[]" x-model="numbers[index]" @input.debounce.150ms="notify()"
+                                                <input type="text" name="pks_numbers[]" x-model="numbers[index]" maxlength="255" @input.debounce.150ms="notify()"
                                                     placeholder="Masukkan nomor PKS..." class="mc-input @error('pks_numbers.*') is-invalid @enderror"
                                                     style="height: 48px; padding-right: 48px;" />
                                                 <button type="button" @click="remove(index)"
@@ -605,27 +617,39 @@
                                     @enderror
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="mc-group">
-                                    <label class="mc-label">Judul Kerjasama<span class="mc-req">*</span></label>
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ val: @js(old('title', $perpanjanganAsal?->title ?? '')), max: 255 }">
+                                    <div class="mc-label-row">
+                                        <label class="mc-label" style="margin-bottom: 0;">Judul Kerjasama <span class="mc-req">*</span></label>
+                                        <span class="mc-limit-badge"><i class="fas fa-keyboard"></i> Maks. 255 Karakter</span>
+                                    </div>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-file-lines mc-icon-left"></i>
-                                        <input type="text" name="title" value="{{ old('title', $perpanjanganAsal?->title ?? '') }}"
+                                        <input type="text" name="title" x-model="val" maxlength="255"
                                             placeholder="Contoh: Pelatihan Web Development Bersama Industri"
                                             class="mc-input @error('title') is-invalid @enderror" />
+                                    </div>
+                                    <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                        <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span> karakter
                                     </div>
                                     @error('title')
                                     <span class="mc-error" style="color: #ef4444; font-size: 11px; margin-top: 4px; display: block;"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                     @enderror
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="mc-group">
-                                    <label class="mc-label">Deskripsi</label>
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ val: @js(old('description', $perpanjanganAsal?->description ?? '')), max: 10000 }">
+                                    <div class="mc-label-row">
+                                        <label class="mc-label" style="margin-bottom: 0;">Deskripsi</label>
+                                        <span class="mc-limit-badge"><i class="fas fa-align-left"></i> Maks. 10.000 Karakter</span>
+                                    </div>
                                     <div class="mc-input-wrap">
                                         <i class="fas fa-comment-dots mc-icon-left" style="top: 14px;"></i>
-                                        <textarea name="description" rows="3"
+                                        <textarea name="description" rows="3" x-model="val" maxlength="10000"
                                             placeholder="Ringkasan singkat terkait cakupan atau kegiatan kerja sama"
                                             class="mc-input"
-                                            style="resize: vertical; min-height: 100px;">{{ old('description', $perpanjanganAsal?->description ?? '') }}</textarea>
+                                            style="resize: vertical; min-height: 100px;"></textarea>
+                                    </div>
+                                    <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                        <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span> karakter
                                     </div>
                                 </div>
                             </div>
@@ -1215,22 +1239,34 @@
                                             <div x-show="showPenandatangan1" x-collapse.duration.200ms
                                                 style="padding: 10px 14px 14px 14px;">
                                                 <div class="mc-grid-2">
-                                                    <div class="mc-group">
-                                                        <label class="mc-label">Nama</label>
+                                                    <div class="mc-group" x-data="{ val: @js(old('nama_penandatangan', $perpanjanganAsal?->penandatanganInternal?->nama ?? '')), max: 255 }">
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Nama</label>
+                                                            <span class="mc-limit-badge">Maks. 255</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
                                                             <input type="text" name="nama_penandatangan"
-                                                                value="{{ old('nama_penandatangan', $perpanjanganAsal?->penandatanganInternal?->nama ?? '') }}"
+                                                                x-model="val" maxlength="255"
                                                                 placeholder="Nama penandatangan" class="mc-input" />
                                                         </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                            <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
+                                                        </div>
                                                     </div>
-                                                    <div class="mc-group">
-                                                        <label class="mc-label">Jabatan</label>
+                                                    <div class="mc-group" x-data="{ val: @js(old('jabatan_penandatangan', $perpanjanganAsal?->penandatanganInternal?->jabatan ?? '')), max: 255 }">
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Jabatan</label>
+                                                            <span class="mc-limit-badge">Maks. 255</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
                                                             <input type="text" name="jabatan_penandatangan"
-                                                                value="{{ old('jabatan_penandatangan', $perpanjanganAsal?->penandatanganInternal?->jabatan ?? '') }}"
+                                                                x-model="val" maxlength="255"
                                                                 placeholder="Jabatan penandatangan" class="mc-input" />
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                            <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1260,23 +1296,35 @@
                                             <div x-show="showPJ1" x-collapse.duration.200ms
                                                 style="padding: 10px 14px 14px 14px;">
                                                 <div class="mc-grid-2">
-                                                    <div class="mc-group">
-                                                        <label class="mc-label">Nama</label>
+                                                    <div class="mc-group" x-data="{ val: @js(old('nama_penanggung_jawab', $perpanjanganAsal?->pjInternal?->nama ?? '')), max: 255 }">
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Nama</label>
+                                                            <span class="mc-limit-badge">Maks. 255</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-user mc-icon-left"></i>
                                                             <input type="text" name="nama_penanggung_jawab"
-                                                                value="{{ old('nama_penanggung_jawab', $perpanjanganAsal?->pjInternal?->nama ?? '') }}"
+                                                                x-model="val" maxlength="255"
                                                                 placeholder="Nama penanggung jawab" class="mc-input" />
                                                         </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                            <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
+                                                        </div>
                                                     </div>
-                                                    <div class="mc-group">
-                                                        <label class="mc-label">Jabatan</label>
+                                                    <div class="mc-group" x-data="{ val: @js(old('jabatan_penanggung_jawab', $perpanjanganAsal?->pjInternal?->jabatan ?? '')), max: 255 }">
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Jabatan</label>
+                                                            <span class="mc-limit-badge">Maks. 255</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-id-badge mc-icon-left"></i>
                                                             <input type="text" name="jabatan_penanggung_jawab"
-                                                                value="{{ old('jabatan_penanggung_jawab', $perpanjanganAsal?->pjInternal?->jabatan ?? '') }}"
+                                                                x-model="val" maxlength="255"
                                                                 placeholder="Jabatan penanggung jawab"
                                                                 class="mc-input" />
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
+                                                            <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1451,25 +1499,39 @@
                                                         style="padding: 10px 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
-                                                                <label class="mc-label">Nama</label>
+                                                                <div class="mc-label-row">
+                                                                    <label class="mc-label" style="margin-bottom: 0;">Nama</label>
+                                                                    <span class="mc-limit-badge">Maks. 255</span>
+                                                                </div>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-user mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][nama_penandatangan]'"
                                                                         x-model="pg.nama_penandatangan"
+                                                                        maxlength="255"
                                                                         placeholder="Nama penandatangan"
                                                                         class="mc-input" />
                                                                 </div>
+                                                                <div class="mc-char-counter" :class="{ 'warning': (pg.nama_penandatangan?.length || 0) >= 216, 'danger': (pg.nama_penandatangan?.length || 0) >= 255 }">
+                                                                    <span x-text="pg.nama_penandatangan ? pg.nama_penandatangan.length : 0"></span>/255
+                                                                </div>
                                                             </div>
                                                             <div class="mc-group">
-                                                                <label class="mc-label">Jabatan</label>
+                                                                <div class="mc-label-row">
+                                                                    <label class="mc-label" style="margin-bottom: 0;">Jabatan</label>
+                                                                    <span class="mc-limit-badge">Maks. 255</span>
+                                                                </div>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][jabatan_penandatangan]'"
                                                                         x-model="pg.jabatan_penandatangan"
+                                                                        maxlength="255"
                                                                         placeholder="Jabatan penandatangan"
                                                                         class="mc-input" />
+                                                                </div>
+                                                                <div class="mc-char-counter" :class="{ 'warning': (pg.jabatan_penandatangan?.length || 0) >= 216, 'danger': (pg.jabatan_penandatangan?.length || 0) >= 255 }">
+                                                                    <span x-text="pg.jabatan_penandatangan ? pg.jabatan_penandatangan.length : 0"></span>/255
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1501,25 +1563,39 @@
                                                         style="padding: 10px 14px 14px 14px;">
                                                         <div class="mc-grid-2">
                                                             <div class="mc-group">
-                                                                <label class="mc-label">Nama</label>
+                                                                <div class="mc-label-row">
+                                                                    <label class="mc-label" style="margin-bottom: 0;">Nama</label>
+                                                                    <span class="mc-limit-badge">Maks. 255</span>
+                                                                </div>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-user mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][nama_pj]'"
                                                                         x-model="pg.nama_pj"
+                                                                        maxlength="255"
                                                                         placeholder="Nama penanggung jawab"
                                                                         class="mc-input" />
                                                                 </div>
+                                                                <div class="mc-char-counter" :class="{ 'warning': (pg.nama_pj?.length || 0) >= 216, 'danger': (pg.nama_pj?.length || 0) >= 255 }">
+                                                                    <span x-text="pg.nama_pj ? pg.nama_pj.length : 0"></span>/255
+                                                                </div>
                                                             </div>
                                                             <div class="mc-group">
-                                                                <label class="mc-label">Jabatan</label>
+                                                                <div class="mc-label-row">
+                                                                    <label class="mc-label" style="margin-bottom: 0;">Jabatan</label>
+                                                                    <span class="mc-limit-badge">Maks. 255</span>
+                                                                </div>
                                                                 <div class="mc-input-wrap">
                                                                     <i class="fas fa-id-badge mc-icon-left"></i>
                                                                     <input type="text"
                                                                         :name="'penggiat[' + idx + '][jabatan_pj]'"
                                                                         x-model="pg.jabatan_pj"
+                                                                        maxlength="255"
                                                                         placeholder="Jabatan penanggung jawab"
                                                                         class="mc-input" />
+                                                                </div>
+                                                                <div class="mc-char-counter" :class="{ 'warning': (pg.jabatan_pj?.length || 0) >= 216, 'danger': (pg.jabatan_pj?.length || 0) >= 255 }">
+                                                                    <span x-text="pg.jabatan_pj ? pg.jabatan_pj.length : 0"></span>/255
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1740,16 +1816,23 @@
 
                                                     {{-- Income --}}
                                                     <div class="mc-group">
-                                                        <label class="mc-label">Income <span
-                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Deskripsi
-                                                                pendapatan)</span></label>
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Income <span
+                                                                    style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Deskripsi
+                                                                    pendapatan)</span></label>
+                                                            <span class="mc-limit-badge">Maks. 255</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-coins mc-icon-left" style="top: 14px;"></i>
                                                             <textarea :name="'jenis_detail[' + id + '][income]'"
                                                                 x-model="formData[id].income" rows="2"
-                                                                placeholder="Deskripsi pendapatan dari kegiatan..."
+                                                                maxlength="255"
+                                                                placeholder="Deskripsi pendapatan singkat dari kegiatan..."
                                                                 class="mc-input"
                                                                 style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (formData[id].income?.length || 0) >= 216, 'danger': (formData[id].income?.length || 0) >= 255 }">
+                                                            <span x-text="formData[id].income ? formData[id].income.length : 0"></span>/255
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1759,50 +1842,69 @@
                                                     style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
                                                     {{-- Output --}}
                                                     <div class="mc-group">
-                                                        <label class="mc-label">Output <span
-                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Hasil
-                                                                langsung kegiatan)</span></label>
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Output <span
+                                                                    style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Hasil
+                                                                    langsung)</span></label>
+                                                            <span class="mc-limit-badge">Maks. 10.000</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-box-open mc-icon-left"
                                                                 style="top: 14px;"></i>
                                                             <textarea :name="'jenis_detail[' + id + '][output]'"
                                                                 x-model="formData[id].output" rows="2"
+                                                                maxlength="10000"
                                                                 placeholder="Jelaskan output / hasil langsung kegiatan..."
                                                                 class="mc-input"
                                                                 style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (formData[id].output?.length || 0) >= 8500, 'danger': (formData[id].output?.length || 0) >= 10000 }">
+                                                            <span x-text="formData[id].output ? formData[id].output.length : 0"></span>/10.000
                                                         </div>
                                                     </div>
 
                                                     {{-- Outcome --}}
                                                     <div class="mc-group">
-                                                        <label class="mc-label">Outcome <span
-                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Dampak
-                                                                / manfaat kegiatan)</span></label>
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Outcome <span
+                                                                    style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Dampak
+                                                                    manfaat)</span></label>
+                                                            <span class="mc-limit-badge">Maks. 10.000</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-seedling mc-icon-left"
                                                                 style="top: 14px;"></i>
                                                             <textarea :name="'jenis_detail[' + id + '][outcome]'"
                                                                 x-model="formData[id].outcome" rows="2"
+                                                                maxlength="10000"
                                                                 placeholder="Jelaskan outcome / dampak manfaat kegiatan..."
                                                                 class="mc-input"
                                                                 style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (formData[id].outcome?.length || 0) >= 8500, 'danger': (formData[id].outcome?.length || 0) >= 10000 }">
+                                                            <span x-text="formData[id].outcome ? formData[id].outcome.length : 0"></span>/10.000
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 {{-- Row 3: Luaran (Volume + Satuan Volume) --}}
                                                 <div style="margin-bottom: 14px;">
-                                                    <label class="mc-label"
-                                                        style="margin-bottom: 8px; display: block;">Luaran</label>
+                                                    <div class="mc-label-row">
+                                                        <label class="mc-label" style="margin-bottom: 0;">Luaran</label>
+                                                        <span class="mc-limit-badge">Maks. 255 per isian</span>
+                                                    </div>
                                                     <div
-                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
                                                         <div class="mc-group">
                                                             <div class="mc-input-wrap">
                                                                 <i class="fas fa-chart-bar mc-icon-left"></i>
                                                                 <input type="text"
                                                                     :name="'jenis_detail[' + id + '][volume]'"
-                                                                    x-model="formData[id].volume" placeholder="Volume"
+                                                                    x-model="formData[id].volume" maxlength="255" placeholder="Volume (contoh: 40)"
                                                                     class="mc-input" />
+                                                            </div>
+                                                            <div class="mc-char-counter" :class="{ 'warning': (formData[id].volume?.length || 0) >= 216, 'danger': (formData[id].volume?.length || 0) >= 255 }">
+                                                                <span x-text="formData[id].volume ? formData[id].volume.length : 0"></span>/255
                                                             </div>
                                                         </div>
                                                         <div class="mc-group">
@@ -1810,8 +1912,11 @@
                                                                 <i class="fas fa-at mc-icon-left"></i>
                                                                 <input type="text"
                                                                     :name="'jenis_detail[' + id + '][satuan_volume]'"
-                                                                    x-model="formData[id].satuan_volume"
-                                                                    placeholder="Satuan Volume" class="mc-input" />
+                                                                    x-model="formData[id].satuan_volume" maxlength="255"
+                                                                    placeholder="Satuan Volume (contoh: Mahasiswa)" class="mc-input" />
+                                                            </div>
+                                                            <div class="mc-char-counter" :class="{ 'warning': (formData[id].satuan_volume?.length || 0) >= 216, 'danger': (formData[id].satuan_volume?.length || 0) >= 255 }">
+                                                                <span x-text="formData[id].satuan_volume ? formData[id].satuan_volume.length : 0"></span>/255
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1822,33 +1927,47 @@
                                                     style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
                                                     {{-- Keterangan --}}
                                                     <div class="mc-group">
-                                                        <label class="mc-label">Keterangan <span
-                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Ringkasan
-                                                                luaran dari kegiatan)</span></label>
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Keterangan <span
+                                                                    style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Ringkasan
+                                                                    luaran)</span></label>
+                                                            <span class="mc-limit-badge">Maks. 10.000</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-align-left mc-icon-left"
                                                                 style="top: 14px;"></i>
                                                             <textarea :name="'jenis_detail[' + id + '][keterangan]'"
                                                                 x-model="formData[id].keterangan" rows="2"
+                                                                maxlength="10000"
                                                                 placeholder="Jelaskan ringkasan luaran kegiatan..."
                                                                 class="mc-input"
                                                                 style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (formData[id].keterangan?.length || 0) >= 8500, 'danger': (formData[id].keterangan?.length || 0) >= 10000 }">
+                                                            <span x-text="formData[id].keterangan ? formData[id].keterangan.length : 0"></span>/10.000
                                                         </div>
                                                     </div>
 
                                                     {{-- Tujuan --}}
                                                     <div class="mc-group">
-                                                        <label class="mc-label">Tujuan <span
-                                                                style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Tujuan
-                                                                dari kegiatan)</span></label>
+                                                        <div class="mc-label-row">
+                                                            <label class="mc-label" style="margin-bottom: 0;">Tujuan <span
+                                                                    style="font-weight: 400; font-size: 11px; color: var(--text-sub);">(Tujuan
+                                                                    kegiatan)</span></label>
+                                                            <span class="mc-limit-badge">Maks. 10.000</span>
+                                                        </div>
                                                         <div class="mc-input-wrap">
                                                             <i class="fas fa-bullseye mc-icon-left"
                                                                 style="top: 14px;"></i>
                                                             <textarea :name="'jenis_detail[' + id + '][tujuan]'"
                                                                 x-model="formData[id].tujuan" rows="2"
+                                                                maxlength="10000"
                                                                 placeholder="Jelaskan tujuan dari kegiatan kerjasama..."
                                                                 class="mc-input"
                                                                 style="resize: vertical; min-height: 70px;"></textarea>
+                                                        </div>
+                                                        <div class="mc-char-counter" :class="{ 'warning': (formData[id].tujuan?.length || 0) >= 8500, 'danger': (formData[id].tujuan?.length || 0) >= 10000 }">
+                                                            <span x-text="formData[id].tujuan ? formData[id].tujuan.length : 0"></span>/10.000
                                                         </div>
                                                     </div>
                                                 </div>

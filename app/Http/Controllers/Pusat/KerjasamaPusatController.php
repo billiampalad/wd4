@@ -185,21 +185,27 @@ class KerjasamaPusatController extends Controller
         try {
             // Handle status normalization (status masa berlaku)
             $statusMap = [
-                'Aktif' => 'aktif',
-                'Dalam Perpanjangan' => 'dalam perpanjangan',
-                'Kadarluarsa' => 'kadarluarsa',
-                'Kadaluarsa' => 'kadarluarsa',
-                'Kedaluwarsa' => 'kadarluarsa',
-                'Tidak Aktif' => 'tidak aktif',
+                'Aktif' => 'Aktif',
+                'aktif' => 'Aktif',
+                'Dalam Perpanjangan' => 'Dalam Perpanjangan',
+                'dalam perpanjangan' => 'Dalam Perpanjangan',
+                'Kadarluarsa' => 'Kadaluarsa',
+                'kadarluarsa' => 'Kadaluarsa',
+                'Kadaluarsa' => 'Kadaluarsa',
+                'kadarluarsa' => 'Kadaluarsa',
+                'Kedaluwarsa' => 'Kadaluarsa',
+                'kedaluwarsa' => 'Kadaluarsa',
+                'Tidak Aktif' => 'Tidak Aktif',
+                'tidak aktif' => 'Tidak Aktif',
             ];
 
             // Perpanjangan memiliki status masa berlaku tersendiri.
-            // Jika input baru biasa, status masa berlaku otomatis 'proses'.
+            // Jika input baru biasa, status masa berlaku otomatis 'Aktif'.
             // Jika input arsip, gunakan pilihan user.
             if ($perpanjanganDariId) {
-                $status = 'dalam perpanjangan';
+                $status = 'Dalam Perpanjangan';
             } else {
-                $status = ($request->input_type === 'baru') ? 'proses' : ($statusMap[$request->status] ?? 'aktif');
+                $status = ($request->input_type === 'baru') ? 'Aktif' : ($statusMap[$request->status] ?? 'Aktif');
             }
 
             // 1. Handle Internal Pejabats (Pihak 1)
@@ -442,15 +448,21 @@ class KerjasamaPusatController extends Controller
         try {
             // Handle status normalization
             $statusMap = [
-                'Aktif' => 'aktif',
-                'Dalam Perpanjangan' => 'dalam perpanjangan',
-                'Kadarluarsa' => 'kadarluarsa',
-                'Kadaluarsa' => 'kadarluarsa',
-                'Kedaluwarsa' => 'kadarluarsa',
-                'Tidak Aktif' => 'tidak aktif',
+                'Aktif' => 'Aktif',
+                'aktif' => 'Aktif',
+                'Dalam Perpanjangan' => 'Dalam Perpanjangan',
+                'dalam perpanjangan' => 'Dalam Perpanjangan',
+                'Kadarluarsa' => 'Kadaluarsa',
+                'kadarluarsa' => 'Kadaluarsa',
+                'Kadaluarsa' => 'Kadaluarsa',
+                'kadarluarsa' => 'Kadaluarsa',
+                'Kedaluwarsa' => 'Kadaluarsa',
+                'kedaluwarsa' => 'Kadaluarsa',
+                'Tidak Aktif' => 'Tidak Aktif',
+                'tidak aktif' => 'Tidak Aktif',
             ];
 
-            $status = $statusMap[$request->status] ?? $cooperation->status_berlaku;
+            $status = $statusMap[$request->status] ?? ($cooperation->status_berlaku ?: 'Aktif');
 
             // 1. Handle Internal Pejabats (Pihak 1)
             if ($request->nama_penandatangan) {
