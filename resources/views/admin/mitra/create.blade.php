@@ -1,5 +1,9 @@
 @extends('admin.dashboard')
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/auth/unit/mitra/modal_create.css') }}">
+@endsection
+
 @section('content')
 @php
     $mitraKlasifikasiItems = ($klasifikasis ?? collect())->map(fn ($klas) => [
@@ -25,7 +29,7 @@
                 <div class="ud-title-copy">
                     <h2 class="ud-title" id="pageTitle">Tambah Mitra Baru</h2>
                     <p class="ud-subtitle" id="pageDesc">
-                        Isi formulir lengkap sesuai tampilan modal tambah mitra.
+                        Lengkapi informasi instansi mitra kerjasama sesuai formulir di bawah ini.
                     </p>
                 </div>
             </div>
@@ -40,22 +44,36 @@
                         <i class="fas fa-handshake"></i>
                     </div>
                     <div class="mitra-create-header-text">
-                        <h3 class="mitra-create-title">Tambah Mitra Baru</h3>
+                        <h3 class="mitra-create-title">Formulir Tambah Mitra Baru</h3>
                         <p class="mitra-create-subtitle">Lengkapi informasi instansi mitra kerjasama</p>
                     </div>
                 </div>
 
-                <form action="{{ route('mitra.store') }}" method="POST" x-data="adminMitraForm({
+                <form action="{{ route('mitra.store') }}" method="POST" x-data="adminMitraCreateForm({
                     klasifikasiItems: {{ Js::from($mitraKlasifikasiItems) }},
                     selectedKlasifikasi: {{ Js::from((string) old('id_klasifikasi', '')) }},
-                    kategori: {{ Js::from(old('kategori', '')) }},
-                    negara: {{ Js::from(old('negara', 'Indonesia')) }}
-                })">
+                    kategori: {{ Js::from(old('kategori', 'nasional')) }},
+                    negara: {{ Js::from(old('negara', 'Indonesia')) }},
+                    provinsi: {{ Js::from(old('provinsi', '')) }},
+                    kota: {{ Js::from(old('kota', '')) }},
+                    kecamatan: {{ Js::from(old('kecamatan', '')) }},
+                    kelurahan: {{ Js::from(old('kelurahan', '')) }}
+                })" x-init="init()">
                     @csrf
+                    
+                    {{-- Hidden inputs for bound state --}}
+                    <input type="hidden" name="id_klasifikasi" :value="klasifikasiSelected">
+                    <input type="hidden" name="kategori" :value="kategori">
+                    <input type="hidden" name="negara" :value="kategori === 'internasional' ? negara : 'Indonesia'">
+                    <input type="hidden" name="provinsi" :value="kategori === 'nasional' ? provinsi : ''">
+                    <input type="hidden" name="kota" :value="kategori === 'nasional' ? kota : kotaInternasional">
+                    <input type="hidden" name="kecamatan" :value="kategori === 'nasional' ? kecamatan : ''">
+                    <input type="hidden" name="kelurahan" :value="kategori === 'nasional' ? kelurahan : ''">
+
                     <div class="mitra-create-content mitra-page-form-content">
+                        {{-- 1. Klasifikasi Mitra --}}
                         <div class="mc-group mitra-create-section">
                             <label class="mc-label">Klasifikasi Mitra</label>
-                            <input type="hidden" name="id_klasifikasi" :value="klasifikasiSelected">
                             <div class="alpine-dropdown" @click.outside="klasifikasiOpen = false; klasifikasiSearch = ''">
                                 <div class="ad-trigger no-icon" :class="{'active': klasifikasiOpen}"
                                     @click="klasifikasiOpen = !klasifikasiOpen; $nextTick(() => { if (klasifikasiOpen) $refs.mkSearch.focus() })">
@@ -91,24 +109,25 @@
                                 </div>
                             </div>
                             @error('id_klasifikasi')
-                            <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                             @enderror
                         </div>
 
+                        {{-- 2. Nama Mitra & Kategori --}}
                         <div class="mc-grid-2 mitra-create-row">
                             <div class="mc-group">
                                 <label class="mc-label">Nama Instansi / Mitra <span class="mc-req">*</span></label>
                                 <div class="mc-input-wrap">
-                                    <input type="text" name="nama_mitra" required placeholder="Masukkan nama instansi/mitra" class="mc-input no-icon @error('nama_mitra') uc-input-error @enderror" value="{{ old('nama_mitra') }}">
+                                    <input type="text" name="nama_mitra" required placeholder="Masukkan nama instansi/mitra"
+                                        class="mc-input no-icon @error('nama_mitra') uc-input-error @enderror" value="{{ old('nama_mitra') }}">
                                 </div>
                                 @error('nama_mitra')
-                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
 
                             <div class="mc-group" x-data="{ katOpen: false }">
                                 <label class="mc-label">Kategori <span class="mc-req">*</span></label>
-                                <input type="hidden" name="kategori" :value="kategori">
                                 <div class="alpine-dropdown" @click.outside="katOpen = false">
                                     <div class="ad-trigger no-icon" :class="{'active': katOpen}" @click="katOpen = !katOpen">
                                         <span x-text="kategori === 'nasional' ? 'Nasional' : (kategori === 'internasional' ? 'Internasional' : '- Pilih Kategori -')" class="mitra-create-item-text"></span>
@@ -120,74 +139,263 @@
                                     </div>
                                 </div>
                                 @error('kategori')
-                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
 
-                        <input type="hidden" name="negara" :value="kategori === 'internasional' ? negara : 'Indonesia'">
-                        <div x-show="kategori === 'internasional'" x-transition class="mitra-create-row">
-                            <div class="mc-group">
-                                <label class="mc-label"><i class="fas fa-globe-americas mitra-create-label-icon"></i>Negara</label>
-                                <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
-                                    <div class="ad-trigger no-icon" :class="{'active': countryOpen}" @click="countryOpen = !countryOpen; $nextTick(() => { if (countryOpen) $refs.mkCountrySearch.focus() })">
-                                        <div class="mitra-create-trigger-content is-compact">
-                                            <i class="fas fa-flag mitra-create-muted-icon"></i>
-                                            <span x-show="!negara" class="mitra-create-placeholder">- Pilih Negara -</span>
-                                            <span x-show="negara" x-text="negara" class="mitra-create-selected is-normal"></span>
+                        {{-- 3. Wilayah Indonesia (Nasional) --}}
+                        <div x-show="kategori === 'nasional'" x-transition class="mitra-create-row">
+                            <div class="mc-grid-2">
+                                {{-- Provinsi --}}
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-map-marked-alt mitra-create-label-icon"></i>Provinsi
+                                    </label>
+                                    <div class="alpine-dropdown" @click.outside="provinceOpen = false; provinceSearch = ''">
+                                        <div class="ad-trigger no-icon" :class="{'active': provinceOpen}"
+                                            @click="provinceOpen = !provinceOpen; $nextTick(() => { if (provinceOpen) $refs.mkProvinceSearch.focus() })">
+                                            <div class="mitra-create-trigger-content is-compact">
+                                                <i class="fas fa-map-pin mitra-create-muted-icon"></i>
+                                                <span x-show="!provinsi" class="mitra-create-placeholder">- Pilih Provinsi -</span>
+                                                <span x-show="provinsi" x-text="provinsi" class="mitra-create-selected is-normal"></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': provinceOpen}"></i>
                                         </div>
-                                        <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': countryOpen}"></i>
-                                    </div>
-                                    <div class="ad-menu mitra-create-menu is-scrollable" x-show="countryOpen" x-transition>
-                                        <div class="mitra-create-search-wrap">
-                                            <div class="mitra-create-search">
-                                                <i class="fas fa-search"></i>
-                                                <input x-ref="mkCountrySearch" x-model="countrySearch" type="text" placeholder="Cari negara..." @click.stop>
+                                        <div class="ad-menu mitra-create-menu is-scrollable" x-show="provinceOpen" x-transition>
+                                            <div class="mitra-create-search-wrap">
+                                                <div class="mitra-create-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input x-ref="mkProvinceSearch" x-model="provinceSearch" type="text" placeholder="Cari provinsi..." @click.stop>
+                                                </div>
+                                            </div>
+                                            <div class="mitra-create-menu-list is-country">
+                                                <div class="ad-item" :class="{'selected': !provinsi}" @click="selectProvince(null)">- Pilih Provinsi -</div>
+                                                <template x-for="item in filteredProvinces" :key="item.id || item.name">
+                                                    <div class="ad-item" :class="{'selected': provinsi === item.name}" @click="selectProvince(item)" x-text="item.name"></div>
+                                                </template>
                                             </div>
                                         </div>
-                                        <div class="mitra-create-menu-list is-country">
-                                            <template x-for="country in filteredCountries" :key="country">
-                                                <div class="ad-item" :class="{'selected': negara === country}" @click="negara = country; countryOpen = false; countrySearch = ''" x-text="country"></div>
-                                            </template>
+                                    </div>
+                                    @error('provinsi')
+                                        <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                {{-- Kota / Kabupaten --}}
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-city mitra-create-label-icon"></i>Kota / Kabupaten
+                                    </label>
+                                    <div class="alpine-dropdown" @click.outside="cityOpen = false; citySearch = ''">
+                                        <div class="ad-trigger no-icon" :class="{'active': cityOpen, 'disabled': !provinsi}"
+                                            @click="if (!provinsi) return; cityOpen = !cityOpen; $nextTick(() => { if (cityOpen) $refs.mkCitySearch.focus() })">
+                                            <div class="mitra-create-trigger-content is-compact">
+                                                <i class="fas fa-city mitra-create-muted-icon"></i>
+                                                <span x-show="!kota && !provinsi" class="mitra-create-placeholder">- Pilih Provinsi Dahulu -</span>
+                                                <span x-show="!kota && provinsi" class="mitra-create-placeholder">- Pilih Kota / Kabupaten -</span>
+                                                <span x-show="kota" x-text="kota" class="mitra-create-selected is-normal"></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': cityOpen}"></i>
+                                        </div>
+                                        <div class="ad-menu mitra-create-menu is-scrollable" x-show="cityOpen" x-transition>
+                                            <div class="mitra-create-search-wrap">
+                                                <div class="mitra-create-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input x-ref="mkCitySearch" x-model="citySearch" type="text" placeholder="Cari kota/kabupaten..." @click.stop>
+                                                </div>
+                                            </div>
+                                            <div class="mitra-create-menu-list is-country">
+                                                <div class="ad-item" :class="{'selected': !kota}" @click="selectCity(null)">- Pilih Kota / Kabupaten -</div>
+                                                <div x-show="loadingCities" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                                </div>
+                                                <template x-for="item in filteredCities" :key="item.id || item.name">
+                                                    <div class="ad-item" :class="{'selected': kota === item.name}" @click="selectCity(item)" x-text="item.name"></div>
+                                                </template>
+                                                <div x-show="!loadingCities && filteredCities.length === 0 && citySearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    Tidak ada kota/kabupaten ditemukan
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    @error('kota')
+                                        <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
                                 </div>
-                                @error('negara')
-                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                                @enderror
+                            </div>
+
+                            <div class="mc-grid-2" style="margin-top: 12px;">
+                                {{-- Kecamatan --}}
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-map-location-dot mitra-create-label-icon"></i>Kecamatan
+                                    </label>
+                                    <div class="alpine-dropdown" @click.outside="districtOpen = false; districtSearch = ''">
+                                        <div class="ad-trigger no-icon" :class="{'active': districtOpen, 'disabled': !kota}"
+                                            @click="if (!kota) return; districtOpen = !districtOpen; $nextTick(() => { if (districtOpen) $refs.mkDistrictSearch.focus() })">
+                                            <div class="mitra-create-trigger-content is-compact">
+                                                <i class="fas fa-map-location-dot mitra-create-muted-icon"></i>
+                                                <span x-show="!kecamatan && !kota" class="mitra-create-placeholder">- Pilih Kota Dahulu -</span>
+                                                <span x-show="!kecamatan && kota" class="mitra-create-placeholder">- Pilih Kecamatan (Opsional) -</span>
+                                                <span x-show="kecamatan" x-text="kecamatan" class="mitra-create-selected is-normal"></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': districtOpen}"></i>
+                                        </div>
+                                        <div class="ad-menu mitra-create-menu is-scrollable" x-show="districtOpen" x-transition>
+                                            <div class="mitra-create-search-wrap">
+                                                <div class="mitra-create-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input x-ref="mkDistrictSearch" x-model="districtSearch" type="text" placeholder="Cari kecamatan..." @click.stop>
+                                                </div>
+                                            </div>
+                                            <div class="mitra-create-menu-list is-country">
+                                                <div class="ad-item" :class="{'selected': !kecamatan}" @click="selectDistrict(null)">- Pilih Kecamatan -</div>
+                                                <div x-show="loadingDistricts" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                                </div>
+                                                <template x-for="item in filteredDistricts" :key="item.id || item.name">
+                                                    <div class="ad-item" :class="{'selected': kecamatan === item.name}" @click="selectDistrict(item)" x-text="item.name"></div>
+                                                </template>
+                                                <div x-show="!loadingDistricts && filteredDistricts.length === 0 && districtSearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    Tidak ada kecamatan ditemukan
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @error('kecamatan')
+                                        <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                {{-- Kelurahan / Desa --}}
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-signs-post mitra-create-label-icon"></i>Kelurahan / Desa
+                                    </label>
+                                    <div class="alpine-dropdown" @click.outside="villageOpen = false; villageSearch = ''">
+                                        <div class="ad-trigger no-icon" :class="{'active': villageOpen, 'disabled': !kecamatan}"
+                                            @click="if (!kecamatan) return; villageOpen = !villageOpen; $nextTick(() => { if (villageOpen) $refs.mkVillageSearch.focus() })">
+                                            <div class="mitra-create-trigger-content is-compact">
+                                                <i class="fas fa-signs-post mitra-create-muted-icon"></i>
+                                                <span x-show="!kelurahan && !kecamatan" class="mitra-create-placeholder">- Pilih Kecamatan Dahulu -</span>
+                                                <span x-show="!kelurahan && kecamatan" class="mitra-create-placeholder">- Pilih Kelurahan (Opsional) -</span>
+                                                <span x-show="kelurahan" x-text="kelurahan" class="mitra-create-selected is-normal"></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': villageOpen}"></i>
+                                        </div>
+                                        <div class="ad-menu mitra-create-menu is-scrollable" x-show="villageOpen" x-transition>
+                                            <div class="mitra-create-search-wrap">
+                                                <div class="mitra-create-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input x-ref="mkVillageSearch" x-model="villageSearch" type="text" placeholder="Cari kelurahan/desa..." @click.stop>
+                                                </div>
+                                            </div>
+                                            <div class="mitra-create-menu-list is-country">
+                                                <div class="ad-item" :class="{'selected': !kelurahan}" @click="selectVillage(null)">- Pilih Kelurahan / Desa -</div>
+                                                <div x-show="loadingVillages" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    <i class="fas fa-spinner fa-spin me-1"></i> Memuat data...
+                                                </div>
+                                                <template x-for="item in filteredVillages" :key="item.id || item.name">
+                                                    <div class="ad-item" :class="{'selected': kelurahan === item.name}" @click="selectVillage(item)" x-text="item.name"></div>
+                                                </template>
+                                                <div x-show="!loadingVillages && filteredVillages.length === 0 && villageSearch" class="ad-item" style="color: #94a3b8; font-style: italic;">
+                                                    Tidak ada kelurahan/desa ditemukan
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @error('kelurahan')
+                                        <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
+                        {{-- 4. Kategori Internasional --}}
+                        <div x-show="kategori === 'internasional'" x-transition class="mitra-create-row">
+                            <div class="mc-grid-2">
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-globe-americas mitra-create-label-icon"></i>Negara
+                                    </label>
+                                    <div class="alpine-dropdown" @click.outside="countryOpen = false; countrySearch = ''">
+                                        <div class="ad-trigger no-icon" :class="{'active': countryOpen}"
+                                            @click="countryOpen = !countryOpen; $nextTick(() => { if (countryOpen) $refs.mkCountrySearch.focus() })">
+                                            <div class="mitra-create-trigger-content is-compact">
+                                                <i class="fas fa-flag mitra-create-muted-icon"></i>
+                                                <span x-show="!negara" class="mitra-create-placeholder">- Pilih Negara -</span>
+                                                <span x-show="negara" x-text="negara" class="mitra-create-selected is-normal"></span>
+                                            </div>
+                                            <i class="fas fa-chevron-down mitra-create-chevron is-small" :class="{'is-open': countryOpen}"></i>
+                                        </div>
+                                        <div class="ad-menu mitra-create-menu is-scrollable" x-show="countryOpen" x-transition>
+                                            <div class="mitra-create-search-wrap">
+                                                <div class="mitra-create-search">
+                                                    <i class="fas fa-search"></i>
+                                                    <input x-ref="mkCountrySearch" x-model="countrySearch" type="text" placeholder="Cari negara..." @click.stop>
+                                                </div>
+                                            </div>
+                                            <div class="mitra-create-menu-list is-country">
+                                                <template x-for="country in filteredCountries" :key="country">
+                                                    <div class="ad-item" :class="{'selected': negara === country}"
+                                                        @click="negara = country; countryOpen = false; countrySearch = ''" x-text="country"></div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @error('negara')
+                                        <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="mc-group">
+                                    <label class="mc-label">
+                                        <i class="fas fa-city mitra-create-label-icon"></i>City / Kota
+                                    </label>
+                                    <div class="mc-input-wrap">
+                                        <i class="fas fa-city mc-icon-left"></i>
+                                        <input type="text" x-model="kotaInternasional" placeholder="Contoh: Tokyo / Munich" class="mc-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 5. Alamat Lengkap --}}
                         <div class="mc-group mitra-create-row">
                             <label class="mc-label">Alamat</label>
                             <div class="mc-input-wrap">
                                 <i class="fas fa-map-marker-alt mc-icon-left mitra-create-textarea-icon"></i>
-                                <textarea name="alamat" rows="2" placeholder="Masukkan alamat lengkap mitra..." class="mc-input mitra-create-textarea @error('alamat') uc-input-error @enderror">{{ old('alamat') }}</textarea>
+                                <textarea name="alamat" rows="2" placeholder="Masukkan alamat lengkap mitra..."
+                                    class="mc-input mitra-create-textarea @error('alamat') uc-input-error @enderror">{{ old('alamat') }}</textarea>
                             </div>
                             @error('alamat')
-                            <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                             @enderror
                         </div>
 
+                        {{-- 6. Telepon & Website --}}
                         <div class="mc-grid-2">
                             <div class="mc-group">
                                 <label class="mc-label">Nomor Telepon</label>
                                 <div class="mc-input-wrap">
                                     <i class="fas fa-phone mc-icon-left"></i>
-                                    <input type="text" name="telp" placeholder="Contoh: 021-12345678" class="mc-input @error('telp') uc-input-error @enderror" value="{{ old('telp') }}">
+                                    <input type="text" name="telp" placeholder="Contoh: 021-12345678"
+                                        class="mc-input @error('telp') uc-input-error @enderror" value="{{ old('telp') }}">
                                 </div>
                                 @error('telp')
-                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="mc-group">
                                 <label class="mc-label">Website</label>
                                 <div class="mc-input-wrap">
                                     <i class="fas fa-globe mc-icon-left"></i>
-                                    <input type="text" name="website" placeholder="https://www.example.com" class="mc-input @error('website') uc-input-error @enderror" value="{{ old('website') }}">
+                                    <input type="text" name="website" placeholder="https://www.example.com"
+                                        class="mc-input @error('website') uc-input-error @enderror" value="{{ old('website') }}">
                                 </div>
                                 @error('website')
-                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -210,32 +418,333 @@
 
 @section('scripts')
 <script>
-    window.adminMitraCountries = window.adminMitraCountries || ['Afghanistan','Albania','Algeria','Andorra','Angola','Argentina','Armenia','Australia','Austria','Azerbaijan','Bahrain','Bangladesh','Belgium','Brazil','Brunei','Cambodia','Canada','China','Denmark','Egypt','Finland','France','Germany','India','Indonesia','Italy','Japan','Malaysia','Netherlands','New Zealand','Philippines','Russia','Saudi Arabia','Singapore','South Korea','Spain','Thailand','United Arab Emirates','United Kingdom','United States','Vietnam'];
-    window.adminMitraForm = window.adminMitraForm || function (config) {
+(function () {
+    const countries = [
+        'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan',
+        'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia',
+        'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon',
+        'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica', 'Croatia',
+        'Cuba', 'Cyprus', 'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'DR Congo', 'East Timor', 'Ecuador',
+        'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France',
+        'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau',
+        'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland',
+        'Israel', 'Italy', 'Ivory Coast', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kosovo',
+        'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania',
+        'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius',
+        'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia',
+        'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway',
+        'Oman', 'Pakistan', 'Palau', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland',
+        'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines',
+        'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore',
+        'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan',
+        'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Togo', 'Tonga',
+        'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates',
+        'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe'
+    ];
+
+    const defaultProvinces = [
+        { id: '11', name: 'Aceh' },
+        { id: '12', name: 'Sumatera Utara' },
+        { id: '13', name: 'Sumatera Barat' },
+        { id: '14', name: 'Riau' },
+        { id: '15', name: 'Jambi' },
+        { id: '16', name: 'Sumatera Selatan' },
+        { id: '17', name: 'Bengkulu' },
+        { id: '18', name: 'Lampung' },
+        { id: '19', name: 'Kepulauan Bangka Belitung' },
+        { id: '21', name: 'Kepulauan Riau' },
+        { id: '31', name: 'DKI Jakarta' },
+        { id: '32', name: 'Jawa Barat' },
+        { id: '33', name: 'Jawa Tengah' },
+        { id: '34', name: 'DI Yogyakarta' },
+        { id: '35', name: 'Jawa Timur' },
+        { id: '36', name: 'Banten' },
+        { id: '51', name: 'Bali' },
+        { id: '52', name: 'Nusa Tenggara Barat' },
+        { id: '53', name: 'Nusa Tenggara Timur' },
+        { id: '61', name: 'Kalimantan Barat' },
+        { id: '62', name: 'Kalimantan Tengah' },
+        { id: '63', name: 'Kalimantan Selatan' },
+        { id: '64', name: 'Kalimantan Timur' },
+        { id: '65', name: 'Kalimantan Utara' },
+        { id: '71', name: 'Sulawesi Utara' },
+        { id: '72', name: 'Sulawesi Tengah' },
+        { id: '73', name: 'Sulawesi Selatan' },
+        { id: '74', name: 'Sulawesi Tenggara' },
+        { id: '75', name: 'Gorontalo' },
+        { id: '76', name: 'Sulawesi Barat' },
+        { id: '81', name: 'Maluku' },
+        { id: '82', name: 'Maluku Utara' },
+        { id: '91', name: 'Papua Barat' },
+        { id: '92', name: 'Papua Barat Daya' },
+        { id: '93', name: 'Papua Selatan' },
+        { id: '94', name: 'Papua' },
+        { id: '95', name: 'Papua Tengah' },
+        { id: '96', name: 'Papua Pegunungan' }
+    ];
+
+    function toTitleCase(str) {
+        if (!str) return '';
+        return str.toLowerCase()
+            .replace(/(?:^|\s|\/|-|\()\S/g, function (match) { return match.toUpperCase(); })
+            .replace(/\b(Dki|Di|Upa)\b/g, function (match) { return match.toUpperCase(); })
+            .replace(/\bIii\b/g, 'III')
+            .replace(/\bIi\b/g, 'II')
+            .replace(/\bIv\b/g, 'IV')
+            .replace(/\bVi\b/g, 'VI')
+            .replace(/\bV\b/g, 'V');
+    }
+
+    const WilayahService = {
+        cache: {
+            provinces: null,
+            regencies: {},
+            districts: {},
+            villages: {}
+        },
+        async getProvinces() {
+            if (this.cache.provinces) return this.cache.provinces;
+            try {
+                const res = await fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json');
+                if (res.ok) {
+                    const data = await res.json();
+                    this.cache.provinces = data.map(item => ({
+                        id: String(item.id),
+                        name: toTitleCase(item.name)
+                    }));
+                    return this.cache.provinces;
+                }
+            } catch (e) {
+                console.error('Failed to fetch provinces, fallback used:', e);
+            }
+            this.cache.provinces = defaultProvinces;
+            return this.cache.provinces;
+        },
+        async getRegencies(provinceId) {
+            if (!provinceId) return [];
+            if (this.cache.regencies[provinceId]) return this.cache.regencies[provinceId];
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.cache.regencies[provinceId] = data.map(item => ({
+                        id: String(item.id),
+                        name: toTitleCase(item.name)
+                    }));
+                    return this.cache.regencies[provinceId];
+                }
+            } catch (e) {
+                console.error('Failed to fetch regencies:', e);
+            }
+            return [];
+        },
+        async getDistricts(regencyId) {
+            if (!regencyId) return [];
+            if (this.cache.districts[regencyId]) return this.cache.districts[regencyId];
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.cache.districts[regencyId] = data.map(item => ({
+                        id: String(item.id),
+                        name: toTitleCase(item.name)
+                    }));
+                    return this.cache.districts[regencyId];
+                }
+            } catch (e) {
+                console.error('Failed to fetch districts:', e);
+            }
+            return [];
+        },
+        async getVillages(districtId) {
+            if (!districtId) return [];
+            if (this.cache.villages[districtId]) return this.cache.villages[districtId];
+            try {
+                const res = await fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    this.cache.villages[districtId] = data.map(item => ({
+                        id: String(item.id),
+                        name: toTitleCase(item.name)
+                    }));
+                    return this.cache.villages[districtId];
+                }
+            } catch (e) {
+                console.error('Failed to fetch villages:', e);
+            }
+            return [];
+        }
+    };
+
+    window.adminMitraCreateForm = function (config) {
         return {
-            kategori: config.kategori || '',
+            kategori: config.kategori || 'nasional',
             negara: config.negara || 'Indonesia',
+            provinsi: config.provinsi || '',
+            kota: config.kota || '',
+            kecamatan: config.kecamatan || '',
+            kelurahan: config.kelurahan || '',
+            kotaInternasional: (config.kategori === 'internasional' ? config.kota : '') || '',
+
             klasifikasiOpen: false,
             klasifikasiSearch: '',
             klasifikasiSelected: config.selectedKlasifikasi || '',
             klasifikasiItems: config.klasifikasiItems || [],
+
             countryOpen: false,
             countrySearch: '',
-            countries: window.adminMitraCountries,
+            countries: countries,
+
+            provinceOpen: false,
+            provinceSearch: '',
+            provinceList: [],
+
+            cityOpen: false,
+            citySearch: '',
+            cityList: [],
+            loadingCities: false,
+
+            districtOpen: false,
+            districtSearch: '',
+            districtList: [],
+            loadingDistricts: false,
+
+            villageOpen: false,
+            villageSearch: '',
+            villageList: [],
+            loadingVillages: false,
+
+            async init() {
+                this.provinceList = await WilayahService.getProvinces();
+                if (this.kategori === 'nasional' && this.provinsi) {
+                    const found = this.provinceList.find(p => p.name.toLowerCase() === this.provinsi.toLowerCase());
+                    if (found) {
+                        this.loadingCities = true;
+                        this.cityList = await WilayahService.getRegencies(found.id);
+                        this.loadingCities = false;
+
+                        if (this.kota) {
+                            const foundCity = this.cityList.find(c => c.name.toLowerCase() === this.kota.toLowerCase());
+                            if (foundCity) {
+                                this.loadingDistricts = true;
+                                this.districtList = await WilayahService.getDistricts(foundCity.id);
+                                this.loadingDistricts = false;
+
+                                if (this.kecamatan) {
+                                    const foundDist = this.districtList.find(d => d.name.toLowerCase() === this.kecamatan.toLowerCase());
+                                    if (foundDist) {
+                                        this.loadingVillages = true;
+                                        this.villageList = await WilayahService.getVillages(foundDist.id);
+                                        this.loadingVillages = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
             get selectedKlasifikasi() {
-                return this.klasifikasiItems.find((item) => item.id === this.klasifikasiSelected);
+                return this.klasifikasiItems.find(item => item.id === this.klasifikasiSelected);
             },
             get filteredKlasifikasi() {
                 if (!this.klasifikasiSearch) return this.klasifikasiItems;
                 const query = this.klasifikasiSearch.toLowerCase();
-                return this.klasifikasiItems.filter((item) => item.label.toLowerCase().includes(query));
+                return this.klasifikasiItems.filter(item => item.label.toLowerCase().includes(query));
             },
             get filteredCountries() {
                 if (!this.countrySearch) return this.countries;
                 const query = this.countrySearch.toLowerCase();
-                return this.countries.filter((country) => country.toLowerCase().includes(query));
+                return this.countries.filter(country => country.toLowerCase().includes(query));
+            },
+            get filteredProvinces() {
+                if (!this.provinceSearch) return this.provinceList;
+                const query = this.provinceSearch.toLowerCase();
+                return this.provinceList.filter(p => p.name.toLowerCase().includes(query));
+            },
+            get filteredCities() {
+                if (!this.citySearch) return this.cityList;
+                const query = this.citySearch.toLowerCase();
+                return this.cityList.filter(c => c.name.toLowerCase().includes(query));
+            },
+            get filteredDistricts() {
+                if (!this.districtSearch) return this.districtList;
+                const query = this.districtSearch.toLowerCase();
+                return this.districtList.filter(d => d.name.toLowerCase().includes(query));
+            },
+            get filteredVillages() {
+                if (!this.villageSearch) return this.villageList;
+                const query = this.villageSearch.toLowerCase();
+                return this.villageList.filter(v => v.name.toLowerCase().includes(query));
+            },
+
+            async selectProvince(item) {
+                if (!item) {
+                    this.provinsi = '';
+                    this.kota = '';
+                    this.kecamatan = '';
+                    this.kelurahan = '';
+                    this.cityList = [];
+                    this.districtList = [];
+                    this.villageList = [];
+                } else {
+                    this.provinsi = item.name;
+                    this.kota = '';
+                    this.kecamatan = '';
+                    this.kelurahan = '';
+                    this.districtList = [];
+                    this.villageList = [];
+                    this.loadingCities = true;
+                    this.cityList = await WilayahService.getRegencies(item.id);
+                    this.loadingCities = false;
+                }
+                this.provinceOpen = false;
+                this.provinceSearch = '';
+            },
+
+            async selectCity(item) {
+                if (!item) {
+                    this.kota = '';
+                    this.kecamatan = '';
+                    this.kelurahan = '';
+                    this.districtList = [];
+                    this.villageList = [];
+                } else {
+                    this.kota = item.name;
+                    this.kecamatan = '';
+                    this.kelurahan = '';
+                    this.villageList = [];
+                    this.loadingDistricts = true;
+                    this.districtList = await WilayahService.getDistricts(item.id);
+                    this.loadingDistricts = false;
+                }
+                this.cityOpen = false;
+                this.citySearch = '';
+            },
+
+            async selectDistrict(item) {
+                if (!item) {
+                    this.kecamatan = '';
+                    this.kelurahan = '';
+                    this.villageList = [];
+                } else {
+                    this.kecamatan = item.name;
+                    this.kelurahan = '';
+                    this.loadingVillages = true;
+                    this.villageList = await WilayahService.getVillages(item.id);
+                    this.loadingVillages = false;
+                }
+                this.districtOpen = false;
+                this.districtSearch = '';
+            },
+
+            selectVillage(item) {
+                this.kelurahan = item ? item.name : '';
+                this.villageOpen = false;
+                this.villageSearch = '';
             }
         };
     };
+})();
 </script>
 @endsection
