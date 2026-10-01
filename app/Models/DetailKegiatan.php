@@ -13,7 +13,6 @@ class DetailKegiatan extends Model
         'jenis_kerjasama_id',
         'sasaran_id',
         'indikator_id',
-        'nilai_kontrak',
         'income',
         'volume_luaran',
         'satuan_luaran',

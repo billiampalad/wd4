@@ -187,6 +187,8 @@ class KerjasamaUpaController extends Controller
             $statusMap = [
                 'Aktif' => 'Aktif',
                 'aktif' => 'Aktif',
+                'Proses' => 'Aktif',
+                'proses' => 'Aktif',
                 'Dalam Perpanjangan' => 'Dalam Perpanjangan',
                 'dalam perpanjangan' => 'Dalam Perpanjangan',
                 'Kadarluarsa' => 'Kadaluarsa',
@@ -302,20 +304,16 @@ class KerjasamaUpaController extends Controller
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? null;
                     if ($detailData) {
-                        // Sanitize nilai_kontrak
-                        $cleanNilai = !empty($detailData['nilai_kontrak']) ? str_replace(['Rp', '.', ' '], '', $detailData['nilai_kontrak']) : '0';
-                        $nilaiKontrak = (float) str_replace(',', '.', $cleanNilai);
+                        $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
 
                         DetailKegiatan::create([
                             'cooperation_id' => $cooperation->id,
                             'jenis_kerjasama_id' => $jenisId,
                             'sasaran_id' => $detailData['sasaran_id'] ?: null,
-                            'nilai_kontrak' => $nilaiKontrak,
-                            'income' => $detailData['income'] ?: null,
+                            'income' => $incomeValue,
                             'volume_luaran' => $detailData['volume'] ?: null,
                             'satuan_luaran' => $detailData['satuan_volume'] ?: null,
-                            'keterangan' => $detailData['keterangan'] ?: null,
-                            'tujuan' => $detailData['tujuan'] ?: null,
+                            'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
                             'indikator_id' => $detailData['indikator_id'] ?: null,
                             'output' => $detailData['output'] ?: null,
                             'outcome' => $detailData['outcome'] ?: null,
@@ -589,20 +587,16 @@ class KerjasamaUpaController extends Controller
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? null;
                     if ($detailData) {
-                        // Sanitize nilai_kontrak (remove Rp, spaces, and dots)
-                        $cleanNilai = isset($detailData['nilai_kontrak']) ? str_replace(['Rp', '.', ' '], '', $detailData['nilai_kontrak']) : '0';
-                        $nilaiKontrak = (float) str_replace(',', '.', $cleanNilai);
+                        $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
 
                         DetailKegiatan::create([
                             'cooperation_id' => $cooperation->id,
                             'jenis_kerjasama_id' => $jenisId,
                             'sasaran_id' => $detailData['sasaran_id'] ?? null,
-                            'nilai_kontrak' => $nilaiKontrak,
-                            'income' => $detailData['income'] ?? null,
+                            'income' => $incomeValue,
                             'volume_luaran' => $detailData['volume'] ?? null,
                             'satuan_luaran' => $detailData['satuan_volume'] ?? null,
-                            'keterangan' => $detailData['keterangan'] ?? null,
-                            'tujuan' => $detailData['tujuan'] ?? null,
+                            'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
                             'indikator_id' => $detailData['indikator_id'] ?? null,
                             'output' => $detailData['output'] ?? null,
                             'outcome' => $detailData['outcome'] ?? null,
