@@ -456,7 +456,7 @@
                             CustomAlert.success('Mitra baru berhasil ditambahkan.');
                         }
 
-                        if (typeof window.refreshMitraIndex === 'function') {
+                        if (typeof window.refreshMitraIndex === 'function' && document.querySelector('main[data-mitra-index]')) {
                             window.refreshMitraIndex();
                         }
                         return;

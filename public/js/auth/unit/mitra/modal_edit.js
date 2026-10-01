@@ -523,7 +523,7 @@
                                 CustomAlert.success(result.message || 'Data mitra berhasil diperbarui.');
                             }
 
-                            if (typeof window.refreshMitraIndex === 'function') {
+                            if (typeof window.refreshMitraIndex === 'function' && document.querySelector('main[data-mitra-index]')) {
                                 window.refreshMitraIndex();
                             }
                             return;

@@ -370,7 +370,7 @@
                     <button type="button" data-mitra-edit-modal-close class="mitra-edit-btn mitra-edit-btn-secondary">
                         <i class="fas fa-times"></i> Batal
                     </button>
-                    <button type="submit" :disabled="submitting" class="mitra-edit-btn mitra-edit-btn-primary"
+                    <button type="button" @click="submitMitra()" :disabled="submitting" class="mitra-edit-btn mitra-edit-btn-primary"
                         :class="{'is-submitting': submitting}">
                         <template x-if="!submitting">
                             <span class="mitra-edit-btn-content"><i class="fas fa-save"></i> Perbarui Mitra</span>

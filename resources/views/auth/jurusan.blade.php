@@ -458,9 +458,9 @@
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/index.js') }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_create.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_create.js')) : time() }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_edit.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_edit.js')) : time() }}" data-turbo-track="reload"></script>
+    <script src="{{ asset('js/auth/unit/mitra/index.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/index.js')) ? filemtime(public_path('js/auth/unit/mitra/index.js')) : time() }}" data-turbo-track="reload"></script>
 </body>
 
 </html>

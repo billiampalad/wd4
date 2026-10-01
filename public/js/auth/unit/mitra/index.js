@@ -2,7 +2,7 @@
     let isRefreshing = false;
 
     async function refreshMitraIndex() {
-        const currentMain = document.getElementById('mainContent');
+        const currentMain = document.querySelector('main[data-mitra-index]');
 
         if (!currentMain || isRefreshing) {
             return;
