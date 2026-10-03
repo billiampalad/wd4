@@ -133,7 +133,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: 5-CARD SHOWCASE (WITH INSET BLUE GLOW)
+           MAIN SECTION: 5-CARD SHOWCASE (TIGHT SUBTLE GLOWING BORDER)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
             padding: 30px 0 50px;
@@ -150,37 +150,35 @@
             position: relative;
         }
 
-        /* Outer Viewport - Dilengkapi Glowing Inset Shadow Biru Menyala */
+        /* Outer Viewport - Border & Frame Slider */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding: 20px 0;
-            border-top: 1px solid rgba(2, 132, 199, 0.22);
-            border-bottom: 1px solid rgba(2, 132, 199, 0.22);
-            box-shadow: inset 0 0 35px -5px rgba(2, 132, 199, 0.4), inset 0 0 70px -10px rgba(2, 132, 199, 0.2);
-            transition: box-shadow 0.35s ease, border-color 0.35s ease;
+            padding: 16px 0;
+            border-top: 1px solid rgba(2, 132, 199, 0.25);
+            border-bottom: 1px solid rgba(2, 132, 199, 0.25);
+            transition: border-color 0.35s ease;
         }
 
         [data-theme="dark"] .carousel-outer-wrap {
             border-top-color: rgba(56, 189, 248, 0.35);
             border-bottom-color: rgba(56, 189, 248, 0.35);
-            box-shadow: inset 0 0 45px -5px rgba(56, 189, 248, 0.55), inset 0 0 90px -10px rgba(14, 165, 233, 0.25);
         }
 
-        /* Inset Glow Overlay Mengelilingi 4 Sisi Slider */
+        /* Inset Glow Overlay Mengelilingi 4 Sisi Slider (Ramping & Presisi di Tepi, Tidak Memanjang ke Tengah) */
         .carousel-outer-wrap::before {
             content: '';
             position: absolute;
             inset: 0;
             pointer-events: none;
             z-index: 10;
-            box-shadow: inset 0 0 35px rgba(2, 132, 199, 0.45), inset 0 0 70px rgba(2, 132, 199, 0.2);
+            box-shadow: inset 0 0 6px 1px rgba(2, 132, 199, 0.35);
             transition: box-shadow 0.35s ease;
         }
 
         [data-theme="dark"] .carousel-outer-wrap::before {
-            box-shadow: inset 0 0 45px rgba(56, 189, 248, 0.55), inset 0 0 90px rgba(14, 165, 233, 0.3);
+            box-shadow: inset 0 0 8px 1px rgba(56, 189, 248, 0.45);
         }
 
         /* Step Slider Track: Jarak simetris 18px */
@@ -398,8 +396,8 @@
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-sparkles"></i> BLUE GLOW</span>
-            <span class="preview-title">Facility & Campus Image Slider (Glowing Inset Blue Shadow)</span>
+            <span class="brand-badge"><i class="fa-solid fa-sparkles"></i> REFINED GLOW</span>
+            <span class="preview-title">Facility & Campus Image Slider (Refined Blue Inset Shadow)</span>
         </div>
 
         <div class="preview-actions">
@@ -415,7 +413,7 @@
     </header>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE (DENGAN SHADOW BIRU MENYALA)
+       KOMPONEN SLIDER IMAGE SHOWCASE
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">

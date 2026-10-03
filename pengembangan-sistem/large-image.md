@@ -6,9 +6,9 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ## 1. Karakter Desain & Pengalaman Visual (Glowing Inset Blue Shadow & Step Slide)
 
-### 1.1 Efek Shadow Biru Menyala (*Glowing Inset Blue Shadow*)
-- **Glowing Inset Shadow Mengelilingi Slider:** Seluruh area viewport slider dikelilingi oleh efek *inner blue neon glow* (`box-shadow: inset 0 0 35px rgba(2, 132, 199, 0.45), inset 0 0 70px rgba(2, 132, 199, 0.2);`) yang menyala ke arah dalam di seluruh sisi (atas, bawah, kiri, dan kanan).
-- **Mode Gelap (Dark Mode):** Berubah menjadi pendaran *electric cyan/blue neon* (`box-shadow: inset 0 0 45px rgba(56, 189, 248, 0.55), inset 0 0 90px rgba(14, 165, 233, 0.3);`) yang futuristik dan premium.
+### 1.1 Efek Shadow Biru Menyala (*Ramping & Presisi di Tepi Frame*)
+- **Glowing Inset Shadow Mengelilingi Slider:** Seluruh area viewport slider dikelilingi oleh efek *inner blue neon glow* yang ramping dan presisi di tepi (`box-shadow: inset 0 0 6px 1px rgba(2, 132, 199, 0.35);`) tanpa memanjang terlalu jauh ke bagian tengah gambar.
+- **Mode Gelap (Dark Mode):** Berubah menjadi pendaran *electric cyan/blue neon* ramping (`box-shadow: inset 0 0 8px 1px rgba(56, 189, 248, 0.45);`) yang futuristik dan bersih.
 - **Murni Gambar Tanpa Background:** Setiap kartu foto tampil murni tanpa background pembungkus, mengisi penuh sudut kartu melengkung (`border-radius: 20px`).
 - **Jarak Tepi Kiri & Kanan Simetris:** Jarak margin luar kiri (`18px`) dan kanan (`18px`) sama persis dengan jarak celah antar kartu (`gap: 18px`).
 - **Kalkulasi Presisi 5 Kartu:**
