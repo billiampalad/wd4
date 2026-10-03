@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview UI/UX - 5-Card Full-Width Showcase Slider</title>
+    <title>Preview UI/UX - 5-Card Symmetrical Spacing Showcase Slider</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,7 +148,7 @@
         /* ═══ NOTICE ═══ */
         .preview-notice {
             max-width: 100%;
-            margin: 20px 24px 0;
+            margin: 20px 20px 0;
             padding: 14px 20px;
             background: var(--primary-light);
             border: 1px solid var(--primary-glow);
@@ -162,7 +162,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: FULL-WIDTH 5-CARD SHOWCASE (100% LEBAR PENUH)
+           MAIN SECTION: 5-CARD SHOWCASE (JARAK SIMETRIS & RAPI)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
             padding: 30px 0 50px;
@@ -171,7 +171,6 @@
             overflow: hidden;
         }
 
-        /* Full Width Container - Tanpa batas max-width atau padding samping */
         .showcase-container {
             width: 100%;
             max-width: 100%;
@@ -180,7 +179,6 @@
             position: relative;
         }
 
-        /* Full Width Viewport - Bebas Halangan & Mask */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
@@ -190,7 +188,7 @@
             mask-image: none !important;
         }
 
-        /* Step Slider Track */
+        /* Step Slider Track: Padding Kiri dan Kanan Sama Persis dengan Jarak Antar Kartu (18px) */
         .carousel-step-track {
             display: flex;
             gap: 18px;
@@ -198,7 +196,7 @@
             will-change: transform;
             cursor: grab;
             user-select: none;
-            padding: 6px 0;
+            padding: 6px 18px; /* 18px margin simetris kiri & kanan */
             transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -206,11 +204,11 @@
             cursor: grabbing;
         }
 
-        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT FULL WIDTH ═══ */
+        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT SEMPURNA ═══ */
         .gallery-card-frame {
             /* Dihitung dinamis via CSS variable --card-item-width oleh JS */
-            flex: 0 0 var(--card-item-width, 260px);
-            width: var(--card-item-width, 260px);
+            flex: 0 0 var(--card-item-width, 240px);
+            width: var(--card-item-width, 240px);
             aspect-ratio: 16 / 10;
             background: var(--frame-bg);
             border: 2.5px solid var(--frame-border);
@@ -374,7 +372,7 @@
 
         /* ═══ HUMAS DEMO UPLOAD INFO ═══ */
         .humas-demo-card {
-            max-width: calc(100% - 48px);
+            max-width: calc(100% - 36px);
             margin: 20px auto 30px;
             background: var(--bg-surface);
             border: 1px solid var(--border);
@@ -404,8 +402,8 @@
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-expand"></i> FULL WIDTH 5-CARD</span>
-            <span class="preview-title">Facility & Campus Image Slider (Full Width)</span>
+            <span class="brand-badge"><i class="fa-solid fa-expand"></i> SYMMETRICAL SPACING</span>
+            <span class="preview-title">Facility & Campus Image Slider (Equal Margin & Gap)</span>
         </div>
 
         <div class="preview-actions">
@@ -424,12 +422,12 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Tampilan Full Width:</strong> Batasan <code>showcase-container</code> telah diubah menjadi 100% lebar penuh tanpa margin atau padding penutup di sisi kiri dan kanan. 5 foto tampil utuh dan bebas halangan.</span>
+            <span><strong>Jarak Simetris & Rapi:</strong> Margin luar pada sisi kiri dan kanan (18px) kini persis sama dengan jarak celah antar kartu (18px), sehingga layout tampil seragam dan rapi.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE (FULL WIDTH)
+       KOMPONEN SLIDER IMAGE SHOWCASE (JARAK SIMETRIS)
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
@@ -568,14 +566,14 @@
                 track.appendChild(clone);
             });
 
-            const GAP = 18; // 18px gap
+            const GAP = 18; // 18px jarak celah antar kartu & margin tepi
             const STEP_DURATION = 3500; // 3.5 Detik per pergeseran 1 gambar
             let currentIndex = 0;
             let stepInterval = null;
             let isHovered = false;
             let isPausedManually = false;
 
-            // 3. KALKULASI UKURAN KARTU DINAMIS (FULL SCREEN LEBAR PENUH)
+            // 3. KALKULASI UKURAN KARTU SIMETRIS
             function calculateCardWidth() {
                 const containerWidth = viewport.clientWidth || window.innerWidth;
                 let visibleCount = 5;
@@ -583,7 +581,10 @@
                 else if (window.innerWidth <= 1024) visibleCount = 3;
                 else visibleCount = 5;
 
-                const cardWidth = (containerWidth - (GAP * (visibleCount - 1))) / visibleCount;
+                // Spacing total = 2 margin tepi (kiri & kanan) + (visibleCount - 1) jarak antar kartu
+                const totalSpacing = (visibleCount + 1) * GAP;
+                const cardWidth = (containerWidth - totalSpacing) / visibleCount;
+                
                 document.documentElement.style.setProperty('--card-item-width', `${cardWidth}px`);
                 return cardWidth + GAP;
             }

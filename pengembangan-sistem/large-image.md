@@ -4,11 +4,13 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ---
 
-## 1. Karakter Desain & Pengalaman Visual (Full-Width 5-Card Display & Step Slide)
+## 1. Karakter Desain & Pengalaman Visual (5-Card Symmetrical Spacing & Step Slide)
 
-### 1.1 Tampilan Lebar Penuh (*Full-Width Unobstructed View*)
-- **100% Lebar Penuh Layar (*Full Width*):** Container `showcase-container` diatur `width: 100%; max-width: 100%; margin: 0; padding: 0;` tanpa batasan padding atau margin samping.
-- **Tepat 5 Kartu Fit Sempurna:** Lebar tiap kartu dihitung secara presisi memenuhi 100% lebar layar `(viewportWidth - (gap * 4)) / 5`, sehingga 5 foto tampil utuh dari ujung kiri monitor hingga ujung kanan monitor tanpa ada kartu yang terhalang atau mengintip separuh.
+### 1.1 Jarak Simetris & Rapi (*Symmetrical Margin & Gap*)
+- **Jarak Tepi Kiri & Kanan Sama Persis:** Jarak margin tepi kiri (`18px`) dan kanan (`18px`) dibuat sama persis dengan jarak celah antar kartu (`gap: 18px`).
+- **Kalkulasi Presisi 5 Kartu:**
+  $$\text{Lebar Kartu} = \frac{\text{Lebar Kontainer} - (\text{Jarak } 18\text{px} \times 6)}{5}$$
+  Dengan formula ini, tepat 5 kartu tampil seimbang dan simetris dari ujung kiri hingga ujung kanan.
 - **Tanpa Masking / Side Shadow:** Seluruh efek *gradient mask / side shadow* pada sisi kiri dan kanan telah dihapus sepenuhnya (`mask-image: none; -webkit-mask-image: none;`).
 - **Frame Finishing:** Menggunakan *Warm Beige Frame* (`#ebdcc0` dengan border `#dfcfb0`) pada mode terang dan *Obsidian Slate Frame* pada mode gelap.
 
@@ -17,16 +19,17 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 ### 1.2 Mekanisme Animasi Bergeser Bertambah 1 (*Step-by-Step Slide*)
 - **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
 - **Infinite Looping Mulus:** Menggunakan teknik *invisible wrap reset* sehingga saat mencapai foto terakhir, urutan berikutnya kembali menyambung ke awal secara natural tanpa merusak alur visual.
-- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` sehingga tampak mengambang bebas.
+- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20`.
 - **Lightbox Modal Murni Foto:** Klik pada kartu membuka tampilan foto murni tanpa border/radius dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                           │
+│   │◄─ 18px ─►│                                                                 │◄─ 18px ─►│               │
 │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
 │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ───► +1  │
 │   │ │    01    │ │   │ │    02    │ │   │ │    03    │ │   │ │    04    │ │   │ │    05    │ │   (Step    │
-│   │ │ POLIMART │ │   │ │ TEFA BAR │ │   │ │  LOUNGE  │ │   │ │  ASRAMA  │ │   │ │   GOR    │ │    Slide)  │
+│   │ │ POLIMART │ │18px│ TEFA BAR │18px│  LOUNGE  │18px│  ASRAMA  │18px│   GOR    │ │    Slide)  │
 │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │            │
 │   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘            │
 │                                                                                                           │
@@ -171,7 +174,7 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (FULL WIDTH) ════════════ -->
+<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (SYMMETRICAL SPACING) ════════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
     <div class="showcase-container">
         <div class="carousel-outer-wrap" id="stepViewport">
