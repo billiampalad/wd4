@@ -457,23 +457,7 @@
             filter: brightness(1.05);
         }
 
-        /* Live Progress Bar Timer Line di Dasar Slider */
-        .slider-timer-bar {
-            width: 100%;
-            height: 2px;
-            background: rgba(2, 132, 199, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
 
-        .slider-timer-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--primary), #38bdf8);
-            border-radius: 999px;
-            box-shadow: 0 0 8px var(--primary);
-            transition: width 0.1s linear;
-        }
 
         /* ═══════════════════════════════════════════════════════════════
            LIGHTBOX PREVIEW MODAL (PURE IMAGE + SIDE ARROWS & COUNTER)
@@ -803,11 +787,6 @@
                 <div class="carousel-bottom-line"></div>
             </div>
 
-            <!-- Visual Progress Timer Line -->
-            <div class="slider-timer-bar">
-                <div class="slider-timer-fill" id="timerFill"></div>
-            </div>
-
         </div>
     </section>
 
@@ -857,12 +836,11 @@
         </div>
     </div>
 
-    <!-- ═══ STEP-BY-STEP SLIDER SCRIPT (+1 PER STEP & TIMER PROGRESS) ═══ -->
+    <!-- ═══ STEP-BY-STEP SLIDER SCRIPT (+1 PER STEP) ═══ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const viewport = document.getElementById('stepViewport');
             const track = document.getElementById('stepTrack');
-            const timerFill = document.getElementById('timerFill');
 
             // Header Elements
             const sliderCurrentNum = document.getElementById('sliderCurrentNum');
@@ -912,8 +890,6 @@
             const STEP_DURATION = 3500; // 3.5 Detik per interval slide
             let currentIndex = 0;
             let stepInterval = null;
-            let progressInterval = null;
-            let progressElapsed = 0;
             let isHovered = false;
             let isPausedManually = false;
 
@@ -977,31 +953,13 @@
                 }, 20);
             }
 
-            function resetProgressBar() {
-                progressElapsed = 0;
-                if (timerFill) timerFill.style.width = '0%';
-            }
-
             function startStepTimer() {
                 clearInterval(stepInterval);
-                clearInterval(progressInterval);
                 if (isPausedManually) return;
-
-                resetProgressBar();
-
-                const tick = 50;
-                progressInterval = setInterval(() => {
-                    if (!isHovered && !isPausedManually) {
-                        progressElapsed += tick;
-                        const pct = Math.min((progressElapsed / STEP_DURATION) * 100, 100);
-                        if (timerFill) timerFill.style.width = `${pct}%`;
-                    }
-                }, tick);
 
                 stepInterval = setInterval(() => {
                     if (!isHovered && !isPausedManually) {
                         slideNext();
-                        resetProgressBar();
                     }
                 }, STEP_DURATION);
             }

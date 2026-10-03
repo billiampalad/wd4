@@ -218,11 +218,6 @@ class ShowcaseController extends Controller
             </div>
             <div class="carousel-bottom-line"></div>
         </div>
-
-        <!-- Visual Progress Timer Line -->
-        <div class="slider-timer-bar">
-            <div class="slider-timer-fill" id="timerFill"></div>
-        </div>
     </div>
 </section>
 
