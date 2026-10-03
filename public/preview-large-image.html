@@ -31,12 +31,11 @@
             --primary-glow: rgba(2, 132, 199, 0.25);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            /* Warm Beige Frame */
-            --frame-bg: linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%);
-            --frame-border: rgba(217, 198, 165, 0.85);
-            --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.04);
-            --card-shadow: 0 10px 24px -6px rgba(44, 38, 27, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
-            --card-hover-shadow: 0 18px 32px -8px rgba(44, 38, 27, 0.16), 0 0 0 1px rgba(2, 132, 199, 0.4);
+            /* Warm Beige Frame Sesuai Gambar */
+            --frame-bg: #ebdcc0;
+            --frame-border: #dfcfb0;
+            --card-shadow: 0 8px 20px -4px rgba(44, 38, 27, 0.08);
+            --card-hover-shadow: 0 16px 32px -6px rgba(44, 38, 27, 0.2), 0 0 0 1.5px var(--primary);
 
             --radius-card: 22px;
             --radius-inner: 16px;
@@ -56,12 +55,11 @@
             --primary-glow: rgba(56, 189, 248, 0.3);
             --primary-light: rgba(56, 189, 248, 0.12);
 
-            /* Obsidian Slate Frame */
-            --frame-bg: linear-gradient(145deg, #1b263b 0%, #111a28 100%);
-            --frame-border: rgba(255, 255, 255, 0.12);
-            --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 -1px 2px rgba(0, 0, 0, 0.6);
-            --card-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
-            --card-hover-shadow: 0 20px 42px -8px rgba(0, 0, 0, 0.8), 0 0 18px rgba(56, 189, 248, 0.3);
+            /* Obsidian Frame Sesuai Mode Gelap */
+            --frame-bg: #1c2738;
+            --frame-border: #2e3d54;
+            --card-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
+            --card-hover-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.85), 0 0 16px var(--primary-glow);
         }
 
         * {
@@ -164,7 +162,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: 5-CARD STEP SHOWCASE (NO SIDE SHADOWS)
+           MAIN SECTION: 5-CARD STEP SHOWCASE (BERSIH 100% TANPA HALANGAN)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
             padding: 40px 0 60px;
@@ -179,21 +177,20 @@
             position: relative;
         }
 
-        /* Outer Wrap - TANPA SIDE SHADOW / MASK */
+        /* Outer Viewport - TANPA SHADOW / OVERLAY / GRADIENT MASK */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding: 12px 0;
-            /* Side Shadow / Gradient Mask Dihapus Bersih */
-            -webkit-mask-image: none;
-            mask-image: none;
+            padding: 16px 0; /* Ruang vertikal cukup agar efek hover tidak terpotong */
+            -webkit-mask-image: none !important;
+            mask-image: none !important;
         }
 
         /* Step Slider Track */
         .carousel-step-track {
             display: flex;
-            gap: 20px;
+            gap: 18px;
             width: max-content;
             will-change: transform;
             cursor: grab;
@@ -206,83 +203,45 @@
             cursor: grabbing;
         }
 
-        /* ═══ CARD FRAME: TEPAT 5 KARTU TAMPIL DI DESKTOP ═══ */
+        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT SEMPURNA ═══ */
         .gallery-card-frame {
-            /* 5 kartu tampil penuh: lebar total - 4 gap (20px * 4 = 80px) dibagi 5 */
-            flex: 0 0 calc((1380px - 48px - 80px) / 5);
-            width: calc((1380px - 48px - 80px) / 5);
+            /* Dihitung dinamis via CSS variable --card-item-width oleh JS */
+            flex: 0 0 var(--card-item-width, 240px);
+            width: var(--card-item-width, 240px);
             aspect-ratio: 16 / 10;
             background: var(--frame-bg);
-            border: 2px solid var(--frame-border);
+            border: 2.5px solid var(--frame-border);
             border-radius: var(--radius-card);
             padding: 7px;
-            box-shadow: var(--card-shadow), var(--frame-inner-shadow);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
             position: relative;
             cursor: pointer;
-            overflow: hidden;
             display: flex;
             align-items: stretch;
             justify-content: stretch;
         }
 
-        @media (max-width: 1400px) {
-            .gallery-card-frame {
-                flex: 0 0 calc((100vw - 48px - 80px) / 5);
-                width: calc((100vw - 48px - 80px) / 5);
-            }
-        }
-
-        @media (max-width: 1100px) {
-            .gallery-card-frame {
-                flex: 0 0 calc((100vw - 48px - 60px) / 4); /* 4 kartu di tablet */
-                width: calc((100vw - 48px - 60px) / 4);
-                border-radius: 18px;
-                padding: 6px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .gallery-card-frame {
-                flex: 0 0 calc((100vw - 48px - 20px) / 2); /* 2 kartu di mobile */
-                width: calc((100vw - 48px - 20px) / 2);
-                border-radius: 16px;
-                padding: 5px;
-            }
-        }
-
         .gallery-card-frame:hover {
-            transform: translateY(-6px) scale(1.03);
+            transform: translateY(-8px);
             box-shadow: var(--card-hover-shadow);
             border-color: var(--primary);
-            z-index: 10;
+            z-index: 20; /* Berada paling atas saat di-hover */
         }
 
-        /* Gambar Internal */
+        /* Gambar di dalam Frame */
         .gallery-img-inner {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: var(--radius-inner);
             display: block;
-            transition: transform 0.5s ease;
+            pointer-events: none;
+            transition: transform 0.4s ease;
         }
 
         .gallery-card-frame:hover .gallery-img-inner {
-            transform: scale(1.04);
-        }
-
-        /* Glossy Highlight Refleksi Atas Kartu */
-        .gallery-card-frame::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
-            border-radius: var(--radius-card) var(--radius-card) 0 0;
-            pointer-events: none;
+            transform: scale(1.03);
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -443,7 +402,7 @@
     <header class="preview-topbar">
         <div class="preview-branding">
             <span class="brand-badge"><i class="fa-solid fa-clone"></i> 5-IMAGE STEP SLIDER</span>
-            <span class="preview-title">Facility & Campus Image Slider (5 Display, Slide +1 Step)</span>
+            <span class="preview-title">Facility & Campus Image Slider (5 Cards Display)</span>
         </div>
 
         <div class="preview-actions">
@@ -462,12 +421,12 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Model Tampilan:</strong> 5 foto tampil sekaligus saat halaman dibuka. Animasi bergeser bertambah 1 foto secara bertahap (setiap 3.5 detik). Bayangan di sisi kiri dan kanan telah dihapus sepenuhnya.</span>
+            <span><strong>Bebas Halangan:</strong> Sisi kiri dan kanan 100% jernih tanpa bayangan, masker, atau overlay penutup. Saat kartu di-hover, foto terangkat secara utuh dan jelas.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE (5 GAMBAR TAMPIL, BERGESER +1)
+       KOMPONEN SLIDER IMAGE SHOWCASE
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
@@ -601,29 +560,40 @@
             });
 
             // 2. CLONE ITEMS TO ENABLE SEAMLESS INFINITE STEP SLIDING
-            // Clone first 5 items to the end for seamless wrapping
             originalCards.forEach(card => {
                 const clone = card.cloneNode(true);
                 track.appendChild(clone);
             });
 
+            const GAP = 18; // 18px gap
+            const STEP_DURATION = 3500; // 3.5 Detik per pergeseran 1 gambar
             let currentIndex = 0;
             let stepInterval = null;
             let isHovered = false;
             let isPausedManually = false;
-            const STEP_DURATION = 3500; // 3.5 Detik per pergeseran 1 gambar
-            const GAP = 20; // 20px gap
 
-            function getStepWidth() {
-                const firstCard = track.querySelector('.gallery-card-frame');
-                return firstCard ? firstCard.offsetWidth + GAP : 0;
+            // 3. KALKULASI UKURAN KARTU DINAMIS (PAS 5 KARTU)
+            function calculateCardWidth() {
+                const containerWidth = viewport.clientWidth;
+                let visibleCount = 5;
+                if (window.innerWidth <= 768) visibleCount = 2;
+                else if (window.innerWidth <= 1100) visibleCount = 3;
+
+                const cardWidth = (containerWidth - (GAP * (visibleCount - 1))) / visibleCount;
+                document.documentElement.style.setProperty('--card-item-width', `${cardWidth}px`);
+                return cardWidth + GAP;
             }
 
-            // 3. STEP-BY-STEP SLIDE ENGINE
+            let stepWidth = calculateCardWidth();
+            window.addEventListener('resize', () => {
+                stepWidth = calculateCardWidth();
+                track.style.transition = 'none';
+                track.style.transform = `translate3d(${-currentIndex * stepWidth}px, 0, 0)`;
+            });
+
+            // 4. STEP-BY-STEP SLIDE ENGINE
             function slideNext() {
                 currentIndex++;
-                const stepWidth = getStepWidth();
-                
                 track.style.transition = 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)';
                 track.style.transform = `translate3d(${-currentIndex * stepWidth}px, 0, 0)`;
 
@@ -633,7 +603,7 @@
                         track.style.transition = 'none';
                         currentIndex = 0;
                         track.style.transform = `translate3d(0px, 0, 0)`;
-                    }, 650); // Selesai transisi CSS
+                    }, 650);
                 }
             }
 
@@ -653,7 +623,7 @@
             viewport.addEventListener('mouseenter', () => { isHovered = true; });
             viewport.addEventListener('mouseleave', () => { isHovered = false; });
 
-            // 4. LIGHTBOX LOGIC
+            // 5. LIGHTBOX LOGIC
             let currentLightboxIndex = 0;
 
             function showLightboxImage(index) {
@@ -718,7 +688,7 @@
                 }
             });
 
-            // 5. TOGGLE PLAY / PAUSE DARI TOOLBAR
+            // 6. TOGGLE PLAY / PAUSE DARI TOOLBAR
             btnAnim.addEventListener('click', () => {
                 isPausedManually = !isPausedManually;
                 if (isPausedManually) {
@@ -732,7 +702,7 @@
                 }
             });
 
-            // 6. THEME SWITCHER (LIGHT / DARK)
+            // 7. THEME SWITCHER (LIGHT / DARK)
             btnTheme.addEventListener('click', () => {
                 const current = document.documentElement.getAttribute('data-theme') || 'light';
                 const next = current === 'dark' ? 'light' : 'dark';

@@ -6,19 +6,18 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ## 1. Karakter Desain & Pengalaman Visual (5-Card Display & Step Slide)
 
-### 1.1 Tampilan Awal & Proporsi
-- **5 Foto Tampil Sekaligus:** Pada tampilan desktop, container langsung memuat **tepat 5 kartu gambar** berjajar horizontal dengan rasio seimbang.
-- **Tanpa Bayangan Samping (*No Side Shadow/Mask*):** Sisi kiri dan kanan track bersih tanpa efek gradasi gelap/shadow sehingga foto pertama dan kelima terlihat tajam dan penuh.
-- **Frame Finishing:** Menggunakan *Warm Champagne / Soft Cream Gradient* (`linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%)`) dengan *subtle glossy rim* (`border: 2px solid rgba(217, 198, 165, 0.85)`).
+### 1.1 Tampilan Bebas Halangan (*Unobstructed View*)
+- **Tepat 5 Kartu Fit 100%:** Lebar kartu dihitung secara presisi sesuai lebar kontainer (`(containerWidth - (gap * 4)) / 5`), sehingga 5 foto tampil penuh dan seimbang dari ujung kiri ke ujung kanan tanpa ada kartu ke-6 yang mengintip atau menutupi kartu lain.
+- **Tanpa Masking / Side Shadow:** Seluruh efek *gradient mask / side shadow* pada sisi kiri dan kanan telah dihapus sepenuhnya (`mask-image: none; -webkit-mask-image: none;`), memastikan setiap gambar terlihat 100% jernih dan utuh saat di-hover.
+- **Frame Finishing:** Menggunakan *Warm Beige Frame* (`#ebdcc0` dengan border `#dfcfb0`) pada mode terang dan *Obsidian Slate Frame* pada mode gelap.
 
 ---
 
 ### 1.2 Mekanisme Animasi Bergeser Bertambah 1 (*Step-by-Step Slide*)
-- **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (misal 3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
+- **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
 - **Infinite Looping Mulus:** Menggunakan teknik *invisible wrap reset* sehingga saat mencapai foto terakhir, urutan berikutnya kembali menyambung ke awal secara natural tanpa merusak alur visual.
-- **Interaksi Pengguna:**
-  - Slider otomatis berhenti sejenak saat kursor mouse diarahkan ke kartu (*hover pause*).
-  - Klik pada kartu membuka **Lightbox Modal Murni Foto** dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
+- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` sehingga tampak mengambang di atas kartu lainnya tanpa terpotong (*no clipping*).
+- **Lightbox Modal Murni Foto:** Klik pada kartu membuka tampilan foto murni tanpa border/radius dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
