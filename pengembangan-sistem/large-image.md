@@ -19,8 +19,14 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 - **Seamless Looping:** Ketika set kartu pertama selesai lewat, posisi offset di-wrap secara invisible (`position -= singleSetWidth`), sehingga transisi dari gambar terakhir ke gambar pertama terjadi **100% mulus tanpa jeda, tanpa loncatan, dan tanpa kembali ke awal**.
 - **User Control:**
   - Otomatis jeda (*pause*) ketika kursor mouse berada di atas kartu (*hover*).
-  - Mendukung tarikan mouse manual (*drag-to-scroll*) di desktop dan usap jari (*touch swipe*) di layar smartphone dengan perhitungan pembungkusan *infinite* yang mulus.
-  - Klik salah satu kartu akan membuka **Lightbox Modal** untuk melihat gambar fasilitas dalam resolusi penuh.
+  - Mendukung tarikan mouse manual (*drag-to-scroll*) di desktop dan usap jari (*touch swipe*) di layar smartphone.
+
+---
+
+### 1.3 Lightbox Modal Murni Foto & Navigasi Panah Samping
+- **Tampilan Bersih (Clean Pure Image):** Tidak memiliki border, background warna, ataupun border-radius (*border-radius: 0; border: none; background: transparent;*). Gambar tampil murni mengambang di atas latar belakang gelap transparan (*blurred backdrop*).
+- **Navigasi Panah Sisi Kiri & Kanan:** Dilengkapi tombol panah melayang di samping kiri (`◄`) dan kanan (`►`) untuk berpindah antar foto secara berurutan.
+- **Kontrol Keyboard:** Mendukung tombol panah kiri/kanan keyboard serta tombol `Escape` untuk menutup lightbox.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -187,12 +193,16 @@ class ShowcaseController extends Controller
     </div>
 </section>
 
-<!-- Lightbox Modal Fullscreen -->
+<!-- Lightbox Modal Fullscreen (Pure Image + Side Arrows) -->
 <div class="lightbox-modal" id="lightboxModal">
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup">&times;</button>
+    <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Sebelumnya">&#10094;</button>
+    
     <div class="lightbox-content">
-        <button type="button" class="lightbox-close" id="lightboxClose">&times;</button>
         <img src="" alt="Fasilitas Polimdo" class="lightbox-img" id="lightboxImg">
     </div>
+
+    <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext" aria-label="Selanjutnya">&#10095;</button>
 </div>
 @endif
 ```

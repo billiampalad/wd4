@@ -185,7 +185,6 @@
             width: 100%;
             overflow: hidden;
             padding: 16px 0;
-            /* Modern Mask Fade di Ujung Kiri & Kanan */
             -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
             mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
         }
@@ -277,13 +276,15 @@
             pointer-events: none;
         }
 
-        /* ═══ LIGHTBOX PREVIEW MODAL ═══ */
+        /* ═══════════════════════════════════════════════════════════════
+           LIGHTBOX PREVIEW MODAL (PURE IMAGE ONLY + SIDE NAV ARROWS)
+           ═══════════════════════════════════════════════════════════════ */
         .lightbox-modal {
             position: fixed;
             inset: 0;
-            background: rgba(4, 9, 18, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(3, 7, 18, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -291,7 +292,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 24px;
+            padding: 20px;
         }
 
         .lightbox-modal.open {
@@ -299,55 +300,114 @@
             pointer-events: auto;
         }
 
+        /* Pure Image Container: NO border, NO background, NO border-radius */
         .lightbox-content {
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             max-width: 90vw;
-            max-height: 85vh;
-            border-radius: var(--radius-card);
-            background: var(--frame-bg);
-            padding: 10px;
-            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
-            border: 2.5px solid var(--frame-border);
-            animation: zoomModal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            background: transparent;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            animation: zoomModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes zoomModal {
-            from { transform: scale(0.92); opacity: 0; }
+            from { transform: scale(0.95); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
+        /* Murni Gambar Saja */
         .lightbox-img {
-            max-width: 85vw;
-            max-height: 78vh;
-            border-radius: var(--radius-inner);
+            max-width: 82vw;
+            max-height: 85vh;
             display: block;
             object-fit: contain;
+            border-radius: 0;
+            border: none;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            user-select: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
+        /* Tombol Close di Pojok Kanan Atas Layar */
         .lightbox-close {
-            position: absolute;
-            top: -16px;
-            right: -16px;
-            width: 42px;
-            height: 42px;
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: var(--bg-surface);
-            color: var(--ink);
-            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 16px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            font-size: 18px;
+            backdrop-filter: blur(8px);
             transition: all 0.2s ease;
+            z-index: 1010;
         }
 
         .lightbox-close:hover {
-            transform: scale(1.15) rotate(90deg);
-            background: var(--primary);
+            background: #ef4444;
+            border-color: #ef4444;
+            transform: scale(1.1) rotate(90deg);
             color: #ffffff;
+        }
+
+        /* Tombol Panah Navigasi Kiri & Kanan di Sisi Gambar */
+        .lightbox-nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1010;
+        }
+
+        .lightbox-arrow-prev {
+            left: 32px;
+        }
+
+        .lightbox-arrow-next {
+            right: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-nav-arrow {
+                width: 42px;
+                height: 42px;
+                font-size: 16px;
+            }
+            .lightbox-arrow-prev { left: 12px; }
+            .lightbox-arrow-next { right: 12px; }
+            .lightbox-close { top: 16px; right: 16px; }
+        }
+
+        .lightbox-nav-arrow:hover {
+            background: var(--primary);
             border-color: var(--primary);
+            color: #ffffff;
+            transform: translateY(-50%) scale(1.12);
+            box-shadow: 0 0 25px var(--primary-glow);
         }
 
         /* ═══ HUMAS DEMO UPLOAD INFO ═══ */
@@ -383,7 +443,7 @@
     <header class="preview-topbar">
         <div class="preview-branding">
             <span class="brand-badge"><i class="fa-solid fa-infinity"></i> INFINITE LOOP</span>
-            <span class="preview-title">Facility & Campus Infinite Image Slider (No Reset Jump)</span>
+            <span class="preview-title">Facility & Campus Infinite Image Slider</span>
         </div>
 
         <div class="preview-actions">
@@ -402,7 +462,7 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Animasi Seamless Tanpa Reset:</strong> Slider berjalan terus-menerus tanpa pernah melompat/kembali ke awal (infinite continuous loop). Otomatis melambat/jeda saat mouse diarahkan ke kartu (*hover*), dan bisa di-drag bebas dengan mouse atau usap jari di smartphone.</span>
+            <span><strong>Lightbox Murni & Panah Navigasi:</strong> Klik gambar untuk membuka tampilan murni foto tanpa bingkai/radius. Gunakan panah kiri/kanan di sisi gambar (atau tombol panah keyboard ◄ / ►) untuk berpindah gambar.</span>
         </div>
     </div>
 
@@ -478,14 +538,25 @@
         </div>
     </section>
 
-    <!-- ═══ LIGHTBOX MODAL ═══ -->
+    <!-- ═══ LIGHTBOX MODAL (PURE IMAGE + SIDE ARROWS) ═══ -->
     <div class="lightbox-modal" id="lightboxModal">
+        <!-- Close Button -->
+        <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup Preview">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Side Navigation Arrows -->
+        <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Gambar Sebelumnya">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
         <div class="lightbox-content">
-            <button type="button" class="lightbox-close" id="lightboxClose">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
             <img src="" alt="Preview Fasilitas" class="lightbox-img" id="lightboxImg">
         </div>
+
+        <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext" aria-label="Gambar Selanjutnya">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
     </div>
 
     <!-- ═══ HUMAS DEMO UPLOAD INFO ═══ -->
@@ -503,16 +574,18 @@
         </div>
     </div>
 
-    <!-- ═══ HIGH-PERFORMANCE INFINITE LOOP SCRIPT ═══ -->
+    <!-- ═══ HIGH-PERFORMANCE INFINITE LOOP & LIGHTBOX SCRIPT ═══ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const viewport = document.getElementById('marqueeViewport');
             const track = document.getElementById('marqueeTrack');
             
-            // Lightbox
+            // Lightbox Elements
             const lightbox = document.getElementById('lightboxModal');
             const lightboxImg = document.getElementById('lightboxImg');
             const lightboxClose = document.getElementById('lightboxClose');
+            const lightboxPrev = document.getElementById('lightboxPrev');
+            const lightboxNext = document.getElementById('lightboxNext');
 
             // Topbar Controls
             const btnTheme = document.getElementById('btnThemeToggle');
@@ -522,11 +595,15 @@
             const iconAnim = document.getElementById('iconAnim');
             const textAnim = document.getElementById('textAnim');
 
-            // 1. CLONE ITEMS UNTUK SEAMLESS INFINITE LOOP TANPA JEDA / RESET
+            // 1. GATHER UNIQUE IMAGE LIST FOR LIGHTBOX
             const originalCards = Array.from(track.children);
             const originalCount = originalCards.length;
+            const imageList = originalCards.map(card => {
+                const img = card.querySelector('img');
+                return img ? img.src : '';
+            });
 
-            // Gandakan kartu 2x agar track selalu penuh dan tidak pernah ada ruang kosong
+            // 2. CLONE ITEMS UNTUK SEAMLESS INFINITE LOOP
             originalCards.forEach(card => {
                 const clone1 = card.cloneNode(true);
                 track.appendChild(clone1);
@@ -548,7 +625,7 @@
             calculateSetWidth();
             window.addEventListener('resize', calculateSetWidth);
 
-            // 2. ANIMASI INFINITE MENGGUNAKAN REQUEST ANIMATION FRAME (60/120 FPS)
+            // 3. ANIMASI INFINITE MENGGUNAKAN REQUEST ANIMATION FRAME
             let position = 0;
             let speed = 0.85; // Kecepatan gerak (pixel per frame)
             let isHovered = false;
@@ -561,7 +638,6 @@
                 if (!isHovered && !isDragging && !isPausedManually) {
                     position += speed;
                     
-                    // KETIKA MENCAPAI AKHIR 1 SET, RESET SECARA INVISIBLE KE AWAL (SEAMLESS INFINITE)
                     if (singleSetWidth > 0 && position >= singleSetWidth) {
                         position -= singleSetWidth;
                     }
@@ -571,11 +647,11 @@
             }
             requestAnimationFrame(animate);
 
-            // 3. HOVER PAUSE & SLOW DOWN
+            // Hover Pause
             viewport.addEventListener('mouseenter', () => { isHovered = true; });
             viewport.addEventListener('mouseleave', () => { isHovered = false; });
 
-            // 4. INTERAKSI MOUSE DRAG / TOUCH SWIPE (MANUAL DRAG)
+            // Drag to Scroll Track
             function onDragStart(clientX) {
                 isDragging = true;
                 startX = clientX;
@@ -587,7 +663,6 @@
                 const deltaX = clientX - startX;
                 position = dragOffset - deltaX;
 
-                // Infinite wrapping saat drag manual
                 if (singleSetWidth > 0) {
                     if (position < 0) position += singleSetWidth;
                     if (position >= singleSetWidth) position -= singleSetWidth;
@@ -599,37 +674,82 @@
                 isDragging = false;
             }
 
-            // Mouse Events
             viewport.addEventListener('mousedown', (e) => onDragStart(e.clientX));
             window.addEventListener('mousemove', (e) => onDragMove(e.clientX));
             window.addEventListener('mouseup', onDragEnd);
 
-            // Touch Events (Mobile)
             viewport.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX), { passive: true });
             window.addEventListener('touchmove', (e) => onDragMove(e.touches[0].clientX), { passive: true });
             window.addEventListener('touchend', onDragEnd);
 
-            // 5. LIGHTBOX DELEGATION (UNTUK SEMUA KARTU ASLI & CLONE)
+            // 4. LIGHTBOX LOGIC DENGAN NAVIGASI PANAH KIRI/KANAN
+            let currentLightboxIndex = 0;
+
+            function showLightboxImage(index) {
+                if (index < 0) index = imageList.length - 1;
+                if (index >= imageList.length) index = 0;
+                currentLightboxIndex = index;
+
+                lightboxImg.style.opacity = '0.3';
+                lightboxImg.style.transform = 'scale(0.98)';
+                
+                setTimeout(() => {
+                    lightboxImg.src = imageList[currentLightboxIndex];
+                    lightboxImg.style.opacity = '1';
+                    lightboxImg.style.transform = 'scale(1)';
+                }, 100);
+            }
+
+            // Click on Card
             track.addEventListener('click', (e) => {
                 const card = e.target.closest('.gallery-card-frame');
                 if (!card) return;
                 const img = card.querySelector('img');
                 if (img) {
-                    lightboxImg.src = img.src;
+                    const foundIndex = imageList.indexOf(img.src);
+                    showLightboxImage(foundIndex !== -1 ? foundIndex : 0);
                     lightbox.classList.add('open');
                 }
             });
 
-            lightboxClose.addEventListener('click', () => {
-                lightbox.classList.remove('open');
+            // Lightbox Prev & Next
+            lightboxPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showLightboxImage(currentLightboxIndex - 1);
             });
+
+            lightboxNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showLightboxImage(currentLightboxIndex + 1);
+            });
+
+            // Lightbox Close
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+            }
+
+            lightboxClose.addEventListener('click', closeLightbox);
             lightbox.addEventListener('click', (e) => {
+                // Tutup hanya jika klik area latar belakang luar gambar
                 if (e.target === lightbox) {
-                    lightbox.classList.remove('open');
+                    closeLightbox();
                 }
             });
 
-            // 6. TOGGLE PLAY / PAUSE DARI TOOLBAR
+            // Keyboard Navigation (Arrow Keys & Escape)
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('open')) return;
+
+                if (e.key === 'ArrowLeft') {
+                    showLightboxImage(currentLightboxIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    showLightboxImage(currentLightboxIndex + 1);
+                } else if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+
+            // 5. TOGGLE PLAY / PAUSE DARI TOOLBAR
             btnAnim.addEventListener('click', () => {
                 isPausedManually = !isPausedManually;
                 if (isPausedManually) {
@@ -641,7 +761,7 @@
                 }
             });
 
-            // 7. THEME SWITCHER (LIGHT / DARK)
+            // 6. THEME SWITCHER (LIGHT / DARK)
             btnTheme.addEventListener('click', () => {
                 const current = document.documentElement.getAttribute('data-theme') || 'light';
                 const next = current === 'dark' ? 'light' : 'dark';
