@@ -4,15 +4,15 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ---
 
-## 1. Karakter Desain & Pengalaman Visual (5-Card Symmetrical Spacing & Step Slide)
+## 1. Karakter Desain & Pengalaman Visual (Pure Image & Step Slide)
 
-### 1.1 Jarak Simetris & Rapi (*Symmetrical Margin & Gap*)
+### 1.1 Murni Foto & Jarak Simetris (*Pure Image & Symmetrical Spacing*)
+- **Murni Gambar (Tanpa Bingkai Latar Belakang):** Background warna dan padding pembentuk bingkai telah dihapus (`background: transparent; padding: 0;`). Foto tampil murni dan langsung mengisi area kartu dengan sudut melengkung halus (`border-radius: 20px`).
+- **Border Aksen Hanya Muncul Saat Hover:** Dalam keadaan diam, border berstatus transparan (`border: 2px solid transparent;`). Garis border aksen biru bersinar (`border-color: var(--primary)`) hanya akan muncul ketika kartu di-hover oleh kursor mouse.
 - **Jarak Tepi Kiri & Kanan Sama Persis:** Jarak margin tepi kiri (`18px`) dan kanan (`18px`) dibuat sama persis dengan jarak celah antar kartu (`gap: 18px`).
 - **Kalkulasi Presisi 5 Kartu:**
   $$\text{Lebar Kartu} = \frac{\text{Lebar Kontainer} - (\text{Jarak } 18\text{px} \times 6)}{5}$$
   Dengan formula ini, tepat 5 kartu tampil seimbang dan simetris dari ujung kiri hingga ujung kanan.
-- **Tanpa Masking / Side Shadow:** Seluruh efek *gradient mask / side shadow* pada sisi kiri dan kanan telah dihapus sepenuhnya (`mask-image: none; -webkit-mask-image: none;`).
-- **Frame Finishing:** Menggunakan *Warm Beige Frame* (`#ebdcc0` dengan border `#dfcfb0`) pada mode terang dan *Obsidian Slate Frame* pada mode gelap.
 
 ---
 
@@ -27,10 +27,10 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 │                                                                                                           │
 │   │◄─ 18px ─►│                                                                 │◄─ 18px ─►│               │
 │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
-│   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ───► +1  │
-│   │ │    01    │ │   │ │    02    │ │   │ │    03    │ │   │ │    04    │ │   │ │    05    │ │   (Step    │
-│   │ │ POLIMART │ │18px│ TEFA BAR │18px│  LOUNGE  │18px│  ASRAMA  │18px│   GOR    │ │    Slide)  │
-│   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │            │
+│   │              │   │              │   │              │   │              │   │              │   ───► +1  │
+│   │      01      │   │      02      │   │      03      │   │      04      │   │      05      │   (Step    │
+│   │   POLIMART   │18px  TEFA BAR    │18px   LOUNGE     │18px   ASRAMA     │18px    GOR       │    Slide)  │
+│   │              │   │              │   │              │   │              │   │              │            │
 │   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘            │
 │                                                                                                           │
 └───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -174,7 +174,7 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (SYMMETRICAL SPACING) ════════════ -->
+<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION ════════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
     <div class="showcase-container">
         <div class="carousel-outer-wrap" id="stepViewport">

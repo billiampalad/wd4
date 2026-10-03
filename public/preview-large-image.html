@@ -28,17 +28,10 @@
             --border-subtle: rgba(226, 232, 240, 0.8);
             
             --primary: #0284c7;
-            --primary-glow: rgba(2, 132, 199, 0.25);
+            --primary-glow: rgba(2, 132, 199, 0.35);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            /* Warm Beige Frame Sesuai Gambar */
-            --frame-bg: #ebdcc0;
-            --frame-border: #dfcfb0;
-            --card-shadow: 0 8px 20px -4px rgba(44, 38, 27, 0.08);
-            --card-hover-shadow: 0 16px 32px -6px rgba(44, 38, 27, 0.2), 0 0 0 1.5px var(--primary);
-
-            --radius-card: 22px;
-            --radius-inner: 16px;
+            --radius-card: 20px;
         }
 
         [data-theme="dark"] {
@@ -52,14 +45,8 @@
             --border-subtle: rgba(255, 255, 255, 0.08);
 
             --primary: #38bdf8;
-            --primary-glow: rgba(56, 189, 248, 0.3);
+            --primary-glow: rgba(56, 189, 248, 0.4);
             --primary-light: rgba(56, 189, 248, 0.12);
-
-            /* Obsidian Frame Sesuai Mode Gelap */
-            --frame-bg: #1c2738;
-            --frame-border: #2e3d54;
-            --card-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6);
-            --card-hover-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.85), 0 0 16px var(--primary-glow);
         }
 
         * {
@@ -162,7 +149,7 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: 5-CARD SHOWCASE (JARAK SIMETRIS & RAPI)
+           MAIN SECTION: 5-CARD SHOWCASE (MURNI GAMBAR TANPA FRAME BG)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
             padding: 30px 0 50px;
@@ -188,7 +175,7 @@
             mask-image: none !important;
         }
 
-        /* Step Slider Track: Padding Kiri dan Kanan Sama Persis dengan Jarak Antar Kartu (18px) */
+        /* Step Slider Track: Jarak simetris 18px */
         .carousel-step-track {
             display: flex;
             gap: 18px;
@@ -196,7 +183,7 @@
             will-change: transform;
             cursor: grab;
             user-select: none;
-            padding: 6px 18px; /* 18px margin simetris kiri & kanan */
+            padding: 6px 18px;
             transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -204,17 +191,18 @@
             cursor: grabbing;
         }
 
-        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT SEMPURNA ═══ */
+        /* ═══ CARD: MURNI GAMBAR LANGSUNG (TANPA BACKGROUND / PADDING FRAME) ═══ */
         .gallery-card-frame {
             /* Dihitung dinamis via CSS variable --card-item-width oleh JS */
             flex: 0 0 var(--card-item-width, 240px);
             width: var(--card-item-width, 240px);
             aspect-ratio: 16 / 10;
-            background: var(--frame-bg);
-            border: 2.5px solid var(--frame-border);
+            background: transparent; /* Background frame beige dihapus */
+            padding: 0;               /* Padding 7px pembentuk bingkai dihapus */
+            border: 2px solid transparent; /* Garis border statis transparan */
             border-radius: var(--radius-card);
-            padding: 7px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
             position: relative;
             cursor: pointer;
@@ -225,24 +213,24 @@
 
         .gallery-card-frame:hover {
             transform: translateY(-8px);
-            box-shadow: var(--card-hover-shadow);
-            border-color: var(--primary);
+            border-color: var(--primary); /* Border warna aktif hanya saat di-hover */
+            box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.28), 0 0 20px var(--primary-glow);
             z-index: 20;
         }
 
-        /* Gambar di dalam Frame */
+        /* Gambar Internal */
         .gallery-img-inner {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: var(--radius-inner);
+            border-radius: calc(var(--radius-card) - 2px);
             display: block;
             pointer-events: none;
             transition: transform 0.4s ease;
         }
 
         .gallery-card-frame:hover .gallery-img-inner {
-            transform: scale(1.03);
+            transform: scale(1.04);
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -378,7 +366,7 @@
             border: 1px solid var(--border);
             border-radius: 18px;
             padding: 24px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
         }
 
         .upload-dropzone {
@@ -402,8 +390,8 @@
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-expand"></i> SYMMETRICAL SPACING</span>
-            <span class="preview-title">Facility & Campus Image Slider (Equal Margin & Gap)</span>
+            <span class="brand-badge"><i class="fa-solid fa-image"></i> PURE IMAGE</span>
+            <span class="preview-title">Facility & Campus Image Slider (Pure Image)</span>
         </div>
 
         <div class="preview-actions">
@@ -422,12 +410,12 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Jarak Simetris & Rapi:</strong> Margin luar pada sisi kiri dan kanan (18px) kini persis sama dengan jarak celah antar kartu (18px), sehingga layout tampil seragam dan rapi.</span>
+            <span><strong>Murni Gambar:</strong> Latar belakang bingkai krem dan padding telah dihapus total. Foto langsung tampil utuh dan border warna hanya muncul saat di-hover.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE (JARAK SIMETRIS)
+       KOMPONEN SLIDER IMAGE SHOWCASE
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
@@ -581,7 +569,6 @@
                 else if (window.innerWidth <= 1024) visibleCount = 3;
                 else visibleCount = 5;
 
-                // Spacing total = 2 margin tepi (kiri & kanan) + (visibleCount - 1) jarak antar kartu
                 const totalSpacing = (visibleCount + 1) * GAP;
                 const cardWidth = (containerWidth - totalSpacing) / visibleCount;
                 
