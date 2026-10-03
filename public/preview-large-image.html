@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview UI/UX - Large Image Showcase Slider</title>
+    <title>Preview UI/UX - Facility & Campus Image Carousel Slider</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,12 +15,12 @@
 
     <style>
         /* ═══════════════════════════════════════════════════════════════
-           CSS VARIABLES & DESIGN SYSTEM (MATCHING WD4 & WELCOME PAGE)
+           DESIGN SYSTEM & VARIABLES
            ═══════════════════════════════════════════════════════════════ */
         :root {
-            --bg-page: #f1f5f9;
+            --bg-page: #f8fafc;
             --bg-surface: #ffffff;
-            --bg-surface-alt: #f8fafc;
+            --bg-surface-alt: #f1f5f9;
             --ink: #0f172a;
             --ink-muted: #475569;
             --ink-faint: #94a3b8;
@@ -32,16 +32,19 @@
             --primary-glow: rgba(2, 132, 199, 0.25);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            --card-shadow: 0 20px 45px -15px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(226, 232, 240, 0.6);
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --radius-sm: 10px;
+            /* Frame Beige / Cream Accent sesuai gambar referensi */
+            --frame-beige: #ebdcc0;
+            --frame-beige-border: #dfcfb0;
+            --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+
+            --radius-card: 22px;
+            --radius-inner: 16px;
         }
 
         [data-theme="dark"] {
-            --bg-page: #060b13;
-            --bg-surface: #0c1524;
-            --bg-surface-alt: #0f1b2f;
+            --bg-page: #070d17;
+            --bg-surface: #0e1726;
+            --bg-surface-alt: #131f33;
             --ink: #f8fafc;
             --ink-muted: #94a3b8;
             --ink-faint: #64748b;
@@ -53,7 +56,9 @@
             --primary-glow: rgba(56, 189, 248, 0.3);
             --primary-light: rgba(56, 189, 248, 0.12);
 
-            --card-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            --frame-beige: #222d3d;
+            --frame-beige-border: #334155;
+            --card-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -66,14 +71,14 @@
             font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
             background-color: var(--bg-page);
             color: var(--ink);
-            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
         }
 
-        /* ═══ TOP PREVIEW TOOLBAR ═══ */
+        /* ═══ TOP TOOLBAR ═══ */
         .preview-topbar {
             background: var(--bg-surface);
             border-bottom: 1px solid var(--border);
@@ -139,14 +144,14 @@
             background: var(--primary-light);
         }
 
-        /* ═══ PREVIEW NOTICE BANNER ═══ */
+        /* ═══ NOTICE ═══ */
         .preview-notice {
-            max-width: 1240px;
+            max-width: 1280px;
             margin: 24px auto 0;
             padding: 14px 20px;
             background: var(--primary-light);
             border: 1px solid var(--primary-glow);
-            border-radius: var(--radius-sm);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -155,27 +160,17 @@
             color: var(--ink);
         }
 
-        .notice-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notice-icon {
-            color: var(--primary);
-            font-size: 16px;
-        }
-
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: LARGE IMAGE SHOWCASE SLIDER (THE ACTUAL UI)
+           MAIN SECTION: FACILITY IMAGE CAROUSEL STRIP (SESUAI GAMBAR)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
-            padding: 40px 24px 80px;
+            padding: 40px 24px 70px;
             width: 100%;
+            position: relative;
         }
 
         .showcase-container {
-            max-width: 1240px;
+            max-width: 1340px;
             margin: 0 auto;
         }
 
@@ -184,8 +179,9 @@
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .showcase-eyebrow {
@@ -216,237 +212,267 @@
 
         .showcase-title-main {
             font-family: 'DM Serif Display', Georgia, serif;
-            font-size: clamp(1.5rem, 2.2vw, 2rem);
+            font-size: clamp(1.5rem, 2.2vw, 2.1rem);
             color: var(--ink);
             line-height: 1.25;
         }
 
-        .showcase-counter-box {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--ink-faint);
+        /* Nav Action Buttons (Header) */
+        .showcase-nav-btns {
             display: flex;
-            align-items: baseline;
-            gap: 4px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             background: var(--bg-surface);
-            padding: 6px 14px;
-            border-radius: 999px;
             border: 1px solid var(--border);
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
-        .curr-idx {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--primary);
+        .nav-btn-circle:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            transform: scale(1.08);
+            box-shadow: 0 8px 18px var(--primary-glow);
         }
 
-        /* ═══ LARGE VIEWPORT BOX ═══ */
-        .showcase-viewport {
+        /* ═══ CAROUSEL TRACK WRAPPER ═══ */
+        .carousel-outer-wrap {
             position: relative;
             width: 100%;
-            height: 540px;
-            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--border-subtle);
-            background-color: #0b1320;
-            user-select: none;
+            padding: 10px 0 20px;
         }
 
-        @media (max-width: 960px) {
-            .showcase-viewport {
-                height: 420px;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .showcase-viewport {
-                height: 280px;
-                border-radius: var(--radius-md);
-            }
-        }
-
-        /* Slide Items (Image Layers) */
-        .showcase-slide {
+        /* Gradasi Fade Kiri & Kanan */
+        .carousel-outer-wrap::before,
+        .carousel-outer-wrap::after {
+            content: '';
             position: absolute;
-            inset: 0;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transform: scale(1.06);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: none;
-        }
-
-        .showcase-slide.is-active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto;
-            z-index: 2;
-        }
-
-        /* Subtle Vignette & Gradient Overlay */
-        .showcase-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%);
-            pointer-events: none;
-        }
-
-        /* Progress Bar (Auto-Play Timer) */
-        .showcase-progress-track {
-            position: absolute;
+            top: 0;
             bottom: 0;
+            width: 40px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .carousel-outer-wrap::before {
             left: 0;
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            z-index: 20;
+            background: linear-gradient(90deg, var(--bg-page) 0%, transparent 100%);
         }
 
-        .showcase-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--primary);
-            box-shadow: 0 0 12px var(--primary);
+        .carousel-outer-wrap::after {
+            right: 0;
+            background: linear-gradient(270deg, var(--bg-page) 0%, transparent 100%);
         }
 
-        /* Floating Nav Arrows */
-        .showcase-nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: #0f172a;
+        .carousel-track {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 25;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            padding: 6px 12px;
+            cursor: grab;
         }
 
-        [data-theme="dark"] .showcase-nav-arrow {
-            background: rgba(15, 27, 47, 0.8);
-            border-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
+        .carousel-track::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
         }
 
-        .showcase-nav-arrow:hover {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 12px 30px var(--primary-glow);
+        .carousel-track:active {
+            cursor: grabbing;
         }
 
-        .arrow-prev { left: 24px; }
-        .arrow-next { right: 24px; }
-
-        @media (max-width: 640px) {
-            .showcase-nav-arrow {
-                width: 38px;
-                height: 38px;
-                font-size: 13px;
-            }
-            .arrow-prev { left: 12px; }
-            .arrow-next { right: 12px; }
-        }
-
-        /* ═══ BOTTOM NAVIGATION PILL STRIP ═══ */
-        .showcase-nav-dots {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 28px;
-        }
-
-        .showcase-dot-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            border-radius: 999px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            color: var(--ink-muted);
-            font-size: 0.82rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            outline: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-        }
-
-        .showcase-dot-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .showcase-dot-btn.is-active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #ffffff;
-            box-shadow: 0 8px 20px -4px var(--primary-glow);
-            transform: translateY(-2px);
-        }
-
-        .dot-indicator-circle {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: currentColor;
-            opacity: 0.6;
-        }
-
-        .showcase-dot-btn.is-active .dot-indicator-circle {
-            opacity: 1;
-            box-shadow: 0 0 6px #ffffff;
-        }
-
-        /* ═══ HUMAS SIMULATION MODAL (DEMO UPLOAD) ═══ */
-        .humas-demo-card {
-            max-width: 1240px;
-            margin: 40px auto 20px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 24px;
+        /* ═══ FRAME KARTU SESUAI GAMBAR REFERENSI ═══ */
+        .gallery-card-frame {
+            flex: 0 0 calc((100% - (20px * 5)) / 6); /* Default 6 item per layar penuh desktop */
+            min-width: 190px;
+            max-width: 230px;
+            aspect-ratio: 16 / 10;
+            background: var(--frame-beige);
+            border: 2.5px solid var(--frame-beige-border);
+            border-radius: var(--radius-card);
+            padding: 7px;
             box-shadow: var(--card-shadow);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
         }
 
-        .humas-header {
+        @media (max-width: 1200px) {
+            .gallery-card-frame {
+                min-width: 180px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-card-frame {
+                min-width: 160px;
+                border-radius: 18px;
+                padding: 5px;
+            }
+        }
+
+        .gallery-card-frame:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 16px 30px -6px rgba(0, 0, 0, 0.16);
+            border-color: var(--primary);
+        }
+
+        /* Gambar di dalam frame */
+        .gallery-img-inner {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius-inner);
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-card-frame:hover .gallery-img-inner {
+            transform: scale(1.02);
+        }
+
+        /* ═══ SCROLLBAR & PROGRESS LINE ═══ */
+        .carousel-bottom-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            margin-top: 14px;
+            gap: 20px;
+            padding: 0 12px;
         }
 
-        .humas-title {
-            font-size: 15px;
+        .track-progress-container {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .track-progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 25%;
+            background: var(--primary);
+            border-radius: 999px;
+            transition: left 0.15s ease, width 0.15s ease;
+        }
+
+        .slide-counter-hint {
+            font-size: 13px;
             font-weight: 700;
+            color: var(--ink-faint);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+        }
+
+        /* ═══ LIGHTBOX PREVIEW MODAL ═══ */
+        .lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 24px;
+        }
+
+        .lightbox-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: var(--radius-card);
+            background: var(--frame-beige);
+            padding: 10px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            border: 3px solid var(--frame-beige-border);
+            animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-img {
+            max-width: 85vw;
+            max-height: 78vh;
+            border-radius: var(--radius-inner);
+            display: block;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -16px;
+            right: -16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #0f172a;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.15);
+        }
+
+        /* ═══ HUMAS DEMO UPLOAD ═══ */
+        .humas-demo-card {
+            max-width: 1340px;
+            margin: 30px auto 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
         }
 
         .upload-dropzone {
             border: 2px dashed var(--border);
-            border-radius: var(--radius-sm);
-            padding: 24px;
+            border-radius: 12px;
+            padding: 22px;
             text-align: center;
             background: var(--bg-surface-alt);
             cursor: pointer;
@@ -457,27 +483,21 @@
             border-color: var(--primary);
             background: var(--primary-light);
         }
-
-        .upload-dropzone i {
-            font-size: 28px;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
     </style>
 </head>
 <body>
 
-    <!-- ═══ PREVIEW CONTROLS TOOLBAR ═══ -->
+    <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
             <span class="brand-badge"><i class="fa-solid fa-layer-group"></i> PREVIEW MODE</span>
-            <span class="preview-title">Large Image Showcase Slider (Image-Only Model)</span>
+            <span class="preview-title">Facility & Campus Image Slider (Rounded Frame Strip)</span>
         </div>
 
         <div class="preview-actions">
-            <button type="button" class="btn-tool" id="btnToggleAutoPlay">
-                <i class="fa-solid fa-pause" id="iconAutoPlay"></i>
-                <span id="textAutoPlay">Jeda Auto-Play</span>
+            <button type="button" class="btn-tool" id="btnToggleAutoScroll">
+                <i class="fa-solid fa-play" id="iconScroll"></i>
+                <span id="textScroll">Auto Scroll: Aktif</span>
             </button>
             <button type="button" class="btn-tool" id="btnThemeToggle">
                 <i class="fa-solid fa-moon" id="iconTheme"></i>
@@ -488,270 +508,277 @@
 
     <!-- ═══ NOTICE ═══ -->
     <div class="preview-notice">
-        <div class="notice-left">
-            <i class="fa-solid fa-circle-info notice-icon"></i>
-            <span><strong>Catatan Integrasi:</strong> Komponen ini berada di bagian bawah <a href="welcome.blade.php" style="color:var(--primary); font-weight:600; text-decoration:none;">welcome.blade.php</a> tepat sebelum footer. Gambar di bawah disuplai langsung dari database yang diunggah oleh staf Humas.</span>
+        <div>
+            <i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right:8px;"></i>
+            <span><strong>Model Tampilan Sesuai Referensi:</strong> Deretan frame kartu gambar berbingkai lembut (beige/cream frame) dengan sudut melengkung <em>(squircle/rounded card)</em>. Geser horizontal atau klik gambar untuk memperbesar (lightbox preview).</span>
         </div>
-        <span style="font-size: 11px; opacity: 0.8;">Keyboard ◄ / ► aktif</span>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN UTAMA: LARGE IMAGE SHOWCASE SLIDER
+       KOMPONEN SLIDER IMAGE SHOWCASE
        ═══════════════════════════════════════════════════════════════ -->
-    <section class="showcase-section" id="imageShowcase">
+    <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
             
-            <!-- Header & Counter -->
+            <!-- Header & Nav Buttons -->
             <div class="showcase-header">
                 <div>
                     <div class="showcase-eyebrow">
                         <span class="eyebrow-pulse"></span>
-                        <span>DOKUMENTASI & FASILITAS KAMPUS</span>
+                        <span>FASILITAS & LINGKUNGAN KAMPUS</span>
                     </div>
-                    <h2 class="showcase-title-main">Eksplorasi Fasilitas & Lingkungan Polimdo</h2>
+                    <h2 class="showcase-title-main">Dokumentasi Fasilitas Polimdo</h2>
                 </div>
 
-                <div class="showcase-counter-box" aria-live="polite">
-                    <span class="curr-idx" id="displayCurrentIndex">01</span>
-                    <span style="opacity:0.4;">/</span>
-                    <span id="displayTotalSlides">04</span>
+                <div class="showcase-nav-btns">
+                    <button type="button" class="nav-btn-circle" id="btnSlidePrev" aria-label="Geser ke Kiri">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <button type="button" class="nav-btn-circle" id="btnSlideNext" aria-label="Geser ke Kanan">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- Large Focal Image Viewport -->
-            <div class="showcase-viewport" id="viewportFrame">
-                
-                <!-- Slide 1: Gedung Kuliah Terpadu Polimdo (Asset Nyata) -->
-                <div class="showcase-slide is-active" 
-                     data-index="0"
-                     style="background-image: url('img/gedung.jpeg');">
-                    <div class="showcase-overlay"></div>
-                </div>
+            <!-- Carousel Outer Wrap -->
+            <div class="carousel-outer-wrap">
+                <div class="carousel-track" id="carouselTrack">
+                    
+                    <!-- 01. Polimart TEFA (Sesuai gambar 1) -->
+                    <div class="gallery-card-frame" data-title="Polimart Polimdo">
+                        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop" 
+                             alt="Polimart" 
+                             class="gallery-img-inner">
+                    </div>
 
-                <!-- Slide 2: Smart Auditorium & Theater -->
-                <div class="showcase-slide" 
-                     data-index="1"
-                     style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop');">
-                    <div class="showcase-overlay"></div>
-                </div>
+                    <!-- 02. TEFA Bar & Cafe (Sesuai gambar 2) -->
+                    <div class="gallery-card-frame" data-title="TEFA Bar & Cafe">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop" 
+                             alt="TEFA Bar & Cafe" 
+                             class="gallery-img-inner">
+                    </div>
 
-                <!-- Slide 3: Laboratorium Riset & Komputasi Canggih -->
-                <div class="showcase-slide" 
-                     data-index="2"
-                     style="background-image: url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1600&auto=format&fit=crop');">
-                    <div class="showcase-overlay"></div>
-                </div>
+                    <!-- 03. Co-Working & Lounge Lobby (Sesuai gambar 3) -->
+                    <div class="gallery-card-frame" data-title="Lounge & Co-Working">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop" 
+                             alt="Lounge & Co-Working" 
+                             class="gallery-img-inner">
+                    </div>
 
-                <!-- Slide 4: Teaching Factory & Innovation Center -->
-                <div class="showcase-slide" 
-                     data-index="3"
-                     style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop');">
-                    <div class="showcase-overlay"></div>
-                </div>
+                    <!-- 04. Asrama Kampus (Sesuai gambar 4) -->
+                    <div class="gallery-card-frame" data-title="Asrama Kampus Polimdo">
+                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop" 
+                             alt="Asrama Kampus" 
+                             class="gallery-img-inner">
+                    </div>
 
-                <!-- Linear Progress Auto-Play Timer -->
-                <div class="showcase-progress-track">
-                    <div class="showcase-progress-bar" id="progressBar"></div>
-                </div>
+                    <!-- 05. GOR Indoor Polimdo (Sesuai gambar 5) -->
+                    <div class="gallery-card-frame" data-title="GOR & Lapangan Indoor">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop" 
+                             alt="GOR Polimdo" 
+                             class="gallery-img-inner">
+                    </div>
 
-                <!-- Floating Glass Arrows -->
-                <button type="button" class="showcase-nav-arrow arrow-prev" id="btnPrev" aria-label="Gambar Sebelumnya">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button type="button" class="showcase-nav-arrow arrow-next" id="btnNext" aria-label="Gambar Selanjutnya">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+                    <!-- 06. Theater / Auditorium Polimdo (Sesuai gambar 6) -->
+                    <div class="gallery-card-frame" data-title="Auditorium & Theater">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" 
+                             alt="Auditorium & Theater" 
+                             class="gallery-img-inner">
+                    </div>
+
+                    <!-- 07. Gedung Kuliah Terpadu (GKT) Asset Nyata -->
+                    <div class="gallery-card-frame" data-title="GKT Polimdo">
+                        <img src="img/gedung.jpeg" 
+                             alt="Gedung Kuliah Terpadu" 
+                             class="gallery-img-inner">
+                    </div>
+
+                    <!-- 08. Galeri Investasi & Lab -->
+                    <div class="gallery-card-frame" data-title="Galeri Investasi">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" 
+                             alt="Galeri Investasi" 
+                             class="gallery-img-inner">
+                    </div>
+
+                </div>
             </div>
 
-            <!-- Bottom Pill Dot Navigation -->
-            <div class="showcase-nav-dots" id="dotsContainer" role="tablist">
-                <button type="button" class="showcase-dot-btn is-active" data-slide="0">
-                    <span class="dot-indicator-circle"></span>
-                    <span>01. GKT Polimdo</span>
-                </button>
-                <button type="button" class="showcase-dot-btn" data-slide="1">
-                    <span class="dot-indicator-circle"></span>
-                    <span>02. Auditorium</span>
-                </button>
-                <button type="button" class="showcase-dot-btn" data-slide="2">
-                    <span class="dot-indicator-circle"></span>
-                    <span>03. Lab Rekayasa</span>
-                </button>
-                <button type="button" class="showcase-dot-btn" data-slide="3">
-                    <span class="dot-indicator-circle"></span>
-                    <span>04. TEFA Hub</span>
-                </button>
+            <!-- Bottom Progress Track -->
+            <div class="carousel-bottom-bar">
+                <div class="track-progress-container">
+                    <div class="track-progress-fill" id="trackProgressFill"></div>
+                </div>
+                <div class="slide-counter-hint">
+                    <i class="fa-solid fa-arrows-left-right" style="color:var(--primary);"></i>
+                    <span id="cardCountHint">8 Fasilitas Terdaftar</span>
+                </div>
             </div>
 
         </div>
     </section>
 
-    <!-- ═══ SIMULASI DASHBOARD HUMAS (IMAGE-ONLY) ═══ -->
-    <div class="humas-demo-card">
-        <div class="humas-header">
-            <div class="humas-title">
-                <i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary);"></i>
-                <span>Simulasi Menu Humas di Sidebar (<code style="font-size:12px; color:var(--primary);">unit.blade.php</code>)</span>
-            </div>
-            <span style="font-size:12px; color:var(--ink-muted);">Database: <code>showcase_images (id, image)</code></span>
-        </div>
-        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
-            Akun Humas hanya perlu memilih file foto tanpa perlu mengisi teks panjang. Foto yang diunggah akan otomatis masuk ke tabel database dan langsung dirender di slider beranda di atas.
-        </p>
-        <div class="upload-dropzone" onclick="alert('Ini adalah preview antarmuka. Pada implementasi Laravel, form ini akan menjalankan POST ke route unit.showcase.store.');">
-            <i class="fa-solid fa-image"></i>
-            <h4 style="font-size:14px; font-weight:700; margin-bottom:4px;">Klik untuk Memilih File Foto Baru</h4>
-            <p style="font-size:12px; color:var(--ink-faint);">Format: JPEG, PNG, WEBP (Maksimal 5MB)</p>
+    <!-- ═══ LIGHTBOX MODAL ═══ -->
+    <div class="lightbox-modal" id="lightboxModal">
+        <div class="lightbox-content">
+            <button type="button" class="lightbox-close" id="lightboxClose">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <img src="" alt="Preview Fasilitas" class="lightbox-img" id="lightboxImg">
         </div>
     </div>
 
-    <!-- ═══ INTERACTIVE SCRIPT ═══ -->
+    <!-- ═══ HUMAS DEMO UPLOAD INFO ═══ -->
+    <div class="humas-demo-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database: <code>showcase_images.image</code>)</strong>
+            <span style="font-size:12px; color:var(--ink-muted);">Sidebar: <code>unit.blade.php</code></span>
+        </div>
+        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
+            Humas hanya perlu mengunggah foto. Setiap gambar yang diunggah akan otomatis terbungkus dalam frame kartu rounded yang serasi di slider beranda di atas.
+        </p>
+        <div class="upload-dropzone" onclick="alert('Form upload di backend Humas akan menambahkan kartu baru ke slider.');">
+            <i class="fa-solid fa-image" style="font-size:24px; color:var(--primary); margin-bottom:6px;"></i>
+            <h4 style="font-size:13px; font-weight:700;">+ Tambah Foto Fasilitas / Kampus</h4>
+        </div>
+    </div>
+
+    <!-- ═══ SCRIPT LOGIC ═══ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const root = document.getElementById('imageShowcase');
-            const slides = Array.from(root.querySelectorAll('.showcase-slide'));
-            const dots = Array.from(root.querySelectorAll('.showcase-dot-btn'));
-            const currentCounter = document.getElementById('displayCurrentIndex');
-            const totalCounter = document.getElementById('displayTotalSlides');
-            const progressBar = document.getElementById('progressBar');
-            const btnPrev = document.getElementById('btnPrev');
-            const btnNext = document.getElementById('btnNext');
-            const viewport = document.getElementById('viewportFrame');
+            const track = document.getElementById('carouselTrack');
+            const btnPrev = document.getElementById('btnSlidePrev');
+            const btnNext = document.getElementById('btnSlideNext');
+            const progressFill = document.getElementById('trackProgressFill');
+            const cards = Array.from(track.querySelectorAll('.gallery-card-frame'));
+            
+            // Lightbox
+            const lightbox = document.getElementById('lightboxModal');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
 
             // Topbar Controls
-            const btnThemeToggle = document.getElementById('btnThemeToggle');
+            const btnTheme = document.getElementById('btnThemeToggle');
             const iconTheme = document.getElementById('iconTheme');
             const labelTheme = document.getElementById('labelTheme');
-            const btnToggleAutoPlay = document.getElementById('btnToggleAutoPlay');
-            const iconAutoPlay = document.getElementById('iconAutoPlay');
-            const textAutoPlay = document.getElementById('textAutoPlay');
+            const btnScroll = document.getElementById('btnToggleAutoScroll');
+            const iconScroll = document.getElementById('iconScroll');
+            const textScroll = document.getElementById('textScroll');
 
-            let currentIndex = 0;
-            const totalSlides = slides.length;
-            const SLIDE_DURATION = 5000; // 5 Detik per pergantian
-            let timer = null;
-            let isAutoPlayPaused = false;
+            let isAutoScrolling = true;
+            let autoScrollTimer = null;
+            const SCROLL_STEP = 240; // Pixels per scroll click
 
-            if (totalCounter) {
-                totalCounter.textContent = String(totalSlides).padStart(2, '0');
-            }
-
-            // Fungsi Pindah Slide
-            function goToSlide(index) {
-                if (index < 0) index = totalSlides - 1;
-                if (index >= totalSlides) index = 0;
-                currentIndex = index;
-
-                // 1. Toggle Slide Layer
-                slides.forEach((slide, idx) => {
-                    slide.classList.toggle('is-active', idx === currentIndex);
-                });
-
-                // 2. Toggle Dot Active
-                dots.forEach((dot, idx) => {
-                    dot.classList.toggle('is-active', idx === currentIndex);
-                });
-
-                // 3. Update Counter
-                if (currentCounter) {
-                    currentCounter.textContent = String(currentIndex + 1).padStart(2, '0');
+            // Update Progress Bar
+            function updateProgressBar() {
+                const maxScroll = track.scrollWidth - track.clientWidth;
+                if (maxScroll <= 0) {
+                    progressFill.style.width = '100%';
+                    progressFill.style.left = '0%';
+                    return;
                 }
+                const currentScroll = track.scrollLeft;
+                const ratio = track.clientWidth / track.scrollWidth;
+                const widthPercent = Math.max(15, ratio * 100);
+                const leftPercent = (currentScroll / maxScroll) * (100 - widthPercent);
 
-                resetProgressAnimation();
+                progressFill.style.width = widthPercent + '%';
+                progressFill.style.left = leftPercent + '%';
             }
 
-            // Animasi Bar Progress
-            function resetProgressAnimation() {
-                if (!progressBar) return;
-                progressBar.style.transition = 'none';
-                progressBar.style.width = '0%';
-                
-                if (!isAutoPlayPaused) {
-                    requestAnimationFrame(() => {
-                        progressBar.style.transition = `width ${SLIDE_DURATION}ms linear`;
-                        progressBar.style.width = '100%';
-                    });
-                }
-            }
-
-            // Auto Play Engine
-            function startAutoPlay() {
-                clearInterval(timer);
-                if (isAutoPlayPaused) return;
-                resetProgressAnimation();
-                timer = setInterval(() => {
-                    goToSlide(currentIndex + 1);
-                }, SLIDE_DURATION);
-            }
-
-            function pauseAutoPlay() {
-                clearInterval(timer);
-                if (progressBar) {
-                    const computedWidth = window.getComputedStyle(progressBar).width;
-                    progressBar.style.transition = 'none';
-                    progressBar.style.width = computedWidth;
-                }
-            }
-
-            // Event Listeners Navigasi
+            // Scroll Events
             btnPrev.addEventListener('click', () => {
-                goToSlide(currentIndex - 1);
-                startAutoPlay();
+                track.scrollBy({ left: -SCROLL_STEP, behavior: 'smooth' });
             });
 
             btnNext.addEventListener('click', () => {
-                goToSlide(currentIndex + 1);
-                startAutoPlay();
+                const maxScroll = track.scrollWidth - track.clientWidth;
+                if (track.scrollLeft >= maxScroll - 10) {
+                    track.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    track.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
+                }
             });
 
-            dots.forEach((dot, idx) => {
-                dot.addEventListener('click', () => {
-                    goToSlide(idx);
-                    startAutoPlay();
+            track.addEventListener('scroll', updateProgressBar);
+            window.addEventListener('resize', updateProgressBar);
+
+            // Drag to Scroll Track
+            let isDown = false;
+            let startX, scrollLeft;
+
+            track.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            });
+            track.addEventListener('mouseleave', () => { isDown = false; });
+            track.addEventListener('mouseup', () => { isDown = false; });
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                track.scrollLeft = scrollLeft - walk;
+            });
+
+            // Lightbox Click
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const img = card.querySelector('img');
+                    if (img) {
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add('open');
+                    }
                 });
             });
 
-            // Pause on Hover
-            viewport.addEventListener('mouseenter', () => {
-                if (!isAutoPlayPaused) pauseAutoPlay();
+            lightboxClose.addEventListener('click', () => {
+                lightbox.classList.remove('open');
             });
-
-            viewport.addEventListener('mouseleave', () => {
-                if (!isAutoPlayPaused) startAutoPlay();
-            });
-
-            // Keyboard Arrow Support
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') {
-                    goToSlide(currentIndex - 1);
-                    startAutoPlay();
-                } else if (e.key === 'ArrowRight') {
-                    goToSlide(currentIndex + 1);
-                    startAutoPlay();
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    lightbox.classList.remove('open');
                 }
             });
 
-            // Toggle Auto Play Button
-            btnToggleAutoPlay.addEventListener('click', () => {
-                isAutoPlayPaused = !isAutoPlayPaused;
-                if (isAutoPlayPaused) {
-                    pauseAutoPlay();
-                    iconAutoPlay.className = 'fa-solid fa-play';
-                    textAutoPlay.textContent = 'Lanjutkan Auto-Play';
+            // Smooth Auto-Scroll
+            function startAutoScroll() {
+                clearInterval(autoScrollTimer);
+                autoScrollTimer = setInterval(() => {
+                    if (!isAutoScrolling) return;
+                    const maxScroll = track.scrollWidth - track.clientWidth;
+                    if (track.scrollLeft >= maxScroll - 5) {
+                        track.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        track.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
+                    }
+                }, 3500);
+            }
+
+            // Pause on track hover
+            track.addEventListener('mouseenter', () => clearInterval(autoScrollTimer));
+            track.addEventListener('mouseleave', () => { if (isAutoScrolling) startAutoScroll(); });
+
+            btnScroll.addEventListener('click', () => {
+                isAutoScrolling = !isAutoScrolling;
+                if (isAutoScrolling) {
+                    startAutoScroll();
+                    iconScroll.className = 'fa-solid fa-pause';
+                    textScroll.textContent = 'Auto Scroll: Aktif';
                 } else {
-                    startAutoPlay();
-                    iconAutoPlay.className = 'fa-solid fa-pause';
-                    textAutoPlay.textContent = 'Jeda Auto-Play';
+                    clearInterval(autoScrollTimer);
+                    iconScroll.className = 'fa-solid fa-play';
+                    textScroll.textContent = 'Auto Scroll: Nonaktif';
                 }
             });
 
-            // Theme Toggle (Light / Dark)
-            btnThemeToggle.addEventListener('click', () => {
-                const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-                const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', nextTheme);
+            // Theme Switcher
+            btnTheme.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'light';
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
 
-                if (nextTheme === 'dark') {
+                if (next === 'dark') {
                     iconTheme.className = 'fa-solid fa-sun';
                     labelTheme.textContent = 'Mode Terang';
                 } else {
@@ -760,9 +787,9 @@
                 }
             });
 
-            // Initial Launch
-            goToSlide(0);
-            startAutoPlay();
+            // Initialize
+            updateProgressBar();
+            startAutoScroll();
         });
     </script>
 </body>
