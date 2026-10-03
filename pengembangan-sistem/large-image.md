@@ -1,41 +1,34 @@
-# Desain & Arsitektur Fitur Infinite Seamless Facility Showcase Slider (Image-Only Database)
+# Desain & Arsitektur Fitur 5-Card Step Facility Showcase Slider (Image-Only Database)
 
-Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fitur **Facility & Campus Image Infinite Carousel Slider** yang ditempatkan pada bagian bawah halaman utama ([welcome.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/welcome.blade.php)) sebelum footer.
-
----
-
-## 1. Karakter Desain & Pengalaman Visual (Ultra-Premium & Infinite Seamless)
-
-### 1.1 Estetika Kartu Mewah (*Luxury Squircle Frame*)
-- **Frame Finishing:** Menggunakan *Warm Champagne / Soft Cream Gradient* (`linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%)`) dengan sentuhan *subtle glossy rim* (`border: 2px solid rgba(217, 198, 165, 0.85)`), *inner highlight shadow*, dan *ambient floating shadow*.
-- **Mode Gelap (Dark Mode):** Berubah menjadi *Obsidian Slate Metallic Frame* dengan tepi *glow* biru/cyan saat di-hover.
-- **Micro-Interaction Hover:** Ketika mouse melintas, kartu naik halus `translateY(-8px) scale(1.04)`, bayangan meluas (*deep ambient glow*), dan gambar di dalamnya memperbesar halus `scale(1.05)`.
-- **Edge Fade Masking:** Ujung kiri dan kanan viewport slider menggunakan CSS `mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)` untuk memberikan efek kartu muncul dan menghilang secara elegan dan natural.
+Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fitur **Facility & Campus Image 5-Card Step Carousel Slider** yang ditempatkan pada bagian bawah halaman utama ([welcome.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/welcome.blade.php)) sebelum footer.
 
 ---
 
-### 1.2 Animasi Infinite Loop Tanpa Reset (*No-Jump Continuous Marquee*)
-- **Mekanisme:** Slider berjalan terus-menerus (*continuous smooth drift*) menggunakan `requestAnimationFrame` (60/120 FPS).
-- **Seamless Looping:** Ketika set kartu pertama selesai lewat, posisi offset di-wrap secara invisible (`position -= singleSetWidth`), sehingga transisi dari gambar terakhir ke gambar pertama terjadi **100% mulus tanpa jeda, tanpa loncatan, dan tanpa kembali ke awal**.
-- **User Control:**
-  - Otomatis jeda (*pause*) ketika kursor mouse berada di atas kartu (*hover*).
-  - Mendukung tarikan mouse manual (*drag-to-scroll*) di desktop dan usap jari (*touch swipe*) di layar smartphone.
+## 1. Karakter Desain & Pengalaman Visual (5-Card Display & Step Slide)
+
+### 1.1 Tampilan Awal & Proporsi
+- **5 Foto Tampil Sekaligus:** Pada tampilan desktop, container langsung memuat **tepat 5 kartu gambar** berjajar horizontal dengan rasio seimbang.
+- **Tanpa Bayangan Samping (*No Side Shadow/Mask*):** Sisi kiri dan kanan track bersih tanpa efek gradasi gelap/shadow sehingga foto pertama dan kelima terlihat tajam dan penuh.
+- **Frame Finishing:** Menggunakan *Warm Champagne / Soft Cream Gradient* (`linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%)`) dengan *subtle glossy rim* (`border: 2px solid rgba(217, 198, 165, 0.85)`).
 
 ---
 
-### 1.3 Lightbox Modal Murni Foto & Navigasi Panah Samping
-- **Tampilan Bersih (Clean Pure Image):** Tidak memiliki border, background warna, ataupun border-radius (*border-radius: 0; border: none; background: transparent;*). Gambar tampil murni mengambang di atas latar belakang gelap transparan (*blurred backdrop*).
-- **Navigasi Panah Sisi Kiri & Kanan:** Dilengkapi tombol panah melayang di samping kiri (`◄`) dan kanan (`►`) untuk berpindah antar foto secara berurutan.
-- **Kontrol Keyboard:** Mendukung tombol panah kiri/kanan keyboard serta tombol `Escape` untuk menutup lightbox.
+### 1.2 Mekanisme Animasi Bergeser Bertambah 1 (*Step-by-Step Slide*)
+- **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (misal 3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
+- **Infinite Looping Mulus:** Menggunakan teknik *invisible wrap reset* sehingga saat mencapai foto terakhir, urutan berikutnya kembali menyambung ke awal secara natural tanpa merusak alur visual.
+- **Interaksi Pengguna:**
+  - Slider otomatis berhenti sejenak saat kursor mouse diarahkan ke kartu (*hover pause*).
+  - Klik pada kartu membuka **Lightbox Modal Murni Foto** dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                           │
 │   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
-│   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ════►    │
-│   │ │ POLIMART │ │   │ │ TEFA BAR │ │   │ │  LOUNGE  │ │   │ │  ASRAMA  │ │   │ │   GOR    │ │  (Infinite  │
-│   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   Continuous│
-│   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘    Loop)   │
+│   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ───► +1  │
+│   │ │    01    │ │   │ │    02    │ │   │ │    03    │ │   │ │    04    │ │   │ │    05    │ │   (Step    │
+│   │ │ POLIMART │ │   │ │ TEFA BAR │ │   │ │  LOUNGE  │ │   │ │  ASRAMA  │ │   │ │   GOR    │ │    Slide)  │
+│   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │            │
+│   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘            │
 │                                                                                                           │
 └───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -178,11 +171,11 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ INFINITE SEAMLESS CAMPUS IMAGE SHOWCASE SECTION ════════ -->
+<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION ════════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
     <div class="showcase-container">
-        <div class="carousel-outer-wrap" id="marqueeViewport">
-            <div class="carousel-marquee-track" id="marqueeTrack">
+        <div class="carousel-outer-wrap" id="stepViewport">
+            <div class="carousel-step-track" id="stepTrack">
                 @foreach($showcases as $item)
                     <div class="gallery-card-frame">
                         <img src="{{ asset($item->image) }}" alt="Fasilitas Polimdo" class="gallery-img-inner" loading="lazy">

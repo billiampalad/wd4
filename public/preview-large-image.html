@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview UI/UX - Infinite Seamless Facility Showcase Slider</title>
+    <title>Preview UI/UX - 5-Card Step Showcase Slider</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,15 +31,15 @@
             --primary-glow: rgba(2, 132, 199, 0.25);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            /* Premium Warm Beige/Champagne Frame */
+            /* Warm Beige Frame */
             --frame-bg: linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%);
             --frame-border: rgba(217, 198, 165, 0.85);
             --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.04);
-            --card-shadow: 0 12px 28px -6px rgba(44, 38, 27, 0.09), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
-            --card-hover-shadow: 0 22px 40px -8px rgba(44, 38, 27, 0.16), 0 0 0 1px rgba(2, 132, 199, 0.4);
+            --card-shadow: 0 10px 24px -6px rgba(44, 38, 27, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+            --card-hover-shadow: 0 18px 32px -8px rgba(44, 38, 27, 0.16), 0 0 0 1px rgba(2, 132, 199, 0.4);
 
-            --radius-card: 24px;
-            --radius-inner: 17px;
+            --radius-card: 22px;
+            --radius-inner: 16px;
         }
 
         [data-theme="dark"] {
@@ -56,12 +56,12 @@
             --primary-glow: rgba(56, 189, 248, 0.3);
             --primary-light: rgba(56, 189, 248, 0.12);
 
-            /* Obsidian & Titanium Metallic Frame */
+            /* Obsidian Slate Frame */
             --frame-bg: linear-gradient(145deg, #1b263b 0%, #111a28 100%);
             --frame-border: rgba(255, 255, 255, 0.12);
             --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 -1px 2px rgba(0, 0, 0, 0.6);
-            --card-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
-            --card-hover-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.35);
+            --card-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            --card-hover-shadow: 0 20px 42px -8px rgba(0, 0, 0, 0.8), 0 0 18px rgba(56, 189, 248, 0.3);
         }
 
         * {
@@ -164,57 +164,60 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: INFINITE SEAMLESS LUXURY IMAGE STRIP
+           MAIN SECTION: 5-CARD STEP SHOWCASE (NO SIDE SHADOWS)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
             padding: 40px 0 60px;
             width: 100%;
             position: relative;
-            overflow: hidden;
         }
 
         .showcase-container {
-            width: 100%;
+            max-width: 1380px;
             margin: 0 auto;
+            padding: 0 24px;
             position: relative;
         }
 
-        /* Outer Wrap with Smooth Edge Gradient Mask */
+        /* Outer Wrap - TANPA SIDE SHADOW / MASK */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding: 16px 0;
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+            padding: 12px 0;
+            /* Side Shadow / Gradient Mask Dihapus Bersih */
+            -webkit-mask-image: none;
+            mask-image: none;
         }
 
-        /* Continuous Smooth Track */
-        .carousel-marquee-track {
+        /* Step Slider Track */
+        .carousel-step-track {
             display: flex;
-            gap: 22px;
+            gap: 20px;
             width: max-content;
             will-change: transform;
             cursor: grab;
             user-select: none;
-            padding: 8px 0;
+            padding: 6px 0;
+            transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .carousel-marquee-track:active {
+        .carousel-step-track:active {
             cursor: grabbing;
         }
 
-        /* ═══ ULTRA-PREMIUM CARD FRAME ═══ */
+        /* ═══ CARD FRAME: TEPAT 5 KARTU TAMPIL DI DESKTOP ═══ */
         .gallery-card-frame {
-            flex: 0 0 220px;
-            width: 220px;
+            /* 5 kartu tampil penuh: lebar total - 4 gap (20px * 4 = 80px) dibagi 5 */
+            flex: 0 0 calc((1380px - 48px - 80px) / 5);
+            width: calc((1380px - 48px - 80px) / 5);
             aspect-ratio: 16 / 10;
             background: var(--frame-bg);
             border: 2px solid var(--frame-border);
             border-radius: var(--radius-card);
             padding: 7px;
             box-shadow: var(--card-shadow), var(--frame-inner-shadow);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
             position: relative;
             cursor: pointer;
             overflow: hidden;
@@ -223,61 +226,67 @@
             justify-content: stretch;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1400px) {
             .gallery-card-frame {
-                flex: 0 0 190px;
-                width: 190px;
-                border-radius: 20px;
+                flex: 0 0 calc((100vw - 48px - 80px) / 5);
+                width: calc((100vw - 48px - 80px) / 5);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .gallery-card-frame {
+                flex: 0 0 calc((100vw - 48px - 60px) / 4); /* 4 kartu di tablet */
+                width: calc((100vw - 48px - 60px) / 4);
+                border-radius: 18px;
                 padding: 6px;
             }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .gallery-card-frame {
-                flex: 0 0 160px;
-                width: 160px;
-                border-radius: 17px;
+                flex: 0 0 calc((100vw - 48px - 20px) / 2); /* 2 kartu di mobile */
+                width: calc((100vw - 48px - 20px) / 2);
+                border-radius: 16px;
                 padding: 5px;
             }
         }
 
         .gallery-card-frame:hover {
-            transform: translateY(-8px) scale(1.04);
+            transform: translateY(-6px) scale(1.03);
             box-shadow: var(--card-hover-shadow);
             border-color: var(--primary);
             z-index: 10;
         }
 
-        /* Gambar Internal Tajam & Rounded */
+        /* Gambar Internal */
         .gallery-img-inner {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: var(--radius-inner);
             display: block;
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+            transition: transform 0.5s ease;
         }
 
         .gallery-card-frame:hover .gallery-img-inner {
-            transform: scale(1.05);
-            filter: brightness(1.03);
+            transform: scale(1.04);
         }
 
-        /* Subtle Luxury Sheen Overlay on Card Corner */
+        /* Glossy Highlight Refleksi Atas Kartu */
         .gallery-card-frame::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 45%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
             border-radius: var(--radius-card) var(--radius-card) 0 0;
             pointer-events: none;
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           LIGHTBOX PREVIEW MODAL (PURE IMAGE ONLY + SIDE NAV ARROWS)
+           LIGHTBOX PREVIEW MODAL (PURE IMAGE + SIDE ARROWS)
            ═══════════════════════════════════════════════════════════════ */
         .lightbox-modal {
             position: fixed;
@@ -300,7 +309,6 @@
             pointer-events: auto;
         }
 
-        /* Pure Image Container: NO border, NO background, NO border-radius */
         .lightbox-content {
             position: relative;
             display: flex;
@@ -321,7 +329,6 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* Murni Gambar Saja */
         .lightbox-img {
             max-width: 82vw;
             max-height: 85vh;
@@ -334,7 +341,6 @@
             transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
-        /* Tombol Close di Pojok Kanan Atas Layar */
         .lightbox-close {
             position: fixed;
             top: 24px;
@@ -362,7 +368,6 @@
             color: #ffffff;
         }
 
-        /* Tombol Panah Navigasi Kiri & Kanan di Sisi Gambar */
         .lightbox-nav-arrow {
             position: fixed;
             top: 50%;
@@ -383,13 +388,8 @@
             z-index: 1010;
         }
 
-        .lightbox-arrow-prev {
-            left: 32px;
-        }
-
-        .lightbox-arrow-next {
-            right: 32px;
-        }
+        .lightbox-arrow-prev { left: 32px; }
+        .lightbox-arrow-next { right: 32px; }
 
         @media (max-width: 768px) {
             .lightbox-nav-arrow {
@@ -442,8 +442,8 @@
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-infinity"></i> INFINITE LOOP</span>
-            <span class="preview-title">Facility & Campus Infinite Image Slider</span>
+            <span class="brand-badge"><i class="fa-solid fa-clone"></i> 5-IMAGE STEP SLIDER</span>
+            <span class="preview-title">Facility & Campus Image Slider (5 Display, Slide +1 Step)</span>
         </div>
 
         <div class="preview-actions">
@@ -462,19 +462,18 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Lightbox Murni & Panah Navigasi:</strong> Klik gambar untuk membuka tampilan murni foto tanpa bingkai/radius. Gunakan panah kiri/kanan di sisi gambar (atau tombol panah keyboard ◄ / ►) untuk berpindah gambar.</span>
+            <span><strong>Model Tampilan:</strong> 5 foto tampil sekaligus saat halaman dibuka. Animasi bergeser bertambah 1 foto secara bertahap (setiap 3.5 detik). Bayangan di sisi kiri dan kanan telah dihapus sepenuhnya.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE: PURE INFINITE LUXURY STRIP
+       KOMPONEN SLIDER IMAGE SHOWCASE (5 GAMBAR TAMPIL, BERGESER +1)
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
             
-            <div class="carousel-outer-wrap" id="marqueeViewport">
-                <!-- Track yang akan digeser secara continuous menggunakan requestAnimationFrame -->
-                <div class="carousel-marquee-track" id="marqueeTrack">
+            <div class="carousel-outer-wrap" id="stepViewport">
+                <div class="carousel-step-track" id="stepTrack">
                     
                     <!-- 01. Polimart TEFA -->
                     <div class="gallery-card-frame">
@@ -540,12 +539,10 @@
 
     <!-- ═══ LIGHTBOX MODAL (PURE IMAGE + SIDE ARROWS) ═══ -->
     <div class="lightbox-modal" id="lightboxModal">
-        <!-- Close Button -->
         <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup Preview">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <!-- Side Navigation Arrows -->
         <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Gambar Sebelumnya">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
@@ -566,19 +563,19 @@
             <span style="font-size:12px; color:var(--ink-muted);">Sidebar: <code>unit.blade.php</code></span>
         </div>
         <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
-            Staf Humas cukup mengunggah foto baru. Sistem akan merender foto ke dalam slider infinite tanpa batas secara otomatis.
+            Staf Humas cukup mengunggah foto baru. Sistem akan otomatis memasukkannya ke dalam urutan slider 5-card.
         </p>
-        <div class="upload-dropzone" onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke infinite slider.');">
+        <div class="upload-dropzone" onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke slider.');">
             <i class="fa-solid fa-image" style="font-size:24px; color:var(--primary); margin-bottom:6px;"></i>
             <h4 style="font-size:13px; font-weight:700;">+ Tambah Foto Fasilitas / Kampus</h4>
         </div>
     </div>
 
-    <!-- ═══ HIGH-PERFORMANCE INFINITE LOOP & LIGHTBOX SCRIPT ═══ -->
+    <!-- ═══ STEP-BY-STEP SLIDER SCRIPT (+1 PER STEP) ═══ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const viewport = document.getElementById('marqueeViewport');
-            const track = document.getElementById('marqueeTrack');
+            const viewport = document.getElementById('stepViewport');
+            const track = document.getElementById('stepTrack');
             
             // Lightbox Elements
             const lightbox = document.getElementById('lightboxModal');
@@ -603,86 +600,60 @@
                 return img ? img.src : '';
             });
 
-            // 2. CLONE ITEMS UNTUK SEAMLESS INFINITE LOOP
+            // 2. CLONE ITEMS TO ENABLE SEAMLESS INFINITE STEP SLIDING
+            // Clone first 5 items to the end for seamless wrapping
             originalCards.forEach(card => {
-                const clone1 = card.cloneNode(true);
-                track.appendChild(clone1);
-            });
-            originalCards.forEach(card => {
-                const clone2 = card.cloneNode(true);
-                track.appendChild(clone2);
+                const clone = card.cloneNode(true);
+                track.appendChild(clone);
             });
 
-            let singleSetWidth = 0;
-            function calculateSetWidth() {
-                let width = 0;
-                const gap = 22; // gap antar kartu
-                for (let i = 0; i < originalCount; i++) {
-                    width += originalCards[i].offsetWidth + gap;
-                }
-                singleSetWidth = width;
-            }
-            calculateSetWidth();
-            window.addEventListener('resize', calculateSetWidth);
-
-            // 3. ANIMASI INFINITE MENGGUNAKAN REQUEST ANIMATION FRAME
-            let position = 0;
-            let speed = 0.85; // Kecepatan gerak (pixel per frame)
+            let currentIndex = 0;
+            let stepInterval = null;
             let isHovered = false;
-            let isDragging = false;
             let isPausedManually = false;
-            let startX = 0;
-            let dragOffset = 0;
+            const STEP_DURATION = 3500; // 3.5 Detik per pergeseran 1 gambar
+            const GAP = 20; // 20px gap
 
-            function animate() {
-                if (!isHovered && !isDragging && !isPausedManually) {
-                    position += speed;
-                    
-                    if (singleSetWidth > 0 && position >= singleSetWidth) {
-                        position -= singleSetWidth;
-                    }
-                    track.style.transform = `translate3d(${-position}px, 0, 0)`;
-                }
-                requestAnimationFrame(animate);
+            function getStepWidth() {
+                const firstCard = track.querySelector('.gallery-card-frame');
+                return firstCard ? firstCard.offsetWidth + GAP : 0;
             }
-            requestAnimationFrame(animate);
+
+            // 3. STEP-BY-STEP SLIDE ENGINE
+            function slideNext() {
+                currentIndex++;
+                const stepWidth = getStepWidth();
+                
+                track.style.transition = 'transform 0.65s cubic-bezier(0.25, 1, 0.5, 1)';
+                track.style.transform = `translate3d(${-currentIndex * stepWidth}px, 0, 0)`;
+
+                // Ketika sudah bergeser sejauh total kartu asli, reset ke index 0 secara invisible
+                if (currentIndex >= originalCount) {
+                    setTimeout(() => {
+                        track.style.transition = 'none';
+                        currentIndex = 0;
+                        track.style.transform = `translate3d(0px, 0, 0)`;
+                    }, 650); // Selesai transisi CSS
+                }
+            }
+
+            function startStepTimer() {
+                clearInterval(stepInterval);
+                if (isPausedManually) return;
+                stepInterval = setInterval(() => {
+                    if (!isHovered && !isPausedManually) {
+                        slideNext();
+                    }
+                }, STEP_DURATION);
+            }
+
+            startStepTimer();
 
             // Hover Pause
             viewport.addEventListener('mouseenter', () => { isHovered = true; });
             viewport.addEventListener('mouseleave', () => { isHovered = false; });
 
-            // Drag to Scroll Track
-            function onDragStart(clientX) {
-                isDragging = true;
-                startX = clientX;
-                dragOffset = position;
-            }
-
-            function onDragMove(clientX) {
-                if (!isDragging) return;
-                const deltaX = clientX - startX;
-                position = dragOffset - deltaX;
-
-                if (singleSetWidth > 0) {
-                    if (position < 0) position += singleSetWidth;
-                    if (position >= singleSetWidth) position -= singleSetWidth;
-                }
-                track.style.transform = `translate3d(${-position}px, 0, 0)`;
-            }
-
-            function onDragEnd() {
-                isDragging = false;
-            }
-
-            viewport.addEventListener('mousedown', (e) => onDragStart(e.clientX));
-            window.addEventListener('mousemove', (e) => onDragMove(e.clientX));
-            window.addEventListener('mouseup', onDragEnd);
-
-            viewport.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX), { passive: true });
-            window.addEventListener('touchmove', (e) => onDragMove(e.touches[0].clientX), { passive: true });
-            window.addEventListener('touchend', onDragEnd);
-
-            // 4. LIGHTBOX LOGIC DENGAN NAVIGASI PANAH KIRI/KANAN
+            // 4. LIGHTBOX LOGIC
             let currentLightboxIndex = 0;
 
             function showLightboxImage(index) {
@@ -700,7 +671,7 @@
                 }, 100);
             }
 
-            // Click on Card
+            // Click Card to Open Lightbox
             track.addEventListener('click', (e) => {
                 const card = e.target.closest('.gallery-card-frame');
                 if (!card) return;
@@ -723,14 +694,12 @@
                 showLightboxImage(currentLightboxIndex + 1);
             });
 
-            // Lightbox Close
             function closeLightbox() {
                 lightbox.classList.remove('open');
             }
 
             lightboxClose.addEventListener('click', closeLightbox);
             lightbox.addEventListener('click', (e) => {
-                // Tutup hanya jika klik area latar belakang luar gambar
                 if (e.target === lightbox) {
                     closeLightbox();
                 }
@@ -753,9 +722,11 @@
             btnAnim.addEventListener('click', () => {
                 isPausedManually = !isPausedManually;
                 if (isPausedManually) {
+                    clearInterval(stepInterval);
                     iconAnim.className = 'fa-solid fa-play';
                     textAnim.textContent = 'Lanjutkan Animasi';
                 } else {
+                    startStepTimer();
                     iconAnim.className = 'fa-solid fa-pause';
                     textAnim.textContent = 'Jeda Animasi';
                 }
