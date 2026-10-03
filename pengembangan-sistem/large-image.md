@@ -176,8 +176,37 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (WITH INSET BLUE GLOW) ════════════ -->
+<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (ULTRA PREMIUM ACCENTS) ════════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
+    <!-- Header Aksen Elegan & Kontrol Navigasi -->
+    <div class="showcase-header">
+        <div class="showcase-header-left">
+            <div class="showcase-pill-badge">
+                <span class="badge-live-pulse"></span>
+                <span>Campus & Facilities Showcase</span>
+            </div>
+            <h2 class="showcase-main-title">
+                Eksplorasi Lingkungan & <span class="title-gradient-accent">Fasilitas Unggulan</span>
+            </h2>
+            <p class="showcase-subtitle">
+                Jelajahi berbagai sarana modern dan infrastruktur pendukung pembelajaran di Politeknik Negeri Manado.
+            </p>
+        </div>
+
+        <div class="showcase-header-right">
+            <div class="slider-counter-pill" id="sliderCounterPill">
+                <i class="fa-solid fa-layer-group" style="color:var(--primary); font-size:12px;"></i>
+                <span id="sliderCurrentNum">01</span> / <span id="sliderTotalNum">{{ str_pad($showcases->count(), 2, '0', STR_PAD_LEFT) }}</span>
+            </div>
+            <button type="button" class="slider-nav-btn" id="btnPrevSlide" aria-label="Slide Sebelumnya" title="Slide Sebelumnya">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" class="slider-nav-btn" id="btnNextSlide" aria-label="Slide Selanjutnya" title="Slide Selanjutnya">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="showcase-container">
         <div class="carousel-outer-wrap" id="stepViewport">
             <div class="carousel-step-track" id="stepTrack">
@@ -187,12 +216,24 @@ class ShowcaseController extends Controller
                     </div>
                 @endforeach
             </div>
+            <div class="carousel-bottom-line"></div>
+        </div>
+
+        <!-- Visual Progress Timer Line -->
+        <div class="slider-timer-bar">
+            <div class="slider-timer-fill" id="timerFill"></div>
         </div>
     </div>
 </section>
 
-<!-- Lightbox Modal Fullscreen (Pure Image + Side Arrows) -->
+<!-- Lightbox Modal Fullscreen (Pure Image + Side Arrows & Counter) -->
 <div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-top-bar">
+        <span class="lightbox-counter-badge" id="lightboxCounter">01 / 08</span>
+        <span style="opacity:0.4;">•</span>
+        <span id="lightboxCaption">Fasilitas Kampus</span>
+    </div>
+
     <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Tutup">&times;</button>
     <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Sebelumnya">&#10094;</button>
     
