@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview UI/UX - 5-Card Step Showcase Slider</title>
+    <title>Preview UI/UX - 5-Card Full-Width Showcase Slider</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -147,8 +147,8 @@
 
         /* ═══ NOTICE ═══ */
         .preview-notice {
-            max-width: 1380px;
-            margin: 24px auto 0;
+            max-width: 100%;
+            margin: 20px 24px 0;
             padding: 14px 20px;
             background: var(--primary-light);
             border: 1px solid var(--primary-glow);
@@ -162,27 +162,30 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: 5-CARD STEP SHOWCASE (BERSIH 100% TANPA HALANGAN)
+           MAIN SECTION: FULL-WIDTH 5-CARD SHOWCASE (100% LEBAR PENUH)
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
-            padding: 40px 0 60px;
+            padding: 30px 0 50px;
             width: 100%;
             position: relative;
+            overflow: hidden;
         }
 
+        /* Full Width Container - Tanpa batas max-width atau padding samping */
         .showcase-container {
-            max-width: 1380px;
-            margin: 0 auto;
-            padding: 0 24px;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
             position: relative;
         }
 
-        /* Outer Viewport - TANPA SHADOW / OVERLAY / GRADIENT MASK */
+        /* Full Width Viewport - Bebas Halangan & Mask */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding: 16px 0; /* Ruang vertikal cukup agar efek hover tidak terpotong */
+            padding: 16px 0;
             -webkit-mask-image: none !important;
             mask-image: none !important;
         }
@@ -203,11 +206,11 @@
             cursor: grabbing;
         }
 
-        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT SEMPURNA ═══ */
+        /* ═══ CARD FRAME: TEPAT 5 KARTU FIT FULL WIDTH ═══ */
         .gallery-card-frame {
             /* Dihitung dinamis via CSS variable --card-item-width oleh JS */
-            flex: 0 0 var(--card-item-width, 240px);
-            width: var(--card-item-width, 240px);
+            flex: 0 0 var(--card-item-width, 260px);
+            width: var(--card-item-width, 260px);
             aspect-ratio: 16 / 10;
             background: var(--frame-bg);
             border: 2.5px solid var(--frame-border);
@@ -226,7 +229,7 @@
             transform: translateY(-8px);
             box-shadow: var(--card-hover-shadow);
             border-color: var(--primary);
-            z-index: 20; /* Berada paling atas saat di-hover */
+            z-index: 20;
         }
 
         /* Gambar di dalam Frame */
@@ -371,7 +374,7 @@
 
         /* ═══ HUMAS DEMO UPLOAD INFO ═══ */
         .humas-demo-card {
-            max-width: 1380px;
+            max-width: calc(100% - 48px);
             margin: 20px auto 30px;
             background: var(--bg-surface);
             border: 1px solid var(--border);
@@ -401,8 +404,8 @@
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-clone"></i> 5-IMAGE STEP SLIDER</span>
-            <span class="preview-title">Facility & Campus Image Slider (5 Cards Display)</span>
+            <span class="brand-badge"><i class="fa-solid fa-expand"></i> FULL WIDTH 5-CARD</span>
+            <span class="preview-title">Facility & Campus Image Slider (Full Width)</span>
         </div>
 
         <div class="preview-actions">
@@ -421,12 +424,12 @@
     <div class="preview-notice">
         <div>
             <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Bebas Halangan:</strong> Sisi kiri dan kanan 100% jernih tanpa bayangan, masker, atau overlay penutup. Saat kartu di-hover, foto terangkat secara utuh dan jelas.</span>
+            <span><strong>Tampilan Full Width:</strong> Batasan <code>showcase-container</code> telah diubah menjadi 100% lebar penuh tanpa margin atau padding penutup di sisi kiri dan kanan. 5 foto tampil utuh dan bebas halangan.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE
+       KOMPONEN SLIDER IMAGE SHOWCASE (FULL WIDTH)
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
@@ -572,12 +575,13 @@
             let isHovered = false;
             let isPausedManually = false;
 
-            // 3. KALKULASI UKURAN KARTU DINAMIS (PAS 5 KARTU)
+            // 3. KALKULASI UKURAN KARTU DINAMIS (FULL SCREEN LEBAR PENUH)
             function calculateCardWidth() {
-                const containerWidth = viewport.clientWidth;
+                const containerWidth = viewport.clientWidth || window.innerWidth;
                 let visibleCount = 5;
-                if (window.innerWidth <= 768) visibleCount = 2;
-                else if (window.innerWidth <= 1100) visibleCount = 3;
+                if (window.innerWidth <= 640) visibleCount = 2;
+                else if (window.innerWidth <= 1024) visibleCount = 3;
+                else visibleCount = 5;
 
                 const cardWidth = (containerWidth - (GAP * (visibleCount - 1))) / visibleCount;
                 document.documentElement.style.setProperty('--card-item-width', `${cardWidth}px`);

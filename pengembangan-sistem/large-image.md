@@ -4,11 +4,12 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ---
 
-## 1. Karakter Desain & Pengalaman Visual (5-Card Display & Step Slide)
+## 1. Karakter Desain & Pengalaman Visual (Full-Width 5-Card Display & Step Slide)
 
-### 1.1 Tampilan Bebas Halangan (*Unobstructed View*)
-- **Tepat 5 Kartu Fit 100%:** Lebar kartu dihitung secara presisi sesuai lebar kontainer (`(containerWidth - (gap * 4)) / 5`), sehingga 5 foto tampil penuh dan seimbang dari ujung kiri ke ujung kanan tanpa ada kartu ke-6 yang mengintip atau menutupi kartu lain.
-- **Tanpa Masking / Side Shadow:** Seluruh efek *gradient mask / side shadow* pada sisi kiri dan kanan telah dihapus sepenuhnya (`mask-image: none; -webkit-mask-image: none;`), memastikan setiap gambar terlihat 100% jernih dan utuh saat di-hover.
+### 1.1 Tampilan Lebar Penuh (*Full-Width Unobstructed View*)
+- **100% Lebar Penuh Layar (*Full Width*):** Container `showcase-container` diatur `width: 100%; max-width: 100%; margin: 0; padding: 0;` tanpa batasan padding atau margin samping.
+- **Tepat 5 Kartu Fit Sempurna:** Lebar tiap kartu dihitung secara presisi memenuhi 100% lebar layar `(viewportWidth - (gap * 4)) / 5`, sehingga 5 foto tampil utuh dari ujung kiri monitor hingga ujung kanan monitor tanpa ada kartu yang terhalang atau mengintip separuh.
+- **Tanpa Masking / Side Shadow:** Seluruh efek *gradient mask / side shadow* pada sisi kiri dan kanan telah dihapus sepenuhnya (`mask-image: none; -webkit-mask-image: none;`).
 - **Frame Finishing:** Menggunakan *Warm Beige Frame* (`#ebdcc0` dengan border `#dfcfb0`) pada mode terang dan *Obsidian Slate Frame* pada mode gelap.
 
 ---
@@ -16,7 +17,7 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 ### 1.2 Mekanisme Animasi Bergeser Bertambah 1 (*Step-by-Step Slide*)
 - **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
 - **Infinite Looping Mulus:** Menggunakan teknik *invisible wrap reset* sehingga saat mencapai foto terakhir, urutan berikutnya kembali menyambung ke awal secara natural tanpa merusak alur visual.
-- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` sehingga tampak mengambang di atas kartu lainnya tanpa terpotong (*no clipping*).
+- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` sehingga tampak mengambang bebas.
 - **Lightbox Modal Murni Foto:** Klik pada kartu membuka tampilan foto murni tanpa border/radius dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
 
 ```text
@@ -170,7 +171,7 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION ════════════ -->
+<!-- ═══ 5-CARD STEP FACILITY IMAGE SHOWCASE SECTION (FULL WIDTH) ════════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
     <div class="showcase-container">
         <div class="carousel-outer-wrap" id="stepViewport">
