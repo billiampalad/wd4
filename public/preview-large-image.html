@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview UI/UX - Facility & Campus Image Carousel Slider</title>
+    <title>Preview UI/UX - Infinite Seamless Facility Showcase Slider</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <style>
         /* ═══════════════════════════════════════════════════════════════
-           DESIGN SYSTEM & VARIABLES
+           PREMIUM EDITORIAL DESIGN SYSTEM
            ═══════════════════════════════════════════════════════════════ */
         :root {
             --bg-page: #f8fafc;
@@ -29,25 +26,26 @@
             --ink-faint: #94a3b8;
             --border: #e2e8f0;
             --border-subtle: rgba(226, 232, 240, 0.8);
-
+            
             --primary: #0284c7;
-            --primary-hover: #0369a1;
             --primary-glow: rgba(2, 132, 199, 0.25);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            /* Frame Beige / Cream Accent sesuai gambar referensi */
-            --frame-beige: #ebdcc0;
-            --frame-beige-border: #dfcfb0;
-            --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+            /* Premium Warm Beige/Champagne Frame */
+            --frame-bg: linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%);
+            --frame-border: rgba(217, 198, 165, 0.85);
+            --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 -1px 2px rgba(0, 0, 0, 0.04);
+            --card-shadow: 0 12px 28px -6px rgba(44, 38, 27, 0.09), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+            --card-hover-shadow: 0 22px 40px -8px rgba(44, 38, 27, 0.16), 0 0 0 1px rgba(2, 132, 199, 0.4);
 
-            --radius-card: 22px;
-            --radius-inner: 16px;
+            --radius-card: 24px;
+            --radius-inner: 17px;
         }
 
         [data-theme="dark"] {
-            --bg-page: #070d17;
-            --bg-surface: #0e1726;
-            --bg-surface-alt: #131f33;
+            --bg-page: #060b13;
+            --bg-surface: #0c1524;
+            --bg-surface-alt: #111e33;
             --ink: #f8fafc;
             --ink-muted: #94a3b8;
             --ink-faint: #64748b;
@@ -55,13 +53,15 @@
             --border-subtle: rgba(255, 255, 255, 0.08);
 
             --primary: #38bdf8;
-            --primary-hover: #0ea5e9;
             --primary-glow: rgba(56, 189, 248, 0.3);
             --primary-light: rgba(56, 189, 248, 0.12);
 
-            --frame-beige: #222d3d;
-            --frame-beige-border: #334155;
-            --card-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.5);
+            /* Obsidian & Titanium Metallic Frame */
+            --frame-bg: linear-gradient(145deg, #1b263b 0%, #111a28 100%);
+            --frame-border: rgba(255, 255, 255, 0.12);
+            --frame-inner-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 -1px 2px rgba(0, 0, 0, 0.6);
+            --card-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            --card-hover-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.85), 0 0 20px rgba(56, 189, 248, 0.35);
         }
 
         * {
@@ -71,13 +71,13 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-page);
             color: var(--ink);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.35s ease, color 0.35s ease;
             overflow-x: hidden;
         }
 
@@ -149,12 +149,12 @@
 
         /* ═══ NOTICE ═══ */
         .preview-notice {
-            max-width: 1280px;
+            max-width: 1380px;
             margin: 24px auto 0;
             padding: 14px 20px;
             background: var(--primary-light);
             border: 1px solid var(--primary-glow);
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -164,260 +164,133 @@
         }
 
         /* ═══════════════════════════════════════════════════════════════
-           MAIN SECTION: FACILITY IMAGE CAROUSEL STRIP (SESUAI GAMBAR)
+           MAIN SECTION: INFINITE SEAMLESS LUXURY IMAGE STRIP
            ═══════════════════════════════════════════════════════════════ */
         .showcase-section {
-            padding: 40px 24px 70px;
+            padding: 40px 0 60px;
             width: 100%;
             position: relative;
+            overflow: hidden;
         }
 
         .showcase-container {
-            max-width: 1340px;
+            width: 100%;
             margin: 0 auto;
+            position: relative;
         }
 
-        /* Header Bar */
-        .showcase-header {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 28px;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .showcase-eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .eyebrow-pulse {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-            animation: pulseDot 2s infinite ease-in-out;
-        }
-
-        @keyframes pulseDot {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.3);
-                opacity: 0.5;
-            }
-        }
-
-        .showcase-title-main {
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: clamp(1.5rem, 2.2vw, 2.1rem);
-            color: var(--ink);
-            line-height: 1.25;
-        }
-
-        /* Nav Action Buttons (Header) */
-        .showcase-nav-btns {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-btn-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            color: var(--ink);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            font-size: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .nav-btn-circle:hover {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            transform: scale(1.08);
-            box-shadow: 0 8px 18px var(--primary-glow);
-        }
-
-        /* ═══ CAROUSEL TRACK WRAPPER ═══ */
+        /* Outer Wrap with Smooth Edge Gradient Mask */
         .carousel-outer-wrap {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding: 10px 0 20px;
+            padding: 16px 0;
+            /* Modern Mask Fade di Ujung Kiri & Kanan */
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
         }
 
-        /* Gradasi Fade Kiri & Kanan */
-        .carousel-outer-wrap::before,
-        .carousel-outer-wrap::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 40px;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        .carousel-outer-wrap::before {
-            left: 0;
-            background: linear-gradient(90deg, var(--bg-page) 0%, transparent 100%);
-        }
-
-        .carousel-outer-wrap::after {
-            right: 0;
-            background: linear-gradient(270deg, var(--bg-page) 0%, transparent 100%);
-        }
-
-        .carousel-track {
+        /* Continuous Smooth Track */
+        .carousel-marquee-track {
             display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE/Edge */
-            padding: 6px 12px;
+            gap: 22px;
+            width: max-content;
+            will-change: transform;
             cursor: grab;
+            user-select: none;
+            padding: 8px 0;
         }
 
-        .carousel-track::-webkit-scrollbar {
-            display: none;
-            /* Chrome/Safari */
-        }
-
-        .carousel-track:active {
+        .carousel-marquee-track:active {
             cursor: grabbing;
         }
 
-        /* ═══ FRAME KARTU SESUAI GAMBAR REFERENSI ═══ */
+        /* ═══ ULTRA-PREMIUM CARD FRAME ═══ */
         .gallery-card-frame {
-            flex: 0 0 calc((100% - (20px * 5)) / 6);
-            /* Default 6 item per layar penuh desktop */
-            min-width: 190px;
-            max-width: 230px;
+            flex: 0 0 220px;
+            width: 220px;
             aspect-ratio: 16 / 10;
-            background: var(--frame-beige);
-            border: 2.5px solid var(--frame-beige-border);
+            background: var(--frame-bg);
+            border: 2px solid var(--frame-border);
             border-radius: var(--radius-card);
             padding: 7px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--card-shadow), var(--frame-inner-shadow);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
             position: relative;
             cursor: pointer;
+            overflow: hidden;
             display: flex;
             align-items: stretch;
             justify-content: stretch;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 1024px) {
             .gallery-card-frame {
-                min-width: 180px;
+                flex: 0 0 190px;
+                width: 190px;
+                border-radius: 20px;
+                padding: 6px;
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
             .gallery-card-frame {
-                min-width: 160px;
-                border-radius: 18px;
+                flex: 0 0 160px;
+                width: 160px;
+                border-radius: 17px;
                 padding: 5px;
             }
         }
 
         .gallery-card-frame:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 16px 30px -6px rgba(0, 0, 0, 0.16);
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: var(--card-hover-shadow);
             border-color: var(--primary);
+            z-index: 10;
         }
 
-        /* Gambar di dalam frame */
+        /* Gambar Internal Tajam & Rounded */
         .gallery-img-inner {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: var(--radius-inner);
             display: block;
-            transition: transform 0.4s ease;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
         }
 
         .gallery-card-frame:hover .gallery-img-inner {
-            transform: scale(1.02);
+            transform: scale(1.05);
+            filter: brightness(1.03);
         }
 
-        /* ═══ SCROLLBAR & PROGRESS LINE ═══ */
-        .carousel-bottom-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 14px;
-            gap: 20px;
-            padding: 0 12px;
-        }
-
-        .track-progress-container {
-            flex: 1;
-            height: 4px;
-            background: var(--border);
-            border-radius: 999px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .track-progress-fill {
+        /* Subtle Luxury Sheen Overlay on Card Corner */
+        .gallery-card-frame::after {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            height: 100%;
-            width: 25%;
-            background: var(--primary);
-            border-radius: 999px;
-            transition: left 0.15s ease, width 0.15s ease;
-        }
-
-        .slide-counter-hint {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--ink-faint);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            right: 0;
+            height: 45%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: var(--radius-card) var(--radius-card) 0 0;
+            pointer-events: none;
         }
 
         /* ═══ LIGHTBOX PREVIEW MODAL ═══ */
         .lightbox-modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(8px);
+            background: rgba(4, 9, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             padding: 24px;
         }
 
@@ -431,23 +304,16 @@
             max-width: 90vw;
             max-height: 85vh;
             border-radius: var(--radius-card);
-            background: var(--frame-beige);
+            background: var(--frame-bg);
             padding: 10px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-            border: 3px solid var(--frame-beige-border);
-            animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
+            border: 2.5px solid var(--frame-border);
+            animation: zoomModal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.92);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        @keyframes zoomModal {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .lightbox-img {
@@ -462,29 +328,32 @@
             position: absolute;
             top: -16px;
             right: -16px;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background: #ffffff;
-            color: #0f172a;
-            border: none;
+            background: var(--bg-surface);
+            color: var(--ink);
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
         }
 
         .lightbox-close:hover {
-            transform: scale(1.15);
+            transform: scale(1.15) rotate(90deg);
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
         }
 
-        /* ═══ HUMAS DEMO UPLOAD ═══ */
+        /* ═══ HUMAS DEMO UPLOAD INFO ═══ */
         .humas-demo-card {
-            max-width: 1340px;
-            margin: 30px auto 20px;
+            max-width: 1380px;
+            margin: 20px auto 30px;
             background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: 18px;
@@ -508,20 +377,19 @@
         }
     </style>
 </head>
-
 <body>
 
     <!-- ═══ PREVIEW TOPBAR ═══ -->
     <header class="preview-topbar">
         <div class="preview-branding">
-            <span class="brand-badge"><i class="fa-solid fa-layer-group"></i> PREVIEW MODE</span>
-            <span class="preview-title">Facility & Campus Image Slider (Rounded Frame Strip)</span>
+            <span class="brand-badge"><i class="fa-solid fa-infinity"></i> INFINITE LOOP</span>
+            <span class="preview-title">Facility & Campus Infinite Image Slider (No Reset Jump)</span>
         </div>
 
         <div class="preview-actions">
-            <button type="button" class="btn-tool" id="btnToggleAutoScroll">
-                <i class="fa-solid fa-play" id="iconScroll"></i>
-                <span id="textScroll">Auto Scroll: Aktif</span>
+            <button type="button" class="btn-tool" id="btnToggleAnimation">
+                <i class="fa-solid fa-pause" id="iconAnim"></i>
+                <span id="textAnim">Jeda Animasi</span>
             </button>
             <button type="button" class="btn-tool" id="btnThemeToggle">
                 <i class="fa-solid fa-moon" id="iconTheme"></i>
@@ -533,101 +401,77 @@
     <!-- ═══ NOTICE ═══ -->
     <div class="preview-notice">
         <div>
-            <i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right:8px;"></i>
-            <span><strong>Model Tampilan Sesuai Referensi:</strong> Deretan frame kartu gambar berbingkai lembut
-                (beige/cream frame) dengan sudut melengkung <em>(squircle/rounded card)</em>. Geser horizontal atau klik
-                gambar untuk memperbesar (lightbox preview).</span>
+            <i class="fa-solid fa-sparkles" style="color:var(--primary); margin-right:8px;"></i>
+            <span><strong>Animasi Seamless Tanpa Reset:</strong> Slider berjalan terus-menerus tanpa pernah melompat/kembali ke awal (infinite continuous loop). Otomatis melambat/jeda saat mouse diarahkan ke kartu (*hover*), dan bisa di-drag bebas dengan mouse atau usap jari di smartphone.</span>
         </div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════════════
-       KOMPONEN SLIDER IMAGE SHOWCASE
+       KOMPONEN SLIDER IMAGE SHOWCASE: PURE INFINITE LUXURY STRIP
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
-
-            Header & Nav Buttons
-            <div class="showcase-header">
-                <div>
-                    <div class="showcase-eyebrow">
-                        <span class="eyebrow-pulse"></span>
-                        <span>FASILITAS & LINGKUNGAN KAMPUS</span>
-                    </div>
-                    <h2 class="showcase-title-main">Dokumentasi Fasilitas Polimdo</h2>
-                </div>
-
-                <div class="showcase-nav-btns">
-                    <button type="button" class="nav-btn-circle" id="btnSlidePrev" aria-label="Geser ke Kiri">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </button>
-                    <button type="button" class="nav-btn-circle" id="btnSlideNext" aria-label="Geser ke Kanan">
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Carousel Outer Wrap -->
-            <div class="carousel-outer-wrap">
-                <div class="carousel-track" id="carouselTrack">
-
-                    <!-- 01. Polimart TEFA (Sesuai gambar 1) -->
-                    <div class="gallery-card-frame" data-title="Polimart Polimdo">
-                        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop"
-                            alt="Polimart" class="gallery-img-inner">
+            
+            <div class="carousel-outer-wrap" id="marqueeViewport">
+                <!-- Track yang akan digeser secara continuous menggunakan requestAnimationFrame -->
+                <div class="carousel-marquee-track" id="marqueeTrack">
+                    
+                    <!-- 01. Polimart TEFA -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop" 
+                             alt="Polimart" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 02. TEFA Bar & Cafe (Sesuai gambar 2) -->
-                    <div class="gallery-card-frame" data-title="TEFA Bar & Cafe">
-                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop"
-                            alt="TEFA Bar & Cafe" class="gallery-img-inner">
+                    <!-- 02. TEFA Bar & Cafe -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop" 
+                             alt="TEFA Bar & Cafe" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 03. Co-Working & Lounge Lobby (Sesuai gambar 3) -->
-                    <div class="gallery-card-frame" data-title="Lounge & Co-Working">
-                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop"
-                            alt="Lounge & Co-Working" class="gallery-img-inner">
+                    <!-- 03. Co-Working & Lounge Lobby -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop" 
+                             alt="Lounge & Co-Working" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 04. Asrama Kampus (Sesuai gambar 4) -->
-                    <div class="gallery-card-frame" data-title="Asrama Kampus Polimdo">
-                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop"
-                            alt="Asrama Kampus" class="gallery-img-inner">
+                    <!-- 04. Asrama Kampus Polimdo -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop" 
+                             alt="Asrama Kampus" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 05. GOR Indoor Polimdo (Sesuai gambar 5) -->
-                    <div class="gallery-card-frame" data-title="GOR & Lapangan Indoor">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop"
-                            alt="GOR Polimdo" class="gallery-img-inner">
+                    <!-- 05. GOR Indoor Polimdo -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop" 
+                             alt="GOR Polimdo" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 06. Theater / Auditorium Polimdo (Sesuai gambar 6) -->
-                    <div class="gallery-card-frame" data-title="Auditorium & Theater">
-                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop"
-                            alt="Auditorium & Theater" class="gallery-img-inner">
+                    <!-- 06. Theater / Auditorium Polimdo -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" 
+                             alt="Auditorium & Theater" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 07. Gedung Kuliah Terpadu (GKT) Asset Nyata -->
-                    <div class="gallery-card-frame" data-title="GKT Polimdo">
-                        <img src="img/gedung.jpeg" alt="Gedung Kuliah Terpadu" class="gallery-img-inner">
+                    <!-- 07. Gedung Kuliah Terpadu (GKT) Asset Nyata Polimdo -->
+                    <div class="gallery-card-frame">
+                        <img src="img/gedung.jpeg" 
+                             alt="Gedung Kuliah Terpadu" 
+                             class="gallery-img-inner">
                     </div>
 
-                    <!-- 08. Galeri Investasi & Lab -->
-                    <div class="gallery-card-frame" data-title="Galeri Investasi">
-                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop"
-                            alt="Galeri Investasi" class="gallery-img-inner">
+                    <!-- 08. Galeri Investasi & Lab Modern -->
+                    <div class="gallery-card-frame">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" 
+                             alt="Galeri Investasi" 
+                             class="gallery-img-inner">
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Bottom Progress Track -->
-            <div class="carousel-bottom-bar">
-                <div class="track-progress-container">
-                    <div class="track-progress-fill" id="trackProgressFill"></div>
-                </div>
-                <div class="slide-counter-hint">
-                    <i class="fa-solid fa-arrows-left-right" style="color:var(--primary);"></i>
-                    <span id="cardCountHint">8 Fasilitas Terdaftar</span>
                 </div>
             </div>
 
@@ -647,31 +491,24 @@
     <!-- ═══ HUMAS DEMO UPLOAD INFO ═══ -->
     <div class="humas-demo-card">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up"
-                    style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database:
-                <code>showcase_images.image</code>)</strong>
+            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database: <code>showcase_images.image</code>)</strong>
             <span style="font-size:12px; color:var(--ink-muted);">Sidebar: <code>unit.blade.php</code></span>
         </div>
         <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
-            Humas hanya perlu mengunggah foto. Setiap gambar yang diunggah akan otomatis terbungkus dalam frame kartu
-            rounded yang serasi di slider beranda di atas.
+            Staf Humas cukup mengunggah foto baru. Sistem akan merender foto ke dalam slider infinite tanpa batas secara otomatis.
         </p>
-        <div class="upload-dropzone"
-            onclick="alert('Form upload di backend Humas akan menambahkan kartu baru ke slider.');">
+        <div class="upload-dropzone" onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke infinite slider.');">
             <i class="fa-solid fa-image" style="font-size:24px; color:var(--primary); margin-bottom:6px;"></i>
             <h4 style="font-size:13px; font-weight:700;">+ Tambah Foto Fasilitas / Kampus</h4>
         </div>
     </div>
 
-    <!-- ═══ SCRIPT LOGIC ═══ -->
+    <!-- ═══ HIGH-PERFORMANCE INFINITE LOOP SCRIPT ═══ -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const track = document.getElementById('carouselTrack');
-            const btnPrev = document.getElementById('btnSlidePrev');
-            const btnNext = document.getElementById('btnSlideNext');
-            const progressFill = document.getElementById('trackProgressFill');
-            const cards = Array.from(track.querySelectorAll('.gallery-card-frame'));
-
+            const viewport = document.getElementById('marqueeViewport');
+            const track = document.getElementById('marqueeTrack');
+            
             // Lightbox
             const lightbox = document.getElementById('lightboxModal');
             const lightboxImg = document.getElementById('lightboxImg');
@@ -681,76 +518,106 @@
             const btnTheme = document.getElementById('btnThemeToggle');
             const iconTheme = document.getElementById('iconTheme');
             const labelTheme = document.getElementById('labelTheme');
-            const btnScroll = document.getElementById('btnToggleAutoScroll');
-            const iconScroll = document.getElementById('iconScroll');
-            const textScroll = document.getElementById('textScroll');
+            const btnAnim = document.getElementById('btnToggleAnimation');
+            const iconAnim = document.getElementById('iconAnim');
+            const textAnim = document.getElementById('textAnim');
 
-            let isAutoScrolling = true;
-            let autoScrollTimer = null;
-            const SCROLL_STEP = 240; // Pixels per scroll click
+            // 1. CLONE ITEMS UNTUK SEAMLESS INFINITE LOOP TANPA JEDA / RESET
+            const originalCards = Array.from(track.children);
+            const originalCount = originalCards.length;
 
-            // Update Progress Bar
-            function updateProgressBar() {
-                const maxScroll = track.scrollWidth - track.clientWidth;
-                if (maxScroll <= 0) {
-                    progressFill.style.width = '100%';
-                    progressFill.style.left = '0%';
-                    return;
+            // Gandakan kartu 2x agar track selalu penuh dan tidak pernah ada ruang kosong
+            originalCards.forEach(card => {
+                const clone1 = card.cloneNode(true);
+                track.appendChild(clone1);
+            });
+            originalCards.forEach(card => {
+                const clone2 = card.cloneNode(true);
+                track.appendChild(clone2);
+            });
+
+            let singleSetWidth = 0;
+            function calculateSetWidth() {
+                let width = 0;
+                const gap = 22; // gap antar kartu
+                for (let i = 0; i < originalCount; i++) {
+                    width += originalCards[i].offsetWidth + gap;
                 }
-                const currentScroll = track.scrollLeft;
-                const ratio = track.clientWidth / track.scrollWidth;
-                const widthPercent = Math.max(15, ratio * 100);
-                const leftPercent = (currentScroll / maxScroll) * (100 - widthPercent);
+                singleSetWidth = width;
+            }
+            calculateSetWidth();
+            window.addEventListener('resize', calculateSetWidth);
 
-                progressFill.style.width = widthPercent + '%';
-                progressFill.style.left = leftPercent + '%';
+            // 2. ANIMASI INFINITE MENGGUNAKAN REQUEST ANIMATION FRAME (60/120 FPS)
+            let position = 0;
+            let speed = 0.85; // Kecepatan gerak (pixel per frame)
+            let isHovered = false;
+            let isDragging = false;
+            let isPausedManually = false;
+            let startX = 0;
+            let dragOffset = 0;
+
+            function animate() {
+                if (!isHovered && !isDragging && !isPausedManually) {
+                    position += speed;
+                    
+                    // KETIKA MENCAPAI AKHIR 1 SET, RESET SECARA INVISIBLE KE AWAL (SEAMLESS INFINITE)
+                    if (singleSetWidth > 0 && position >= singleSetWidth) {
+                        position -= singleSetWidth;
+                    }
+                    track.style.transform = `translate3d(${-position}px, 0, 0)`;
+                }
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            // 3. HOVER PAUSE & SLOW DOWN
+            viewport.addEventListener('mouseenter', () => { isHovered = true; });
+            viewport.addEventListener('mouseleave', () => { isHovered = false; });
+
+            // 4. INTERAKSI MOUSE DRAG / TOUCH SWIPE (MANUAL DRAG)
+            function onDragStart(clientX) {
+                isDragging = true;
+                startX = clientX;
+                dragOffset = position;
             }
 
-            // Scroll Events
-            btnPrev.addEventListener('click', () => {
-                track.scrollBy({ left: -SCROLL_STEP, behavior: 'smooth' });
-            });
+            function onDragMove(clientX) {
+                if (!isDragging) return;
+                const deltaX = clientX - startX;
+                position = dragOffset - deltaX;
 
-            btnNext.addEventListener('click', () => {
-                const maxScroll = track.scrollWidth - track.clientWidth;
-                if (track.scrollLeft >= maxScroll - 10) {
-                    track.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    track.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
+                // Infinite wrapping saat drag manual
+                if (singleSetWidth > 0) {
+                    if (position < 0) position += singleSetWidth;
+                    if (position >= singleSetWidth) position -= singleSetWidth;
                 }
-            });
+                track.style.transform = `translate3d(${-position}px, 0, 0)`;
+            }
 
-            track.addEventListener('scroll', updateProgressBar);
-            window.addEventListener('resize', updateProgressBar);
+            function onDragEnd() {
+                isDragging = false;
+            }
 
-            // Drag to Scroll Track
-            let isDown = false;
-            let startX, scrollLeft;
+            // Mouse Events
+            viewport.addEventListener('mousedown', (e) => onDragStart(e.clientX));
+            window.addEventListener('mousemove', (e) => onDragMove(e.clientX));
+            window.addEventListener('mouseup', onDragEnd);
 
-            track.addEventListener('mousedown', (e) => {
-                isDown = true;
-                startX = e.pageX - track.offsetLeft;
-                scrollLeft = track.scrollLeft;
-            });
-            track.addEventListener('mouseleave', () => { isDown = false; });
-            track.addEventListener('mouseup', () => { isDown = false; });
-            track.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - track.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                track.scrollLeft = scrollLeft - walk;
-            });
+            // Touch Events (Mobile)
+            viewport.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX), { passive: true });
+            window.addEventListener('touchmove', (e) => onDragMove(e.touches[0].clientX), { passive: true });
+            window.addEventListener('touchend', onDragEnd);
 
-            // Lightbox Click
-            cards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const img = card.querySelector('img');
-                    if (img) {
-                        lightboxImg.src = img.src;
-                        lightbox.classList.add('open');
-                    }
-                });
+            // 5. LIGHTBOX DELEGATION (UNTUK SEMUA KARTU ASLI & CLONE)
+            track.addEventListener('click', (e) => {
+                const card = e.target.closest('.gallery-card-frame');
+                if (!card) return;
+                const img = card.querySelector('img');
+                if (img) {
+                    lightboxImg.src = img.src;
+                    lightbox.classList.add('open');
+                }
             });
 
             lightboxClose.addEventListener('click', () => {
@@ -762,38 +629,19 @@
                 }
             });
 
-            // Smooth Auto-Scroll
-            function startAutoScroll() {
-                clearInterval(autoScrollTimer);
-                autoScrollTimer = setInterval(() => {
-                    if (!isAutoScrolling) return;
-                    const maxScroll = track.scrollWidth - track.clientWidth;
-                    if (track.scrollLeft >= maxScroll - 5) {
-                        track.scrollTo({ left: 0, behavior: 'smooth' });
-                    } else {
-                        track.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
-                    }
-                }, 3500);
-            }
-
-            // Pause on track hover
-            track.addEventListener('mouseenter', () => clearInterval(autoScrollTimer));
-            track.addEventListener('mouseleave', () => { if (isAutoScrolling) startAutoScroll(); });
-
-            btnScroll.addEventListener('click', () => {
-                isAutoScrolling = !isAutoScrolling;
-                if (isAutoScrolling) {
-                    startAutoScroll();
-                    iconScroll.className = 'fa-solid fa-pause';
-                    textScroll.textContent = 'Auto Scroll: Aktif';
+            // 6. TOGGLE PLAY / PAUSE DARI TOOLBAR
+            btnAnim.addEventListener('click', () => {
+                isPausedManually = !isPausedManually;
+                if (isPausedManually) {
+                    iconAnim.className = 'fa-solid fa-play';
+                    textAnim.textContent = 'Lanjutkan Animasi';
                 } else {
-                    clearInterval(autoScrollTimer);
-                    iconScroll.className = 'fa-solid fa-play';
-                    textScroll.textContent = 'Auto Scroll: Nonaktif';
+                    iconAnim.className = 'fa-solid fa-pause';
+                    textAnim.textContent = 'Jeda Animasi';
                 }
             });
 
-            // Theme Switcher
+            // 7. THEME SWITCHER (LIGHT / DARK)
             btnTheme.addEventListener('click', () => {
                 const current = document.documentElement.getAttribute('data-theme') || 'light';
                 const next = current === 'dark' ? 'light' : 'dark';
@@ -807,12 +655,7 @@
                     labelTheme.textContent = 'Mode Gelap';
                 }
             });
-
-            // Initialize
-            updateProgressBar();
-            startAutoScroll();
         });
     </script>
 </body>
-
 </html>

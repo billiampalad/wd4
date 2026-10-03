@@ -1,33 +1,38 @@
-# Desain & Arsitektur Fitur Facility & Campus Image Carousel Slider (Image-Only Database)
+# Desain & Arsitektur Fitur Infinite Seamless Facility Showcase Slider (Image-Only Database)
 
-Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fitur **Facility & Campus Image Carousel Slider** yang ditempatkan pada bagian bawah halaman utama ([welcome.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/welcome.blade.php)) sebelum footer.
-
-Desain visual mengadopsi format **Pure Horizontal Card Frame Strip (Squircle / Rounded Card)** dengan bingkai lembut bernuansa *soft beige/cream frame*, yang menampilkan murni deretan kartu foto fasilitas kampus tanpa elemen teks/navigasi yang mengganggu, bersumber dari database `showcase_images` yang dikelola oleh staf **Humas** melalui sidebar ([unit.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/unit.blade.php)).
+Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fitur **Facility & Campus Image Infinite Carousel Slider** yang ditempatkan pada bagian bawah halaman utama ([welcome.blade.php](file:///c:/laragon/www/wd4/resources/views/auth/welcome.blade.php)) sebelum footer.
 
 ---
 
-## 1. Karakter Visual (Pure Card Strip Sesuai Referensi)
+## 1. Karakter Desain & Pengalaman Visual (Ultra-Premium & Infinite Seamless)
+
+### 1.1 Estetika Kartu Mewah (*Luxury Squircle Frame*)
+- **Frame Finishing:** Menggunakan *Warm Champagne / Soft Cream Gradient* (`linear-gradient(145deg, #fbf7ee 0%, #ece1cb 100%)`) dengan sentuhan *subtle glossy rim* (`border: 2px solid rgba(217, 198, 165, 0.85)`), *inner highlight shadow*, dan *ambient floating shadow*.
+- **Mode Gelap (Dark Mode):** Berubah menjadi *Obsidian Slate Metallic Frame* dengan tepi *glow* biru/cyan saat di-hover.
+- **Micro-Interaction Hover:** Ketika mouse melintas, kartu naik halus `translateY(-8px) scale(1.04)`, bayangan meluas (*deep ambient glow*), dan gambar di dalamnya memperbesar halus `scale(1.05)`.
+- **Edge Fade Masking:** Ujung kiri dan kanan viewport slider menggunakan CSS `mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%)` untuk memberikan efek kartu muncul dan menghilang secara elegan dan natural.
+
+---
+
+### 1.2 Animasi Infinite Loop Tanpa Reset (*No-Jump Continuous Marquee*)
+- **Mekanisme:** Slider berjalan terus-menerus (*continuous smooth drift*) menggunakan `requestAnimationFrame` (60/120 FPS).
+- **Seamless Looping:** Ketika set kartu pertama selesai lewat, posisi offset di-wrap secara invisible (`position -= singleSetWidth`), sehingga transisi dari gambar terakhir ke gambar pertama terjadi **100% mulus tanpa jeda, tanpa loncatan, dan tanpa kembali ke awal**.
+- **User Control:**
+  - Otomatis jeda (*pause*) ketika kursor mouse berada di atas kartu (*hover*).
+  - Mendukung tarikan mouse manual (*drag-to-scroll*) di desktop dan usap jari (*touch swipe*) di layar smartphone dengan perhitungan pembungkusan *infinite* yang mulus.
+  - Klik salah satu kartu akan membuka **Lightbox Modal** untuk melihat gambar fasilitas dalam resolusi penuh.
 
 ```text
-┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                                                                                         │
-│   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
-│   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ...    │
-│   │ │ POLIMART │ │   │ │ TEFA BAR │ │   │ │  LOUNGE  │ │   │ │  ASRAMA  │ │   │ │   GOR    │ │          │
-│   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │          │
-│   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘          │
-│                                                                                                         │
-└─────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                           │
+│   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐            │
+│   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   │ ┌──────────┐ │   ════►    │
+│   │ │ POLIMART │ │   │ │ TEFA BAR │ │   │ │  LOUNGE  │ │   │ │  ASRAMA  │ │   │ │   GOR    │ │  (Infinite  │
+│   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   │ └──────────┘ │   Continuous│
+│   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘    Loop)   │
+│                                                                                                           │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
-
-### 1.1 Spesifikasi Kartu Gambar
-- **Frame Kartu:** Bentuk rounded (*squircle*) dengan padding bingkai `7px`, `border-radius: 22px`, dan warna bingkai *warm soft beige* (`#ebdcc0` dengan border `#dfcfb0`) pada mode terang, serta *dark slate frame* pada mode gelap.
-- **Gambar Internal:** `object-fit: cover` dengan `border-radius: 16px`, responsif dan tajam.
-- **Interaktivitas:**
-  - **Efek Hover:** Kartu naik halus `translateY(-6px)` dan pembesaran mikro `scale(1.03)`.
-  - **Drag & Swipe:** Bisa di-drag langsung dengan mouse atau touch-swipe pada layar smartphone.
-  - **Auto-Scroll Halus:** Menggeser otomatis secara berkala (otomatis jeda saat mouse hover).
-  - **Lightbox Modal:** Klik salah satu kartu untuk memperbesar foto dalam layar penuh.
 
 ---
 
@@ -167,14 +172,13 @@ class ShowcaseController extends Controller
 
 ```blade
 @if(isset($showcases) && $showcases->count() > 0)
-<!-- ═══ PURE FACILITY & CAMPUS IMAGE CAROUSEL SECTION ══════════ -->
+<!-- ═══ INFINITE SEAMLESS CAMPUS IMAGE SHOWCASE SECTION ════════ -->
 <section class="showcase-section" id="campusShowcase" aria-label="Galeri Fasilitas Kampus">
     <div class="showcase-container">
-        <!-- Carousel Outer Wrap -->
-        <div class="carousel-outer-wrap">
-            <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-outer-wrap" id="marqueeViewport">
+            <div class="carousel-marquee-track" id="marqueeTrack">
                 @foreach($showcases as $item)
-                    <div class="gallery-card-frame" onclick="openLightbox('{{ asset($item->image) }}')">
+                    <div class="gallery-card-frame">
                         <img src="{{ asset($item->image) }}" alt="Fasilitas Polimdo" class="gallery-img-inner" loading="lazy">
                     </div>
                 @endforeach
@@ -184,9 +188,9 @@ class ShowcaseController extends Controller
 </section>
 
 <!-- Lightbox Modal Fullscreen -->
-<div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(event)">
-    <div class="lightbox-content" onclick="event.stopPropagation()">
-        <button type="button" class="lightbox-close" onclick="closeLightbox()">&times;</button>
+<div class="lightbox-modal" id="lightboxModal">
+    <div class="lightbox-content">
+        <button type="button" class="lightbox-close" id="lightboxClose">&times;</button>
         <img src="" alt="Fasilitas Polimdo" class="lightbox-img" id="lightboxImg">
     </div>
 </div>
@@ -195,7 +199,7 @@ class ShowcaseController extends Controller
 
 ---
 
-## 6. Preview Halaman
+## 6. Live Preview File
 
-Tampilan preview live interaktif murni deretan kartu dapat dilihat pada:
+File preview interaktif lengkap dapat diakses pada:
 [preview-large-image.html](file:///c:/laragon/www/wd4/public/preview-large-image.html) atau melalui URL `http://localhost/wd4/public/preview-large-image.html`.
