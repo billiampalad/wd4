@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
@@ -26,12 +28,12 @@
             --ink-faint: #94a3b8;
             --border: #e2e8f0;
             --border-subtle: rgba(226, 232, 240, 0.8);
-            
+
             --primary: #0284c7;
             --primary-glow: rgba(2, 132, 199, 0.45);
             --primary-light: rgba(2, 132, 199, 0.08);
 
-            --radius-card: 20px;
+            --radius-card: 10px;
         }
 
         [data-theme="dark"] {
@@ -279,8 +281,15 @@
         }
 
         @keyframes zoomModal {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .lightbox-img {
@@ -342,8 +351,13 @@
             z-index: 1010;
         }
 
-        .lightbox-arrow-prev { left: 32px; }
-        .lightbox-arrow-next { right: 32px; }
+        .lightbox-arrow-prev {
+            left: 32px;
+        }
+
+        .lightbox-arrow-next {
+            right: 32px;
+        }
 
         @media (max-width: 768px) {
             .lightbox-nav-arrow {
@@ -351,9 +365,19 @@
                 height: 42px;
                 font-size: 16px;
             }
-            .lightbox-arrow-prev { left: 12px; }
-            .lightbox-arrow-next { right: 12px; }
-            .lightbox-close { top: 16px; right: 16px; }
+
+            .lightbox-arrow-prev {
+                left: 12px;
+            }
+
+            .lightbox-arrow-next {
+                right: 12px;
+            }
+
+            .lightbox-close {
+                top: 16px;
+                right: 16px;
+            }
         }
 
         .lightbox-nav-arrow:hover {
@@ -391,6 +415,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- ═══ PREVIEW TOPBAR ═══ -->
@@ -417,64 +442,55 @@
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
         <div class="showcase-container">
-            
+
             <div class="carousel-outer-wrap" id="stepViewport">
                 <div class="carousel-step-track" id="stepTrack">
-                    
+
                     <!-- 01. Polimart TEFA -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop" 
-                             alt="Polimart" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800&auto=format&fit=crop"
+                            alt="Polimart" class="gallery-img-inner">
                     </div>
 
                     <!-- 02. TEFA Bar & Cafe -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop" 
-                             alt="TEFA Bar & Cafe" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop"
+                            alt="TEFA Bar & Cafe" class="gallery-img-inner">
                     </div>
 
                     <!-- 03. Co-Working & Lounge Lobby -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop" 
-                             alt="Lounge & Co-Working" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop"
+                            alt="Lounge & Co-Working" class="gallery-img-inner">
                     </div>
 
                     <!-- 04. Asrama Kampus Polimdo -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop" 
-                             alt="Asrama Kampus" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=800&auto=format&fit=crop"
+                            alt="Asrama Kampus" class="gallery-img-inner">
                     </div>
 
                     <!-- 05. GOR Indoor Polimdo -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop" 
-                             alt="GOR Polimdo" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop"
+                            alt="GOR Polimdo" class="gallery-img-inner">
                     </div>
 
                     <!-- 06. Theater / Auditorium Polimdo -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" 
-                             alt="Auditorium & Theater" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop"
+                            alt="Auditorium & Theater" class="gallery-img-inner">
                     </div>
 
                     <!-- 07. Gedung Kuliah Terpadu (GKT) Asset Nyata Polimdo -->
                     <div class="gallery-card-frame">
-                        <img src="img/gedung.jpeg" 
-                             alt="Gedung Kuliah Terpadu" 
-                             class="gallery-img-inner">
+                        <img src="img/gedung.jpeg" alt="Gedung Kuliah Terpadu" class="gallery-img-inner">
                     </div>
 
                     <!-- 08. Galeri Investasi & Lab Modern -->
                     <div class="gallery-card-frame">
-                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop" 
-                             alt="Galeri Investasi" 
-                             class="gallery-img-inner">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop"
+                            alt="Galeri Investasi" class="gallery-img-inner">
                     </div>
 
                 </div>
@@ -489,15 +505,17 @@
             <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Gambar Sebelumnya">
+        <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev"
+            aria-label="Gambar Sebelumnya">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-        
+
         <div class="lightbox-content">
             <img src="" alt="Preview Fasilitas" class="lightbox-img" id="lightboxImg">
         </div>
 
-        <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext" aria-label="Gambar Selanjutnya">
+        <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext"
+            aria-label="Gambar Selanjutnya">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
     </div>
@@ -505,13 +523,16 @@
     <!-- ═══ HUMAS DEMO UPLOAD INFO ═══ -->
     <div class="humas-demo-card">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database: <code>showcase_images.image</code>)</strong>
+            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up"
+                    style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database:
+                <code>showcase_images.image</code>)</strong>
             <span style="font-size:12px; color:var(--ink-muted);">Sidebar: <code>unit.blade.php</code></span>
         </div>
         <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
             Staf Humas cukup mengunggah foto baru. Sistem akan otomatis memasukkannya ke dalam urutan slider 5-card.
         </p>
-        <div class="upload-dropzone" onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke slider.');">
+        <div class="upload-dropzone"
+            onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke slider.');">
             <i class="fa-solid fa-image" style="font-size:24px; color:var(--primary); margin-bottom:6px;"></i>
             <h4 style="font-size:13px; font-weight:700;">+ Tambah Foto Fasilitas / Kampus</h4>
         </div>
@@ -522,7 +543,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const viewport = document.getElementById('stepViewport');
             const track = document.getElementById('stepTrack');
-            
+
             // Lightbox Elements
             const lightbox = document.getElementById('lightboxModal');
             const lightboxImg = document.getElementById('lightboxImg');
@@ -569,7 +590,7 @@
 
                 const totalSpacing = (visibleCount + 1) * GAP;
                 const cardWidth = (containerWidth - totalSpacing) / visibleCount;
-                
+
                 document.documentElement.style.setProperty('--card-item-width', `${cardWidth}px`);
                 return cardWidth + GAP;
             }
@@ -623,7 +644,7 @@
 
                 lightboxImg.style.opacity = '0.3';
                 lightboxImg.style.transform = 'scale(0.98)';
-                
+
                 setTimeout(() => {
                     lightboxImg.src = imageList[currentLightboxIndex];
                     lightboxImg.style.opacity = '1';
@@ -709,4 +730,5 @@
         });
     </script>
 </body>
+
 </html>
