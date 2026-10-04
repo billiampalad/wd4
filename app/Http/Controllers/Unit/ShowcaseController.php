@@ -45,9 +45,10 @@ class ShowcaseController extends Controller
                     $file->move($uploadPath, $filename);
 
                     $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $judul = (count($files) === 1 && $request->filled('judul')) ? $request->input('judul') : ($originalName ?: 'Foto Penghargaan Kerjasama');
 
                     ShowcaseImage::create([
-                        'judul' => $originalName ?: 'Foto Penghargaan Kerjasama',
+                        'judul' => $judul,
                         'image_path' => 'uploads/showcase/' . $filename,
                     ]);
 
