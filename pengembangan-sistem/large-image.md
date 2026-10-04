@@ -9,7 +9,7 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 ### 1.1 Efek Shadow Biru Menyala (*Ramping & Presisi di Tepi Frame*)
 - **Glowing Inset Shadow Mengelilingi Slider:** Seluruh area viewport slider dikelilingi oleh efek *inner blue neon glow* yang ramping dan presisi di tepi (`box-shadow: inset 0 0 6px 1px rgba(2, 132, 199, 0.35);`) tanpa memanjang terlalu jauh ke bagian tengah gambar.
 - **Mode Gelap (Dark Mode):** Berubah menjadi pendaran *electric cyan/blue neon* ramping (`box-shadow: inset 0 0 8px 1px rgba(56, 189, 248, 0.45);`) yang futuristik dan bersih.
-- **Murni Gambar & Border:** Kartu foto memiliki `border-radius: 10px`, transparan di mode terang, dan **border warna putih solid (`border: 2px solid #ffffff;`) pada mode gelap (Dark Mode)**.
+- **Murni Gambar Tanpa Border:** Kartu foto tampil murni sebagai foto beresolusi tinggi dengan sudut melengkung halus (`border-radius: 10px`) tanpa garis border tepi (`border: none`).
 - **Jarak Tepi Kiri & Kanan Simetris:** Jarak margin luar kiri (`18px`) dan kanan (`18px`) sama persis dengan jarak celah antar kartu (`gap: 18px`).
 - **Kalkulasi Presisi 5 Kartu:**
   $$\text{Lebar Kartu} = \frac{\text{Lebar Kontainer} - (\text{Jarak } 18\text{px} \times 6)}{5}$$
@@ -19,7 +19,7 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 ### 1.2 Mekanisme Animasi Bergeser Bertambah 1 (*Step-by-Step Slide*)
 - **Pergeseran Teratur (+1 Foto per Interval):** Slider diam sejenak (3.5 detik), lalu bergeser secara halus (*smooth cubic-bezier transition*) sejauh 1 lebar kartu untuk memunculkan foto berikutnya.
 - **Infinite Looping Mulus:** Menggunakan teknik *invisible wrap reset* sehingga saat mencapai foto terakhir, urutan berikutnya kembali menyambung ke awal secara natural tanpa merusak alur visual.
-- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` dan **border warna aksen biru berpendar (`var(--primary)`) baik pada mode terang maupun mode gelap**.
+- **Hover Lift & Z-Index:** Ketika mouse melintas di atas salah satu kartu, kartu tersebut naik halus (`translateY(-8px)`) dengan `z-index: 20` dan pendaran cahaya lembut (*soft ambient glow*).
 - **Lightbox Modal Murni Foto:** Klik pada kartu membuka tampilan foto murni tanpa border/radius dengan tombol panah navigasi samping kiri (`◄`) dan kanan (`►`) serta dukungan keyboard.
 
 ```text
