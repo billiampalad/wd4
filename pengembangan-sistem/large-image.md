@@ -40,9 +40,9 @@ Dokumen ini merinci konsep desain visual, arsitektur teknis, dan implementasi fi
 
 ---
 
-## 2. Skema Database & Model (Image-Only)
+## 2. Skema Database & Model (Image & Judul)
 
-### 2.1 Migration: `create_showcase_images_table.php`
+### 2.1 Migration: `simplify_showcase_images_table.php`
 ```php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -53,7 +53,8 @@ return new class extends Migration {
     {
         Schema::create('showcase_images', function (Blueprint $table) {
             $table->id();
-            $table->string('image'); // Menyimpan path file gambar (e.g. "uploads/showcase/xxx.jpg")
+            $table->string('judul')->nullable();
+            $table->string('image_path'); // Menyimpan path file gambar (e.g. "uploads/showcase/xxx.jpg")
             $table->timestamps();
         });
     }
@@ -76,8 +77,14 @@ class ShowcaseImage extends Model
     protected $table = 'showcase_images';
 
     protected $fillable = [
-        'image',
+        'judul',
+        'image_path',
     ];
+
+    public function getImageAttribute()
+    {
+        return $this->image_path;
+    }
 }
 ```
 

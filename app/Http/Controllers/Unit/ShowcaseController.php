@@ -14,12 +14,12 @@ class ShowcaseController extends Controller
      */
     public function index()
     {
-        $showcases = ShowcaseImage::orderBy('urutan', 'asc')->latest()->get();
+        $showcases = ShowcaseImage::latest()->get();
         return view('auth.unit', compact('showcases'));
     }
 
     /**
-     * Menyimpan foto penghargaan/fasilitas baru dari form upload
+     * Menyimpan foto penghargaan baru dari form upload
      */
     public function store(Request $request)
     {
@@ -49,8 +49,6 @@ class ShowcaseController extends Controller
                     ShowcaseImage::create([
                         'judul' => $originalName ?: 'Foto Penghargaan Kerjasama',
                         'image_path' => 'uploads/showcase/' . $filename,
-                        'is_active' => true,
-                        'created_by' => auth()->id(),
                     ]);
 
                     $uploadedCount++;

@@ -13,21 +13,7 @@ class ShowcaseImage extends Model
 
     protected $fillable = [
         'judul',
-        'kategori',
-        'label_nav',
-        'deskripsi',
-        'lokasi_spesifik',
-        'highlight_meta',
-        'tags',
         'image_path',
-        'urutan',
-        'is_active',
-        'created_by',
-    ];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-        'urutan' => 'integer',
     ];
 
     /**
