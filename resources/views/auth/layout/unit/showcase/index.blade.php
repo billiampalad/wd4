@@ -1,14 +1,6 @@
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
 <link rel="stylesheet" href="{{ asset('css/auth/unit/uploudimageslider.css') }}" data-turbo-track="reload">
 
-<style>
-    .showcase-admin-page {
-        padding: 24px 30px 60px;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-</style>
-
 <main id="mainContent" class="sk-page showcase-admin-page">
     <!-- Topbar / Breadcrumb Header -->
     <section class="ud-topbar" style="margin-bottom: 24px;">
