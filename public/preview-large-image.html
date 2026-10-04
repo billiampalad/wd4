@@ -441,20 +441,21 @@
             border-color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Border Kartu Gambar Berwarna Putih saat Tampilan Gelap (Dark Mode) */
+        /* Border Dasar Putih saat Tampilan Gelap (Dark Mode) */
         [data-theme="dark"] .gallery-card-frame {
             border: 2px solid #ffffff;
         }
 
+        /* Hover Border Tetap Berwarna Biru (Sama Seperti Mode Terang) */
         [data-theme="dark"] .gallery-card-frame:hover {
-            border-color: #ffffff;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.65), 0 0 24px -2px rgba(255, 255, 255, 0.6);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.65), 0 0 24px -2px var(--primary-glow);
         }
 
         [data-theme="dark"] .gallery-card-frame:hover::after {
-            background: #ffffff;
-            color: #0f172a;
-            border-color: #ffffff;
+            background: var(--primary);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.6);
         }
 
         /* Gambar Internal */
