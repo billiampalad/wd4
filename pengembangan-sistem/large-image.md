@@ -187,7 +187,6 @@ class ShowcaseController extends Controller
                     </div>
                 @endforeach
             </div>
-            <div class="carousel-bottom-line"></div>
         </div>
     </div>
 </section>
