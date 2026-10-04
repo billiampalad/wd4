@@ -617,30 +617,380 @@
             }
         }
 
-        /* ═══ HUMAS DEMO UPLOAD INFO ═══ */
-        .humas-demo-card {
-            max-width: calc(100% - 36px);
-            margin: 20px auto 30px;
+        /* ═══ HUMAS DEMO UPLOAD INFO (PREMIUM UI) ═══ */
+        .humas-admin-showcase {
+            max-width: 1400px;
+            width: calc(100% - 36px);
+            margin: 40px auto 60px;
             background: var(--bg-surface);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            border-radius: 24px;
+            padding: 32px 36px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 20px 25px -15px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .upload-dropzone {
+        [data-theme="dark"] .humas-admin-showcase {
+            background: linear-gradient(180deg, #0e1726 0%, #0a111e 100%);
+            border-color: rgba(56, 189, 248, 0.18);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 35px -10px rgba(56, 189, 248, 0.08);
+        }
+
+        /* Top decorative accent gradient bar */
+        .humas-admin-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc, #38bdf8);
+            background-size: 200% 100%;
+            animation: moveGradient 6s linear infinite;
+        }
+
+        @keyframes moveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .humas-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 28px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .humas-title-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .humas-icon-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 22px;
+            box-shadow: 0 8px 18px var(--primary-glow);
+            flex-shrink: 0;
+        }
+
+        .humas-text-meta h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .humas-text-meta p {
+            font-size: 13.5px;
+            color: var(--ink-muted);
+            line-height: 1.5;
+        }
+
+        .humas-meta-badges {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .humas-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: var(--bg-surface-alt);
+            color: var(--ink-muted);
+            border: 1px solid var(--border);
+            letter-spacing: 0.02em;
+        }
+
+        .humas-pill-live {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        [data-theme="dark"] .humas-pill-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+
+        .humas-pill-code code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--primary);
+            font-size: 11.5px;
+        }
+
+        [data-theme="dark"] .humas-pill-code code {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Modern Dropzone Area */
+        .humas-dropzone-box {
+            position: relative;
             border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 22px;
+            border-radius: 18px;
+            padding: 40px 24px;
             text-align: center;
             background: var(--bg-surface-alt);
             cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .humas-dropzone-box:hover,
+        .humas-dropzone-box.drag-over {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px var(--primary-glow);
+        }
+
+        .dropzone-icon-stack {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-surface);
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+
+        .humas-dropzone-box:hover .dropzone-icon-stack {
+            transform: scale(1.1) translateY(-4px);
+        }
+
+        .dropzone-icon-stack i.main-ico {
+            font-size: 30px;
+            color: var(--primary);
+        }
+
+        .dropzone-icon-stack .sub-ico-badge {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #6366f1;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border: 2px solid var(--bg-surface);
+        }
+
+        .humas-dropzone-box h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+
+        .humas-dropzone-box p {
+            font-size: 13.5px;
+            color: var(--ink-muted);
+            max-width: 480px;
+            margin-bottom: 18px;
+            line-height: 1.45;
+        }
+
+        .btn-browse-file {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0284c7 100%);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 700;
+            padding: 10px 22px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px var(--primary-glow);
             transition: all 0.2s ease;
         }
 
-        .upload-dropzone:hover {
+        [data-theme="dark"] .btn-browse-file {
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+            color: #041221;
+        }
+
+        .btn-browse-file:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--primary-glow);
+            filter: brightness(1.08);
+        }
+
+        .dropzone-specs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .spec-item {
+            font-size: 12px;
+            color: var(--ink-faint);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .spec-item i {
+            color: var(--primary);
+            font-size: 13px;
+        }
+
+        /* 3-Column Pipeline Info Cards */
+        .humas-pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 900px) {
+            .humas-pipeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .humas-admin-showcase {
+                padding: 24px 20px;
+            }
+        }
+
+        .pipeline-card {
+            background: var(--bg-surface-alt);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .pipeline-card:hover {
             border-color: var(--primary);
-            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-ico-wrap {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .pipeline-card-content h5 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .pipeline-card-content p {
+            font-size: 12px;
+            color: var(--ink-muted);
+            line-height: 1.45;
+        }
+
+        /* Toast Feedback Notification */
+        .humas-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 14px 22px;
+            border-radius: 14px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            z-index: 2000;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .humas-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .humas-toast-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #10b981;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -786,22 +1136,108 @@
         </button>
     </div>
 
-    <!-- ═══ HUMAS DEMO UPLOAD INFO ═══ -->
-    <div class="humas-demo-card">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <strong style="font-size:14px;"><i class="fa-solid fa-cloud-arrow-up"
-                    style="color:var(--primary); margin-right:6px;"></i> Manajemen Gambar oleh Humas (Database:
-                <code>showcase_images.image</code>)</strong>
-            <span style="font-size:12px; color:var(--ink-muted);">Sidebar: <code>unit.blade.php</code></span>
+    <!-- ═══ HUMAS DEMO UPLOAD INFO (PREMIUM UI) ═══ -->
+    <section class="humas-admin-showcase">
+        <div class="humas-header-row">
+            <div class="humas-title-group">
+                <div class="humas-icon-badge">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div class="humas-text-meta">
+                    <h3>
+                        Manajemen Galeri & Unggah Foto Kampus
+                    </h3>
+                    <p>
+                        Panel interaktif Unit Humas untuk memperbarui konten visual fasilitas dan sarana kampus secara terpusat.
+                    </p>
+                </div>
+            </div>
+
+            <div class="humas-meta-badges">
+                <span class="humas-pill humas-pill-live">
+                    <i class="fa-solid fa-circle" style="font-size:7px;"></i> Unit Humas Terhubung
+                </span>
+                <span class="humas-pill humas-pill-code">
+                    <i class="fa-solid fa-database"></i> <code>showcase_images.image</code>
+                </span>
+                <span class="humas-pill humas-pill-code">
+                    <i class="fa-solid fa-file-code"></i> <code>unit.blade.php</code>
+                </span>
+            </div>
         </div>
-        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:14px;">
-            Staf Humas cukup mengunggah foto baru. Sistem akan otomatis memasukkannya ke dalam urutan slider 5-card.
-        </p>
-        <div class="upload-dropzone"
-            onclick="alert('Form upload di backend Humas akan menambahkan foto baru ke slider.');">
-            <i class="fa-solid fa-image" style="font-size:24px; color:var(--primary); margin-bottom:6px;"></i>
-            <h4 style="font-size:13px; font-weight:700;">+ Tambah Foto Fasilitas / Kampus</h4>
+
+        <input type="file" id="humasFileInput" accept="image/*" multiple style="display:none;">
+
+        <div class="humas-dropzone-box" id="humasDropzone">
+            <div class="dropzone-icon-stack">
+                <i class="fa-solid fa-images main-ico"></i>
+                <div class="sub-ico-badge">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
+
+            <h4>Tarik & Lepas Foto Fasilitas di Sini</h4>
+            <p>
+                Unggah dokumentasi foto kampus beresolusi tinggi. Foto yang diunggah akan otomatis disinkronkan ke carousel slider 5-kartu.
+            </p>
+
+            <button type="button" class="btn-browse-file" id="btnBrowseFile">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Pilih Foto dari Komputer</span>
+            </button>
+
+            <div class="dropzone-specs">
+                <span class="spec-item">
+                    <i class="fa-regular fa-file-image"></i> Format: JPG, PNG, WEBP, AVIF
+                </span>
+                <span class="spec-item">
+                    <i class="fa-solid fa-weight-scale"></i> Ukuran Maks: 5 MB / file
+                </span>
+                <span class="spec-item">
+                    <i class="fa-solid fa-expand"></i> Resolusi Rekomendasi: 1920x1080 (16:9 / 4:3)
+                </span>
+            </div>
         </div>
+
+        <div class="humas-pipeline-grid">
+            <div class="pipeline-card">
+                <div class="pipeline-ico-wrap">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="pipeline-card-content">
+                    <h5>Live Real-time Carousel</h5>
+                    <p>Setiap foto baru langsung masuk ke deretan slider simetris tanpa perlu merombak layout.</p>
+                </div>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-ico-wrap">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div class="pipeline-card-content">
+                    <h5>Infinite Symmetrical Loop</h5>
+                    <p>Sistem otomatis mengkalkulasi lebar 5-card & looping berulang dengan animasi halus.</p>
+                </div>
+            </div>
+
+            <div class="pipeline-card">
+                <div class="pipeline-ico-wrap">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="pipeline-card-content">
+                    <h5>Otoritas & Hak Akses Humas</h5>
+                    <p>Tervalidasi secara aman di backend Laravel dengan autentikasi unit kerja & storage disk.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ TOAST FEEDBACK ═══ -->
+    <div class="humas-toast" id="humasToast">
+        <div class="humas-toast-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span id="humasToastMsg">Foto fasilitas berhasil diunggah & dimasukkan ke slider!</span>
     </div>
 
     <!-- ═══ STEP-BY-STEP SLIDER SCRIPT (+1 PER STEP) ═══ -->
@@ -1032,7 +1468,6 @@
                 isPausedManually = !isPausedManually;
                 if (isPausedManually) {
                     clearInterval(stepInterval);
-                    clearInterval(progressInterval);
                     iconAnim.className = 'fa-solid fa-play';
                     textAnim.textContent = 'Lanjutkan Animasi';
                 } else {
@@ -1056,6 +1491,104 @@
                     labelTheme.textContent = 'Mode Gelap';
                 }
             });
+
+            // 8. INTERACTIVE HUMAS FILE UPLOAD & DROPZONE
+            const humasDropzone = document.getElementById('humasDropzone');
+            const humasFileInput = document.getElementById('humasFileInput');
+            const btnBrowseFile = document.getElementById('btnBrowseFile');
+            const humasToast = document.getElementById('humasToast');
+            const humasToastMsg = document.getElementById('humasToastMsg');
+            let toastTimeout = null;
+
+            function showToast(message) {
+                if (humasToastMsg) humasToastMsg.textContent = message;
+                if (humasToast) {
+                    humasToast.classList.add('show');
+                    clearTimeout(toastTimeout);
+                    toastTimeout = setTimeout(() => {
+                        humasToast.classList.remove('show');
+                    }, 4000);
+                }
+            }
+
+            function handleNewUploadedFiles(files) {
+                if (!files || files.length === 0) return;
+
+                let processedCount = 0;
+                Array.from(files).forEach((file) => {
+                    if (!file.type.startsWith('image/')) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const newSrc = e.target.result;
+                        const newAlt = file.name.replace(/\.[^/.]+$/, "") || 'Foto Fasilitas Humas';
+
+                        // 1. Buat elemen card baru
+                        const newCard = document.createElement('div');
+                        newCard.className = 'gallery-card-frame';
+                        newCard.innerHTML = `<img src="${newSrc}" alt="${newAlt}" class="gallery-card-img" loading="lazy">`;
+
+                        // 2. Masukkan ke itemsData lightbox
+                        itemsData.push({ src: newSrc, alt: newAlt });
+
+                        // 3. Masukkan ke slider track
+                        track.appendChild(newCard);
+
+                        // 4. Update total count counter
+                        if (sliderTotalNum) {
+                            sliderTotalNum.textContent = String(itemsData.length).padStart(2, '0');
+                        }
+
+                        // 5. Re-kalkulasi stepWidth
+                        stepWidth = calculateCardWidth();
+                        processedCount++;
+
+                        showToast(`${processedCount} foto fasilitas berhasil diunggah & langsung disematkan ke slider!`);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            if (btnBrowseFile && humasFileInput) {
+                btnBrowseFile.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    humasFileInput.click();
+                });
+            }
+
+            if (humasDropzone && humasFileInput) {
+                humasDropzone.addEventListener('click', () => {
+                    humasFileInput.click();
+                });
+
+                humasFileInput.addEventListener('change', (e) => {
+                    handleNewUploadedFiles(e.target.files);
+                    humasFileInput.value = '';
+                });
+
+                // Drag & Drop listeners
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    humasDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        humasDropzone.classList.add('drag-over');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    humasDropzone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        humasDropzone.classList.remove('drag-over');
+                    });
+                });
+
+                humasDropzone.addEventListener('drop', (e) => {
+                    if (e.dataTransfer && e.dataTransfer.files) {
+                        handleNewUploadedFiles(e.dataTransfer.files);
+                    }
+                });
+            }
         });
     </script>
 </body>
