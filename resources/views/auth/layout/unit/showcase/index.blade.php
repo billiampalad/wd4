@@ -57,45 +57,6 @@
         </div>
     </section>
 
-    <!-- Stats Grid -->
-    <section class="dk-stats-grid" aria-label="Ringkasan data showcase">
-        <div class="dk-stat-card dk-stat-total">
-            <div class="dk-stat-icon"><i class="fas fa-photo-film"></i></div>
-            <div>
-                <span class="dk-stat-label">Total Foto Showcase</span>
-                <strong>{{ number_format($showcaseList->count()) }}</strong>
-            </div>
-        </div>
-        <div class="dk-stat-card dk-stat-active">
-            <div class="dk-stat-icon"><i class="fas fa-circle-check"></i></div>
-            <div>
-                <span class="dk-stat-label">Status Integrasi</span>
-                <strong>Terkoneksi Beranda</strong>
-            </div>
-        </div>
-        <div class="dk-stat-card dk-stat-warning">
-            <div class="dk-stat-icon"><i class="fas fa-images"></i></div>
-            <div>
-                <span class="dk-stat-label">Format Didukung</span>
-                <strong>JPG, PNG, WEBP</strong>
-            </div>
-        </div>
-    </section>
-
-    @if(session('success'))
-    <div class="dk-alert dk-alert-success" style="margin-bottom: 20px;">
-        <i class="fas fa-check-circle"></i>
-        <span>{{ session('success') }}</span>
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="dk-alert dk-alert-error" style="margin-bottom: 20px;">
-        <i class="fas fa-exclamation-circle"></i>
-        <span>{{ session('error') }}</span>
-    </div>
-    @endif
-
     <!-- Card Table -->
     <div class="card um-card dk-card">
         <div class="card-header um-header dk-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
