@@ -206,8 +206,17 @@
         }
 
         @keyframes pulseDot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.4); opacity: 0.4; }
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.4);
+                opacity: 0.4;
+            }
         }
 
         .showcase-main-title {
@@ -401,7 +410,8 @@
 
         /* Aksen Floating Zoom Badge on Hover */
         .gallery-card-frame::after {
-            content: '\f00e'; /* FontAwesome search-plus */
+            content: '\f00e';
+            /* FontAwesome search-plus */
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
@@ -718,36 +728,6 @@
        KOMPONEN SLIDER IMAGE SHOWCASE
        ═══════════════════════════════════════════════════════════════ -->
     <section class="showcase-section" id="campusShowcase">
-        
-        <!-- Header Aksen Elegan & Kontrol Navigasi -->
-        <div class="showcase-header">
-            <div class="showcase-header-left">
-                <div class="showcase-pill-badge">
-                    <span class="badge-live-pulse"></span>
-                    <span>Campus & Facilities Showcase</span>
-                </div>
-                <h2 class="showcase-main-title">
-                    Eksplorasi Lingkungan & <span class="title-gradient-accent">Fasilitas Unggulan</span>
-                </h2>
-                <p class="showcase-subtitle">
-                    Jelajahi berbagai sarana modern dan infrastruktur pendukung pembelajaran di Politeknik Negeri Manado.
-                </p>
-            </div>
-
-            <div class="showcase-header-right">
-                <div class="slider-counter-pill" id="sliderCounterPill">
-                    <i class="fa-solid fa-layer-group" style="color:var(--primary); font-size:12px;"></i>
-                    <span id="sliderCurrentNum">01</span> / <span id="sliderTotalNum">08</span>
-                </div>
-                <button type="button" class="slider-nav-btn" id="btnPrevSlide" aria-label="Slide Sebelumnya" title="Slide Sebelumnya">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button type="button" class="slider-nav-btn" id="btnNextSlide" aria-label="Slide Selanjutnya" title="Slide Selanjutnya">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-
         <div class="showcase-container">
 
             <div class="carousel-outer-wrap" id="stepViewport">
@@ -983,16 +963,20 @@
 
             startStepTimer();
 
-            // Header Nav Buttons
-            btnNextSlide.addEventListener('click', () => {
-                slideNext();
-                startStepTimer();
-            });
+            // Header Nav Buttons (Optional)
+            if (btnNextSlide) {
+                btnNextSlide.addEventListener('click', () => {
+                    slideNext();
+                    startStepTimer();
+                });
+            }
 
-            btnPrevSlide.addEventListener('click', () => {
-                slidePrev();
-                startStepTimer();
-            });
+            if (btnPrevSlide) {
+                btnPrevSlide.addEventListener('click', () => {
+                    slidePrev();
+                    startStepTimer();
+                });
+            }
 
             // Hover Pause
             viewport.addEventListener('mouseenter', () => { isHovered = true; });
