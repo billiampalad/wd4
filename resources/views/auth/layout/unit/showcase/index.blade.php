@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="{{ asset('css/auth/unit/institusi.css') }}" data-turbo-track="reload">
-<link rel="stylesheet" href="{{ asset('css/auth/unit/uploudimageslider.css') }}" data-turbo-track="reload">
 
 <main id="mainContent" class="sk-page showcase-admin-page">
     <!-- Topbar / Breadcrumb Header -->
