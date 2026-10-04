@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <link rel="icon" type="image/png" href="{{ asset('img/logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/logo.png') }}">
     <title>Humas | Sistem Informasi Kerjasama Politeknik Negeri Manado</title>
@@ -105,11 +105,11 @@
         if ($notificationUser) {
             $notificationUser->loadMissing('profile.unitKerja');
             $unitDataNotifications = \App\Models\Notifikasi::with([
-                    'sender.profile.jurusan',
-                    'sender.profile.unitKerja',
-                    'sender.profile.upa',
-                    'sender.profile.pusat',
-                ])
+                'sender.profile.jurusan',
+                'sender.profile.unitKerja',
+                'sender.profile.upa',
+                'sender.profile.pusat',
+            ])
                 ->where('user_id', $notificationUser->id)
                 ->where('is_read', 0)
                 ->whereIn('type', ['data_baru', 'pengajuan_perpanjangan', 'perpanjangan', 'info'])
@@ -190,11 +190,7 @@
             </div>
 
             <div class="nav-actions">
-                <x-search 
-                    id="navSearchInput"
-                    placeholder="Cari data..."
-                    width="200px"
-                />
+                <x-search id="navSearchInput" placeholder="Cari data..." width="200px" />
 
                 <button class="icon-btn" id="darkModeBtn" title="Toggle dark mode">
                     <i class="fas fa-moon" id="themeIcon"></i>
@@ -227,12 +223,12 @@
                                         ?? 'Sistem';
                                     $isNotifPerpanjangan = in_array($dataNotification->type, ['pengajuan_perpanjangan', 'perpanjangan'], true);
                                 @endphp
-                                <a href="{{ $dataNotification->link ?: '#' }}"
-                                    class="notification-item unread"
+                                <a href="{{ $dataNotification->link ?: '#' }}" class="notification-item unread"
                                     data-id="{{ $dataNotification->id }}">
                                     <div class="notification-icon-wrapper"
                                         style="background: {{ $isNotifPerpanjangan ? 'rgba(37, 99, 235, 0.12)' : 'rgba(16, 185, 129, 0.12)' }}; color: {{ $isNotifPerpanjangan ? '#2563eb' : '#059669' }};">
-                                        <i class="fas {{ $isNotifPerpanjangan ? 'fa-clock-rotate-left' : 'fa-file-circle-plus' }}"></i>
+                                        <i
+                                            class="fas {{ $isNotifPerpanjangan ? 'fa-clock-rotate-left' : 'fa-file-circle-plus' }}"></i>
                                     </div>
                                     <div class="notification-content">
                                         <span class="notification-sender">{{ $senderName }}</span>
@@ -241,7 +237,9 @@
                                             <span class="notification-time">
                                                 {{ $dataNotification->created_at?->diffForHumans() }}
                                             </span>
-                                            <span class="notification-badge-type {{ $isNotifPerpanjangan ? 'badge-perpanjangan' : 'badge-data_baru' }}" style="{{ $isNotifPerpanjangan ? 'background:rgba(37,99,235,0.12); color:#2563eb;' : '' }}">
+                                            <span
+                                                class="notification-badge-type {{ $isNotifPerpanjangan ? 'badge-perpanjangan' : 'badge-data_baru' }}"
+                                                style="{{ $isNotifPerpanjangan ? 'background:rgba(37,99,235,0.12); color:#2563eb;' : '' }}">
                                                 {{ $isNotifPerpanjangan ? 'Perpanjangan' : 'Data Baru' }}
                                             </span>
                                         </div>
@@ -298,7 +296,8 @@
                     </div>
                 </div>
 
-                <form id="logout-form" method="POST" action="{{ route('logout') }}" data-turbo="false" style="display: none;">
+                <form id="logout-form" method="POST" action="{{ route('logout') }}" data-turbo="false"
+                    style="display: none;">
                     @csrf
                 </form>
                 <button type="button" class="icon-btn danger" id="logoutBtn" title="Logout"
@@ -401,7 +400,7 @@
                         </a>
                         <a class="submenu-item {{ request()->routeIs('unit.showcase.*') ? 'active' : '' }}"
                             href="{{ route('unit.showcase.index') }}">
-                            <span class="submenu-dot"></span><span>Galeri Showcase</span>
+                            <span class="submenu-dot"></span><span>Galeri</span>
                         </a>
                     </div>
                 </div>
@@ -521,14 +520,20 @@
     </div>
 
     <x-alert id="modalLogout" type="logout" title="Keluar dari Sistem"
-        message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?"
-        confirmText="Ya, Keluar" cancelText="Batal" action="{{ route('logout') }}" method="POST" />
+        message="Apakah Anda yakin ingin mengakhiri sesi Anda dan keluar dari sistem?" confirmText="Ya, Keluar"
+        cancelText="Batal" action="{{ route('logout') }}" method="POST" />
 
     @include('partials.loading-system')
     <script src="{{ asset('js/auth/user.js') }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/modal_create.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_create.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_create.js')) : time() }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_edit.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_edit.js')) : time() }}" data-turbo-track="reload"></script>
-    <script src="{{ asset('js/auth/unit/mitra/index.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/index.js')) ? filemtime(public_path('js/auth/unit/mitra/index.js')) : time() }}" data-turbo-track="reload"></script>
+    <script
+        src="{{ asset('js/auth/unit/mitra/modal_create.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_create.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_create.js')) : time() }}"
+        data-turbo-track="reload"></script>
+    <script
+        src="{{ asset('js/auth/unit/mitra/modal_edit.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/modal_edit.js')) ? filemtime(public_path('js/auth/unit/mitra/modal_edit.js')) : time() }}"
+        data-turbo-track="reload"></script>
+    <script
+        src="{{ asset('js/auth/unit/mitra/index.js') }}?v={{ file_exists(public_path('js/auth/unit/mitra/index.js')) ? filemtime(public_path('js/auth/unit/mitra/index.js')) : time() }}"
+        data-turbo-track="reload"></script>
 </body>
 
 </html>
