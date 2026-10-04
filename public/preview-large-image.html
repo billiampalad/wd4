@@ -1160,22 +1160,9 @@
                         Unggah Foto Penghargaan Kerjasama
                     </h3>
                     <p>
-                        Panel interaktif Unit Humas untuk memperbarui konten visual fasilitas dan sarana kampus secara
-                        terpusat.
+                        Mengunggah dan memperbarui foto penghargaan serta pencapaian kerjasama kampus.
                     </p>
                 </div>
-            </div>
-
-            <div class="humas-meta-badges">
-                <span class="humas-pill humas-pill-live">
-                    <i class="fa-solid fa-circle" style="font-size:7px;"></i> Unit Humas Terhubung
-                </span>
-                <span class="humas-pill humas-pill-code">
-                    <i class="fa-solid fa-database"></i> <code>showcase_images.image</code>
-                </span>
-                <span class="humas-pill humas-pill-code">
-                    <i class="fa-solid fa-file-code"></i> <code>unit.blade.php</code>
-                </span>
             </div>
         </div>
 
@@ -1189,10 +1176,10 @@
                 </div>
             </div>
 
-            <h4>Tarik & Lepas Foto Fasilitas di Sini</h4>
+            <h4>Tarik & Lepas Foto Penghargaan Kerjasama di Sini</h4>
             <p>
-                Unggah dokumentasi foto kampus beresolusi tinggi. Foto yang diunggah akan otomatis disinkronkan ke
-                carousel slider 5-kartu.
+                Unggah dokumentasi foto penghargaan, sertifikat prestasi, dan kemitraan kampus beresolusi tinggi. Foto
+                yang diunggah akan otomatis disinkronkan ke carousel slider 5-kartu.
             </p>
 
             <button type="button" class="btn-browse-file" id="btnBrowseFile">
@@ -1219,8 +1206,9 @@
                     <i class="fa-solid fa-bolt"></i>
                 </div>
                 <div class="pipeline-card-content">
-                    <h5>Live Real-time Carousel</h5>
-                    <p>Setiap foto baru langsung masuk ke deretan slider simetris tanpa perlu merombak layout.</p>
+                    <h5>Live Real-time Showcase</h5>
+                    <p>Setiap foto penghargaan baru langsung masuk ke deretan slider simetris tanpa perlu merombak
+                        layout.</p>
                 </div>
             </div>
 
@@ -1239,8 +1227,8 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div class="pipeline-card-content">
-                    <h5>Otoritas & Hak Akses Humas</h5>
-                    <p>Tervalidasi secara aman di backend Laravel dengan autentikasi unit kerja & storage disk.</p>
+                    <h5>Otoritas Humas & Kerjasama</h5>
+                    <p>Tervalidasi secara aman di backend Laravel dengan autentikasi unit Humas & storage disk.</p>
                 </div>
             </div>
         </div>
@@ -1251,7 +1239,7 @@
         <div class="humas-toast-icon">
             <i class="fa-solid fa-check"></i>
         </div>
-        <span id="humasToastMsg">Foto fasilitas berhasil diunggah & dimasukkan ke slider!</span>
+        <span id="humasToastMsg">Foto penghargaan kerjasama berhasil diunggah & dimasukkan ke slider!</span>
     </div>
 
     <!-- ═══ STEP-BY-STEP SLIDER SCRIPT (+1 PER STEP) ═══ -->
@@ -1535,7 +1523,7 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         const newSrc = e.target.result;
-                        const newAlt = file.name.replace(/\.[^/.]+$/, "") || 'Foto Fasilitas Humas';
+                        const newAlt = file.name.replace(/\.[^/.]+$/, "") || 'Foto Penghargaan Kerjasama';
 
                         // 1. Buat elemen card baru
                         const newCard = document.createElement('div');
@@ -1557,7 +1545,7 @@
                         stepWidth = calculateCardWidth();
                         processedCount++;
 
-                        showToast(`${processedCount} foto fasilitas berhasil diunggah & langsung disematkan ke slider!`);
+                        showToast(`${processedCount} foto penghargaan kerjasama berhasil diunggah & langsung disematkan ke slider!`);
                     };
                     reader.readAsDataURL(file);
                 });
