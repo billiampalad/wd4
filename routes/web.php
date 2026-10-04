@@ -291,6 +291,11 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
     Route::get('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporan'])->name('unit.form');
     Route::post('/unit/form-laporan', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanStore'])->name('unit.form.store');
     Route::delete('/unit/form-laporan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'formLaporanDestroy'])->name('unit.form.destroy');
+
+    // ─── Galeri Showcase Gambar (Humas) ───────────────────
+    Route::get('/unit/showcase', [\App\Http\Controllers\Unit\ShowcaseController::class, 'index'])->name('unit.showcase.index');
+    Route::post('/unit/showcase', [\App\Http\Controllers\Unit\ShowcaseController::class, 'store'])->name('unit.showcase.store');
+    Route::delete('/unit/showcase/{id}', [\App\Http\Controllers\Unit\ShowcaseController::class, 'destroy'])->name('unit.showcase.destroy');
 });
 
 Route::middleware(['auth', 'role:upa'])->group(function () {

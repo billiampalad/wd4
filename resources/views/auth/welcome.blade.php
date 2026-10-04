@@ -27,13 +27,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
         rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="{{ asset('css/auth/welcome-stats.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('css/auth/imageslider.css') }}" data-turbo-track="reload">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @stack('styles')
 </head>
 
 <body>
@@ -282,6 +283,9 @@
             </div>
         </div>
     </header>
+
+    <!-- ═══ IMAGE SLIDER SHOWCASE ═══════════════════════════════ -->
+    <x-imageslider :images="$showcases ?? null" />
 
     <!-- ═══ STATS CARD ═══════════════════════════════════════ -->
     <section class="stats-new-strip" id="ringkasan" aria-labelledby="stats-overview-title">
@@ -1277,6 +1281,7 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
     <script src="{{ asset('js/index.js') }}" data-turbo-track="reload"></script>
+    @stack('scripts')
 
 </body>
 

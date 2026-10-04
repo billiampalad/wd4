@@ -49,6 +49,11 @@ class PublicLandingController extends Controller
         $landingAnalytics = $this->buildLandingAnalytics($analyticsCooperations, $analyticsMitras, $filters);
         $dataScope = $filters['data_scope'];
 
+        $showcases = \App\Models\ShowcaseImage::where('is_active', true)
+            ->orderBy('urutan', 'asc')
+            ->latest()
+            ->get();
+
         return view('auth.welcome', compact(
             'kerjasama',
             'mitras',
@@ -56,6 +61,7 @@ class PublicLandingController extends Controller
             'heroSnapshot',
             'landingAnalytics',
             'dataScope',
+            'showcases',
         ));
     }
 

@@ -370,6 +370,7 @@
                     'unit.mitra.*',
                     'unit.form',
                     'unit.form.*',
+                    'unit.showcase.*',
                 );
             @endphp
             <div id="kerjasamaParent" class="sidebar-dropdown"
@@ -397,6 +398,10 @@
                         <a class="submenu-item {{ request()->routeIs('unit.form', 'unit.form.*') ? 'active' : '' }}"
                             href="{{ route('unit.form') }}">
                             <span class="submenu-dot"></span><span>Form Laporan</span>
+                        </a>
+                        <a class="submenu-item {{ request()->routeIs('unit.showcase.*') ? 'active' : '' }}"
+                            href="{{ route('unit.showcase.index') }}">
+                            <span class="submenu-dot"></span><span>Galeri Showcase</span>
                         </a>
                     </div>
                 </div>
@@ -480,6 +485,8 @@
                 @include('auth.layout.unit.mitra.detail')
             @elseif(request()->routeIs('unit.form'))
                 @include('auth.layout.unit.form.index')
+            @elseif(request()->routeIs('unit.showcase.*'))
+                @include('auth.layout.unit.showcase.index')
             @elseif(request()->routeIs('unit.mitra'))
                 @include('auth.layout.unit.mitra.index')
 
