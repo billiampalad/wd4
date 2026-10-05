@@ -23,7 +23,8 @@
                 Dokumentasi & <span class="title-gradient-accent">Penghargaan Kerjasama</span>
             </h2>
             <p class="showcase-subtitle">
-                Pencapaian prestasi, sertifikat kemitraan strategis, dan momentum kolaborasi institusi Politeknik Negeri Manado.
+                Pencapaian prestasi, sertifikat kemitraan strategis, dan momentum kolaborasi institusi Politeknik Negeri
+                Manado.
             </p>
         </div>
 
@@ -32,10 +33,12 @@
                 <i class="fa-solid fa-layer-group" style="color:var(--primary); font-size:12px;"></i>
                 <span id="sliderCurrentNum">01</span> / <span id="sliderTotalNum">08</span>
             </div>
-            <button type="button" class="slider-nav-btn" id="btnPrevSlide" aria-label="Slide Sebelumnya" title="Slide Sebelumnya">
+            <button type="button" class="slider-nav-btn" id="btnPrevSlide" aria-label="Slide Sebelumnya"
+                title="Slide Sebelumnya">
                 <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button type="button" class="slider-nav-btn" id="btnNextSlide" aria-label="Slide Selanjutnya" title="Slide Selanjutnya">
+            <button type="button" class="slider-nav-btn" id="btnNextSlide" aria-label="Slide Selanjutnya"
+                title="Slide Selanjutnya">
                 <i class="fa-solid fa-chevron-right"></i>
             </button>
         </div>
@@ -48,9 +51,9 @@
                 @if(!empty($images) && count($images) > 0)
                     @foreach($images as $img)
                         <div class="gallery-card-frame">
-                            <img src="{{ asset($img->image ?? $img['image'] ?? $img) }}" 
-                                 alt="{{ $img->title ?? $img['title'] ?? 'Dokumentasi Penghargaan Kerjasama' }}" 
-                                 class="gallery-img-inner" loading="lazy">
+                            <img src="{{ asset($img->image ?? $img['image'] ?? $img) }}"
+                                alt="{{ $img->title ?? $img['judul'] ?? 'Dokumentasi Penghargaan Kerjasama' }}"
+                                class="gallery-img-inner" loading="lazy">
                         </div>
                     @endforeach
                 @else
@@ -86,8 +89,8 @@
                     </div>
 
                     <div class="gallery-card-frame">
-                        <img src="{{ asset('img/gedung.jpeg') }}" 
-                            alt="Gedung Kuliah Terpadu (GKT)" class="gallery-img-inner" loading="lazy">
+                        <img src="{{ asset('img/gedung.jpeg') }}" alt="Gedung Kuliah Terpadu (GKT)"
+                            class="gallery-img-inner" loading="lazy">
                     </div>
 
                     <div class="gallery-card-frame">
@@ -114,7 +117,8 @@
         <i class="fa-solid fa-xmark"></i>
     </button>
 
-    <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev" aria-label="Gambar Sebelumnya">
+    <button type="button" class="lightbox-nav-arrow lightbox-arrow-prev" id="lightboxPrev"
+        aria-label="Gambar Sebelumnya">
         <i class="fa-solid fa-chevron-left"></i>
     </button>
 
@@ -122,7 +126,8 @@
         <img src="" alt="Pratinjau Gambar" class="lightbox-img" id="lightboxImg">
     </div>
 
-    <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext" aria-label="Gambar Selanjutnya">
+    <button type="button" class="lightbox-nav-arrow lightbox-arrow-next" id="lightboxNext"
+        aria-label="Gambar Selanjutnya">
         <i class="fa-solid fa-chevron-right"></i>
     </button>
 </div>
