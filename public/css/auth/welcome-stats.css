@@ -244,8 +244,10 @@
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.card-icon-box span {
+.card-icon-box span,
+.card-icon-box i {
     font-size: 1.125rem;
+    line-height: 1;
 }
 
 .text-blue {
@@ -325,7 +327,8 @@
     background-color: rgba(var(--stats-green-rgb), 0.1);
 }
 
-.card-trend span {
+.card-trend span,
+.card-trend i {
     font-size: 0.875rem;
 }
 
@@ -483,6 +486,7 @@
     align-items: center;
     justify-content: center;
     color: var(--stats-blue);
+    font-size: 1.125rem;
 }
 
 .breakdown-title {
@@ -555,7 +559,8 @@
     gap: 0.25rem;
 }
 
-.break-trend span {
+.break-trend span,
+.break-trend i {
     font-size: 0.875rem;
 }
 
@@ -615,13 +620,15 @@
     pointer-events: none;
 }
 
-.map-bg-icon span {
+.map-bg-icon span,
+.map-bg-icon i {
     font-size: 100px;
     color: rgba(var(--stats-blue-rgb), 0.1);
     filter: blur(4px);
 }
 
-.map-bg-icon.center span {
+.map-bg-icon.center span,
+.map-bg-icon.center i {
     font-size: 140px;
     opacity: 0.5;
 }
@@ -867,8 +874,11 @@
 }
 
 .trust-icon {
-    font-size: 20px;
-    color: rgba(var(--stats-blue-rgb), 0.6);
+    font-size: 18px;
+    color: rgba(var(--stats-blue-rgb), 0.7);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .trust-text {

@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}" data-turbo-track="reload">
@@ -312,16 +312,16 @@
                     <div class="card-glow glow-blue"></div>
                     <div class="card-header">
                         <div class="card-icon-box text-blue">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">view_headline</span>
+                            <i class="fa-solid fa-file-contract"></i>
                         </div>
                         <h3 class="card-title">TOTAL KERJASAMA</h3>
-                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square card-arrow"></i>
                     </div>
                     <div class="card-content">
                         <div class="card-stats">
                             <div class="card-value">{{ $stats['total_kerjasama'] ?? 0 }}</div>
                             <div class="card-trend trend-up">
-                                <span class="material-symbols-outlined">trending_up</span>
+                                <i class="fa-solid fa-arrow-trend-up"></i>
                                 +12% bulan ini
                             </div>
                         </div>
@@ -347,16 +347,16 @@
                     <div class="card-glow glow-yellow"></div>
                     <div class="card-header">
                         <div class="card-icon-box text-yellow">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+                            <i class="fa-solid fa-handshake"></i>
                         </div>
                         <h3 class="card-title">TOTAL MITRA</h3>
-                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square card-arrow"></i>
                     </div>
                     <div class="card-content">
                         <div class="card-stats">
                             <div class="card-value">{{ $stats['total_mitra'] ?? 0 }}</div>
                             <div class="card-trend trend-up">
-                                <span class="material-symbols-outlined">trending_up</span>
+                                <i class="fa-solid fa-arrow-trend-up"></i>
                                 +3% bulan ini
                             </div>
                         </div>
@@ -374,10 +374,10 @@
                     <div class="card-glow glow-blue"></div>
                     <div class="card-header">
                         <div class="card-icon-box text-blue">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+                            <i class="fa-solid fa-chart-line"></i>
                         </div>
                         <h3 class="card-title">STATUS BERJALAN</h3>
-                        <span class="material-symbols-outlined card-arrow group-hover:arrow-active">arrow_outward</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square card-arrow"></i>
                     </div>
                     <div class="card-content items-center h-full">
                         <div class="card-stats">
@@ -406,7 +406,7 @@
             <div class="stats-new-breakdown">
                 <div class="breakdown-header">
                     <div class="breakdown-icon">
-                        <span class="material-symbols-outlined">public</span>
+                        <i class="fa-solid fa-globe"></i>
                     </div>
                     <h2 class="breakdown-title">Cakupan Mitra</h2>
                 </div>
@@ -419,14 +419,14 @@
                                 <p class="break-subtitle text-blue">Mitra Nasional</p>
                                 <div class="break-value-group">
                                     <h3 class="break-value">{{ $stats['mitra_nasional'] ?? 0 }}</h3>
-                                    <span class="break-trend trend-up"><span class="material-symbols-outlined">trending_up</span>+5%</span>
+                                    <span class="break-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +5%</span>
                                 </div>
                             </div>
                             <div class="break-badge badge-green">Dominan</div>
                         </div>
                         <div class="break-map-box">
                             <div class="map-bg-pattern"></div>
-                            <div class="map-bg-icon"><span class="material-symbols-outlined">map</span></div>
+                            <div class="map-bg-icon"><i class="fa-solid fa-map-location-dot"></i></div>
                             <div class="map-bars">
                                 <div class="map-bar-item">
                                     <div class="map-bar-lbl"><span>Jawa &amp; Bali</span><span>9</span></div>
@@ -437,7 +437,7 @@
                                     <div class="map-bar-track"><div class="map-bar-fill fill-blue-60" style="width: 29%"></div></div>
                                 </div>
                                 <div class="map-bar-item">
-                                    <div class="map-bar-lbl"><span>Lainnya</span><span>{{ ($stats['mitra_nasional'] ?? 0) - 14 }}</span></div>
+                                    <div class="map-bar-lbl"><span>Lainnya</span><span>{{ max(0, ($stats['mitra_nasional'] ?? 0) - 14) }}</span></div>
                                     <div class="map-bar-track"><div class="map-bar-fill fill-blue-30" style="width: 18%"></div></div>
                                 </div>
                             </div>
@@ -458,7 +458,7 @@
                             <div class="break-badge badge-yellow">Berkembang</div>
                         </div>
                         <div class="break-map-box horizontal">
-                            <div class="map-bg-icon center"><span class="material-symbols-outlined">public</span></div>
+                            <div class="map-bg-icon center"><i class="fa-solid fa-earth-americas"></i></div>
                             <div class="globe-ring">
                                 <svg viewBox="0 0 36 36">
                                     <circle cx="18" cy="18" fill="none" r="15.9155" stroke="rgba(var(--stats-white-rgb), 0.05)" stroke-width="3"></circle>
@@ -508,19 +508,19 @@
                     <!-- Marquee Content Set 1 -->
                     <div class="trust-item-group">
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">verified_user</span>
+                            <i class="fa-solid fa-circle-check trust-icon"></i>
                             <span class="trust-text">Data terverifikasi &amp; akurat</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">public</span>
+                            <i class="fa-solid fa-globe trust-icon"></i>
                             <span class="trust-text">Akses publik &amp; transparan</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">update</span>
+                            <i class="fa-solid fa-clock-rotate-left trust-icon"></i>
                             <span class="trust-text">Diperbarui secara berkala</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">groups</span>
+                            <i class="fa-solid fa-handshake trust-icon"></i>
                             <span class="trust-text">Multi-mitra &amp; multi-bidang</span>
                         </div>
                     </div>
@@ -528,19 +528,19 @@
                     <!-- Marquee Content Set 2 (Duplicate for seamless loop) -->
                     <div class="trust-item-group">
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">verified_user</span>
+                            <i class="fa-solid fa-circle-check trust-icon"></i>
                             <span class="trust-text">Data terverifikasi &amp; akurat</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">public</span>
+                            <i class="fa-solid fa-globe trust-icon"></i>
                             <span class="trust-text">Akses publik &amp; transparan</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">update</span>
+                            <i class="fa-solid fa-clock-rotate-left trust-icon"></i>
                             <span class="trust-text">Diperbarui secara berkala</span>
                         </div>
                         <div class="trust-item">
-                            <span class="material-symbols-outlined trust-icon">groups</span>
+                            <i class="fa-solid fa-handshake trust-icon"></i>
                             <span class="trust-text">Multi-mitra &amp; multi-bidang</span>
                         </div>
                     </div>
