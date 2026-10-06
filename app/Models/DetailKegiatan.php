@@ -19,7 +19,38 @@ class DetailKegiatan extends Model
         'keterangan_luaran',
         'output',
         'outcome',
+        'nilai_kontrak',
     ];
+
+    public function getKeteranganAttribute(): ?string
+    {
+        return $this->keterangan_luaran ?? null;
+    }
+
+    public function setKeteranganAttribute($value): void
+    {
+        $this->attributes['keterangan_luaran'] = $value;
+    }
+
+    public function getVolumeAttribute(): ?string
+    {
+        return $this->volume_luaran ?? null;
+    }
+
+    public function setVolumeAttribute($value): void
+    {
+        $this->attributes['volume_luaran'] = $value;
+    }
+
+    public function getSatuanVolumeAttribute(): ?string
+    {
+        return $this->satuan_luaran ?? null;
+    }
+
+    public function setSatuanVolumeAttribute($value): void
+    {
+        $this->attributes['satuan_luaran'] = $value;
+    }
 
     public function cooperation()
     {

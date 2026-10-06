@@ -69,6 +69,16 @@ class Cooperation extends Model
         'end_date' => 'date',
     ];
 
+    public function getDescriptionAttribute(): ?string
+    {
+        return $this->attributes['ruang_lingkup'] ?? null;
+    }
+
+    public function setDescriptionAttribute($value): void
+    {
+        $this->attributes['ruang_lingkup'] = $value;
+    }
+
     public function mitra()
     {
         return $this->belongsTo(Mitra::class, 'mitra_id');

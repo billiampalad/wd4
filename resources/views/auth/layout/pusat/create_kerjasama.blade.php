@@ -632,7 +632,7 @@
                                     @enderror
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ descVal: @js(old('description', $perpanjanganAsal?->description ?? '')) }">
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ descVal: @js(old('description', $perpanjanganAsal?->ruang_lingkup ?? $perpanjanganAsal?->description ?? '')) }">
                                     <div class="mc-label-row">
                                         <label class="mc-label" style="margin-bottom: 0;">Deskripsi</label>
                                         <span class="mc-limit-badge">Maks. 10.000</span>

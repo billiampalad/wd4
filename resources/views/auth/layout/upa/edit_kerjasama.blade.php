@@ -26,11 +26,11 @@
         $detail = $detailsByJenis->get($jenisId);
         $oldDetail = $oldJenisDetail[$jenisId] ?? [];
         $initialJenisDetail[$jenisId] = [
-            'nilai_kontrak' => array_key_exists('nilai_kontrak', $oldDetail) ? $oldDetail['nilai_kontrak'] : ($detail && $detail->nilai_kontrak ? 'Rp ' . number_format($detail->nilai_kontrak, 0, ',', '.') : ''),
+            'nilai_kontrak' => array_key_exists('nilai_kontrak', $oldDetail) ? $oldDetail['nilai_kontrak'] : ($detail && $detail->nilai_kontrak ? (is_numeric($detail->nilai_kontrak) ? 'Rp ' . number_format((float) $detail->nilai_kontrak, 0, ',', '.') : $detail->nilai_kontrak) : ''),
             'income' => array_key_exists('income', $oldDetail) ? $oldDetail['income'] : ($detail->income ?? ''),
-            'volume' => array_key_exists('volume', $oldDetail) ? $oldDetail['volume'] : ($detail->volume_luaran ?? ''),
-            'satuan_volume' => array_key_exists('satuan_volume', $oldDetail) ? $oldDetail['satuan_volume'] : ($detail->satuan_luaran ?? ''),
-            'keterangan' => array_key_exists('keterangan', $oldDetail) ? $oldDetail['keterangan'] : ($detail->keterangan ?? ''),
+            'volume' => array_key_exists('volume', $oldDetail) ? $oldDetail['volume'] : ($detail->volume_luaran ?? $detail->volume ?? ''),
+            'satuan_volume' => array_key_exists('satuan_volume', $oldDetail) ? $oldDetail['satuan_volume'] : ($detail->satuan_luaran ?? $detail->satuan_volume ?? ''),
+            'keterangan' => array_key_exists('keterangan', $oldDetail) ? $oldDetail['keterangan'] : ($detail->keterangan_luaran ?? $detail->keterangan ?? ''),
             'tujuan' => array_key_exists('tujuan', $oldDetail) ? $oldDetail['tujuan'] : ($detail->tujuan ?? ''),
             'sasaran_id' => array_key_exists('sasaran_id', $oldDetail) ? $oldDetail['sasaran_id'] : ($detail->sasaran_id ?? ''),
             'indikator_id' => array_key_exists('indikator_id', $oldDetail) ? $oldDetail['indikator_id'] : ($detail->indikator_id ?? ''),
@@ -617,7 +617,7 @@
                                     @enderror
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ descVal: @js(old('description', $kegiatan->description ?? '')) }">
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ descVal: @js(old('description', $kegiatan->ruang_lingkup ?? $kegiatan->description ?? '')) }">
                                     <div class="mc-label-row">
                                         <label class="mc-label" style="margin-bottom: 0;">Deskripsi</label>
                                         <span class="mc-limit-badge">Maks. 10.000</span>

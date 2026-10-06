@@ -636,7 +636,7 @@
                                     @enderror
                                 </div>
 
-                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ val: @js(old('description', $perpanjanganAsal?->description ?? '')), max: 10000 }">
+                                <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ val: @js(old('description', $perpanjanganAsal?->ruang_lingkup ?? $perpanjanganAsal?->description ?? '')), max: 10000 }">
                                     <div class="mc-label-row">
                                         <label class="mc-label" style="margin-bottom: 0;">Deskripsi</label>
                                         <span class="mc-limit-badge"><i class="fas fa-align-left"></i> Maks. 10.000 Karakter</span>

@@ -258,23 +258,22 @@ class KerjasamaUnitController extends Controller
             // 5. Handle Detail Kegiatans (Optional fields)
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
-                    $detailData = $request->jenis_detail[$jenisId] ?? null;
-                    if ($detailData) {
-                        $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $detailData = $request->jenis_detail[$jenisId] ?? [];
+                    $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
 
-                        DetailKegiatan::create([
-                            'cooperation_id' => $cooperation->id,
-                            'jenis_kerjasama_id' => $jenisId,
-                            'sasaran_id' => $detailData['sasaran_id'] ?: null,
-                            'income' => $incomeValue,
-                            'volume_luaran' => $detailData['volume'] ?: null,
-                            'satuan_luaran' => $detailData['satuan_volume'] ?: null,
-                            'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
-                            'indikator_id' => $detailData['indikator_id'] ?: null,
-                            'output' => $detailData['output'] ?: null,
-                            'outcome' => $detailData['outcome'] ?: null,
-                        ]);
-                    }
+                    DetailKegiatan::create([
+                        'cooperation_id' => $cooperation->id,
+                        'jenis_kerjasama_id' => $jenisId,
+                        'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
+                        'income' => $incomeValue,
+                        'nilai_kontrak' => !empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null,
+                        'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
+                        'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
+                        'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
+                        'indikator_id' => !empty($detailData['indikator_id']) ? $detailData['indikator_id'] : null,
+                        'output' => !empty($detailData['output']) ? $detailData['output'] : null,
+                        'outcome' => !empty($detailData['outcome']) ? $detailData['outcome'] : null,
+                    ]);
                 }
             }
 
@@ -539,23 +538,22 @@ class KerjasamaUnitController extends Controller
             $cooperation->details()->delete();
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
-                    $detailData = $request->jenis_detail[$jenisId] ?? null;
-                    if ($detailData) {
-                        $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $detailData = $request->jenis_detail[$jenisId] ?? [];
+                    $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
 
-                        DetailKegiatan::create([
-                            'cooperation_id' => $cooperation->id,
-                            'jenis_kerjasama_id' => $jenisId,
-                            'sasaran_id' => $detailData['sasaran_id'] ?? null,
-                            'income' => $incomeValue,
-                            'volume_luaran' => $detailData['volume'] ?? null,
-                            'satuan_luaran' => $detailData['satuan_volume'] ?? null,
-                            'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
-                            'indikator_id' => $detailData['indikator_id'] ?? null,
-                            'output' => $detailData['output'] ?? null,
-                            'outcome' => $detailData['outcome'] ?? null,
-                        ]);
-                    }
+                    DetailKegiatan::create([
+                        'cooperation_id' => $cooperation->id,
+                        'jenis_kerjasama_id' => $jenisId,
+                        'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
+                        'income' => $incomeValue,
+                        'nilai_kontrak' => !empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null,
+                        'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
+                        'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
+                        'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
+                        'indikator_id' => !empty($detailData['indikator_id']) ? $detailData['indikator_id'] : null,
+                        'output' => !empty($detailData['output']) ? $detailData['output'] : null,
+                        'outcome' => !empty($detailData['outcome']) ? $detailData['outcome'] : null,
+                    ]);
                 }
             }
 
