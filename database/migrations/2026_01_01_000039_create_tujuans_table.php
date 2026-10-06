@@ -28,22 +28,21 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
             $table->text('tujuan')->nullable();
-            $table->text('sasaran')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('tujuans', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
+            if (!Schema::hasColumn('tujuans', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
             }
             if (!Schema::hasColumn('tujuans', 'tujuan')) {
                 $table->text('tujuan')->nullable();
             }
-            if (!Schema::hasColumn('tujuans', 'sasaran')) {
-                $table->text('sasaran')->nullable();
+            if (!Schema::hasColumn('tujuans', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

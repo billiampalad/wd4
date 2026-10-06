@@ -28,34 +28,29 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
-            $table->text('hasil_langsung')->nullable();
-            $table->text('dampak')->nullable();
-            $table->text('manfaat_mahasiswa')->nullable();
-            $table->text('manfaat_polimdo')->nullable();
-            $table->text('manfaat_mitra')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('judul', 255)->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->string('file_path', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('hasils', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
+            if (!Schema::hasColumn('hasils', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
             }
-            if (!Schema::hasColumn('hasils', 'hasil_langsung')) {
-                $table->text('hasil_langsung')->nullable();
+            if (!Schema::hasColumn('hasils', 'judul')) {
+                $table->string('judul', 255)->nullable();
             }
-            if (!Schema::hasColumn('hasils', 'dampak')) {
-                $table->text('dampak')->nullable();
+            if (!Schema::hasColumn('hasils', 'deskripsi')) {
+                $table->text('deskripsi')->nullable();
             }
-            if (!Schema::hasColumn('hasils', 'manfaat_mahasiswa')) {
-                $table->text('manfaat_mahasiswa')->nullable();
+            if (!Schema::hasColumn('hasils', 'file_path')) {
+                $table->string('file_path', 255)->nullable();
             }
-            if (!Schema::hasColumn('hasils', 'manfaat_polimdo')) {
-                $table->text('manfaat_polimdo')->nullable();
-            }
-            if (!Schema::hasColumn('hasils', 'manfaat_mitra')) {
-                $table->text('manfaat_mitra')->nullable();
+            if (!Schema::hasColumn('hasils', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

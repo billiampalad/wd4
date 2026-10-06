@@ -28,30 +28,33 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->string('cakupan', 255)->nullable();
-            $table->integer('jumlah_peserta')->nullable();
-            $table->text('sumber_daya')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('kegiatan', 255)->nullable();
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_selesai')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('pelaksanaans', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
             }
-            if (!Schema::hasColumn('pelaksanaans', 'deskripsi')) {
-                $table->text('deskripsi')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'kegiatan')) {
+                $table->string('kegiatan', 255)->nullable();
             }
-            if (!Schema::hasColumn('pelaksanaans', 'cakupan')) {
-                $table->string('cakupan', 255)->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'tanggal_mulai')) {
+                $table->date('tanggal_mulai')->nullable();
             }
-            if (!Schema::hasColumn('pelaksanaans', 'jumlah_peserta')) {
-                $table->integer('jumlah_peserta')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'tanggal_selesai')) {
+                $table->date('tanggal_selesai')->nullable();
             }
-            if (!Schema::hasColumn('pelaksanaans', 'sumber_daya')) {
-                $table->text('sumber_daya')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'keterangan')) {
+                $table->text('keterangan')->nullable();
+            }
+            if (!Schema::hasColumn('pelaksanaans', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = 'kerjasama_prodi';
+        $table = 'cooperation_prodi';
         $oldNames = array (
-  0 => 'cooperation_prodi',
-  1 => 'kerjasama_prodis',
+  0 => 'kerjasama_prodi',
 );
 
         // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
@@ -29,18 +28,21 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cooperation_id');
-            $table->unsignedBigInteger('prodi_id');
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->unsignedBigInteger('prodi_id')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kerjasama_prodi', 'cooperation_id')) {
+            if (!Schema::hasColumn('cooperation_prodi', 'cooperation_id')) {
                 $table->unsignedBigInteger('cooperation_id')->nullable();
             }
-            if (!Schema::hasColumn('kerjasama_prodi', 'prodi_id')) {
+            if (!Schema::hasColumn('cooperation_prodi', 'prodi_id')) {
                 $table->unsignedBigInteger('prodi_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperation_prodi', 'created_at')) {
+                $table->timestamps();
             }
             });
         }
@@ -51,6 +53,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kerjasama_prodi');
+        Schema::dropIfExists('cooperation_prodi');
     }
 };

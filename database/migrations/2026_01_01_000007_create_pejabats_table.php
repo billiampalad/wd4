@@ -28,30 +28,25 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 150);
+            $table->string('nama', 255);
+            $table->string('jabatan', 255);
             $table->string('nip', 50)->nullable();
-            $table->string('jabatan', 150)->nullable();
-            $table->boolean('is_internal')->default(true);
-            $table->string('instansi', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('pejabats', 'nama')) {
-                $table->string('nama', 150)->nullable();
+                $table->string('nama', 255)->nullable();
+            }
+            if (!Schema::hasColumn('pejabats', 'jabatan')) {
+                $table->string('jabatan', 255)->nullable();
             }
             if (!Schema::hasColumn('pejabats', 'nip')) {
                 $table->string('nip', 50)->nullable();
             }
-            if (!Schema::hasColumn('pejabats', 'jabatan')) {
-                $table->string('jabatan', 150)->nullable();
-            }
-            if (!Schema::hasColumn('pejabats', 'is_internal')) {
-                $table->boolean('is_internal')->default(true);
-            }
-            if (!Schema::hasColumn('pejabats', 'instansi')) {
-                $table->string('instansi', 255)->nullable();
+            if (!Schema::hasColumn('pejabats', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

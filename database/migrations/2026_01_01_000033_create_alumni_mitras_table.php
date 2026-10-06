@@ -31,15 +31,13 @@ return new class extends Migration
             $table->unsignedBigInteger('alumni_id')->nullable();
             $table->unsignedBigInteger('mitra_id')->nullable();
             $table->string('posisi', 255)->nullable();
-            $table->decimal('gaji', 15, 2)->nullable();
-            $table->integer('masa_tunggu_bulan')->nullable();
-            $table->date('tanggal_mulai')->nullable();
-            $table->date('tanggal_selesai')->nullable();
-            $table->string('status', 50)->nullable();
+            $table->integer('tahun_mulai')->nullable();
+            $table->string('status', 255)->nullable()->default('Aktif');
+            $table->string('sumber_data', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('alumni_mitras', 'alumni_id')) {
                 $table->unsignedBigInteger('alumni_id')->nullable();
@@ -50,20 +48,17 @@ return new class extends Migration
             if (!Schema::hasColumn('alumni_mitras', 'posisi')) {
                 $table->string('posisi', 255)->nullable();
             }
-            if (!Schema::hasColumn('alumni_mitras', 'gaji')) {
-                $table->decimal('gaji', 15, 2)->nullable();
-            }
-            if (!Schema::hasColumn('alumni_mitras', 'masa_tunggu_bulan')) {
-                $table->integer('masa_tunggu_bulan')->nullable();
-            }
-            if (!Schema::hasColumn('alumni_mitras', 'tanggal_mulai')) {
-                $table->date('tanggal_mulai')->nullable();
-            }
-            if (!Schema::hasColumn('alumni_mitras', 'tanggal_selesai')) {
-                $table->date('tanggal_selesai')->nullable();
+            if (!Schema::hasColumn('alumni_mitras', 'tahun_mulai')) {
+                $table->integer('tahun_mulai')->nullable();
             }
             if (!Schema::hasColumn('alumni_mitras', 'status')) {
-                $table->string('status', 50)->nullable();
+                $table->string('status', 255)->nullable()->default('Aktif');
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'sumber_data')) {
+                $table->string('sumber_data', 255)->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

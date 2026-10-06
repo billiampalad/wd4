@@ -28,26 +28,29 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
-            $table->text('ringkasan')->nullable();
-            $table->text('saran')->nullable();
-            $table->text('tindak_lanjut')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->unsignedBigInteger('evaluasi_id')->nullable();
+            $table->text('kesimpulan')->nullable();
+            $table->text('rekomendasi')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kesimpulans', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
             }
-            if (!Schema::hasColumn('kesimpulans', 'ringkasan')) {
-                $table->text('ringkasan')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'evaluasi_id')) {
+                $table->unsignedBigInteger('evaluasi_id')->nullable();
             }
-            if (!Schema::hasColumn('kesimpulans', 'saran')) {
-                $table->text('saran')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'kesimpulan')) {
+                $table->text('kesimpulan')->nullable();
             }
-            if (!Schema::hasColumn('kesimpulans', 'tindak_lanjut')) {
-                $table->text('tindak_lanjut')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'rekomendasi')) {
+                $table->text('rekomendasi')->nullable();
+            }
+            if (!Schema::hasColumn('kesimpulans', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

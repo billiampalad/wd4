@@ -28,30 +28,33 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
             $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
             $table->string('file_path', 255)->nullable();
-            $table->string('link_drive', 255)->nullable();
+            $table->string('nama_file', 255)->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
+            if (!Schema::hasColumn('dokumentasis', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
             if (!Schema::hasColumn('dokumentasis', 'kegiatan_kerjasama_id')) {
                 $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
-            }
-            if (!Schema::hasColumn('dokumentasis', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
             }
             if (!Schema::hasColumn('dokumentasis', 'file_path')) {
                 $table->string('file_path', 255)->nullable();
             }
-            if (!Schema::hasColumn('dokumentasis', 'link_drive')) {
-                $table->string('link_drive', 255)->nullable();
+            if (!Schema::hasColumn('dokumentasis', 'nama_file')) {
+                $table->string('nama_file', 255)->nullable();
             }
             if (!Schema::hasColumn('dokumentasis', 'keterangan')) {
                 $table->text('keterangan')->nullable();
+            }
+            if (!Schema::hasColumn('dokumentasis', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

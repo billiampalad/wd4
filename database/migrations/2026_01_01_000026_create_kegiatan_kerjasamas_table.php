@@ -32,11 +32,11 @@ return new class extends Migration
             $table->string('nama_kegiatan', 255);
             $table->date('periode_mulai')->nullable();
             $table->date('periode_selesai')->nullable();
-            $table->enum('status', ['Perencanaan', 'Berjalan', 'Selesai'])->default('Perencanaan');
+            $table->string('status', 50)->nullable()->default('Perencanaan');
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('kegiatan_kerjasamas', 'cooperation_id')) {
                 $table->unsignedBigInteger('cooperation_id')->nullable();
@@ -51,7 +51,10 @@ return new class extends Migration
                 $table->date('periode_selesai')->nullable();
             }
             if (!Schema::hasColumn('kegiatan_kerjasamas', 'status')) {
-                $table->enum('status', ['Perencanaan', 'Berjalan', 'Selesai'])->default('Perencanaan');
+                $table->string('status', 50)->nullable()->default('Perencanaan');
+            }
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

@@ -30,11 +30,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sasaran_id')->nullable();
             $table->string('nama_indikator', 255);
-            $table->text('deskripsi')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('indikators', 'sasaran_id')) {
                 $table->unsignedBigInteger('sasaran_id')->nullable();
@@ -42,8 +41,8 @@ return new class extends Migration
             if (!Schema::hasColumn('indikators', 'nama_indikator')) {
                 $table->string('nama_indikator', 255)->nullable();
             }
-            if (!Schema::hasColumn('indikators', 'deskripsi')) {
-                $table->text('deskripsi')->nullable();
+            if (!Schema::hasColumn('indikators', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

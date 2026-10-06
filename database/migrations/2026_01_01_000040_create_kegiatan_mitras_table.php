@@ -28,18 +28,29 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_kegiatan')->nullable();
-            $table->unsignedBigInteger('id_mitra')->nullable();
+            $table->unsignedBigInteger('mitra_id')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('nama_kegiatan', 255)->nullable();
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kegiatan_mitras', 'id_kegiatan')) {
-                $table->unsignedBigInteger('id_kegiatan')->nullable();
+            if (!Schema::hasColumn('kegiatan_mitras', 'mitra_id')) {
+                $table->unsignedBigInteger('mitra_id')->nullable();
             }
-            if (!Schema::hasColumn('kegiatan_mitras', 'id_mitra')) {
-                $table->unsignedBigInteger('id_mitra')->nullable();
+            if (!Schema::hasColumn('kegiatan_mitras', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mitras', 'nama_kegiatan')) {
+                $table->string('nama_kegiatan', 255)->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mitras', 'deskripsi')) {
+                $table->text('deskripsi')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mitras', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

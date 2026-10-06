@@ -28,19 +28,19 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nik', 50)->nullable()->unique();
+            $table->string('nik', 50)->nullable();
             $table->string('name', 255);
-            $table->string('email', 255)->unique();
+            $table->string('email', 255);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password', 255);
-            $table->unsignedBigInteger('role_id');
-            $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->boolean('is_active')->default(1);
             $table->unsignedBigInteger('mitra_id')->nullable();
-            $table->rememberToken();
+            $table->string('remember_token', 100)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('users', 'nik')) {
                 $table->string('nik', 50)->nullable();
@@ -61,10 +61,16 @@ return new class extends Migration
                 $table->unsignedBigInteger('role_id')->nullable();
             }
             if (!Schema::hasColumn('users', 'is_active')) {
-                $table->boolean('is_active')->default(true);
+                $table->boolean('is_active')->nullable()->default(1);
             }
             if (!Schema::hasColumn('users', 'mitra_id')) {
                 $table->unsignedBigInteger('mitra_id')->nullable();
+            }
+            if (!Schema::hasColumn('users', 'remember_token')) {
+                $table->string('remember_token', 100)->nullable();
+            }
+            if (!Schema::hasColumn('users', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

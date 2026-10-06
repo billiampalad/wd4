@@ -35,14 +35,15 @@ return new class extends Migration
             $table->unsignedBigInteger('indikator_id')->nullable();
             $table->string('income', 255)->nullable();
             $table->string('volume_luaran', 255)->nullable();
-            $table->string('satuan_luaran', 255)->nullable();
+            $table->string('satuan_luaran', 100)->nullable();
             $table->text('keterangan_luaran')->nullable();
             $table->text('output')->nullable();
             $table->text('outcome')->nullable();
+            $table->string('nilai_kontrak', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('detail_kegiatans', 'kegiatan_kerjasama_id')) {
                 $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
@@ -66,7 +67,7 @@ return new class extends Migration
                 $table->string('volume_luaran', 255)->nullable();
             }
             if (!Schema::hasColumn('detail_kegiatans', 'satuan_luaran')) {
-                $table->string('satuan_luaran', 255)->nullable();
+                $table->string('satuan_luaran', 100)->nullable();
             }
             if (!Schema::hasColumn('detail_kegiatans', 'keterangan_luaran')) {
                 $table->text('keterangan_luaran')->nullable();
@@ -76,6 +77,12 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('detail_kegiatans', 'outcome')) {
                 $table->text('outcome')->nullable();
+            }
+            if (!Schema::hasColumn('detail_kegiatans', 'nilai_kontrak')) {
+                $table->string('nilai_kontrak', 255)->nullable();
+            }
+            if (!Schema::hasColumn('detail_kegiatans', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

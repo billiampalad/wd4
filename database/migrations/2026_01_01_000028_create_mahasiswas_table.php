@@ -28,20 +28,20 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nim', 50)->unique();
+            $table->string('nim', 255);
             $table->string('nama', 255);
             $table->unsignedBigInteger('prodi_id')->nullable();
-            $table->string('angkatan', 10)->nullable();
-            $table->string('email', 150)->nullable();
-            $table->string('telepon', 50)->nullable();
+            $table->integer('angkatan')->nullable();
+            $table->string('email', 255)->nullable();
+            $table->string('telepon', 255)->nullable();
             $table->string('status', 50)->nullable()->default('Aktif');
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('mahasiswas', 'nim')) {
-                $table->string('nim', 50)->nullable();
+                $table->string('nim', 255)->nullable();
             }
             if (!Schema::hasColumn('mahasiswas', 'nama')) {
                 $table->string('nama', 255)->nullable();
@@ -50,16 +50,19 @@ return new class extends Migration
                 $table->unsignedBigInteger('prodi_id')->nullable();
             }
             if (!Schema::hasColumn('mahasiswas', 'angkatan')) {
-                $table->string('angkatan', 10)->nullable();
+                $table->integer('angkatan')->nullable();
             }
             if (!Schema::hasColumn('mahasiswas', 'email')) {
-                $table->string('email', 150)->nullable();
+                $table->string('email', 255)->nullable();
             }
             if (!Schema::hasColumn('mahasiswas', 'telepon')) {
-                $table->string('telepon', 50)->nullable();
+                $table->string('telepon', 255)->nullable();
             }
             if (!Schema::hasColumn('mahasiswas', 'status')) {
-                $table->string('status', 50)->nullable();
+                $table->string('status', 50)->nullable()->default('Aktif');
+            }
+            if (!Schema::hasColumn('mahasiswas', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

@@ -28,26 +28,21 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cooperation_id')->nullable();
             $table->unsignedBigInteger('unit_kerja_id')->nullable();
             $table->unsignedBigInteger('jurusan_id')->nullable();
             $table->unsignedBigInteger('upa_id')->nullable();
             $table->unsignedBigInteger('pusat_id')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
             $table->unsignedBigInteger('uploaded_by')->nullable();
-            $table->string('uploader_role', 50)->nullable();
-            $table->string('file_path', 255);
+            $table->string('uploader_role', 30)->nullable();
+            $table->string('file_path', 255)->nullable();
             $table->string('original_name', 255)->nullable();
-            $table->unsignedBigInteger('file_size')->nullable();
-            $table->string('nama_file', 255)->nullable();
-            $table->string('tipe', 50)->nullable();
+            $table->unsignedBigInteger('file_size')->default(0);
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('laporan_files', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id')->nullable();
-            }
             if (!Schema::hasColumn('laporan_files', 'unit_kerja_id')) {
                 $table->unsignedBigInteger('unit_kerja_id')->nullable();
             }
@@ -60,11 +55,14 @@ return new class extends Migration
             if (!Schema::hasColumn('laporan_files', 'pusat_id')) {
                 $table->unsignedBigInteger('pusat_id')->nullable();
             }
+            if (!Schema::hasColumn('laporan_files', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
             if (!Schema::hasColumn('laporan_files', 'uploaded_by')) {
                 $table->unsignedBigInteger('uploaded_by')->nullable();
             }
             if (!Schema::hasColumn('laporan_files', 'uploader_role')) {
-                $table->string('uploader_role', 50)->nullable();
+                $table->string('uploader_role', 30)->nullable();
             }
             if (!Schema::hasColumn('laporan_files', 'file_path')) {
                 $table->string('file_path', 255)->nullable();
@@ -73,13 +71,10 @@ return new class extends Migration
                 $table->string('original_name', 255)->nullable();
             }
             if (!Schema::hasColumn('laporan_files', 'file_size')) {
-                $table->unsignedBigInteger('file_size')->nullable();
+                $table->unsignedBigInteger('file_size')->nullable()->default(0);
             }
-            if (!Schema::hasColumn('laporan_files', 'nama_file')) {
-                $table->string('nama_file', 255)->nullable();
-            }
-            if (!Schema::hasColumn('laporan_files', 'tipe')) {
-                $table->string('tipe', 50)->nullable();
+            if (!Schema::hasColumn('laporan_files', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

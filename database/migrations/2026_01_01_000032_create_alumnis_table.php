@@ -28,19 +28,19 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nim', 50);
+            $table->string('nim', 255);
             $table->string('nama', 255);
             $table->unsignedBigInteger('prodi_id')->nullable();
             $table->integer('tahun_lulus')->nullable();
-            $table->string('email', 150)->nullable();
-            $table->string('telepon', 50)->nullable();
+            $table->string('email', 255)->nullable();
+            $table->string('telepon', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('alumnis', 'nim')) {
-                $table->string('nim', 50)->nullable();
+                $table->string('nim', 255)->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'nama')) {
                 $table->string('nama', 255)->nullable();
@@ -52,10 +52,13 @@ return new class extends Migration
                 $table->integer('tahun_lulus')->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'email')) {
-                $table->string('email', 150)->nullable();
+                $table->string('email', 255)->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'telepon')) {
-                $table->string('telepon', 50)->nullable();
+                $table->string('telepon', 255)->nullable();
+            }
+            if (!Schema::hasColumn('alumnis', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

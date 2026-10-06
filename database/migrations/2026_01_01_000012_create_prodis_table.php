@@ -31,11 +31,11 @@ return new class extends Migration
             $table->unsignedBigInteger('jurusan_id')->nullable();
             $table->string('kode_prodi', 20)->nullable();
             $table->string('nama_prodi', 150);
-            $table->enum('jenjang', ['D3', 'D4', 'S1', 'S2', 'Profesi'])->default('D4');
+            $table->string('jenjang', 20)->nullable()->default('D4');
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('prodis', 'jurusan_id')) {
                 $table->unsignedBigInteger('jurusan_id')->nullable();
@@ -47,7 +47,10 @@ return new class extends Migration
                 $table->string('nama_prodi', 150)->nullable();
             }
             if (!Schema::hasColumn('prodis', 'jenjang')) {
-                $table->enum('jenjang', ['D3', 'D4', 'S1', 'S2', 'Profesi'])->default('D4');
+                $table->string('jenjang', 20)->nullable()->default('D4');
+            }
+            if (!Schema::hasColumn('prodis', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

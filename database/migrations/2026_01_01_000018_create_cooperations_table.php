@@ -32,23 +32,23 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('parent_cooperation_id')->nullable();
             $table->unsignedBigInteger('mitra_id')->nullable();
-            $table->string('internal_instansi', 255)->default('Politeknik Negeri Manado');
+            $table->string('internal_instansi', 255)->nullable()->default('Politeknik Negeri Manado');
             $table->unsignedBigInteger('penandatangan_internal_id')->nullable();
             $table->unsignedBigInteger('pj_internal_id')->nullable();
             $table->unsignedBigInteger('penandatangan_mitra_id')->nullable();
             $table->unsignedBigInteger('pj_mitra_id')->nullable();
-            $table->enum('jenis', ['MoU', 'MoA', 'IA', 'SPK'])->default('MoU');
+            $table->string('jenis', 50)->nullable()->default('MoU');
             $table->string('doc_number', 255)->nullable();
-            $table->string('judul', 255);
+            $table->string('judul', 255)->nullable();
             $table->text('ruang_lingkup')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->enum('status_berlaku', ['Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif'])->default('Aktif');
-            $table->enum('status_dokumen', ['Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi'])->default('Draft');
+            $table->string('status_berlaku', 50)->nullable()->default('Aktif');
+            $table->string('status_dokumen', 50)->nullable()->default('Draft');
             $table->unsignedBigInteger('perpanjangan_dari_id')->nullable();
             $table->unsignedBigInteger('pengajuan_kerjasama_baru_id')->nullable();
             $table->unsignedBigInteger('pengajuan_perpanjangan_kerjasama_id')->nullable();
-            $table->enum('tingkat', ['Institusi', 'Jurusan', 'Prodi', 'Pusat/UPA'])->default('Institusi');
+            $table->string('tingkat', 50)->nullable()->default('Institusi');
             $table->unsignedBigInteger('jurusan_id')->nullable();
             $table->unsignedBigInteger('upa_id')->nullable();
             $table->unsignedBigInteger('pusat_id')->nullable();
@@ -59,7 +59,7 @@ return new class extends Migration
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('cooperations', 'parent_cooperation_id')) {
                 $table->unsignedBigInteger('parent_cooperation_id')->nullable();
@@ -68,7 +68,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('mitra_id')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'internal_instansi')) {
-                $table->string('internal_instansi', 255)->default('Politeknik Negeri Manado');
+                $table->string('internal_instansi', 255)->nullable()->default('Politeknik Negeri Manado');
             }
             if (!Schema::hasColumn('cooperations', 'penandatangan_internal_id')) {
                 $table->unsignedBigInteger('penandatangan_internal_id')->nullable();
@@ -83,7 +83,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('pj_mitra_id')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'jenis')) {
-                $table->enum('jenis', ['MoU', 'MoA', 'IA', 'SPK'])->default('MoU');
+                $table->string('jenis', 50)->nullable()->default('MoU');
             }
             if (!Schema::hasColumn('cooperations', 'doc_number')) {
                 $table->string('doc_number', 255)->nullable();
@@ -101,10 +101,10 @@ return new class extends Migration
                 $table->date('end_date')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'status_berlaku')) {
-                $table->enum('status_berlaku', ['Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif'])->default('Aktif');
+                $table->string('status_berlaku', 50)->nullable()->default('Aktif');
             }
             if (!Schema::hasColumn('cooperations', 'status_dokumen')) {
-                $table->enum('status_dokumen', ['Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi'])->default('Draft');
+                $table->string('status_dokumen', 50)->nullable()->default('Draft');
             }
             if (!Schema::hasColumn('cooperations', 'perpanjangan_dari_id')) {
                 $table->unsignedBigInteger('perpanjangan_dari_id')->nullable();
@@ -116,7 +116,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('pengajuan_perpanjangan_kerjasama_id')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'tingkat')) {
-                $table->enum('tingkat', ['Institusi', 'Jurusan', 'Prodi', 'Pusat/UPA'])->default('Institusi');
+                $table->string('tingkat', 50)->nullable()->default('Institusi');
             }
             if (!Schema::hasColumn('cooperations', 'jurusan_id')) {
                 $table->unsignedBigInteger('jurusan_id')->nullable();
@@ -138,6 +138,9 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('cooperations', 'updated_by')) {
                 $table->unsignedBigInteger('updated_by')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

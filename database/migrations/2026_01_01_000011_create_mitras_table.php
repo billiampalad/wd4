@@ -34,18 +34,17 @@ return new class extends Migration
             $table->string('kota', 100)->nullable();
             $table->string('kecamatan', 100)->nullable();
             $table->string('kelurahan', 100)->nullable();
-            $table->string('provinsi', 120)->nullable();
-            $table->string('country_code', 2)->nullable()->index();
-            $table->string('province_code', 10)->nullable()->index();
             $table->string('negara', 255)->nullable();
+            $table->string('country_code', 2)->nullable();
+            $table->string('provinsi', 120)->nullable();
+            $table->string('province_code', 10)->nullable();
             $table->string('telepon', 50)->nullable();
-            $table->string('telp', 50)->nullable();
             $table->string('website', 255)->nullable();
-            $table->enum('status_akses', ['Pending', 'Aktif', 'Nonaktif'])->default('Pending');
+            $table->string('status_akses', 50)->nullable()->default('Pending');
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('mitras', 'id_klasifikasi')) {
                 $table->unsignedBigInteger('id_klasifikasi')->nullable();
@@ -65,29 +64,29 @@ return new class extends Migration
             if (!Schema::hasColumn('mitras', 'kelurahan')) {
                 $table->string('kelurahan', 100)->nullable();
             }
-            if (!Schema::hasColumn('mitras', 'provinsi')) {
-                $table->string('provinsi', 120)->nullable();
+            if (!Schema::hasColumn('mitras', 'negara')) {
+                $table->string('negara', 255)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'country_code')) {
                 $table->string('country_code', 2)->nullable();
             }
+            if (!Schema::hasColumn('mitras', 'provinsi')) {
+                $table->string('provinsi', 120)->nullable();
+            }
             if (!Schema::hasColumn('mitras', 'province_code')) {
                 $table->string('province_code', 10)->nullable();
             }
-            if (!Schema::hasColumn('mitras', 'negara')) {
-                $table->string('negara', 255)->nullable();
-            }
             if (!Schema::hasColumn('mitras', 'telepon')) {
                 $table->string('telepon', 50)->nullable();
-            }
-            if (!Schema::hasColumn('mitras', 'telp')) {
-                $table->string('telp', 50)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'website')) {
                 $table->string('website', 255)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'status_akses')) {
-                $table->enum('status_akses', ['Pending', 'Aktif', 'Nonaktif'])->default('Pending');
+                $table->string('status_akses', 50)->nullable()->default('Pending');
+            }
+            if (!Schema::hasColumn('mitras', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

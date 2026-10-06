@@ -30,28 +30,26 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('cooperation_id')->nullable();
             $table->unsignedBigInteger('evaluator_id')->nullable();
-            $table->string('tipe_evaluasi', 50)->nullable();
-            $table->integer('score')->nullable();
-            $table->string('realisasi_volume', 255)->nullable();
+            $table->string('tipe_evaluasi', 50)->nullable()->default('Internal');
+            $table->decimal('score', 5, 2)->nullable();
+            $table->integer('realisasi_volume')->nullable();
             $table->text('realisasi_output')->nullable();
             $table->text('realisasi_outcome')->nullable();
-            $table->string('sesuai_rencana', 50)->nullable();
-            $table->integer('kualitas')->nullable();
-            $table->integer('keterlibatan')->nullable();
-            $table->integer('efisiensi')->nullable();
-            $table->integer('kepuasan')->nullable();
+            $table->tinyInteger('sesuai_rencana')->nullable();
+            $table->tinyInteger('kualitas')->nullable();
+            $table->tinyInteger('keterlibatan')->nullable();
+            $table->tinyInteger('efisiensi')->nullable();
+            $table->tinyInteger('kepuasan')->nullable();
             $table->text('kendala')->nullable();
             $table->text('ringkasan')->nullable();
             $table->text('rekomendasi')->nullable();
-            $table->text('kesimpulan')->nullable();
+            $table->string('kesimpulan', 100)->nullable();
             $table->text('tindak_lanjut')->nullable();
             $table->string('status_validasi', 50)->nullable()->default('Draft');
-            $table->text('catatan')->nullable();
-            $table->integer('nilai')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('evaluasis', 'cooperation_id')) {
                 $table->unsignedBigInteger('cooperation_id')->nullable();
@@ -60,13 +58,13 @@ return new class extends Migration
                 $table->unsignedBigInteger('evaluator_id')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'tipe_evaluasi')) {
-                $table->string('tipe_evaluasi', 50)->nullable();
+                $table->string('tipe_evaluasi', 50)->nullable()->default('Internal');
             }
             if (!Schema::hasColumn('evaluasis', 'score')) {
-                $table->integer('score')->nullable();
+                $table->decimal('score', 5, 2)->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'realisasi_volume')) {
-                $table->string('realisasi_volume', 255)->nullable();
+                $table->integer('realisasi_volume')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'realisasi_output')) {
                 $table->text('realisasi_output')->nullable();
@@ -75,19 +73,19 @@ return new class extends Migration
                 $table->text('realisasi_outcome')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'sesuai_rencana')) {
-                $table->string('sesuai_rencana', 50)->nullable();
+                $table->tinyInteger('sesuai_rencana')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'kualitas')) {
-                $table->integer('kualitas')->nullable();
+                $table->tinyInteger('kualitas')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'keterlibatan')) {
-                $table->integer('keterlibatan')->nullable();
+                $table->tinyInteger('keterlibatan')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'efisiensi')) {
-                $table->integer('efisiensi')->nullable();
+                $table->tinyInteger('efisiensi')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'kepuasan')) {
-                $table->integer('kepuasan')->nullable();
+                $table->tinyInteger('kepuasan')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'kendala')) {
                 $table->text('kendala')->nullable();
@@ -99,19 +97,16 @@ return new class extends Migration
                 $table->text('rekomendasi')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'kesimpulan')) {
-                $table->text('kesimpulan')->nullable();
+                $table->string('kesimpulan', 100)->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'tindak_lanjut')) {
                 $table->text('tindak_lanjut')->nullable();
             }
             if (!Schema::hasColumn('evaluasis', 'status_validasi')) {
-                $table->string('status_validasi', 50)->nullable();
+                $table->string('status_validasi', 50)->nullable()->default('Draft');
             }
-            if (!Schema::hasColumn('evaluasis', 'catatan')) {
-                $table->text('catatan')->nullable();
-            }
-            if (!Schema::hasColumn('evaluasis', 'nilai')) {
-                $table->integer('nilai')->nullable();
+            if (!Schema::hasColumn('evaluasis', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

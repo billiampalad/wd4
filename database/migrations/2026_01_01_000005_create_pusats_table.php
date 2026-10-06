@@ -28,18 +28,21 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama_pusat', 150)->unique();
+            $table->string('nama_pusat', 150);
             $table->text('keterangan')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('pusats', 'nama_pusat')) {
                 $table->string('nama_pusat', 150)->nullable();
             }
             if (!Schema::hasColumn('pusats', 'keterangan')) {
                 $table->text('keterangan')->nullable();
+            }
+            if (!Schema::hasColumn('pusats', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

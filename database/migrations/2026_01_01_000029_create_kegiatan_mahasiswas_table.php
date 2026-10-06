@@ -28,32 +28,24 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
             $table->unsignedBigInteger('kegiatan_id')->nullable();
             $table->unsignedBigInteger('mahasiswa_id')->nullable();
-            $table->unsignedBigInteger('detail_kegiatan_id')->nullable();
             $table->unsignedBigInteger('mitra_id')->nullable();
             $table->date('periode_mulai')->nullable();
             $table->date('periode_selesai')->nullable();
-            $table->string('status', 50)->nullable();
+            $table->string('status', 50)->nullable()->default('Aktif');
             $table->decimal('nilai_mitra', 5, 2)->nullable();
             $table->text('catatan_mitra')->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kegiatan_mahasiswas', 'kegiatan_kerjasama_id')) {
-                $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
-            }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'kegiatan_id')) {
                 $table->unsignedBigInteger('kegiatan_id')->nullable();
             }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'mahasiswa_id')) {
                 $table->unsignedBigInteger('mahasiswa_id')->nullable();
-            }
-            if (!Schema::hasColumn('kegiatan_mahasiswas', 'detail_kegiatan_id')) {
-                $table->unsignedBigInteger('detail_kegiatan_id')->nullable();
             }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'mitra_id')) {
                 $table->unsignedBigInteger('mitra_id')->nullable();
@@ -65,13 +57,16 @@ return new class extends Migration
                 $table->date('periode_selesai')->nullable();
             }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'status')) {
-                $table->string('status', 50)->nullable();
+                $table->string('status', 50)->nullable()->default('Aktif');
             }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'nilai_mitra')) {
                 $table->decimal('nilai_mitra', 5, 2)->nullable();
             }
             if (!Schema::hasColumn('kegiatan_mahasiswas', 'catatan_mitra')) {
                 $table->text('catatan_mitra')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mahasiswas', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

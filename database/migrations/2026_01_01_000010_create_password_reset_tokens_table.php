@@ -27,15 +27,21 @@ return new class extends Migration
         // 2. Buat tabel jika belum ada
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
+            $table->string('email', 255);
+            $table->string('token', 255);
             $table->timestamp('created_at')->nullable();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
+            if (!Schema::hasColumn('password_reset_tokens', 'email')) {
+                $table->string('email', 255)->nullable();
+            }
             if (!Schema::hasColumn('password_reset_tokens', 'token')) {
-                $table->string('token')->nullable();
+                $table->string('token', 255)->nullable();
+            }
+            if (!Schema::hasColumn('password_reset_tokens', 'created_at')) {
+                $table->timestamp('created_at')->nullable();
             }
             });
         }

@@ -28,23 +28,21 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('kode_pengajuan', 100)->nullable();
-            $table->unsignedBigInteger('cooperation_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('kode_pengajuan', 255)->nullable();
             $table->unsignedBigInteger('mitra_id')->nullable();
             $table->string('nama_mitra', 255)->nullable();
             $table->unsignedBigInteger('id_klasifikasi')->nullable();
-            $table->string('kategori', 100)->nullable();
-            $table->string('negara', 100)->nullable();
-            $table->string('alamat', 255)->nullable();
+            $table->string('kategori', 100)->nullable()->default('nasional');
+            $table->string('negara', 255)->nullable();
+            $table->text('alamat')->nullable();
             $table->string('telp', 50)->nullable();
             $table->string('website', 255)->nullable();
-            $table->string('nama_penandatangan', 150)->nullable();
-            $table->string('jabatan_penandatangan', 150)->nullable();
-            $table->string('nama_penanggung_jawab', 150)->nullable();
-            $table->string('jabatan_penanggung_jawab', 150)->nullable();
-            $table->string('email', 150)->nullable();
-            $table->string('jenis', 50)->nullable();
+            $table->string('nama_penandatangan', 255)->nullable();
+            $table->string('jabatan_penandatangan', 255)->nullable();
+            $table->string('nama_penanggung_jawab', 255)->nullable();
+            $table->string('jabatan_penanggung_jawab', 255)->nullable();
+            $table->string('email', 255)->nullable();
+            $table->string('jenis', 255)->nullable();
             $table->string('doc_number', 255)->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
@@ -52,28 +50,24 @@ return new class extends Migration
             $table->string('judul_pengajuan', 255)->nullable();
             $table->text('tujuan_pengajuan')->nullable();
             $table->text('ruang_lingkup')->nullable();
-            $table->text('alasan_perpanjangan')->nullable();
             $table->text('pesan_tambahan')->nullable();
-            $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Ditolak', 'Revisi'])->default('Draft');
-            $table->text('catatan')->nullable();
+            $table->string('status', 50)->nullable()->default('diajukan');
             $table->text('catatan_pimpinan')->nullable();
-            $table->string('file_pendukung', 255)->nullable();
             $table->unsignedBigInteger('reviewed_by')->nullable();
             $table->timestamp('reviewed_at')->nullable();
             $table->timestamp('submitted_at')->nullable();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->text('alasan_perpanjangan')->nullable();
+            $table->text('catatan')->nullable();
+            $table->string('file_pendukung', 255)->nullable();
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'kode_pengajuan')) {
-                $table->string('kode_pengajuan', 100)->nullable();
-            }
-            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id')->nullable();
-            }
-            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'user_id')) {
-                $table->unsignedBigInteger('user_id')->nullable();
+                $table->string('kode_pengajuan', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'mitra_id')) {
                 $table->unsignedBigInteger('mitra_id')->nullable();
@@ -85,13 +79,13 @@ return new class extends Migration
                 $table->unsignedBigInteger('id_klasifikasi')->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'kategori')) {
-                $table->string('kategori', 100)->nullable();
+                $table->string('kategori', 100)->nullable()->default('nasional');
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'negara')) {
-                $table->string('negara', 100)->nullable();
+                $table->string('negara', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'alamat')) {
-                $table->string('alamat', 255)->nullable();
+                $table->text('alamat')->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'telp')) {
                 $table->string('telp', 50)->nullable();
@@ -100,22 +94,22 @@ return new class extends Migration
                 $table->string('website', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'nama_penandatangan')) {
-                $table->string('nama_penandatangan', 150)->nullable();
+                $table->string('nama_penandatangan', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'jabatan_penandatangan')) {
-                $table->string('jabatan_penandatangan', 150)->nullable();
+                $table->string('jabatan_penandatangan', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'nama_penanggung_jawab')) {
-                $table->string('nama_penanggung_jawab', 150)->nullable();
+                $table->string('nama_penanggung_jawab', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'jabatan_penanggung_jawab')) {
-                $table->string('jabatan_penanggung_jawab', 150)->nullable();
+                $table->string('jabatan_penanggung_jawab', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'email')) {
-                $table->string('email', 150)->nullable();
+                $table->string('email', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'jenis')) {
-                $table->string('jenis', 50)->nullable();
+                $table->string('jenis', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'doc_number')) {
                 $table->string('doc_number', 255)->nullable();
@@ -138,23 +132,14 @@ return new class extends Migration
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'ruang_lingkup')) {
                 $table->text('ruang_lingkup')->nullable();
             }
-            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'alasan_perpanjangan')) {
-                $table->text('alasan_perpanjangan')->nullable();
-            }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'pesan_tambahan')) {
                 $table->text('pesan_tambahan')->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'status')) {
-                $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Ditolak', 'Revisi'])->default('Draft');
-            }
-            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'catatan')) {
-                $table->text('catatan')->nullable();
+                $table->string('status', 50)->nullable()->default('diajukan');
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'catatan_pimpinan')) {
                 $table->text('catatan_pimpinan')->nullable();
-            }
-            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'file_pendukung')) {
-                $table->string('file_pendukung', 255)->nullable();
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'reviewed_by')) {
                 $table->unsignedBigInteger('reviewed_by')->nullable();
@@ -164,6 +149,24 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'submitted_at')) {
                 $table->timestamp('submitted_at')->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'alasan_perpanjangan')) {
+                $table->text('alasan_perpanjangan')->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'catatan')) {
+                $table->text('catatan')->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'file_pendukung')) {
+                $table->string('file_pendukung', 255)->nullable();
+            }
+            if (!Schema::hasColumn('pengajuan_perpanjangan_kerjasama', 'created_at')) {
+                $table->timestamps();
             }
             });
         }

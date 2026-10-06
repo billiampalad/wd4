@@ -28,7 +28,7 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('jabatan', 255)->nullable();
             $table->unsignedBigInteger('jurusan_id')->nullable();
             $table->unsignedBigInteger('prodi_id')->nullable();
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->timestamps();
             });
         } else {
-            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada (100% safe nullable alter)
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('profiles', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable();
@@ -60,6 +60,9 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('profiles', 'unit_kerja_id')) {
                 $table->unsignedBigInteger('unit_kerja_id')->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'created_at')) {
+                $table->timestamps();
             }
             });
         }
