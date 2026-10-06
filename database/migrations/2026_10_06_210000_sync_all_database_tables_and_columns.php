@@ -47,7 +47,6 @@ return new class extends Migration
             'evaluasi' => 'evaluasis',
             'alumni' => 'alumnis',
             'alumni_mitra' => 'alumni_mitras',
-            'dokumentasi' => 'dokumentasis',
             'showcase_image' => 'showcase_images',
         ];
 
@@ -373,50 +372,9 @@ return new class extends Migration
                 'status' => 'string:255:default_Aktif',
                 'sumber_data' => 'string:255',
             ],
-            'dokumentasis' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'kegiatan_kerjasama_id' => 'unsignedBigInteger',
-                'file_path' => 'string:255',
-                'nama_file' => 'string:255',
-                'keterangan' => 'text',
-            ],
             'showcase_images' => [
                 'judul' => 'string:150',
                 'image_path' => 'string:255',
-            ],
-            'hasils' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'judul' => 'string:255',
-                'deskripsi' => 'text',
-                'file_path' => 'string:255',
-            ],
-            'pelaksanaans' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'kegiatan' => 'string:255',
-                'tanggal_mulai' => 'date',
-                'tanggal_selesai' => 'date',
-                'keterangan' => 'text',
-            ],
-            'permasalahan_solusis' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'permasalahan' => 'text',
-                'solusi' => 'text',
-            ],
-            'tujuans' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'tujuan' => 'text',
-            ],
-            'kegiatan_mitras' => [
-                'mitra_id' => 'unsignedBigInteger',
-                'cooperation_id' => 'unsignedBigInteger',
-                'nama_kegiatan' => 'string:255',
-                'deskripsi' => 'text',
-            ],
-            'kesimpulans' => [
-                'cooperation_id' => 'unsignedBigInteger',
-                'evaluasi_id' => 'unsignedBigInteger',
-                'kesimpulan' => 'text',
-                'rekomendasi' => 'text',
             ],
         ];
 
