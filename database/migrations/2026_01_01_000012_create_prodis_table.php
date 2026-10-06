@@ -44,7 +44,7 @@ return new class extends Migration
                 $table->string('kode_prodi', 20)->nullable();
             }
             if (!Schema::hasColumn('prodis', 'nama_prodi')) {
-                $table->string('nama_prodi', 150);
+                $table->string('nama_prodi', 150)->nullable();
             }
             if (!Schema::hasColumn('prodis', 'jenjang')) {
                 $table->enum('jenjang', ['D3', 'D4', 'S1', 'S2', 'Profesi'])->default('D4');

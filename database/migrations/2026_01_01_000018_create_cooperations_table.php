@@ -89,7 +89,7 @@ return new class extends Migration
                 $table->string('doc_number', 255)->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'judul')) {
-                $table->string('judul', 255);
+                $table->string('judul', 255)->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'ruang_lingkup')) {
                 $table->text('ruang_lingkup')->nullable();

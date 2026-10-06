@@ -40,7 +40,7 @@ return new class extends Migration
                 $table->string('judul', 255)->nullable();
             }
             if (!Schema::hasColumn('showcase_images', 'image_path')) {
-                $table->string('image_path', 255);
+                $table->string('image_path', 255)->nullable();
             }
             });
         }

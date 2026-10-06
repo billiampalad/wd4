@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = 'kerjasama_jurusan';
+        $table = 'pelaksanaans';
         $oldNames = array (
-  0 => 'cooperation_jurusan',
-  1 => 'kerjasama_jurusans',
+  0 => 'pelaksanaan',
 );
 
         // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
@@ -29,18 +28,30 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cooperation_id');
-            $table->unsignedBigInteger('jurusan_id');
+            $table->unsignedBigInteger('id_kegiatan')->nullable();
+            $table->text('deskripsi')->nullable();
+            $table->string('cakupan', 255)->nullable();
+            $table->integer('jumlah_peserta')->nullable();
+            $table->text('sumber_daya')->nullable();
             $table->timestamps();
             });
         } else {
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kerjasama_jurusan', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'id_kegiatan')) {
+                $table->unsignedBigInteger('id_kegiatan')->nullable();
             }
-            if (!Schema::hasColumn('kerjasama_jurusan', 'jurusan_id')) {
-                $table->unsignedBigInteger('jurusan_id')->nullable();
+            if (!Schema::hasColumn('pelaksanaans', 'deskripsi')) {
+                $table->text('deskripsi')->nullable();
+            }
+            if (!Schema::hasColumn('pelaksanaans', 'cakupan')) {
+                $table->string('cakupan', 255)->nullable();
+            }
+            if (!Schema::hasColumn('pelaksanaans', 'jumlah_peserta')) {
+                $table->integer('jumlah_peserta')->nullable();
+            }
+            if (!Schema::hasColumn('pelaksanaans', 'sumber_daya')) {
+                $table->text('sumber_daya')->nullable();
             }
             });
         }
@@ -51,6 +62,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kerjasama_jurusan');
+        Schema::dropIfExists('pelaksanaans');
     }
 };

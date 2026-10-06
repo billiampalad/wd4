@@ -40,7 +40,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('sasaran_id')->nullable();
             }
             if (!Schema::hasColumn('indikators', 'nama_indikator')) {
-                $table->string('nama_indikator', 255);
+                $table->string('nama_indikator', 255)->nullable();
             }
             if (!Schema::hasColumn('indikators', 'deskripsi')) {
                 $table->text('deskripsi')->nullable();

@@ -33,6 +33,9 @@ return new class extends Migration
             $table->string('posisi', 255)->nullable();
             $table->decimal('gaji', 15, 2)->nullable();
             $table->integer('masa_tunggu_bulan')->nullable();
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_selesai')->nullable();
+            $table->string('status', 50)->nullable();
             $table->timestamps();
             });
         } else {
@@ -52,6 +55,15 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('alumni_mitras', 'masa_tunggu_bulan')) {
                 $table->integer('masa_tunggu_bulan')->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'tanggal_mulai')) {
+                $table->date('tanggal_mulai')->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'tanggal_selesai')) {
+                $table->date('tanggal_selesai')->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'status')) {
+                $table->string('status', 50)->nullable();
             }
             });
         }

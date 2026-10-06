@@ -28,7 +28,7 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama_sasaran', 255);
+            $table->string('nama_sasaran', 255)->nullable();
             $table->text('deskripsi')->nullable();
             $table->timestamps();
             });
@@ -36,7 +36,7 @@ return new class extends Migration
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('sasarans', 'nama_sasaran')) {
-                $table->string('nama_sasaran', 255);
+                $table->string('nama_sasaran', 255)->nullable();
             }
             if (!Schema::hasColumn('sasarans', 'deskripsi')) {
                 $table->text('deskripsi')->nullable();

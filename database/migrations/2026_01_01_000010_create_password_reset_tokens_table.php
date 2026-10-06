@@ -35,7 +35,7 @@ return new class extends Migration
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('password_reset_tokens', 'token')) {
-                $table->string('token');
+                $table->string('token')->nullable();
             }
             });
         }

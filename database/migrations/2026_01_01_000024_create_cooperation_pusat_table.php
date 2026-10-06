@@ -37,10 +37,10 @@ return new class extends Migration
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('kerjasama_pusat', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id');
+                $table->unsignedBigInteger('cooperation_id')->nullable();
             }
             if (!Schema::hasColumn('kerjasama_pusat', 'pusat_id')) {
-                $table->unsignedBigInteger('pusat_id');
+                $table->unsignedBigInteger('pusat_id')->nullable();
             }
             });
         }

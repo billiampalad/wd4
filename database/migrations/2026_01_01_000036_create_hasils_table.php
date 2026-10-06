@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = 'dokumentasis';
+        $table = 'hasils';
         $oldNames = array (
-  0 => 'dokumentasi',
+  0 => 'hasil',
 );
 
         // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
@@ -28,30 +28,34 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
             $table->unsignedBigInteger('id_kegiatan')->nullable();
-            $table->string('file_path', 255)->nullable();
-            $table->string('link_drive', 255)->nullable();
-            $table->text('keterangan')->nullable();
+            $table->text('hasil_langsung')->nullable();
+            $table->text('dampak')->nullable();
+            $table->text('manfaat_mahasiswa')->nullable();
+            $table->text('manfaat_polimdo')->nullable();
+            $table->text('manfaat_mitra')->nullable();
             $table->timestamps();
             });
         } else {
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('dokumentasis', 'kegiatan_kerjasama_id')) {
-                $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
-            }
-            if (!Schema::hasColumn('dokumentasis', 'id_kegiatan')) {
+            if (!Schema::hasColumn('hasils', 'id_kegiatan')) {
                 $table->unsignedBigInteger('id_kegiatan')->nullable();
             }
-            if (!Schema::hasColumn('dokumentasis', 'file_path')) {
-                $table->string('file_path', 255)->nullable();
+            if (!Schema::hasColumn('hasils', 'hasil_langsung')) {
+                $table->text('hasil_langsung')->nullable();
             }
-            if (!Schema::hasColumn('dokumentasis', 'link_drive')) {
-                $table->string('link_drive', 255)->nullable();
+            if (!Schema::hasColumn('hasils', 'dampak')) {
+                $table->text('dampak')->nullable();
             }
-            if (!Schema::hasColumn('dokumentasis', 'keterangan')) {
-                $table->text('keterangan')->nullable();
+            if (!Schema::hasColumn('hasils', 'manfaat_mahasiswa')) {
+                $table->text('manfaat_mahasiswa')->nullable();
+            }
+            if (!Schema::hasColumn('hasils', 'manfaat_polimdo')) {
+                $table->text('manfaat_polimdo')->nullable();
+            }
+            if (!Schema::hasColumn('hasils', 'manfaat_mitra')) {
+                $table->text('manfaat_mitra')->nullable();
             }
             });
         }
@@ -62,6 +66,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dokumentasis');
+        Schema::dropIfExists('hasils');
     }
 };

@@ -29,8 +29,14 @@ return new class extends Migration
             Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('judul', 255);
-            $table->text('pesan');
+            $table->unsignedBigInteger('sender_id')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
+            $table->string('source_type', 100)->nullable();
+            $table->string('type', 50)->nullable();
+            $table->string('title', 255)->nullable();
+            $table->text('message')->nullable();
+            $table->string('judul', 255)->nullable();
+            $table->text('pesan')->nullable();
             $table->string('tipe', 50)->default('info');
             $table->string('url', 255)->nullable();
             $table->boolean('is_read')->default(false);
@@ -42,11 +48,29 @@ return new class extends Migration
             if (!Schema::hasColumn('notifikasis', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable();
             }
+            if (!Schema::hasColumn('notifikasis', 'sender_id')) {
+                $table->unsignedBigInteger('sender_id')->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'source_id')) {
+                $table->unsignedBigInteger('source_id')->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'source_type')) {
+                $table->string('source_type', 100)->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'type')) {
+                $table->string('type', 50)->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'title')) {
+                $table->string('title', 255)->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'message')) {
+                $table->text('message')->nullable();
+            }
             if (!Schema::hasColumn('notifikasis', 'judul')) {
-                $table->string('judul', 255);
+                $table->string('judul', 255)->nullable();
             }
             if (!Schema::hasColumn('notifikasis', 'pesan')) {
-                $table->text('pesan');
+                $table->text('pesan')->nullable();
             }
             if (!Schema::hasColumn('notifikasis', 'tipe')) {
                 $table->string('tipe', 50)->default('info');

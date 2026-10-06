@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = 'kerjasama_jurusan';
+        $table = 'kesimpulans';
         $oldNames = array (
-  0 => 'cooperation_jurusan',
-  1 => 'kerjasama_jurusans',
+  0 => 'kesimpulan',
 );
 
         // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
@@ -29,18 +28,26 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cooperation_id');
-            $table->unsignedBigInteger('jurusan_id');
+            $table->unsignedBigInteger('id_kegiatan')->nullable();
+            $table->text('ringkasan')->nullable();
+            $table->text('saran')->nullable();
+            $table->text('tindak_lanjut')->nullable();
             $table->timestamps();
             });
         } else {
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kerjasama_jurusan', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'id_kegiatan')) {
+                $table->unsignedBigInteger('id_kegiatan')->nullable();
             }
-            if (!Schema::hasColumn('kerjasama_jurusan', 'jurusan_id')) {
-                $table->unsignedBigInteger('jurusan_id')->nullable();
+            if (!Schema::hasColumn('kesimpulans', 'ringkasan')) {
+                $table->text('ringkasan')->nullable();
+            }
+            if (!Schema::hasColumn('kesimpulans', 'saran')) {
+                $table->text('saran')->nullable();
+            }
+            if (!Schema::hasColumn('kesimpulans', 'tindak_lanjut')) {
+                $table->text('tindak_lanjut')->nullable();
             }
             });
         }
@@ -51,6 +58,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kerjasama_jurusan');
+        Schema::dropIfExists('kesimpulans');
     }
 };

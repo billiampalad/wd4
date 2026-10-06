@@ -41,7 +41,7 @@ return new class extends Migration
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('profiles', 'user_id')) {
-                $table->unsignedBigInteger('user_id');
+                $table->unsignedBigInteger('user_id')->nullable();
             }
             if (!Schema::hasColumn('profiles', 'jabatan')) {
                 $table->string('jabatan', 255)->nullable();

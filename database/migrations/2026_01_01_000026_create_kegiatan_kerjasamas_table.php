@@ -42,7 +42,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('cooperation_id')->nullable();
             }
             if (!Schema::hasColumn('kegiatan_kerjasamas', 'nama_kegiatan')) {
-                $table->string('nama_kegiatan', 255);
+                $table->string('nama_kegiatan', 255)->nullable();
             }
             if (!Schema::hasColumn('kegiatan_kerjasamas', 'periode_mulai')) {
                 $table->date('periode_mulai')->nullable();

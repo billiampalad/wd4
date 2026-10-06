@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = 'kerjasama_jurusan';
+        $table = 'permasalahan_solusis';
         $oldNames = array (
-  0 => 'cooperation_jurusan',
-  1 => 'kerjasama_jurusans',
+  0 => 'permasalahan_solusi',
 );
 
         // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
@@ -29,18 +28,26 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cooperation_id');
-            $table->unsignedBigInteger('jurusan_id');
+            $table->unsignedBigInteger('id_kegiatan')->nullable();
+            $table->text('kendala')->nullable();
+            $table->text('solusi')->nullable();
+            $table->text('rekomendasi')->nullable();
             $table->timestamps();
             });
         } else {
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
-            if (!Schema::hasColumn('kerjasama_jurusan', 'cooperation_id')) {
-                $table->unsignedBigInteger('cooperation_id')->nullable();
+            if (!Schema::hasColumn('permasalahan_solusis', 'id_kegiatan')) {
+                $table->unsignedBigInteger('id_kegiatan')->nullable();
             }
-            if (!Schema::hasColumn('kerjasama_jurusan', 'jurusan_id')) {
-                $table->unsignedBigInteger('jurusan_id')->nullable();
+            if (!Schema::hasColumn('permasalahan_solusis', 'kendala')) {
+                $table->text('kendala')->nullable();
+            }
+            if (!Schema::hasColumn('permasalahan_solusis', 'solusi')) {
+                $table->text('solusi')->nullable();
+            }
+            if (!Schema::hasColumn('permasalahan_solusis', 'rekomendasi')) {
+                $table->text('rekomendasi')->nullable();
             }
             });
         }
@@ -51,6 +58,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kerjasama_jurusan');
+        Schema::dropIfExists('permasalahan_solusis');
     }
 };

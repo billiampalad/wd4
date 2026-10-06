@@ -28,7 +28,8 @@ return new class extends Migration
         if (!Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table) {
             $table->id();
-            $table->string('nama_unit', 150)->unique();
+            $table->string('nama_unit', 150)->nullable();
+            $table->string('nama_unit_pelaksana', 150)->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
             });
@@ -37,6 +38,9 @@ return new class extends Migration
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('unit_kerjas', 'nama_unit')) {
                 $table->string('nama_unit', 150)->nullable();
+            }
+            if (!Schema::hasColumn('unit_kerjas', 'nama_unit_pelaksana')) {
+                $table->string('nama_unit_pelaksana', 150)->nullable();
             }
             if (!Schema::hasColumn('unit_kerjas', 'keterangan')) {
                 $table->text('keterangan')->nullable();

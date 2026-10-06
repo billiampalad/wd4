@@ -32,22 +32,30 @@ return new class extends Migration
             $table->string('nama', 255);
             $table->unsignedBigInteger('prodi_id')->nullable();
             $table->integer('tahun_lulus')->nullable();
+            $table->string('email', 150)->nullable();
+            $table->string('telepon', 50)->nullable();
             $table->timestamps();
             });
         } else {
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('alumnis', 'nim')) {
-                $table->string('nim', 50);
+                $table->string('nim', 50)->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'nama')) {
-                $table->string('nama', 255);
+                $table->string('nama', 255)->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'prodi_id')) {
                 $table->unsignedBigInteger('prodi_id')->nullable();
             }
             if (!Schema::hasColumn('alumnis', 'tahun_lulus')) {
                 $table->integer('tahun_lulus')->nullable();
+            }
+            if (!Schema::hasColumn('alumnis', 'email')) {
+                $table->string('email', 150)->nullable();
+            }
+            if (!Schema::hasColumn('alumnis', 'telepon')) {
+                $table->string('telepon', 50)->nullable();
             }
             });
         }

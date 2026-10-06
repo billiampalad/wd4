@@ -29,9 +29,11 @@ return new class extends Migration
             Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cooperation_id')->nullable();
-            $table->string('pks_number', 255);
+            $table->string('pks_number', 255)->nullable();
             $table->string('number', 255)->nullable();
             $table->integer('sort_order')->default(0);
+            $table->string('nomor_pihak_kampus', 255)->nullable();
+            $table->string('nomor_pihak_mitra', 255)->nullable();
             $table->timestamps();
             });
         } else {
@@ -41,13 +43,19 @@ return new class extends Migration
                 $table->unsignedBigInteger('cooperation_id')->nullable();
             }
             if (!Schema::hasColumn('pks_numbers', 'pks_number')) {
-                $table->string('pks_number', 255);
+                $table->string('pks_number', 255)->nullable();
             }
             if (!Schema::hasColumn('pks_numbers', 'number')) {
                 $table->string('number', 255)->nullable();
             }
             if (!Schema::hasColumn('pks_numbers', 'sort_order')) {
                 $table->integer('sort_order')->default(0);
+            }
+            if (!Schema::hasColumn('pks_numbers', 'nomor_pihak_kampus')) {
+                $table->string('nomor_pihak_kampus', 255)->nullable();
+            }
+            if (!Schema::hasColumn('pks_numbers', 'nomor_pihak_mitra')) {
+                $table->string('nomor_pihak_mitra', 255)->nullable();
             }
             });
         }

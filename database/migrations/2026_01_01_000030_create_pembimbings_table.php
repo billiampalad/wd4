@@ -29,7 +29,11 @@ return new class extends Migration
             Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
+            $table->unsignedBigInteger('kegiatan_mahasiswa_id')->nullable();
             $table->unsignedBigInteger('pejabat_id')->nullable();
+            $table->string('nama_pembimbing', 150)->nullable();
+            $table->string('tipe', 50)->nullable();
+            $table->string('kontak', 50)->nullable();
             $table->string('peran', 255)->nullable();
             $table->timestamps();
             });
@@ -39,8 +43,20 @@ return new class extends Migration
             if (!Schema::hasColumn('pembimbings', 'kegiatan_kerjasama_id')) {
                 $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
             }
+            if (!Schema::hasColumn('pembimbings', 'kegiatan_mahasiswa_id')) {
+                $table->unsignedBigInteger('kegiatan_mahasiswa_id')->nullable();
+            }
             if (!Schema::hasColumn('pembimbings', 'pejabat_id')) {
                 $table->unsignedBigInteger('pejabat_id')->nullable();
+            }
+            if (!Schema::hasColumn('pembimbings', 'nama_pembimbing')) {
+                $table->string('nama_pembimbing', 150)->nullable();
+            }
+            if (!Schema::hasColumn('pembimbings', 'tipe')) {
+                $table->string('tipe', 50)->nullable();
+            }
+            if (!Schema::hasColumn('pembimbings', 'kontak')) {
+                $table->string('kontak', 50)->nullable();
             }
             if (!Schema::hasColumn('pembimbings', 'peran')) {
                 $table->string('peran', 255)->nullable();

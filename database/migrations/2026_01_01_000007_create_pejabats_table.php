@@ -39,7 +39,7 @@ return new class extends Migration
             // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
             Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('pejabats', 'nama')) {
-                $table->string('nama', 150);
+                $table->string('nama', 150)->nullable();
             }
             if (!Schema::hasColumn('pejabats', 'nip')) {
                 $table->string('nip', 50)->nullable();

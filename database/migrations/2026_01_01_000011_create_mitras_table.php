@@ -38,7 +38,8 @@ return new class extends Migration
             $table->string('country_code', 2)->nullable()->index();
             $table->string('province_code', 10)->nullable()->index();
             $table->string('negara', 255)->nullable();
-            $table->string('telepon', 20)->nullable();
+            $table->string('telepon', 50)->nullable();
+            $table->string('telp', 50)->nullable();
             $table->string('website', 255)->nullable();
             $table->enum('status_akses', ['Pending', 'Aktif', 'Nonaktif'])->default('Pending');
             $table->timestamps();
@@ -50,7 +51,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('id_klasifikasi')->nullable();
             }
             if (!Schema::hasColumn('mitras', 'nama_mitra')) {
-                $table->string('nama_mitra', 255);
+                $table->string('nama_mitra', 255)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'alamat')) {
                 $table->string('alamat', 255)->nullable();
@@ -68,16 +69,19 @@ return new class extends Migration
                 $table->string('provinsi', 120)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'country_code')) {
-                $table->string('country_code', 2)->nullable()->index();
+                $table->string('country_code', 2)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'province_code')) {
-                $table->string('province_code', 10)->nullable()->index();
+                $table->string('province_code', 10)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'negara')) {
                 $table->string('negara', 255)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'telepon')) {
-                $table->string('telepon', 20)->nullable();
+                $table->string('telepon', 50)->nullable();
+            }
+            if (!Schema::hasColumn('mitras', 'telp')) {
+                $table->string('telp', 50)->nullable();
             }
             if (!Schema::hasColumn('mitras', 'website')) {
                 $table->string('website', 255)->nullable();
