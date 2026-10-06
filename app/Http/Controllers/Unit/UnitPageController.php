@@ -1726,7 +1726,7 @@ class UnitPageController extends Controller
                     'jenis_kerjasama_id' => $jenisKerjasamaId,
                     'tujuan' => $submission->tujuan_pengajuan,
                     'keterangan' => $validated['pesan_tambahan'] ?? null,
-                    'nilai_kontrak' => 0,
+                    'income' => 0,
                 ]
             );
 

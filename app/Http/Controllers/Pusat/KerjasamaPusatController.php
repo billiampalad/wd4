@@ -303,14 +303,15 @@ class KerjasamaPusatController extends Controller
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? [];
-                    $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $rawIncome = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $incomeValue = !empty($rawIncome) ? preg_replace('/[^\d]/', '', (string) $rawIncome) : null;
+                    $incomeValue = $incomeValue !== '' ? $incomeValue : null;
 
                     DetailKegiatan::create([
                         'cooperation_id' => $cooperation->id,
                         'jenis_kerjasama_id' => $jenisId,
                         'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
                         'income' => $incomeValue,
-                        'nilai_kontrak' => !empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null,
                         'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
                         'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
                         'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
@@ -585,14 +586,15 @@ class KerjasamaPusatController extends Controller
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
                     $detailData = $request->jenis_detail[$jenisId] ?? [];
-                    $incomeValue = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $rawIncome = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
+                    $incomeValue = !empty($rawIncome) ? preg_replace('/[^\d]/', '', (string) $rawIncome) : null;
+                    $incomeValue = $incomeValue !== '' ? $incomeValue : null;
 
                     DetailKegiatan::create([
                         'cooperation_id' => $cooperation->id,
                         'jenis_kerjasama_id' => $jenisId,
                         'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
                         'income' => $incomeValue,
-                        'nilai_kontrak' => !empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null,
                         'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
                         'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
                         'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),

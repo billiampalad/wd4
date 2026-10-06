@@ -19,8 +19,12 @@ class DetailKegiatan extends Model
         'keterangan_luaran',
         'output',
         'outcome',
-        'nilai_kontrak',
     ];
+
+    public function getNilaiKontrakAttribute(): ?string
+    {
+        return isset($this->attributes['nilai_kontrak']) ? (string) $this->attributes['nilai_kontrak'] : ($this->attributes['income'] ?? null);
+    }
 
     public function getKeteranganAttribute(): ?string
     {
