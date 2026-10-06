@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('cooperations')) {
-        Schema::create('cooperations', function (Blueprint $table) {
+            Schema::create('cooperations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_cooperation_id')->nullable();
             $table->unsignedBigInteger('mitra_id')->nullable();
@@ -41,22 +41,88 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
-
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('jurusan_id')->references('id')->on('jurusans')->onDelete('set null');
-            $table->foreign('mitra_id')->references('id')->on('mitras')->onDelete('set null');
-            $table->foreign('parent_cooperation_id')->references('id')->on('cooperations')->onDelete('cascade');
-            $table->foreign('penandatangan_internal_id')->references('id')->on('pejabats')->onDelete('set null');
-            $table->foreign('penandatangan_mitra_id')->references('id')->on('pejabats')->onDelete('set null');
-            $table->foreign('pengajuan_kerjasama_baru_id')->references('id')->on('pengajuan_kerjasama_baru')->onDelete('set null');
-            $table->foreign('pengajuan_perpanjangan_kerjasama_id')->references('id')->on('pengajuan_perpanjangan_kerjasama')->onDelete('set null');
-            $table->foreign('perpanjangan_dari_id')->references('id')->on('cooperations')->onDelete('set null');
-            $table->foreign('pj_internal_id')->references('id')->on('pejabats')->onDelete('set null');
-            $table->foreign('pj_mitra_id')->references('id')->on('pejabats')->onDelete('set null');
-            $table->foreign('pusat_id')->references('id')->on('pusats')->onDelete('set null');
-            $table->foreign('upa_id')->references('id')->on('upas')->onDelete('set null');
-        });
+            });
+        } else {
+            Schema::table('cooperations', function (Blueprint $table) {
+            if (!Schema::hasColumn('cooperations', 'parent_cooperation_id')) {
+                $table->unsignedBigInteger('parent_cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'mitra_id')) {
+                $table->unsignedBigInteger('mitra_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'internal_instansi')) {
+                $table->string('internal_instansi', 255)->default('Politeknik Negeri Manado');
+            }
+            if (!Schema::hasColumn('cooperations', 'penandatangan_internal_id')) {
+                $table->unsignedBigInteger('penandatangan_internal_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pj_internal_id')) {
+                $table->unsignedBigInteger('pj_internal_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'penandatangan_mitra_id')) {
+                $table->unsignedBigInteger('penandatangan_mitra_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pj_mitra_id')) {
+                $table->unsignedBigInteger('pj_mitra_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'jenis')) {
+                $table->enum('jenis', ['MoU', 'MoA', 'IA', 'SPK'])->default('MoU');
+            }
+            if (!Schema::hasColumn('cooperations', 'doc_number')) {
+                $table->string('doc_number', 255)->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'judul')) {
+                $table->string('judul', 255);
+            }
+            if (!Schema::hasColumn('cooperations', 'ruang_lingkup')) {
+                $table->text('ruang_lingkup')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'start_date')) {
+                $table->date('start_date')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'end_date')) {
+                $table->date('end_date')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'status_berlaku')) {
+                $table->enum('status_berlaku', ['Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif'])->default('Aktif');
+            }
+            if (!Schema::hasColumn('cooperations', 'status_dokumen')) {
+                $table->enum('status_dokumen', ['Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi'])->default('Draft');
+            }
+            if (!Schema::hasColumn('cooperations', 'perpanjangan_dari_id')) {
+                $table->unsignedBigInteger('perpanjangan_dari_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pengajuan_kerjasama_baru_id')) {
+                $table->unsignedBigInteger('pengajuan_kerjasama_baru_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pengajuan_perpanjangan_kerjasama_id')) {
+                $table->unsignedBigInteger('pengajuan_perpanjangan_kerjasama_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'tingkat')) {
+                $table->enum('tingkat', ['Institusi', 'Jurusan', 'Prodi', 'Pusat/UPA'])->default('Institusi');
+            }
+            if (!Schema::hasColumn('cooperations', 'jurusan_id')) {
+                $table->unsignedBigInteger('jurusan_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'upa_id')) {
+                $table->unsignedBigInteger('upa_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pusat_id')) {
+                $table->unsignedBigInteger('pusat_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'document_link')) {
+                $table->string('document_link', 255)->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'catatan_pimpinan')) {
+                $table->text('catatan_pimpinan')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'created_by')) {
+                $table->unsignedBigInteger('created_by')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'updated_by')) {
+                $table->unsignedBigInteger('updated_by')->nullable();
+            }
+            });
         }
     }
 

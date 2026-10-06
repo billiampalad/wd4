@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,28 +12,37 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('notifikasis')) {
-        DB::statement(<<<SQL
-CREATE TABLE `notifikasis` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint unsigned NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_read` tinyint(1) NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `sender_id` bigint unsigned DEFAULT NULL,
-  `source_id` bigint unsigned DEFAULT NULL,
-  `source_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `notifikasis_user_id_foreign` (`user_id`),
-  KEY `notifikasis_sender_id_foreign` (`sender_id`),
-  CONSTRAINT `notifikasis_sender_id_foreign` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `notifikasis_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('notifikasis', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('judul', 255);
+            $table->text('pesan');
+            $table->string('tipe', 50)->default('info');
+            $table->string('url', 255)->nullable();
+            $table->boolean('is_read')->default(false);
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('notifikasis', function (Blueprint $table) {
+            if (!Schema::hasColumn('notifikasis', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'judul')) {
+                $table->string('judul', 255);
+            }
+            if (!Schema::hasColumn('notifikasis', 'pesan')) {
+                $table->text('pesan');
+            }
+            if (!Schema::hasColumn('notifikasis', 'tipe')) {
+                $table->string('tipe', 50)->default('info');
+            }
+            if (!Schema::hasColumn('notifikasis', 'url')) {
+                $table->string('url', 255)->nullable();
+            }
+            if (!Schema::hasColumn('notifikasis', 'is_read')) {
+                $table->boolean('is_read')->default(false);
+            }
+            });
         }
     }
 

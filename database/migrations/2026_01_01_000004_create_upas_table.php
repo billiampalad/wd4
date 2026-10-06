@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,18 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('upas')) {
-        DB::statement(<<<SQL
-CREATE TABLE `upas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nama_upa` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `keterangan` text COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `upas_nama_upa_unique` (`nama_upa`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('upas', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_upa', 150)->unique();
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('upas', function (Blueprint $table) {
+            if (!Schema::hasColumn('upas', 'nama_upa')) {
+                $table->string('nama_upa', 150)->unique();
+            }
+            if (!Schema::hasColumn('upas', 'keterangan')) {
+                $table->text('keterangan')->nullable();
+            }
+            });
         }
     }
 

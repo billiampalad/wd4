@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,25 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('alumni_mitras')) {
-        DB::statement(<<<SQL
-CREATE TABLE `alumni_mitras` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `alumni_id` bigint unsigned NOT NULL,
-  `mitra_id` bigint unsigned NOT NULL,
-  `posisi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tahun_mulai` year NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Aktif',
-  `sumber_data` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `alumni_mitras_alumni_id_foreign` (`alumni_id`),
-  KEY `alumni_mitras_mitra_id_foreign` (`mitra_id`),
-  CONSTRAINT `alumni_mitras_alumni_id_foreign` FOREIGN KEY (`alumni_id`) REFERENCES `alumnis` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `alumni_mitras_mitra_id_foreign` FOREIGN KEY (`mitra_id`) REFERENCES `mitras` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('alumni_mitras', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('alumni_id')->nullable();
+            $table->unsignedBigInteger('mitra_id')->nullable();
+            $table->string('posisi', 255)->nullable();
+            $table->decimal('gaji', 15, 2)->nullable();
+            $table->integer('masa_tunggu_bulan')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('alumni_mitras', function (Blueprint $table) {
+            if (!Schema::hasColumn('alumni_mitras', 'alumni_id')) {
+                $table->unsignedBigInteger('alumni_id')->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'mitra_id')) {
+                $table->unsignedBigInteger('mitra_id')->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'posisi')) {
+                $table->string('posisi', 255)->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'gaji')) {
+                $table->decimal('gaji', 15, 2)->nullable();
+            }
+            if (!Schema::hasColumn('alumni_mitras', 'masa_tunggu_bulan')) {
+                $table->integer('masa_tunggu_bulan')->nullable();
+            }
+            });
         }
     }
 

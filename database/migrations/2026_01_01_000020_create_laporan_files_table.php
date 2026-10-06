@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,36 +12,29 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('laporan_files')) {
-        DB::statement(<<<SQL
-CREATE TABLE `laporan_files` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `unit_kerja_id` bigint unsigned DEFAULT NULL,
-  `jurusan_id` bigint unsigned DEFAULT NULL,
-  `upa_id` bigint unsigned DEFAULT NULL,
-  `pusat_id` bigint unsigned DEFAULT NULL,
-  `cooperation_id` bigint unsigned DEFAULT NULL,
-  `uploaded_by` bigint unsigned NOT NULL,
-  `uploader_role` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `file_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `original_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `file_size` bigint unsigned NOT NULL DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `laporan_files_unit_kerja_id_foreign` (`unit_kerja_id`),
-  KEY `laporan_files_uploaded_by_foreign` (`uploaded_by`),
-  KEY `laporan_files_cooperation_id_foreign` (`cooperation_id`),
-  KEY `laporan_files_jurusan_id_foreign` (`jurusan_id`),
-  KEY `laporan_files_upa_id_foreign` (`upa_id`),
-  KEY `laporan_files_pusat_id_foreign` (`pusat_id`),
-  CONSTRAINT `laporan_files_cooperation_id_foreign` FOREIGN KEY (`cooperation_id`) REFERENCES `cooperations` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `laporan_files_jurusan_id_foreign` FOREIGN KEY (`jurusan_id`) REFERENCES `jurusans` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `laporan_files_pusat_id_foreign` FOREIGN KEY (`pusat_id`) REFERENCES `pusats` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `laporan_files_upa_id_foreign` FOREIGN KEY (`upa_id`) REFERENCES `upas` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `laporan_files_uploaded_by_foreign` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('laporan_files', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('file_path', 255);
+            $table->string('nama_file', 255)->nullable();
+            $table->string('tipe', 50)->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('laporan_files', function (Blueprint $table) {
+            if (!Schema::hasColumn('laporan_files', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('laporan_files', 'file_path')) {
+                $table->string('file_path', 255);
+            }
+            if (!Schema::hasColumn('laporan_files', 'nama_file')) {
+                $table->string('nama_file', 255)->nullable();
+            }
+            if (!Schema::hasColumn('laporan_files', 'tipe')) {
+                $table->string('tipe', 50)->nullable();
+            }
+            });
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,22 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('kegiatan_kerjasamas')) {
-        DB::statement(<<<SQL
-CREATE TABLE `kegiatan_kerjasamas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `cooperation_id` bigint unsigned DEFAULT NULL,
-  `nama_kegiatan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `periode_mulai` date DEFAULT NULL,
-  `periode_selesai` date DEFAULT NULL,
-  `status` enum('Perencanaan','Berjalan','Selesai') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Perencanaan',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `kegiatan_kerjasamas_cooperation_id_foreign` (`cooperation_id`),
-  CONSTRAINT `kegiatan_kerjasamas_cooperation_id_foreign` FOREIGN KEY (`cooperation_id`) REFERENCES `cooperations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('kegiatan_kerjasamas', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('nama_kegiatan', 255);
+            $table->date('periode_mulai')->nullable();
+            $table->date('periode_selesai')->nullable();
+            $table->enum('status', ['Perencanaan', 'Berjalan', 'Selesai'])->default('Perencanaan');
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('kegiatan_kerjasamas', function (Blueprint $table) {
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'nama_kegiatan')) {
+                $table->string('nama_kegiatan', 255);
+            }
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'periode_mulai')) {
+                $table->date('periode_mulai')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'periode_selesai')) {
+                $table->date('periode_selesai')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_kerjasamas', 'status')) {
+                $table->enum('status', ['Perencanaan', 'Berjalan', 'Selesai'])->default('Perencanaan');
+            }
+            });
         }
     }
 

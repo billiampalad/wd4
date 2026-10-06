@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,29 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('kegiatan_mahasiswas')) {
-        DB::statement(<<<SQL
-CREATE TABLE `kegiatan_mahasiswas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `kegiatan_id` bigint unsigned NOT NULL,
-  `mahasiswa_id` bigint unsigned NOT NULL,
-  `mitra_id` bigint unsigned NOT NULL,
-  `periode_mulai` date NOT NULL,
-  `periode_selesai` date NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Aktif',
-  `nilai_mitra` decimal(5,2) DEFAULT NULL,
-  `catatan_mitra` text COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `kegiatan_mahasiswas_kegiatan_id_foreign` (`kegiatan_id`),
-  KEY `kegiatan_mahasiswas_mahasiswa_id_foreign` (`mahasiswa_id`),
-  KEY `kegiatan_mahasiswas_mitra_id_foreign` (`mitra_id`),
-  CONSTRAINT `kegiatan_mahasiswas_kegiatan_id_foreign` FOREIGN KEY (`kegiatan_id`) REFERENCES `kegiatan_kerjasamas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `kegiatan_mahasiswas_mahasiswa_id_foreign` FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswas` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `kegiatan_mahasiswas_mitra_id_foreign` FOREIGN KEY (`mitra_id`) REFERENCES `mitras` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('kegiatan_mahasiswas', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
+            $table->unsignedBigInteger('mahasiswa_id')->nullable();
+            $table->unsignedBigInteger('detail_kegiatan_id')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('kegiatan_mahasiswas', function (Blueprint $table) {
+            if (!Schema::hasColumn('kegiatan_mahasiswas', 'kegiatan_kerjasama_id')) {
+                $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mahasiswas', 'mahasiswa_id')) {
+                $table->unsignedBigInteger('mahasiswa_id')->nullable();
+            }
+            if (!Schema::hasColumn('kegiatan_mahasiswas', 'detail_kegiatan_id')) {
+                $table->unsignedBigInteger('detail_kegiatan_id')->nullable();
+            }
+            });
         }
     }
 

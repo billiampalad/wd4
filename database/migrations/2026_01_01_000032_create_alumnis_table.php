@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,24 +12,29 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('alumnis')) {
-        DB::statement(<<<SQL
-CREATE TABLE `alumnis` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nim` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `prodi_id` bigint unsigned NOT NULL,
-  `tahun_lulus` year NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `telepon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `alumnis_nim_unique` (`nim`),
-  KEY `alumnis_prodi_id_foreign` (`prodi_id`),
-  CONSTRAINT `alumnis_prodi_id_foreign` FOREIGN KEY (`prodi_id`) REFERENCES `prodis` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('alumnis', function (Blueprint $table) {
+            $table->id();
+            $table->string('nim', 50);
+            $table->string('nama', 255);
+            $table->unsignedBigInteger('prodi_id')->nullable();
+            $table->integer('tahun_lulus')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('alumnis', function (Blueprint $table) {
+            if (!Schema::hasColumn('alumnis', 'nim')) {
+                $table->string('nim', 50);
+            }
+            if (!Schema::hasColumn('alumnis', 'nama')) {
+                $table->string('nama', 255);
+            }
+            if (!Schema::hasColumn('alumnis', 'prodi_id')) {
+                $table->unsignedBigInteger('prodi_id')->nullable();
+            }
+            if (!Schema::hasColumn('alumnis', 'tahun_lulus')) {
+                $table->integer('tahun_lulus')->nullable();
+            }
+            });
         }
     }
 

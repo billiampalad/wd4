@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,25 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('mahasiswas')) {
-        DB::statement(<<<SQL
-CREATE TABLE `mahasiswas` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nim` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `prodi_id` bigint unsigned NOT NULL,
-  `angkatan` year NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `telepon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` enum('Aktif','Lulus','Cuti','DO') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Aktif',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `mahasiswas_nim_unique` (`nim`),
-  KEY `mahasiswas_prodi_id_foreign` (`prodi_id`),
-  CONSTRAINT `mahasiswas_prodi_id_foreign` FOREIGN KEY (`prodi_id`) REFERENCES `prodis` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('mahasiswas', function (Blueprint $table) {
+            $table->id();
+            $table->string('nim', 50)->unique();
+            $table->string('nama', 255);
+            $table->unsignedBigInteger('prodi_id')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('mahasiswas', function (Blueprint $table) {
+            if (!Schema::hasColumn('mahasiswas', 'nim')) {
+                $table->string('nim', 50)->unique();
+            }
+            if (!Schema::hasColumn('mahasiswas', 'nama')) {
+                $table->string('nama', 255);
+            }
+            if (!Schema::hasColumn('mahasiswas', 'prodi_id')) {
+                $table->unsignedBigInteger('prodi_id')->nullable();
+            }
+            });
         }
     }
 

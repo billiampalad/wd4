@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,19 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('jurusans')) {
-        DB::statement(<<<SQL
-CREATE TABLE `jurusans` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `kode_jurusan` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nama_jurusan` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `jurusans_nama_jurusan_unique` (`nama_jurusan`),
-  UNIQUE KEY `jurusans_kode_jurusan_unique` (`kode_jurusan`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('jurusans', function (Blueprint $table) {
+            $table->id();
+            $table->string('kode_jurusan', 20)->nullable()->unique();
+            $table->string('nama_jurusan', 150)->unique();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('jurusans', function (Blueprint $table) {
+            if (!Schema::hasColumn('jurusans', 'kode_jurusan')) {
+                $table->string('kode_jurusan', 20)->nullable()->unique();
+            }
+            if (!Schema::hasColumn('jurusans', 'nama_jurusan')) {
+                $table->string('nama_jurusan', 150)->unique();
+            }
+            });
         }
     }
 

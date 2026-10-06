@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,16 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('sasarans')) {
-        DB::statement(<<<SQL
-CREATE TABLE `sasarans` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `deskripsi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('sasarans', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_sasaran', 255);
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('sasarans', function (Blueprint $table) {
+            if (!Schema::hasColumn('sasarans', 'nama_sasaran')) {
+                $table->string('nama_sasaran', 255);
+            }
+            if (!Schema::hasColumn('sasarans', 'deskripsi')) {
+                $table->text('deskripsi')->nullable();
+            }
+            });
         }
     }
 

@@ -12,15 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('kerjasama_jurusan')) {
-        Schema::create('kerjasama_jurusan', function (Blueprint $table) {
+            Schema::create('kerjasama_jurusan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cooperation_id');
             $table->unsignedBigInteger('jurusan_id');
             $table->timestamps();
-
-            $table->foreign('cooperation_id')->references('id')->on('cooperations')->onDelete('cascade');
-            $table->foreign('jurusan_id')->references('id')->on('jurusans')->onDelete('cascade');
-        });
+            });
+        } else {
+            Schema::table('kerjasama_jurusan', function (Blueprint $table) {
+            if (!Schema::hasColumn('kerjasama_jurusan', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id');
+            }
+            if (!Schema::hasColumn('kerjasama_jurusan', 'jurusan_id')) {
+                $table->unsignedBigInteger('jurusan_id');
+            }
+            });
         }
     }
 

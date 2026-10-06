@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('profiles')) {
-        Schema::create('profiles', function (Blueprint $table) {
+            Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('jabatan', 255)->nullable();
@@ -22,14 +22,31 @@ return new class extends Migration
             $table->unsignedBigInteger('pusat_id')->nullable();
             $table->unsignedBigInteger('unit_kerja_id')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('jurusan_id')->references('id')->on('jurusans')->onDelete('set null');
-            $table->foreign('prodi_id')->references('id')->on('prodis')->onDelete('set null');
-            $table->foreign('upa_id')->references('id')->on('upas')->onDelete('set null');
-            $table->foreign('pusat_id')->references('id')->on('pusats')->onDelete('set null');
-            $table->foreign('unit_kerja_id')->references('id')->on('unit_kerjas')->onDelete('set null');
-        });
+            });
+        } else {
+            Schema::table('profiles', function (Blueprint $table) {
+            if (!Schema::hasColumn('profiles', 'user_id')) {
+                $table->unsignedBigInteger('user_id');
+            }
+            if (!Schema::hasColumn('profiles', 'jabatan')) {
+                $table->string('jabatan', 255)->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'jurusan_id')) {
+                $table->unsignedBigInteger('jurusan_id')->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'prodi_id')) {
+                $table->unsignedBigInteger('prodi_id')->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'upa_id')) {
+                $table->unsignedBigInteger('upa_id')->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'pusat_id')) {
+                $table->unsignedBigInteger('pusat_id')->nullable();
+            }
+            if (!Schema::hasColumn('profiles', 'unit_kerja_id')) {
+                $table->unsignedBigInteger('unit_kerja_id')->nullable();
+            }
+            });
         }
     }
 

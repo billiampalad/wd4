@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,37 +12,29 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('evaluasis')) {
-        DB::statement(<<<SQL
-CREATE TABLE `evaluasis` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `cooperation_id` bigint unsigned NOT NULL,
-  `evaluator_id` bigint unsigned NOT NULL,
-  `tipe_evaluasi` enum('Internal','Umpan_Balik_Mitra') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Internal',
-  `score` decimal(5,2) DEFAULT NULL,
-  `realisasi_volume` int DEFAULT NULL,
-  `realisasi_output` text COLLATE utf8mb4_unicode_ci,
-  `realisasi_outcome` text COLLATE utf8mb4_unicode_ci,
-  `sesuai_rencana` tinyint DEFAULT NULL,
-  `kualitas` tinyint DEFAULT NULL,
-  `keterlibatan` tinyint DEFAULT NULL,
-  `efisiensi` tinyint DEFAULT NULL,
-  `kepuasan` tinyint DEFAULT NULL,
-  `kendala` text COLLATE utf8mb4_unicode_ci,
-  `ringkasan` text COLLATE utf8mb4_unicode_ci,
-  `rekomendasi` text COLLATE utf8mb4_unicode_ci,
-  `kesimpulan` enum('Sangat Baik','Baik','Cukup','Perlu Perbaikan') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tindak_lanjut` text COLLATE utf8mb4_unicode_ci,
-  `status_validasi` enum('Draft','Menunggu Validasi','Divalidasi','Perlu Revisi') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Draft',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `evaluasis_cooperation_id_foreign` (`cooperation_id`),
-  KEY `evaluasis_dinilai_oleh_foreign` (`evaluator_id`),
-  CONSTRAINT `evaluasis_cooperation_id_foreign` FOREIGN KEY (`cooperation_id`) REFERENCES `cooperations` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `evaluasis_dinilai_oleh_foreign` FOREIGN KEY (`evaluator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('evaluasis', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->unsignedBigInteger('evaluator_id')->nullable();
+            $table->text('catatan')->nullable();
+            $table->integer('nilai')->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('evaluasis', function (Blueprint $table) {
+            if (!Schema::hasColumn('evaluasis', 'cooperation_id')) {
+                $table->unsignedBigInteger('cooperation_id')->nullable();
+            }
+            if (!Schema::hasColumn('evaluasis', 'evaluator_id')) {
+                $table->unsignedBigInteger('evaluator_id')->nullable();
+            }
+            if (!Schema::hasColumn('evaluasis', 'catatan')) {
+                $table->text('catatan')->nullable();
+            }
+            if (!Schema::hasColumn('evaluasis', 'nilai')) {
+                $table->integer('nilai')->nullable();
+            }
+            });
         }
     }
 

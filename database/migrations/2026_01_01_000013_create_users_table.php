@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('users')) {
-        Schema::create('users', function (Blueprint $table) {
+            Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nik', 50)->nullable()->unique();
             $table->string('name', 255);
@@ -24,10 +24,31 @@ return new class extends Migration
             $table->unsignedBigInteger('mitra_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
-
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-            $table->foreign('mitra_id')->references('id')->on('mitras')->onDelete('set null');
-        });
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'nik')) {
+                $table->string('nik', 50)->nullable()->unique();
+            }
+            if (!Schema::hasColumn('users', 'name')) {
+                $table->string('name', 255);
+            }
+            if (!Schema::hasColumn('users', 'email')) {
+                $table->string('email', 255)->unique();
+            }
+            if (!Schema::hasColumn('users', 'password')) {
+                $table->string('password', 255);
+            }
+            if (!Schema::hasColumn('users', 'role_id')) {
+                $table->unsignedBigInteger('role_id');
+            }
+            if (!Schema::hasColumn('users', 'is_active')) {
+                $table->boolean('is_active')->default(true);
+            }
+            if (!Schema::hasColumn('users', 'mitra_id')) {
+                $table->unsignedBigInteger('mitra_id')->nullable();
+            }
+            });
         }
     }
 

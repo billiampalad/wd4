@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,21 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('pembimbings')) {
-        DB::statement(<<<SQL
-CREATE TABLE `pembimbings` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `kegiatan_mahasiswa_id` bigint unsigned NOT NULL,
-  `nama_pembimbing` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tipe` enum('Internal','Eksternal') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kontak` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `pembimbings_kegiatan_mahasiswa_id_foreign` (`kegiatan_mahasiswa_id`),
-  CONSTRAINT `pembimbings_kegiatan_mahasiswa_id_foreign` FOREIGN KEY (`kegiatan_mahasiswa_id`) REFERENCES `kegiatan_mahasiswas` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('pembimbings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
+            $table->unsignedBigInteger('pejabat_id')->nullable();
+            $table->string('peran', 255)->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('pembimbings', function (Blueprint $table) {
+            if (!Schema::hasColumn('pembimbings', 'kegiatan_kerjasama_id')) {
+                $table->unsignedBigInteger('kegiatan_kerjasama_id')->nullable();
+            }
+            if (!Schema::hasColumn('pembimbings', 'pejabat_id')) {
+                $table->unsignedBigInteger('pejabat_id')->nullable();
+            }
+            if (!Schema::hasColumn('pembimbings', 'peran')) {
+                $table->string('peran', 255)->nullable();
+            }
+            });
         }
     }
 

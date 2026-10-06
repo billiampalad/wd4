@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,17 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         if (!Schema::hasTable('pejabats')) {
-        DB::statement(<<<SQL
-CREATE TABLE `pejabats` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `jabatan` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+            Schema::create('pejabats', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama', 150);
+            $table->string('nip', 50)->nullable();
+            $table->string('jabatan', 150)->nullable();
+            $table->boolean('is_internal')->default(true);
+            $table->string('instansi', 255)->nullable();
+            $table->timestamps();
+            });
+        } else {
+            Schema::table('pejabats', function (Blueprint $table) {
+            if (!Schema::hasColumn('pejabats', 'nama')) {
+                $table->string('nama', 150);
+            }
+            if (!Schema::hasColumn('pejabats', 'nip')) {
+                $table->string('nip', 50)->nullable();
+            }
+            if (!Schema::hasColumn('pejabats', 'jabatan')) {
+                $table->string('jabatan', 150)->nullable();
+            }
+            if (!Schema::hasColumn('pejabats', 'is_internal')) {
+                $table->boolean('is_internal')->default(true);
+            }
+            if (!Schema::hasColumn('pejabats', 'instansi')) {
+                $table->string('instansi', 255)->nullable();
+            }
+            });
         }
     }
 
