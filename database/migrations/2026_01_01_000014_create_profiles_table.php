@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('profiles')) {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreign('pusat_id')->references('id')->on('pusats')->onDelete('set null');
             $table->foreign('unit_kerja_id')->references('id')->on('unit_kerjas')->onDelete('set null');
         });
+        }
     }
 
     /**

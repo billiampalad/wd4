@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('laporan_files')) {
         DB::statement(<<<SQL
 CREATE TABLE `laporan_files` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -41,6 +42,7 @@ CREATE TABLE `laporan_files` (
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL
         );
+        }
     }
 
     /**

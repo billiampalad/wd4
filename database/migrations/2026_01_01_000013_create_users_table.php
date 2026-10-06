@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('users')) {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nik', 50)->nullable()->unique();
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('mitra_id')->references('id')->on('mitras')->onDelete('set null');
         });
+        }
     }
 
     /**

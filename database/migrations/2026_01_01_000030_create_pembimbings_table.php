@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('pembimbings')) {
         DB::statement(<<<SQL
 CREATE TABLE `pembimbings` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -26,6 +27,7 @@ CREATE TABLE `pembimbings` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL
         );
+        }
     }
 
     /**

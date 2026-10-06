@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('kerjasama_upa')) {
         Schema::create('kerjasama_upa', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cooperation_id');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->foreign('cooperation_id')->references('id')->on('cooperations')->onDelete('cascade');
             $table->foreign('upa_id')->references('id')->on('upas')->onDelete('cascade');
         });
+        }
     }
 
     /**

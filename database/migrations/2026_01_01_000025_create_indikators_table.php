@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('indikators')) {
         DB::statement(<<<SQL
 CREATE TABLE `indikators` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -24,6 +25,7 @@ CREATE TABLE `indikators` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL
         );
+        }
     }
 
     /**

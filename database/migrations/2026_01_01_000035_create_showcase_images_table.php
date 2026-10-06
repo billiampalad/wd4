@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('showcase_images')) {
         Schema::create('showcase_images', function (Blueprint $table) {
             $table->id();
             $table->string('judul', 255)->nullable();
             $table->string('image_path', 255);
             $table->timestamps();
         });
+        }
     }
 
     /**

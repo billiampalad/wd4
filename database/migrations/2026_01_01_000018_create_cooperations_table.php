@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('cooperations')) {
         Schema::create('cooperations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('parent_cooperation_id')->nullable();
@@ -56,6 +57,7 @@ return new class extends Migration
             $table->foreign('pusat_id')->references('id')->on('pusats')->onDelete('set null');
             $table->foreign('upa_id')->references('id')->on('upas')->onDelete('set null');
         });
+        }
     }
 
     /**

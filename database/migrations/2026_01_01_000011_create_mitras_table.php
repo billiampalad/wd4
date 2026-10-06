@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('mitras')) {
         Schema::create('mitras', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_klasifikasi')->nullable();
@@ -30,6 +31,7 @@ return new class extends Migration
 
             $table->foreign('id_klasifikasi')->references('id')->on('klasifikasis')->onDelete('set null');
         });
+        }
     }
 
     /**
