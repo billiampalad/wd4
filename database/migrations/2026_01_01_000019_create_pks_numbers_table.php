@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,22 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement(<<<SQL
-CREATE TABLE `pks_numbers` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `cooperation_id` bigint unsigned NOT NULL,
-  `number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort_order` int NOT NULL DEFAULT '0',
-  `nomor_pihak_kampus` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nomor_pihak_mitra` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `pks_numbers_cooperation_id_sort_order_index` (`cooperation_id`),
-  CONSTRAINT `pks_numbers_cooperation_id_foreign` FOREIGN KEY (`cooperation_id`) REFERENCES `cooperations` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+        Schema::create('pks_numbers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('cooperation_id')->nullable();
+            $table->string('pks_number', 255);
+            $table->string('number', 255)->nullable();
+            $table->integer('sort_order')->default(0);
+            $table->timestamps();
+
+            $table->foreign('cooperation_id')->references('id')->on('cooperations')->onDelete('cascade');
+        });
     }
 
     /**

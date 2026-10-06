@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,29 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement(<<<SQL
-CREATE TABLE `users` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `nik` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role_id` bigint unsigned NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `mitra_id` bigint unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`),
-  UNIQUE KEY `users_nik_unique` (`nik`),
-  KEY `users_role_id_foreign` (`role_id`),
-  KEY `users_mitra_id_foreign` (`mitra_id`),
-  CONSTRAINT `users_mitra_id_foreign` FOREIGN KEY (`mitra_id`) REFERENCES `mitras` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `users_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('nik', 50)->nullable()->unique();
+            $table->string('name', 255);
+            $table->string('email', 255)->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password', 255);
+            $table->unsignedBigInteger('role_id');
+            $table->boolean('is_active')->default(true);
+            $table->unsignedBigInteger('mitra_id')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->foreign('mitra_id')->references('id')->on('mitras')->onDelete('set null');
+        });
     }
 
     /**

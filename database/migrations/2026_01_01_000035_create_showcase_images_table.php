@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->foreignId('prodi_id')->nullable()->after('jurusan_id')->constrained('prodis')->nullOnDelete();
+        Schema::create('showcase_images', function (Blueprint $table) {
+            $table->id();
+            $table->string('judul', 255)->nullable();
+            $table->string('image_path', 255);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->dropConstrainedForeignId('prodi_id');
-        });
+        Schema::dropIfExists('showcase_images');
     }
 };

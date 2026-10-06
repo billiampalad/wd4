@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,31 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement(<<<SQL
-CREATE TABLE `profiles` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint unsigned NOT NULL,
-  `jabatan` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `jurusan_id` bigint unsigned DEFAULT NULL,
-  `upa_id` bigint unsigned DEFAULT NULL,
-  `pusat_id` bigint unsigned DEFAULT NULL,
-  `unit_kerja_id` bigint unsigned DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `profiles_user_id_foreign` (`user_id`),
-  KEY `profiles_jurusan_id_foreign` (`jurusan_id`),
-  KEY `profiles_unit_kerja_id_foreign` (`unit_kerja_id`),
-  KEY `profiles_upa_id_foreign` (`upa_id`),
-  KEY `profiles_pusat_id_foreign` (`pusat_id`),
-  CONSTRAINT `profiles_jurusan_id_foreign` FOREIGN KEY (`jurusan_id`) REFERENCES `jurusans` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `profiles_pusat_id_foreign` FOREIGN KEY (`pusat_id`) REFERENCES `pusats` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `profiles_unit_kerja_id_foreign` FOREIGN KEY (`unit_kerja_id`) REFERENCES `unit_kerjas` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `profiles_upa_id_foreign` FOREIGN KEY (`upa_id`) REFERENCES `upas` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `profiles_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL
-        );
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('jabatan', 255)->nullable();
+            $table->unsignedBigInteger('jurusan_id')->nullable();
+            $table->unsignedBigInteger('prodi_id')->nullable();
+            $table->unsignedBigInteger('upa_id')->nullable();
+            $table->unsignedBigInteger('pusat_id')->nullable();
+            $table->unsignedBigInteger('unit_kerja_id')->nullable();
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('jurusan_id')->references('id')->on('jurusans')->onDelete('set null');
+            $table->foreign('prodi_id')->references('id')->on('prodis')->onDelete('set null');
+            $table->foreign('upa_id')->references('id')->on('upas')->onDelete('set null');
+            $table->foreign('pusat_id')->references('id')->on('pusats')->onDelete('set null');
+            $table->foreign('unit_kerja_id')->references('id')->on('unit_kerjas')->onDelete('set null');
+        });
     }
 
     /**
