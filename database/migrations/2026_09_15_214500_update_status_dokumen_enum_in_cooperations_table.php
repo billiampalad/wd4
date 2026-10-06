@@ -12,21 +12,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Temporarily change to VARCHAR to safely update any values
-        DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_dokumen` VARCHAR(50) NOT NULL DEFAULT 'Draft'");
+        if (!Schema::hasColumn('cooperations', 'status_dokumen')) {
+            DB::statement("ALTER TABLE `cooperations` ADD COLUMN `status_dokumen` ENUM('Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi') NOT NULL DEFAULT 'Draft'");
+        } else {
+            // 1. Temporarily change to VARCHAR to safely update any values
+            DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_dokumen` VARCHAR(50) NOT NULL DEFAULT 'Draft'");
 
-        // 2. Normalize existing data: map 'Menunggu Validasi' to 'Menunggu Evaluasi'
-        DB::table('cooperations')
-            ->whereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['menunggu validasi', 'menunggu_validasi'])
-            ->update(['status_dokumen' => 'Menunggu Evaluasi']);
+            // 2. Normalize existing data: map 'Menunggu Validasi' to 'Menunggu Evaluasi'
+            DB::table('cooperations')
+                ->whereIn(DB::raw("LOWER(COALESCE(status_dokumen, ''))"), ['menunggu validasi', 'menunggu_validasi'])
+                ->update(['status_dokumen' => 'Menunggu Evaluasi']);
 
-        DB::table('cooperations')
-            ->whereNotIn('status_dokumen', ['Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi'])
-            ->orWhereNull('status_dokumen')
-            ->update(['status_dokumen' => 'Draft']);
+            DB::table('cooperations')
+                ->whereNotIn('status_dokumen', ['Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi'])
+                ->orWhereNull('status_dokumen')
+                ->update(['status_dokumen' => 'Draft']);
 
-        // 3. Set standardized 4-state ENUM definition
-        DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_dokumen` ENUM('Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi') NOT NULL DEFAULT 'Draft'");
+            // 3. Set standardized 4-state ENUM definition
+            DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_dokumen` ENUM('Draft', 'Menunggu Evaluasi', 'Disahkan', 'Revisi') NOT NULL DEFAULT 'Draft'");
+        }
     }
 
     /**

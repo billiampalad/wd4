@@ -12,29 +12,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Temporarily change to VARCHAR so any value can be stored safely
-        DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_berlaku` VARCHAR(50) NOT NULL DEFAULT 'Aktif'");
+        if (!Schema::hasColumn('cooperations', 'status_berlaku')) {
+            DB::statement("ALTER TABLE `cooperations` ADD COLUMN `status_berlaku` ENUM('Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif') NOT NULL DEFAULT 'Aktif'");
+        } else {
+            // 1. Temporarily change to VARCHAR so any value can be stored safely
+            DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_berlaku` VARCHAR(50) NOT NULL DEFAULT 'Aktif'");
 
-        // 2. Normalize existing data values
-        DB::table('cooperations')
-            ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['diperpanjang', 'dalam perpanjangan'])
-            ->update(['status_berlaku' => 'Dalam Perpanjangan']);
+            // 2. Normalize existing data values
+            DB::table('cooperations')
+                ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['diperpanjang', 'dalam perpanjangan'])
+                ->update(['status_berlaku' => 'Dalam Perpanjangan']);
 
-        DB::table('cooperations')
-            ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa', 'akan berakhir'])
-            ->update(['status_berlaku' => 'Kadaluarsa']);
+            DB::table('cooperations')
+                ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa', 'akan berakhir'])
+                ->update(['status_berlaku' => 'Kadaluarsa']);
 
-        DB::table('cooperations')
-            ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['tidak aktif', 'nonaktif', 'non aktif'])
-            ->update(['status_berlaku' => 'Tidak Aktif']);
+            DB::table('cooperations')
+                ->whereIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), ['tidak aktif', 'nonaktif', 'non aktif'])
+                ->update(['status_berlaku' => 'Tidak Aktif']);
 
-        DB::table('cooperations')
-            ->whereNotIn('status_berlaku', ['Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif'])
-            ->orWhereNull('status_berlaku')
-            ->update(['status_berlaku' => 'Aktif']);
+            DB::table('cooperations')
+                ->whereNotIn('status_berlaku', ['Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif'])
+                ->orWhereNull('status_berlaku')
+                ->update(['status_berlaku' => 'Aktif']);
 
-        // 3. Set final standardized ENUM definition
-        DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_berlaku` ENUM('Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif') NOT NULL DEFAULT 'Aktif'");
+            // 3. Set final standardized ENUM definition
+            DB::statement("ALTER TABLE `cooperations` MODIFY COLUMN `status_berlaku` ENUM('Aktif', 'Kadaluarsa', 'Dalam Perpanjangan', 'Tidak Aktif') NOT NULL DEFAULT 'Aktif'");
+        }
     }
 
     /**
