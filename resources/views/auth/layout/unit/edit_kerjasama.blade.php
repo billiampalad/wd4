@@ -464,10 +464,12 @@
 
                     {{-- ══ RIGHT COLUMN: Form Utama ══ --}}
                     <div>
-                        <div class="mc-body" style="padding: 0                                {{-- Dokumen Kerjasama (Alpine Interactive) --}}
+                        <div class="mc-body" style="padding: 0;">
+                            <div class="mc-grid-2">
+                                {{-- Dokumen Kerjasama (Alpine Interactive) --}}
                                 <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
                             open: false, 
-                            selected: '{{ old('jenis', $normalizedJenis) }}',
+                            selected: @js($normalizedJenis),
                             items: [
                                 { id: 'MoU (Memorandum of Understanding)', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
                                 { id: 'MoA (Memorandum of Agreement)', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
@@ -629,6 +631,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div> {{-- End RIGHT COLUMN --}}
                 </div> {{-- End TWO-COLUMN TOP LAYOUT --}}
 
                 {{-- ═══ TWO-COLUMN LAYOUT: Penggiat & Bentuk Kegiatan ═══ --}}

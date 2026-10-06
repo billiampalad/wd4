@@ -638,9 +638,6 @@
                             </div>
                         </div>
                     </div> {{-- End RIGHT COLUMN --}}
-                            </div>
-                        </div>
-                    </div> {{-- End RIGHT COLUMN --}}
                 </div> {{-- End TWO-COLUMN TOP LAYOUT --}}
 
                 {{-- ═══ TWO-COLUMN LAYOUT: Penggiat & Bentuk Kegiatan ═══ --}}
