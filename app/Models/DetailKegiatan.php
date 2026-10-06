@@ -21,9 +21,14 @@ class DetailKegiatan extends Model
         'outcome',
     ];
 
-    public function getNilaiKontrakAttribute(): ?string
+    public function getNilaiKontrakAttribute(): float
     {
-        return isset($this->attributes['nilai_kontrak']) ? (string) $this->attributes['nilai_kontrak'] : ($this->attributes['income'] ?? null);
+        $raw = $this->attributes['nilai_kontrak'] ?? ($this->attributes['income'] ?? 0);
+        if (is_numeric($raw)) {
+            return (float) $raw;
+        }
+        $cleaned = preg_replace('/[^\d]/', '', (string) $raw);
+        return $cleaned !== '' ? (float) $cleaned : 0.0;
     }
 
     public function getKeteranganAttribute(): ?string

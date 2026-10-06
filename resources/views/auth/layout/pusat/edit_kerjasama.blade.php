@@ -1636,13 +1636,13 @@
                                     search: '',
                                     selected: @js($initialJenisIds),
                                     items: @js($jenisOptions),
-                                    formData: @js($initialJenisDetail),
+                                    formData: (typeof @js($initialJenisDetail) === 'object' && !Array.isArray(@js($initialJenisDetail))) ? @js($initialJenisDetail) : {},
                                     sasaranOpen: {},
                                     indikatorOpen: {},
                                     sasaranOptions: @js($sasaranOptions),
                                     indikatorOptions: @js($indikatorOptions),
                                     getIndikatorOptions(id) {
-                                        return this.indikatorOptions.filter(o => o.sasaran_id == this.formData[id].sasaran_id);
+                                        return this.indikatorOptions.filter(o => o.sasaran_id == this.formData[id]?.sasaran_id);
                                     },
                                     get filteredItems() {
                                         return (this.items || []).filter(item => !this.search || (item.label || '').toLowerCase().includes(this.search.toLowerCase().trim()));
@@ -1667,12 +1667,15 @@
                                         return this.items.filter(i => this.selected.includes(i.id)).map(i => i.label);
                                     },
                                     init() {
+                                        if (!this.formData || Array.isArray(this.formData)) {
+                                            this.formData = {};
+                                        }
                                         this.selected.forEach(id => {
                                             if (!this.formData[id]) {
                                                 this.formData[id] = { nilai_kontrak: '', income: '', volume: '', satuan_volume: '', keterangan: '', tujuan: '', sasaran_id: '', indikator_id: '', output: '', outcome: '' };
-                                                this.sasaranOpen[id] = false;
-                                                this.indikatorOpen[id] = false;
                                             }
+                                            this.sasaranOpen[id] = false;
+                                            this.indikatorOpen[id] = false;
                                         });
                                     }
                                 }">

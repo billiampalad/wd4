@@ -166,14 +166,7 @@ class Cooperation extends Model
 
     public function details()
     {
-        return $this->hasManyThrough(
-            DetailKegiatan::class,
-            KegiatanKerjasama::class,
-            'cooperation_id', // Foreign key on kegiatan_kerjasamas table...
-            'kegiatan_kerjasama_id', // Foreign key on detail_kegiatans table...
-            'id', // Local key on cooperations table...
-            'id' // Local key on kegiatan_kerjasamas table...
-        );
+        return $this->hasMany(DetailKegiatan::class, 'cooperation_id');
     }
 
     public function detailKegiatans()
