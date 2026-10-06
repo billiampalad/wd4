@@ -11,8 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('mitras')) {
-            Schema::create('mitras', function (Blueprint $table) {
+        $table = 'mitras';
+        $oldNames = array (
+  0 => 'mitra',
+);
+
+        // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
+        foreach ($oldNames as $old) {
+            if (Schema::hasTable($old) && !Schema::hasTable($table)) {
+                Schema::rename($old, $table);
+                break;
+            }
+        }
+
+        // 2. Buat tabel jika belum ada
+        if (!Schema::hasTable($table)) {
+            Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_klasifikasi')->nullable();
             $table->string('nama_mitra', 255);
@@ -30,7 +44,8 @@ return new class extends Migration
             $table->timestamps();
             });
         } else {
-            Schema::table('mitras', function (Blueprint $table) {
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('mitras', 'id_klasifikasi')) {
                 $table->unsignedBigInteger('id_klasifikasi')->nullable();
             }

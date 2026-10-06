@@ -11,15 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('upas')) {
-            Schema::create('upas', function (Blueprint $table) {
+        $table = 'upas';
+        $oldNames = array (
+  0 => 'upa',
+);
+
+        // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
+        foreach ($oldNames as $old) {
+            if (Schema::hasTable($old) && !Schema::hasTable($table)) {
+                Schema::rename($old, $table);
+                break;
+            }
+        }
+
+        // 2. Buat tabel jika belum ada
+        if (!Schema::hasTable($table)) {
+            Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->string('nama_upa', 150)->unique();
             $table->text('keterangan')->nullable();
             $table->timestamps();
             });
         } else {
-            Schema::table('upas', function (Blueprint $table) {
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('upas', 'nama_upa')) {
                 $table->string('nama_upa', 150)->unique();
             }

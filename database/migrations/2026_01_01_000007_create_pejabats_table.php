@@ -11,8 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('pejabats')) {
-            Schema::create('pejabats', function (Blueprint $table) {
+        $table = 'pejabats';
+        $oldNames = array (
+  0 => 'pejabat',
+);
+
+        // 1. Rename tabel lama jika tabel lama ditemukan dan tabel baru belum ada
+        foreach ($oldNames as $old) {
+            if (Schema::hasTable($old) && !Schema::hasTable($table)) {
+                Schema::rename($old, $table);
+                break;
+            }
+        }
+
+        // 2. Buat tabel jika belum ada
+        if (!Schema::hasTable($table)) {
+            Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->string('nama', 150);
             $table->string('nip', 50)->nullable();
@@ -22,7 +36,8 @@ return new class extends Migration
             $table->timestamps();
             });
         } else {
-            Schema::table('pejabats', function (Blueprint $table) {
+            // 3. Tambahkan kolom yang belum ada jika tabel sudah ada
+            Schema::table($table, function (Blueprint $table) {
             if (!Schema::hasColumn('pejabats', 'nama')) {
                 $table->string('nama', 150);
             }
