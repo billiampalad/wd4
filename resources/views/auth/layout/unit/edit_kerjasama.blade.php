@@ -6,6 +6,11 @@
     $pksNumberInputs = !empty($pksNumberInputs) ? $pksNumberInputs : [''];
     $hasPksNumberInputs = collect($pksNumberInputs)->contains(fn ($number) => trim((string) $number) !== '');
     $allowedTipePelaksana = $allowedTipePelaksana ?? null;
+    $normalizedJenis = match ($kegiatan->jenis ?? '') {
+        'MoA', 'MoA (Memorandum of Agreement)' => 'MoA (Memorandum of Agreement)',
+        'IA', 'IA (Implementation Agreement)' => 'IA (Implementation Agreement)',
+        default => 'MoU (Memorandum of Understanding)',
+    };
     $normalizeTipePelaksana = fn ($value) => collect((array) $value)
         ->filter(fn ($type) => in_array($type, ['jurusan', 'upa', 'pusat'], true))
         ->unique()
@@ -81,8 +86,8 @@
     } elseif ($kegiatan->mitra_id) {
         $initialPenggiatList = [[
             'id' => 1,
-            'showPenandatangan' => (bool) $kegiatan->penandatanganMitra,
-            'showPJ' => (bool) $kegiatan->pjMitra,
+            'showPenandatangan' => (bool) $kegiatan->penandatanganMitra && (filled($kegiatan->penandatanganMitra?->nama) || filled($kegiatan->penandatanganMitra?->jabatan)),
+            'showPJ' => (bool) $kegiatan->pjMitra && (filled($kegiatan->pjMitra?->nama) || filled($kegiatan->pjMitra?->jabatan)),
             'mitraId' => (string) $kegiatan->mitra_id,
             'mitraOpen' => false,
             'mitraSearch' => '',
@@ -174,12 +179,12 @@
                                     showMasaBerlaku: true, 
                                     statusOpen: false, 
                                     statusValue: '{{ 
-                                        match(strtolower(old('status', $kegiatan->status ?? ''))) {
+                                        match(strtolower(old('status', $kegiatan->status_berlaku ?? $kegiatan->status ?? ''))) {
                                             'aktif' => 'Aktif',
                                             'dalam perpanjangan' => 'Dalam Perpanjangan',
-                                            'kadarluarsa' => 'Kadarluarsa',
+                                            'kadarluarsa', 'kadaluarsa', 'kedaluwarsa' => 'Kadaluarsa',
                                             'tidak aktif' => 'Tidak Aktif',
-                                            default => old('status', $kegiatan->status ?? '')
+                                            default => old('status', $kegiatan->status_berlaku ?? $kegiatan->status ?? 'Aktif')
                                         }
                                     }}' 
                                 }">
@@ -224,13 +229,13 @@
                                                         style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                                                         <i class="fas fa-signal"
                                                             style="font-size: 13px; flex-shrink: 0;"
-                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;' : 'color: #9ca3af;'"></i>
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : (statusValue === 'Kadaluarsa' || statusValue === 'Kadarluarsa') ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;' : 'color: #9ca3af;'"></i>
                                                         <span x-show="!statusValue"
                                                             style="color: #9ca3af; font-size: 13px;">— Pilih Status
                                                             —</span>
                                                         <span x-show="statusValue"
                                                             style="font-size: 13px; font-weight: 500;"
-                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : 'color: #6b7280;'"
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : (statusValue === 'Kadaluarsa' || statusValue === 'Kadarluarsa') ? 'color: #ef4444;' : 'color: #6b7280;'"
                                                             x-text="statusValue"></span>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
@@ -257,13 +262,13 @@
                                                         <span style="font-size: 13px;">Dalam Perpanjangan</span>
                                                     </div>
                                                     <div class="ad-item"
-                                                        :class="{'selected': statusValue === 'Kadarluarsa'}"
-                                                        @click="statusValue = 'Kadarluarsa'; statusOpen = false"
+                                                        :class="{'selected': statusValue === 'Kadaluarsa' || statusValue === 'Kadarluarsa'}"
+                                                        @click="statusValue = 'Kadaluarsa'; statusOpen = false"
                                                         style="display: flex; align-items: center; gap: 10px; padding: 10px 14px;">
                                                         <div
                                                             style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0;">
                                                         </div>
-                                                        <span style="font-size: 13px;">Kadarluarsa</span>
+                                                        <span style="font-size: 13px;">Kadaluarsa</span>
                                                     </div>
                                                     <div class="ad-item"
                                                         :class="{'selected': statusValue === 'Tidak Aktif'}"
@@ -459,19 +464,17 @@
 
                     {{-- ══ RIGHT COLUMN: Form Utama ══ --}}
                     <div>
-                        <div class="mc-body" style="padding: 0;">
-                            <div class="mc-grid-2">
-                                {{-- Dokumen Kerjasama (Alpine Interactive) --}}
+                        <div class="mc-body" style="padding: 0                                {{-- Dokumen Kerjasama (Alpine Interactive) --}}
                                 <div style="grid-column: 1 / -1;" class="mc-group" x-data="{ 
                             open: false, 
-                            selected: '{{ old('jenis', $kegiatan->jenis ?? 'MoU (Memorandum of Understanding)') }}',
+                            selected: '{{ old('jenis', $normalizedJenis) }}',
                             items: [
                                 { id: 'MoU (Memorandum of Understanding)', label: 'Memorandum of Understanding', short: 'MoU', icon: 'fa-file-signature', color: '#4f46e5' },
                                 { id: 'MoA (Memorandum of Agreement)', label: 'Memorandum of Agreement', short: 'MoA', icon: 'fa-file-contract', color: '#059669' },
                                 { id: 'IA (Implementation Agreement)', label: 'Implementation Agreement', short: 'IA', icon: 'fa-file-invoice', color: '#d97706' }
                             ],
                             get selectedItem() {
-                                return this.items.find(i => i.id === this.selected);
+                                return this.items.find(i => i.id === this.selected || i.short === this.selected) || this.items[0];
                             },
                             selectType(id) {
                                                 this.selected = id;
@@ -532,7 +535,10 @@
                                                             style="margin-left: auto; font-size: 11px; color: var(--accent);"></i>
                                                     </div>
                                                 </template>
-                                                                                   {{-- Right: Number Input --}}
+                                            </div>
+                                        </div>
+
+                                        {{-- Right: Number Input --}}
                                         <div class="mc-input-wrap" x-data="{ val: @js(old('doc_number', $kegiatan->doc_number ?? '')), max: 255 }">
                                             <i class="fas fa-hashtag mc-icon-left"></i>
                                             <input type="text" name="doc_number"
@@ -620,11 +626,9 @@
                                     <div class="mc-char-counter" :class="{ 'warning': (val?.length || 0) >= max * 0.85, 'danger': (val?.length || 0) >= max }">
                                         <span x-text="val ? val.length : 0"></span>/<span x-text="max"></span> karakter
                                     </div>
-                                </div>           </div>
                                 </div>
                             </div>
                         </div>
-                    </div> {{-- End RIGHT COLUMN --}}
                 </div> {{-- End TWO-COLUMN TOP LAYOUT --}}
 
                 {{-- ═══ TWO-COLUMN LAYOUT: Penggiat & Bentuk Kegiatan ═══ --}}
@@ -1583,7 +1587,7 @@ hasTipePelaksana(type) {
                     {{-- ═══ COLUMN 2: Bentuk Kegiatan ═══ --}}
                     <div
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
-                        <div x-data="{ showBentuk: false }">
+                        <div x-data="{ showBentuk: {{ !empty($initialJenisIds) ? 'true' : 'false' }} }">
                             {{-- Card Header --}}
                             <div @click="showBentuk = !showBentuk"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(217,119,6,0.04), rgba(245,158,11,0.04)); border-radius: 16px 16px 0 0;">
