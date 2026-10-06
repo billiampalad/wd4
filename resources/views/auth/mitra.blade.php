@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="{{ asset('css/auth/layout/mitra/umpan_balik.css') }}" data-turbo-track="reload">
     <script src="https://unpkg.com/@hotwired/turbo@7.3.0/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="{{ asset('js/component/alert.js') }}" data-turbo-track="reload"></script>
     <script src="{{ asset('js/component/search.js') }}" data-turbo-track="reload"></script>
