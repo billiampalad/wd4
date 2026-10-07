@@ -77,39 +77,7 @@ class PengajuanKerjasamaMitraController extends Controller
         }
 
         if ($submission->status !== 'diajukan') {
-            $sendEmail = $request->boolean('send_email');
-            $sendWhatsApp = $request->boolean('send_whatsapp');
-
-            if ($sendEmail || $sendWhatsApp) {
-                $validated = $request->validate([
-                    'send_email' => ['nullable'],
-                    'send_whatsapp' => ['nullable'],
-                    'custom_message_email' => ['nullable', 'string', 'max:5000'],
-                    'custom_message_whatsapp' => ['nullable', 'string', 'max:5000'],
-                ]);
-
-                $notifInfo = [];
-                if ($sendEmail) {
-                    $emailMessage = !empty($validated['custom_message_email'])
-                        ? $validated['custom_message_email']
-                        : NotificationService::generateDefaultMessage($submission, 'email');
-                    NotificationService::sendEmail($submission, $emailMessage);
-                    $notifInfo[] = 'Email';
-                }
-
-                if ($sendWhatsApp) {
-                    $waMessage = !empty($validated['custom_message_whatsapp'])
-                        ? $validated['custom_message_whatsapp']
-                        : NotificationService::generateDefaultMessage($submission, 'whatsapp');
-                    NotificationService::sendWhatsApp($submission, $waMessage);
-                    $notifInfo[] = 'WhatsApp';
-                }
-
-                $resendMsg = 'Notifikasi berhasil dikirim ulang ke mitra via ' . implode(' & ', $notifInfo) . '.';
-                return redirect()->route('pimpinan.pengajuan_mitra')->with('success', $resendMsg);
-            }
-
-            return back()->with('error', 'Pengajuan ini sudah diproses sebelumnya.');
+            return $this->resendNotification($request, $submission);
         }
 
         $validated = $request->validate([
@@ -129,159 +97,14 @@ class PengajuanKerjasamaMitraController extends Controller
         DB::beginTransaction();
 
         try {
-            $mitraId = $isPerpanjangan ? $submission->mitra_id : null;
+            $mitraId = null;
 
             if ($validated['keputusan'] === 'disetujui') {
-
                 if ($isPerpanjangan) {
-                    // === PERPANJANGAN ===
-                    // Tidak membuat record Cooperation/Pejabat/DetailKegiatan langsung.
-                    // Data hanya masuk ke menu "Pengajuan Perpanjangan" Humas/Unit Kerja.
-                    // Record Cooperation baru akan dibuat oleh Humas di halaman proses perpanjangan.
-
-                    $senderId = Auth::id() ?: 1;
-                    $linkPerpanjangan = route('unit.pengajuan_perpanjangan');
-
-                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
-                        ->get()
-                        ->each(function (User $unitUser) use ($senderId, $submission, $linkPerpanjangan) {
-                            Notifikasi::send(
-                                $unitUser->id,
-                                $senderId,
-                                $submission->id,
-                                'pengajuan_perpanjangan',
-                                'Pengajuan Perpanjangan Disetujui Pimpinan',
-                                "Pimpinan menyetujui pengajuan perpanjangan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi berkas perpanjangan.",
-                                $linkPerpanjangan,
-                                'pengajuan_perpanjangan_kerjasama'
-                            );
-                        });
-
+                    $this->approvePerpanjangan($submission);
+                    $mitraId = $submission->mitra_id;
                 } else {
-                    // === KERJA SAMA BARU ===
-                    // 1. Simpan / update data Mitra
-                    $mitra = null;
-                    if ($submission->nama_mitra) {
-                        $mitra = Mitra::whereRaw('LOWER(nama_mitra) = ?', [strtolower($submission->nama_mitra)])->first();
-                    }
-
-                    if (! $mitra && $submission->nama_mitra) {
-                        $mitra = Mitra::create([
-                            'nama_mitra' => $submission->nama_mitra,
-                            'id_klasifikasi' => $submission->id_klasifikasi,
-                            'alamat' => $submission->alamat ?: '-',
-                            'negara' => $submission->negara,
-                            'telepon' => $submission->telp,
-                            'website' => $submission->website,
-                            'status_akses' => 'Aktif',
-                        ]);
-                    } elseif ($mitra) {
-                        $mitra->fill([
-                            'id_klasifikasi' => $mitra->id_klasifikasi ?: $submission->id_klasifikasi,
-                            'alamat' => $mitra->alamat ?: $submission->alamat,
-                            'negara' => $mitra->negara ?: $submission->negara,
-                            'telepon' => $mitra->telepon ?: $submission->telp,
-                            'website' => $mitra->website ?: $submission->website,
-                        ])->save();
-                    }
-
-                    $mitraId = $mitra?->id ?: $submission->mitra_id;
-
-                    // UC-AA: Auto-create User account with role 'mitra' if email is available and user does not exist
-                    $mitraEmail = $submission->email ?: ($mitra ? $mitra->email : null);
-                    if ($mitraId && $mitraEmail) {
-                        $existingMitraUser = User::where('email', $mitraEmail)->first();
-                        if (! $existingMitraUser) {
-                            $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(name)) = ?', ['mitra'])->first();
-                            if ($roleMitra) {
-                                $randomPassword = \Illuminate\Support\Str::random(10);
-                                User::create([
-                                    'name' => $submission->nama_mitra ?: ($mitra ? $mitra->nama_mitra : 'Mitra'),
-                                    'email' => $mitraEmail,
-                                    'password' => \Illuminate\Support\Facades\Hash::make($randomPassword),
-                                    'role_id' => $roleMitra->id,
-                                    'mitra_id' => $mitraId,
-                                    'email_verified_at' => now(),
-                                ]);
-                            }
-                        }
-                    }
-
-                    // 2. Buat / Ambil Pejabat penandatangan & penanggung jawab mitra
-                    $penandatanganMitra = Pejabat::create([
-                        'nama' => $submission->nama_penandatangan ?: 'Mitra',
-                        'jabatan' => $submission->jabatan_penandatangan ?: '-',
-                    ]);
-
-                    $pjMitra = null;
-                    if ($submission->nama_penanggung_jawab) {
-                        $pjMitra = Pejabat::create([
-                            'nama' => $submission->nama_penanggung_jawab,
-                            'jabatan' => $submission->jabatan_penanggung_jawab ?: '-',
-                        ]);
-                    }
-
-                    // 3. Buat / Update record Cooperation (Status Dokumen: Draft, Status Berlaku: Aktif)
-                    $jenisEnum = 'MoU';
-                    if (!empty($submission->jenis)) {
-                        $j = strtoupper($submission->jenis);
-                        if (str_contains($j, 'MOA')) {
-                            $jenisEnum = 'MoA';
-                        } elseif (str_contains($j, 'IA') || str_contains($j, 'SPK')) {
-                            $jenisEnum = 'IA';
-                        } else {
-                            $jenisEnum = 'MoU';
-                        }
-                    }
-
-                    /** @var Cooperation|null $cooperation */
-                    $cooperation = Cooperation::where('pengajuan_kerjasama_baru_id', $submission->id)->first();
-                    if (! $cooperation) {
-                        $cooperation = Cooperation::create([
-                            'jenis' => $jenisEnum,
-                            'doc_number' => $submission->doc_number,
-                            'judul' => $submission->judul_pengajuan,
-                            'description' => $submission->ruang_lingkup ?: $submission->tujuan_pengajuan,
-                            'start_date' => $submission->start_date,
-                            'end_date' => $submission->end_date,
-                            'status_berlaku' => 'Aktif',
-                            'status_dokumen' => 'Draft',
-                            'tingkat' => 'Institusi',
-                            'mitra_id' => $mitraId,
-                            'penandatangan_mitra_id' => $penandatanganMitra->id,
-                            'pj_mitra_id' => $pjMitra?->id,
-                            'pengajuan_kerjasama_baru_id' => $submission->id,
-                            'created_by' => Auth::id(),
-                        ]);
-
-                        $penandatanganMitra?->update(['cooperation_id' => $cooperation->id]);
-                        $pjMitra?->update(['cooperation_id' => $cooperation->id]);
-                    } else {
-                        $cooperation->update([
-                            'judul' => $submission->judul_pengajuan,
-                            'status_berlaku' => 'Aktif',
-                            'status_dokumen' => 'Draft',
-                            'mitra_id' => $mitraId,
-                        ]);
-                    }
-
-                    // 4. Kirim notifikasi ke Humas / Unit Kerja
-                    $senderId = Auth::id() ?: 1;
-                    $linkRepositori = route('unit.dkerjasama');
-
-                    User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
-                        ->get()
-                        ->each(function (User $unitUser) use ($senderId, $cooperation, $linkRepositori, $submission) {
-                            Notifikasi::send(
-                                $unitUser->id,
-                                $senderId,
-                                $cooperation->id,
-                                'data_baru',
-                                'Pengajuan Kerja Sama Baru Disahkan',
-                                "Pimpinan menyetujui pengajuan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi data & dokumen kerjasama.",
-                                $linkRepositori
-                            );
-                        });
+                    $mitraId = $this->approveKerjasamaBaru($submission);
                 }
             }
 
@@ -292,7 +115,7 @@ class PengajuanKerjasamaMitraController extends Controller
                 'reviewed_at' => now(),
             ];
 
-            if (!$isPerpanjangan) {
+            if (!$isPerpanjangan && $mitraId) {
                 $updateData['mitra_id'] = $mitraId;
             }
 
@@ -304,32 +127,16 @@ class PengajuanKerjasamaMitraController extends Controller
 
             DB::commit();
 
-            // --- Kirim notifikasi ke mitra setelah DB commit berhasil ---
-            $sendEmail = $request->boolean('send_email');
-            $sendWhatsApp = $request->boolean('send_whatsapp');
-
-            if ($sendEmail) {
-                $emailMessage = !empty($validated['custom_message_email'])
-                    ? $validated['custom_message_email']
-                    : NotificationService::generateDefaultMessage($submission, 'email');
-                NotificationService::sendEmail($submission, $emailMessage);
-            }
-
-            if ($sendWhatsApp) {
-                $waMessage = !empty($validated['custom_message_whatsapp'])
-                    ? $validated['custom_message_whatsapp']
-                    : NotificationService::generateDefaultMessage($submission, 'whatsapp');
-                NotificationService::sendWhatsApp($submission, $waMessage);
-            }
+            $notifInfo = $this->dispatchNotifications(
+                $submission,
+                $validated,
+                $request->boolean('send_email'),
+                $request->boolean('send_whatsapp')
+            );
 
             $message = $validated['keputusan'] === 'disetujui'
                 ? ($isPerpanjangan ? 'Pengajuan perpanjangan berhasil disetujui dan notifikasi dikirim ke Humas/Unit Kerja.' : 'Pengajuan mitra berhasil disetujui dan dicatat ke master mitra.')
                 : 'Pengajuan mitra berhasil ditolak.';
-
-            // Tambahkan info notifikasi ke flash message
-            $notifInfo = [];
-            if ($sendEmail) $notifInfo[] = 'Email';
-            if ($sendWhatsApp) $notifInfo[] = 'WhatsApp';
 
             if (count($notifInfo) > 0) {
                 $message .= ' Notifikasi dikirim via ' . implode(' & ', $notifInfo) . '.';
@@ -346,5 +153,215 @@ class PengajuanKerjasamaMitraController extends Controller
 
             return back()->with('error', 'Gagal memproses pengajuan mitra: ' . $exception->getMessage());
         }
+    }
+
+    private function resendNotification(Request $request, $submission)
+    {
+        $sendEmail = $request->boolean('send_email');
+        $sendWhatsApp = $request->boolean('send_whatsapp');
+
+        if ($sendEmail || $sendWhatsApp) {
+            $validated = $request->validate([
+                'send_email' => ['nullable'],
+                'send_whatsapp' => ['nullable'],
+                'custom_message_email' => ['nullable', 'string', 'max:5000'],
+                'custom_message_whatsapp' => ['nullable', 'string', 'max:5000'],
+            ]);
+
+            $notifInfo = [];
+            if ($sendEmail) {
+                $emailMessage = !empty($validated['custom_message_email'])
+                    ? $validated['custom_message_email']
+                    : NotificationService::generateDefaultMessage($submission, 'email');
+                NotificationService::sendEmail($submission, $emailMessage);
+                $notifInfo[] = 'Email';
+            }
+
+            if ($sendWhatsApp) {
+                $waMessage = !empty($validated['custom_message_whatsapp'])
+                    ? $validated['custom_message_whatsapp']
+                    : NotificationService::generateDefaultMessage($submission, 'whatsapp');
+                NotificationService::sendWhatsApp($submission, $waMessage);
+                $notifInfo[] = 'WhatsApp';
+            }
+
+            $resendMsg = 'Notifikasi berhasil dikirim ulang ke mitra via ' . implode(' & ', $notifInfo) . '.';
+            return redirect()->route('pimpinan.pengajuan_mitra')->with('success', $resendMsg);
+        }
+
+        return back()->with('error', 'Pengajuan ini sudah diproses sebelumnya.');
+    }
+
+    private function approvePerpanjangan(PengajuanPerpanjanganKerjasama $submission): void
+    {
+        $senderId = Auth::id() ?: 1;
+        $linkPerpanjangan = route('unit.pengajuan_perpanjangan');
+
+        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
+            ->get()
+            ->each(function (User $unitUser) use ($senderId, $submission, $linkPerpanjangan) {
+                Notifikasi::send(
+                    $unitUser->id,
+                    $senderId,
+                    $submission->id,
+                    'pengajuan_perpanjangan',
+                    'Pengajuan Perpanjangan Disetujui Pimpinan',
+                    "Pimpinan menyetujui pengajuan perpanjangan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi berkas perpanjangan.",
+                    $linkPerpanjangan,
+                    'pengajuan_perpanjangan_kerjasama'
+                );
+            });
+    }
+
+    private function approveKerjasamaBaru(PengajuanKerjasamaBaru $submission): ?int
+    {
+        // 1. Simpan / update data Mitra
+        $mitra = null;
+        if ($submission->nama_mitra) {
+            $mitra = Mitra::whereRaw('LOWER(nama_mitra) = ?', [strtolower($submission->nama_mitra)])->first();
+        }
+
+        if (! $mitra && $submission->nama_mitra) {
+            $mitra = Mitra::create([
+                'nama_mitra' => $submission->nama_mitra,
+                'id_klasifikasi' => $submission->id_klasifikasi,
+                'alamat' => $submission->alamat ?: '-',
+                'negara' => $submission->negara,
+                'telepon' => $submission->telp,
+                'website' => $submission->website,
+                'status_akses' => 'Aktif',
+            ]);
+        } elseif ($mitra) {
+            $mitra->fill([
+                'id_klasifikasi' => $mitra->id_klasifikasi ?: $submission->id_klasifikasi,
+                'alamat' => $mitra->alamat ?: $submission->alamat,
+                'negara' => $mitra->negara ?: $submission->negara,
+                'telepon' => $mitra->telepon ?: $submission->telp,
+                'website' => $mitra->website ?: $submission->website,
+            ])->save();
+        }
+
+        $mitraId = $mitra?->id ?: $submission->mitra_id;
+
+        // Auto-create User account with role 'mitra' if email is available and user does not exist
+        $mitraEmail = $submission->email ?: ($mitra ? $mitra->email : null);
+        if ($mitraId && $mitraEmail) {
+            $existingMitraUser = User::where('email', $mitraEmail)->first();
+            if (! $existingMitraUser) {
+                $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(name)) = ?', ['mitra'])->first();
+                if ($roleMitra) {
+                    $randomPassword = \Illuminate\Support\Str::random(10);
+                    User::create([
+                        'name' => $submission->nama_mitra ?: ($mitra ? $mitra->nama_mitra : 'Mitra'),
+                        'email' => $mitraEmail,
+                        'password' => \Illuminate\Support\Facades\Hash::make($randomPassword),
+                        'role_id' => $roleMitra->id,
+                        'mitra_id' => $mitraId,
+                        'email_verified_at' => now(),
+                    ]);
+                }
+            }
+        }
+
+        // 2. Buat / Ambil Pejabat penandatangan & penanggung jawab mitra
+        $penandatanganMitra = Pejabat::create([
+            'nama' => $submission->nama_penandatangan ?: 'Mitra',
+            'jabatan' => $submission->jabatan_penandatangan ?: '-',
+        ]);
+
+        $pjMitra = null;
+        if ($submission->nama_penanggung_jawab) {
+            $pjMitra = Pejabat::create([
+                'nama' => $submission->nama_penanggung_jawab,
+                'jabatan' => $submission->jabatan_penanggung_jawab ?: '-',
+            ]);
+        }
+
+        // 3. Buat / Update record Cooperation
+        $jenisEnum = 'MoU';
+        if (!empty($submission->jenis)) {
+            $j = strtoupper($submission->jenis);
+            if (str_contains($j, 'MOA')) {
+                $jenisEnum = 'MoA';
+            } elseif (str_contains($j, 'IA') || str_contains($j, 'SPK')) {
+                $jenisEnum = 'IA';
+            } else {
+                $jenisEnum = 'MoU';
+            }
+        }
+
+        /** @var Cooperation|null $cooperation */
+        $cooperation = Cooperation::where('pengajuan_kerjasama_baru_id', $submission->id)->first();
+        if (! $cooperation) {
+            $cooperation = Cooperation::create([
+                'jenis' => $jenisEnum,
+                'doc_number' => $submission->doc_number,
+                'judul' => $submission->judul_pengajuan,
+                'description' => $submission->ruang_lingkup ?: $submission->tujuan_pengajuan,
+                'start_date' => $submission->start_date,
+                'end_date' => $submission->end_date,
+                'status_berlaku' => 'Aktif',
+                'status_dokumen' => 'Draft',
+                'tingkat' => 'Institusi',
+                'mitra_id' => $mitraId,
+                'penandatangan_mitra_id' => $penandatanganMitra->id,
+                'pj_mitra_id' => $pjMitra?->id,
+                'pengajuan_kerjasama_baru_id' => $submission->id,
+                'created_by' => Auth::id(),
+            ]);
+
+            $penandatanganMitra?->update(['cooperation_id' => $cooperation->id]);
+            $pjMitra?->update(['cooperation_id' => $cooperation->id]);
+        } else {
+            $cooperation->update([
+                'judul' => $submission->judul_pengajuan,
+                'status_berlaku' => 'Aktif',
+                'status_dokumen' => 'Draft',
+                'mitra_id' => $mitraId,
+            ]);
+        }
+
+        // 4. Kirim notifikasi ke Humas / Unit Kerja
+        $senderId = Auth::id() ?: 1;
+        $linkRepositori = route('unit.dkerjasama');
+
+        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
+            ->get()
+            ->each(function (User $unitUser) use ($senderId, $cooperation, $linkRepositori, $submission) {
+                Notifikasi::send(
+                    $unitUser->id,
+                    $senderId,
+                    $cooperation->id,
+                    'data_baru',
+                    'Pengajuan Kerja Sama Baru Disahkan',
+                    "Pimpinan menyetujui pengajuan mitra '{$submission->nama_mitra}' ({$submission->judul_pengajuan}). Silakan lengkapi data & dokumen kerjasama.",
+                    $linkRepositori
+                );
+            });
+
+        return $mitraId;
+    }
+
+    private function dispatchNotifications($submission, array $validated, bool $sendEmail, bool $sendWhatsApp): array
+    {
+        $notifInfo = [];
+
+        if ($sendEmail) {
+            $emailMessage = !empty($validated['custom_message_email'])
+                ? $validated['custom_message_email']
+                : NotificationService::generateDefaultMessage($submission, 'email');
+            NotificationService::sendEmail($submission, $emailMessage);
+            $notifInfo[] = 'Email';
+        }
+
+        if ($sendWhatsApp) {
+            $waMessage = !empty($validated['custom_message_whatsapp'])
+                ? $validated['custom_message_whatsapp']
+                : NotificationService::generateDefaultMessage($submission, 'whatsapp');
+            NotificationService::sendWhatsApp($submission, $waMessage);
+            $notifInfo[] = 'WhatsApp';
+        }
+
+        return $notifInfo;
     }
 }
