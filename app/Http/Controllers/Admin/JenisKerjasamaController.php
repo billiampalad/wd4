@@ -26,11 +26,11 @@ class JenisKerjasamaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama',
+            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama',
         ]);
 
         JenisKerjasama::create([
-            'nama' => $request->nama_kerjasama
+            'nama_kerjasama' => $request->nama_kerjasama
         ]);
 
         return redirect()
@@ -46,11 +46,11 @@ class JenisKerjasamaController extends Controller
     public function update(Request $request, JenisKerjasama $jkerjasama)
     {
         $request->validate([
-            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama,' . $jkerjasama->id,
+            'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama,' . $jkerjasama->id,
         ]);
 
         $jkerjasama->update([
-            'nama' => $request->nama_kerjasama
+            'nama_kerjasama' => $request->nama_kerjasama
         ]);
 
         return redirect()

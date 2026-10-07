@@ -11,7 +11,7 @@ class JenisKerjasama extends Model
 
     protected $table = 'jenis_kerjasamas';
 
-    protected $fillable = ['nama', 'nama_kerjasama'];
+    protected $fillable = ['nama_kerjasama'];
 
     public function kegiatanKerjasamas()
     {
@@ -32,23 +32,22 @@ class JenisKerjasama extends Model
 
     public function getNamaJenisAttribute()
     {
-        return !empty($this->attributes['nama']) 
-            ? $this->attributes['nama'] 
-            : ($this->attributes['nama_kerjasama'] ?? null);
+        return $this->attributes['nama_kerjasama'] ?? ($this->attributes['nama'] ?? null);
     }
 
     public function getNamaKerjasamaAttribute()
     {
-        return !empty($this->attributes['nama_kerjasama']) 
-            ? $this->attributes['nama_kerjasama'] 
-            : ($this->attributes['nama'] ?? null);
+        return $this->attributes['nama_kerjasama'] ?? ($this->attributes['nama'] ?? null);
     }
 
     public function getNamaAttribute()
     {
-        return !empty($this->attributes['nama']) 
-            ? $this->attributes['nama'] 
-            : ($this->attributes['nama_kerjasama'] ?? null);
+        return $this->attributes['nama_kerjasama'] ?? ($this->attributes['nama'] ?? null);
+    }
+
+    public function setNamaAttribute($value)
+    {
+        $this->attributes['nama_kerjasama'] = $value;
     }
 }
 
