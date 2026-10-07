@@ -541,7 +541,7 @@ class UpaPageController extends Controller
         $this->resolveUnitId();
 
         $bentukKegiatans = JenisKerjasama::withCount(['details as total_count'])
-            ->orderByRaw("COALESCE(nama, nama_kerjasama, '') ASC")
+            ->orderByRaw('COALESCE(nama_kerjasama, nama) ASC')
             ->get();
 
         return view('auth.upa', compact('bentukKegiatans'));

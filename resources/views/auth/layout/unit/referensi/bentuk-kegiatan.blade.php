@@ -5,7 +5,7 @@
 
     // Find the most active/frequent activity type
     $mostActive = $bentukList->sortByDesc('total_count')->first();
-    $mostActiveName = $mostActive && $mostActive->total_count > 0 ? ($mostActive->nama ?: $mostActive->nama_kerjasama) : '-';
+    $mostActiveName = $mostActive && $mostActive->total_count > 0 ? ($mostActive->nama_kerjasama ?: $mostActive->nama) : '-';
     $mostActiveCount = $mostActive ? $mostActive->total_count : 0;
 @endphp
 
@@ -101,7 +101,7 @@
                                     <div class="dk-entity" style="gap: 14px;">
                                         <div style="display: flex; flex-direction: column; gap: 4px;">
                                             <span class="dk-entity-text"
-                                                style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $bentuk->nama ?: $bentuk->nama_kerjasama }}</span>
+                                                style="font-weight: 700; font-size: 14px; color: var(--ud-text);">{{ $bentuk->nama_kerjasama ?: ($bentuk->nama ?: '-') }}</span>
                                         </div>
                                     </div>
                                 </td>

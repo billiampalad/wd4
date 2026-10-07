@@ -32,11 +32,23 @@ class JenisKerjasama extends Model
 
     public function getNamaJenisAttribute()
     {
-        return $this->nama ?? $this->attributes['nama_kerjasama'] ?? null;
+        return !empty($this->attributes['nama']) 
+            ? $this->attributes['nama'] 
+            : ($this->attributes['nama_kerjasama'] ?? null);
     }
 
     public function getNamaKerjasamaAttribute()
     {
-        return $this->nama ?? $this->attributes['nama_kerjasama'] ?? null;
+        return !empty($this->attributes['nama_kerjasama']) 
+            ? $this->attributes['nama_kerjasama'] 
+            : ($this->attributes['nama'] ?? null);
+    }
+
+    public function getNamaAttribute()
+    {
+        return !empty($this->attributes['nama']) 
+            ? $this->attributes['nama'] 
+            : ($this->attributes['nama_kerjasama'] ?? null);
     }
 }
+
