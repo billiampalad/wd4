@@ -289,33 +289,43 @@ class KerjasamaJurusanController extends Controller
 
             // 4. Handle Pivot Tables
             if ($request->tipe_pelaksana === 'jurusan' && $request->pelaksana_jurusan_ids) {
-                $cooperation->jurusans()->sync($request->pelaksana_jurusan_ids);
-                if ($request->pelaksana_prodi_ids) {
-                    $cooperation->prodis()->sync($request->pelaksana_prodi_ids);
+                $jurusanIds = array_values(array_filter(array_map('intval', (array)$request->pelaksana_jurusan_ids), fn($id) => $id > 0));
+                $prodiIds = array_values(array_filter(array_map('intval', (array)$request->input('pelaksana_prodi_ids', [])), fn($id) => $id > 0));
+                $cooperation->jurusans()->sync($jurusanIds);
+                if (!empty($prodiIds)) {
+                    $cooperation->prodis()->sync($prodiIds);
                 }
             } elseif ($request->tipe_pelaksana === 'upa' && $request->pelaksana_upa_ids) {
-                $cooperation->upas()->sync($request->pelaksana_upa_ids);
+                $upaIds = array_values(array_filter(array_map('intval', (array)$request->pelaksana_upa_ids), fn($id) => $id > 0));
+                $cooperation->upas()->sync($upaIds);
             } elseif ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) {
-                $cooperation->pusats()->sync($request->pelaksana_pusat_ids);
+                $pusatIds = array_values(array_filter(array_map('intval', (array)$request->pelaksana_pusat_ids), fn($id) => $id > 0));
+                $cooperation->pusats()->sync($pusatIds);
             }
 
             // 5. Handle Detail Kegiatans (Optional fields)
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
+                    if (empty($jenisId) || !is_numeric($jenisId) || (int)$jenisId <= 0) {
+                        continue;
+                    }
                     $detailData = $request->jenis_detail[$jenisId] ?? [];
                     $rawIncome = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
                     $incomeValue = !empty($rawIncome) ? preg_replace('/[^\d]/', '', (string) $rawIncome) : null;
                     $incomeValue = $incomeValue !== '' ? $incomeValue : null;
 
+                    $sasaranId = (!empty($detailData['sasaran_id']) && is_numeric($detailData['sasaran_id']) && (int)$detailData['sasaran_id'] > 0) ? (int)$detailData['sasaran_id'] : null;
+                    $indikatorId = (!empty($detailData['indikator_id']) && is_numeric($detailData['indikator_id']) && (int)$detailData['indikator_id'] > 0) ? (int)$detailData['indikator_id'] : null;
+
                     DetailKegiatan::create([
                         'cooperation_id' => $cooperation->id,
-                        'jenis_kerjasama_id' => $jenisId,
-                        'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
+                        'jenis_kerjasama_id' => (int)$jenisId,
+                        'sasaran_id' => $sasaranId,
                         'income' => $incomeValue,
                         'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
                         'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
                         'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
-                        'indikator_id' => !empty($detailData['indikator_id']) ? $detailData['indikator_id'] : null,
+                        'indikator_id' => $indikatorId,
                         'output' => !empty($detailData['output']) ? $detailData['output'] : null,
                         'outcome' => !empty($detailData['outcome']) ? $detailData['outcome'] : null,
                     ]);
