@@ -248,13 +248,13 @@
                                                         style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                                                         <i class="fas fa-signal"
                                                             style="font-size: 13px; flex-shrink: 0;"
-                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;' : 'color: #9ca3af;'"></i>
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : (statusValue === 'Kadaluarsa' || statusValue === 'Kadarluarsa') ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;' : 'color: #9ca3af;'"></i>
                                                         <span x-show="!statusValue"
                                                             style="color: #9ca3af; font-size: 13px;">— Pilih Status
                                                             —</span>
                                                         <span x-show="statusValue"
                                                             style="font-size: 13px; font-weight: 500;"
-                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : statusValue === 'Kadarluarsa' ? 'color: #ef4444;' : statusValue === 'Tidak Aktif' ? 'color: #6b7280;'"
+                                                            :style="statusValue === 'Aktif' ? 'color: #10b981;' : statusValue === 'Dalam Perpanjangan' ? 'color: #f59e0b;' : (statusValue === 'Kadaluarsa' || statusValue === 'Kadarluarsa') ? 'color: #ef4444;' : 'color: #6b7280;'"
                                                             x-text="statusValue"></span>
                                                     </div>
                                                     <i class="fas fa-chevron-down"
