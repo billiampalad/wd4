@@ -196,8 +196,7 @@ class KerjasamaUnitController extends Controller
             $pjMitra = null;
 
             if ($request->penggiat_mitra_ids && count($request->penggiat_mitra_ids) > 0) {
-                $rawMitraId = $request->penggiat_mitra_ids[0] ?: null;
-                $mitraId = (!empty($rawMitraId) && is_numeric($rawMitraId) && (int)$rawMitraId > 0) ? (int)$rawMitraId : null;
+                $mitraId = $request->penggiat_mitra_ids[0] ?: null;
 
                 $penggiatData = $request->penggiat[0] ?? null;
                 if ($penggiatData) {
@@ -246,9 +245,9 @@ class KerjasamaUnitController extends Controller
                 'penandatangan_mitra_id' => $penandatanganMitra?->id,
                 'pj_mitra_id' => $pjMitra?->id,
                 'tingkat' => 'Institusi',
-                'jurusan_id' => in_array('jurusan', $tipePelaksana, true) && $request->pelaksana_jurusan_ids ? (int)$request->pelaksana_jurusan_ids[0] : null,
-                'upa_id' => in_array('upa', $tipePelaksana, true) && $request->pelaksana_upa_ids ? (int)$request->pelaksana_upa_ids[0] : null,
-                'pusat_id' => in_array('pusat', $tipePelaksana, true) && $request->pelaksana_pusat_ids ? (int)$request->pelaksana_pusat_ids[0] : null,
+                'jurusan_id' => in_array('jurusan', $tipePelaksana, true) && $request->pelaksana_jurusan_ids ? $request->pelaksana_jurusan_ids[0] : null,
+                'upa_id' => in_array('upa', $tipePelaksana, true) && $request->pelaksana_upa_ids ? $request->pelaksana_upa_ids[0] : null,
+                'pusat_id' => in_array('pusat', $tipePelaksana, true) && $request->pelaksana_pusat_ids ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
             $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
@@ -259,26 +258,20 @@ class KerjasamaUnitController extends Controller
             // 5. Handle Detail Kegiatans (Optional fields)
             if ($request->id_jenis && is_array($request->id_jenis)) {
                 foreach ($request->id_jenis as $jenisId) {
-                    if (empty($jenisId) || !is_numeric($jenisId) || (int)$jenisId <= 0) {
-                        continue;
-                    }
                     $detailData = $request->jenis_detail[$jenisId] ?? [];
                     $rawIncome = !empty($detailData['income']) ? $detailData['income'] : (!empty($detailData['nilai_kontrak']) ? $detailData['nilai_kontrak'] : null);
                     $incomeValue = !empty($rawIncome) ? preg_replace('/[^\d]/', '', (string) $rawIncome) : null;
                     $incomeValue = $incomeValue !== '' ? $incomeValue : null;
 
-                    $sasaranId = (!empty($detailData['sasaran_id']) && is_numeric($detailData['sasaran_id']) && (int)$detailData['sasaran_id'] > 0) ? (int)$detailData['sasaran_id'] : null;
-                    $indikatorId = (!empty($detailData['indikator_id']) && is_numeric($detailData['indikator_id']) && (int)$detailData['indikator_id'] > 0) ? (int)$detailData['indikator_id'] : null;
-
                     DetailKegiatan::create([
                         'cooperation_id' => $cooperation->id,
-                        'jenis_kerjasama_id' => (int)$jenisId,
-                        'sasaran_id' => $sasaranId,
+                        'jenis_kerjasama_id' => $jenisId,
+                        'sasaran_id' => !empty($detailData['sasaran_id']) ? $detailData['sasaran_id'] : null,
                         'income' => $incomeValue,
                         'volume_luaran' => !empty($detailData['volume']) ? $detailData['volume'] : null,
                         'satuan_luaran' => !empty($detailData['satuan_volume']) ? $detailData['satuan_volume'] : null,
                         'keterangan_luaran' => $detailData['keterangan'] ?? ($detailData['keterangan_luaran'] ?? null),
-                        'indikator_id' => $indikatorId,
+                        'indikator_id' => !empty($detailData['indikator_id']) ? $detailData['indikator_id'] : null,
                         'output' => !empty($detailData['output']) ? $detailData['output'] : null,
                         'outcome' => !empty($detailData['outcome']) ? $detailData['outcome'] : null,
                     ]);
@@ -743,27 +736,16 @@ class KerjasamaUnitController extends Controller
     private function syncPelaksanaRelations(Cooperation $cooperation, array $tipePelaksana, Request $request): void
     {
         if (in_array('jurusan', $tipePelaksana, true)) {
-            $jurusanIds = array_values(array_filter(array_map('intval', (array) $request->input('pelaksana_jurusan_ids', [])), fn($id) => $id > 0));
-            $prodiIds = array_values(array_filter(array_map('intval', (array) $request->input('pelaksana_prodi_ids', [])), fn($id) => $id > 0));
-            $cooperation->jurusans()->sync($jurusanIds);
-            $cooperation->prodis()->sync($prodiIds);
-        } else {
-            $cooperation->jurusans()->detach();
-            $cooperation->prodis()->detach();
+            $cooperation->jurusans()->sync((array) $request->input('pelaksana_jurusan_ids', []));
+            $cooperation->prodis()->sync((array) $request->input('pelaksana_prodi_ids', []));
         }
 
         if (in_array('upa', $tipePelaksana, true)) {
-            $upaIds = array_values(array_filter(array_map('intval', (array) $request->input('pelaksana_upa_ids', [])), fn($id) => $id > 0));
-            $cooperation->upas()->sync($upaIds);
-        } else {
-            $cooperation->upas()->detach();
+            $cooperation->upas()->sync((array) $request->input('pelaksana_upa_ids', []));
         }
 
         if (in_array('pusat', $tipePelaksana, true)) {
-            $pusatIds = array_values(array_filter(array_map('intval', (array) $request->input('pelaksana_pusat_ids', [])), fn($id) => $id > 0));
-            $cooperation->pusats()->sync($pusatIds);
-        } else {
-            $cooperation->pusats()->detach();
+            $cooperation->pusats()->sync((array) $request->input('pelaksana_pusat_ids', []));
         }
     }
 

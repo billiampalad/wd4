@@ -132,22 +132,22 @@ class Cooperation extends Model
 
     public function jurusans()
     {
-        return $this->belongsToMany(Jurusan::class, 'cooperation_jurusan', 'cooperation_id', 'jurusan_id');
+        return $this->belongsToMany(Jurusan::class, 'kerjasama_jurusan', 'cooperation_id', 'jurusan_id');
     }
 
     public function upas()
     {
-        return $this->belongsToMany(Upa::class, 'cooperation_upa', 'cooperation_id', 'upa_id');
+        return $this->belongsToMany(Upa::class, 'kerjasama_upa', 'cooperation_id', 'upa_id');
     }
 
     public function pusats()
     {
-        return $this->belongsToMany(Pusat::class, 'cooperation_pusat', 'cooperation_id', 'pusat_id');
+        return $this->belongsToMany(Pusat::class, 'kerjasama_pusat', 'cooperation_id', 'pusat_id');
     }
 
     public function prodis()
     {
-        return $this->belongsToMany(Prodi::class, 'cooperation_prodi', 'cooperation_id', 'prodi_id');
+        return $this->belongsToMany(Prodi::class, 'kerjasama_prodi', 'cooperation_id', 'prodi_id');
     }
 
     public function laporanFiles()
@@ -395,17 +395,6 @@ class Cooperation extends Model
         }
 
         return 'dk-entity-indigo';
-    }
-
-    public function getDescriptionAttribute(): ?string
-    {
-        return $this->attributes['description'] ?? ($this->attributes['ruang_lingkup'] ?? null);
-    }
-
-    public function setDescriptionAttribute($value): void
-    {
-        $this->attributes['description'] = $value;
-        $this->attributes['ruang_lingkup'] = $value;
     }
 
     protected static function booted(): void
