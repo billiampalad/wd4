@@ -540,7 +540,7 @@ class JurusanPageController extends Controller
         $this->resolveUnitId();
 
         $bentukKegiatans = JenisKerjasama::withCount(['details as total_count'])
-            ->orderBy('nama_kerjasama', 'asc')
+            ->orderByRaw("COALESCE(nama, nama_kerjasama, '') ASC")
             ->get();
 
         return view('auth.jurusan', compact('bentukKegiatans'));
