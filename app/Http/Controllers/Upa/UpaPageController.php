@@ -547,6 +547,56 @@ class UpaPageController extends Controller
         return view('auth.upa', compact('bentukKegiatans'));
     }
 
+    public function bentukKegiatanStore(Request $request)
+    {
+        $request->validate([
+            'nama_kerjasama' => 'required|string|max:255',
+            'keterangan' => 'nullable|string|max:1000',
+        ], [
+            'nama_kerjasama.required' => 'Nama bentuk kegiatan wajib diisi.',
+            'nama_kerjasama.max' => 'Nama bentuk kegiatan maksimal 255 karakter.',
+            'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+        ]);
+
+        JenisKerjasama::create([
+            'nama_kerjasama' => $request->nama_kerjasama,
+            'keterangan' => $request->keterangan,
+        ]);
+
+        return back()->with('success', 'Bentuk kegiatan kerjasama berhasil ditambahkan.');
+    }
+
+    public function bentukKegiatanUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_kerjasama' => 'required|string|max:255',
+            'keterangan' => 'nullable|string|max:1000',
+        ], [
+            'nama_kerjasama.required' => 'Nama bentuk kegiatan wajib diisi.',
+            'nama_kerjasama.max' => 'Nama bentuk kegiatan maksimal 255 karakter.',
+            'keterangan.max' => 'Keterangan maksimal 1000 karakter.',
+        ]);
+
+        $bentuk = JenisKerjasama::findOrFail($id);
+        $bentuk->update([
+            'nama_kerjasama' => $request->nama_kerjasama,
+            'keterangan' => $request->keterangan,
+        ]);
+
+        return back()->with('success', 'Bentuk kegiatan kerjasama berhasil diperbarui.');
+    }
+
+    public function bentukKegiatanDestroy($id)
+    {
+        $bentuk = JenisKerjasama::withCount(['details as total_count'])->findOrFail($id);
+        if ($bentuk->total_count > 0) {
+            return back()->with('error', 'Bentuk kegiatan tidak dapat dihapus karena telah digunakan pada data kerjasama.');
+        }
+
+        $bentuk->delete();
+        return back()->with('success', 'Bentuk kegiatan kerjasama berhasil dihapus.');
+    }
+
     public function statusKerjasamaReferensi()
     {
         $unitId = $this->resolveUnitId();

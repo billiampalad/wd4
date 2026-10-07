@@ -129,6 +129,9 @@ Route::middleware(['auth', 'role:jurusan'])->group(function () {
     Route::get('/jurusan/analitik/geo-mitra', [JurusanPageController::class, 'geoMitra'])->name('jurusan.analitik.geo-mitra');
     Route::get('/jurusan/institusi', [JurusanPageController::class, 'institusi'])->name('jurusan.institusi');
     Route::get('/jurusan/referensi/bentuk-kegiatan', [JurusanPageController::class, 'bentukKegiatan'])->name('jurusan.referensi.bentuk-kegiatan');
+    Route::post('/jurusan/referensi/bentuk-kegiatan', [JurusanPageController::class, 'bentukKegiatanStore'])->name('jurusan.referensi.bentuk-kegiatan.store');
+    Route::put('/jurusan/referensi/bentuk-kegiatan/{id}', [JurusanPageController::class, 'bentukKegiatanUpdate'])->name('jurusan.referensi.bentuk-kegiatan.update');
+    Route::delete('/jurusan/referensi/bentuk-kegiatan/{id}', [JurusanPageController::class, 'bentukKegiatanDestroy'])->name('jurusan.referensi.bentuk-kegiatan.destroy');
     Route::get('/jurusan/referensi/status-kerjasama', [JurusanPageController::class, 'statusKerjasamaReferensi'])->name('jurusan.referensi.status-kerjasama');
     Route::get('/jurusan/referensi/status-evaluasi', [JurusanPageController::class, 'statusEvaluasiReferensi'])->name('jurusan.referensi.status-evaluasi');
     Route::get('/jurusan/referensi/kriteria-mitra', [JurusanPageController::class, 'kriteriaMitraReferensi'])->name('jurusan.referensi.kriteria-mitra');
@@ -217,6 +220,9 @@ Route::middleware(['auth', 'role:unit_kerja'])->group(function () {
 
     // referensi
     Route::get('/unit/referensi/bentuk-kegiatan', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatan'])->name('unit.referensi.bentuk-kegiatan');
+    Route::post('/unit/referensi/bentuk-kegiatan', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatanStore'])->name('unit.referensi.bentuk-kegiatan.store');
+    Route::put('/unit/referensi/bentuk-kegiatan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatanUpdate'])->name('unit.referensi.bentuk-kegiatan.update');
+    Route::delete('/unit/referensi/bentuk-kegiatan/{id}', [App\Http\Controllers\Unit\UnitPageController::class, 'bentukKegiatanDestroy'])->name('unit.referensi.bentuk-kegiatan.destroy');
     Route::get('/unit/referensi/status-kerjasama', [App\Http\Controllers\Unit\UnitPageController::class, 'statusKerjasamaReferensi'])->name('unit.referensi.status-kerjasama');
     Route::get('/unit/referensi/status-evaluasi', [App\Http\Controllers\Unit\UnitPageController::class, 'statusEvaluasiReferensi'])->name('unit.referensi.status-evaluasi');
     Route::get('/unit/referensi/kriteria-mitra', [App\Http\Controllers\Unit\UnitPageController::class, 'kriteriaMitraReferensi'])->name('unit.referensi.kriteria-mitra');
@@ -306,6 +312,9 @@ Route::middleware(['auth', 'role:upa'])->group(function () {
     Route::get('/upa/analitik/geo-mitra', [UpaPageController::class, 'geoMitra'])->name('upa.analitik.geo-mitra');
     Route::get('/upa/institusi', [UpaPageController::class, 'institusi'])->name('upa.institusi');
     Route::get('/upa/referensi/bentuk-kegiatan', [UpaPageController::class, 'bentukKegiatan'])->name('upa.referensi.bentuk-kegiatan');
+    Route::post('/upa/referensi/bentuk-kegiatan', [UpaPageController::class, 'bentukKegiatanStore'])->name('upa.referensi.bentuk-kegiatan.store');
+    Route::put('/upa/referensi/bentuk-kegiatan/{id}', [UpaPageController::class, 'bentukKegiatanUpdate'])->name('upa.referensi.bentuk-kegiatan.update');
+    Route::delete('/upa/referensi/bentuk-kegiatan/{id}', [UpaPageController::class, 'bentukKegiatanDestroy'])->name('upa.referensi.bentuk-kegiatan.destroy');
     Route::get('/upa/referensi/status-kerjasama', [UpaPageController::class, 'statusKerjasamaReferensi'])->name('upa.referensi.status-kerjasama');
     Route::get('/upa/referensi/status-evaluasi', [UpaPageController::class, 'statusEvaluasiReferensi'])->name('upa.referensi.status-evaluasi');
     Route::get('/upa/referensi/kriteria-mitra', [UpaPageController::class, 'kriteriaMitraReferensi'])->name('upa.referensi.kriteria-mitra');
@@ -374,6 +383,9 @@ Route::middleware(['auth', 'role:pusat'])->group(function () {
     Route::get('/pusat/analitik/geo-mitra', [PusatPageController::class, 'geoMitra'])->name('pusat.analitik.geo-mitra');
     Route::get('/pusat/institusi', [PusatPageController::class, 'institusi'])->name('pusat.institusi');
     Route::get('/pusat/referensi/bentuk-kegiatan', [PusatPageController::class, 'bentukKegiatan'])->name('pusat.referensi.bentuk-kegiatan');
+    Route::post('/pusat/referensi/bentuk-kegiatan', [PusatPageController::class, 'bentukKegiatanStore'])->name('pusat.referensi.bentuk-kegiatan.store');
+    Route::put('/pusat/referensi/bentuk-kegiatan/{id}', [PusatPageController::class, 'bentukKegiatanUpdate'])->name('pusat.referensi.bentuk-kegiatan.update');
+    Route::delete('/pusat/referensi/bentuk-kegiatan/{id}', [PusatPageController::class, 'bentukKegiatanDestroy'])->name('pusat.referensi.bentuk-kegiatan.destroy');
     Route::get('/pusat/referensi/status-kerjasama', [PusatPageController::class, 'statusKerjasamaReferensi'])->name('pusat.referensi.status-kerjasama');
     Route::get('/pusat/referensi/status-evaluasi', [PusatPageController::class, 'statusEvaluasiReferensi'])->name('pusat.referensi.status-evaluasi');
     Route::get('/pusat/referensi/kriteria-mitra', [PusatPageController::class, 'kriteriaMitraReferensi'])->name('pusat.referensi.kriteria-mitra');
