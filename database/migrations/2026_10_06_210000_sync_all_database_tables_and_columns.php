@@ -243,8 +243,6 @@ return new class extends Migration
                 'pengajuan_perpanjangan_kerjasama_id' => 'unsignedBigInteger',
                 'tingkat' => 'string:50:default_Institusi',
                 'jurusan_id' => 'unsignedBigInteger',
-                'upa_id' => 'unsignedBigInteger',
-                'pusat_id' => 'unsignedBigInteger',
                 'document_link' => 'string:255',
                 'catatan_pimpinan' => 'text',
                 'created_by' => 'unsignedBigInteger',

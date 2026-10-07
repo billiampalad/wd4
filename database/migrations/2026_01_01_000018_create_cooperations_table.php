@@ -50,8 +50,6 @@ return new class extends Migration
             $table->unsignedBigInteger('pengajuan_perpanjangan_kerjasama_id')->nullable();
             $table->string('tingkat', 50)->nullable()->default('Institusi');
             $table->unsignedBigInteger('jurusan_id')->nullable();
-            $table->unsignedBigInteger('upa_id')->nullable();
-            $table->unsignedBigInteger('pusat_id')->nullable();
             $table->string('document_link', 255)->nullable();
             $table->text('catatan_pimpinan')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
@@ -120,12 +118,6 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('cooperations', 'jurusan_id')) {
                 $table->unsignedBigInteger('jurusan_id')->nullable();
-            }
-            if (!Schema::hasColumn('cooperations', 'upa_id')) {
-                $table->unsignedBigInteger('upa_id')->nullable();
-            }
-            if (!Schema::hasColumn('cooperations', 'pusat_id')) {
-                $table->unsignedBigInteger('pusat_id')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'document_link')) {
                 $table->string('document_link', 255)->nullable();
