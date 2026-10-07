@@ -150,14 +150,14 @@ class KerjasamaUnitController extends Controller
             $statusMap = [
                 'Aktif' => 'Aktif',
                 'aktif' => 'Aktif',
-                'Proses' => 'Aktif',
-                'proses' => 'Aktif',
+                'Proses' => 'Proses',
+                'proses' => 'Proses',
                 'Dalam Perpanjangan' => 'Dalam Perpanjangan',
                 'dalam perpanjangan' => 'Dalam Perpanjangan',
                 'Kadarluarsa' => 'Kadaluarsa',
                 'kadarluarsa' => 'Kadaluarsa',
                 'Kadaluarsa' => 'Kadaluarsa',
-                'kadaluarsa' => 'Kadaluarsa',
+                'kadarluarsa' => 'Kadaluarsa',
                 'Kedaluwarsa' => 'Kadaluarsa',
                 'kedaluwarsa' => 'Kadaluarsa',
                 'Tidak Aktif' => 'Tidak Aktif',
@@ -165,12 +165,17 @@ class KerjasamaUnitController extends Controller
             ];
 
             // Perpanjangan memiliki status masa berlaku tersendiri.
-            // Jika input baru biasa, status masa berlaku otomatis 'Aktif'.
-            // Jika input arsip, gunakan pilihan user.
+            // Jika input baru biasa, status masa berlaku otomatis 'Proses' dan dokumen 'Draft'.
+            // Jika input arsip, gunakan pilihan user dan dokumen 'Disahkan'.
             if ($perpanjanganDariId) {
                 $status = 'Dalam Perpanjangan';
+                $statusDokumen = 'Draft';
+            } elseif ($request->input_type === 'baru') {
+                $status = 'Proses';
+                $statusDokumen = 'Draft';
             } else {
-                $status = ($request->input_type === 'baru') ? 'Aktif' : ($statusMap[$request->status] ?? 'Aktif');
+                $status = $statusMap[$request->status] ?? 'Aktif';
+                $statusDokumen = 'Disahkan';
             }
 
             // 1. Handle Internal Pejabats (Pihak 1)
@@ -232,8 +237,8 @@ class KerjasamaUnitController extends Controller
                 'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'status_berlaku' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
-                'status_dokumen' => 'Draft', // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
+                'status_berlaku' => $status, // Status Masa Berlaku (Proses, Aktif, Kadaluarsa, dll)
+                'status_dokumen' => $statusDokumen, // Status Alur Dokumen (Draft, Menunggu Evaluasi, Disahkan)
                 'parent_cooperation_id' => $request->parent_cooperation_id,
                 'perpanjangan_dari_id' => $perpanjanganDariId,
                 'pengajuan_perpanjangan_kerjasama_id' => $request->pengajuan_perpanjangan_kerjasama_id,
