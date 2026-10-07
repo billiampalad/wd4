@@ -185,19 +185,10 @@ class KerjasamaPusatController extends Controller
         try {
             // Handle status normalization (status masa berlaku)
             $statusMap = [
-                'Aktif' => 'Aktif',
-                'aktif' => 'Aktif',
-                'Proses' => 'Proses',
                 'proses' => 'Proses',
-                'Dalam Perpanjangan' => 'Dalam Perpanjangan',
+                'aktif' => 'Aktif',
                 'dalam perpanjangan' => 'Dalam Perpanjangan',
-                'Kadarluarsa' => 'Kadaluarsa',
                 'kadarluarsa' => 'Kadaluarsa',
-                'Kadaluarsa' => 'Kadaluarsa',
-                'kadaluarsa' => 'Kadaluarsa',
-                'Kedaluwarsa' => 'Kadaluarsa',
-                'kedaluwarsa' => 'Kadaluarsa',
-                'Tidak Aktif' => 'Tidak Aktif',
                 'tidak aktif' => 'Tidak Aktif',
             ];
 
@@ -211,7 +202,7 @@ class KerjasamaPusatController extends Controller
                 $status = 'Proses';
                 $statusDokumen = 'Draft';
             } else {
-                $status = $statusMap[$request->status] ?? 'Aktif';
+                $status = $statusMap[strtolower(trim((string) $request->status))] ?? 'Aktif';
                 $statusDokumen = 'Disahkan';
             }
 
@@ -457,21 +448,14 @@ class KerjasamaPusatController extends Controller
         try {
             // Handle status normalization
             $statusMap = [
-                'Aktif' => 'Aktif',
+                'proses' => 'Proses',
                 'aktif' => 'Aktif',
-                'Dalam Perpanjangan' => 'Dalam Perpanjangan',
                 'dalam perpanjangan' => 'Dalam Perpanjangan',
-                'Kadarluarsa' => 'Kadaluarsa',
                 'kadarluarsa' => 'Kadaluarsa',
-                'Kadaluarsa' => 'Kadaluarsa',
-                'kadaluarsa' => 'Kadaluarsa',
-                'Kedaluwarsa' => 'Kadaluarsa',
-                'kedaluwarsa' => 'Kadaluarsa',
-                'Tidak Aktif' => 'Tidak Aktif',
                 'tidak aktif' => 'Tidak Aktif',
             ];
 
-            $status = $statusMap[$request->status] ?? ($cooperation->status_berlaku ?: 'Aktif');
+            $status = $statusMap[strtolower(trim((string) $request->status))] ?? ($cooperation->status_berlaku ?: 'Aktif');
 
             // 1. Handle Internal Pejabats (Pihak 1)
             if ($request->nama_penandatangan) {
