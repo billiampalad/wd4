@@ -27,10 +27,12 @@ class JenisKerjasamaController extends Controller
     {
         $request->validate([
             'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama',
+            'keterangan' => 'nullable|string',
         ]);
 
         JenisKerjasama::create([
-            'nama_kerjasama' => $request->nama_kerjasama
+            'nama_kerjasama' => $request->nama_kerjasama,
+            'keterangan' => $request->keterangan,
         ]);
 
         return redirect()
@@ -47,10 +49,12 @@ class JenisKerjasamaController extends Controller
     {
         $request->validate([
             'nama_kerjasama' => 'required|string|max:255|unique:jenis_kerjasamas,nama_kerjasama,' . $jkerjasama->id,
+            'keterangan' => 'nullable|string',
         ]);
 
         $jkerjasama->update([
-            'nama_kerjasama' => $request->nama_kerjasama
+            'nama_kerjasama' => $request->nama_kerjasama,
+            'keterangan' => $request->keterangan,
         ]);
 
         return redirect()

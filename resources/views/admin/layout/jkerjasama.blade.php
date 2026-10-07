@@ -44,6 +44,7 @@
                     <tr>
                         <th class="um-th um-th-num">#</th>
                         <th class="um-th">Nama Jenis</th>
+                        <th class="um-th">Keterangan</th>
                         <th class="um-th">Dibuat</th>
                         <th class="um-th">Diperbarui</th>
                         <th class="um-th um-th-aksi">Aksi</th>
@@ -57,6 +58,9 @@
                             </td>
                             <td class="um-td">
                                 <span class="um-name">{{ $jkerjasama->nama_kerjasama ?? $jkerjasama->nama ?? '-' }}</span>
+                            </td>
+                            <td class="um-td">
+                                <span style="font-size: 13px; color: var(--text-sub, #64748b);">{{ $jkerjasama->keterangan ?: '-' }}</span>
                             </td>
                             <td class="um-td">
                                 <div class="um-date">
@@ -73,7 +77,7 @@
                             <td class="um-td um-td-aksi">
                                 <div class="actions um-actions">
                                     <button type="button" class="btn-action edit um-btn-edit" title="Edit"
-                                        onclick="openEditJKerjasamaModal({{ $jkerjasama->id }}, '{{ addslashes($jkerjasama->nama_kerjasama ?? $jkerjasama->nama) }}')">
+                                        onclick="openEditJKerjasamaModal({{ $jkerjasama->id }}, @js($jkerjasama->nama_kerjasama ?? $jkerjasama->nama ?? ''), @js($jkerjasama->keterangan ?? ''))">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <form id="form-delete-jkerjasama-{{ $jkerjasama->id }}" action="{{ route('jkerjasama.destroy', $jkerjasama->id) }}" method="POST">
@@ -95,7 +99,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="um-empty">
+                            <td colspan="6" class="um-empty">
                                 <div class="um-empty-state">
                                     <div class="um-empty-icon">
                                         <i class="fas fa-tags"></i>
@@ -107,7 +111,7 @@
                         </tr>
                     @endforelse
                     <tr id="jkerjasamaSearchEmptyRow" style="display: none;">
-                        <td colspan="5" class="um-empty">
+                        <td colspan="6" class="um-empty">
                             <div class="um-empty-state">
                                 <div class="um-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
                                     <i class="fas fa-search-minus"></i>
@@ -153,6 +157,13 @@
                         <input type="text" id="create_nama_kerjasama" name="nama_kerjasama" class="adm-form-input"
                             placeholder="Contoh: Magang, Penelitian, dsb" required maxlength="255">
                     </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="create_keterangan">
+                            <i class="fas fa-align-left"></i> Keterangan
+                        </label>
+                        <textarea id="create_keterangan" name="keterangan" class="adm-form-input" rows="3"
+                            placeholder="Masukkan keterangan atau deskripsi bentuk kegiatan (opsional)"></textarea>
+                    </div>
                 </div>
                 <div class="adm-modal-footer">
                     <button type="button" class="adm-btn-cancel" onclick="AdminModal.close('createJKerjasamaModal')">
@@ -176,7 +187,7 @@
                     </div>
                     <div>
                         <h3 class="adm-modal-title">Edit Jenis Kerjasama</h3>
-                        <p class="adm-modal-subtitle">Ubah nama jenis kerjasama yang sudah ada.</p>
+                        <p class="adm-modal-subtitle">Ubah data jenis kerjasama yang sudah ada.</p>
                     </div>
                 </div>
                 <button type="button" class="adm-modal-close" onclick="AdminModal.close('editJKerjasamaModal')" title="Tutup">
@@ -193,6 +204,13 @@
                         </label>
                         <input type="text" id="edit_nama_kerjasama" name="nama_kerjasama" class="adm-form-input"
                             placeholder="Ubah nama jenis kerjasama" required maxlength="255">
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label" for="edit_keterangan">
+                            <i class="fas fa-align-left"></i> Keterangan
+                        </label>
+                        <textarea id="edit_keterangan" name="keterangan" class="adm-form-input" rows="3"
+                            placeholder="Masukkan keterangan atau deskripsi bentuk kegiatan (opsional)"></textarea>
                     </div>
                 </div>
                 <div class="adm-modal-footer">
@@ -216,13 +234,16 @@
         });
     }
 
-    function openEditJKerjasamaModal(id, namaKerjasama) {
+    function openEditJKerjasamaModal(id, namaKerjasama, keterangan) {
         const form = document.getElementById('editJKerjasamaForm');
         if (form) {
             form.action = "{{ route('jkerjasama.update', ':id') }}".replace(':id', id);
         }
         const nameInput = document.getElementById('edit_nama_kerjasama');
-        if (nameInput) nameInput.value = namaKerjasama;
+        if (nameInput) nameInput.value = namaKerjasama || '';
+
+        const ketInput = document.getElementById('edit_keterangan');
+        if (ketInput) ketInput.value = keterangan || '';
 
         AdminModal.open('editJKerjasamaModal', {
             focusSelector: '#edit_nama_kerjasama'
