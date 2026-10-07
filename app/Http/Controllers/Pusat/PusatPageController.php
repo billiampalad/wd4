@@ -541,7 +541,7 @@ class PusatPageController extends Controller
         $this->resolveUnitId();
 
         $bentukKegiatans = JenisKerjasama::withCount(['details as total_count'])
-            ->orderByRaw('COALESCE(nama_kerjasama, nama) ASC')
+            ->orderBy('nama_kerjasama', 'asc')
             ->get();
 
         return view('auth.pusat', compact('bentukKegiatans'));
