@@ -77,7 +77,7 @@ class MelihatDokumenMitraTest extends TestCase
             ['jabatan' => 'Direktur Utama', 'jenis' => 'eksternal']
         );
 
-        $jenisKs = JenisKerjasama::firstOrCreate(['nama' => 'Pengembangan Kurikulum']);
+        $jenisKs = JenisKerjasama::firstOrCreate(['nama_kerjasama' => 'Pengembangan Kurikulum']);
 
         $coop = Cooperation::create([
             'judul' => 'Detail Dokumen Kerja Sama Riset',

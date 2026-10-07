@@ -97,7 +97,6 @@ return new class extends Migration
                 'deskripsi' => 'string:255',
             ],
             'jenis_kerjasamas' => [
-                'nama' => 'string:255',
                 'nama_kerjasama' => 'string:255',
                 'keterangan' => 'text',
             ],

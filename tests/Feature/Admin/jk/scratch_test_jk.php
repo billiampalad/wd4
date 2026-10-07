@@ -96,7 +96,7 @@ try {
 
     echo "\n▶ 5. PENGUJIAN HAPUS DATA YANG SEDANG DIGUNAKAN (DELETE CONSTRAINTS):\n";
     // Setup dependency
-    $usedJk = JenisKerjasama::create(['nama' => 'Dipakai Kegiatan']);
+    $usedJk = JenisKerjasama::create(['nama_kerjasama' => 'Dipakai Kegiatan']);
     
 
     

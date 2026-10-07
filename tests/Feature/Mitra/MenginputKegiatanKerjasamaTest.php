@@ -77,7 +77,7 @@ class MenginputKegiatanKerjasamaTest extends TestCase
         $mitra = Mitra::firstOrCreate(['nama_mitra' => 'PT Schneider Electric'], ['id_klasifikasi' => $klasifikasi->id]);
         $sasaran = Sasaran::firstOrCreate(['deskripsi' => 'Meningkatnya Kualitas Lulusan']);
         $indikator = Indikator::firstOrCreate(['nama_indikator' => 'Persentase Lulusan yang Bekerja'], ['sasaran_id' => $sasaran->id]);
-        $jenisKerjasama = JenisKerjasama::firstOrCreate(['nama' => 'Magang Industri']);
+        $jenisKerjasama = JenisKerjasama::firstOrCreate(['nama_kerjasama' => 'Magang Industri']);
 
         $coop = Cooperation::create([
             'judul' => 'IA Otomasi Industri dan Magang Mahasiswa',
