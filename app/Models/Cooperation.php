@@ -36,6 +36,7 @@ class Cooperation extends Model
         'jenis',
         'doc_number',
         'judul',
+        'description',
         'ruang_lingkup',
         'start_date',
         'end_date',
@@ -69,14 +70,14 @@ class Cooperation extends Model
         'end_date' => 'date',
     ];
 
-    public function getDescriptionAttribute(): ?string
+    public function getRuangLingkupAttribute(): ?string
     {
-        return $this->attributes['ruang_lingkup'] ?? null;
+        return $this->attributes['description'] ?? ($this->attributes['ruang_lingkup'] ?? null);
     }
 
-    public function setDescriptionAttribute($value): void
+    public function setRuangLingkupAttribute($value): void
     {
-        $this->attributes['ruang_lingkup'] = $value;
+        $this->attributes['description'] = $value;
     }
 
     public function mitra()

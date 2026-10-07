@@ -125,7 +125,7 @@ class PublicLandingController extends Controller
                 $builder->where('judul', 'like', "%{$search}%")
                     ->orWhere('doc_number', 'like', "%{$search}%")
                     ->orWhere('jenis', 'like', "%{$search}%")
-                    ->orWhere('ruang_lingkup', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
                     ->orWhere('status_berlaku', 'like', "%{$search}%")
                     ->orWhere('status_dokumen', 'like', "%{$search}%")
                     ->orWhere('internal_instansi', 'like', "%{$search}%")

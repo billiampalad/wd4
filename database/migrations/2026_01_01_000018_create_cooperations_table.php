@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('jenis', 50)->nullable()->default('MoU');
             $table->string('doc_number', 255)->nullable();
             $table->string('judul', 255)->nullable();
-            $table->text('ruang_lingkup')->nullable();
+            $table->text('description')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->string('status_berlaku', 50)->nullable()->default('Aktif');
@@ -50,6 +50,8 @@ return new class extends Migration
             $table->unsignedBigInteger('pengajuan_perpanjangan_kerjasama_id')->nullable();
             $table->string('tingkat', 50)->nullable()->default('Institusi');
             $table->unsignedBigInteger('jurusan_id')->nullable();
+            $table->unsignedBigInteger('upa_id')->nullable();
+            $table->unsignedBigInteger('pusat_id')->nullable();
             $table->string('document_link', 255)->nullable();
             $table->text('catatan_pimpinan')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
@@ -89,8 +91,8 @@ return new class extends Migration
             if (!Schema::hasColumn('cooperations', 'judul')) {
                 $table->string('judul', 255)->nullable();
             }
-            if (!Schema::hasColumn('cooperations', 'ruang_lingkup')) {
-                $table->text('ruang_lingkup')->nullable();
+            if (!Schema::hasColumn('cooperations', 'description')) {
+                $table->text('description')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'start_date')) {
                 $table->date('start_date')->nullable();
@@ -118,6 +120,12 @@ return new class extends Migration
             }
             if (!Schema::hasColumn('cooperations', 'jurusan_id')) {
                 $table->unsignedBigInteger('jurusan_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'upa_id')) {
+                $table->unsignedBigInteger('upa_id')->nullable();
+            }
+            if (!Schema::hasColumn('cooperations', 'pusat_id')) {
+                $table->unsignedBigInteger('pusat_id')->nullable();
             }
             if (!Schema::hasColumn('cooperations', 'document_link')) {
                 $table->string('document_link', 255)->nullable();

@@ -265,7 +265,7 @@ class KerjasamaJurusanController extends Controller
                 'judul' => $request->title,
                 'jenis' => $jenisEnum,
                 'doc_number' => $request->doc_number,
-                'ruang_lingkup' => $request->description,
+                'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
                 'status_berlaku' => $status, // Status Masa Berlaku (aktif, kadarluarsa, dll)
@@ -544,7 +544,7 @@ class KerjasamaJurusanController extends Controller
                 'judul' => $request->title,
                 'jenis' => $jenisEnum,
                 'doc_number' => $request->doc_number,
-                'ruang_lingkup' => $request->description,
+                'description' => $request->description,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
                 'status_berlaku' => $status,

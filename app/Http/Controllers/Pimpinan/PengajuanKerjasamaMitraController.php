@@ -241,7 +241,7 @@ class PengajuanKerjasamaMitraController extends Controller
                             'jenis' => $jenisEnum,
                             'doc_number' => $submission->doc_number,
                             'judul' => $submission->judul_pengajuan,
-                            'ruang_lingkup' => $submission->ruang_lingkup ?: $submission->tujuan_pengajuan,
+                            'description' => $submission->ruang_lingkup ?: $submission->tujuan_pengajuan,
                             'start_date' => $submission->start_date,
                             'end_date' => $submission->end_date,
                             'status_berlaku' => 'Aktif',
