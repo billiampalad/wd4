@@ -198,12 +198,12 @@ class KerjasamaUpaController extends Controller
             if ($perpanjanganDariId) {
                 $status = 'Dalam Perpanjangan';
                 $statusDokumen = 'Draft';
-            } elseif ($request->input_type === 'baru') {
-                $status = 'Proses';
-                $statusDokumen = 'Draft';
-            } else {
+            } elseif ($request->input_type === 'arsip') {
                 $status = $statusMap[strtolower(trim((string) $request->status))] ?? 'Aktif';
                 $statusDokumen = 'Disahkan';
+            } else {
+                $status = 'Proses';
+                $statusDokumen = 'Draft';
             }
 
             // 1. Handle Internal Pejabats (Pihak 1)
