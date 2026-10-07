@@ -352,23 +352,25 @@
             });
 
             // Update Empty State Element
-            if (emptySelector) {
-                const emptyEl = document.querySelector(emptySelector) || document.getElementById(emptySelector.replace(/^#/, ''));
-                if (emptyEl) {
-                    if (visibleCount === 0 && query !== '' && totalCount > 0) {
-                        emptyEl.style.display = '';
-                    } else {
-                        emptyEl.style.display = 'none';
-                    }
+            const resolvedEmptyEl = emptySelector
+                ? (document.querySelector(emptySelector) || document.getElementById(emptySelector.replace(/^#/, '')))
+                : (document.getElementById('dkerjasamaSearchEmptyRow') || document.querySelector('#mainContent .um-search-empty') || document.querySelector('table .um-search-empty'));
+
+            if (resolvedEmptyEl) {
+                if (visibleCount === 0 && query !== '' && totalCount > 0) {
+                    resolvedEmptyEl.style.display = '';
+                } else {
+                    resolvedEmptyEl.style.display = 'none';
                 }
             }
 
             // Update Query Text Span
-            if (querySpanSelector) {
-                const querySpan = document.querySelector(querySpanSelector) || document.getElementById(querySpanSelector.replace(/^#/, ''));
-                if (querySpan) {
-                    querySpan.textContent = input.value.trim();
-                }
+            const resolvedQuerySpan = querySpanSelector
+                ? (document.querySelector(querySpanSelector) || document.getElementById(querySpanSelector.replace(/^#/, '')))
+                : (document.getElementById('dkerjasamaSearchQueryText') || (resolvedEmptyEl ? resolvedEmptyEl.querySelector('.dkerjasama-search-query-text, [id*="SearchQueryText"], [data-search-query-text]') : null));
+
+            if (resolvedQuerySpan) {
+                resolvedQuerySpan.textContent = input.value.trim();
             }
 
             // Update Count Display

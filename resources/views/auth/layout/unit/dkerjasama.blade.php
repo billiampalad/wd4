@@ -743,6 +743,17 @@ $auditUserLabel = function ($user = null) {
                             </td>
                         </tr>
                         @endforelse
+                        <tr id="dkerjasamaSearchEmptyRow" class="um-search-empty" style="display: none;">
+                            <td colspan="8" class="um-empty">
+                                <div class="um-empty-state dk-empty-state">
+                                    <div class="um-empty-icon dk-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;">
+                                        <i class="fas fa-search-minus"></i>
+                                    </div>
+                                    <p class="um-empty-title">Data Tidak Ditemukan</p>
+                                    <p class="um-empty-sub">Tidak ada data kerjasama yang cocok dengan kata kunci "<span id="dkerjasamaSearchQueryText" class="dkerjasama-search-query-text" style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -963,11 +974,27 @@ $auditUserLabel = function ($user = null) {
                     data.forEach(function(item, idx) {
                         fragment.appendChild(buildRow(item, idx));
                     });
+
+                    var emptySearchTr = document.createElement('tr');
+                    emptySearchTr.id = 'dkerjasamaSearchEmptyRow';
+                    emptySearchTr.className = 'um-search-empty';
+                    emptySearchTr.style.display = 'none';
+                    emptySearchTr.innerHTML = '<td colspan="8" class="um-empty">' +
+                        '<div class="um-empty-state dk-empty-state">' +
+                        '<div class="um-empty-icon dk-empty-icon" style="color: var(--accent, #4f46e5); opacity: 0.7;"><i class="fas fa-search-minus"></i></div>' +
+                        '<p class="um-empty-title">Data Tidak Ditemukan</p>' +
+                        '<p class="um-empty-sub">Tidak ada data kerjasama yang cocok dengan kata kunci "<span id="dkerjasamaSearchQueryText" class="dkerjasama-search-query-text" style="font-weight: 600; color: var(--accent, #4f46e5);"></span>".</p>' +
+                        '</div></td>';
+                    fragment.appendChild(emptySearchTr);
+
                     previewBody.innerHTML = '';
                     previewBody.appendChild(fragment);
 
                     if (window.CustomPaginav) {
                         window.CustomPaginav.init();
+                    }
+                    if (window.CustomSearch) {
+                        window.CustomSearch.init();
                     }
                 })
                 .catch(function(err) {
