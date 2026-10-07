@@ -115,6 +115,11 @@ class Cooperation extends Model
         return $this->belongsTo(Pejabat::class, 'pj_mitra_id');
     }
 
+    public function pejabats()
+    {
+        return $this->hasMany(Pejabat::class, 'cooperation_id');
+    }
+
     public function jurusan()
     {
         return $this->belongsTo(Jurusan::class, 'jurusan_id');

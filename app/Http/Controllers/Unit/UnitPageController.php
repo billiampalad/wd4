@@ -1697,6 +1697,9 @@ class UnitPageController extends Controller
                     'pengajuan_perpanjangan_kerjasama_id' => $submission->id,
                     'created_by' => Auth::id(),
                 ]);
+
+                $penandatanganMitra->update(['cooperation_id' => $cooperation->id]);
+                $pjMitra?->update(['cooperation_id' => $cooperation->id]);
             } else {
                 $updateData = [
                     'doc_number' => $validated['doc_number'],

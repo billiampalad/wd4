@@ -285,6 +285,12 @@ class KerjasamaPusatController extends Controller
                 'pusat_id' => ($request->tipe_pelaksana === 'pusat' && $request->pelaksana_pusat_ids) ? $request->pelaksana_pusat_ids[0] : null,
             ]);
 
+            // Link pejabats to this cooperation
+            $penandatanganInternal?->update(['cooperation_id' => $cooperation->id]);
+            $pjInternal?->update(['cooperation_id' => $cooperation->id]);
+            $penandatanganMitra?->update(['cooperation_id' => $cooperation->id]);
+            $pjMitra?->update(['cooperation_id' => $cooperation->id]);
+
             $this->syncPksNumbers($cooperation, $request->input('pks_numbers', []));
 
             // 4. Handle Pivot Tables
@@ -468,9 +474,11 @@ class KerjasamaPusatController extends Controller
                     $cooperation->penandatanganInternal->update([
                         'nama' => $request->nama_penandatangan,
                         'jabatan' => $request->jabatan_penandatangan ?? '-',
+                        'cooperation_id' => $cooperation->id,
                     ]);
                 } else {
                     $pj = Pejabat::create([
+                        'cooperation_id' => $cooperation->id,
                         'nama' => $request->nama_penandatangan,
                         'jabatan' => $request->jabatan_penandatangan ?? '-',
                     ]);
@@ -483,9 +491,11 @@ class KerjasamaPusatController extends Controller
                     $cooperation->pjInternal->update([
                         'nama' => $request->nama_penanggung_jawab,
                         'jabatan' => $request->jabatan_penanggung_jawab ?? '-',
+                        'cooperation_id' => $cooperation->id,
                     ]);
                 } else {
                     $pj = Pejabat::create([
+                        'cooperation_id' => $cooperation->id,
                         'nama' => $request->nama_penanggung_jawab,
                         'jabatan' => $request->jabatan_penanggung_jawab ?? '-',
                     ]);
@@ -505,9 +515,11 @@ class KerjasamaPusatController extends Controller
                             $cooperation->penandatanganMitra->update([
                                 'nama' => $penggiatData['nama_penandatangan'],
                                 'jabatan' => $penggiatData['jabatan_penandatangan'] ?? '-',
+                                'cooperation_id' => $cooperation->id,
                             ]);
                         } else {
                             $pj = Pejabat::create([
+                                'cooperation_id' => $cooperation->id,
                                 'nama' => $penggiatData['nama_penandatangan'],
                                 'jabatan' => $penggiatData['jabatan_penandatangan'] ?? '-',
                             ]);
@@ -519,9 +531,11 @@ class KerjasamaPusatController extends Controller
                             $cooperation->pjMitra->update([
                                 'nama' => $penggiatData['nama_pj'],
                                 'jabatan' => $penggiatData['jabatan_pj'] ?? '-',
+                                'cooperation_id' => $cooperation->id,
                             ]);
                         } else {
                             $pj = Pejabat::create([
+                                'cooperation_id' => $cooperation->id,
                                 'nama' => $penggiatData['nama_pj'],
                                 'jabatan' => $penggiatData['jabatan_pj'] ?? '-',
                             ]);

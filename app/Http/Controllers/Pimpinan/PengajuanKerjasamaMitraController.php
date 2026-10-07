@@ -253,6 +253,9 @@ class PengajuanKerjasamaMitraController extends Controller
                             'pengajuan_kerjasama_baru_id' => $submission->id,
                             'created_by' => Auth::id(),
                         ]);
+
+                        $penandatanganMitra?->update(['cooperation_id' => $cooperation->id]);
+                        $pjMitra?->update(['cooperation_id' => $cooperation->id]);
                     } else {
                         $cooperation->update([
                             'judul' => $submission->judul_pengajuan,
