@@ -661,9 +661,9 @@
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible;">
                         {{-- Card Header --}}
                         <div x-data="{
-                            showPenggiat: {{ $isPerpanjangan ? 'true' : 'false' }},
-                            showPihak1: {{ $isPerpanjangan ? 'true' : 'false' }},
-                            showPihak2: {{ $isPerpanjangan ? 'true' : 'false' }},
+                            showPenggiat: {{ $isPerpanjangan || old('penggiat_mitra_ids') || old('penggiat') || old('nama_penandatangan') || old('jabatan_penandatangan') || old('nama_penanggung_jawab') || old('jabatan_penanggung_jawab') || old('tipe_pelaksana') || old('pelaksana_jurusan_ids') || old('pelaksana_prodi_ids') || old('pelaksana_upa_ids') || old('pelaksana_pusat_ids') || $errors->any() ? 'true' : 'false' }},
+                            showPihak1: {{ $isPerpanjangan || old('nama_penandatangan') || old('jabatan_penandatangan') || old('nama_penanggung_jawab') || old('jabatan_penanggung_jawab') || old('tipe_pelaksana') || old('pelaksana_jurusan_ids') || old('pelaksana_prodi_ids') || old('pelaksana_upa_ids') || old('pelaksana_pusat_ids') || $errors->any() ? 'true' : 'false' }},
+                            showPihak2: {{ $isPerpanjangan || old('penggiat_mitra_ids') || old('penggiat') || $errors->any() ? 'true' : 'false' }},
                             showPenandatangan1: {{ filled(old('nama_penandatangan', $perpanjanganAsal?->penandatanganInternal?->nama ?? '')) || filled(old('jabatan_penandatangan', $perpanjanganAsal?->penandatanganInternal?->jabatan ?? '')) ? 'true' : 'false' }},
                             showPJ1: {{ filled(old('nama_penanggung_jawab', $perpanjanganAsal?->pjInternal?->nama ?? '')) || filled(old('jabatan_penanggung_jawab', $perpanjanganAsal?->pjInternal?->jabatan ?? '')) ? 'true' : 'false' }},
                             penggiatList: {{ \Illuminate\Support\Js::from($penggiatList) }},
@@ -1619,7 +1619,7 @@
                     {{-- ═══ COLUMN 2: Bentuk Kegiatan ═══ --}}
                     <div
                         style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: visible; margin-bottom:20px;">
-                        <div x-data="{ showBentuk: false }">
+                        <div x-data="{ showBentuk: {{ $isPerpanjangan || !empty($selectedDetailIds) || !empty($detailFormData) || $errors->any() ? 'true' : 'false' }} }">
                             {{-- Card Header --}}
                             <div @click="showBentuk = !showBentuk"
                                 style="display: flex; align-items: center; gap: 14px; padding: 20px 24px; cursor: pointer; user-select: none; border-bottom: 1px solid var(--border); background: linear-gradient(135deg, rgba(217,119,6,0.04), rgba(245,158,11,0.04)); border-radius: 16px 16px 0 0;">
