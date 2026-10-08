@@ -1127,16 +1127,16 @@
             <div class="cards-grid">
                 @foreach ($kerjasama as $item)
                     @php
-                        $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status_dokumen ?? '')));
+                        $status = trim(strtolower(str_replace(['_', '-'], ' ', $item->status_berlaku ?? '')));
                         $statusClass = match (true) {
-                            $status === 'disahkan' => 'badge-active',
+                            $status === 'aktif' => 'badge-active',
                             str_contains($status, 'perpanjangan') => 'badge-warning',
                             in_array($status, ['revisi', 'kadarluarsa', 'kadaluarsa', 'kedaluwarsa']) => 'badge-expired',
                             $status === 'tidak aktif' => 'badge-inactive',
-                            str_contains($status, 'menunggu') => 'badge-process',
+                            $status === 'proses' || str_contains($status, 'menunggu') => 'badge-process',
                             default => 'badge-inactive',
                         };
-                        $statusLabel = ucfirst($status !== '' ? $status : 'draft');
+                        $statusLabel = ucwords($status !== '' ? $status : 'proses');
 
                         $mitraNames = $item->mitra ? $item->mitra->nama_mitra : 'Mitra belum ditentukan';
                         $mitraInit = strtoupper(substr($mitraNames, 0, 2));
