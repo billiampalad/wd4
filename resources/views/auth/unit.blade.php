@@ -99,6 +99,8 @@
         </script>
     @endif
     @php
+        \App\Support\CooperationExpiryService::checkAndNotifyExpiredCooperations();
+
         $unitExpiryNotifications = collect();
         $unitDataNotifications = collect();
         $notificationUser = auth()->user();
@@ -113,7 +115,7 @@
             ])
                 ->where('user_id', $notificationUser->id)
                 ->where('is_read', 0)
-                ->whereIn('type', ['data_baru', 'pengajuan_perpanjangan', 'perpanjangan', 'info'])
+                ->whereIn('type', ['data_baru', 'pengajuan_perpanjangan', 'perpanjangan', 'info', 'kadaluarsa', 'masa_berakhir'])
                 ->latest()
                 ->take(10)
                 ->get();
@@ -221,15 +223,41 @@
                                         ?? $senderProfile?->pusat?->nama_pusat
                                         ?? $senderProfile?->unitKerja?->nama_unit_pelaksana
                                         ?? $dataNotification->sender?->name
-                                        ?? 'Sistem';
+                                        ?? ($dataNotification->judul ?: 'Sistem Kerjasama');
                                     $isNotifPerpanjangan = in_array($dataNotification->type, ['pengajuan_perpanjangan', 'perpanjangan'], true);
+                                    $isNotifKadaluarsa = in_array($dataNotification->type, ['kadaluarsa', 'masa_berakhir'], true);
+
+                                    $iconClass = match(true) {
+                                        $isNotifKadaluarsa => 'fa-circle-xmark',
+                                        $isNotifPerpanjangan => 'fa-clock-rotate-left',
+                                        default => 'fa-file-circle-plus',
+                                    };
+                                    $iconBg = match(true) {
+                                        $isNotifKadaluarsa => 'rgba(239, 68, 68, 0.12)',
+                                        $isNotifPerpanjangan => 'rgba(37, 99, 235, 0.12)',
+                                        default => 'rgba(16, 185, 129, 0.12)',
+                                    };
+                                    $iconColor = match(true) {
+                                        $isNotifKadaluarsa => '#dc2626',
+                                        $isNotifPerpanjangan => '#2563eb',
+                                        default => '#059669',
+                                    };
+                                    $badgeLabel = match(true) {
+                                        $isNotifKadaluarsa => 'Masa Berakhir',
+                                        $isNotifPerpanjangan => 'Perpanjangan',
+                                        default => 'Data Baru',
+                                    };
+                                    $badgeClass = match(true) {
+                                        $isNotifKadaluarsa => 'badge-kadaluarsa',
+                                        $isNotifPerpanjangan => 'badge-perpanjangan',
+                                        default => 'badge-data_baru',
+                                    };
                                 @endphp
                                 <a href="{{ $dataNotification->link ?: '#' }}" class="notification-item unread"
                                     data-id="{{ $dataNotification->id }}">
                                     <div class="notification-icon-wrapper"
-                                        style="background: {{ $isNotifPerpanjangan ? 'rgba(37, 99, 235, 0.12)' : 'rgba(16, 185, 129, 0.12)' }}; color: {{ $isNotifPerpanjangan ? '#2563eb' : '#059669' }};">
-                                        <i
-                                            class="fas {{ $isNotifPerpanjangan ? 'fa-clock-rotate-left' : 'fa-file-circle-plus' }}"></i>
+                                        style="background: {{ $iconBg }}; color: {{ $iconColor }};">
+                                        <i class="fas {{ $iconClass }}"></i>
                                     </div>
                                     <div class="notification-content">
                                         <span class="notification-sender">{{ $senderName }}</span>
@@ -238,10 +266,8 @@
                                             <span class="notification-time">
                                                 {{ $dataNotification->created_at?->diffForHumans() }}
                                             </span>
-                                            <span
-                                                class="notification-badge-type {{ $isNotifPerpanjangan ? 'badge-perpanjangan' : 'badge-data_baru' }}"
-                                                style="{{ $isNotifPerpanjangan ? 'background:rgba(37,99,235,0.12); color:#2563eb;' : '' }}">
-                                                {{ $isNotifPerpanjangan ? 'Perpanjangan' : 'Data Baru' }}
+                                            <span class="notification-badge-type {{ $badgeClass }}">
+                                                {{ $badgeLabel }}
                                             </span>
                                         </div>
                                     </div>

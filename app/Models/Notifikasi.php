@@ -23,6 +23,28 @@ class Notifikasi extends Model
         'is_read',
     ];
 
+    protected $appends = [
+        'pesan',
+        'judul',
+        'link',
+    ];
+
+    public function getPesanAttribute(): ?string
+    {
+        return $this->attributes['message'] ?? ($this->attributes['pesan'] ?? null);
+    }
+
+    public function getJudulAttribute(): ?string
+    {
+        return $this->attributes['title'] ?? ($this->attributes['judul'] ?? null);
+    }
+
+    public function getLinkAttribute(): ?string
+    {
+        return $this->attributes['url'] ?? ($this->attributes['link'] ?? null);
+    }
+
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

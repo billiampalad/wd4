@@ -573,30 +573,31 @@ $auditUserLabel = function ($user = null) {
                         @forelse($kerjasamaList as $kegiatan)
                         @php
                         $status = strtolower($kegiatan->status ?? '');
-                        $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true);
                         $isExtended = str_contains($status, 'perpanjangan');
+                        $isExpiredDate = $kegiatan->end_date && now()->startOfDay()->greaterThan(\Carbon\Carbon::parse($kegiatan->end_date)->startOfDay());
+                        $isExpired = in_array($status, ['kadarluarsa', 'kadaluarsa', 'kedaluwarsa'], true) || (!$isExtended && $isExpiredDate);
                         $statusValue = $isExtended ? 'dalam perpanjangan' : ($isExpired ? 'kadarluarsa' : $status);
 
                         $statusClass = match (true) {
-                        $status === 'aktif' => 'dk-status-active',
-                        $status === 'proses' => 'dk-status-info',
                         $isExtended => 'dk-status-warning',
                         $isExpired => 'dk-status-danger',
+                        $status === 'aktif' => 'dk-status-active',
+                        $status === 'proses' => 'dk-status-info',
                         $status === 'tidak aktif' => 'dk-status-muted',
                         default => 'dk-status-neutral',
                         };
                         $statusIcon = match (true) {
-                        $status === 'aktif' => 'fa-circle-check',
-                        $status === 'proses' => 'fa-spinner fa-spin',
                         $isExtended => 'fa-clock',
                         $isExpired => 'fa-circle-xmark',
+                        $status === 'aktif' => 'fa-circle-check',
+                        $status === 'proses' => 'fa-spinner fa-spin',
                         $status === 'tidak aktif' => 'fa-circle-minus',
                         default => 'fa-circle-info',
                         };
                         $statusLabel = match (true) {
-                        $status === 'aktif' => 'Aktif',
                         $isExtended => 'Perpanjangan',
-                        $isExpired => 'Kadarluarsa',
+                        $isExpired => 'Kadaluarsa',
+                        $status === 'aktif' => 'Aktif',
                         $status === 'tidak aktif' => 'Tidak Aktif',
                         $status !== '' => ucwords($status),
                         default => 'Belum Diatur',

@@ -101,6 +101,22 @@
         </script>
     @endif
 
+    @php
+        \App\Support\CooperationExpiryService::checkAndNotifyExpiredCooperations();
+
+        $mitraNotifications = collect();
+        $notificationUser = auth()->user();
+
+        if ($notificationUser) {
+            $mitraNotifications = \App\Models\Notifikasi::where('user_id', $notificationUser->id)
+                ->where('is_read', 0)
+                ->latest()
+                ->take(10)
+                ->get();
+        }
+        $mitraNotificationCount = $mitraNotifications->count();
+    @endphp
+
     <!-- navbar -->
     <nav>
         <div class="nav-inner">
@@ -130,17 +146,49 @@
                 <div class="notification-container">
                     <button class="icon-btn" id="notificationBtn" title="Notifications">
                         <i class="fas fa-bell" id="notificationIcon"></i>
-                        <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                        <span class="notification-badge" id="notifBadge"
+                            style="{{ $mitraNotificationCount > 0 ? 'display: flex;' : 'display: none;' }}">
+                            {{ $mitraNotificationCount > 9 ? '9+' : $mitraNotificationCount }}
+                        </span>
                     </button>
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notification-header">
                             <h3>Notifikasi</h3>
+                            <button id="markAllRead" class="notification-mark-read"
+                                style="{{ $mitraNotificationCount > 0 ? 'display: block;' : 'display: none;' }}">Tandai semua dibaca</button>
                         </div>
                         <div class="notification-list" id="notifList">
-                            <div class="notification-empty">
-                                <i class="fas fa-bell-slash"></i>
-                                <p>Tidak ada notifikasi baru</p>
-                            </div>
+                            @forelse ($mitraNotifications as $notif)
+                                @php
+                                    $isKadaluarsa = in_array($notif->type, ['kadaluarsa', 'masa_berakhir'], true);
+                                    $iconClass = $isKadaluarsa ? 'fa-circle-xmark' : 'fa-bell';
+                                    $iconBg = $isKadaluarsa ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+                                    $iconColor = $isKadaluarsa ? '#dc2626' : '#059669';
+                                    $badgeLabel = $isKadaluarsa ? 'Masa Berakhir' : ($notif->type === 'data_baru' ? 'Data Baru' : 'Info');
+                                    $badgeClass = $isKadaluarsa ? 'badge-kadaluarsa' : 'badge-data_baru';
+                                @endphp
+                                <a href="{{ $notif->link ?: '#' }}" class="notification-item unread" data-id="{{ $notif->id }}">
+                                    <div class="notification-icon-wrapper" style="background: {{ $iconBg }}; color: {{ $iconColor }};">
+                                        <i class="fas {{ $iconClass }}"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <span class="notification-sender">{{ $notif->judul ?: 'Sistem Kerjasama' }}</span>
+                                        <span class="notification-message">{{ $notif->pesan }}</span>
+                                        <div class="notification-meta">
+                                            <span class="notification-time">{{ $notif->created_at?->diffForHumans() }}</span>
+                                            <span class="notification-badge-type {{ $badgeClass }}">{{ $badgeLabel }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            @empty
+                                <div class="notification-empty">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>Tidak ada notifikasi baru</p>
+                                </div>
+                            @endforelse
+                        </div>
+                        <div class="notification-footer">
+                            <a href="{{ route('mitra.dokumen.index') }}">Lihat Dokumen Kerjasama</a>
                         </div>
                     </div>
                 </div>

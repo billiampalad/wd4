@@ -1278,6 +1278,11 @@ function initNotifikasi() {
                     typeBadgeClass = 'data_baru';
                     typeLabel = 'Data Baru';
                     break;
+                case 'kadaluarsa':
+                case 'masa_berakhir':
+                    typeBadgeClass = 'kadaluarsa';
+                    typeLabel = 'Masa Berakhir';
+                    break;
             }
 
             // Tentukan ikon & warna berdasarkan tipe notifikasi dan pengirim
@@ -1308,6 +1313,11 @@ function initNotifikasi() {
                 icon = 'fa-file-circle-plus';
                 iconBg = 'rgba(16, 185, 129, 0.12)';
                 iconColor = '#059669';
+            } else if (typeKey === 'kadaluarsa' || typeKey === 'masa_berakhir') {
+                icon = 'fa-circle-xmark';
+                iconBg = 'rgba(239, 68, 68, 0.12)';
+                iconColor = '#dc2626';
+                senderName = item.title || item.judul || 'Masa Berlaku Berakhir';
             }
 
             if (item.sender && item.sender.profile) {

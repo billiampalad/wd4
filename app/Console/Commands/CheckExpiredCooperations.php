@@ -31,70 +31,53 @@ class CheckExpiredCooperations extends Command
     {
         $this->info('Memulai pengecekan kedaluwarsa dokumen kerjasama...');
 
+        // 1. Proses kerjasama yang sudah berakhir dan kirim notifikasi ke semua unit terkait dan mitra
+        $expiredCount = \App\Support\CooperationExpiryService::checkAndNotifyExpiredCooperations();
+        $this->info("Pengecekan kadaluarsa selesai. {$expiredCount} dokumen diproses.");
+
+        // 2. Pengecekan Peringatan Dini (Early Warning H-90, H-60, H-30) untuk Pimpinan
         $today = Carbon::today();
-        
-        // Ambil pimpinan untuk dinotifikasi
         $pimpinanUsers = User::whereHas('role', function($q) {
-            $q->where('name', 'pimpinan');
+            $q->where(DB::raw("LOWER(role_name)"), 'pimpinan');
         })->get();
 
-        // Cari dokumen aktif
-        $cooperations = Cooperation::where('status_berlaku', 'Aktif')
+        $activeCooperations = Cooperation::with('mitra')
+            ->where('status_berlaku', 'Aktif')
             ->whereNotNull('end_date')
             ->get();
 
-        $count = 0;
+        $warningCount = 0;
 
-        foreach ($cooperations as $coop) {
+        foreach ($activeCooperations as $coop) {
             $endDate = Carbon::parse($coop->end_date);
-            $diffDays = $today->diffInDays($endDate, false); // false agar bisa negatif
+            $diffDays = (int) $today->diffInDays($endDate, false);
 
-            if (in_array($diffDays, [90, 60, 30])) {
-                $count++;
-                
+            if (in_array($diffDays, [90, 60, 30], true)) {
+                $warningCount++;
+                $mitraName = $coop->mitra?->nama_mitra ?? 'Mitra Terkait';
                 $title = "Peringatan Dini: Dokumen H-$diffDays";
-                $message = "Dokumen kerjasama {$coop->jenis} dengan {$coop->mitra->nama_mitra} ({$coop->doc_number}) akan berakhir dalam $diffDays hari pada " . $endDate->format('d M Y') . ".";
-                $link = route('pimpinan.kerjasama.show', $coop->id);
+                $message = "Dokumen kerjasama {$coop->jenis} dengan {$mitraName} ({$coop->doc_number}) akan berakhir dalam $diffDays hari pada " . $endDate->format('d M Y') . ".";
+                $link = route('pimpinan.monitoring.detail', $coop->id);
 
-                // Kirim notifikasi ke semua pimpinan
                 foreach ($pimpinanUsers as $pimpinan) {
-                    Notifikasi::create([
+                    Notifikasi::firstOrCreate([
                         'user_id' => $pimpinan->id,
-                        'sender_id' => null, // Sistem
-                        'cooperation_id' => $coop->id,
-                        'type' => 'early_warning',
+                        'source_id' => $coop->id,
+                        'source_type' => 'cooperation',
+                        'type' => "warning_h_{$diffDays}",
+                    ], [
+                        'sender_id' => null,
                         'title' => $title,
                         'message' => $message,
-                        'link' => $link,
-                        'is_read' => false,
+                        'url' => $link,
+                        'is_read' => 0,
                     ]);
                 }
 
-                // Jika dokumen diajukan oleh user tertentu (pic_id / user_id), kita bisa notifikasi ke mereka juga.
-                if ($coop->user_id) {
-                    Notifikasi::create([
-                        'user_id' => $coop->user_id,
-                        'sender_id' => null, // Sistem
-                        'cooperation_id' => $coop->id,
-                        'type' => 'early_warning',
-                        'title' => $title,
-                        'message' => $message,
-                        'link' => route('kerjasama.show', $coop->id), // asumsikan rute general
-                        'is_read' => false,
-                    ]);
-                }
-                
                 $this->info("Notifikasi H-$diffDays dibuat untuk dokumen {$coop->doc_number}");
-            } elseif ($diffDays < 0) {
-                // Jika dokumen sudah kadaluarsa tapi status masih 'Aktif'
-                // Bisa otomatis mengubah status menjadi 'Kadaluarsa'
-                $coop->status_berlaku = 'Kadaluarsa';
-                $coop->save();
-
-                $this->info("Dokumen {$coop->doc_number} otomatis diubah statusnya menjadi Kadaluarsa.");
             }
         }
 
-        $this->info("Pengecekan selesai. {$count} dokumen mendekati masa kadaluarsa.");
+        $this->info("Pengecekan selesai. {$warningCount} dokumen mendekati masa kadaluarsa.");
     }
 }

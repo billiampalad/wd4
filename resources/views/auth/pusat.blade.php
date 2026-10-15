@@ -98,6 +98,8 @@
         </script>
     @endif
     @php
+        \App\Support\CooperationExpiryService::checkAndNotifyExpiredCooperations();
+
         $unitExpiryNotifications = collect();
         $notificationUser = auth()->user();
         if ($notificationUser) {

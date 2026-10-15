@@ -2,9 +2,12 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 use App\Models\Mitra;
 use App\Support\GeoNormalizer;
 use Illuminate\Support\Facades\DB;
+
+Schedule::command('notifikasi:check-expired')->daily();
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());

@@ -13,6 +13,9 @@ class NotifikasiController extends Controller
      */
     public function index()
     {
+        // Otomatis periksa kerjasama yang berakhir dan buat notifikasi untuk pihak relevan
+        \App\Support\CooperationExpiryService::checkAndNotifyExpiredCooperations();
+
         $user = Auth::user();
 
         // 1. Inisialisasi query dasar untuk notifikasi yang belum dibaca milik user ini
@@ -53,8 +56,8 @@ class NotifikasiController extends Controller
                 })
                     // Notifikasi sistem tanpa source_id
                     ->orWhereNull('source_id')
-                    // Fallback berdasarkan tipe
-                    ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi']);
+                    // Fallback berdasarkan tipe (termasuk kadaluarsa)
+                    ->orWhereIn('type', ['evaluasi', 'revisi', 'sudah_revisi', 'kadaluarsa', 'masa_berakhir']);
             });
         }
 
@@ -77,26 +80,25 @@ class NotifikasiController extends Controller
             ->take(10)
             ->get();
 
-        if ($roleName === 'pimpinan') {
-            $notifikasis->each(function ($notifikasi) {
+        $notifikasis->each(function ($notifikasi) use ($roleName) {
+            if ($roleName === 'pimpinan') {
                 if (in_array($notifikasi->type, ['evaluasi', 'revisi', 'sudah_revisi', 'validasi'], true)) {
                     $notifikasi->link = route('pimpinan.evaluasi');
                 } elseif ($notifikasi->type === 'pengajuan_mitra') {
                     $notifikasi->link = route('pimpinan.pengajuan_mitra');
+                } else {
+                    $notifikasi->link = $notifikasi->url ?: ($notifikasi->source_id ? route('pimpinan.monitoring.detail', $notifikasi->source_id) : '#');
                 }
-                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
-            });
-        } elseif ($roleName === 'admin') {
-            $notifikasis->each(function ($notifikasi) {
+            } elseif ($roleName === 'admin') {
                 $notifikasi->link = $notifikasi->url ?: route('mitra.index');
-                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
-            });
-        } else {
-            $notifikasis->each(function ($notifikasi) {
+            } else {
                 $notifikasi->link = $notifikasi->url ?: '#';
-                $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
-            });
-        }
+            }
+
+            $notifikasi->pesan = $notifikasi->message;
+            $notifikasi->judul = $notifikasi->title;
+            $notifikasi->time_ago = $notifikasi->created_at?->diffForHumans();
+        });
 
         return response()->json([
             'success' => true,
