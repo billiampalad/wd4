@@ -1,0 +1,761 @@
+[
+  {
+    "id": "TC001",
+    "title": "Pimpinan dapat menyetujui pengajuan mitra",
+    "description": "Verifies that a pimpinan can open an incoming partnership submission, approve it, and see the submission status update.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "action",
+        "description": "Open the submission details"
+      },
+      {
+        "type": "action",
+        "description": "Approve the submission"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission status update is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Pengguna internal masuk dan diarahkan ke dashboard sesuai peran",
+    "description": "Pengguna internal berhasil login dan melihat dashboard yang sesuai dengan peran akunnya.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the appropriate role dashboard is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Mitra baru mengajukan kerja sama publik",
+    "description": "Mitra baru dapat mengirim pengajuan kerja sama publik lengkap dan menerima konfirmasi submit.",
+    "category": "Pengajuan Kerjasama Publik",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /pengajuan-kerjasama"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner institution name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner phone field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner address field"
+      },
+      {
+        "type": "action",
+        "description": "Select a cooperation field"
+      },
+      {
+        "type": "action",
+        "description": "Select a scope of cooperation"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid PDF proposal"
+      },
+      {
+        "type": "action",
+        "description": "Submit the application"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a submission confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Pimpinan dapat meminta revisi pada pengajuan mitra",
+    "description": "Verifies that a pimpinan can review an incoming submission, request revision with notes, and see the updated status.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "action",
+        "description": "Open the submission details"
+      },
+      {
+        "type": "action",
+        "description": "Request a revision and add notes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the revision status update is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Petugas jurusan membuat draft dokumen kerja sama baru",
+    "description": "Petugas internal dapat membuat dokumen kerja sama baru, menyimpannya sebagai draft, dan melihatnya muncul di daftar.",
+    "category": "Kelola Dokumen Kerjasama",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the cooperation documents section"
+      },
+      {
+        "type": "action",
+        "description": "Add a new cooperation document"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the document number field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the document title field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the validity start date field"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the validity end date field"
+      },
+      {
+        "type": "action",
+        "description": "Upload a scanned PDF document"
+      },
+      {
+        "type": "action",
+        "description": "Save the document as a draft"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the draft appears in the document list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Pimpinan dapat menolak pengajuan mitra",
+    "description": "Verifies that a pimpinan can reject an incoming partnership submission with a reason and see the rejection status update.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "action",
+        "description": "Open the submission details"
+      },
+      {
+        "type": "action",
+        "description": "Reject the submission and add a reason"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the rejection status update is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Petugas jurusan mengirim draft dokumen ke pimpinan",
+    "description": "Petugas internal dapat mengirim draft dokumen untuk evaluasi pimpinan dan melihat statusnya berubah.",
+    "category": "Kelola Dokumen Kerjasama",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the cooperation documents section"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing draft document"
+      },
+      {
+        "type": "action",
+        "description": "Submit the document for leader review"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the status changes to waiting for evaluation"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Pengguna keluar dan sesi berakhir",
+    "description": "Pengguna yang sudah login dapat logout dan kembali ke halaman login dengan sesi berakhir.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the logout control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the login page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Pimpinan meminta revisi pengajuan mitra dengan catatan",
+    "description": "Pimpinan dapat meminta revisi atas pengajuan mitra dan menyimpan catatan revisi yang terlihat kembali di status pengajuan.",
+    "category": "Pimpinan Pengajuan Mitra",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the partner submissions section"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission detail"
+      },
+      {
+        "type": "action",
+        "description": "Request revision for the submission"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the revision notes field"
+      },
+      {
+        "type": "action",
+        "description": "Save the revision decision"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a revision status is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Pimpinan melihat daftar pengajuan mitra setelah login",
+    "description": "Verifies that a logged-in pimpinan is redirected to the proper dashboard and can access the list of incoming partnership submissions.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the pimpinan dashboard is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the incoming submission list is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Pimpinan dapat membuka detail pengajuan dari daftar",
+    "description": "Verifies that a pimpinan can open a submission from the review list and view its details before making a decision.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the submission detail view is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Petugas jurusan mengedit draft dokumen kerja sama",
+    "description": "Petugas internal dapat membuka draft dokumen, memperbarui datanya, dan melihat perubahan tersimpan.",
+    "category": "Kelola Dokumen Kerjasama",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the cooperation documents section"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing draft document"
+      },
+      {
+        "type": "action",
+        "description": "Edit the document title field"
+      },
+      {
+        "type": "action",
+        "description": "Upload an updated attachment file"
+      },
+      {
+        "type": "action",
+        "description": "Save the changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated document details are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Mitra terdaftar melihat dokumen dan status review di portal mitra",
+    "description": "Mitra terdaftar dapat login ke portal mitra dan membuka daftar dokumen untuk meninjau status serta draft yang tersedia.",
+    "category": "Portal Mitra",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the partner documents section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the partner document list is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify document statuses or draft review information are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Admin membuka pengelolaan pengguna, role, dan mitra",
+    "description": "Admin dapat login dan mengakses halaman pengelolaan dasar untuk pengguna, role, dan mitra.",
+    "category": "Admin Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 120604"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the users management section"
+      },
+      {
+        "type": "action",
+        "description": "Click the roles management section"
+      },
+      {
+        "type": "action",
+        "description": "Click the partner management section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the administrative management pages are accessible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Pimpinan melihat catatan revisi pada pengajuan yang dikembalikan",
+    "description": "Verifies that a pimpinan can see previously added revision notes when reopening a submission that needs changes.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "action",
+        "description": "Open a submission with revision required status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the revision notes are visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Pimpinan melihat status pengajuan yang sudah diproses",
+    "description": "Verifies that a pimpinan can distinguish approved, revised, and rejected submissions in the review workflow.",
+    "category": "Validasi dan Pengesahan Pimpinan",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with 012460"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the link to the partnership submission review page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify processed submission statuses are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC017",
+    "title": "Pengguna melihat peringatan saat kredensial tidak valid",
+    "description": "Pengguna yang memasukkan kredensial salah melihat peringatan validasi tanpa berhasil masuk.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with fake-user@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with invalid-password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an invalid credentials alert is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC018",
+    "title": "Petugas jurusan tidak dapat mengedit dokumen yang sudah diproses",
+    "description": "Petugas internal yang membuka dokumen non-draft melihat bahwa dokumen tersebut tidak dapat diedit.",
+    "category": "Kelola Dokumen Kerjasama",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in NIK or email field with 222222"
+      },
+      {
+        "type": "action",
+        "description": "Fill in password field with password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the cooperation documents section"
+      },
+      {
+        "type": "action",
+        "description": "Open a document with a non-draft status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify editing is unavailable for the document"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC019",
+    "title": "Mitra melihat validasi saat data pengajuan publik belum lengkap",
+    "description": "Mitra yang mengirim pengajuan publik dengan data wajib belum lengkap melihat pesan validasi dan pengajuan tidak terkirim.",
+    "category": "Pengajuan Kerjasama Publik",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /pengajuan-kerjasama"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the partner institution name field"
+      },
+      {
+        "type": "action",
+        "description": "Select a cooperation field"
+      },
+      {
+        "type": "action",
+        "description": "Upload a valid PDF proposal"
+      },
+      {
+        "type": "action",
+        "description": "Submit the application"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible"
+      }
+    ],
+    "priority": "Low"
+  }
+]
