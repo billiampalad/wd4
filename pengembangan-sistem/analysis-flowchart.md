@@ -58,7 +58,7 @@ Setiap activity diagram mereferensikan kode use case dari dokumen [analysis-use-
 flowchart TD
     Start(("●"))
     A["Membuka Halaman Login"]
-    B["Memasukkan NIK/Email"]
+    B["Memasukkan Email"]
     C["Memasukkan Password"]
     D{"Kredensial Valid?"}
     E{"Akun Aktif?"}
@@ -112,7 +112,7 @@ flowchart TD
 | No | Langkah | Pelaku | Keterangan |
 |----|---------|--------|------------|
 | 1 | Membuka halaman login | Pengguna | Mengakses URL login sistem |
-| 2 | Memasukkan NIK/Email | Pengguna | Input field NIK atau email |
+| 2 | Memasukkan Email | Pengguna | Input field email |
 | 3 | Memasukkan Password | Pengguna | Input field password |
 | 4 | Memvalidasi kredensial | Sistem | Mencocokkan dengan database |
 | 5 | Memeriksa status akun | Sistem | Pastikan akun berstatus aktif |
