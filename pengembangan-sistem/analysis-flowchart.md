@@ -1393,6 +1393,59 @@ flowchart TD
 
 ---
 
+### 10.3 Alur Otomatisasi Pengecekan Kedaluwarsa & Distribusi Notifikasi Terarah
+
+**Aktor / Komponen**: Sistem (Laravel Scheduler & Service), Database, Unit Terkait (Penginput, Humas, Jurusan, Prodi, UPA, Pusat), Mitra Privat
+
+```mermaid
+flowchart TD
+    Start(("●"))
+
+    subgraph trigger["⏰ 1. Pemicu Sistem (Trigger)"]
+        T1["Scheduler Harian via Cron\n(php artisan notifikasi:check-expired)"]
+        T2["Polling / Interaksi Pengguna\n(Fetch /api/notifikasi)"]
+    end
+
+    subgraph check["🔍 2. Evaluasi Masa Berlaku Dokumen"]
+        A["CooperationExpiryService:\ncheckAndNotifyExpired()"]
+        B["Query Dokumen Kerja Sama:\n- end_date < Hari Ini (CURRENT_DATE)\n- status_berlaku != 'Kadaluarsa'\n- Kecualikan status dalam perpanjangan / tidak aktif"]
+        C{"Apakah Ditemukan\nDokumen Kedaluwarsa?"}
+        D["Loop Setiap Dokumen Kedaluwarsa"]
+        E["Update Database:\nstatus_berlaku = 'Kadaluarsa'"]
+        F["Tampilan Tabel Dokumen:\nUpdate Badge Merah 'Masa Berakhir'"]
+    end
+
+    subgraph dispatch["📢 3. Pemetaan & Distribusi Notifikasi Terarah"]
+        G["Identifikasi Target Penerima Relevan:"]
+        G1["• Unit Penginput (created_by)\n• Humas / Staf Pengelola Kemitraan\n• Jurusan & Prodi Terkait (Direct & Pivot)\n• UPA Terkait (Direct & Pivot)\n• Pusat Terkait (Direct & Pivot)\n• Mitra Privat Pemilik Dokumen (users.mitra_id)\n• Pimpinan (Monitoring Institusi)"]
+        H["Cek Idempotensi (Deduplikasi):\nNotifikasi::firstOrCreate([\n  'user_id' => target_id,\n  'cooperation_id' => doc_id,\n  'type' => 'kerjasama_expired'\n])"]
+        I{"Notifikasi\nSudah Pernah\nDikirim?"}
+        J["Lewati Pembuatan\n(Cegah Duplikasi / Spam)"]
+        K["Simpan Record Notifikasi Baru:\n- Judul: 'Masa Berlaku Berakhir'\n- Pesan: 'Kerja sama [Judul] telah berakhir...'\n- Link: Detail Dokumen Sesuai Role\n- is_read = false"]
+    end
+
+    subgraph ui["💻 4. Respon & Tampilan Antarmuka (UI)"]
+        L["Pengguna (Unit / Mitra) Membuka Sistem"]
+        M["Badge Lonceng Navbar Menampilkan Counter Merah"]
+        N["Pengguna Mengklik Ikon Lonceng"]
+        O["Menampilkan Dropdown Notifikasi Real-Time\n(Kategori: 'Masa Berakhir')"]
+        P["Pengguna Mengklik Notifikasi Dokumen"]
+        Q["Sistem Menandai is_read = true"]
+        R["Redirect ke Halaman Detail Kerja Sama Terkait\n(Unit/Mitra dapat Mengajukan Perpanjangan)"]
+    end
+
+    End(("◉"))
+
+    Start --> T1 & T2 --> A
+    A --> B --> C
+    C -- Tidak Ada --> End
+    C -- Ada Dokumen --> D --> E --> F --> G --> G1 --> H --> I
+    I -- Sudah Ada --> J --> End
+    I -- Belum Ada --> K --> L --> M --> N --> O --> P --> Q --> R --> End
+```
+
+---
+
 ## 11. Alur Proses Bisnis Utama End-to-End
 
 Bagian ini menggambarkan alur bisnis utama sistem secara end-to-end, menghubungkan beberapa use case dalam satu proses berkelanjutan.
@@ -1438,12 +1491,12 @@ flowchart TD
         D6["Mitra Memberi\nUmpan Balik\n(UC26)"]
     end
 
-    subgraph fase5["🔄 Fase 5: Perpanjangan / Penutupan"]
-        E1{"KS Akan\nBerakhir?"}
-        E2["Notifikasi Early Warning\n30/60/90 Hari\n(UC34)"]
-        E3{"Mitra Ajukan\nPerpanjangan?\n(UC18)"}
+    subgraph fase5["🔄 Fase 5: Kedaluwarsa, Perpanjangan & Penutupan"]
+        E1{"KS Melewati\nend_date?"}
+        E2["Sistem Otomatis:\nStatus → Kadaluarsa\n+ Dispatch Notifikasi Terarah\n(Bagian 10.3)"]
+        E3{"Mitra / Unit Ajukan\nPerpanjangan?\n(UC18)"}
         E4["Proses Perpanjangan\n→ Kembali ke Fase 2"]
-        E5["KS Selesai / Ditutup"]
+        E5["KS Selesai / Diarsipkan"]
     end
 
     subgraph fase6["🎓 Fase 6: Tracking"]
@@ -1618,19 +1671,66 @@ stateDiagram-v2
     state Disahkan {
         [*] --> Aktif : Tanggal berlaku dimulai
         Aktif --> Akan_Berakhir : 90 hari sebelum end_date
-        Akan_Berakhir --> Berakhir : Melewati end_date
-        Akan_Berakhir --> Diperpanjang : Mitra mengajukan perpanjangan (UC18)
-        Berakhir --> Diperpanjang : Mitra mengajukan perpanjangan (UC18)
+        Akan_Berakhir --> Kadaluarsa : Melewati end_date (Otomatis via CooperationExpiryService)
+        Aktif --> Kadaluarsa : Melewati end_date (Otomatis via CooperationExpiryService)
+        Akan_Berakhir --> Diperpanjang : Mitra/Unit mengajukan perpanjangan (UC18)
+        Kadaluarsa --> Diperpanjang : Mitra/Unit mengajukan perpanjangan (UC18)
+        Kadaluarsa --> Selesai : Tidak diperpanjang / Diarsipkan
     }
 ```
 
 ---
 
+### 11.5 Alur Otomatisasi Masa Berlaku & Distribusi Notifikasi Multi-Aktor (Swimlane Diagram)
+
+Diagram berikut menggambarkan interaksi kolaboratif antara sistem otomasi latar belakang dengan para pemangku kepentingan (*stakeholders*) saat kerja sama melewati tanggal batas berlaku (`end_date`).
+
+```mermaid
+flowchart TD
+    subgraph S["🖥️ Sistem & Backend (Cron / Service)"]
+        S1["Scheduler Daily (00:00) /\nTrigger via API Polling"]
+        S2["CooperationExpiryService:\nDeteksi end_date < Hari Ini"]
+        S3["Update Database:\nstatus_berlaku = 'Kadaluarsa'"]
+        S4["Filter Target Penerima Terarah:\nPenginput, Humas, Jurusan/Prodi,\nUPA, Pusat, Mitra Privat"]
+        S5["Notifikasi::firstOrCreate\n(Deduplikasi Otomatis)"]
+    end
+
+    subgraph U["🏛️ Unit Penginput & Humas"]
+        U1["Terima Notifikasi Alert:\n'Masa Berlaku Berakhir'"]
+        U2["Membuka Halaman Detail Dokumen\n(Status berubah jadi Kadaluarsa)"]
+        U3{"Tindak Lanjut?"}
+        U4["Ajukan / Proses Perpanjangan\n(Perpanjangan Kerja Sama)"]
+        U5["Arsipkan Dokumen Selesai"]
+    end
+
+    subgraph J["📚 Unit Akademik & Layanan (Jurusan, Prodi, UPA, Pusat)"]
+        J1["Terima Notifikasi Relevan\n(Jika Terikat di Jurusan/UPA/Pusat)"]
+        J2["Review Kegiatan Mahasiswa / Dosen\nyang Terkait Dokumen"]
+        J3["Finalisasi Laporan Kegiatan / IA"]
+    end
+
+    subgraph M["🏢 Mitra Privat Terkait"]
+        M1["Menerima Notifikasi di Portal Mitra\n(Hanya Dokumen Milik Mitra Tersebut)"]
+        M2["Melihat Detail Dokumen & Masa Berlaku"]
+        M3["Koordinasi dengan Humas Kampus /\nAjukan Perpanjangan Online"]
+    end
+
+    S1 --> S2 --> S3 --> S4 --> S5
+    S5 -->|Kirim ke Penginput & Humas| U1 --> U2 --> U3
+    U3 -- Perpanjangan --> U4
+    U3 -- Selesai --> U5
+    S5 -->|Kirim ke Unit Kerja Terikat| J1 --> J2 --> J3
+    S5 -->|Kirim ke Mitra Privat| M1 --> M2 --> M3
+```
+
+---
+
 > [!NOTE]
-> **Total Activity Diagram**: Dokumen ini mencakup **37 activity diagram** yang mewakili seluruh use case (UC01–UC37) dari 8 subsistem, ditambah **4 diagram proses bisnis end-to-end** yang menggambarkan alur terintegrasi antar use case.
+> **Total Activity Diagram**: Dokumen ini mencakup **38 activity diagram** (UC01–UC37 ditambah alur otomatisasi kedaluwarsa 10.3) dari 8 subsistem, ditambah **5 diagram proses bisnis end-to-end** yang menggambarkan alur terintegrasi antar use case dan multi-aktor.
 
 > [!IMPORTANT]
 > Setiap activity diagram menggunakan kode use case yang konsisten dengan dokumen [analysis-use-case.md](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md) untuk menjaga **traceability**. Jika terdapat perubahan use case, activity diagram terkait harus diperbarui.
 
 > [!TIP]
 > Gunakan diagram end-to-end di **Bagian 11** untuk memahami keseluruhan proses bisnis sistem. Diagram per-use case di **Bagian 2–10** untuk memahami detail langkah demi langkah setiap fungsi.
+
