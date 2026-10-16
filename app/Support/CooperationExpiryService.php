@@ -33,17 +33,12 @@ class CooperationExpiryService
         ])
             ->whereNotNull('end_date')
             ->whereDate('end_date', '<', $today)
-            ->whereNotIn(DB::raw("LOWER(COALESCE(status_berlaku, ''))"), [
-                'dalam perpanjangan',
-                'diperpanjang',
-                'tidak aktif',
-                'nonaktif',
-                'non aktif',
-            ])
+            ->whereRaw("LOWER(COALESCE(status_berlaku, '')) NOT IN ('dalam perpanjangan', 'diperpanjang', 'tidak aktif', 'nonaktif', 'non aktif')")
             ->get();
 
         $processedCount = 0;
 
+        /** @var Cooperation $coop */
         foreach ($expiredCooperations as $coop) {
             // 1. Update status_berlaku di database menjadi 'Kadaluarsa' jika belum
             $currentStatus = strtolower(trim((string) $coop->status_berlaku));

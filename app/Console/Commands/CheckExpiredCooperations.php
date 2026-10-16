@@ -7,6 +7,7 @@ use App\Models\Cooperation;
 use App\Models\Notifikasi;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CheckExpiredCooperations extends Command
 {
