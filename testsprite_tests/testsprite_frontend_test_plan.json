@@ -52,7 +52,7 @@
       },
       {
         "type": "action",
-        "description": "Fill in NIK or email field with 222222"
+        "description": "Fill in email field with jurusan@polnado.ac.id"
       },
       {
         "type": "action",
@@ -318,7 +318,7 @@
       },
       {
         "type": "action",
-        "description": "Fill in NIK or email field with 222222"
+        "description": "Fill in email field with jurusan@polnado.ac.id"
       },
       {
         "type": "action",

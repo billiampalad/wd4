@@ -40,73 +40,46 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link in the page header to open the login page.
-        # Login Sistem link
-        elem = page.get_by_role("link", name="Login Sistem")
-        await elem.click(timeout=10000)
+        # -> Open the Login page by navigating to the Login page (Login Sistem).
+        await page.goto("http://localhost:8000/login")
+        try:
+            await page.wait_for_load_state("domcontentloaded", timeout=5000)
+        except Exception:
+            pass
         
-        # -> Isi field 'Email' dengan '222222', isi field 'Kata Sandi' dengan 'password', lalu klik tombol 'Masuk Sekarang'.
+        # -> Fill 'jurusan@polnado.ac.id' into the Email field and then enter the password and submit the form using the 'Masuk Sekarang' button.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("222222")
+        await elem.fill("jurusan@polnado.ac.id")
         
-        # -> Isi field 'Email' dengan '222222', isi field 'Kata Sandi' dengan 'password', lalu klik tombol 'Masuk Sekarang'.
+        # -> Fill 'jurusan@polnado.ac.id' into the Email field and then enter the password and submit the form using the 'Masuk Sekarang' button.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Isi field 'Email' dengan '222222', isi field 'Kata Sandi' dengan 'password', lalu klik tombol 'Masuk Sekarang'.
+        # -> Fill 'jurusan@polnado.ac.id' into the Email field and then enter the password and submit the form using the 'Masuk Sekarang' button.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
-        # -> Fill the Email field with '222222@example.com' and click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("222222@example.com")
-        
-        # -> Fill the Email field with '222222@example.com' and click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("password")
-        
-        # -> Fill the Email field with '222222@example.com' and click the 'Masuk Sekarang' button to submit the login form.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
+        # -> Click the 'Logout' button to sign out and return to the login page.
+        # Logout button
+        elem = page.get_by_role("button", name="")
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Email' field with 'example@gmail.com', fill the 'Kata Sandi' field with 'password123', then click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("example@gmail.com")
-        
-        # -> Fill the 'Email' field with 'example@gmail.com', fill the 'Kata Sandi' field with 'password123', then click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("password123")
-        
-        # -> Fill the 'Email' field with 'example@gmail.com', fill the 'Kata Sandi' field with 'password123', then click the 'Masuk Sekarang' button to submit the login form.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
+        # -> Click the 'Ya, Keluar' button in the logout confirmation dialog to confirm logout.
+        # Ya, Keluar button
+        elem = page.get_by_role("button", name="Ya, Keluar")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> Could not verify return to the login page after logout because login failed.
-        await page.get_by_role("button", name="Masuk Sekarang").nth(0).scroll_into_view_if_needed()
-        # Assert-outcome: failed
-        # Assert: Expected the login page to be displayed after logout.
-        await expect(page.get_by_role("button", name="Masuk Sekarang").nth(0)).to_be_visible(timeout=15000), "Expected the login page to be displayed after logout."
-        
-        # --> Test blocked by environment/access constraints during agent run
-        # Reason: TEST BLOCKED The test could not be run — login could not be completed because valid credentials were not available and the provided credentials were rejected. Observations: - The login page shows the error message: 'Email atau kata sandi salah. Sisa percobaan: 2 kali.' - The UI remained on the login form after submission and no logout control or authenticated UI was displayed.
-        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The test could not be run \u2014 login could not be completed because valid credentials were not available and the provided credentials were rejected. Observations: - The login page shows the error message: 'Email atau kata sandi salah. Sisa percobaan: 2 kali.' - The UI remained on the login form after submission and no logout control or authenticated UI was displayed." + " — the exported script cannot reproduce a PASS in this environment.")
+        # --> After logout, the login page is displayed and the login form is visible.
+        # Assert-outcome: passed
+        # Assert: The login form's submit button text is 'Masuk Sekarang', showing the login form is present.
+        await expect(page.locator("xpath=/html/body/div[2]/div[2]/form/button").nth(0)).to_have_text("Masuk Sekarang", timeout=15000), "The login form's submit button text is 'Masuk Sekarang', showing the login form is present."
         await asyncio.sleep(5)
 
     finally:
