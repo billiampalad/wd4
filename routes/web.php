@@ -501,6 +501,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('roles', RoleController::class);
     Route::resource('mitra', MitraController::class);
     Route::post('/mitra/{mitra}/send-access', [MitraController::class, 'sendAccessLogin'])->name('mitra.send-access');
+    Route::post('/mitra/{mitra}/send-access-login', [MitraController::class, 'sendAccessLogin'])->name('mitra.sendAccessLogin');
     Route::resource('jkerjasama', JenisKerjasamaController::class);
     Route::resource('upelaksana', UpelaksanaController::class);
     Route::resource('jurusan', JurusanController::class);

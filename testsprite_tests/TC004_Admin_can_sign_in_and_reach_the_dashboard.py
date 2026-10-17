@@ -40,46 +40,36 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link in the header to open the login page.
-        # Login Sistem link
-        elem = page.get_by_role("link", name="Login Sistem")
-        await elem.click(timeout=10000)
+        # -> Open the specified admin login page and inspect the form fields.
+        await page.goto("http://127.0.0.1:8000/admin/login")
+        try:
+            await page.wait_for_load_state("domcontentloaded", timeout=5000)
+        except Exception:
+            pass
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
+        # -> Enter the provided admin email and password, then submit the 'Masuk ke Sistem' form.
+        # Masukkan Email Administrator email field
+        elem = page.get_by_role("textbox", name="Email Administrator")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
+        # -> Enter the provided admin email and password, then submit the 'Masuk ke Sistem' form.
         # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
+        elem = page.get_by_role("textbox", name="Kata Sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
+        # -> Enter the provided admin email and password, then submit the 'Masuk ke Sistem' form.
+        # Masuk ke Sistem button
+        elem = page.get_by_role("button", name="Masuk ke Sistem")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> The browser landed on the admin dashboard URL.
-        # Assert-outcome: passed
-        # Assert: URL contains /admin/dashboard.
-        await expect(page).to_have_url(re.compile("/admin/dashboard"), timeout=15000), "URL contains /admin/dashboard."
-        
-        # --> A success notification confirming login is visible on the page.
-        await page.locator("xpath=/html/body/div[3]/div/div[1]").nth(0).scroll_into_view_if_needed()
-        # Assert-outcome: passed
-        # Assert: The login success notification element is visible.
-        await expect(page.locator("xpath=/html/body/div[3]/div/div[1]").nth(0)).to_be_visible(timeout=15000), "The login success notification element is visible."
-        
-        # --> Admin dashboard content is present (management link 'Kelola Pengguna' is visible).
-        await page.get_by_role("link", name=" Kelola Pengguna Tambah,").nth(0).scroll_into_view_if_needed()
-        # Assert-outcome: passed
-        # Assert: The 'Kelola Pengguna' management link is visible on the dashboard.
-        await expect(page.get_by_role("link", name=" Kelola Pengguna Tambah,").nth(0)).to_be_visible(timeout=15000), "The 'Kelola Pengguna' management link is visible on the dashboard."
+        # --> The admin dashboard is displayed after login.
+        # Assert-outcome: not verified — the export-time check could not be evaluated
+        # Assert: The page is on the admin dashboard.
+        await expect(page).to_have_url(re.compile("/admin/dashboard"), timeout=15000), "The page is on the admin dashboard."
         await asyncio.sleep(5)
 
     finally:

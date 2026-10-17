@@ -1,981 +1,981 @@
 [
-  {
-    "id": "TC001",
-    "title": "Mengajukan kerja sama publik dengan data lengkap",
-    "description": "Mitra publik dapat mengirim pengajuan kerja sama dengan seluruh data wajib dan melihat konfirmasi pengiriman.",
-    "category": "Pengajuan Kerjasama Publik",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /pengajuan-kerjasama"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the partner identity fields with valid information"
-      },
-      {
-        "type": "action",
-        "description": "Select a valid bidang kerja sama"
-      },
-      {
-        "type": "action",
-        "description": "Select a valid ruang lingkup"
-      },
-      {
-        "type": "action",
-        "description": "Upload a valid proposal PDF"
-      },
-      {
-        "type": "action",
-        "description": "Submit the application"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify a submission confirmation is visible"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC002",
-    "title": "Public user can submit a partnership application",
-    "description": "This verifies that a public applicant can complete the cooperation request form, upload a proposal PDF, and see the submission confirmation.",
-    "category": "Validasi dan Pengesahan Pimpinan",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /pengajuan-kerjasama"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the applicant name field with PT Mitra Publik"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the institution email field with publik@example.com"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the contact phone field with 081234567891"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the cooperation subject field with Kerja Sama Pelatihan"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the description field with Permohonan kerja sama pelatihan bersama kampus"
-      },
-      {
-        "type": "action",
-        "description": "Upload a valid proposal PDF"
-      },
-      {
-        "type": "action",
-        "description": "Submit the partnership application"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify a submission confirmation is visible"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC003",
-    "title": "Masuk ke dashboard sesuai peran",
-    "description": "Pengguna berhasil masuk dan diarahkan ke dashboard sesuai role yang dimilikinya.",
-    "category": "User Authentication",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the user lands on the appropriate role dashboard"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC004",
-    "title": "Admin can sign in and reach the dashboard",
-    "description": "This verifies that an admin can log in successfully and land on the admin dashboard.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the admin dashboard is displayed"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC005",
-    "title": "Memvalidasi pengajuan mitra dan menyetujui permohonan",
-    "description": "Pimpinan dapat meninjau pengajuan mitra dan menyetujui permohonan sehingga status pengajuan berubah.",
-    "category": "Pengesahan Pengajuan Mitra",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the partner submission review page"
-      },
-      {
-        "type": "action",
-        "description": "Open a pending submission"
-      },
-      {
-        "type": "action",
-        "description": "Approve the submission"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the submission status is updated"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC006",
-    "title": "Leader can approve a partner submission",
-    "description": "This verifies that a leader can open an incoming submission, approve it, and see the status update.",
-    "category": "Validasi dan Pengesahan Pimpinan",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /pimpinan/pengajuan-mitra"
-      },
-      {
-        "type": "action",
-        "description": "Open an incoming submission"
-      },
-      {
-        "type": "action",
-        "description": "Approve the submission"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the submission status is updated to approved"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC007",
-    "title": "Mengirim draft dokumen ke pimpinan untuk evaluasi",
-    "description": "Unit internal dapat mengirim draft dokumen kerja sama ke pimpinan dan melihat status berubah menjadi menunggu evaluasi.",
-    "category": "Kelola Dokumen Kerjasama",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the cooperation documents page"
-      },
-      {
-        "type": "action",
-        "description": "Select an existing draft document"
-      },
-      {
-        "type": "action",
-        "description": "Submit the document to the leader for validation"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the document status changes to waiting for evaluation"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC008",
-    "title": "Keluar dari sesi akun",
-    "description": "Pengguna yang sudah masuk dapat keluar dan kembali ke halaman login.",
-    "category": "User Authentication",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Click the logout control"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the login page is displayed"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC009",
-    "title": "Menyimpan dokumen kerja sama baru sebagai draft",
-    "description": "Unit internal dapat membuat dokumen kerja sama baru dan menyimpannya sebagai draft yang muncul di daftar dokumen.",
-    "category": "Kelola Dokumen Kerjasama",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the cooperation documents page"
-      },
-      {
-        "type": "action",
-        "description": "Start creating a new cooperation document"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the document details with valid information"
-      },
-      {
-        "type": "action",
-        "description": "Upload a valid scanned PDF"
-      },
-      {
-        "type": "action",
-        "description": "Save the document as a draft"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the new draft appears in the document list"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC010",
-    "title": "Leader can request revision with notes",
-    "description": "This verifies that a leader can request changes on a submission and the revision status appears with notes saved.",
-    "category": "Validasi dan Pengesahan Pimpinan",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /pimpinan/pengajuan-mitra"
-      },
-      {
-        "type": "action",
-        "description": "Open an incoming submission"
-      },
-      {
-        "type": "action",
-        "description": "Request revision for the submission"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the revision notes field with Mohon lengkapi dokumen pendukung"
-      },
-      {
-        "type": "action",
-        "description": "Submit the revision request"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the submission status is updated to revision requested"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC011",
-    "title": "Meminta revisi pengajuan mitra dengan catatan",
-    "description": "Pimpinan dapat meminta revisi pada pengajuan mitra dan catatan revisi tersimpan sebagai hasil keputusan.",
-    "category": "Pengesahan Pengajuan Mitra",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the partner submission review page"
-      },
-      {
-        "type": "action",
-        "description": "Open a pending submission"
-      },
-      {
-        "type": "action",
-        "description": "Request revision with a note"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the revision request is recorded"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC012",
-    "title": "Admin can send login access to a partner without an account",
-    "description": "This verifies that an admin can filter partners without an account and trigger the login access action successfully.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /admin/mitra"
-      },
-      {
-        "type": "action",
-        "description": "Filter partners to show those without an account"
-      },
-      {
-        "type": "action",
-        "description": "Click the send login access action for one partner"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify a success confirmation is visible"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the partner is marked as having access sent"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC013",
-    "title": "Admin can add a new user",
-    "description": "This verifies that an admin can create a new user from the user management page and see it appear in the list.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /admin/users"
-      },
-      {
-        "type": "action",
-        "description": "Click the add user action"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the name field with Test User Admin"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the identification number field with 1234567890123456"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with testuseradmin@example.com"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with Password123!"
-      },
-      {
-        "type": "action",
-        "description": "Select an appropriate role"
-      },
-      {
-        "type": "action",
-        "description": "Save the user"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the new user appears in the user list"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC014",
-    "title": "Leader can reject a submission with a reason",
-    "description": "This verifies that a leader can reject a submission with a reason and see the rejected status reflected in the list.",
-    "category": "Validasi dan Pengesahan Pimpinan",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /pimpinan/pengajuan-mitra"
-      },
-      {
-        "type": "action",
-        "description": "Open an incoming submission"
-      },
-      {
-        "type": "action",
-        "description": "Reject the submission"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the rejection reason field with Pengajuan belum memenuhi persyaratan"
-      },
-      {
-        "type": "action",
-        "description": "Submit the rejection"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the submission status is updated to rejected"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC015",
-    "title": "Menolak kredensial yang salah",
-    "description": "Pengguna melihat pesan kesalahan ketika mencoba masuk dengan kredensial yang tidak valid.",
-    "category": "User Authentication",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with invalid-user@example.com"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with invalid-password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify an invalid credentials alert is visible"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC016",
-    "title": "Admin can register a new partner",
-    "description": "This verifies that an admin can add a mitra record and see the partner registered in the mitra list.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /admin/mitra"
-      },
-      {
-        "type": "action",
-        "description": "Click the add partner action"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the institution name field with PT Mitra Contoh"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the address field with Jalan Contoh 1"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with mitra.contoh@example.com"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the phone field with 081234567890"
-      },
-      {
-        "type": "action",
-        "description": "Select a classification"
-      },
-      {
-        "type": "action",
-        "description": "Save the partner"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the new partner appears in the mitra list"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC017",
-    "title": "Mengedit draft dokumen kerja sama dan melihat perubahan tersimpan",
-    "description": "Unit internal dapat membuka draft dokumen kerja sama, memperbarui isinya, lalu melihat perubahan pada detail dokumen.",
-    "category": "Kelola Dokumen Kerjasama",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the cooperation documents page"
-      },
-      {
-        "type": "action",
-        "description": "Select an existing draft document"
-      },
-      {
-        "type": "action",
-        "description": "Edit the document details"
-      },
-      {
-        "type": "action",
-        "description": "Save the changes"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the updated document details are displayed"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC018",
-    "title": "Admin can create a new role",
-    "description": "This verifies that an admin can add a role with permissions and see the role saved in the roles list.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /admin/roles"
-      },
-      {
-        "type": "action",
-        "description": "Click the add role action"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the role name field with Reviewer Khusus"
-      },
-      {
-        "type": "action",
-        "description": "Select the required permissions"
-      },
-      {
-        "type": "action",
-        "description": "Save the role"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the new role appears in the roles list"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC019",
-    "title": "Menampilkan validasi saat pengajuan publik belum lengkap",
-    "description": "Form pengajuan kerja sama publik menolak pengiriman ketika data wajib belum diisi.",
-    "category": "Pengajuan Kerjasama Publik",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /pengajuan-kerjasama"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the partner identity fields with partial valid information"
-      },
-      {
-        "type": "action",
-        "description": "Select a valid bidang kerja sama"
-      },
-      {
-        "type": "action",
-        "description": "Submit the application"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify a form validation error is visible"
-      }
-    ],
-    "priority": "High"
-  },
-  {
-    "id": "TC020",
-    "title": "Admin can add a new cooperation type",
-    "description": "This verifies that an admin can create a new jenis kerja sama entry and see it listed afterward.",
-    "category": "Subsistem Master Data",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /admin/jkerjasama"
-      },
-      {
-        "type": "action",
-        "description": "Click the add cooperation type action"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the name field with Kerja Sama Riset"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the code field with RSK"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the description field with Jenis kerja sama untuk riset kolaboratif"
-      },
-      {
-        "type": "action",
-        "description": "Save the cooperation type"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the new cooperation type appears in the list"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC021",
-    "title": "Mitra melihat dokumen dan memberikan review pada draft",
-    "description": "Mitra yang sudah login dapat membuka daftar dokumen kerja sama, meninjau draft yang tersedia, dan mengirim feedback.",
-    "category": "Mitra Dokumen dan Review",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the partner documents page"
-      },
-      {
-        "type": "action",
-        "description": "Open an available draft document"
-      },
-      {
-        "type": "action",
-        "description": "Submit a review or feedback"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the review is saved and visible"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC022",
-    "title": "Mitra can view documents and review a draft",
-    "description": "This verifies that a logged-in partner can open the document page, inspect a draft cooperation document, and submit feedback on it.",
-    "category": "Validasi dan Pengesahan Pimpinan",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Navigate to /mitra/dokumen"
-      },
-      {
-        "type": "action",
-        "description": "Open a draft document"
-      },
-      {
-        "type": "action",
-        "description": "Enter review feedback for the draft"
-      },
-      {
-        "type": "action",
-        "description": "Submit the review feedback"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the draft review is saved and visible"
-      }
-    ],
-    "priority": "Medium"
-  },
-  {
-    "id": "TC023",
-    "title": "Mencegah pengeditan dokumen yang sudah bukan draft",
-    "description": "Unit internal tidak dapat mengubah dokumen kerja sama yang sudah berstatus selain draft.",
-    "category": "Kelola Dokumen Kerjasama",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to /login"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the NIK or email field with admin@polnado.ac.id"
-      },
-      {
-        "type": "action",
-        "description": "Fill in the password field with password"
-      },
-      {
-        "type": "action",
-        "description": "Submit the login form"
-      },
-      {
-        "type": "action",
-        "description": "Open the cooperation documents page"
-      },
-      {
-        "type": "action",
-        "description": "Select a document with a non-draft status"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the document cannot be edited"
-      }
-    ],
-    "priority": "Medium"
-  }
+    {
+        "id": "TC001",
+        "title": "Mengajukan kerja sama publik dengan data lengkap",
+        "description": "Mitra publik dapat mengirim pengajuan kerja sama dengan seluruh data wajib dan melihat konfirmasi pengiriman.",
+        "category": "Pengajuan Kerjasama Publik",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /pengajuan-kerjasama"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the partner identity fields with valid information"
+            },
+            {
+                "type": "action",
+                "description": "Select a valid bidang kerja sama"
+            },
+            {
+                "type": "action",
+                "description": "Select a valid ruang lingkup"
+            },
+            {
+                "type": "action",
+                "description": "Upload a valid proposal PDF"
+            },
+            {
+                "type": "action",
+                "description": "Submit the application"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify a submission confirmation is visible"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC002",
+        "title": "Public user can submit a partnership application",
+        "description": "This verifies that a public applicant can complete the cooperation request form, upload a proposal PDF, and see the submission confirmation.",
+        "category": "Validasi dan Pengesahan Pimpinan",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /pengajuan-kerjasama"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the applicant name field with PT Mitra Publik"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the institution email field with publik@example.com"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the contact phone field with 081234567891"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the cooperation subject field with Kerja Sama Pelatihan"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the description field with Permohonan kerja sama pelatihan bersama kampus"
+            },
+            {
+                "type": "action",
+                "description": "Upload a valid proposal PDF"
+            },
+            {
+                "type": "action",
+                "description": "Submit the partnership application"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify a submission confirmation is visible"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC003",
+        "title": "Masuk ke dashboard sesuai peran",
+        "description": "Pengguna berhasil masuk dan diarahkan ke dashboard sesuai role yang dimilikinya.",
+        "category": "User Authentication",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the user lands on the appropriate role dashboard"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC004",
+        "title": "Admin can sign in and reach the dashboard",
+        "description": "This verifies that an admin can log in successfully and land on the admin dashboard.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the admin dashboard is displayed"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC005",
+        "title": "Memvalidasi pengajuan mitra dan menyetujui permohonan",
+        "description": "Pimpinan dapat meninjau pengajuan mitra dan menyetujui permohonan sehingga status pengajuan berubah.",
+        "category": "Pengesahan Pengajuan Mitra",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the partner submission review page"
+            },
+            {
+                "type": "action",
+                "description": "Open a pending submission"
+            },
+            {
+                "type": "action",
+                "description": "Approve the submission"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the submission status is updated"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC006",
+        "title": "Leader can approve a partner submission",
+        "description": "This verifies that a leader can open an incoming submission, approve it, and see the status update.",
+        "category": "Validasi dan Pengesahan Pimpinan",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /pimpinan/pengajuan-mitra"
+            },
+            {
+                "type": "action",
+                "description": "Open an incoming submission"
+            },
+            {
+                "type": "action",
+                "description": "Approve the submission"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the submission status is updated to approved"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC007",
+        "title": "Mengirim draft dokumen ke pimpinan untuk evaluasi",
+        "description": "Unit internal dapat mengirim draft dokumen kerja sama ke pimpinan dan melihat status berubah menjadi menunggu evaluasi.",
+        "category": "Kelola Dokumen Kerjasama",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the cooperation documents page"
+            },
+            {
+                "type": "action",
+                "description": "Select an existing draft document"
+            },
+            {
+                "type": "action",
+                "description": "Submit the document to the leader for validation"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the document status changes to waiting for evaluation"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC008",
+        "title": "Keluar dari sesi akun",
+        "description": "Pengguna yang sudah masuk dapat keluar dan kembali ke halaman login.",
+        "category": "User Authentication",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Click the logout control"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the login page is displayed"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC009",
+        "title": "Menyimpan dokumen kerja sama baru sebagai draft",
+        "description": "Unit internal dapat membuat dokumen kerja sama baru dan menyimpannya sebagai draft yang muncul di daftar dokumen.",
+        "category": "Kelola Dokumen Kerjasama",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the cooperation documents page"
+            },
+            {
+                "type": "action",
+                "description": "Start creating a new cooperation document"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the document details with valid information"
+            },
+            {
+                "type": "action",
+                "description": "Upload a valid scanned PDF"
+            },
+            {
+                "type": "action",
+                "description": "Save the document as a draft"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the new draft appears in the document list"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC010",
+        "title": "Leader can request revision with notes",
+        "description": "This verifies that a leader can request changes on a submission and the revision status appears with notes saved.",
+        "category": "Validasi dan Pengesahan Pimpinan",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /pimpinan/pengajuan-mitra"
+            },
+            {
+                "type": "action",
+                "description": "Open an incoming submission"
+            },
+            {
+                "type": "action",
+                "description": "Request revision for the submission"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the revision notes field with Mohon lengkapi dokumen pendukung"
+            },
+            {
+                "type": "action",
+                "description": "Submit the revision request"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the submission status is updated to revision requested"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC011",
+        "title": "Meminta revisi pengajuan mitra dengan catatan",
+        "description": "Pimpinan dapat meminta revisi pada pengajuan mitra dan catatan revisi tersimpan sebagai hasil keputusan.",
+        "category": "Pengesahan Pengajuan Mitra",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the partner submission review page"
+            },
+            {
+                "type": "action",
+                "description": "Open a pending submission"
+            },
+            {
+                "type": "action",
+                "description": "Request revision with a note"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the revision request is recorded"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC012",
+        "title": "Admin can send login access to a partner without an account",
+        "description": "This verifies that an admin can filter partners without an account and trigger the login access action successfully.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /admin/mitra"
+            },
+            {
+                "type": "action",
+                "description": "Filter partners to show those without an account"
+            },
+            {
+                "type": "action",
+                "description": "Click the send login access action for one partner"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify a success confirmation is visible"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the partner is marked as having access sent"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC013",
+        "title": "Admin can add a new user",
+        "description": "This verifies that an admin can create a new user from the user management page and see it appear in the list.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /admin/users"
+            },
+            {
+                "type": "action",
+                "description": "Click the add user action"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the name field with Test User Admin"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the identification number field with 1234567890123456"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with testuseradmin@example.com"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with Password123!"
+            },
+            {
+                "type": "action",
+                "description": "Select an appropriate role"
+            },
+            {
+                "type": "action",
+                "description": "Save the user"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the new user appears in the user list"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC014",
+        "title": "Leader can reject a submission with a reason",
+        "description": "This verifies that a leader can reject a submission with a reason and see the rejected status reflected in the list.",
+        "category": "Validasi dan Pengesahan Pimpinan",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /pimpinan/pengajuan-mitra"
+            },
+            {
+                "type": "action",
+                "description": "Open an incoming submission"
+            },
+            {
+                "type": "action",
+                "description": "Reject the submission"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the rejection reason field with Pengajuan belum memenuhi persyaratan"
+            },
+            {
+                "type": "action",
+                "description": "Submit the rejection"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the submission status is updated to rejected"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC015",
+        "title": "Menolak kredensial yang salah",
+        "description": "Pengguna melihat pesan kesalahan ketika mencoba masuk dengan kredensial yang tidak valid.",
+        "category": "User Authentication",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with invalid-user@example.com"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with invalid-password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify an invalid credentials alert is visible"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC016",
+        "title": "Admin can register a new partner",
+        "description": "This verifies that an admin can add a mitra record and see the partner registered in the mitra list.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /admin/mitra"
+            },
+            {
+                "type": "action",
+                "description": "Click the add partner action"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the institution name field with PT Mitra Contoh"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the address field with Jalan Contoh 1"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with mitra.contoh@example.com"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the phone field with 081234567890"
+            },
+            {
+                "type": "action",
+                "description": "Select a classification"
+            },
+            {
+                "type": "action",
+                "description": "Save the partner"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the new partner appears in the mitra list"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC017",
+        "title": "Mengedit draft dokumen kerja sama dan melihat perubahan tersimpan",
+        "description": "Unit internal dapat membuka draft dokumen kerja sama, memperbarui isinya, lalu melihat perubahan pada detail dokumen.",
+        "category": "Kelola Dokumen Kerjasama",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the cooperation documents page"
+            },
+            {
+                "type": "action",
+                "description": "Select an existing draft document"
+            },
+            {
+                "type": "action",
+                "description": "Edit the document details"
+            },
+            {
+                "type": "action",
+                "description": "Save the changes"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the updated document details are displayed"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC018",
+        "title": "Admin can create a new role",
+        "description": "This verifies that an admin can add a role with permissions and see the role saved in the roles list.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /admin/roles"
+            },
+            {
+                "type": "action",
+                "description": "Click the add role action"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the role name field with Reviewer Khusus"
+            },
+            {
+                "type": "action",
+                "description": "Select the required permissions"
+            },
+            {
+                "type": "action",
+                "description": "Save the role"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the new role appears in the roles list"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC019",
+        "title": "Menampilkan validasi saat pengajuan publik belum lengkap",
+        "description": "Form pengajuan kerja sama publik menolak pengiriman ketika data wajib belum diisi.",
+        "category": "Pengajuan Kerjasama Publik",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /pengajuan-kerjasama"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the partner identity fields with partial valid information"
+            },
+            {
+                "type": "action",
+                "description": "Select a valid bidang kerja sama"
+            },
+            {
+                "type": "action",
+                "description": "Submit the application"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify a form validation error is visible"
+            }
+        ],
+        "priority": "High"
+    },
+    {
+        "id": "TC020",
+        "title": "Admin can add a new cooperation type",
+        "description": "This verifies that an admin can create a new jenis kerja sama entry and see it listed afterward.",
+        "category": "Subsistem Master Data",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /admin/login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /admin/jkerjasama"
+            },
+            {
+                "type": "action",
+                "description": "Click the add cooperation type action"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the name field with Kerja Sama Riset"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the code field with RSK"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the description field with Jenis kerja sama untuk riset kolaboratif"
+            },
+            {
+                "type": "action",
+                "description": "Save the cooperation type"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the new cooperation type appears in the list"
+            }
+        ],
+        "priority": "Medium"
+    },
+    {
+        "id": "TC021",
+        "title": "Mitra melihat dokumen dan memberikan review pada draft",
+        "description": "Mitra yang sudah login dapat membuka daftar dokumen kerja sama, meninjau draft yang tersedia, dan mengirim feedback.",
+        "category": "Mitra Dokumen dan Review",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the partner documents page"
+            },
+            {
+                "type": "action",
+                "description": "Open an available draft document"
+            },
+            {
+                "type": "action",
+                "description": "Submit a review or feedback"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the review is saved and visible"
+            }
+        ],
+        "priority": "Medium"
+    },
+    {
+        "id": "TC022",
+        "title": "Mitra can view documents and review a draft",
+        "description": "This verifies that a logged-in partner can open the document page, inspect a draft cooperation document, and submit feedback on it.",
+        "category": "Validasi dan Pengesahan Pimpinan",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Navigate to /mitra/dokumen"
+            },
+            {
+                "type": "action",
+                "description": "Open a draft document"
+            },
+            {
+                "type": "action",
+                "description": "Enter review feedback for the draft"
+            },
+            {
+                "type": "action",
+                "description": "Submit the review feedback"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the draft review is saved and visible"
+            }
+        ],
+        "priority": "Medium"
+    },
+    {
+        "id": "TC023",
+        "title": "Mencegah pengeditan dokumen yang sudah bukan draft",
+        "description": "Unit internal tidak dapat mengubah dokumen kerja sama yang sudah berstatus selain draft.",
+        "category": "Kelola Dokumen Kerjasama",
+        "steps": [
+            {
+                "type": "action",
+                "description": "Navigate to /login"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the NIK or email field with admin@polnado.ac.id"
+            },
+            {
+                "type": "action",
+                "description": "Fill in the password field with password"
+            },
+            {
+                "type": "action",
+                "description": "Submit the login form"
+            },
+            {
+                "type": "action",
+                "description": "Open the cooperation documents page"
+            },
+            {
+                "type": "action",
+                "description": "Select a document with a non-draft status"
+            },
+            {
+                "type": "assertion",
+                "description": "Verify the document cannot be edited"
+            }
+        ],
+        "priority": "Medium"
+    }
 ]

@@ -40,77 +40,79 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link in the header to open the login page.
-        # Login Sistem link
-        elem = page.get_by_role("link", name="Login Sistem")
-        await elem.click(timeout=10000)
-        
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("admin@polnado.ac.id")
-        
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
-        # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("password")
-        
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
-        await elem.click(timeout=10000)
-        
-        # -> Open the 'Mitra' (Partners) admin page to view the partners list and controls
-        await page.goto("http://localhost:8000/admin/mitra")
+        # -> Open the admin sign-in page at the specified admin login path.
+        await page.goto("http://127.0.0.1:8000/admin/login")
         try:
             await page.wait_for_load_state("domcontentloaded", timeout=5000)
         except Exception:
             pass
         
-        # -> Open the 'Semua Status Akun' dropdown in the 'Filter Data Mitra' panel to reveal account-status filter options.
-        # Semua Status Akun
-        elem = page.locator(".ad-trigger-content").first
-        await elem.click(timeout=10000)
-        
-        # -> Select the 'Belum Punya Akun' option from the 'Status Akun Login' dropdown to filter partners without an account.
-        # Belum Punya Akun
-        elem = page.locator("#mitraFilter_form").get_by_text("Belum Punya Akun")
-        await elem.click(timeout=10000)
-        
-        # -> Open the partner's actions menu for the first listed partner and click the 'Kirim Akses' (Send login access) option.
-        # Open the partner's actions menu for the first listed partner and click the 'Kirim Akses' (Send login access) option.
-        elem = page.get_by_role("row", name="1 PT Mitra Contoh  Indonesia").locator("i").nth(1)
-        await elem.click(timeout=10000)
-        
-        # -> Click the 'Kirim Akses' (Send login access) button for the first partner row (PT Mitra Contoh) to open the access modal.
-        # Kirim Akses Login button
-        elem = page.get_by_role("row", name="1 PT Mitra Contoh  Indonesia").get_by_role("button").first
-        await elem.click(timeout=10000)
-        
-        # -> Fill the 'Alamat Email Mitra' field with 'contoh@mitra.com' and click the 'Kirim Akses' button to send access.
-        # contoh@mitra.com email field
-        elem = page.get_by_role("textbox", name="Alamat Email Mitra")
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
+        # Masukkan Email Administrator email field
+        elem = page.get_by_role("textbox", name="Email Administrator")
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("contoh@mitra.com")
+        await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the 'Alamat Email Mitra' field with 'contoh@mitra.com' and click the 'Kirim Akses' button to send access.
-        # Kirim Akses button
-        elem = page.get_by_role("button", name=" Kirim Akses")
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
+        # Masukkan kata sandi password field
+        elem = page.get_by_role("textbox", name="Kata Sandi")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("password")
+        
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
+        # Masuk ke Sistem button
+        elem = page.get_by_role("button", name="Masuk ke Sistem")
+        await elem.click(timeout=10000)
+        
+        # -> Open partner management by selecting “Mitra Kerjasama” from the admin navigation.
+        # Mitra Kerjasama link
+        elem = page.get_by_role("link", name=" Mitra Kerjasama")
+        await elem.click(timeout=10000)
+        
+        # -> Open the “Status Akun Login” filter to choose the option for partners without an account.
+        # Semua Status Akun
+        elem = page.locator(".ad-trigger").first
+        await elem.click(timeout=10000)
+        
+        # -> Select “Belum Punya Akun” in the account-status filter and verify the partner list updates.
+        # Belum Punya Akun
+        elem = page.locator("#mitraFilter_form div").filter(has_text="Belum Punya Akun").nth(4)
+        await elem.click(timeout=10000)
+        
+        # -> Scroll to the filtered partner table and locate a partner’s login-access action.
+        await page.mouse.wheel(0, 300)
+        
+        # -> Scroll the filtered partner table to bring a partner’s “Kirim Akses Login” button into view.
+        await page.mouse.wheel(0, 300)
+        
+        # -> Scroll farther down the filtered partner list to bring a partner’s login-access action into view.
+        await page.mouse.wheel(0, 300)
+        
+        # -> Focus a visible filtered partner row and use the keyboard to reveal the table’s right-side login-access actions.
+        # PT Telkom
+        elem = page.get_by_role("cell", name="PT Telkom", exact=True)
+        await elem.click(timeout=10000)
+        
+        # -> Move keyboard focus through a visible filtered partner row to bring its login-access action into view.
+        # PT Telkom
+        elem = page.get_by_role("cell", name="PT Telkom", exact=True)
+        await elem.click(timeout=10000)
+        
+        # -> Click the focused “Kirim Akses Login” button for a filtered partner and check the page for a success confirmation and updated account-access status.
+        # Kirim Akses Login button
+        elem = page.get_by_role("row", name="25 PT Telkom  Indonesia").get_by_role("button").first
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> A success confirmation message should have appeared after sending access.
-        # Assert-outcome: failed
-        # Assert: Expected to see a success confirmation message 'Berhasil' after sending access.
-        await expect(page.locator("tbody").nth(0)).to_contain_text("Berhasil", timeout=15000), "Expected to see a success confirmation message 'Berhasil' after sending access."
+        # --> The access-send dialog should close after a successful send.
+        # Assert-outcome: not verified — the export-time check could not be evaluated
+        # Assert: Expected the access-send dialog to close after a successful send.
+        await expect(page.locator("xpath=/html/body/div[1]/main/div[3]").nth(0)).not_to_be_visible(timeout=15000), "Expected the access-send dialog to close after a successful send."
         
-        # --> The partner row should have been updated to indicate access was sent.
-        # Assert-outcome: failed
-        # Assert: Expected the partner's Status Akun cell to show 'Terdaftar' indicating access was sent.
-        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[1]/td[7]").nth(0)).to_have_text("Terdaftar", timeout=15000), "Expected the partner's Status Akun cell to show 'Terdaftar' indicating access was sent."
+        # --> Test blocked by environment/access constraints during agent run
+        # Reason: TEST BLOCKED The login-access action could not be completed because the form requires a partner email address, and no recipient address was provided. No success confirmation or updated access-sent status was observed. Observations: - The filtered partner list showed PT Telkom as “Belum Punya Akun.” - The “Kirim Akses Login” dialog opened for PT Telkom and displayed a required, blank email field...
+        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The login-access action could not be completed because the form requires a partner email address, and no recipient address was provided. No success confirmation or updated access-sent status was observed. Observations: - The filtered partner list showed PT Telkom as \u201cBelum Punya Akun.\u201d - The \u201cKirim Akses Login\u201d dialog opened for PT Telkom and displayed a required, blank email field..." + " — the exported script cannot reproduce a PASS in this environment.")
         await asyncio.sleep(5)
 
     finally:

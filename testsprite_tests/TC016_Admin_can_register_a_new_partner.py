@@ -40,88 +40,96 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link in the page header to open the login page.
+        # -> Open the admin sign-in flow using the visible “Login Sistem” link.
         # Login Sistem link
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
+        # -> Open the specified admin sign-in page at http://127.0.0.1:8000/admin/login.
+        await page.goto("http://127.0.0.1:8000/admin/login")
+        try:
+            await page.wait_for_load_state("domcontentloaded", timeout=5000)
+        except Exception:
+            pass
+        
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
+        # Masukkan Email Administrator email field
+        elem = page.get_by_role("textbox", name="Email Administrator")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
         # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
+        elem = page.get_by_role("textbox", name="Kata Sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
+        # -> Enter the provided administrator email and password, then submit the “Masuk ke Sistem” form.
+        # Masuk ke Sistem button
+        elem = page.get_by_role("button", name="Masuk ke Sistem")
         await elem.click(timeout=10000)
         
-        # -> Click the 'Mitra Kerjasama' navigation link in the sidebar to open the Mitra management page.
+        # -> Open the “Mitra Kerjasama” section to view and manage partner records.
         # Mitra Kerjasama link
         elem = page.get_by_role("link", name=" Mitra Kerjasama")
         await elem.click(timeout=10000)
         
-        # -> Click the 'Tambah Mitra' button to open the add-partner form.
+        # -> Open the “Tambah Mitra” form and inspect its visible fields before filling it.
         # Tambah Mitra link
         elem = page.get_by_role("link", name="+ Tambah Mitra")
         await elem.click(timeout=10000)
         
-        # -> Open the 'Klasifikasi Mitra' dropdown to reveal classification options
+        # -> Open the classification selector and inspect its available choices.
         # - Pilih Klasifikasi -
-        elem = page.get_by_role("main").locator("form div").filter(has_text="- Pilih Klasifikasi -").nth(4)
+        elem = page.get_by_text("- Pilih Klasifikasi -")
         await elem.click(timeout=10000)
         
-        # -> Select the 'Dunia Usaha' option from the Klasifikasi Mitra dropdown.
+        # -> Select “Dunia Usaha” as the partner classification.
         # Dunia Usaha
         elem = page.get_by_text("Dunia Usaha")
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
+        # -> Enter “PT Mitra Contoh” in the required institution-name field, then inspect the remaining form fields.
         # Masukkan nama instansi/mitra text field
         elem = page.get_by_role("textbox", name="Masukkan nama instansi/mitra")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("PT Mitra Contoh")
         
-        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
+        # -> Enter “PT Mitra Contoh” in the required institution-name field, then inspect the remaining form fields.
+        await page.mouse.wheel(0, 300)
+        
+        # -> Enter the sample address and phone number, then save the partner record.
         # Masukkan alamat lengkap mitra... text area
         elem = page.get_by_role("textbox", name="Masukkan alamat lengkap mitra")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("Jalan Contoh 1")
         
-        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
+        # -> Enter the sample address and phone number, then save the partner record.
         # Contoh: 021-12345678 text field
         elem = page.get_by_role("textbox", name="Contoh: 021-")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("081234567890")
         
-        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
-        # https://www.example.com text field
-        elem = page.get_by_role("textbox", name="https://www.example.com")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("https://mitra.contoh.example")
-        
-        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
+        # -> Enter the sample address and phone number, then save the partner record.
         # Simpan Mitra button
         elem = page.get_by_role("button", name=" Simpan Mitra")
         await elem.click(timeout=10000)
         
-        # -> Click the 'Mitra Kerjasama' link in the sidebar to open the mitra list and verify 'PT Mitra Contoh' appears.
+        # -> Open the Mitra Kerjasama list and check whether PT Mitra Contoh appears as a registered partner.
         # Mitra Kerjasama link
         elem = page.get_by_role("link", name=" Mitra Kerjasama")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> The Mitra list shows the newly added partner 'PT Mitra Contoh'.
-        # Assert-outcome: passed
-        # Assert: Mitra list contains the partner name 'PT Mitra Contoh'.
-        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[1]/td[2]").nth(0)).to_have_text("PT Mitra Contoh", timeout=15000), "Mitra list contains the partner name 'PT Mitra Contoh'."
+        # --> A second PT Mitra Contoh entry should appear in the mitra list after registration.
+        # Assert-outcome: not verified — the export-time check could not be evaluated
+        # Assert: Expected a second PT Mitra Contoh entry to appear in the mitra list.
+        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[1]/td[2]")).to_have_count(2, timeout=15000), "Expected a second PT Mitra Contoh entry to appear in the mitra list."
+        
+        # --> Test blocked by environment/access constraints during agent run
+        # Reason: TEST BLOCKED The add workflow was submitted, but it could not be confirmed that this attempt registered a new mitra because the sample partner was already present in the list before submission. Observations: - PT Mitra Contoh was visible in the mitra list before the add attempt. - PT Mitra Contoh is also visible in the list after submission. - The add form did not show an email field.
+        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The add workflow was submitted, but it could not be confirmed that this attempt registered a new mitra because the sample partner was already present in the list before submission. Observations: - PT Mitra Contoh was visible in the mitra list before the add attempt. - PT Mitra Contoh is also visible in the list after submission. - The add form did not show an email field." + " — the exported script cannot reproduce a PASS in this environment.")
         await asyncio.sleep(5)
 
     finally:

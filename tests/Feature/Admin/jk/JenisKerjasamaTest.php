@@ -106,15 +106,16 @@ class JenisKerjasamaTest extends TestCase
         
         // Simulate usage by attaching to a KegiatanKerjasama (if factory exists, else manual DB insert)
         $kegiatanId = DB::table('kegiatan_kerjasamas')->insertGetId([
-            'judul_kegiatan' => 'Kegiatan Test',
-            'deskripsi' => 'test',
+            'nama_kegiatan' => 'Kegiatan Test',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         
-        DB::table('kegiatan_jenis_kerjasamas')->insert([
-            'id_kegiatan' => $kegiatanId,
-            'id_jenis' => $jk->id,
+        DB::table('detail_kegiatans')->insert([
+            'kegiatan_kerjasama_id' => $kegiatanId,
+            'jenis_kerjasama_id' => $jk->id,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $response = $this->actingAs($this->adminUser)

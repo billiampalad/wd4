@@ -40,143 +40,113 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link to open the login page.
+        # -> Open the sign-in page using the visible “Login Sistem” link.
         # Login Sistem link
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button.
+        # -> Enter the provided admin email and password in the sign-in form and submit it.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button.
+        # -> Enter the provided admin email and password in the sign-in form and submit it.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button.
+        # -> Enter the provided admin email and password in the sign-in form and submit it.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
-        # -> Open the 'User Management' (Users) page in the admin area so the 'Add User' action can be accessed.
-        await page.goto("http://localhost:8000/admin/users")
+        # -> Open the specified administrator sign-in page at /admin/login.
+        await page.goto("http://127.0.0.1:8000/admin/login")
         try:
             await page.wait_for_load_state("domcontentloaded", timeout=5000)
         except Exception:
             pass
         
-        # -> Click the 'Tambah Pengguna' (Add User) button to open the new user form.
+        # -> Enter the supplied administrator email and password, then submit the administrator sign-in form.
+        # Masukkan Email Administrator email field
+        elem = page.get_by_role("textbox", name="Email Administrator")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("admin@polnado.ac.id")
+        
+        # -> Enter the supplied administrator email and password, then submit the administrator sign-in form.
+        # Masukkan kata sandi password field
+        elem = page.get_by_role("textbox", name="Kata Sandi")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("password")
+        
+        # -> Enter the supplied administrator email and password, then submit the administrator sign-in form.
+        # Masuk ke Sistem button
+        elem = page.get_by_role("button", name="Masuk ke Sistem")
+        await elem.click(timeout=10000)
+        
+        # -> Open the “Pengguna” user-management page and inspect its user list and creation controls.
+        # Pengguna link
+        elem = page.get_by_role("link", name="Pengguna", exact=True)
+        await elem.click(timeout=10000)
+        
+        # -> Open the “Tambah Pengguna” form to inspect the fields and available roles.
         # Tambah Pengguna link
         elem = page.get_by_role("link", name="+ Tambah Pengguna")
         await elem.click(timeout=10000)
         
-        # -> Open the 'Role' dropdown labeled '-- Pilih Role --' after filling the Name, NIK, Email, and Password fields so a role can be selected.
+        # -> Inspect the available roles in the “Role” selector before completing the new-user form.
+        # -- Pilih Role -- button
+        elem = page.get_by_role("button", name="-- Pilih Role -- ")
+        await elem.click(timeout=10000)
+        
+        # -> Select the visible “Admin” role and inspect the profile fields that appear.
+        # Admin button
+        elem = page.get_by_role("button", name="Admin")
+        await elem.click(timeout=10000)
+        
+        # -> Fill the required identity, password, and Jabatan fields with distinct test-user details, then save the new user.
         # Masukkan nama lengkap text field
         elem = page.get_by_role("textbox", name=" Nama Lengkap *")
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("Test User Admin")
+        await elem.fill("Test User Admin QA")
         
-        # -> Open the 'Role' dropdown labeled '-- Pilih Role --' after filling the Name, NIK, Email, and Password fields so a role can be selected.
+        # -> Fill the required identity, password, and Jabatan fields with distinct test-user details, then save the new user.
         # Nomor Induk Kependudukan text field
         elem = page.get_by_role("textbox", name=" NIK/NIP *")
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("1234567890123456")
+        await elem.fill("9876543210987654")
         
-        # -> Open the 'Role' dropdown labeled '-- Pilih Role --' after filling the Name, NIK, Email, and Password fields so a role can be selected.
+        # -> Fill the required identity, password, and Jabatan fields with distinct test-user details, then save the new user.
         # nama@institusi.ac.id email field
         elem = page.get_by_role("textbox", name=" Email *")
         await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("testuseradmin@example.com")
+        await elem.fill("testuseradminqa@example.com")
         
-        # -> Open the 'Role' dropdown labeled '-- Pilih Role --' after filling the Name, NIK, Email, and Password fields so a role can be selected.
+        # -> Fill the required identity, password, and Jabatan fields with distinct test-user details, then save the new user.
         # Min. 8 karakter password field
         elem = page.get_by_role("textbox", name=" Password *")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("Password123!")
         
-        # -> Open the 'Role' dropdown labeled '-- Pilih Role --' after filling the Name, NIK, Email, and Password fields so a role can be selected.
-        # -- Pilih Role -- button
-        elem = page.get_by_role("button", name="-- Pilih Role -- ")
-        await elem.click(timeout=10000)
+        # -> Fill the required identity, password, and Jabatan fields with distinct test-user details, then save the new user.
+        # Contoh: Direktur text field
+        elem = page.get_by_role("textbox", name=" Jabatan")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("Koordinator QA")
         
-        # -> Select the 'Admin' role from the role list and click the 'Simpan Pengguna' button to save the new user.
-        # Admin button
-        elem = page.get_by_role("button", name="Admin")
-        await elem.click(timeout=10000)
-        
-        # -> Select the 'Admin' role from the role list and click the 'Simpan Pengguna' button to save the new user.
+        # -> Save the completed new-user form and verify the new user appears in the user list.
         # Simpan Pengguna button
         elem = page.get_by_role("button", name=" Simpan Pengguna")
-        await elem.click(timeout=10000)
-        
-        # -> Open the role dropdown ('-- Pilih Role --') after filling the form so the 'Admin' role option can be selected and the user saved.
-        # Masukkan nama lengkap text field
-        elem = page.get_by_role("textbox", name=" Nama Lengkap *")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("Test User Admin")
-        
-        # -> Open the role dropdown ('-- Pilih Role --') after filling the form so the 'Admin' role option can be selected and the user saved.
-        # Nomor Induk Kependudukan text field
-        elem = page.get_by_role("textbox", name=" NIK/NIP *")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("1234567890123456")
-        
-        # -> Open the role dropdown ('-- Pilih Role --') after filling the form so the 'Admin' role option can be selected and the user saved.
-        # nama@institusi.ac.id email field
-        elem = page.get_by_role("textbox", name=" Email *")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("testuseradmin@example.com")
-        
-        # -> Open the role dropdown ('-- Pilih Role --') after filling the form so the 'Admin' role option can be selected and the user saved.
-        # Min. 8 karakter password field
-        elem = page.get_by_role("textbox", name=" Password *")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("Password123!")
-        
-        # -> Open the role dropdown ('-- Pilih Role --') after filling the form so the 'Admin' role option can be selected and the user saved.
-        # -- Pilih Role -- button
-        elem = page.get_by_role("button", name="-- Pilih Role -- ")
-        await elem.click(timeout=10000)
-        
-        # -> Select the 'Admin' role from the role list and click the 'Simpan Pengguna' (Save User) button to submit the new user.
-        # Simpan Pengguna button
-        elem = page.get_by_role("button", name=" Simpan Pengguna")
-        await elem.click(timeout=10000)
-        
-        # -> Open the role dropdown labeled '-- Pilih Role --' so the 'Admin' option becomes visible for selection.
-        # -- Pilih Role -- button
-        elem = page.get_by_role("button", name="-- Pilih Role -- ")
-        await elem.click(timeout=10000)
-        
-        # -> Select the 'Admin' role from the role dropdown so the form's role is set.
-        # Admin button
-        elem = page.get_by_role("button", name="Admin")
-        await elem.click(timeout=10000)
-        
-        # -> Click the 'Simpan Pengguna' button to submit the new user and then verify the UI shows the user in the users list or displays any validation errors.
-        # Simpan Pengguna button
-        elem = page.get_by_role("button", name=" Simpan Pengguna")
-        await elem.click(timeout=10000)
-        
-        # -> Click the visible 'Users' link in the page header/breadcrumb to open the users list and verify whether 'Test User Admin' appears.
-        # Users link
-        elem = page.get_by_role("link", name="Users")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> The users list contains an entry for Test User Admin (NIK 1234567890123456).
-        # Assert-outcome: failed
-        # Assert: Expected the users list to contain an entry with email 'testuseradmin@example.com'.
-        await expect(page.locator("xpath=/html/body/div[1]/main/div/div[2]/table/tbody/tr[10]/td[4]").nth(0)).to_have_text("testuseradmin@example.com", timeout=15000), "Expected the users list to contain an entry with email 'testuseradmin@example.com'."
-        
-        # --> Test blocked by environment/access constraints during agent run
-        # Reason: TEST BLOCKED The test could not be run to completion — the user record already existed before the create action, and the UI did not show a clear success confirmation that the create action succeeded. Observations: - The users list already contained 'Test User Admin' (NIK 1234567890123456, email testuseradmin@example.com) before the save attempts. - Multiple attempts to save the add-user form pr...
-        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The test could not be run to completion \u2014 the user record already existed before the create action, and the UI did not show a clear success confirmation that the create action succeeded. Observations: - The users list already contained 'Test User Admin' (NIK 1234567890123456, email testuseradmin@example.com) before the save attempts. - Multiple attempts to save the add-user form pr..." + " — the exported script cannot reproduce a PASS in this environment.")
+        # --> The newly created user appears in the user list with the submitted email address.
+        # Assert-outcome: not verified — the export-time check could not be evaluated
+        # Assert: The user list includes the newly created account with the submitted email address.
+        await expect(page.locator("tbody").nth(0)).to_contain_text("testuseradminqa@example.com", timeout=15000), "The user list includes the newly created account with the submitted email address."
         await asyncio.sleep(5)
 
     finally:

@@ -53,7 +53,7 @@ class UserManagementTest extends TestCase
 
     public function test_admin_can_create_new_user_with_valid_data()
     {
-        $jurusan = Jurusan::factory()->create();
+        $jurusan = Jurusan::first() ?? Jurusan::create(['nama_jurusan' => 'Teknik Informatika', 'kode_jurusan' => 'TI']);
 
         $userData = [
             'name' => 'New User Test',
