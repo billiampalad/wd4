@@ -45,29 +45,41 @@ async def run_test():
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Masukkan alamat email Anda' field with admin@polnado.ac.id.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the 'Masukkan alamat email Anda' field with admin@polnado.ac.id.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill the 'Masukkan alamat email Anda' field with admin@polnado.ac.id.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, then click the 'Masuk Sekarang' button to submit the login form.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> Admin dashboard is displayed after login (navigated to /admin/dashboard).
+        # --> The browser landed on the admin dashboard URL.
         # Assert-outcome: passed
-        # Assert: The current URL contains /admin/dashboard.
-        await expect(page).to_have_url(re.compile("/admin/dashboard"), timeout=15000), "The current URL contains /admin/dashboard."
+        # Assert: URL contains /admin/dashboard.
+        await expect(page).to_have_url(re.compile("/admin/dashboard"), timeout=15000), "URL contains /admin/dashboard."
+        
+        # --> A success notification confirming login is visible on the page.
+        await page.locator("xpath=/html/body/div[3]/div/div[1]").nth(0).scroll_into_view_if_needed()
+        # Assert-outcome: passed
+        # Assert: The login success notification element is visible.
+        await expect(page.locator("xpath=/html/body/div[3]/div/div[1]").nth(0)).to_be_visible(timeout=15000), "The login success notification element is visible."
+        
+        # --> Admin dashboard content is present (management link 'Kelola Pengguna' is visible).
+        await page.get_by_role("link", name=" Kelola Pengguna Tambah,").nth(0).scroll_into_view_if_needed()
+        # Assert-outcome: passed
+        # Assert: The 'Kelola Pengguna' management link is visible on the dashboard.
+        await expect(page.get_by_role("link", name=" Kelola Pengguna Tambah,").nth(0)).to_be_visible(timeout=15000), "The 'Kelola Pengguna' management link is visible on the dashboard."
         await asyncio.sleep(5)
 
     finally:

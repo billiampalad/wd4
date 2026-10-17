@@ -40,71 +40,88 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link in the top navigation to open the login page.
+        # -> Click the 'Login Sistem' link in the page header to open the login page.
         # Login Sistem link
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Fill the 'Email' and 'Kata Sandi' fields and click the 'Masuk Sekarang' button to log in as admin.
+        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill the 'Email' and 'Kata Sandi' fields and click the 'Masuk Sekarang' button to log in as admin.
+        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill the 'Email' and 'Kata Sandi' fields and click the 'Masuk Sekarang' button to log in as admin.
+        # -> Fill the Email field with 'admin@polnado.ac.id', fill the Kata Sandi field with 'password', then click the 'Masuk Sekarang' button.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
-        # -> Click the 'Mitra Kerjasama' link in the left navigation to open the Mitra management page.
+        # -> Click the 'Mitra Kerjasama' navigation link in the sidebar to open the Mitra management page.
         # Mitra Kerjasama link
         elem = page.get_by_role("link", name=" Mitra Kerjasama")
         await elem.click(timeout=10000)
         
-        # -> Click the 'Tambah Mitra' button to open the add-partner form or page.
+        # -> Click the 'Tambah Mitra' button to open the add-partner form.
         # Tambah Mitra link
         elem = page.get_by_role("link", name="+ Tambah Mitra")
         await elem.click(timeout=10000)
         
-        # -> Fill the visible partner form fields (Nama Instansi / Mitra, Alamat, Nomor Telepon) and click the 'Simpan Mitra' button to attempt to save the new partner.
+        # -> Open the 'Klasifikasi Mitra' dropdown to reveal classification options
+        # - Pilih Klasifikasi -
+        elem = page.get_by_role("main").locator("form div").filter(has_text="- Pilih Klasifikasi -").nth(4)
+        await elem.click(timeout=10000)
+        
+        # -> Select the 'Dunia Usaha' option from the Klasifikasi Mitra dropdown.
+        # Dunia Usaha
+        elem = page.get_by_text("Dunia Usaha")
+        await elem.click(timeout=10000)
+        
+        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
         # Masukkan nama instansi/mitra text field
         elem = page.get_by_role("textbox", name="Masukkan nama instansi/mitra")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("PT Mitra Contoh")
         
-        # -> Fill the visible partner form fields (Nama Instansi / Mitra, Alamat, Nomor Telepon) and click the 'Simpan Mitra' button to attempt to save the new partner.
+        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
         # Masukkan alamat lengkap mitra... text area
         elem = page.get_by_role("textbox", name="Masukkan alamat lengkap mitra")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("Jalan Contoh 1")
         
-        # -> Fill the visible partner form fields (Nama Instansi / Mitra, Alamat, Nomor Telepon) and click the 'Simpan Mitra' button to attempt to save the new partner.
+        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
         # Contoh: 021-12345678 text field
         elem = page.get_by_role("textbox", name="Contoh: 021-")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("081234567890")
         
-        # -> Fill the visible partner form fields (Nama Instansi / Mitra, Alamat, Nomor Telepon) and click the 'Simpan Mitra' button to attempt to save the new partner.
+        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
+        # https://www.example.com text field
+        elem = page.get_by_role("textbox", name="https://www.example.com")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("https://mitra.contoh.example")
+        
+        # -> Fill the 'Nama Instansi' field with 'PT Mitra Contoh', fill 'Alamat' with 'Jalan Contoh 1', fill 'Nomor Telepon' with '081234567890', fill 'Website' with 'https://mitra.contoh.example', then click the 'Simpan Mitra' button to save the pa...
         # Simpan Mitra button
         elem = page.get_by_role("button", name=" Simpan Mitra")
         await elem.click(timeout=10000)
         
-        # -> Final action — this is where the agent failed
-        # Error observed by agent: Failed to click element <button index=10209>. The element may not be interactable or visible. If the page changed after navigation/interaction, the index [10209] may be stale. Get fresh browser state 
-        # Simpan Mitra button
-        elem = page.get_by_title("Hapus semua filter aktif")
+        # -> Click the 'Mitra Kerjasama' link in the sidebar to open the mitra list and verify 'PT Mitra Contoh' appears.
+        # Mitra Kerjasama link
+        elem = page.get_by_role("link", name=" Mitra Kerjasama")
         await elem.click(timeout=10000)
         
-        # --> Test passed — verified by AI agent
-        frame = context.pages[-1]
-        current_url = await frame.evaluate("() => window.location.href")
-        assert current_url is not None, "Test completed successfully"
+        # --> Assertions to verify final state
+        
+        # --> The Mitra list shows the newly added partner 'PT Mitra Contoh'.
+        # Assert-outcome: passed
+        # Assert: Mitra list contains the partner name 'PT Mitra Contoh'.
+        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[1]/td[2]").nth(0)).to_have_text("PT Mitra Contoh", timeout=15000), "Mitra list contains the partner name 'PT Mitra Contoh'."
         await asyncio.sleep(5)
 
     finally:

@@ -40,102 +40,77 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Open the 'Login Sistem' page (navigate to the login page).
-        await page.goto("http://localhost:8000/login")
-        try:
-            await page.wait_for_load_state("domcontentloaded", timeout=5000)
-        except Exception:
-            pass
+        # -> Click the 'Login Sistem' link in the header to open the login page.
+        # Login Sistem link
+        elem = page.get_by_role("link", name="Login Sistem")
+        await elem.click(timeout=10000)
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill the 'Email' field with admin@polnado.ac.id, fill the 'Kata Sandi' field with password, and click the 'Masuk Sekarang' button to submit the login form.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
-        # -> Open the 'Mitra Kerjasama' (Partners) admin page to manage partners.
+        # -> Open the 'Mitra' (Partners) admin page to view the partners list and controls
         await page.goto("http://localhost:8000/admin/mitra")
         try:
             await page.wait_for_load_state("domcontentloaded", timeout=5000)
         except Exception:
             pass
         
-        # -> Open the 'Status Akun Login' dropdown in the Filter Data Mitra panel so the options (including the one for partners without an account) become visible.
-        # Open the 'Status Akun Login' dropdown in the Filter Data Mitra panel so the options (including the one for partners without an account) become visible.
-        elem = page.locator(".ad-trigger > i").first
+        # -> Open the 'Semua Status Akun' dropdown in the 'Filter Data Mitra' panel to reveal account-status filter options.
+        # Semua Status Akun
+        elem = page.locator(".ad-trigger-content").first
         await elem.click(timeout=10000)
         
-        # -> Select the 'Belum Punya Akun' option in the 'Status Akun Login' dropdown to filter partners without an account.
+        # -> Select the 'Belum Punya Akun' option from the 'Status Akun Login' dropdown to filter partners without an account.
         # Belum Punya Akun
-        elem = page.locator("#mitraFilter_form div").filter(has_text="Belum Punya Akun").nth(4)
+        elem = page.locator("#mitraFilter_form").get_by_text("Belum Punya Akun")
         await elem.click(timeout=10000)
         
-        # -> Open a partner's actions menu and click the 'Kirim Akses' (Send access) action to initiate sending login access.
-        # Belum Punya Akun
-        elem = page.locator("td:nth-child(7)").first
+        # -> Open the partner's actions menu for the first listed partner and click the 'Kirim Akses' (Send login access) option.
+        # Open the partner's actions menu for the first listed partner and click the 'Kirim Akses' (Send login access) option.
+        elem = page.get_by_role("row", name="1 PT Mitra Contoh  Indonesia").locator("i").nth(1)
         await elem.click(timeout=10000)
         
-        # -> Click the 'Kirim Akses Login' button for the first partner row (PT Mitra Test Jurusan) to open the send-access modal or trigger the send action.
+        # -> Click the 'Kirim Akses' (Send login access) button for the first partner row (PT Mitra Contoh) to open the access modal.
         # Kirim Akses Login button
-        elem = page.get_by_role("row", name="1 PT Mitra Test Jurusan  -").get_by_role("button").first
+        elem = page.get_by_role("row", name="1 PT Mitra Contoh  Indonesia").get_by_role("button").first
         await elem.click(timeout=10000)
         
-        # -> Fill 'contoh@mitra.com' into the 'Alamat Email Mitra' field and click the 'Kirim Akses' button in the 'Kirim Akses Login' modal.
+        # -> Fill the 'Alamat Email Mitra' field with 'contoh@mitra.com' and click the 'Kirim Akses' button to send access.
         # contoh@mitra.com email field
         elem = page.get_by_role("textbox", name="Alamat Email Mitra")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("contoh@mitra.com")
         
-        # -> Fill 'contoh@mitra.com' into the 'Alamat Email Mitra' field and click the 'Kirim Akses' button in the 'Kirim Akses Login' modal.
+        # -> Fill the 'Alamat Email Mitra' field with 'contoh@mitra.com' and click the 'Kirim Akses' button to send access.
         # Kirim Akses button
         elem = page.get_by_role("button", name=" Kirim Akses")
         await elem.click(timeout=10000)
         
-        # -> Scroll down the partners list to reveal the partner action buttons and any send-access confirmation message, then click the 'Kirim Akses' button if visible.
-        await page.mouse.wheel(0, 300)
-        
-        # -> Click the 'PT Mitra Test Jurusan' row to open its actions and the 'Kirim Akses Login' modal.
-        # PT Mitra Test Jurusan
-        elem = page.get_by_role("cell", name="PT Mitra Test Jurusan")
-        await elem.click(timeout=10000)
-        
-        # -> Click the 'PT Mitra Test Jurusan' row to open its actions and the 'Kirim Akses' modal, then check for the 'Kirim Akses' modal or any success confirmation text.
-        # PT Mitra Test Jurusan
-        elem = page.get_by_role("cell", name="PT Mitra Test Jurusan")
-        await elem.click(timeout=10000)
-        
-        # -> Open the action menu for the partner row 'PT Mitra Test Jurusan' and bring up the 'Kirim Akses' (Send Akses) modal so the send-access action can be retried and verified.
-        # 2
-        elem = page.get_by_role("cell", name="2").locator("span")
-        await elem.click(timeout=10000)
-        
-        # -> Click the 'PT Mitra Contoh' row to open its actions and bring up the 'Kirim Akses' (Send Akses) modal so the send-access flow can be retried and verified.
-        # PT Mitra Contoh
-        elem = page.get_by_role("cell", name="PT Mitra Contoh")
-        await elem.click(timeout=10000)
-        
-        # -> Open the partner action menu by clicking the action icon for 'PT Mitra Contoh' so the 'Kirim Akses' option or modal can be revealed.
-        # 1
-        elem = page.get_by_role("cell", name="1", exact=True).locator("span")
-        await elem.click(timeout=10000)
-        
         # --> Assertions to verify final state
         
-        # --> The partner row for PT Mitra Test Jurusan is marked as 'Terdaftar' in the Status Akun column.
-        # Assert-outcome: passed
-        # Assert: Partner status cell equals 'Terdaftar'.
-        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[2]/td[7]").nth(0)).to_have_text("Terdaftar", timeout=15000), "Partner status cell equals 'Terdaftar'."
+        # --> A success confirmation message should have appeared after sending access.
+        # Assert-outcome: failed
+        # Assert: Expected to see a success confirmation message 'Berhasil' after sending access.
+        await expect(page.locator("tbody").nth(0)).to_contain_text("Berhasil", timeout=15000), "Expected to see a success confirmation message 'Berhasil' after sending access."
+        
+        # --> The partner row should have been updated to indicate access was sent.
+        # Assert-outcome: failed
+        # Assert: Expected the partner's Status Akun cell to show 'Terdaftar' indicating access was sent.
+        await expect(page.locator("xpath=/html/body/div[1]/main/div[2]/div[2]/table/tbody/tr[1]/td[7]").nth(0)).to_have_text("Terdaftar", timeout=15000), "Expected the partner's Status Akun cell to show 'Terdaftar' indicating access was sent."
         await asyncio.sleep(5)
 
     finally:

@@ -52,7 +52,7 @@ Setiap activity diagram mereferensikan kode use case dari dokumen [analysis-use-
 
 ### 2.1 UC36 — Login
 
-**Aktor**: Semua pengguna (Admin, Pimpinan, Humas, Jurusan, Prodi, UPA, Pusat, Mitra)
+**Aktor**: Semua pengguna (Admin, Pimpinan, Humas, Jurusan, Prodi, UPA, Pusat, Mitra)  
 
 ```mermaid
 flowchart TD
@@ -112,9 +112,9 @@ flowchart TD
 | No | Langkah | Pelaku | Keterangan |
 |----|---------|--------|------------|
 | 1 | Membuka halaman login | Pengguna | Mengakses URL login sistem |
-| 2 | Memasukkan Email | Pengguna | Input field email |
-| 3 | Memasukkan Password | Pengguna | Input field password |
-| 4 | Memvalidasi kredensial | Sistem | Mencocokkan dengan database |
+| 2 | Memasukkan Email | Pengguna | Input field email terdaftar (hanya menggunakan email) |
+| 3 | Memasukkan Password | Pengguna | Input field password akun |
+| 4 | Memvalidasi kredensial | Sistem | Mencocokkan email dan hash password dengan database |
 | 5 | Memeriksa status akun | Sistem | Pastikan akun berstatus aktif |
 | 6 | Mengidentifikasi role | Sistem | Menentukan role pengguna |
 | 7 | Redirect ke dashboard | Sistem | Mengarahkan ke dashboard sesuai role |

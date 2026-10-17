@@ -40,68 +40,62 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Click the 'Login Sistem' link/button in the page header to open the login form.
+        # -> Click the 'Login Sistem' link to open the login page.
         # Login Sistem link
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field, fill 'password' into the Kata Sandi field, and click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field, fill 'password' into the Kata Sandi field, and click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Fill 'admin@polnado.ac.id' into the Email field, fill 'password' into the Kata Sandi field, and click the 'Masuk Sekarang' button to submit the login form.
+        # -> Fill 'admin@polnado.ac.id' into the Email field and 'password' into the Kata Sandi field, then click the 'Masuk Sekarang' button.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
         
-        # -> Open the 'Roles' management page (Roles management) so the Add Role flow can be performed.
+        # -> Open the Roles management page by navigating to the 'Roles' page (Admin → Roles).
         await page.goto("http://localhost:8000/admin/roles")
         try:
             await page.wait_for_load_state("domcontentloaded", timeout=5000)
         except Exception:
             pass
         
-        # -> Click the 'Tambah Role' button to open the new role creation form.
+        # -> Click the 'Tambah Role' button to open the add-role form.
         # Tambah Role button
         elem = page.get_by_role("button", name="+ Tambah Role")
         await elem.click(timeout=10000)
         
-        # -> Fill 'Reviewer Khusus' into the 'Nama Role' field inside the 'Tambah Role Baru' modal so permission controls can be revealed.
+        # -> Fill the 'Nama Role' field with 'Reviewer Khusus', add an optional description, and click the 'Simpan Role' button to save the new role.
         # Contoh: Admin, Pimpinan, dsb text field
         elem = page.get_by_role("textbox", name=" Nama Role *")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("Reviewer Khusus")
         
-        # -> Fill 'Reviewer Khusus' into the 'Nama Role' field inside the 'Tambah Role Baru' modal so permission controls can be revealed.
+        # -> Fill the 'Nama Role' field with 'Reviewer Khusus', add an optional description, and click the 'Simpan Role' button to save the new role.
         # Penjelasan wewenang atau hak akses role (opsional) text area
         elem = page.get_by_role("textbox", name=" Deskripsi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("Peninjau eksternal dengan akses terbatas untuk meninjau dokumen.")
         
-        # -> Fill 'Reviewer Khusus' into the 'Nama Role' field inside the 'Tambah Role Baru' modal so permission controls can be revealed.
-        await page.mouse.wheel(0, 300)
-        
-        # -> Scroll the 'Tambah Role Baru' modal to reveal the 'Hak Akses' / permission checkboxes so they can be selected.
-        await page.mouse.wheel(0, 300)
-        
-        # -> Select the permission checkboxes under 'Hak Akses' in the 'Tambah Role Baru' modal so the role can be saved.
-        await page.mouse.wheel(0, 300)
-        
-        # -> Locate permission controls by inspecting inputs/checkboxes and labels inside the 'Tambah Role Baru' modal, and then scroll the modal if needed to reveal 'Hak Akses'.
-        await page.mouse.wheel(0, 300)
-        
-        # -> Click the 'Simpan Role' button to save the new role and then verify whether the new role appears in the roles list.
+        # -> Fill the 'Nama Role' field with 'Reviewer Khusus', add an optional description, and click the 'Simpan Role' button to save the new role.
         # Simpan Role button
         elem = page.get_by_role("button", name=" Simpan Role")
         await elem.click(timeout=10000)
+        
+        # -> Type 'Reviewer Khusus' into the roles search field 'Cari data role...' and verify that 'Reviewer Khusus' appears in the roles list.
+        # Cari data role text field
+        elem = page.get_by_role("textbox", name="Cari data role...")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("Reviewer Khusus")
         
         # --> Test passed — verified by AI agent
         frame = context.pages[-1]
