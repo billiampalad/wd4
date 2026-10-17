@@ -1,0 +1,27 @@
+[
+  {
+    "id": "TC001",
+    "title": "test_user_authentication_login_logout_flow",
+    "description": "Verify that users can login using NIK or email with correct password, are redirected to the appropriate role dashboard, see an error alert on invalid credentials, and can logout successfully returning to the login page."
+  },
+  {
+    "id": "TC002",
+    "title": "test_pengajuan_kerjasama_publik_submission_validation",
+    "description": "Verify that a public partner can submit a new cooperation proposal by filling all required fields and uploading a PDF proposal, and that submission confirmation is shown; also verify validation errors appear when required data is incomplete."
+  },
+  {
+    "id": "TC003",
+    "title": "test_kelola_dokumen_kerjasama_create_edit_submit",
+    "description": "Verify that internal unit users can add new cooperation documents with required details and scanned PDF, save as draft, edit draft documents, update attachments, submit documents to leadership, and that documents with non-draft status cannot be edited."
+  },
+  {
+    "id": "TC004",
+    "title": "test_validasi_pengesahan_pimpinan_review_approve_reject",
+    "description": "Verify that leadership users can review incoming partnership submissions, approve or request revisions with notes, reject submissions with reasons, and see the submission status updated accordingly."
+  },
+  {
+    "id": "TC005",
+    "title": "test_subsistem_master_data_crud_and_send_access",
+    "description": "Verify that admin users can perform CRUD operations on users, roles, cooperation types, partners, units, and classifications, and can filter partners without accounts and send login access credentials successfully."
+  }
+]
