@@ -40,38 +40,67 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Open the “Login Sistem” page to begin the admin sign-in flow.
-        # Login Sistem link
-        elem = page.get_by_role("link", name="Login Sistem")
-        await elem.click(timeout=10000)
+        # -> Open the admin login page and inspect its visible form.
+        await page.goto("http://localhost:8000/admin/login")
+        try:
+            await page.wait_for_load_state("domcontentloaded", timeout=5000)
+        except Exception:
+            pass
         
-        # -> Enter the provided admin email and password, then submit the sign-in form.
-        # Masukkan alamat email Anda email field
-        elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
+        # -> Enter the provided administrator credentials and submit the “Masuk ke Sistem” sign-in form.
+        # Masukkan Email Administrator email field
+        elem = page.get_by_role("textbox", name="Email Administrator")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Enter the provided admin email and password, then submit the sign-in form.
+        # -> Enter the provided administrator credentials and submit the “Masuk ke Sistem” sign-in form.
         # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
+        elem = page.get_by_role("textbox", name="Kata Sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Enter the provided admin email and password, then submit the sign-in form.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
+        # -> Enter the provided administrator credentials and submit the “Masuk ke Sistem” sign-in form.
+        # Masuk ke Sistem button
+        elem = page.get_by_role("button", name="Masuk ke Sistem")
+        await elem.click(timeout=10000)
+        
+        # -> Open the “Roles” page from the admin sidebar and inspect the role-management options.
+        # Roles link
+        elem = page.get_by_role("link", name="Roles", exact=True)
+        await elem.click(timeout=10000)
+        
+        # -> Open the “Tambah Role” form and inspect its visible fields and permission options.
+        # Tambah Role button
+        elem = page.get_by_role("button", name="+ Tambah Role")
+        await elem.click(timeout=10000)
+        
+        # -> Enter “Reviewer Khusus” and select role permissions in the add-role form.
+        # Contoh: Admin, Pimpinan, dsb text field
+        elem = page.get_by_role("textbox", name=" Nama Role *")
+        await elem.wait_for(state="visible", timeout=10000)
+        await elem.fill("Reviewer Khusus")
+        
+        # -> Enter “Reviewer Khusus” and select role permissions in the add-role form.
+        # permissions[] checkbox
+        elem = page.get_by_role("checkbox", name="Master Data")
+        await elem.click(timeout=10000)
+        
+        # -> Enter “Reviewer Khusus” and select role permissions in the add-role form.
+        # permissions[] checkbox
+        elem = page.get_by_role("checkbox", name="Dokumen Kerja Sama")
+        await elem.click(timeout=10000)
+        
+        # -> Save the “Reviewer Khusus” role and verify it appears in the roles list.
+        # Simpan Role button
+        elem = page.get_by_role("button", name=" Simpan Role")
         await elem.click(timeout=10000)
         
         # --> Assertions to verify final state
         
-        # --> The roles list should be reached to verify the newly saved role.
+        # --> The newly created “Reviewer Khusus” role appears in the roles list.
         # Assert-outcome: not verified — the export-time check could not be evaluated
-        # Assert: Expected to reach the roles list to verify the saved role.
-        await expect(page).to_have_url(re.compile("/admin/roles"), timeout=15000), "Expected to reach the roles list to verify the saved role."
-        
-        # --> Test blocked by environment/access constraints during agent run
-        # Reason: TEST BLOCKED The role-management test could not be run because the provided admin credentials were rejected at sign-in. Observations: - The page displayed “Email atau kata sandi salah. Sisa percobaan: 2 kali.” - The browser remained on the login page; the roles list was not reached.
-        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The role-management test could not be run because the provided admin credentials were rejected at sign-in. Observations: - The page displayed \u201cEmail atau kata sandi salah. Sisa percobaan: 2 kali.\u201d - The browser remained on the login page; the roles list was not reached." + " — the exported script cannot reproduce a PASS in this environment.")
+        # Assert: The roles list shows the newly created “Reviewer Khusus” role.
+        await expect(page.locator("xpath=/html/body/div[1]/main/div/div[2]/table/tbody/tr[10]/td[2]").nth(0)).to_have_text("Reviewer Khusus", timeout=15000), "The roles list shows the newly created \u201cReviewer Khusus\u201d role."
         await asyncio.sleep(5)
 
     finally:

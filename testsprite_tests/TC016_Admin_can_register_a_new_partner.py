@@ -40,56 +40,38 @@ async def run_test():
         except Exception:
             pass
         
-        # -> Open the administrator sign-in page using the visible “Login Sistem” link.
+        # -> Open the administrator login page using the visible “Login Sistem” link.
         # Login Sistem link
         elem = page.get_by_role("link", name="Login Sistem")
         await elem.click(timeout=10000)
         
-        # -> Enter the supplied administrator email and password, then submit the “Masuk Sekarang” form.
+        # -> Enter the provided administrator email and password, then submit the login form.
         # Masukkan alamat email Anda email field
         elem = page.get_by_role("textbox", name="Masukkan alamat email Anda")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("admin@polnado.ac.id")
         
-        # -> Enter the supplied administrator email and password, then submit the “Masuk Sekarang” form.
+        # -> Enter the provided administrator email and password, then submit the login form.
         # Masukkan kata sandi password field
         elem = page.get_by_role("textbox", name="Masukkan kata sandi")
         await elem.wait_for(state="visible", timeout=10000)
         await elem.fill("password")
         
-        # -> Enter the supplied administrator email and password, then submit the “Masuk Sekarang” form.
+        # -> Enter the provided administrator email and password, then submit the login form.
         # Masuk Sekarang button
         elem = page.get_by_role("button", name="Masuk Sekarang")
         await elem.click(timeout=10000)
-        
-        # -> Retry signing in with the provided administrator password and check whether the admin area opens.
-        # Masukkan kata sandi password field
-        elem = page.get_by_role("textbox", name="Masukkan kata sandi")
-        await elem.wait_for(state="visible", timeout=10000)
-        await elem.fill("password")
-        
-        # -> Retry signing in with the provided administrator password and check whether the admin area opens.
-        # Masuk Sekarang button
-        elem = page.get_by_role("button", name="Masuk Sekarang")
-        await elem.click(timeout=10000)
-        
-        # -> Open the administrator sign-in page at the provided /admin/login address.
-        await page.goto("http://127.0.0.1:8000/admin/login")
-        try:
-            await page.wait_for_load_state("domcontentloaded", timeout=5000)
-        except Exception:
-            pass
         
         # --> Assertions to verify final state
         
-        # --> The mitra list should be open so the newly added partner can be verified.
+        # --> The new partner should appear in the mitra list after the admin reaches that page.
         # Assert-outcome: not verified — the export-time check could not be evaluated
-        # Assert: Expected the URL to contain /admin/mitra so the partner list is open for verification.
-        await expect(page).to_have_url(re.compile("/admin/mitra"), timeout=15000), "Expected the URL to contain /admin/mitra so the partner list is open for verification."
+        # Assert: Expected the mitra list to be open after the new partner is saved.
+        await expect(page).to_have_url(re.compile("/admin/mitra"), timeout=15000), "Expected the mitra list to be open after the new partner is saved."
         
         # --> Test blocked by environment/access constraints during agent run
-        # Reason: TEST BLOCKED The partner-management test could not be run because the administrator sign-in rejected the supplied credentials. The mitra form and partner list were not reached. Observations: - The sign-in page reported that the email or password was incorrect after each of two login attempts. - The administrator sign-in form remains open.
-        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The partner-management test could not be run because the administrator sign-in rejected the supplied credentials. The mitra form and partner list were not reached. Observations: - The sign-in page reported that the email or password was incorrect after each of two login attempts. - The administrator sign-in form remains open." + " — the exported script cannot reproduce a PASS in this environment.")
+        # Reason: TEST BLOCKED The mitra test could not be completed because the administrator login was rejected, so the partner form and mitra list could not be reached. Observations: - The login page displayed “Email atau kata sandi salah.” - The page stated that two login attempts remained.
+        raise AssertionError("Test blocked during agent run: " + "TEST BLOCKED The mitra test could not be completed because the administrator login was rejected, so the partner form and mitra list could not be reached. Observations: - The login page displayed \u201cEmail atau kata sandi salah.\u201d - The page stated that two login attempts remained." + " — the exported script cannot reproduce a PASS in this environment.")
         await asyncio.sleep(5)
 
     finally:
