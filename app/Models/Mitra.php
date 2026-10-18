@@ -23,6 +23,7 @@ class Mitra extends Model
         'province_code',
         'telepon',
         'telp',
+        'email',
         'website',
         'status_akses',
     ];

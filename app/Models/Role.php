@@ -8,7 +8,11 @@ class Role extends Model
 {
     protected $table = 'roles';
 
-    protected $fillable = ['role_name', 'description', 'name'];
+    protected $fillable = ['role_name', 'description', 'name', 'permissions'];
+
+    protected $casts = [
+        'permissions' => 'array',
+    ];
 
     /**
      * Backward-compatibility accessor if $role->name is called

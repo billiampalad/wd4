@@ -214,11 +214,11 @@
                         <td class="um-td um-td-aksi">
                             <div class="actions um-actions">
                                 @if($mitra->users->count() == 0)
-                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')">
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}', '{{ addslashes($mitra->email ?? '') }}')">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 @else
-                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Ulang Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}')">
+                                    <button type="button" class="btn-action send um-btn-send" title="Kirim Ulang Akses Login" onclick="openAccessModal({{ $mitra->id }}, '{{ addslashes($mitra->nama_mitra) }}', '{{ addslashes($mitra->email ?? '') }}')">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 @endif
@@ -314,9 +314,14 @@
     </div>
 
     <script>
-        function openAccessModal(id, name) {
+        function openAccessModal(id, name, defaultEmail) {
             document.getElementById('modalMitraName').textContent = name;
             document.getElementById('accessForm').action = '/admin/mitra/' + id + '/send-access';
+            
+            var emailInput = document.getElementById('email');
+            if (emailInput && defaultEmail) {
+                emailInput.value = defaultEmail;
+            }
             
             var modal = document.getElementById('accessModal');
             modal.classList.add('active');

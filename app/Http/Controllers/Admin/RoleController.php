@@ -24,11 +24,14 @@ class RoleController
         $request->validate([
             'role_name' => 'required|string|max:255|unique:roles,role_name',
             'description' => 'nullable|string',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|max:100',
         ]);
 
         Role::create([
             'role_name' => $request->role_name,
             'description' => $request->description,
+            'permissions' => $request->permissions ?? [],
         ]);
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil ditambahkan.');
@@ -44,11 +47,14 @@ class RoleController
         $request->validate([
             'role_name' => 'required|string|max:255|unique:roles,role_name,' . $role->id,
             'description' => 'nullable|string',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|max:100',
         ]);
 
         $role->update([
             'role_name' => $request->role_name,
             'description' => $request->description,
+            'permissions' => $request->permissions ?? [],
         ]);
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui.');

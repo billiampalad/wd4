@@ -374,8 +374,19 @@
                             @enderror
                         </div>
 
-                        {{-- 6. Telepon & Website --}}
+                        {{-- 6. Kontak: Email, Telepon & Website --}}
                         <div class="mc-grid-2">
+                            <div class="mc-group">
+                                <label class="mc-label">Email Mitra / Instansi</label>
+                                <div class="mc-input-wrap">
+                                    <i class="fas fa-envelope mc-icon-left"></i>
+                                    <input type="email" name="email" id="email" placeholder="contoh: info@mitra.co.id"
+                                        class="mc-input @error('email') uc-input-error @enderror" value="{{ old('email') }}">
+                                </div>
+                                @error('email')
+                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                                @enderror
+                            </div>
                             <div class="mc-group">
                                 <label class="mc-label">Nomor Telepon</label>
                                 <div class="mc-input-wrap">
@@ -387,17 +398,17 @@
                                     <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="mc-group">
-                                <label class="mc-label">Website</label>
-                                <div class="mc-input-wrap">
-                                    <i class="fas fa-globe mc-icon-left"></i>
-                                    <input type="text" name="website" placeholder="https://www.example.com"
-                                        class="mc-input @error('website') uc-input-error @enderror" value="{{ old('website') }}">
-                                </div>
-                                @error('website')
-                                    <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
-                                @enderror
+                        </div>
+                        <div class="mc-group mitra-create-row" style="margin-top: 12px;">
+                            <label class="mc-label">Website</label>
+                            <div class="mc-input-wrap">
+                                <i class="fas fa-globe mc-icon-left"></i>
+                                <input type="text" name="website" placeholder="https://www.example.com"
+                                    class="mc-input @error('website') uc-input-error @enderror" value="{{ old('website') }}">
                             </div>
+                            @error('website')
+                                <span class="mitra-create-error"><i class="fas fa-circle-exclamation"></i> {{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

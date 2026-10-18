@@ -76,7 +76,7 @@
                                 <td class="um-td um-td-aksi">
                                     <div class="actions um-actions">
                                         <button type="button" class="btn-action edit um-btn-edit" title="Edit"
-                                            onclick="openEditRoleModal({{ $role->id }}, '{{ addslashes($role->role_name) }}', '{{ addslashes($role->description ?? '') }}')">
+                                            onclick="openEditRoleModal({{ $role->id }}, '{{ addslashes($role->role_name) }}', '{{ addslashes($role->description ?? '') }}', {{ Js::from($role->permissions ?? []) }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <form id="form-delete-role-{{ $role->id }}"
@@ -163,7 +163,34 @@
                             <i class="fas fa-align-left"></i> Deskripsi
                         </label>
                         <textarea id="create_description" name="description" class="adm-form-input adm-form-textarea"
-                            placeholder="Penjelasan wewenang atau hak akses role (opsional)" rows="3"></textarea>
+                            placeholder="Penjelasan wewenang atau cakupan tugas role (opsional)" rows="2"></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label">
+                            <i class="fas fa-key"></i> Hak Akses / Permissions
+                        </label>
+                        <div class="role-permissions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 6px;">
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="master_data" class="create-perm-cb">
+                                <span>Master Data</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="dokumen_kerjasama" class="create-perm-cb">
+                                <span>Dokumen Kerja Sama</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="kegiatan_kerjasama" class="create-perm-cb">
+                                <span>Kegiatan Kerja Sama</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="laporan_statistik" class="create-perm-cb">
+                                <span>Laporan & Statistik</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="validasi_pimpinan" class="create-perm-cb">
+                                <span>Validasi Pimpinan</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="adm-modal-footer">
@@ -211,7 +238,34 @@
                             <i class="fas fa-align-left"></i> Deskripsi
                         </label>
                         <textarea id="edit_description" name="description" class="adm-form-input adm-form-textarea"
-                            placeholder="Penjelasan wewenang atau hak akses role (opsional)" rows="3"></textarea>
+                            placeholder="Penjelasan wewenang atau cakupan tugas role (opsional)" rows="2"></textarea>
+                    </div>
+                    <div class="adm-form-group">
+                        <label class="adm-form-label">
+                            <i class="fas fa-key"></i> Hak Akses / Permissions
+                        </label>
+                        <div class="role-permissions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 6px;">
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="master_data" class="edit-perm-cb">
+                                <span>Master Data</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="dokumen_kerjasama" class="edit-perm-cb">
+                                <span>Dokumen Kerja Sama</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="kegiatan_kerjasama" class="edit-perm-cb">
+                                <span>Kegiatan Kerja Sama</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="laporan_statistik" class="edit-perm-cb">
+                                <span>Laporan & Statistik</span>
+                            </label>
+                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                                <input type="checkbox" name="permissions[]" value="validasi_pimpinan" class="edit-perm-cb">
+                                <span>Validasi Pimpinan</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="adm-modal-footer">
@@ -228,13 +282,14 @@
 
     <script>
         function openCreateRoleModal() {
+            document.querySelectorAll('.create-perm-cb').forEach(cb => cb.checked = false);
             AdminModal.open('createRoleModal', {
                 focusSelector: '#create_role_name',
                 resetForm: true
             });
         }
 
-        function openEditRoleModal(id, roleName, description) {
+        function openEditRoleModal(id, roleName, description, permissions) {
             const form = document.getElementById('editRoleForm');
             if (form) {
                 form.action = "{{ route('roles.update', ':id') }}".replace(':id', id);
@@ -243,6 +298,11 @@
             const descInput = document.getElementById('edit_description');
             if (nameInput) nameInput.value = roleName;
             if (descInput) descInput.value = description;
+
+            const permList = Array.isArray(permissions) ? permissions : [];
+            document.querySelectorAll('.edit-perm-cb').forEach(cb => {
+                cb.checked = permList.includes(cb.value);
+            });
 
             AdminModal.open('editRoleModal', {
                 focusSelector: '#edit_role_name'

@@ -38,12 +38,14 @@ class MitraController extends Controller
             'kelurahan' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
             'telp' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
             'website' => 'nullable|string|max:255',
         ], [
             'nama_mitra.required' => 'Nama instansi/mitra wajib diisi.',
             'nama_mitra.unique' => 'Nama instansi/mitra ini sudah terdaftar.',
             'kategori.required' => 'Kategori mitra wajib dipilih.',
             'id_klasifikasi.exists' => 'Klasifikasi yang dipilih tidak valid.',
+            'email.email' => 'Format email mitra tidak valid.',
         ]);
 
         Mitra::create([
@@ -56,6 +58,7 @@ class MitraController extends Controller
             'kelurahan' => $request->kategori === 'nasional' ? $request->kelurahan : null,
             'alamat' => $request->alamat,
             'telepon' => $request->telp,
+            'email' => $request->email,
             'website' => $request->website,
         ]);
 
@@ -82,12 +85,14 @@ class MitraController extends Controller
             'kelurahan' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
             'telp' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
             'website' => 'nullable|string|max:255',
         ], [
             'nama_mitra.required' => 'Nama instansi/mitra wajib diisi.',
             'nama_mitra.unique' => 'Nama instansi/mitra ini sudah digunakan oleh data lain.',
             'kategori.required' => 'Kategori mitra wajib dipilih.',
             'id_klasifikasi.exists' => 'Klasifikasi yang dipilih tidak valid.',
+            'email.email' => 'Format email mitra tidak valid.',
         ]);
 
         $mitra->update([
@@ -100,6 +105,7 @@ class MitraController extends Controller
             'kelurahan' => $request->kategori === 'nasional' ? $request->kelurahan : null,
             'alamat' => $request->alamat,
             'telepon' => $request->telp,
+            'email' => $request->email,
             'website' => $request->website,
         ]);
 
