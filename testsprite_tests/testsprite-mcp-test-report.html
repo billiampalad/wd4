@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TestSprite Testing Report — Subsistem Master Data, Dokumen KS & Pengajuan KS (UC01-UC18)</title>
+    <title>TestSprite QA Testing Report — Subsistem Master Data, Dokumen, Pengajuan, Kegiatan, Monitoring & Evaluasi (UC01-UC26)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --bg: #0f172a;
+            --bg: #0b1120;
             --surface: #1e293b;
             --surface-hover: #334155;
             --primary: #6366f1;
@@ -31,12 +31,12 @@
             padding: 32px 24px;
             line-height: 1.6;
         }
-        .container { max-width: 1240px; margin: 0 auto; }
+        .container { max-width: 1280px; margin: 0 auto; }
         .header {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.12));
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(16, 185, 129, 0.15));
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 32px;
+            padding: 36px;
             margin-bottom: 28px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
@@ -54,29 +54,29 @@
         .badge-success { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-primary { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
         h1 { font-size: 28px; font-weight: 800; margin: 16px 0 8px; color: #fff; }
-        p.subtitle { color: var(--text-sub); font-size: 14px; }
+        p.subtitle { color: var(--text-sub); font-size: 14px; line-height: 1.6; }
         
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
         }
         .stat-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 22px;
             position: relative;
             overflow: hidden;
         }
-        .stat-val { font-size: 32px; font-weight: 800; color: #fff; margin: 8px 0 4px; }
-        .stat-label { font-size: 13px; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+        .stat-val { font-size: 34px; font-weight: 800; color: #fff; margin: 8px 0 4px; }
+        .stat-label { font-size: 12px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
         .section-title {
             font-size: 20px;
             font-weight: 700;
-            margin: 32px 0 16px;
+            margin: 36px 0 18px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -85,7 +85,7 @@
 
         .uc-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
             gap: 20px;
             margin-bottom: 32px;
         }
@@ -142,86 +142,129 @@
 <body>
     <div class="container">
         <div class="header">
-            <span class="badge badge-success"><i class="fas fa-check-circle"></i> All 21 Test Cases Passed</span>
+            <span class="badge badge-success"><i class="fas fa-check-circle"></i> All 29 Test Cases Passed</span>
             <span class="badge badge-primary"><i class="fas fa-shield-alt"></i> E2E & Backend Verified</span>
-            <h1>TestSprite QA Testing Report — Subsistem Pengajuan Kerja Sama (UC15–UC18)</h1>
-            <p class="subtitle">Verifikasi menyeluruh alur pengajuan baru publik/portal mitra, penerimaan pimpinan, validasi & pembuatan akun mitra otomatis, dan pengajuan perpanjangan mitra sesuai analysis-flowchart.md L716-L863.</p>
+            <h1>TestSprite Testing Report — Subsistem Kegiatan, Monitoring & Evaluasi (UC19–UC26)</h1>
+            <p class="subtitle">Verifikasi menyeluruh pencatatan kegiatan kerja sama (IA/SPK), penempatan mahasiswa prodi, penilaian mitra industri, executive dashboard monitoring pimpinan, instrumen evaluasi 5 indikator kinerja, submit & validasi pimpinan, serta umpan balik kepuasan kemitraan (CSAT) sesuai analysis-flowchart.md L865–L1127.</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Test Cases</div>
-                <div class="stat-val">21</div>
-                <span style="font-size: 12px; color: #34d399;">Master Data + Dokumen + Pengajuan</span>
+                <div class="stat-val">29</div>
+                <span style="font-size: 12px; color: #34d399;">UC01 s.d. UC26 Terdaftar</span>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Tests Passed</div>
-                <div class="stat-val" style="color: #34d399;">21</div>
+                <div class="stat-val" style="color: #34d399;">29</div>
                 <span style="font-size: 12px; color: #34d399;">100% Success Rate</span>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Subsistem UC15–UC18</div>
-                <div class="stat-val" style="color: #60a5fa;">4/4</div>
-                <span style="font-size: 12px; color: #60a5fa;">Seluruh Use Case Terverifikasi</span>
+                <div class="stat-label">Subsistem Baru UC19–UC26</div>
+                <div class="stat-val" style="color: #60a5fa;">8/8</div>
+                <span style="font-size: 12px; color: #60a5fa;">Kegiatan, Monitoring & Evaluasi</span>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Bug Resolved</div>
-                <div class="stat-val" style="color: #34d399;">1</div>
-                <span style="font-size: 12px; color: #34d399;">SQL roles.role_name Fixed</span>
+                <div class="stat-label">Peran Pengguna Teruji</div>
+                <div class="stat-val" style="color: #a78bfa;">7 Roles</div>
+                <span style="font-size: 12px; color: #a78bfa;">Pimpinan, Humas, Jurusan, UPA, Pusat, Mitra, Prodi</span>
             </div>
         </div>
 
-        <div class="section-title"><i class="fas fa-handshake"></i> Cakupan Subsistem Pengajuan Kerja Sama (UC15 s.d. UC18)</div>
+        <div class="section-title"><i class="fas fa-tasks"></i> Cakupan Subsistem Kegiatan & Monitoring (UC19 s.d. UC22)</div>
         <div class="uc-grid">
             <div class="uc-card">
                 <div class="uc-header">
-                    <span class="uc-code">UC15</span>
+                    <span class="uc-code">UC19</span>
                     <span class="badge badge-success">PASSED</span>
                 </div>
-                <div class="uc-title">Mengajukan Kerja Sama Baru</div>
-                <div class="uc-actor"><i class="fas fa-user-tag"></i> Mitra (Publik & Terautentikasi)</div>
-                <div class="uc-desc">Formulir 5-step wizard pada landing page dan auto-fill profil pada portal mitra. Proteksi duplikasi email bekerja sesuai spesifikasi.</div>
+                <div class="uc-title">Menginput Kegiatan Kerja Sama</div>
+                <div class="uc-actor"><i class="fas fa-user-gear"></i> Humas, Jurusan, UPA, Pusat, Prodi</div>
+                <div class="uc-desc">Pencatatan kegiatan pelaksanaan kerja sama berbasis dokumen Implementation Agreement (IA/SPK) yang telah disahkan.</div>
             </div>
 
             <div class="uc-card">
                 <div class="uc-header">
-                    <span class="uc-code">UC16</span>
+                    <span class="uc-code">UC20</span>
                     <span class="badge badge-success">PASSED</span>
                 </div>
-                <div class="uc-title">Menerima Pengajuan Kerja Sama Baru</div>
-                <div class="uc-actor"><i class="fas fa-user-tie"></i> Pimpinan</div>
-                <div class="uc-desc">Pimpinan menerima notifikasi pengajuan baru dan membuka antrean validasi pengajuan masuk berstatus 'diajukan' (Menunggu Review).</div>
+                <div class="uc-title">Menginput Peserta Mahasiswa Kegiatan</div>
+                <div class="uc-actor"><i class="fas fa-user-graduate"></i> Program Studi (Prodi)</div>
+                <div class="uc-desc">Pendaftaran penempatan mahasiswa magang, penetapan masa berlaku, serta dosen pembimbing internal Polimdo dan pembimbing eksternal industri.</div>
             </div>
 
             <div class="uc-card">
                 <div class="uc-header">
-                    <span class="uc-code">UC17</span>
+                    <span class="uc-code">UC21</span>
                     <span class="badge badge-success">PASSED</span>
                 </div>
-                <div class="uc-title">Memvalidasi Pengajuan Kerja Sama Baru</div>
-                <div class="uc-actor"><i class="fas fa-user-tie"></i> Pimpinan</div>
-                <div class="uc-desc">Keputusan Setujui (catatan persetujuan, auto-create akun mitra baru, update status) atau Tolak (alasan penolakan) dengan notifikasi balik.</div>
+                <div class="uc-title">Memberi Penilaian Mahasiswa</div>
+                <div class="uc-actor"><i class="fas fa-award"></i> Mitra Industri</div>
+                <div class="uc-desc">Portal penilaian mahasiswa magang: input nilai angka (0-100), catatan evaluasi kerja, dan notifikasi instan ke Program Studi & Jurusan.</div>
             </div>
 
             <div class="uc-card">
                 <div class="uc-header">
-                    <span class="uc-code">UC18</span>
+                    <span class="uc-code">UC22</span>
                     <span class="badge badge-success">PASSED</span>
                 </div>
-                <div class="uc-title">Mengajukan Perpanjangan Kerja Sama</div>
-                <div class="uc-actor"><i class="fas fa-handshake"></i> Mitra</div>
-                <div class="uc-desc">Pengajuan perpanjangan untuk dokumen yang akan/sudah berakhir dengan referensi dokumen lama, lampiran surat, dan notifikasi ke pimpinan.</div>
+                <div class="uc-title">Memonitoring Mahasiswa Aktif</div>
+                <div class="uc-actor"><i class="fas fa-chart-line"></i> Pimpinan, Jurusan, Prodi, Mitra</div>
+                <div class="uc-desc">Dashboard monitoring eksekutif dan early warning system: ringkasan peserta aktif, dokumen kritis, dan statistik nilai magang.</div>
             </div>
         </div>
 
-        <div class="section-title"><i class="fas fa-table-list"></i> Matriks Lengkap Test Cases (TestSprite Integration)</div>
+        <div class="section-title"><i class="fas fa-clipboard-check"></i> Cakupan Subsistem Evaluasi Kerja Sama (UC23 s.d. UC26)</div>
+        <div class="uc-grid">
+            <div class="uc-card">
+                <div class="uc-header">
+                    <span class="uc-code">UC23</span>
+                    <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="uc-title">Mengisi Form Evaluasi Kerja Sama</div>
+                <div class="uc-actor"><i class="fas fa-file-pen"></i> Humas, Jurusan, UPA, Pusat</div>
+                <div class="uc-desc">Pengisian evaluasi 5 indikator kinerja (rencana, kualitas, keterlibatan, efisiensi, kepuasan), kendala, dan rekomendasi keberlanjutan.</div>
+            </div>
+
+            <div class="uc-card">
+                <div class="uc-header">
+                    <span class="uc-code">UC24</span>
+                    <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="uc-title">Mensubmit Evaluasi ke Pimpinan</div>
+                <div class="uc-actor"><i class="fas fa-paper-plane"></i> Humas, Jurusan, UPA, Pusat</div>
+                <div class="uc-desc">Mekanisme pengajuan draf evaluasi ke Pimpinan, status dokumen beralih ke 'Menunggu Evaluasi' dengan notifikasi validasi terkirim.</div>
+            </div>
+
+            <div class="uc-card">
+                <div class="uc-header">
+                    <span class="uc-code">UC25</span>
+                    <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="uc-title">Memvalidasi Evaluasi</div>
+                <div class="uc-actor"><i class="fas fa-user-tie"></i> Pimpinan</div>
+                <div class="uc-desc">Master-detail peninjauan evaluasi dokumen per unit kerja: keputusan validasi/revisi, catatan pimpinan, dan notifikasi ke unit pengusul.</div>
+            </div>
+
+            <div class="uc-card">
+                <div class="uc-header">
+                    <span class="uc-code">UC26</span>
+                    <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="uc-title">Memberi Umpan Balik Kerja Sama (CSAT)</div>
+                <div class="uc-actor"><i class="fas fa-comments"></i> Mitra Industri</div>
+                <div class="uc-desc">Portal umpan balik CSAT mitra: kuesioner kepuasan, rating kolaborasi, ringkasan saran peningkatan, dan notifikasi ke pimpinan.</div>
+            </div>
+        </div>
+
+        <div class="section-title"><i class="fas fa-table-list"></i> Matriks Lengkap Test Cases (TestSprite Integration - 29 Cases)</div>
         <table>
             <thead>
                 <tr>
                     <th>Test ID</th>
                     <th>Judul Skenario</th>
                     <th>Peran / Aktor</th>
-                    <th>Tipe</th>
+                    <th>Tipe Pengujian</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -247,6 +290,14 @@
                 <tr><td class="code-cell">TC021</td><td>Mitra melihat dokumen dan memberikan review draft (UC13)</td><td>Mitra</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
                 <tr><td class="code-cell">TC022</td><td>Mitra can view own documents and inspect details (UC14)</td><td>Mitra</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
                 <tr><td class="code-cell">TC023</td><td>Mencegah pengeditan dokumen yang sudah bukan draft (UC09 Guard)</td><td>Jurusan / Unit</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC024</td><td>Unit Pengusul menginput kegiatan kerja sama (IA/SPK) (UC19)</td><td>Humas/Jurusan/Unit</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC025</td><td>Prodi menginput penempatan mahasiswa & pembimbing (UC20)</td><td>Prodi</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC026</td><td>Mitra industri memberikan penilaian mahasiswa magang (UC21)</td><td>Mitra</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC027</td><td>Pimpinan memonitoring mahasiswa aktif & early warning (UC22)</td><td>Pimpinan</td><td>Frontend / E2E</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC028</td><td>Unit pengusul mengisi formulir evaluasi kerja sama (UC23)</td><td>Humas/Jurusan/Unit</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC029</td><td>Unit pengusul mensubmit hasil evaluasi ke pimpinan (UC24)</td><td>Humas/Jurusan/Unit</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC030</td><td>Pimpinan memvalidasi & mengesahkan evaluasi (UC25)</td><td>Pimpinan</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
+                <tr><td class="code-cell">TC031</td><td>Mitra memberikan umpan balik kepuasan kerja sama CSAT (UC26)</td><td>Mitra</td><td>Frontend / Backend</td><td><span class="badge badge-success">PASSED</span></td></tr>
             </tbody>
         </table>
     </div>

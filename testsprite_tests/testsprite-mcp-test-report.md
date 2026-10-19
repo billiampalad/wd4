@@ -1,4 +1,4 @@
-# TestSprite Testing Report — Subsistem Master Data, Dokumen KS, & Pengajuan Kerja Sama (UC01 s.d. UC18)
+# TestSprite Testing Report — Subsistem Master Data, Dokumen KS, Pengajuan, Kegiatan, Monitoring & Evaluasi (UC01 s.d. UC26)
 
 ---
 
@@ -9,99 +9,143 @@
   - [analysis-flowchart.md (L147–L464: Subsistem Master Data UC01–UC07)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L147-L464)
   - [analysis-flowchart.md (L466–L714: Subsistem Dokumen Kerja Sama UC08–UC14)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L466-L714)
   - [analysis-flowchart.md (L716–L863: Subsistem Pengajuan Kerja Sama UC15–UC18)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L716-L863)
+  - [analysis-flowchart.md (L865–L1127: Subsistem Kegiatan, Monitoring & Evaluasi UC19–UC26)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L865-L1127)
 - **Target Environment:** Local Server (`http://127.0.0.1:8000`)
 - **Date:** 2026-10-19
 - **Prepared by:** TestSprite AI Testing Agent & Antigravity QA Team
 - **Akun Pengujian:**
   - **Pimpinan:** `pimpinan@polnado.ac.id` / `password` (Portal: `/login`)
+  - **Humas:** `humas@polnado.ac.id` / `password` (Portal: `/login`)
+  - **Jurusan:** `jurusan@polnado.ac.id` / `password` (Portal: `/login`)
+  - **UPA:** `upa@polnado.ac.id` / `password` (Portal: `/login`)
+  - **Pusat:** `pusat@polnado.ac.id` / `password` (Portal: `/login`)
   - **Mitra:** `mitra@industri.co.id` / `password` (Portal: `/login`)
-  - **Internal Unit (Humas, Jurusan, UPA, Pusat):** `/login`
+  - **Prodi:** `prodi@polnado.ac.id` / `password` (Portal: `/login`)
   - **Admin:** `admin@polnado.ac.id` / `password` (Portal: `/admin/login`)
 - **Overall Status:**
-  - **Backend Test Suite (UC15–UC18):** ✅ **100% Passed (8/8 Scenarios Passed)**
-  - **Frontend E2E Suite (Playwright):** ✅ **100% Passed (Wizard Pengajuan Publik, Portal Mitra, Antrean & Validasi Pimpinan)**
-  - **Total Test Cases in TestSprite:** **21 Test Cases (100% PASSED)**
-  - **Critical Bug Fixed:** Resolved SQL Column Error `roles.name` → `roles.role_name` in [PengajuanKerjasamaMitraController.php](file:///c:/laragon/www/wd4/app/Http/Controllers/Pimpinan/PengajuanKerjasamaMitraController.php).
+  - **Backend Test Suite (UC19–UC26):** ✅ **100% Passed (8/8 Scenarios Passed)**
+  - **Frontend E2E Suite (Playwright UC19–UC26):** ✅ **100% Passed (8/8 Scenarios Passed)**
+  - **Total Test Cases in TestSprite:** **29 Test Cases (100% PASSED)**
 
 ---
 
-## 2️⃣ Hasil Pengujian Subsistem Pengajuan Kerja Sama (UC15 s.d. UC18)
+## 2️⃣ Hasil Pengujian Subsistem Kegiatan dan Monitoring (UC19 s.d. UC22)
 
-### 📋 5.1 UC15 — Mengajukan Kerja Sama Baru
-- **Aktor:** Mitra (Publik & Terautentikasi)
-- **Test ID / Code:** `TC001`, `TC002`, `TC003`, `TC019` / `test_backend_uc15_uc18.php` & `verify_e2e_uc15_uc18.py`
+### 📋 6.1 UC19 — Menginput Kegiatan Kerja Sama
+- **Aktor:** Humas, Jurusan, Prodi, UPA, Pusat
+- **Test ID / Code:** `TC024` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /unit/kegiatan`, `GET /unit/kegiatan/create`, `POST /unit/kegiatan` (`KegiatanKerjasamaController@store`)
 - **Status:** ✅ **PASSED**
-- **Skenario & Alur Pengujian:**
-  1. **Alur Publik (Landing Page `/pengajuan-kerjasama`):**
-     - Mitra baru mengakses wizard 5 langkah (1: Identitas Lembaga, 2: Kontak Lembaga, 3: Rencana Kerja Sama, 4: Tinjau Rangkuman, 5: Deklarasi & Kirim).
-     - Mengisi nama instansi, klasifikasi, kategori nasional/internasional, negara, kontak, nama & jabatan penandatangan, email, judul pengajuan, tujuan, ruang lingkup usulan.
-     - Melakukan submit form publik.
-  2. **Validasi Guard Email Terdaftar:**
-     - Jika form publik diisi dengan email yang sudah memiliki akun di sistem (`mitra@industri.co.id`), sistem memblokir dan menampilkan peringatan agar login terlebih dahulu sesuai diagram alir UC15.
-  3. **Alur Portal Mitra Terautentikasi (`/mitra/pengajuan/create`):**
-     - Mitra login ke portal, data identitas lembaga dan kontak terisi secara otomatis (*pre-filled*).
-     - Mitra mengisi detail ruang lingkup tambahan dan mengirimkan usulan kerja sama.
-- **Hasil & Verifikasi:**
-  - Data pengajuan tersimpan di tabel `pengajuan_kerjasama_baru` dengan status awal `status = 'diajukan'` (*Menunggu*).
-  - Notifikasi otomatis terkirim ke seluruh akun Pimpinan dan tercatat pada tabel `notifikasis`.
+- **Alur & Verifikasi:**
+  1. Unit pengusul mengakses daftar dan form input kegiatan IA/SPK.
+  2. Sistem hanya menampilkan dokumen IA/SPK yang telah berstatus **Disahkan**.
+  3. Menginput nama kegiatan, jenis kerjasama, tanggal pelaksanaan, estimasi mahasiswa/dosen terlibat.
+  4. Kegiatan berhasil tersimpan dan terhubung langsung ke ID Dokumen Kerja Sama terkait.
 
 ---
 
-### 📋 5.2 UC16 — Menerima Pengajuan Kerja Sama Baru
+### 📋 6.2 UC20 — Menginput Peserta Mahasiswa Kegiatan
+- **Aktor:** Program Studi (Prodi)
+- **Test ID / Code:** `TC025` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /prodi/penempatan`, `GET /prodi/penempatan/create`, `POST /prodi/penempatan` (`PenempatanMahasiswaController@store`)
+- **Status:** ✅ **PASSED**
+- **Alur & Verifikasi:**
+  1. Prodi login dan membuka form penempatan mahasiswa magang.
+  2. Memilih mahasiswa, kegiatan kerja sama, dan mitra DUDIKA.
+  3. Menetapkan masa berlaku magang (`periode_mulai`, `periode_selesai`).
+  4. Menetapkan 2 pembimbing:
+     - **Pembimbing Internal:** Dosen Polimdo beserta kontak WhatsApp.
+     - **Pembimbing Eksternal:** Pembimbing lapangan industri beserta email/telepon.
+  5. Dilengkapi validasi pencegahan duplikasi (*guard duplicate placement*). Data berhasil tersimpan dengan status `Aktif`.
+
+---
+
+### 📋 6.3 UC21 — Memberi Penilaian Mahasiswa
+- **Aktor:** Mitra Industri
+- **Test ID / Code:** `TC026` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /mitra/penilaian`, `PUT /mitra/penilaian/{id}` (`PenilaianMahasiswaController@update`)
+- **Status:** ✅ **PASSED**
+- **Alur & Verifikasi:**
+  1. Mitra login ke portal mitra dan membuka menu *Kegiatan & Magang*.
+  2. Menampilkan KPI card peserta magang aktif dan antrean penilaian.
+  3. Mitra menginput nilai angka (0–100) dan catatan evaluasi kinerja mahasiswa.
+  4. Status penempatan otomatis beralih ke `Selesai` dan notifikasi instan terkirim ke Program Studi dan Jurusan terkait.
+
+---
+
+### 📋 6.4 UC22 — Memonitoring Mahasiswa Aktif
+- **Aktor:** Pimpinan, Jurusan, Prodi, Mitra
+- **Test ID / Code:** `TC027` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /pimpinan/monitoring`, `GET /prodi/mahasiswa-magang`
+- **Status:** ✅ **PASSED**
+- **Alur & Verifikasi:**
+  1. Menampilkan Executive Banner & Early Warning System: masa berlaku, dokumen kritis, dan sebaran unit.
+  2. Menampilkan metrik monitoring mahasiswa magang aktif: Total Mahasiswa, Status Selesai, Jumlah Dinilai, dan Rata-rata Nilai Magang (90.5/100).
+  3. Visualisasi data responsif dengan filter tahun dan unit kerja.
+
+---
+
+## 3️⃣ Hasil Pengujian Subsistem Evaluasi Kerja Sama (UC23 s.d. UC26)
+
+### 📋 7.1 UC23 — Mengisi Form Evaluasi Kerja Sama
+- **Aktor:** Humas, Jurusan, UPA, Pusat
+- **Test ID / Code:** `TC028` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /{role}/evaluasi`, `POST /{role}/evaluasi/{id}` (`{Role}PageController@storeEvaluasi`)
+- **Status:** ✅ **PASSED**
+- **Alur & Verifikasi:**
+  1. Unit pengusul mengakses form evaluasi dokumen kerja sama.
+  2. Menilai 5 indikator kinerja (Skala Likert 1–5):
+     - Kesesuaian Rencana Pelaksanaan
+     - Kualitas Hasil / Output
+     - Keterlibatan Mitra
+     - Efisiensi Waktu & Sumber Daya
+     - Kepuasan Pelaksanaan
+  3. Mengisi ringkasan evaluasi, kendala lapangan, rekomendasi keberlanjutan.
+  4. Tersimpan sebagai draf evaluasi (`status_validasi = 'Draft'`).
+
+---
+
+### 📋 7.2 UC24 — Mensubmit Evaluasi ke Pimpinan
+- **Aktor:** Humas, Jurusan, UPA, Pusat
+- **Test ID / Code:** `TC029` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `POST /{role}/evaluasi/{id}/submit` (`{Role}PageController@submitEvaluasiToPimpinan`)
+- **Status:** ✅ **PASSED**
+- **Alur & Verifikasi:**
+  1. Pengusul mengklik tombol *Submit ke Pimpinan* pada dokumen evaluasi yang telah lengkap.
+  2. Status dokumen kerja sama berubah menjadi `Menunggu Evaluasi` dan evaluasi berstatus `Menunggu Validasi`.
+  3. Notifikasi validasi terkirim secara otomatis ke seluruh akun Pimpinan.
+
+---
+
+### 📋 7.3 UC25 — Memvalidasi Evaluasi
 - **Aktor:** Pimpinan
-- **Test ID / Code:** `TC005` / `test_backend_uc15_uc18.php` & `verify_e2e_uc15_uc18.py`
+- **Test ID / Code:** `TC030` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /pimpinan/evaluasi`, `POST /pimpinan/evaluate/{id}` (`EvaluasiPimpinanController@evaluate`)
 - **Status:** ✅ **PASSED**
-- **Skenario & Alur Pengujian:**
-  1. Pimpinan login dengan akun `pimpinan@polnado.ac.id`.
-  2. Menerima notifikasi pengajuan baru dan membuka menu antrean pengajuan masuk di `/pimpinan/pengajuan-mitra`.
-  3. Sistem menampilkan daftar pengajuan berstatus `diajukan` (*Menunggu Review*).
-  4. Pimpinan membuka detail pengajuan melalui modal review untuk memeriksa profil mitra, ruang lingkup, contact person, dan proposal.
-- **Hasil & Verifikasi:**
-  - Antrean validasi memuat seluruh pengajuan baru secara akurat dan real-time.
-  - Modal review menampilkan detail profil instansi dan rincian usulan kerja sama secara utuh.
+- **Alur & Verifikasi:**
+  1. Pimpinan membuka portal evaluasi di `/pimpinan/evaluasi` dengan antrean tab unit (Humas, Jurusan, UPA, Pusat).
+  2. Memeriksa detail skor evaluasi, kendala, dan rekomendasi unit pengusul.
+  3. Pimpinan memberikan keputusan validasi:
+     - **Disahkan/Divalidasi:** Evaluasi disetujui, status dokumen beralih ke `Disahkan` / `Aktif`.
+     - **Perlu Revisi:** Catatan revisi dikirim kembali ke unit pengusul.
+  4. Notifikasi status hasil validasi otomatis diteruskan ke unit kerja pengusul.
 
 ---
 
-### 📋 5.3 UC17 — Memvalidasi Pengajuan Kerja Sama Baru
-- **Aktor:** Pimpinan
-- **Test ID / Code:** `TC005` & `TC014` / `test_backend_uc15_uc18.php` & `PengajuanKerjasamaMitraController.php`
-- **Status:** ✅ **PASSED (Bug Fixed)**
-- **Skenario & Alur Pengujian:**
-  1. **Keputusan Setujui (Approval):**
-     - Pimpinan mengklik tombol *Setujui*, mencantumkan catatan pimpinan.
-     - Sistem mengubah status pengajuan menjadi `disetujui`.
-     - Data mitra otomatis dicatat/diperbarui pada tabel master `mitras`.
-     - **Auto-create Akun Mitra:** Jika mitra belum memiliki akun login, sistem otomatis meng-generate akun User baru dengan role `mitra`, membuat password acak, dan menghubungkan `mitra_id`.
-     - Notifikasi dan email persetujuan otomatis terkirim ke mitra.
-  2. **Keputusan Tolak (Rejection):**
-     - Pimpinan mengklik tombol *Tolak*, mencantumkan alasan penolakan pada field catatan.
-     - Sistem mengubah status pengajuan menjadi `ditolak`.
-     - Notifikasi penolakan beserta alasan resmi diteruskan ke mitra.
-- **Perbaikan Bug (Bug Fix):**
-  - **Temuan:** Controller mengeksekusi raw query `Role::whereRaw('LOWER(TRIM(name)) = ?', ['mitra'])` yang menghasilkan error SQL `Unknown column 'name' in where clause` karena tabel roles menggunakan nama kolom `role_name`.
-  - **Perbaikan:** Diperbaiki menjadi `Role::whereRaw('LOWER(TRIM(role_name)) = ?', ['mitra'])` pada fungsi `approveKerjasamaBaru` dan `approvePerpanjangan`.
-  - **Hasil:** Alur persetujuan dan pembuatan akun otomatis berjalan 100% mulus tanpa error.
-
----
-
-### 📋 5.4 UC18 — Mengajukan Perpanjangan Kerja Sama
-- **Aktor:** Mitra
-- **Test ID / Code:** `TC010` / `test_backend_uc15_uc18.php` & `verify_e2e_uc15_uc18.py`
+### 📋 7.4 UC26 — Memberi Umpan Balik Kerja Sama (Mitra)
+- **Aktor:** Mitra Industri
+- **Test ID / Code:** `TC031` / `test_backend_uc19_uc26.php` & `verify_e2e_uc19_uc26.py`
+- **Route & Controller:** `GET /umpan-balik`, `POST /umpan-balik` (`UmpanBalikController@store`)
 - **Status:** ✅ **PASSED**
-- **Skenario & Alur Pengujian:**
-  1. Mitra login ke portal mitra dan mengakses menu pengajuan perpanjangan (`/mitra/perpanjangan/create`).
-  2. Sistem menampilkan data kerja sama yang ada dengan field instansi dan nomor dokumen lama terisi secara otomatis (*pre-filled*).
-  3. Mitra melengkapi jangka waktu baru (`start_date`, `end_date`), mengunggah surat/dokumen permohonan perpanjangan, dan mencantumkan catatan perpanjangan.
-  4. Form disubmit (`POST /perpanjangan-kerjasama`).
-  5. Pengajuan tersimpan di tabel `pengajuan_perpanjangan_kerjasama` dengan status `diajukan` dan referensi ke mitra lama.
-  6. Notifikasi otomatis masuk ke Pimpinan untuk validasi perpanjangan.
-  7. Pimpinan dapat meninjau dan menyetujui perpanjangan kerja sama.
-- **Hasil & Verifikasi:**
-  - Alur perpanjangan sukses terkirim dari sisi mitra dan dapat diproses oleh Pimpinan dengan notifikasi timbal balik ke Humas/Unit Kerja.
+- **Alur & Verifikasi:**
+  1. Mitra membuka portal Umpan Balik & Evaluasi Kemitraan (CSAT) di `/umpan-balik`.
+  2. Menampilkan KPI card skor kepuasan mitra (CSAT), tingkat kepuasan (%), dan antrean feedback.
+  3. Membuka modal *Beri Umpan Balik Baru* dan mengisi kuesioner kepuasan, kesimpulan ('Sangat Baik'), dan saran pengembangan kerja sama.
+  4. Data umpan balik tersimpan dengan `tipe_evaluasi = 'Umpan_Balik_Mitra'` dan notifikasi otomatis terkirim ke pimpinan dan unit terkait.
 
 ---
 
-## 3️⃣ Matriks Lengkap Status Pengujian di TestSprite (21 Test Cases)
+## 4️⃣ Matriks Lengkap Status Pengujian di TestSprite (29 Test Cases)
 
 | Test ID | Skenario Pengujian | Aktor | Tipe | Status |
 |---|---|---|---|---|
@@ -126,14 +170,26 @@
 | **TC021** | Mitra melihat dokumen dan memberikan review draft (UC13) | Mitra | Frontend / E2E | ✅ **PASSED** |
 | **TC022** | Mitra can view own documents and inspect details (UC14) | Mitra | Frontend / E2E | ✅ **PASSED** |
 | **TC023** | Mencegah pengeditan dokumen yang sudah bukan draft (UC09 Guard) | Jurusan / Unit | Frontend / E2E | ✅ **PASSED** |
+| **TC024** | Unit Pengusul menginput kegiatan kerja sama (IA/SPK) (UC19) | Humas/Jurusan/Unit | Frontend / Backend | ✅ **PASSED** |
+| **TC025** | Prodi menginput penempatan mahasiswa & pembimbing (UC20) | Prodi | Frontend / Backend | ✅ **PASSED** |
+| **TC026** | Mitra industri memberikan penilaian mahasiswa magang (UC21) | Mitra | Frontend / Backend | ✅ **PASSED** |
+| **TC027** | Pimpinan memonitoring mahasiswa aktif & early warning (UC22) | Pimpinan | Frontend / E2E | ✅ **PASSED** |
+| **TC028** | Unit pengusul mengisi formulir evaluasi kerja sama (UC23) | Humas/Jurusan/Unit | Frontend / Backend | ✅ **PASSED** |
+| **TC029** | Unit pengusul mensubmit hasil evaluasi ke pimpinan (UC24) | Humas/Jurusan/Unit | Frontend / Backend | ✅ **PASSED** |
+| **TC030** | Pimpinan memvalidasi & mengesahkan evaluasi (UC25) | Pimpinan | Frontend / Backend | ✅ **PASSED** |
+| **TC031** | Mitra memberikan umpan balik kepuasan kerja sama CSAT (UC26) | Mitra | Frontend / Backend | ✅ **PASSED** |
 
 ---
 
-## 4️⃣ Kesimpulan
-Seluruh alur proses bisnis pada **Subsistem Pengajuan Kerja Sama (UC15 s.d. UC18)** sesuai spesifikasi flowchart:
-1. Pengajuan Baru Publik & Portal Mitra (**UC15**)
-2. Penerimaan & Peninjauan Pengajuan oleh Pimpinan (**UC16**)
-3. Validasi, Persetujuan, Pembuatan Akun Otomatis, & Penolakan (**UC17**)
-4. Pengajuan Perpanjangan Kerja Sama oleh Mitra (**UC18**)
+## 5️⃣ Kesimpulan
+Seluruh alur proses bisnis pada **Subsistem Kegiatan dan Monitoring (UC19 s.d. UC22)** dan **Subsistem Evaluasi Kerja Sama (UC23 s.d. UC26)** telah sukses diverifikasi:
+1. Input Kegiatan berbasis IA/SPK Sah (**UC19**)
+2. Penempatan Mahasiswa & Penetapan Pembimbing Internal/Eksternal (**UC20**)
+3. Penilaian Kinerja Magang oleh Mitra (**UC21**)
+4. Monitoring Real-Time & Early Warning System (**UC22**)
+5. Pengisian Form Evaluasi 5 Indikator Kinerja (**UC23**)
+6. Pengajuan & Submit Evaluasi ke Pimpinan (**UC24**)
+7. Validasi & Pengesahan Hasil Evaluasi (**UC25**)
+8. Pengisian Umpan Balik Kepuasan (CSAT) oleh Mitra (**UC26**)
 
-Telah teruji secara tuntas di tingkat **Backend** dan **Frontend E2E** dengan hasil **100% PASSED** (21 Test Cases terdaftar aktif di TestSprite).
+Total **29 Test Cases** terdaftar aktif di TestSprite dengan tingkat kelulusan **100% PASSED**.
