@@ -197,7 +197,7 @@ class PengajuanKerjasamaMitraController extends Controller
         $senderId = Auth::id() ?: 1;
         $linkPerpanjangan = route('unit.pengajuan_perpanjangan');
 
-        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
+        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(role_name))'), ['unit_kerja', 'unit', 'humas']))
             ->get()
             ->each(function (User $unitUser) use ($senderId, $submission, $linkPerpanjangan) {
                 Notifikasi::send(
@@ -248,7 +248,7 @@ class PengajuanKerjasamaMitraController extends Controller
         if ($mitraId && $mitraEmail) {
             $existingMitraUser = User::where('email', $mitraEmail)->first();
             if (! $existingMitraUser) {
-                $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(name)) = ?', ['mitra'])->first();
+                $roleMitra = \App\Models\Role::whereRaw('LOWER(TRIM(role_name)) = ?', ['mitra'])->first() ?: \App\Models\Role::where('role_name', 'like', '%mitra%')->first();
                 if ($roleMitra) {
                     $randomPassword = \Illuminate\Support\Str::random(10);
                     User::create([
@@ -325,7 +325,7 @@ class PengajuanKerjasamaMitraController extends Controller
         $senderId = Auth::id() ?: 1;
         $linkRepositori = route('unit.dkerjasama');
 
-        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(name))'), ['unit_kerja', 'unit', 'humas']))
+        User::whereHas('role', fn ($query) => $query->whereIn(DB::raw('LOWER(TRIM(role_name))'), ['unit_kerja', 'unit', 'humas']))
             ->get()
             ->each(function (User $unitUser) use ($senderId, $cooperation, $linkRepositori, $submission) {
                 Notifikasi::send(
