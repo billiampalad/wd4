@@ -169,24 +169,24 @@
                         <label class="adm-form-label">
                             <i class="fas fa-key"></i> Hak Akses / Permissions
                         </label>
-                        <div class="role-permissions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 6px;">
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                        <div class="role-permissions-grid">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="master_data" class="create-perm-cb">
                                 <span>Master Data</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="dokumen_kerjasama" class="create-perm-cb">
                                 <span>Dokumen Kerja Sama</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="kegiatan_kerjasama" class="create-perm-cb">
                                 <span>Kegiatan Kerja Sama</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="laporan_statistik" class="create-perm-cb">
                                 <span>Laporan & Statistik</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="validasi_pimpinan" class="create-perm-cb">
                                 <span>Validasi Pimpinan</span>
                             </label>
@@ -244,24 +244,24 @@
                         <label class="adm-form-label">
                             <i class="fas fa-key"></i> Hak Akses / Permissions
                         </label>
-                        <div class="role-permissions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 6px;">
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                        <div class="role-permissions-grid">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="master_data" class="edit-perm-cb">
                                 <span>Master Data</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="dokumen_kerjasama" class="edit-perm-cb">
                                 <span>Dokumen Kerja Sama</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="kegiatan_kerjasama" class="edit-perm-cb">
                                 <span>Kegiatan Kerja Sama</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="laporan_statistik" class="edit-perm-cb">
                                 <span>Laporan & Statistik</span>
                             </label>
-                            <label class="adm-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; padding: 7px 10px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; background: var(--card-bg, #fff);">
+                            <label class="adm-checkbox-label">
                                 <input type="checkbox" name="permissions[]" value="validasi_pimpinan" class="edit-perm-cb">
                                 <span>Validasi Pimpinan</span>
                             </label>
