@@ -248,11 +248,12 @@
                 <span>Umpan Balik & Evaluasi</span>
             </a>
 
-            <!-- <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
-            <a class="menu-item" href="mailto:admin@polimdo.ac.id">
+            <div class="menu-section" style="margin-top: 20px;">DUKUNGAN</div>
+            <a class="menu-item {{ request()->routeIs('mitra.bantuan.*') ? 'active' : '' }}"
+                href="{{ route('mitra.bantuan.index') }}">
                 <div class="menu-icon"><i class="fas fa-headset"></i></div>
-                <span>Bantuan / Hubungi Admin</span>
-            </a> -->
+                <span>Hubungi Administrator</span>
+            </a>
         </aside>
 
         <!-- Sidebar Toggle (Floating on Border) -->
@@ -275,6 +276,8 @@
                 @include('auth.layout.mitra.tracking')
             @elseif (request()->routeIs('mitra.umpan_balik.*') || (isset($view) && $view === 'umpan_balik'))
                 @include('auth.layout.mitra.umpan_balik')
+            @elseif (request()->routeIs('mitra.bantuan.*') || (isset($view) && $view === 'bantuan') || (isset($content) && $content === 'auth.layout.mitra.bantuan'))
+                @include('auth.layout.mitra.bantuan')
             @else
                 <main id="mainContent" class="dk-page">
                     <div style="padding: 100px 40px; text-align: center; color: var(--text-sub);">

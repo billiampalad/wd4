@@ -53,6 +53,7 @@ Route::post('/perpanjangan-kerjasama', [PublicPengajuanKerjasamaController::clas
 Route::middleware(['auth'])->group(function () {
     Route::get('/api/notifikasi', [\App\Http\Controllers\NotifikasiController::class, 'index']);
     Route::post('/api/notifikasi/{id}/mark-read', [\App\Http\Controllers\NotifikasiController::class, 'markAsRead']);
+    Route::post('/api/notifikasi/{id}/read', [\App\Http\Controllers\NotifikasiController::class, 'markAsRead']);
     Route::post('/api/notifikasi/mark-all-read', [\App\Http\Controllers\NotifikasiController::class, 'markAllRead']);
 });
 
@@ -478,6 +479,10 @@ Route::middleware(['auth', 'role:mitra'])->group(function () {
     Route::post('alumni', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'store'])->name('mitra.alumni.store');
     Route::put('alumni/{id}', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'update'])->name('mitra.alumni.update');
     Route::delete('alumni/{id}', [\App\Http\Controllers\Mitra\AlumniMitraController::class, 'destroy'])->name('mitra.alumni.destroy');
+
+    // ─── Phase 8 / Subsistem 10: Hubungi Administrator (UC35) ────────────────
+    Route::get('/mitra/bantuan', [\App\Http\Controllers\Mitra\BantuanController::class, 'index'])->name('mitra.bantuan.index');
+    Route::post('/mitra/bantuan', [\App\Http\Controllers\Mitra\BantuanController::class, 'store'])->name('mitra.bantuan.store');
 });
 
 // ─── Phase 5: Kegiatan Kerjasama (UC19) ─────────────────
