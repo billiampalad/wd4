@@ -1,4 +1,4 @@
-# TestSprite Testing Report — Subsistem Master Data, Dokumen KS, Pengajuan, Kegiatan, Monitoring, Evaluasi, Laporan, Tracking Lulusan & Komunikasi (UC01 s.d. UC35)
+# TestSprite Testing Report — Seluruh Subsistem 1 s.d. 10 & Alur Bisnis Utama End-to-End (UC01 s.d. UC35 & Lifecycle Section 11)
 
 ---
 
@@ -13,6 +13,7 @@
   - [analysis-flowchart.md (L1129–L1269: Subsistem Laporan dan Dashboard UC27–UC31)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1129-L1269)
   - [analysis-flowchart.md (L1271–L1346: Subsistem Tracking Lulusan UC32–UC33)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1271-L1346)
   - [analysis-flowchart.md (L1348–L1447: Subsistem Komunikasi UC34–UC35 & Otomatisasi Kedaluwarsa)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1348-L1447)
+  - [analysis-flowchart.md (L1449–L1726: Alur Proses Bisnis Utama End-to-End Siklus Hidup Kerja Sama)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1449-L1726)
 - **Target Environment:** Local Server (`http://127.0.0.1:8000`)
 - **Date:** 2026-10-21
 - **Prepared by:** TestSprite AI Testing Agent & Antigravity QA Team
@@ -29,7 +30,7 @@
 ---
 
 ## 2️⃣ Executive Summary
-Pengujian menyeluruh mencakup **38 Test Case (100% Passed)** yang memverifikasi seluruh subsistem aplikasi kerja sama:
+Pengujian menyeluruh mencakup **40 Test Case (100% Passed)** yang memverifikasi seluruh subsistem aplikasi kerja sama dan siklus hidup bisnis end-to-end:
 1. **Autentikasi & Multi-Role Guard:** Login Admin di `/admin/login` serta login multi-role di `/login`.
 2. **Master Data & Mitra (UC01–UC07):** CRUD User, Role, Mitra, dan pengiriman kredensial.
 3. **Dokumen Kerja Sama (UC08–UC14):** Alur MoU, MoA, IA, validasi, pengesahan, dan revisi.
@@ -38,6 +39,7 @@ Pengujian menyeluruh mencakup **38 Test Case (100% Passed)** yang memverifikasi 
 6. **Laporan & Dashboard Eksekutif (UC27–UC31):** Dashboard Pimpinan, Unit, Mitra, filter multi-dimensi, dan export PDF/Excel.
 7. **Tracking Lulusan (UC32–UC33):** Input alumni bekerja di mitra (Prodi & Mitra) dan metrik statistik penyerapan IKU 1.
 8. **Subsistem Komunikasi & Notifikasi Terarah (UC34–UC35):** Notifikasi sistem real-time, bell counter badge, otomatisasi pengecekan dokumen kedaluwarsa (`notifikasi:check-expired`), deduplikasi/idempotensi, serta formulir Hubungi Administrator dari portal Mitra.
+9. **Alur Bisnis Utama End-to-End (Section 11.1–11.5):** Pengujian integrasi siklus hidup (Fase 1 Inisiasi s.d. Fase 6 Tracking), state transition dokumen, swimlane multi-aktor, dan notifikasi terarah.
 
 ---
 
@@ -85,5 +87,7 @@ Pengujian menyeluruh mencakup **38 Test Case (100% Passed)** yang memverifikasi 
 | 38 | `TC038` | Melihat Statistik Penyerapan Lulusan IKU 1 (UC33) | E2E | **PASSED** |
 | 39 | `TC039` | Menerima Notifikasi Sistem & Pengecekan Kedaluwarsa Otomatis (UC34 & Section 10.3) | E2E | **PASSED** |
 | 40 | `TC040` | Menghubungi Administrator dari Portal Mitra (UC35) | E2E | **PASSED** |
+| 41 | `TC041` | Alur Bisnis Utama End-to-End Siklus Hidup Kerja Sama (Lifecycle Fase 1 s.d. 6) | E2E | **PASSED** |
+| 42 | `TC042` | Verifikasi Transisi Status Dokumen & Otomatisasi Multi-Aktor Swimlane | E2E | **PASSED** |
 
-> **Statistik Hasil Uji Akhir:** 38 Test Case Terverifikasi | **38 Passed (100%)** | 0 Failed | 0 Blocked
+> **Statistik Hasil Uji Akhir:** 40 Test Case Terverifikasi | **40 Passed (100%)** | 0 Failed | 0 Blocked
