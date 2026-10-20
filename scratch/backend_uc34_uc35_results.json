@@ -1,0 +1,23 @@
+{
+    "status": "ALL_PASSED",
+    "timestamp": "2026-10-20T01:37:57+00:00",
+    "results": {
+        "uc34_notifikasi": {
+            "api_index": "PASS",
+            "mark_as_read": "PASS",
+            "mark_all_read": "PASS"
+        },
+        "uc35_hubungi_admin": {
+            "admin_notification_received": "PASS",
+            "mitra_sent_archive": "PASS"
+        },
+        "10_3_expiry_distribution": {
+            "status_update": "PASS",
+            "notif_penginput": "PASS",
+            "notif_humas": "PASS",
+            "notif_pimpinan": "PASS",
+            "notif_mitra": "PASS",
+            "idempotency": "PASS"
+        }
+    }
+}
