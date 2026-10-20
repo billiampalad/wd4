@@ -1,0 +1,23 @@
+{
+  "auth_admin": "PASS",
+  "auth_pimpinan": "PASS",
+  "auth_humas": "PASS",
+  "auth_jurusan": "PASS",
+  "auth_upa": "PASS",
+  "auth_pusat": "PASS",
+  "auth_prodi": "PASS",
+  "auth_mitra": "PASS",
+  "mitra_dokumen_kerjasama": "PASS",
+  "mitra_penilaian_magang": "PASS",
+  "mitra_umpan_balik_csat": "PASS",
+  "mitra_tracking_lulusan": "PASS",
+  "mitra_hubungi_admin": "PASS",
+  "pimpinan_dashboard_utama": "PASS",
+  "pimpinan_pengajuan_mitra": "PASS",
+  "pimpinan_evaluasi_kemitraan": "PASS",
+  "prodi_dashboard_prodi": "PASS",
+  "prodi_alumni_tracking": "PASS",
+  "admin_dashboard": "PASS",
+  "admin_master_pengguna": "PASS",
+  "admin_master_mitra": "PASS"
+}

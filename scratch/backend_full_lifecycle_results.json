@@ -1,0 +1,14 @@
+{
+    "status": "ALL_LIFECYCLE_PHASES_PASSED",
+    "timestamp": "2026-10-20T11:21:04+00:00",
+    "phases": {
+        "fase_0_actors": "PASS",
+        "fase_1_inisiasi": "PASS",
+        "fase_2_dokumen": "PASS",
+        "fase_3_pelaksanaan": "PASS",
+        "fase_4_evaluasi": "PASS",
+        "fase_5_expiry_extension": "PASS",
+        "fase_6_tracking_iku": "PASS",
+        "fase_7_komunikasi": "PASS"
+    }
+}
