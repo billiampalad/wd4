@@ -28,10 +28,34 @@
     }
     .bantuan-card {
         background: var(--surface, #ffffff);
-        border: 1px solid var(--border-color, #e2e8f0);
+        border: 1px solid var(--border, #e2e8f0);
         border-radius: 14px;
         padding: 24px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .bantuan-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border, #e2e8f0);
+    }
+    .bantuan-card-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .bantuan-card-title h3 {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text, #1e293b);
+        margin: 0;
+    }
+    .bantuan-card-title i {
+        font-size: 18px;
+        color: #2563eb;
     }
     .form-group-bantuan {
         margin-bottom: 20px;
@@ -40,22 +64,27 @@
         display: block;
         font-size: 13.5px;
         font-weight: 600;
-        color: var(--text-main, #1e293b);
+        color: var(--text, #1e293b);
         margin-bottom: 8px;
     }
     .form-label-bantuan span.req {
         color: #ef4444;
+    }
+    .form-label-bantuan span.hint {
+        font-weight: 400;
+        color: var(--text-sub, #64748b);
+        font-size: 12.5px;
     }
     .form-control-bantuan {
         width: 100%;
         padding: 11px 14px;
         font-size: 14px;
         font-family: inherit;
-        border: 1px solid var(--border-color, #cbd5e1);
+        border: 1px solid var(--border, #cbd5e1);
         border-radius: 10px;
-        background: var(--bg-card, #ffffff);
-        color: var(--text-main, #0f172a);
-        transition: border-color 0.2s, box-shadow 0.2s;
+        background: var(--surface2, #ffffff);
+        color: var(--text, #0f172a);
+        transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, color 0.2s;
         box-sizing: border-box;
     }
     .form-control-bantuan:focus {
@@ -63,15 +92,35 @@
         border-color: #2563eb;
         box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
     }
+    .form-control-bantuan::placeholder {
+        color: var(--text-sub, #94a3b8);
+        opacity: 0.7;
+    }
+    .form-control-bantuan::file-selector-button {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border, #cbd5e1);
+        background: var(--surface, #ffffff);
+        color: var(--text, #1e293b);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-right: 12px;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .form-control-bantuan::file-selector-button:hover {
+        background: var(--border, #e2e8f0);
+    }
     .info-kategori-card {
         display: flex;
         align-items: flex-start;
         gap: 12px;
         padding: 14px;
         border-radius: 10px;
-        background: rgba(241, 245, 249, 0.6);
-        border: 1px solid #e2e8f0;
+        background: var(--surface2, rgba(241, 245, 249, 0.6));
+        border: 1px solid var(--border, #e2e8f0);
         margin-bottom: 12px;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
     }
     .info-kategori-icon {
         width: 36px;
@@ -95,6 +144,194 @@
     .badge-kendala { background: rgba(239, 68, 68, 0.12); color: #dc2626; }
     .badge-pertanyaan { background: rgba(59, 130, 246, 0.12); color: #2563eb; }
     .badge-bantuan { background: rgba(16, 185, 129, 0.12); color: #059669; }
+
+    .bantuan-btn-reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        background: var(--surface2, #f1f5f9);
+        color: var(--text-sub, #64748b);
+        border: 1px solid var(--border, #cbd5e1);
+        transition: all 0.2s ease;
+    }
+    .bantuan-btn-reset:hover {
+        background: var(--border, #e2e8f0);
+        color: var(--text, #1e293b);
+    }
+
+    .bantuan-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+    }
+    .bantuan-table thead tr {
+        border-bottom: 2px solid var(--border, #e2e8f0);
+        text-align: left;
+        color: var(--text-sub, #64748b);
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    .bantuan-table th {
+        padding: 10px 14px;
+        font-weight: 600;
+    }
+    .bantuan-table tbody tr {
+        border-bottom: 1px solid var(--border, #f1f5f9);
+        transition: background-color 0.15s ease;
+    }
+    .bantuan-table tbody tr:hover {
+        background-color: var(--surface2, rgba(241, 245, 249, 0.5));
+    }
+    .bantuan-table td {
+        padding: 12px 14px;
+        color: var(--text, #334155);
+    }
+    .bantuan-status-sent {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: #059669;
+        font-weight: 600;
+    }
+    .bantuan-empty-state {
+        padding: 40px 20px;
+        text-align: center;
+        color: var(--text-sub, #64748b);
+    }
+    .bantuan-empty-icon {
+        font-size: 38px;
+        color: var(--text-sub, #cbd5e1);
+        opacity: 0.5;
+        margin-bottom: 12px;
+    }
+
+    /* ─── DARK MODE ADAPTATIONS ─────────────────────────────────────── */
+    [data-theme="dark"] .bantuan-card {
+        background: var(--surface, #181c27);
+        border-color: var(--border, #2a2f45);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+    [data-theme="dark"] .bantuan-card-header {
+        border-bottom-color: var(--border, #2a2f45);
+    }
+    [data-theme="dark"] .bantuan-card-title h3 {
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .bantuan-card-title i {
+        color: #60a5fa;
+    }
+    [data-theme="dark"] .form-label-bantuan {
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .form-label-bantuan span.hint {
+        color: var(--text-sub, #8b92a8);
+    }
+    [data-theme="dark"] .form-control-bantuan {
+        background: var(--surface2, #1e2333);
+        border-color: var(--border, #2a2f45);
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .form-control-bantuan:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+    [data-theme="dark"] .form-control-bantuan::placeholder {
+        color: var(--text-sub, #8b92a8);
+        opacity: 0.6;
+    }
+    [data-theme="dark"] .form-control-bantuan option {
+        background-color: var(--surface2, #1e2333);
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .form-control-bantuan::file-selector-button {
+        background: var(--surface, #181c27);
+        border-color: var(--border, #2a2f45);
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .form-control-bantuan::file-selector-button:hover {
+        background: var(--surface2, #1e2333);
+    }
+    [data-theme="dark"] .info-kategori-card {
+        background: rgba(30, 35, 51, 0.65);
+        border-color: var(--border, #2a2f45);
+    }
+    [data-theme="dark"] .badge-kendala {
+        background: rgba(239, 68, 68, 0.22);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    [data-theme="dark"] .badge-pertanyaan {
+        background: rgba(59, 130, 246, 0.22);
+        color: #60a5fa;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    [data-theme="dark"] .badge-bantuan {
+        background: rgba(16, 185, 129, 0.22);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    [data-theme="dark"] .bantuan-btn-reset {
+        background: var(--surface2, #1e2333);
+        border-color: var(--border, #2a2f45);
+        color: var(--text-sub, #8b92a8);
+    }
+    [data-theme="dark"] .bantuan-btn-reset:hover {
+        background: var(--border, #2a2f45);
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .dk-stat-card {
+        background: var(--surface, #181c27);
+        border-color: var(--border, #2a2f45);
+    }
+    [data-theme="dark"] .dk-stat-card strong {
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .dk-stat-card p {
+        color: var(--text-sub, #8b92a8);
+    }
+    [data-theme="dark"] .dk-stat-label {
+        color: var(--text-sub, #8b92a8);
+    }
+    [data-theme="dark"] .bantuan-table thead tr {
+        border-bottom-color: var(--border, #2a2f45);
+        color: var(--text-sub, #8b92a8);
+    }
+    [data-theme="dark"] .bantuan-table tbody tr {
+        border-bottom-color: var(--border, #2a2f45);
+    }
+    [data-theme="dark"] .bantuan-table tbody tr:hover {
+        background-color: var(--surface2, rgba(30, 35, 51, 0.6));
+    }
+    [data-theme="dark"] .bantuan-table td {
+        color: var(--text, #e8eaf6);
+    }
+    [data-theme="dark"] .bantuan-status-sent {
+        color: #34d399;
+    }
+    [data-theme="dark"] .ud-title-icon {
+        background: rgba(59, 130, 246, 0.2) !important;
+        color: #60a5fa !important;
+    }
+    [data-theme="dark"] .info-kategori-icon.icon-blue {
+        background: rgba(59, 130, 246, 0.2) !important;
+        color: #60a5fa !important;
+    }
+    [data-theme="dark"] .info-kategori-icon.icon-green {
+        background: rgba(16, 185, 129, 0.2) !important;
+        color: #34d399 !important;
+    }
+    [data-theme="dark"] .info-kategori-icon.icon-amber {
+        background: rgba(245, 158, 11, 0.2) !important;
+        color: #fbbf24 !important;
+    }
 </style>
 
 <main id="mainContent" class="dk-page">
@@ -163,9 +400,11 @@
     <div class="bantuan-grid">
         {{-- KOLOM KIRI: FORMULIR KIRIM PESAN KE ADMIN --}}
         <div class="bantuan-card">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color, #e2e8f0);">
-                <i class="fas fa-paper-plane" style="font-size: 18px; color: #2563eb;"></i>
-                <h3 style="font-size: 17px; font-weight: 700; color: var(--text-main, #1e293b); margin: 0;">Formulir Kontak Administrator</h3>
+            <div class="bantuan-card-header">
+                <div class="bantuan-card-title">
+                    <i class="fas fa-paper-plane"></i>
+                    <h3>Formulir Kontak Administrator</h3>
+                </div>
             </div>
 
             <form action="{{ route('mitra.bantuan.store') }}" method="POST" enctype="multipart/form-data" id="formHubungiAdmin">
@@ -207,7 +446,7 @@
                 {{-- Field Lampiran (Opsional) --}}
                 <div class="form-group-bantuan">
                     <label for="lampiran" class="form-label-bantuan">
-                        Lampiran Berkas Pendukung <span style="font-weight: 400; color: #64748b;">(Opsional, Maks. 5MB: PDF, JPG, PNG, DOCX)</span>
+                        Lampiran Berkas Pendukung <span class="hint">(Opsional, Maks. 5MB: PDF, JPG, PNG, DOCX)</span>
                     </label>
                     <input type="file" name="lampiran" id="lampiran" class="form-control-bantuan"
                         accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
@@ -215,7 +454,7 @@
 
                 {{-- Tombol Kirim --}}
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-                    <button type="reset" class="dk-secondary-btn" style="padding: 10px 20px; border-radius: 10px;">
+                    <button type="reset" class="bantuan-btn-reset">
                         <i class="fas fa-rotate-left"></i>
                         <span>Reset Form</span>
                     </button>
@@ -230,7 +469,7 @@
         {{-- KOLOM KANAN: PANDUAN & INFORMASI KONTAK RESMI --}}
         <div style="display: flex; flex-direction: column; gap: 20px;">
             <div class="bantuan-card">
-                <h4 style="font-size: 15px; font-weight: 700; color: var(--text-main, #1e293b); margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;">
+                <h4 style="font-size: 15px; font-weight: 700; color: var(--text, #1e293b); margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-circle-info" style="color: #2563eb;"></i>
                     <span>Informasi Pelayanan</span>
                 </h4>
@@ -239,31 +478,31 @@
                 </p>
 
                 <div class="info-kategori-card">
-                    <div class="info-kategori-icon" style="background: rgba(37,99,235,0.1); color: #2563eb;">
+                    <div class="info-kategori-icon icon-blue" style="background: rgba(37,99,235,0.1); color: #2563eb;">
                         <i class="fas fa-envelope"></i>
                     </div>
                     <div>
-                        <strong style="font-size: 12px; display: block; color: var(--text-main);">Email Resmi</strong>
+                        <strong style="font-size: 12px; display: block; color: var(--text);">Email Resmi</strong>
                         <span style="font-size: 12px; color: var(--text-sub);">humas@polimdo.ac.id</span>
                     </div>
                 </div>
 
                 <div class="info-kategori-card">
-                    <div class="info-kategori-icon" style="background: rgba(16,185,129,0.1); color: #059669;">
+                    <div class="info-kategori-icon icon-green" style="background: rgba(16,185,129,0.1); color: #059669;">
                         <i class="fas fa-clock"></i>
                     </div>
                     <div>
-                        <strong style="font-size: 12px; display: block; color: var(--text-main);">Jam Operasional</strong>
+                        <strong style="font-size: 12px; display: block; color: var(--text);">Jam Operasional</strong>
                         <span style="font-size: 12px; color: var(--text-sub);">Senin - Jumat: 08.00 - 16.00 WITA</span>
                     </div>
                 </div>
 
                 <div class="info-kategori-card">
-                    <div class="info-kategori-icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;">
+                    <div class="info-kategori-icon icon-amber" style="background: rgba(245,158,11,0.1); color: #f59e0b;">
                         <i class="fas fa-shield-halved"></i>
                     </div>
                     <div>
-                        <strong style="font-size: 12px; display: block; color: var(--text-main);">Keamanan Data</strong>
+                        <strong style="font-size: 12px; display: block; color: var(--text);">Keamanan Data</strong>
                         <span style="font-size: 12px; color: var(--text-sub);">Pesan terlindungi secara terenkripsi internal</span>
                     </div>
                 </div>
@@ -273,24 +512,24 @@
 
     {{-- ═══ RIWAYAT PESAN TERKIRIM KE ADMIN ═══ --}}
     <section class="bantuan-card" style="margin-top: 28px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color, #e2e8f0);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-clock-rotate-left" style="font-size: 17px; color: #64748b;"></i>
-                <h3 style="font-size: 16px; font-weight: 700; color: var(--text-main, #1e293b); margin: 0;">Riwayat Pesan Bantuan Terkirim</h3>
+        <div class="bantuan-card-header">
+            <div class="bantuan-card-title">
+                <i class="fas fa-clock-rotate-left" style="color: var(--text-sub, #64748b);"></i>
+                <h3>Riwayat Pesan Bantuan Terkirim</h3>
             </div>
             <span style="font-size: 12px; color: var(--text-sub, #64748b);">Total: {{ $sentMessages->count() }} Pesan</span>
         </div>
 
         @if($sentMessages->count() > 0)
             <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+                <table class="bantuan-table">
                     <thead>
-                        <tr style="border-bottom: 2px solid var(--border-color, #e2e8f0); text-align: left; color: var(--text-sub, #64748b); font-size: 12px; text-transform: uppercase;">
-                            <th style="padding: 10px 14px;">No</th>
-                            <th style="padding: 10px 14px;">Kategori &amp; Subjek</th>
-                            <th style="padding: 10px 14px;">Pesan</th>
-                            <th style="padding: 10px 14px;">Waktu Kirim</th>
-                            <th style="padding: 10px 14px;">Status</th>
+                        <tr>
+                            <th>No</th>
+                            <th>Kategori &amp; Subjek</th>
+                            <th>Pesan</th>
+                            <th>Waktu Kirim</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -303,19 +542,19 @@
                                     $badgeClass = 'badge-bantuan';
                                 }
                             @endphp
-                            <tr style="border-bottom: 1px solid var(--border-color, #f1f5f9);">
-                                <td style="padding: 12px 14px; font-weight: 600;">{{ $index + 1 }}</td>
-                                <td style="padding: 12px 14px;">
+                            <tr>
+                                <td style="font-weight: 600;">{{ $index + 1 }}</td>
+                                <td>
                                     <span class="badge-kat {{ $badgeClass }}" style="margin-bottom: 4px;">{{ $msg->title }}</span>
                                 </td>
-                                <td style="padding: 12px 14px; max-width: 400px; color: var(--text-main, #334155); line-height: 1.4;">
+                                <td style="max-width: 400px; line-height: 1.4;">
                                     {{ Str::limit($msg->message, 120) }}
                                 </td>
-                                <td style="padding: 12px 14px; white-space: nowrap; color: var(--text-sub, #64748b);">
+                                <td style="white-space: nowrap; color: var(--text-sub, #64748b);">
                                     {{ $msg->created_at?->format('d M Y, H:i') }}
                                 </td>
-                                <td style="padding: 12px 14px; white-space: nowrap;">
-                                    <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #059669; font-weight: 600;">
+                                <td style="white-space: nowrap;">
+                                    <span class="bantuan-status-sent">
                                         <i class="fas fa-check-double"></i> Terkirim ke Admin
                                     </span>
                                 </td>
@@ -325,8 +564,8 @@
                 </table>
             </div>
         @else
-            <div style="padding: 40px 20px; text-align: center; color: var(--text-sub, #64748b);">
-                <i class="fas fa-inbox" style="font-size: 38px; color: #cbd5e1; margin-bottom: 12px;"></i>
+            <div class="bantuan-empty-state">
+                <i class="fas fa-inbox bantuan-empty-icon"></i>
                 <p style="font-size: 14px; margin: 0;">Belum ada pesan bantuan yang dikirimkan ke administrator.</p>
             </div>
         @endif
