@@ -1,4 +1,4 @@
-# TestSprite Testing Report — Subsistem Master Data, Dokumen KS, Pengajuan, Kegiatan, Monitoring, Evaluasi, Laporan & Dashboard (UC01 s.d. UC31)
+# TestSprite Testing Report — Subsistem Master Data, Dokumen KS, Pengajuan, Kegiatan, Monitoring, Evaluasi, Laporan & Tracking Lulusan (UC01 s.d. UC33)
 
 ---
 
@@ -11,93 +11,66 @@
   - [analysis-flowchart.md (L716–L863: Subsistem Pengajuan Kerja Sama UC15–UC18)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L716-L863)
   - [analysis-flowchart.md (L865–L1127: Subsistem Kegiatan, Monitoring & Evaluasi UC19–UC26)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L865-L1127)
   - [analysis-flowchart.md (L1129–L1269: Subsistem Laporan dan Dashboard UC27–UC31)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1129-L1269)
+  - [analysis-flowchart.md (L1271–L1346: Subsistem Tracking Lulusan UC32–UC33)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md#L1271-L1346)
 - **Target Environment:** Local Server (`http://127.0.0.1:8000`)
-- **Date:** 2026-10-19
+- **Date:** 2026-10-21
 - **Prepared by:** TestSprite AI Testing Agent & Antigravity QA Team
 - **Akun Pengujian:**
-  - **Admin:** `admin@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/admin/login`)
   - **Pimpinan:** `pimpinan@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
   - **Humas:** `humas@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
   - **Jurusan:** `jurusan@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
-  - **UPA:** `upa@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
-  - **Pusat:** `pusat@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
   - **Mitra:** `mitra@industri.co.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
   - **Prodi:** `prodi@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/login`)
+  - **Admin:** `admin@polnado.ac.id` / `password` (Portal: `http://127.0.0.1:8000/admin/login`)
 - **Overall Status:**
-  - **Backend Test Suite (UC27–UC31):** ✅ **100% Passed (5/5 Scenarios Passed)**
-  - **Frontend E2E Suite (Playwright UC27–UC31):** ✅ **100% Passed (5/5 Scenarios Passed)**
-  - **Total Test Cases in TestSprite:** **34 Test Cases (100% PASSED)**
+  - **Backend Test Suite (UC32–UC33):** ✅ **100% Passed (2/2 Scenarios Passed)**
+  - **Frontend E2E Suite (Playwright UC32–UC33):** ✅ **100% Passed (2/2 Scenarios Passed)**
+  - **Total Test Cases in TestSprite:** **36 Test Cases (100% PASSED)**
 
 ---
 
-## 2️⃣ Hasil Pengujian Subsistem Laporan dan Dashboard (UC27 s.d. UC31)
+## 2️⃣ Hasil Pengujian Subsistem Tracking Lulusan (UC32 s.d. UC33)
 
-### 📋 8.1 UC27 — Melihat Dashboard Eksekutif
-- **Aktor:** Pimpinan
-- **Test ID / Code:** `TC032` / `test_backend_uc27_uc31.php` & `verify_e2e_uc27_uc31.py`
-- **Route & Controller:** `GET /pimpinan` (`DashboardController@pimpinan`)
+### 📋 9.1 UC32 — Menginput Data Lulusan Bekerja di Mitra
+- **Aktor:** Program Studi (Prodi) & Mitra Industri
+- **Test ID / Code:** `TC037` / `test_backend_uc32_uc33.php` & `verify_e2e_uc32_uc33.py`
+- **Route & Controller:**
+  - **Prodi:** `GET /prodi/alumni`, `GET /prodi/alumni/create`, `POST /prodi/alumni` (`Prodi\AlumniMitraController@store`)
+  - **Mitra:** `GET /alumni`, `POST /alumni`, `PUT /alumni/{id}` (`Mitra\AlumniMitraController@store`, `@update`)
 - **Status:** ✅ **PASSED**
 - **Alur & Verifikasi:**
-  1. Pimpinan login via `http://127.0.0.1:8000/login`.
-  2. Sistem memuat dashboard eksekutif dengan widget KPI utama: Total KS Aktif (16), Total Mitra (26), Nilai Kontrak, dan Mahasiswa Magang Aktif (17).
-  3. Visualisasi grafik analitik lengkap: Distribusi Jenis KS (MoU/MoA/IA), Tren Tahunan, Top Jurusan Kolaboratif, dan Klasifikasi Mitra.
-  4. Ringkasan operasional: Dokumen mendekati masa kedaluwarsa (30/60 hari), dalam perpanjangan, dan antrean validasi evaluasi unit.
+  1. **Aktor Prodi:**
+     - Mengisi data alumni (NIM, Nama, Program Studi, Tahun Kelulusan, Kontak).
+     - Menghubungkan alumni ke perusahaan/instansi mitra tempat bekerja, menetapkan posisi/jabatan, tahun mulai bekerja, dan status aktif.
+     - Terverifikasi tersimpan di tabel `alumnis` dan relasi `alumni_mitras` dengan flag `sumber_data = 'Prodi'`.
+  2. **Aktor Mitra Industri:**
+     - Mitra dapat mencatat alumni yang bekerja di perusahaannya melalui portal mitra `/alumni`.
+     - Menyediakan mode autocomplete master alumni terdaftar maupun pendaftaran alumni baru.
+     - Menyediakan fitur update posisi/jabatan dan status karir alumni (`PUT /alumni/{id}`).
+     - Dilengkapi proteksi validasi pencegahan duplikasi alumni pada mitra yang sama.
 
 ---
 
-### 📋 8.2 UC28 — Melihat Dashboard Per-Unit
-- **Aktor:** Humas, Jurusan, Prodi, UPA, Pusat
-- **Test ID / Code:** `TC033` / `test_backend_uc27_uc31.php` & `verify_e2e_uc27_uc31.py`
-- **Route & Controller:** `GET /unit`, `GET /jurusan`, `GET /prodi`, `GET /upa`, `GET /pusat`
+### 📋 9.2 UC33 — Melihat Statistik Penyerapan Lulusan
+- **Aktor:** Pimpinan, Humas, Jurusan, Prodi, Mitra
+- **Test ID / Code:** `TC038` / `test_backend_uc32_uc33.php` & `verify_e2e_uc32_uc33.py`
+- **Route & Controller:**
+  - `GET /pimpinan` (`DashboardController@pimpinan`)
+  - `GET /prodi` (`DashboardController@prodi`)
+  - `GET /alumni` (`Mitra\AlumniMitraController@index`)
 - **Status:** ✅ **PASSED**
 - **Alur & Verifikasi:**
-  1. **Jurusan:** Memuat dashboard jurusan dengan metrik kerja sama spesifik jurusan, draf dokumen, dan antrean evaluasi.
-  2. **Prodi:** Memuat ringkasan mahasiswa magang aktif (11 peserta), status distribusi penempatan, penyerapan alumni bekerja (80%), dan tren penempatan.
-  3. **UPA:** Memuat ringkasan kerja sama spesifik UPA (misal UPA Perpustakaan/Laboratorium) dan status keaktifan dokumen.
-  4. **Pusat:** Memuat kerja sama spesifik Pusat Penelitian & Pengabdian Masyarakat (P3M) dan capaian sasaran.
-  5. **Humas / Unit Kerja:** Memuat statistik operasional publikasi, galeri showcase, dan kemitraan umum.
+  1. **Executive Dashboard Pimpinan (`/pimpinan`):**
+     - Menampilkan indikator kinerja utama IKU 1: Total Alumni Terdaftar (11), Alumni Bekerja di Mitra (8), dan Rasio Penyerapan Lulusan (72.73%).
+  2. **Dashboard Prodi (`/prodi`):**
+     - Menampilkan statistik penyerapan alumni prodi (Total: 7, Bekerja: 6, Persentase Penyerapan: 85.71%), status distribusi, tren tahunan, dan tabel 5 alumni bekerja terkini.
+  3. **Portal Mitra (`/alumni`):**
+     - Menampilkan KPI Card instansi mitra: Total Alumni Bekerja (9), Status Aktif (7), Resign/Selesai, dan Sebaran Program Studi yang terserap (4 Prodi).
+     - Menyediakan filter interaktif berdasarkan Program Studi dan Tahun Kelulusan.
 
 ---
 
-### 📋 8.3 UC29 — Melihat Dashboard Mitra
-- **Aktor:** Mitra Industri
-- **Test ID / Code:** `TC034` / `test_backend_uc27_uc31.php` & `verify_e2e_uc27_uc31.py`
-- **Route & Controller:** `GET /mitra` (`DashboardController@mitra`)
-- **Status:** ✅ **PASSED**
-- **Alur & Verifikasi:**
-  1. Mitra login via portal `http://127.0.0.1:8000/login`.
-  2. Menampilkan ringkasan kemitraan khusus instansi mitra: Dokumen Aktif (6 dokumen), Dokumen Menunggu Review, dan Mahasiswa yang Sedang Magang.
-  3. Menampilkan riwayat dokumen kerja sama terbaru beserta tautan berkas dan status masa berlaku.
-  4. Menyediakan tombol aksi cepat (*Quick Actions*): Ajukan Kerja Sama Baru, Ajukan Perpanjangan, Input Penilaian Magang, dan Beri Umpan Balik CSAT.
-
----
-
-### 📋 8.4 UC30 — Mengekspor Laporan
-- **Aktor:** Admin, Pimpinan, Humas, Jurusan, UPA, Pusat
-- **Test ID / Code:** `TC035` / `test_backend_uc27_uc31.php` & `verify_e2e_uc27_uc31.py`
-- **Route & Controller:** `GET /admin/dashboard`, `GET /pimpinan/laporan`, `GET /pimpinan/laporan/preview`, `GET /pimpinan/laporan/pdf`, `GET /pimpinan/laporan/excel`
-- **Status:** ✅ **PASSED**
-- **Alur & Verifikasi:**
-  1. **Admin Panel:** Admin login melalui `http://127.0.0.1:8000/admin/login` dengan form otentikasi administrator terisolasi, berhasil masuk ke panel admin.
-  2. **Preview Laporan:** Pimpinan dan unit membuka halaman laporan, menentukan parameter filter (rentang tanggal, status berlaku, jenis dokumen MoU/MoA/IA, unit pelaksana). AJAX preview memuat data secara instan.
-  3. **Export PDF:** Mengunduh berkas laporan format PDF landscape dengan layout tabel komprehensif (HTTP 200).
-  4. **Export Excel / CSV:** Mengunduh berkas spreadsheet terstruktur dengan seluruh kolom atribut kerja sama (HTTP 200).
-
----
-
-### 📋 8.5 UC31 — Melihat Analitik
-- **Aktor:** Admin, Pimpinan, Humas, Jurusan, UPA, Pusat
-- **Test ID / Code:** `TC036` / `test_backend_uc27_uc31.php` & `verify_e2e_uc27_uc31.py`
-- **Route & Controller:** `GET /{role}/analitik/status-kerjasama`, `GET /{role}/analitik/klasifikasi-mitra`, `GET /{role}/analitik/geo-mitra`
-- **Status:** ✅ **PASSED**
-- **Alur & Verifikasi:**
-  1. **Analitik Status KS:** Menampilkan visualisasi persentase status dokumen (Aktif, Kedaluwarsa, Dalam Perpanjangan) dan rata-rata durasi keaktifan.
-  2. **Analitik Klasifikasi Mitra:** Menampilkan grafik distribusi kemitraan berdasarkan klasifikasi (Dunia Usaha/Industri, Instansi Pemerintah, BUMN, Perguruan Tinggi).
-  3. **Analitik Geografis Mitra:** Menampilkan peta interaktif dan konsentrasi sebaran kemitraan tingkat wilayah/nasional/internasional berdasarkan koordinat latitude & longitude mitra.
-
----
-
-## 3️⃣ Matriks Lengkap Kasus Uji TestSprite (34 Test Cases)
+## 3️⃣ Matriks Lengkap Kasus Uji TestSprite (36 Test Cases)
 
 | Test ID | Skenario Pengujian | Aktor | Tipe | Status |
 |---|---|---|---|---|
@@ -135,15 +108,14 @@
 | **TC034** | Mitra industri melihat dashboard kemitraan (UC29) | Mitra | Frontend / Backend | ✅ **PASSED** |
 | **TC035** | Admin dan Pimpinan mengekspor laporan PDF & Excel/CSV (UC30) | Admin / Pimpinan | Frontend / Backend | ✅ **PASSED** |
 | **TC036** | Pengguna melihat analitik status KS, klasifikasi, & geo (UC31) | Multi-Role / Unit | Frontend / Backend | ✅ **PASSED** |
+| **TC037** | Menginput data lulusan bekerja di mitra (Prodi & Mitra) (UC32) | Prodi / Mitra | Frontend / Backend | ✅ **PASSED** |
+| **TC038** | Melihat statistik penyerapan lulusan IKU 1 (UC33) | Pimpinan/Prodi/Mitra | Frontend / Backend | ✅ **PASSED** |
 
 ---
 
 ## 4️⃣ Kesimpulan
-Seluruh alur proses bisnis pada **Subsistem Laporan dan Dashboard (UC27 s.d. UC31)** telah teruji tuntas:
-1. Dashboard Eksekutif Pimpinan (**UC27**)
-2. Dashboard Spesifik Per-Unit Humas, Jurusan, Prodi, UPA, Pusat (**UC28**)
-3. Portal Dashboard Kemitraan Mitra Industri (**UC29**)
-4. Ekspor Laporan Komprehensif PDF & Excel/CSV (**UC30**)
-5. Visualisasi Analitik Status, Klasifikasi, dan Sebaran Geografis Mitra (**UC31**)
+Seluruh alur proses bisnis pada **Subsistem Tracking Lulusan (UC32 s.d. UC33)** telah diverifikasi secara tuntas:
+1. Input Data Lulusan Bekerja oleh Prodi & Mitra (**UC32**)
+2. Monitoring & Visualisasi Statistik Penyerapan Lulusan IKU 1 (**UC33**)
 
-Dengan penambahan ini, total **34 Kasus Uji (TC001–TC036)** pada TestSprite telah berhasil diverifikasi dengan tingkat kelulusan sempurna **100% PASSED**.
+Total **36 Kasus Uji (TC001–TC038)** kini terdaftar aktif di TestSprite dengan kelulusan sempurna **100% PASSED**.
