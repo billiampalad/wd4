@@ -1,83 +1,387 @@
-## Pengembangan dan Implementasi Sistem Informasi Berbasis Web untuk Evaluasi Kerja Sama Kampus–Industri (Studi Kasus: Politeknik Negeri Manado)
+# 🤝 Sistem Informasi Kerja Sama Kampus–DUDIKA (WD4)
+### *Smart Collaboration Lifecycle Management System*
+**Politeknik Negeri Manado (POLIMDO)**
 
-### Role Akses:
-- Admin → full control
-- Jurusan → Input kegiatan (Tidak ada Evaluasi)
-- Pimpinan → Memberi penilaian & melakukan monitoring
-- Unit → Input & Evaluasi
+---
 
-### Flow:
-Jurusan / Unit Kerja
-        ↓ (input data)
-   Data Kerjasama
-        ↓
-   Notifikasi ke Pimpinan
-        ↓
-   Pimpinan Monitoring
-        ↓
-   Evaluasi & Catatan
-        ↓
-   Data Final + Laporan
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=white)](https://alpinejs.dev)
+[![Hotwire Turbo](https://img.shields.io/badge/Hotwire-Turbo-1F2937?style=for-the-badge&logo=hotwire&logoColor=white)](https://turbo.hotwired.dev)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
-### PATH FILE MENU JURUSAN
-JURUSAN -> Fokus: INPUT DATA SAJA -> resources/views/auth/jurusan.blade.php
-Dashboard -> resources/views/auth/layout/jurusan/dashboard.blade.php
-Data Kerjasama -> resources/views/auth/layout/jurusan/dkerjasama.blade.php
-Laporan Data -> resources/views/auth/layout/jurusan/laporan.blade.php
+---
 
+## 📑 Daftar Isi
 
-# FUNGSI TOMBOL 'KIRIM KE PIMPINAN' & 'AJUKAN PERPANJANGAN'
+- [Tentang Sistem](#-tentang-sistem)
+- [Fitur Utama & 10 Subsistem](#-fitur-utama--10-subsistem)
+- [Ruang Lingkup Role & Matriks Hak Akses](#-ruang-lingkup-role--matriks-hak-akses)
+- [Alur Proses Bisnis & Lifecycle Dokumen](#-alur-proses-bisnis--lifecycle-dokumen)
+  - [1. Siklus Hidup Dokumen Kerja Sama](#1-siklus-hidup-dokumen-kerja-sama-state-transition)
+  - [2. Alur Pengajuan, Review & Validasi Pimpinan](#2-alur-pengajuan-review--validasi-pimpinan)
+  - [3. Alur Monitoring Mahasiswa Magang & Penilaian Mitra](#3-alur-monitoring-mahasiswa-magang--penilaian-mitra)
+  - [4. Otomasi Masa Berlaku & Notifikasi Kedaluwarsa](#4-otomasi-masa-berlaku--notifikasi-kedaluwarsa)
+- [Logika Aksi Tombol Penting](#-logika-aksi-tombol-penting)
+  - [Tombol "Kirim ke Pimpinan"](#1-tombol-kirim-ke-pimpinan)
+  - [Tombol "Ajukan Perpanjangan"](#2-tombol-ajukan-perpanjangan)
+- [Desain & Tampilan (Light & Dark Mode)](#-desain--tampilan-light--dark-mode)
+- [Tech Stack & Pustaka](#-tech-stack--pustaka)
+- [Panduan Instalasi & Menjalankan Sistem](#-panduan-instalasi--menjalankan-sistem)
+- [Akun Demo / Kredensial Default](#-akun-demo--kredensial-default)
+- [Struktur Direktori Proyek](#-struktur-direktori-proyek)
+- [Dokumentasi Lengkap Pengembangan](#-dokumentasi-lengkap-pengembangan)
 
-1. Tombol "Kirim ke Pimpinan"
-Tombol ini hanya muncul pada fase awal pengajuan atau saat ada perbaikan.
+---
 
-- Muncul jika: Status dokumen adalah 'Draft' (baru diunggah) atau 'Revisi' (dikembalikan oleh pimpinan untuk diperbaiki).
-- Fungsi: Mengubah status_dokumen menjadi 'Menunggu Evaluasi' dan mengirimkan notifikasi ke Pimpinan.
-- Hilang jika: Dokumen sudah dikirim ke Pimpinan atau sudah Disahkan. (Unit Kerja tidak perlu mengirim ulang dokumen yang sudah disetujui).
+## 💡 Tentang Sistem
 
-2. Tombol "Ajukan Perpanjangan"
-Tombol ini khusus untuk fase akhir, saat dokumen sudah berjalan sah namun masa berlakunya hampir habis atau sudah habis.
+**Sistem Informasi Kerja Sama (WD4)** adalah platform berbasis web terintegrasi (*Single Source of Truth*) yang dirancang khusus untuk mengelola seluruh siklus hidup kerja sama antara **Politeknik Negeri Manado** dengan **DUDIKA** (Dunia Usaha, Dunia Industri, dan Dunia Kerja).
 
-- Muncul jika: Status dokumen sudah Disahkan dan status masa berlakunya adalah 'Kadaluarsa' (atau misalnya sisa 30 hari lagi sebelum kadaluarsa).
-- Fungsi: Memulai proses perpanjangan, yang bisa mengubah status menjadi Dalam Perpanjangan dan mungkin memicu pembuatan form draft kesepakatan baru.
-- Hilang jika: Dokumen masih berstatus Draft, Menunggu Evaluasi, atau jika masa aktifnya masih sangat panjang.
+Sistem ini mentransformasi pengelolaan kerja sama konvensional (arsip fisik/spreadsheet terfragmentasi) menjadi ekosistem digital cerdas yang mencakup:
+1. **Pusat Data Kerja Sama Terpadu**: Mengarsipkan dokumen kesepahaman dan perjanjian secara digital (MoU, MoA, IA).
+2. **Pelacakan Aktivitas Berjenjang**: Menghubungkan perjanjian legal langsung dengan implementasi nyata di lapangan (magang mahasiswa, penelitian bersama, praktisi mengajar, sertifikasi).
+3. **Early Warning System**: Otomasi deteksi masa berlaku perjanjian dengan distribusi notifikasi cerdas.
+4. **Monitoring & Evaluasi Objektif**: Kolaborasi penilaian berkala dari mitra industri dan pimpinan institusi.
+5. **Tracking Penyerapan Lulusan**: Mendokumentasikan alumni kampus yang berhasil terserap kerja di mitra DUDIKA guna mendukung Indikator Kinerja Utama (IKU 1 & IKU 6).
 
-# FORM TAMBAHAN UNTUK AJUKAN PERPANJANGAN
-Menggunakan Kembali Form "Input Data Baru"
-Gunakan cara ini jika: Perpanjangan kerja sama dianggap sebagai kontrak baru yang memiliki Nomor Dokumen/PKS baru, tetapi masih berhubungan dengan kerja sama yang lama.
-Anda tidak perlu membuat halaman HTML/Blade baru. Anda cukup menggunakan halaman Form Input Data Baru yang sudah Anda buat sebelumnya, tetapi dengan trik "Isi Otomatis" (Auto-fill).
-- Cara Kerja UI:
-Saat tombol "Ajukan Perpanjangan" ditekan, arahkan Unit Kerja ke halaman Form Input Data Baru. Namun, sistem akan mengisi otomatis semua kolomnya (Nama Mitra, Judul, Jurusan, dll) berdasarkan data kerja sama yang lama.
-- Alur:
-1. Sistem mengarahkan ke URL seperti: [domain.com/kerjasama/create?perpanjangan_dari=15](https://domain.com/kerjasama/create?perpanjangan_dari=15) (Angka 15 adalah ID kerja sama lama).
-2. Unit Kerja melihat form input data yang sudah terisi, jadi mereka hanya perlu mengganti Nomor PKS baru dan menyesuaikan tanggal berlakunya.
-3. Setelah di-submit, ini akan tersimpan sebagai Data Kerja Sama Baru dengan status awal Draft.
-4. Kerja sama yang lama statusnya dibiarkan Kadaluarsa atau Selesai sebagai arsip sejarah.
+---
 
+## 🚀 Fitur Utama & 10 Subsistem
 
-# Kesimpulan Struktur Menu Final Pimpinan:
-- Dashboard Eksekutif (Beranda & ringkasan tugas hari ini)
-- Evaluasi & Validasi (Tempat Pimpinan memberi nilai, catatan, dan status persetujuan)
-- Monitoring Data (Melihat grafik performa instansi dan peringatan dini)
-- Arsip Digital (Pencarian cepat dokumen PDF yang sudah disahkan)
-- Laporan Global (Pusat unduhan dan cetak rekapitulasi)
+Sistem dibangun secara komprehensif ke dalam 10 subsistem utama:
 
+| No | Subsistem | Deskripsi Fitur Unggulan |
+|:--:|---|---|
+| **S1** | **Autentikasi & Keamanan** | Login multi-role (8 peran), forgot/reset password via token aman, session heartbeat, auto-logout saat sesi berakhir, toggle aktif/nonaktif akun. |
+| **S2** | **Master Data Management** | CRUD terpusat Pengguna, Roles, Klasifikasi Industri, Jurusan, Program Studi, Unit Penunjang (UPA), Pusat Layanan, Sasaran & Indikator Renstra. |
+| **S3** | **Manajemen Dokumen Kerja Sama** | Pengelolaan MoU, MoA, SPK/IA dengan relasi hierarkis, penyimpanan tautan digital / berkas fisik, serta pencatatan tujuan, pelaksanaan, hasil, dokumentasi, dan solusi kendala. |
+| **S4** | **Pengajuan & Perpanjangan Dokumen** | Form pendaftaran kerja sama publik/mitra, mekanisme auto-fill perpanjangan kontrak lama (`?perpanjangan_dari=id`), dan alur persetujuan bertingkat. |
+| **S5** | **Kegiatan & Mahasiswa Magang** | Penempatan mahasiswa magang per mitra oleh Program Studi, penetapan dosen pembimbing & mentor industri, dan monitoring aktivitas. |
+| **S6** | **Penilaian Kinerja Industri oleh Mitra** | Portal mandiri bagi mitra industri untuk mengisi skor evaluasi teknis, kedisiplinan, dan capaian kompetensi mahasiswa peserta magang. |
+| **S7** | **Evaluasi Kinerja & Feedback Mitra** | Instrumen evaluasi berkala oleh Humas/Unit, form survey kepuasan/umpan balik langsung dari industri, serta penilaian kelayakan kerja sama oleh Pimpinan. |
+| **S8** | **Dashboard Eksekutif & Laporan Multi-Format** | Visualisasi statistik, diagram interaktif sebaran mitra (geografis/kategori), metrik real-time, serta ekspor laporan resmi ke format **PDF (DomPDF)** dan **Excel (.xlsx)**. |
+| **S9** | **Tracking Lulusan / Alumni di Mitra** | Pendataan alumni kampus yang bekerja di instansi mitra oleh Prodi dan konfirmasi status kepegawaian oleh Mitra Industri (IKU Kampus). |
+| **S10** | **Pusat Notifikasi & Helpdesk Komunikasi** | Notifikasi terpusat pada header (ikon lonceng), deduplikasi notifikasi otomatis, peringatan dini H-90 kedaluwarsa dokumen, dan formulir bantuan/helpdesk mitra ke Admin. |
 
-## PERAN KERJA NOTIFIKASI
-Gemini berkata
-Keputusan yang sangat jeli! Memiliki dua akses untuk menu yang sama (di header dan di sidebar) seringkali membuat tampilan menjadi redundan (tumpang tindih).
+---
 
-Pendekatan terbaik dan paling modern untuk sistem informasi seperti ini adalah menghapus menu Notifikasi dari sidebar dan memusatkan semuanya pada ikon lonceng di header.
+## 👥 Ruang Lingkup Role & Matriks Hak Akses
 
-Dengan cara ini, sidebar Anda akan benar-benar bersih dan hanya berisi menu inti (Dashboard & Data Kerjasama).
+Sistem mendukung **8 level aktor** dengan pemisahan tugas (*Separation of Duties*) yang ketat:
 
-Berikut adalah skenario penerapan UI/UX dan alur sistem yang paling ideal untuk fitur notifikasi Anda:
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        ROLE AKSES SISTEM (RBAC)                        │
+├───────────────┬────────────────────────────────────────────────────────┤
+│ 👑 Admin      │ Full control, kelola Master Data, manajemen pengguna   │
+│ 👔 Pimpinan   │ Dashboard eksekutif, validasi & pengesahan, evaluasi   │
+│ 🏛️ Humas/Unit │ Inisiasi MoU/MoA, kelola mitra, showcase galeri foto   │
+│ 🏢 Jurusan    │ Kelola data kerja sama & sub-resource tingkat jurusan  │
+│ 🎓 Prodi      │ Penempatan & monitoring mahasiswa magang, data alumni  │
+│ 🔬 UPA        │ Kelola data kerja sama operasional unit penunjang      │
+│ 🌐 Pusat      │ Kelola data kerja sama pusat studi / layanan kampus    │
+│ 🤝 Mitra      │ Portal mandiri industri, review draf, nilai magang     │
+└───────────────┴────────────────────────────────────────────────────────┘
+```
 
-1. Peran Ikon Lonceng di Header (Quick View)
-Ikon di header berfungsi sebagai pusat perhatian instan karena posisinya selalu terlihat di halaman mana pun user berada.
+### Matriks Akses Fitur
 
-Badge Angka: Menampilkan jumlah notifikasi yang belum dibaca (berdasarkan kolom is_read = 0 di tabel notifikasis).
+| Fitur / Modul | Admin | Pimpinan | Humas | Jurusan | Prodi | UPA | Pusat | Mitra |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Kelola Master Data** | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Input Kerja Sama Baru** | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ *(Draft)* |
+| **Kelola Sub-resource (Tujuan/Hasil/Dok)** | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| **Kirim ke Pimpinan (Submit)** | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| **Validasi & Pengesahan Dokumen** | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Penempatan Mahasiswa Magang** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Penilaian Mahasiswa Magang** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Tracking Alumni Bekerja** | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ *(Konfirmasi)*|
+| **Evaluasi & Umpan Balik** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Unduh Laporan (PDF/Excel)** | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| **Bantuan / Helpdesk Admin** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 
-Dropdown Pop-up: Saat ikon diklik, muncul dropdown yang menampilkan 3 hingga 5 notifikasi terbaru.
+---
 
-Aksi Cepat: User bisa mengklik salah satu notifikasi di dropdown tersebut, dan sistem akan langsung mengarahkan mereka ke halaman detail kegiatan yang bersangkutan, sekaligus mengubah status is_read menjadi 1 (sudah dibaca).
+## 🔄 Alur Proses Bisnis & Lifecycle Dokumen
+
+### 1. Siklus Hidup Dokumen Kerja Sama (State Transition)
+
+Setiap dokumen kerja sama melewati tahapan status yang terstruktur dan terotomasi:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Draft : Unit / Jurusan / Mitra Input Dokumen Baru
+    Draft --> Draft : Perbaikan Data / Kelengkapan Lampiran
+    Draft --> Menunggu_Evaluasi : Tombol "Kirim ke Pimpinan" Ditekan
+    
+    Menunggu_Evaluasi --> Revisi : Pimpinan Meminta Perbaikan Catatan
+    Menunggu_Evaluasi --> Disahkan : Pimpinan Mengesahkan Dokumen
+    Revisi --> Draft : Unit Memperbaiki Dokumen
+    
+    state Disahkan {
+        [*] --> Aktif : Tanggal Mulai Berlaku Tiba
+        Aktif --> Akan_Berakhir : H-90 Sebelum Tanggal Berakhir
+        Aktif --> Kadaluarsa : Melewati Tanggal Berakhir (Cron Auto-check)
+        Akan_Berakhir --> Kadaluarsa : Tanggal Berakhir Terlewati
+        Akan_Berakhir --> Diperpanjang : Mengajukan Perpanjangan Kerja Sama
+        Kadaluarsa --> Diperpanjang : Mengajukan Perpanjangan Kerja Sama
+        Kadaluarsa --> Selesai : Diarsipkan / Tidak Diperpanjang
+    }
+```
+
+---
+
+### 2. Alur Pengajuan, Review & Validasi Pimpinan
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as Unit Kerja / Jurusan
+    participant S as Sistem (WD4)
+    actor P as Pimpinan (Wadir 4)
+    actor M as Mitra Industri
+
+    U->>S: Input Dokumen Kerja Sama (Status: Draft)
+    U->>S: Lengkapi Tujuan, Pelaksanaan, Dokumen & Lampiran
+    U->>S: Klik "Kirim ke Pimpinan"
+    S->>S: Update status_dokumen = 'Menunggu Evaluasi'
+    S-->>P: Kirim Notifikasi Review Dokumen Baru
+    
+    P->>S: Buka Modul Evaluasi & Validasi
+    alt Dokumen Perlu Diperbaiki
+        P->>S: Input Catatan Perbaikan & Pilih "Minta Revisi"
+        S->>S: Update status_dokumen = 'Revisi'
+        S-->>U: Notifikasi Revisi Dokumen + Catatan
+        U->>S: Perbaiki Dokumen & Submit Ulang
+    else Dokumen Disetujui
+        P->>S: Beri Nilai Evaluasi & Klik "Sahkan Dokumen"
+        S->>S: Update status_dokumen = 'Disahkan' & status_berlaku = 'Aktif'
+        S-->>U: Notifikasi Dokumen Telah Disahkan
+        S-->>M: Notifikasi Dokumen Aktif (Portal Mitra)
+    end
+```
+
+---
+
+### 3. Alur Monitoring Mahasiswa Magang & Penilaian Mitra
+
+```mermaid
+flowchart TD
+    A([● Mulai]) --> B[Prodi Menginput Program Magang & Kegiatan IA]
+    B --> C[Prodi Memilih Mitra Kerja Sama yang Aktif]
+    C --> D[Prodi Menetapkan Data Mahasiswa & Dosen Pembimbing]
+    D --> E[Sistem Menyimpan Data Penempatan]
+    E --> F[Notifikasi Otomatis Terkirim ke Portal Mitra]
+    F --> G[Mitra Membimbing Mahasiswa di Industri]
+    G --> H[Mitra Mengisi Skor Kompetensi & Evaluasi Performa]
+    H --> I[Nilai Tersimpan di Database]
+    I --> J[Prodi & Pimpinan Melihat Laporan Monitoring & Rekap Nilai]
+    J --> K([◉ Selesai])
+```
+
+---
+
+### 4. Otomasi Masa Berlaku & Notifikasi Kedaluwarsa
+
+Sistem menjalankan otomatisasi terjadwal (*scheduled service*) untuk mendeteksi masa berlaku kerja sama tanpa intervensi manual:
+
+```mermaid
+flowchart LR
+    Cron["⏰ Scheduler Harian\n(00:00 WITA)"] --> Service["⚙️ CooperationExpiryService\nCek Dokumen Disahkan"]
+    
+    Service --> Cond{"end_date < Hari Ini?"}
+    
+    Cond -- Ya --> Expire["Set status_berlaku = 'Kadaluarsa'"]
+    Cond -- H-90 --> Warning["Set status_berlaku = 'Akan Berakhir'"]
+    
+    Expire --> Notify["Distribusi Notifikasi Terarah\n(Deduplikasi Otomatis)"]
+    Warning --> Notify
+    
+    Notify --> N1["🏛️ Unit Penginput / Humas"]
+    Notify --> N2["📚 Jurusan & Program Studi"]
+    Notify --> N3["🏢 Mitra Industri Terkait"]
+```
+
+---
+
+## 🎯 Logika Aksi Tombol Penting
+
+### 1. Tombol "Kirim ke Pimpinan"
+Tombol ini berfungsi mengantarkan draf dokumen ke meja pimpinan untuk ditinjau:
+* **Kondisi Tampil:** Muncul saat dokumen berstatus `Draft` (baru dibuat) atau `Revisi` (dikembalikan oleh pimpinan dengan catatan perbaikan).
+* **Fungsi Sistem:** Mengubah nilai `status_dokumen` menjadi `Menunggu Evaluasi`, mengunci pengeditan sementara dari pihak penginput, dan mengirimkan notifikasi instan ke akun Pimpinan.
+* **Kondisi Hilang:** Otomatis disembunyikan saat dokumen sudah berstatus `Menunggu Evaluasi`, `Menunggu Validasi`, atau sudah `Disahkan`.
+
+### 2. Tombol "Ajukan Perpanjangan"
+Tombol ini digunakan untuk keberlanjutan kemitraan yang masa berlakunya segera/sudah habis:
+* **Kondisi Tampil:** Muncul hanya pada dokumen yang sudah `Disahkan` dan memiliki status masa berlaku `Akan Berakhir` (H-90) atau `Kadaluarsa`.
+* **Fungsi Sistem:**
+  1. Mengarahkan pengguna ke halaman pembuatan dokumen baru dengan parameter:
+     ```
+     /unit/data-kerjasama/create?perpanjangan_dari={ID_LAMA}
+     ```
+  2. Sistem secara cerdas melakukan **Auto-fill** seluruh formulir (Nama Mitra, Kategori, Jurusan, Jenis Kerja Sama, dll.) berdasarkan data historis kerja sama sebelumnya.
+  3. Pengguna cukup memasukkan Nomor Dokumen PKS/MoU baru serta tanggal mulai/berakhir baru.
+  4. Dokumen lama tetap tersimpan sebagai arsip histori dengan relasi yang terhubung.
+
+---
+
+## 🎨 Desain & Tampilan (Light & Dark Mode)
+
+Antarmuka WD4 dirancang dengan fokus pada **estetika visual modern, ergonomi kerja, dan aksesibilitas tinggi**:
+* **Dua Tema Warna Terintegrasi**: Mendukung **Light Mode** yang bersih profesional dan **Dark Mode** elegan berbasis token CSS dinamis (`--bg`, `--surface`, `--border`, `--text`, `--accent`).
+* **Header Notification Center**: Menggantikan menu notifikasi sidebar yang redundan dengan ikon lonceng interaktif, badge unread, dan quick dropdown.
+* **Horizontal Scroll Responsif**: Seluruh tabel master data dan tabel data kerja sama dilengkapi container `overflow-x: auto` terstandarisasi dengan scrollbar custom yang nyaman diakses di berbagai ukuran layar.
+* **Komponen Interaktif**: Integrasi modal Alpine.js yang ringan, animasi mikro yang halus, dan transisi halaman instan melalui Hotwire Turbo.
+
+---
+
+## 🛠️ Tech Stack & Pustaka
+
+```text
+Backend            : Laravel 12.x (PHP 8.2+)
+Database           : MySQL 8.0+
+Frontend           : Blade Templating, Vanilla CSS3 (Custom Design System)
+Interactivity      : Alpine.js 3.x, Hotwire Turbo 7.3
+Typography & Icons : Plus Jakarta Sans, DM Mono, Font Awesome 6.5
+Export Engine      : barryvdh/laravel-dompdf 3.1, maatwebsite/excel 3.1
+Architecture       : Role-Based Access Control (RBAC), Service Layer Pattern
+```
+
+---
+
+## 💻 Panduan Instalasi & Menjalankan Sistem
+
+### Prasyarat Sistem
+* PHP >= 8.2 (dengan ekstensi: `bcmath`, `ctype`, `fileinfo`, `json`, `mbstring`, `openssl`, `pdo_mysql`, `tokenizer`, `xml`, `gd`)
+* Composer >= 2.x
+* MySQL Server >= 8.0 / MariaDB >= 10.4
+* Node.js & NPM (opsional, jika ingin mengompilasi asset frontend)
+
+### Langkah-Langkah Instalasi
+
+1. **Clone Repositori & Masuk ke Folder Projek:**
+   ```bash
+   git clone https://github.com/billiampalad/wd4.git
+   cd wd4
+   ```
+
+2. **Pasang Dependensi PHP (Composer):**
+   ```bash
+   composer install
+   ```
+
+3. **Salin Berkas Lingkungan (.env):**
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Konfigurasi Database pada `.env`:**
+   Sesuaikan konfigurasi koneksi database Anda:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=wd4
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+5. **Generate Application Key:**
+   ```bash
+   php artisan key:generate
+   ```
+
+6. **Jalankan Migrasi Database & Seeder:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+7. **Buat Tautan Simbolik Storage:**
+   ```bash
+   php artisan storage:link
+   ```
+
+8. **Jalankan Server Lokal:**
+   ```bash
+   php artisan serve
+   ```
+   Aplikasi dapat diakses melalui peramban pada alamat: **`http://localhost:8000`** (atau via Laragon: `http://wd4.test`).
+
+---
+
+## 🔑 Akun Demo / Kredensial Default
+
+Setelah menjalankan `php artisan migrate --seed`, akun uji coba berikut siap digunakan:
+
+| Role | Username / NIK / Email | Password Default | Akses URL Utama |
+|---|---|:---:|---|
+| **Admin** | NIK: `120604` / `admin@polimdo.ac.id` | `password` | `/admin/dashboard` |
+| **Pimpinan** | NIK: `012460` / `pimpinan@polimdo.ac.id` | `password` | `/pimpinan` |
+| **Unit Kerja / Humas** | NIK: `123456` / `unit@polimdo.ac.id` | `password` | `/unit` |
+| **Jurusan** | NIK: `222222` / `jurusan@polimdo.ac.id` | `password` | `/jurusan` |
+| **Program Studi** | Didaftarkan oleh Admin / Seeder | `password` | `/prodi` |
+| **UPA** | Didaftarkan oleh Admin / Seeder | `password` | `/upa` |
+| **Pusat** | Didaftarkan oleh Admin / Seeder | `password` | `/pusat` |
+| **Mitra Industri** | Dibuat saat mitra didaftarkan | `password` | `/mitra` |
+
+> [!NOTE]
+> Untuk alasan keamanan di lingkungan produksi, segera perbarui seluruh kata sandi bawaan melalui menu pengaturan akun atau manajemen pengguna admin.
+
+---
+
+## 📂 Struktur Direktori Proyek
+
+```text
+wd4/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/            # Controller panel Master Data & Admin
+│   │   │   ├── Auth/             # Login, logout, lupa sandi
+│   │   │   ├── Jurusan/          # Modul operasional Jurusan
+│   │   │   ├── Mitra/            # Portal mandiri Mitra DUDIKA
+│   │   │   ├── Pimpinan/         # Validasi, evaluasi eksekutif & laporan global
+│   │   │   ├── Prodi/            # Penempatan magang, mahasiswa & tracking alumni
+│   │   │   ├── Pusat/            # Modul kerja sama Pusat Studi / Layanan
+│   │   │   ├── Unit/             # Modul Humas / Unit Kerja
+│   │   │   └── Upa/              # Modul Unit Penunjang Akademik (UPA)
+│   │   └── Middleware/           # Role verification & session security
+│   ├── Models/                   # Cooperation, Mitra, Kegiatan, Alumni, User, dll.
+│   └── Services/                 # CooperationExpiryService & Business Logic
+├── database/
+│   ├── migrations/               # Skema tabel database sistem
+│   └── seeders/                  # Seeder roles, users, sasaran, indikator
+├── pengembangan-sistem/          # Dokumentasi teknis: Flowchart, DFD, ERD, Use Case
+├── public/
+│   ├── css/                      # Dashboard styling, light/dark theme tokens
+│   ├── js/                       # Script interaktif, filter, paginasi, alert
+│   └── storage/                  # Berkas unggahan dokumen & galeri showcase
+└── resources/
+    └── views/
+        ├── admin/                # Template Blade Admin Master Data
+        ├── auth/                 # Template Blade per Role (Pimpinan, Unit, Jurusan, dll)
+        ├── components/           # Komponen reusable (Search, Filter, Paginav, Alert)
+        └── landing/              # Landing page publik & form permohonan kerja sama
+```
+
+---
+
+## 📚 Dokumentasi Lengkap Pengembangan
+
+Dokumentasi rinci terkait rekayasa perangkat lunak dan analisis sistem dapat dipelajari pada folder [`pengembangan-sistem/`](file:///c:/laragon/www/wd4/pengembangan-sistem/):
+
+1. **[Analysis Flowchart & Activity Diagram](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-flowchart.md)**: 38 Activity diagram use case, swimlane multi-aktor, dan diagram state transition.
+2. **[Analysis Use Case & Traceability](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-use-case.md)**: Spesifikasi fungsional aktor UC01 s/d UC37.
+3. **[Analysis Entity Relationship Diagram (ERD)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-erd.md)**: Rancangan relasi database komprehensif.
+4. **[Analysis Data Flow Diagram (DFD)](file:///c:/laragon/www/wd4/pengembangan-sistem/analysis-dfd.md)**: Diagram konteks hingga DFD Level 2.
+5. **[Strategic Planning Roadmap](file:///c:/laragon/www/wd4/pengembangan-sistem/planning.md)**: Roadmap pengembangan fase 1 hingga fase 8.
+
+---
+
+<p align="center">
+  Dikelola oleh <strong>Tim Kerjasama & Humas Politeknik Negeri Manado</strong><br>
+  <em>Sistem Informasi Kerja Sama Kampus–DUDIKA (WD4) © 2026. All Rights Reserved.</em>
+</p>
